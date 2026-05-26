@@ -1,0 +1,63 @@
+<th rowspan="{{ $rowSpan ?? 1 }}" rowspan="{{ $rowspan ?? 1 }}" colspan="{{ $colspan ?? 1 }}"
+    class="px-6 py-3 {{ $isSubHeader ?? false ? 'bg-gray-100/50' : '' }}
+        {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
+        {{ $isBorderL ?? false ? 'border-l' : '' }}
+        {{ $isBorderR ?? false ? 'border-r' : '' }}
+        {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-3' : 'py-3' }}
+        bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 relative
+        ">
+    <div class="flex flex-col gap-1 items-center">
+
+        @include('livewire.global.table.head-table', [
+            'sortFieldString' => $sortFieldString,
+            'headString' => $headString ?? null,
+            'withTh' => 0,
+        ])
+
+        <div x-data="{ value: @entangle($modelString) }" class="sm:col-span-4 relative w-fit">
+            <div class="relative">
+
+                <input x-model="value" wire:model.live.debounce.300ms="{{ $modelString }}" type="text"
+                    placeholder="{{ $placeholder }}"
+                    @if (isset($floatOnly) && $floatOnly)
+                        inputmode="decimal"
+                        oninput="
+                            let val = this.value.replace(/,/g, '.');
+                            val = val.replace(/[^0-9.]/g, '');
+                            let parts = val.split('.');
+
+                            if (parts.length > 2) {
+                                val = parts[0] + '.' + parts.slice(1).join('');
+                                parts = val.split('.');
+                            }
+
+                            parts[0] = parts[0].slice(0, {{ $maxlength ?? 255 }});
+
+                            if (parts.length > 1) {
+                                parts[1] = parts[1].slice(0, 2);
+                            }
+
+                            this.value = parts.join('.');
+                        "
+                    @elseif (isset($numberOnly) && $numberOnly) 
+                        inputmode="numeric" 
+                        oninput="this.value = this.value.replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxlength ?? 255 }})"
+                    @else
+                        maxlength="{{ $maxlength ?? 255 }}" @endif
+                    class="mt-1 text-[10px] w-{{ $wInput ?? '13' }} border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
+
+                {{-- Tombol Reset --}}
+                @include('livewire.global.search-and-filters.partial.reset-button', [
+                    'xShow' => 'value',
+                    'xClick' => "value = ''",
+                    'xWire' => $resetXFilter,
+                    'xSize' => 3,
+                    'xPr' => 1,
+                ])
+
+            </div>
+        </div>
+
+    </div>
+
+</th>

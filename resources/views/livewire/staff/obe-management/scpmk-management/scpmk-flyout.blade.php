@@ -1,0 +1,16 @@
+{{-- @if (!$this->showCPLModal && !$this->showRefModal)
+    <template x-if="$store.scpmk?.isFlyout == 1">
+        <flux:modal name="scpmk-modal" wire:model="showSCPMKModal" x-data @refresh-data-scpmk.window="$store.scpmk.reset()"
+            flyout
+            class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+            @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form')
+        </flux:modal>
+    </template>
+@endif
+
+<template x-if="$store.scpmk?.isFlyout == 0"> --}}
+    <flux:modal name="scpmk-modal" wire:model="showSCPMKModal" x-data @refresh-data-scpmk.window="$store.scpmk.reset()"
+   class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+        @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form')
+    </flux:modal>
+{{-- </template> --}}
