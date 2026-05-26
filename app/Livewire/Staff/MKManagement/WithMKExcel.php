@@ -72,8 +72,9 @@ trait WithMKExcel
         }
 
         $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new MKExport($queryMK, $this->switchTable, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileName);
+        return Excel::download(new MKExport($queryMK, $this->switchTable, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileNameSafe);
     }
 }

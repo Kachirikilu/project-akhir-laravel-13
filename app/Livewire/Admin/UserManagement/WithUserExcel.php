@@ -83,9 +83,10 @@ trait WithUserExcel
         }
 
         $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileName);
+        return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileNameSafe);
     }
 
     // public function getPaginatedRowsProperty()

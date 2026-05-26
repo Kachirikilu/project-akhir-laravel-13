@@ -49,8 +49,9 @@ trait WithProdiExcel
         }
 
         $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new ProdiExport($queryProdi, $this->switchTable, $title), $fileName);
+        return Excel::download(new ProdiExport($queryProdi, $this->switchTable, $title), $fileNameSafe);
     }
 }

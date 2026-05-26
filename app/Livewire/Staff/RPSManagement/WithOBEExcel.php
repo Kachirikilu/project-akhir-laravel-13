@@ -182,17 +182,18 @@ trait WithOBEExcel
         }
 
         $fileName = 'Data_'.$tag.$sInput.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.$sINPUT.' '.$UNIV;
 
         switch ($this->switchTable) {
             case 'rps':
-                return Excel::download(new RPSExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new RPSExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
                 break;
             case 'cpmk':
-                return Excel::download(new CPMKExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new CPMKExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
                 break;
             case 'sub-cpmk':
-                return Excel::download(new SubCPMKExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new SubCPMKExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
                 break;
             case 'cpl':
                 return Excel::download(new CPLExport($queryOBE, $this->switchTable, $title), $fileName);

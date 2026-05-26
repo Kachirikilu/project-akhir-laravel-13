@@ -63,8 +63,8 @@ trait WithRPSShow
             'logoBase64' => $logoBase64,
         ])->render();
 
-        $akademikSafe = str_replace('/', '-', $data['akademik']);
-        $fileName = 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$akademikSafe.'.pdf';
+        $fileName = 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$data['akademik'].'.pdf';
+        $fileNameSafe = str_replace('/', '-', $fileName);
 
         return response()->streamDownload(function () use ($html) {
             echo Browsershot::html($html)
@@ -72,7 +72,7 @@ trait WithRPSShow
                 ->format('A4')
                 ->showBackground()
                 ->pdf();
-        }, $fileName, [
+        }, $fileNameSafe, [
             'Content-Type' => 'application/pdf',
         ]);
     }
