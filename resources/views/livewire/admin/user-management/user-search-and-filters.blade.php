@@ -1,33 +1,32 @@
 <div x-data="{ activeFilter: @entangle('filterStatus') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
-    <div
-        class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
-
-        {{-- Bagian Tab / Link (Kiri) --}}
-        @include('livewire.global.search-and-filters.filter-mode', [
-            'filterByFunc' => 'filterByStatus',
-            'filterString' => 'filterStatus',
-            'totalTab' => $totalUserProdi,
-            'totalTab1' => $totalAllOpsi,
-            'totalTab2' => $totalAktif,
-            'totalTab3' => $totalNonAktif,
-            'tab1String' => 'user-all',
-            'tab2String' => 'user-aktif',
-            'tab3String' => 'user-non-aktif',
-            'tabName' => Auth::user()->prodi,
-            'tab1Name' => 'Semua Status',
-            'tab2Name' => 'Aktif',
-            'tab3Name' => 'Tidak Aktif',
-        ])
-
-        {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-        @include('livewire.global.search-and-filters.page-control', [
-            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-            'key' => 'page-control-user',
-        ])
-
+    
+    <div class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+        <div class="min-w-0 flex-1 overflow-hidden">
+            @include('livewire.global.search-and-filters.filter-mode', [
+                'filterByFunc' => 'filterByStatus',
+                'filterString' => 'filterStatus',
+                'totalTab' => $totalUserProdi,
+                'totalTab1' => $totalAllOpsi,
+                'totalTab2' => $totalAktif,
+                'totalTab3' => $totalNonAktif,
+                'tab1String' => 'user-all',
+                'tab2String' => 'user-aktif',
+                'tab3String' => 'user-non-aktif',
+                'tabName' => Auth::user()->prodi,
+                'tab1Name' => 'Semua Status',
+                'tab2Name' => 'Aktif',
+                'tab3Name' => 'Tidak Aktif',
+            ])
+        </div>
+        <div class="shrink-0">
+            @include('livewire.global.search-and-filters.page-control', [
+                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                'key' => 'page-control-user',
+                'autoSmall' => 'md',
+            ])
+        </div>
     </div>
-
 
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
@@ -37,7 +36,7 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-            class="col-start-1 row-start-1 w-full grid grid-cols-1 sm:grid-cols-7 gap-3 items-center">
+            class="col-start-1 row-start-1 w-full grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
             <div class="sm:col-span-7 relative">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
@@ -51,7 +50,7 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4" class="col-start-1 row-start-1 w-full">
-            <div class=" grid grid-cols-1 sm:grid-cols-7 gap-3 items-center">
+            <div class=" grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
                 <div class="sm:col-span-4 relative">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
@@ -122,25 +121,4 @@
             </div>
         </div>
     </div>
-
-
-
-    {{-- <div class="grid grid-cols-1 sm:grid-cols-4 mt-2 gap-2 items-center w-full">
-        <div class="sm:col-span-2 relative">
-            @include('livewire.global.search-and-filters.dropdown-filter', [
-                'filterByFunc' => 'filterByStatus',
-                'filterString' => 'filterStatus',
-                'placeholderString' => 'Filter Status Pengguna',
-                'options' => [
-                    '' => 'Semua Status',
-                    'Aktif' => 'Aktif',
-                    'Lulus' => 'Lulus',
-                    'Cuti' => 'Cuti',
-                    'Non-Aktif' => 'Non-Aktif',
-                    'Resign' => 'Resign',
-                    'Pensiun' => 'Pensiun',
-                ],
-            ])
-        </div>
-    </div> --}}
 </div>

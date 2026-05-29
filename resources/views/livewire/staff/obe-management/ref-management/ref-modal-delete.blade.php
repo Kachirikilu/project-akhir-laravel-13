@@ -15,7 +15,7 @@
                     x-text="$store.ref?.kode_ref_delete ? '***Kode ' + $store.ref?.kode_ref_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                Tindakan ini tidak dapat dibatalkan!
             </flux:subheading>
         </div>
 

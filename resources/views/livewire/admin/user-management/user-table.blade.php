@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -90,7 +90,6 @@
             @if ($switchTable == 'mahasiswa')
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'angkatan',
-                    'headString' => 'Angkatan',
                     'modelString' => 'searchAngkatan',
                     'resetXFilter' => 'resetInputAngkatan()',
                     'wInput' => 15,
@@ -339,12 +338,5 @@
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $users,
-            ])
-        </x-slot:footer>
 
         </x-admin.global.table.main-layout-table>

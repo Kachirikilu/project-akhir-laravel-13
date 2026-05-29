@@ -2,26 +2,31 @@
 
 namespace App\Livewire\Staff\KelasManagement;
 
+use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithMahasiswaSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalModal;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
-use App\Livewire\Global\WithMahasiswaSearchFilters;
-use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class JadwalManagement extends Component
 {
+    use HasToast;
     use WithJadwalFilters;
     use WithJadwalModal;
-    use WithRPSShow;
+    use WithKelasModal;
     use WithMahasiswaSearchFilters;
-    use HasToast;
-
     use WithPagination;
+    use WithProdiSearchFilters;
+    use WithRPSSearchFilters;
+    use WithRPSShow;
 
     public $search = '';
 
@@ -39,6 +44,8 @@ class JadwalManagement extends Component
 
     public $showDeleted = false;
 
+    public $switchTable = 'jadwal-card';
+
     protected $listeners = ['refresh-table' => '$refresh'];
 
     protected $queryString = [
@@ -48,12 +55,14 @@ class JadwalManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    public function mount($kode)
+    public function mount($kode, $switchTable = 'jadwal-card')
     {
         $this->kode = $kode;
         $this->kelas = Kelas::where('kode_kelas', $kode)
             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
             ->firstOrFail();
+
+        $this->switchTable = $switchTable;
     }
 
     public function loadingTable() {}
@@ -73,17 +82,55 @@ class JadwalManagement extends Component
         }
     }
 
+    public function switchingTable($table)
+    {
+        $this->switchTable = $table;
+        $this->resetPage();
+
+        if ($table == 'jadwal-card' || $table == '' || $table == null) {
+            $targetPath = "/kelas-management/kelas/{$this->kode}";
+        } else {
+            $targetPath = "/kelas-management/kelas/{$this->kode}/{$table}";
+        }
+        $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    }
+
     public function render()
     {
         try {
             $queryJadwal = $this->inputJadwalSearch($this->kelas->id);
-            if ($this->showDeleted) {
+            $countJadwal = KelasJadwal::where('kelas_id', $this->kelas->id);
+
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryJadwal->onlyTrashed();
+                $countJadwal->onlyTrashed();
+            }
+
+            $jadwals = $queryJadwal->paginate($this->perPage);
+
+
+            // totalJadwal
+
+            if (Auth::user()->mahasiswa) {
+                $userId = Auth::id();
+                $jadwals->load('mahasiswas:id,user_id');
+                $jadwals->getCollection()->transform(function ($jadwal) use ($userId) {
+                    if ($jadwal->password == '' || $jadwal->password == null) {
+                        $jadwal->with_pw = false;
+                    } else {
+                        $jadwal->with_pw = true;
+                    }
+                    $jadwal->password = '';
+                    $jadwal->is_my_class = $jadwal->mahasiswas->contains('user_id', $userId);
+
+                    return $jadwal;
+                });
             }
 
             return view('livewire.staff.kelas-management.jadwal-management', [
-                'jadwals' => $queryJadwal->paginate($this->perPage),
+                'jadwals' => $jadwals,
                 'kelas' => $this->kelas,
+                'totalJadwalKelas' => $countJadwal->count(),
             ]);
 
         } catch (QueryException $e) {

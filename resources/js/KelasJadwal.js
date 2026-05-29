@@ -14,6 +14,11 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        jadwal_id: "",
+        kode: "",
+        kode_kelas: "",
+        label_extra: "",
+
         rps_id_show: "",
 
         kode_wilayah: "",
@@ -43,6 +48,7 @@ document.addEventListener("alpine:init", () => {
             tanggalBerakhir,
 
             kapasitas,
+            password
         ) {
             this.label_kelas = label;
             this.kode_wilayah = wilayah;
@@ -55,6 +61,14 @@ document.addEventListener("alpine:init", () => {
             // this.tanggal_berakhir = toWeekFormat(tanggalBerakhir);
 
             this.kapasitas = kapasitas;
+            this.password = password;
+        },
+
+        setValueJoinJadwal(id, kode, kodeKelas, labelExtra) {
+            this.jadwal_id = id;
+            this.kode = kode;
+            this.kode_kelas = kodeKelas;
+            this.label_extra = labelExtra;
         },
 
         setShowRPS(idRPS) {
@@ -78,6 +92,11 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = 0;
             this.isForceDelete = 0;
             this.colorIcon = "";
+
+            this.jadwal_id = "";
+            this.kode = "";
+            this.kode_kelas = "";
+            this.label_extra = "";
 
             this.kode_wilayah = "";
             this.label_kelas = "";

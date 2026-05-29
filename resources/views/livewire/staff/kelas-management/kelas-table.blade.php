@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$kelas">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -47,6 +47,7 @@
                 'isCenter' => 1,
                 'isBorderR' => 1,
             ])
+            <th rowspan="2" class="{{ $headKolom }} border-x">Show</th>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kelas',
                 'rowSpan' => 2,
@@ -148,24 +149,10 @@
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($k->rps_rel?->mk_rel?->level_mk)
-                            @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $k->kode ?? '-' }}
-                                </flux:badge>
-                            @break
-
-                            @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $k->kode ?? '-' }}</flux:badge>
-                            @break
-
-                            @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $k->kode ?? '-' }}
-                                </flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $k->kode ?? '-' }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.level-mk-badge', [
+                            'xValue' => $k->kode,
+                            'sortir' => $k->rps_rel?->mk_rel?->level_mk,
+                        ])
                     </button>
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
@@ -181,42 +168,10 @@
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($k->semester)
-                            {{-- Tahun 1: Biru/Cyan --}}
-                            @case(1)
-                                <flux:badge color="blue" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(2)
-                                <flux:badge color="cyan" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 2: Hijau/Emerald --}}
-                            @case(3)
-                                <flux:badge color="green" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(4)
-                                <flux:badge color="emerald" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 3: Kuning/Oranye --}}
-                            @case(5)
-                                <flux:badge color="yellow" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(6)
-                                <flux:badge color="orange" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 4: Merah/Ungu (Fase Tugas Akhir) --}}
-                            @case(7)
-                                <flux:badge color="red" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge color="purple" size="sm">{{ $k->kode_rps ?? '---' }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.semester-badge', [
+                            'xValue' => $k->kode_rps,
+                            'sortir' => $k->semester,
+                        ])
                     </button>
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
@@ -231,6 +186,11 @@
                 </flux:dropdown>
             </td>
 
+            <td class="{{ $secondKolom }} {{ $borderR }}">
+                <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
+                    <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
+                </x-button-action>
+            </td>
             <td class="{{ $secondKolom }} min-w-84">{{ $k->kelas ?? '-' }}</td>
             <td class="{{ $secondKolom }} min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
 
@@ -238,18 +198,19 @@
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
-                <ul class="text-left text-sm whitespace-nowrap">
-                    @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                        <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->hari ?? '-' }}</li>
-                    @endforeach
+                    <ul class="text-left text-sm whitespace-nowrap">
+                        @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                            <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->hari ?? '-' }}
+                            </li>
+                        @endforeach
 
-                    @if ($k->jadwals->count() > 4)
-                        <li class="text-xs text-gray-500 italic mt-1">
-                            dan {{ $k->jadwals->count() - 4 }} kelas lainnya...
-                        </li>
-                    @endif  
-                </ul>
-            @endif
+                        @if ($k->jadwals->count() > 4)
+                            <li class="text-xs text-gray-500 italic mt-1">
+                                dan {{ $k->jadwals->count() - 4 }} kelas lainnya...
+                            </li>
+                        @endif
+                    </ul>
+                @endif
             </td>
             <td class="{{ $subKolom }} whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
@@ -288,26 +249,10 @@
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($k->rps_rel?->mk_rel?->level_mk)
-                            @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $k->kode_mk ?? '---' }}
-                                </flux:badge>
-                            @break
-
-                            @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $k->kode_mk ?? '---' }}
-                                </flux:badge>
-                            @break
-
-                            @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $k->kode_mk ?? '---' }}
-                                </flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $k->kode_mk ?? '---' }}
-                                </flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.level-mk-badge', [
+                            'xValue' => $k->kode_mk,
+                            'sortir' => $k->rps_rel?->mk_rel?->level_mk,
+                        ])
                     </button>
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
@@ -329,15 +274,10 @@
             <td class="{{ $secondKolom }} {{ $borderR }} {{ $borderL }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @if ($k->wajib)
-                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">
-                                {{ $k->wajib_text }}
-                            </flux:badge>
-                        @else
-                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">
-                                {{ $k->wajib_text }}
-                            </flux:badge>
-                        @endif
+                        @include('livewire.global.table.badge.wajib-badge', [
+                            'xValue' => $k->wajib_text,
+                            'sortir' => $k->wajib,
+                        ])
                     </button>
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
@@ -371,20 +311,12 @@
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
         </tr>
-        @empty
-            <tr>
-                <td colspan="18"
-                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada data Kelas ditemukan!
-                </td>
-            </tr>
-        @endforelse
+    @empty
+        <tr>
+            <td colspan="19" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                Tidak ada data Kelas ditemukan!
+            </td>
+        </tr>
+    @endforelse
 
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $kelas,
-            ])
-        </x-slot:footer>
-
-        </x-admin.global.table.main-layout-table>
+    </x-admin.global.table.main-layout-table>

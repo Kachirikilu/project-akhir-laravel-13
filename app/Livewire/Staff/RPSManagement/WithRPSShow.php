@@ -14,10 +14,6 @@ trait WithRPSShow
 
     public function showRPS($id)
     {
-        if (! $this->AuthCheck('staff')) {
-            return;
-        }
-
         $this->selected_id_rps = $id;
 
         try {

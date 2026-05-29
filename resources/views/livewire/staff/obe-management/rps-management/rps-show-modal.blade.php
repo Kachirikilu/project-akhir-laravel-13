@@ -70,7 +70,7 @@
                 @break
 
                 @default
-                    <flux:badge icon="globe-alt" color="red" size="lg" class="px-4">{{ $r['kode_rps'] ?? '-' }}
+                    <flux:badge icon="globe-alt" color="red" size="lg" class="px-4">{{ $r['kode_rps'] ?? 'YYYY-0X-XXXZZZZ' }}
                     </flux:badge>
             @endswitch
             <flux:badge color="emerald" size="lg" class="px-4">

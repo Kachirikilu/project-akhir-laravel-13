@@ -25,7 +25,6 @@
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
 
         <div class="space-y-4">
-
             @if ($this->showRPSModal)
                 @include('livewire.global.modal-form.search-input-cpmk-form', [
                     'alpine' => 'rps',
@@ -47,6 +46,8 @@
                     'iconString' => 'academic-cap',
                     'wireLoading' => 'fetchCPMK',
                 ])
+            @else
+                <div class="h-32"></div>
             @endif
         </div>
 

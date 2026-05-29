@@ -1,16 +1,15 @@
 <div x-data="{ activeFilter: @entangle('filterKelas') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    {{-- BAGIAN FILTER ATAS --}}
+
     <div x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-        class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
-        {{-- Bagian Tab / Link (Kiri) --}}
-
-        @if (Auth::user()->dosen)
+        class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+        <div class="min-w-0 flex-1 overflow-hidden">
+        @if (Auth::user()->dosen || Auth::user()->mahasiswa)
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByKelas',
                 'filterString' => 'filterKelas',
@@ -53,20 +52,23 @@
                 'tab4Name' => 'Universitas',
             ])
         @endif
-
-        {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-        @include('livewire.global.search-and-filters.page-control', [
-            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150],
-            'key' => 'page-control-mk',
-        ])
+        </div>
+        <div class="shrink-0">
+            @include('livewire.global.search-and-filters.page-control', [
+                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150],
+                'key' => 'page-control-kelas',
+                'autoSmall' => 'lg',
+            ])
+        </div>
     </div>
+
 
     {{-- BAGIAN SEARCH UTAMA --}}
     <div x-show="activeFilter !== 'universitas'" x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-4"
-        class="grid grid-cols-1 sm:grid-cols-7 gap-3 items-center w-full">
+        class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center w-full">
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.main-search', [

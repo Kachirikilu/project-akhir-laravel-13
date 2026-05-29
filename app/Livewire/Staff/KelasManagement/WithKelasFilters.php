@@ -70,7 +70,6 @@ trait WithKelasFilters
         return $queryKelas;
     }
 
-
     // public function buttonKelasFilter($queryKelas, $currentYear, $fiveYearsAgoYear)
     // {
     //     if (! empty($this->selectedPrId)) {
@@ -79,14 +78,22 @@ trait WithKelasFilters
     // }
     public function buttonKelasFilter($queryKelas)
     {
-        if (Auth::user()?->dosen) {
+        if (Auth::user()?->dosen || Auth::user()?->mahasiswa) {
             if ($this->filterKelas === '') {
-                $queryKelas->whereHas('rps_rel.dosens', function ($q) {
-                    $q->where('dosens.id', Auth::user()->dosen->id);
-                });
-                $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                    $q->where('dosens.id', Auth::user()->dosen->id);
-                });
+                if (Auth::user()?->dosen) {
+                    $queryKelas->whereHas('rps_rel.dosens', function ($q) {
+                        $q->where('dosens.id', Auth::user()->dosen->id);
+                    });
+                    $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                        $q->where('dosens.id', Auth::user()->dosen->id);
+                    });
+                } else {
+                    if ($this->filterKelas === '') {
+                        $queryKelas->whereHas('jadwals.mahasiswas', function ($q) {
+                            $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
+                        });
+                    }
+                }
             } elseif ($this->filterKelas === 'kelas-prodi') {
                 $queryKelas->whereHas('pr_rel', function ($q) {
                     $q->where('prodis.id', Auth::user()->pr_id);

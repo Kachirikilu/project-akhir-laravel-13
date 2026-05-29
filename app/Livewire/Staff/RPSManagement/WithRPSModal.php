@@ -175,7 +175,7 @@ trait WithRPSModal
         $mkId = $data['mk_id'] ?? null;
         $mk = DB::table('mata_kuliahs')->where('id', $mkId ?? null)->first();
         $desMK = $mk?->deskripsi ?? '';
-  
+
         $desMK = $this->normalizeText($desMK);
         $data['deskripsi'] = $this->normalizeText($data['deskripsi']);
 
@@ -257,6 +257,7 @@ trait WithRPSModal
         }
 
         // --- RULES VALIDASI ---
+        // dd($data['akademik'], $data['akademik_1'], $data['akademik_2']);
         $rules = [
             'deskripsi' => 'string|string|min:5|max:1000',
             'mk_id' => 'required|exists:mata_kuliahs,id',
@@ -386,7 +387,15 @@ trait WithRPSModal
 
             foreach ($validator->errors()->toArray() as $key => $messages) {
                 if (in_array($key, ['akademik', 'akademik_1', 'akademik_2'])) {
-                    if (! isset($formattedErrors['akademik'])) {
+                    $hasDuplicateError = false;
+                    foreach ($messages as $msg) {
+                        if (str_contains($msg, 'sudah ada')) {
+                            $formattedErrors['akademik'][] = $msg;
+                            $hasDuplicateError = true;
+                            break;
+                        }
+                    }
+                    if (! $hasDuplicateError && ! isset($formattedErrors['akademik'])) {
                         $formattedErrors['akademik'][] = $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama;
                     }
                 } else {

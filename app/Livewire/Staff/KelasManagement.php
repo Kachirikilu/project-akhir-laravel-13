@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithRPSSearchFilters;
 // use App\Livewire\Staff\KelasManagement\WithKelasDelete;
+use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\KelasManagement\WithKelasFilters;
 use App\Livewire\Staff\KelasManagement\WithKelasModal;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
-use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +21,7 @@ use Livewire\WithPagination;
 
 class KelasManagement extends Component
 {
+    use HasToast;
     use WithDepartemenSearchFilters;
     use WithDosenSearchFilters;
     use WithFakultasSearchFilters;
@@ -33,7 +34,6 @@ class KelasManagement extends Component
     use WithProdiSearchFilters;
     use WithRPSSearchFilters;
     use WithRPSShow;
-    use HasToast;
 
     public $showModal = false;
 
@@ -121,7 +121,6 @@ class KelasManagement extends Component
 
         $this->resetPage();
 
-
         $targetUrl = route('kelas-management', ['switchTable' => $table]);
         if ($table == '' || $table == null) {
             $targetPath = '/kelas-management';
@@ -156,7 +155,7 @@ class KelasManagement extends Component
             // =========================
             $countKelas = Kelas::query();
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryKelas->onlyTrashed();
                 $countKelas->onlyTrashed();
             }
@@ -209,6 +208,12 @@ class KelasManagement extends Component
                         ->orWhereHas('jadwals.sesis.dosens', function ($q) {
                             $q->where('dosens.id', Auth::user()->dosen->id);
                         });
+                })->count();
+            } elseif (Auth::user()->mahasiswa) {
+                $totalKelasSaya = (clone $tabQuery)->where(function ($mainQuery) {
+                    $mainQuery->whereHas('jadwals.mahasiswas', function ($q) {
+                        $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
+                    });
                 })->count();
             }
 

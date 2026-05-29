@@ -13,7 +13,7 @@
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'dosen',
                 'isFlyout' => 1,
-                'isSmall' => 1
+                'isSmall' => 1,
             ])
         @endif
     </div>
@@ -22,6 +22,7 @@
 
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
 
+        @if ($this->showRPSModal)
             @include('livewire.global.modal-form.search-input-dosen-form', [
                 'alpine' => 'rps',
                 'xResults' => $dosenResults,
@@ -43,6 +44,9 @@
                 'iconString' => 'user',
                 'wireLoading' => 'fetchDosen',
             ])
+        @else
+            <div class="h-32"></div>
+        @endif
 
     </div>
 

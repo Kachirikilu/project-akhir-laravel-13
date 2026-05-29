@@ -14,6 +14,10 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        sesi_id: "",
+        pertemuan_ke: "",
+        absen: "",
+
         rps_id_show: "",
 
         jam_mulai: "",
@@ -69,6 +73,14 @@ document.addEventListener("alpine:init", () => {
             this.sks = sks;
         },
 
+        setValueAbsenSesi(
+            sesiId,
+            pertemuanKe
+        ) {
+            this.sesi_id = sesiId;
+            this.pertemuan_ke = pertemuanKe;
+        },
+
         setShowRPS(idRPS) {
             this.resetShow();
             this.rps_id_show = idRPS;
@@ -90,6 +102,10 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = 0;
             this.isForceDelete = 0;
             this.colorIcon = "";
+
+            this.sesi_id = "";
+            this.pertemuan_ke = "";
+            this.absen = "",
             
             this.jam_mulai = "";
             this.jam_berakhir = "";

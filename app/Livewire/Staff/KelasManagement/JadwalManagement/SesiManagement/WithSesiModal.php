@@ -5,10 +5,10 @@ namespace App\Livewire\Staff\KelasManagement\JadwalManagement\SesiManagement;
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
-use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\KelasSesi;
-use App\Models\Kelas\KelasOverride;
+use App\Models\Kelas\MahasiswaKehadiran;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -27,6 +27,8 @@ trait WithSesiModal
 
     public $showSesiModal = false;
 
+    public $showSesiAbsen = false;
+
     public function addSesi()
     {
         if (! $this->AuthCheck('staff')) {
@@ -42,6 +44,128 @@ trait WithSesiModal
         $this->isEditingSesi = false;
         $this->showSesiModal = true;
         $this->showEditSesi = false;
+    }
+
+    public function absenSesi($data)
+    {
+        if (! $this->AuthCheck('mahasiswa')) {
+            return;
+        }
+
+        try {
+            $mahasiswa_id = Auth::user()->mahasiswa->id ?? null;
+
+            if (empty($mahasiswa_id)) {
+                $this->toast(
+                    message: 'Mahasiswa',
+                    type: 'unfound',
+                    variant: 'danger'
+                );
+
+                return;
+            }
+
+            $validated = validator(
+                $data,
+                [
+                    'sesi_id' => ['required', 'exists:kelas_sesi,id'],
+                    'absen' => [
+                        'required',
+                        'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi',
+                    ],
+                    'keterangan' => [
+                        'nullable',
+                        'string',
+                        'max:1000',
+                    ],
+                ],
+                [
+                    'sesi_id.required' => 'Sesi kelas tidak ditemukan!',
+                    'sesi_id.exists' => 'Sesi kelas tidak valid!',
+
+                    'absen.required' => 'Status absensi wajib dipilih!',
+                    'absen.in' => 'Status absensi tidak valid!',
+
+                    'keterangan.string' => 'Keterangan harus berupa teks!',
+                    'keterangan.max' => 'Keterangan maksimal 1000 karakter!',
+                ]
+            )->validate();
+
+            $sesi = KelasSesi::with(['jadwal_rel.kelas_rel'])
+                ->findOrFail($validated['sesi_id']);
+
+            /**
+             * ===========================
+             * VALIDASI WAKTU ABSENSI
+             * ===========================
+             */
+            $now = now();
+
+            $jamMulai = $sesi->override?->jam_mulai
+                ?? $sesi->jadwal_rel?->jam_mulai
+                ?? $sesi->jam_mulai;
+
+            $jamBerakhir = $sesi->override?->jam_berakhir
+                ?? $sesi->jadwal_rel?->jam_berakhir
+                ?? $sesi->jam_berakhir;
+
+            $mulai = Carbon::parse(
+                $sesi->tanggal.' '.$jamMulai
+            );
+
+            $berakhir = Carbon::parse(
+                $sesi->tanggal.' '.$jamBerakhir
+            );
+
+            // ❌ terlalu cepat / belum waktunya
+            if ($now->lt($mulai)) {
+                $this->toast(
+                    text: 'Absensi belum dibuka. Silakan melakukan presensi sesuai jadwal perkuliahan!',
+                    variant: 'danger'
+                );
+
+                return;
+            }
+
+            // ❌ sesi sudah lewat tapi belum absen
+            if ($now->gt($berakhir)) {
+                $validated['absen'] = 'Absen';
+            }
+
+            /**
+             * ===========================
+             * UPSERT ABSENSI
+             * ===========================
+             */
+            MahasiswaKehadiran::updateOrCreate(
+                [
+                    'sesi_id' => $validated['sesi_id'],
+                    'mahasiswa_id' => $mahasiswa_id,
+                ],
+                [
+                    'status' => $validated['absen'],
+                    'waktu_presensi' => now(),
+                    'keterangan' => $validated['keterangan'] ?? null,
+                ]
+            );
+
+            $this->showSesiAbsen = false;
+
+            $this->dispatch('refresh-data-sesi');
+
+            $this->toast(
+                message: 'Absensi berhasil dikirim',
+                type: 'success'
+            );
+
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->toast(
+                text: 'Gagal Mengambil Data: '.$e->getMessage(),
+                variant: 'danger'
+            );
+        }
     }
 
     public function editSesi($id)
@@ -87,14 +211,14 @@ trait WithSesiModal
         // RULES & CONDITIONAL UNIQUE CHECK
         // ==========================================
         $rules = [
-            'pertemuan_ke'    => [
+            'pertemuan_ke' => [
                 'required',
                 'integer',
                 'min:1',
                 'max:16',
                 function ($attribute, $value, $fail) use ($isUpdate, $jadwalInduk, $data) {
                     $kjId = $jadwalInduk?->id ?? $data['kj_id'] ?? $this->selected_kj_id ?? null;
-                    
+
                     if ($kjId) {
                         $query = DB::table('kelas_sesi')
                             ->where('kj_id', $kjId)
@@ -108,18 +232,18 @@ trait WithSesiModal
                             $fail("Pertemuan ke-{$value} sudah terdaftar pada jadwal kelas ini.");
                         }
                     }
-                }
+                },
             ],
-            'tanggal'         => 'required|date',
-            'jam_mulai'       => 'nullable|date_format:H:i',
-            'jam_berakhir'    => 'nullable|date_format:H:i|after:jam_mulai',
-            
-            'deskripsi'       => 'nullable|string|min:5|max:1000',
-            'materi'          => 'nullable|string|min:5|max:1000',
-            'metodologi'      => 'nullable|string|min:5|max:1000',
-            'indikator'       => 'nullable|string|min:5|max:1000',
-            
-            'metode'          => [
+            'tanggal' => 'required|date',
+            'jam_mulai' => 'nullable|date_format:H:i',
+            'jam_berakhir' => 'nullable|date_format:H:i|after:jam_mulai',
+
+            'deskripsi' => 'nullable|string|min:5|max:1000',
+            'materi' => 'nullable|string|min:5|max:1000',
+            'metodologi' => 'nullable|string|min:5|max:1000',
+            'indikator' => 'nullable|string|min:5|max:1000',
+
+            'metode' => [
                 'nullable',
                 Rule::in([
                     'Teori', 'Aktivitas Partisipasif', 'Tugas', 'Mandiri',
@@ -128,11 +252,11 @@ trait WithSesiModal
                     'Skripsi', 'Kerja Praktek', 'Responsi', 'Logbook', 'Portofolio',
                 ]),
             ],
-            
+
             'deskripsi_tugas' => 'nullable|string|min:5|max:1000',
-            'waktu_tugas'     => 'nullable|integer|min:60',
-            'waktu_mandiri'   => 'nullable|integer|min:60',
-            'bobot'           => 'nullable|numeric|min:0.5|max:100',
+            'waktu_tugas' => 'nullable|integer|min:60',
+            'waktu_mandiri' => 'nullable|integer|min:60',
+            'bobot' => 'nullable|numeric|min:0.5|max:100',
         ];
 
         // ==========================================
@@ -153,24 +277,24 @@ trait WithSesiModal
         $defaultWaktuSks = 60 * $sks;
 
         $fieldsToCompare = [
-            'jam_mulai'        => $validated['jam_mulai'] ?? null,
-            'jam_berakhir'     => $validated['jam_berakhir'] ?? null,
-            'deskripsi'        => $validated['deskripsi'] ?? null,
-            'materi'           => $validated['materi'] ?? null,
-            'metodologi'       => $validated['metodologi'] ?? null,
-            'indikator'        => $validated['indikator'] ?? null,
-            'metode'           => $validated['metode'] ?? null,
-            'deskripsi_tugas'  => $validated['deskripsi_tugas'] ?? null,
-            'waktu_tugas'      => isset($validated['waktu_tugas']) && $validated['waktu_tugas'] !== '' ? (int)$validated['waktu_tugas'] : null,
-            'waktu_mandiri'    => isset($validated['waktu_mandiri']) && $validated['waktu_mandiri'] !== '' ? (int)$validated['waktu_mandiri'] : null,
-            'bobot'            => isset($validated['bobot']) && $validated['bobot'] !== '' ? (float)$validated['bobot'] : null,
+            'jam_mulai' => $validated['jam_mulai'] ?? null,
+            'jam_berakhir' => $validated['jam_berakhir'] ?? null,
+            'deskripsi' => $validated['deskripsi'] ?? null,
+            'materi' => $validated['materi'] ?? null,
+            'metodologi' => $validated['metodologi'] ?? null,
+            'indikator' => $validated['indikator'] ?? null,
+            'metode' => $validated['metode'] ?? null,
+            'deskripsi_tugas' => $validated['deskripsi_tugas'] ?? null,
+            'waktu_tugas' => isset($validated['waktu_tugas']) && $validated['waktu_tugas'] !== '' ? (int) $validated['waktu_tugas'] : null,
+            'waktu_mandiri' => isset($validated['waktu_mandiri']) && $validated['waktu_mandiri'] !== '' ? (int) $validated['waktu_mandiri'] : null,
+            'bobot' => isset($validated['bobot']) && $validated['bobot'] !== '' ? (float) $validated['bobot'] : null,
         ];
 
         $overridePayload = [];
         $hasOverrideContent = false;
 
         foreach ($fieldsToCompare as $field => $inputValue) {
-            
+
             if (in_array($field, ['jam_mulai', 'jam_berakhir'])) {
                 $defaultValue = $jadwalInduk ? ($jadwalInduk->{$field} ?? null) : ($data[$field] ?? null);
                 if ($defaultValue) {
@@ -182,16 +306,16 @@ trait WithSesiModal
 
             if (in_array($field, ['deskripsi', 'materi', 'metodologi', 'indikator', 'deskripsi_tugas'])) {
                 $defaultValue = $this->normalizeText($defaultValue);
-                if ($scpmk && !empty($defaultValue)) {
+                if ($scpmk && ! empty($defaultValue)) {
                     $scpmk->{$field} = $defaultValue;
                 }
                 $inputValue = $this->normalizeText($inputValue);
             }
 
-            if (in_array($field, ['waktu_tugas', 'waktu_mandiri']) && !is_null($defaultValue)) {
+            if (in_array($field, ['waktu_tugas', 'waktu_mandiri']) && ! is_null($defaultValue)) {
                 $defaultValue = (int) $defaultValue;
             }
-            if ($field === 'bobot' && !is_null($defaultValue)) {
+            if ($field === 'bobot' && ! is_null($defaultValue)) {
                 $defaultValue = (float) $defaultValue;
             }
 
@@ -200,12 +324,15 @@ trait WithSesiModal
                     $overridePayload[$field] = null;
                 } else {
                     $overridePayload[$field] = $inputValue;
-                    if (!empty($inputValue)) $hasOverrideContent = true;
+                    if (! empty($inputValue)) {
+                        $hasOverrideContent = true;
+                    }
                 }
+
                 continue;
             }
 
-            if (trim((string)$inputValue) === trim((string)$defaultValue) || trim((string)$inputValue) === '') {
+            if (trim((string) $inputValue) === trim((string) $defaultValue) || trim((string) $inputValue) === '') {
                 $overridePayload[$field] = null;
             } else {
                 $overridePayload[$field] = $inputValue;
@@ -216,10 +343,10 @@ trait WithSesiModal
         return [
             'main_data' => [
                 'pertemuan_ke' => $validated['pertemuan_ke'],
-                'tanggal'      => $validated['tanggal'] ?? null,
+                'tanggal' => $validated['tanggal'] ?? null,
             ],
             'override_data' => $overridePayload,
-            'has_override'  => $hasOverrideContent,
+            'has_override' => $hasOverrideContent,
         ];
     }
 
@@ -237,9 +364,9 @@ trait WithSesiModal
 
             DB::transaction(function () use ($validated, $data) {
                 $sesi = KelasSesi::create([
-                    'kj_id'        => $data['kj_id'],
+                    'kj_id' => $data['kj_id'],
                     'pertemuan_ke' => $validated['main_data']['pertemuan_ke'],
-                    'tanggal'      => $validated['main_data']['tanggal'],
+                    'tanggal' => $validated['main_data']['tanggal'],
                 ]);
 
                 if ($validated['has_override']) {
@@ -261,7 +388,6 @@ trait WithSesiModal
             report($e);
         }
     }
-
 
     public function updateSesi($data)
     {
@@ -304,14 +430,13 @@ trait WithSesiModal
     private function validationMessagesSesi()
     {
         $messages = [
-            'tanggal.required'                    => 'Tanggal Sesi Kelas pertemuan wajib diisi!',
-            'tanggal.date'                        => 'Format tanggal Sesi Kelas tidak valid!',
-            
-            'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
-            'jam_mulai.date_format'               => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
-            'jam_berakhir.date_format'            => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
-            'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
+            'tanggal.required' => 'Tanggal Sesi Kelas pertemuan wajib diisi!',
+            'tanggal.date' => 'Format tanggal Sesi Kelas tidak valid!',
 
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
+            'jam_mulai.date_format' => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
+            'jam_berakhir.date_format' => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
+            'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
 
             // Deskripsi & Status
             'deskripsi.string' => 'Deskripsi Sub-CPMK harus berupa text!',
@@ -321,11 +446,11 @@ trait WithSesiModal
             'materi.string' => 'Materi Sub-CPMK harus berupa text!',
             'materi.min' => 'Materi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'materi.max' => 'Materi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
-            
+
             'metodologi.string' => 'Metodologi Sub-CPMK harus berupa text!',
             'metodologi.min' => 'Metodologi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'metodologi.max' => 'Metodologi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
-            
+
             'indikator.string' => 'Indikator Sub-CPMK harus berupa text!',
             'indikator.min' => 'Indikator Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'indikator.max' => 'Indikator Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
@@ -333,7 +458,7 @@ trait WithSesiModal
             'deskripsi_tugas.string' => 'Deskripsi Tugas harus berupa text!',
             'deskripsi_tugas.min' => 'Deskripsi Tugas terlalu pendek (Minimal 5 karakter)!',
             'deskripsi_tugas.max' => 'Deskripsi Tugas terlalu panjang (Maksimal 1000 karakter)!',
-            
+
             'metode.in' => 'Pilih Metode yang telah tersedia!',
 
             'waktu_tugas.integer' => 'Waktu tugas harus berupa angka!',

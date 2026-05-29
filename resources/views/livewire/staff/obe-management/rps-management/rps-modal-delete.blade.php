@@ -1,4 +1,5 @@
-<flux:modal name="rps-delete" wire:model="showRPSDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="rps-delete" wire:model="showRPSDelete"
+    class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>
@@ -9,12 +10,12 @@
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="$store.rps?.rps_delete ? '***RPS ' + $store.rps?.rps_delete + '***' : '***RPS ini***'
                     ">
-                </strong> dengan 
+                </strong> dengan
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="$store.rps?.kode_rps_delete ? '***Kode ' + $store.rps?.kode_rps_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                Tindakan ini tidak dapat dibatalkan!
             </flux:subheading>
         </div>
 
@@ -32,8 +33,7 @@
             <flux:button wire:click="destroyRPS" wire:loading.attr="disabled" wire:target="deleteRPS, destroyRPS"
                 type="submit" variant="primary"
                 class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
-                <span
-                    wire:loading.remove wire:target="destroyRPS">Ya, Hapus RPS
+                <span wire:loading.remove wire:target="destroyRPS">Ya, Hapus RPS
                 </span>
 
                 <span wire:loading wire:target="destroyRPS">
@@ -45,4 +45,3 @@
     </div>
 
 </flux:modal>
-

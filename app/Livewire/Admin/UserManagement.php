@@ -8,10 +8,10 @@ use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\HasToast;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -19,6 +19,7 @@ use Livewire\WithPagination;
 
 class UserManagement extends Component
 {
+    use HasToast;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;
@@ -29,7 +30,6 @@ class UserManagement extends Component
     use WithUserExcel;
     use WithUserFilters;
     use WithUserModal;
-    use HasToast;
 
     public $showModal = false;
 
@@ -201,7 +201,7 @@ class UserManagement extends Component
                 $queryUser->whereHas($this->switchTable);
             }
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryUser->onlyTrashed();
             }
 
@@ -223,7 +223,7 @@ class UserManagement extends Component
                 $statsNonAktif->whereHas($this->switchTable);
             }
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $statsPr->onlyTrashed();
                 $statsAll->onlyTrashed();
                 $statsAktif->onlyTrashed();

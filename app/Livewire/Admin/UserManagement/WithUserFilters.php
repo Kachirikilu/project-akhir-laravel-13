@@ -29,7 +29,7 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    // public function inputUserSearch($role = null, $id_jadwal = null)
+    // public function inputUserSearch($role = null, $jadwal_id = null)
     // {
     //     if (!$role) {
     //         $queryUser = User::query()
@@ -56,9 +56,9 @@ trait WithUserFilters
     //             'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
     //         ]);
 
-    //         if ($id_jadwal) {
-    //             $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($id_jadwal) {
-    //                 $q->where('kj_id', $id_jadwal);
+    //         if ($jadwal_id) {
+    //             $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($jadwal_id) {
+    //                 $q->where('kj_id', $jadwal_id);
     //             });
     //         }
     //     }
@@ -98,7 +98,7 @@ trait WithUserFilters
     //     return $queryUser;
     // }
 
-    public function inputUserSearch($role = null, $id_jadwal = null)
+    public function inputUserSearch($role = null, $jadwal_id = null)
     {
         if (! $role) {
             $queryUser = User::query()->with([
@@ -117,9 +117,9 @@ trait WithUserFilters
         } elseif ($role == 'mahasiswa') {
             $queryUser = User::query()->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
 
-            if ($id_jadwal) {
-                $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($id_jadwal) {
-                    $q->where('kj_id', $id_jadwal);
+            if ($jadwal_id) {
+                $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($jadwal_id) {
+                    $q->where('kj_id', $jadwal_id);
                 });
             }
         }
@@ -228,7 +228,7 @@ trait WithUserFilters
         $profileFields = [
             'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
             'name', 'identity1', 'identity2', 'identity3', 'nik',
-            'prodi', 'status', 'angkatan', 'kode',
+            'prodi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
             'nip', 'nitk', 'nidn', 'nidk', 'nim',
         ];
 
@@ -255,6 +255,13 @@ trait WithUserFilters
                 'COALESCE(ap.strata, dp.strata, mp.strata)',
                 'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)');
         }
+        
+        // if (Auth::user()->mahasiswa) {
+        //     $sort = $this->sortField;
+        //     if ($sort == 'mhs_poin_absensi' || $sort == 'mhs_absensi' || $sort == 'mhs_masuk' || $sort == 'mhs_hadir' || $sort == 'mhs_terlambat' || $sort == 'mhs_izin' || $sort == 'mhs_sakit' || $sort == 'mhs_dispensasi' || $sort == 'mhs_tidak_masuk' || $sort == 'mhs_absen' || $sort == 'mhs_poin_absensi') {
+        //         $this->sortField == 'id';
+        //     }
+        // }
 
         $orderByRaw = match ($this->sortField) {
             'admin_id' => 'admins.id',
@@ -276,6 +283,7 @@ trait WithUserFilters
             'nidn' => 'dosens.nidn',
             'nidk' => 'dosens.nidk',
             'nim' => 'mahasiswas.nim',
+            'pertemuan_ke' => 'mahasiswas.nim',
             'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
             'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
             'angkatan' => 'mahasiswas.angkatan',

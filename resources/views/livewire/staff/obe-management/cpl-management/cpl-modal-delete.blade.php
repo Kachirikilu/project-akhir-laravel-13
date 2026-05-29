@@ -15,7 +15,7 @@
                     x-text="$store.cpl?.kode_cpl_delete ? '***Kode ' + $store.cpl?.kode_cpl_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                Tindakan ini tidak dapat dibatalkan!
             </flux:subheading>
         </div>
 

@@ -8,7 +8,7 @@
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.mk?.nama_mk_delete ? '***Mata Kuliah' + $store.mk?.nama_mk_delete + '***' : '***Mata Kuliah ini***'
+                    x-text="$store.mk?.nama_mk_delete ? '***Mata Kuliah ' + $store.mk?.nama_mk_delete + '***' : '***Mata Kuliah ini***'
                     ">
                 </strong> dengan
                 <strong class="text-red-700 dark:text-red-400"

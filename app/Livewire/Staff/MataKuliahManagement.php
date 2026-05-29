@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
+use App\Livewire\Staff\MKManagement\WithMKExcel;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
-use App\Livewire\Staff\MKManagement\WithMKExcel;
-use App\Livewire\Global\HasToast;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -18,15 +18,15 @@ use Livewire\WithPagination;
 
 class MataKuliahManagement extends Component
 {
+    use HasToast;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKDelete;
+    use WithMKExcel;
     use WithMKFilters;
     use WithMKModal;
-    use WithMKExcel;
     use WithPagination;
     use WithProdiSearchFilters;
-    use HasToast;
 
     public $showModal = false;
 
@@ -231,7 +231,7 @@ class MataKuliahManagement extends Component
             // =========================
             $countMK = MataKuliah::query();
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryMK->onlyTrashed();
                 $countMK->onlyTrashed();
             }

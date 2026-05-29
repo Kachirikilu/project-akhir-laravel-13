@@ -1,4 +1,4 @@
-@if (Auth::user()?->admin || Auth::user()?->dosen)
+@if (Auth::user())
     <flux:menu
         class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
@@ -17,19 +17,17 @@
         ])
 
         <flux:menu.separator />
-        
-            <flux:menu.item
-                href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
-                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
-                
-                <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Detail Kelas</span>
-                    <flux:icon wire:loading wire:target="showKelas" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
+        <flux:menu.item href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
+            class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
+
+            <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
+
+            <div class="flex justify-between items-center w-full">
+                <span>Show Kelas</span>
+                <flux:icon wire:loading wire:target="showKelas" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+            </div>
+        </flux:menu.item>
 
 
         <flux:menu.separator />
@@ -74,106 +72,111 @@
                 class="animate-spin h-4 w-4 ml-2" />
         </div>
 
-        <flux:menu.separator />
 
-        @if (!$isTrashed)
-            {{-- Tombol Edit --}}
-            <flux:menu.item
-                @click="
-                $store.kelas?.reset();
-                $store.kelas?.setEdit(1);
-
-                $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
-
-                $store.kelas?.setValueKelas(
-                    '{{ $x->kode ?? '' }}',
-                    '{{ $x->kelas ?? '' }}',
-                    '{{ $x->deskripsi_kelas ?? '' }}',
-
-                    '{{ $x->pr_id ?? '' }}',
-                    '{{ $x->kode_pr ?? '' }}',
-                    '{{ $x->prodi ?? '' }}',
-                    '{{ $x->pr_rel?->departemen_dp ?? '' }}',
-                    '{{ $x->pr_rel?->fakultas_fk ?? '' }}',
-
-                    '{{ $x->rps_id ?? '' }}',
-                    '{{ $x->kode_rps ?? '' }}',
-                    '{{ $x->rps_rel?->rps ?? '' }}',
-                    '{{ $x->rps_rel?->sks_full ?? '' }}',
-                    '{{ $x->wajib_text ?? '' }}',
-                    '{{ $x->rps_rel?->draf_full ?? '' }}',
-                );
-
-                $flux.modal('kelas-modal').show();
-            "
-                wire:click="{{ $editCall }}"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Edit Data</span>
-                    <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
+        @if (Auth::user()?->admin || Auth::user()?->dosen)
 
             <flux:menu.separator />
 
-            <flux:menu.item
-                @click="
-                    {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
+            @if (!$isTrashed)
+                {{-- Tombol Edit --}}
+                <flux:menu.item
+                    @click="
+                        $store.kelas?.reset();
+                        $store.kelas?.setEdit(1);
 
-                        $store.kelas?.setDeleteKelas(
-                            '{{ $x->kelas ?? '' }}',
-                            '{{ $x->kode ?? '' }}'
-                        );
-                        $flux.modal('kelas-delete').show();
-                "
-                wire:click="{{ $deleteCall }}"
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                        $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
-        @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="{{ $restoreCall }}"
-                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
-
-            <flux:menu.separator />
-
-            {{-- Tombol Delete Permanent --}}
-            <flux:menu.item
-                @click="
-                            $store.kelas?.setDeleteKelas(
-                            '{{ $x->kelas ?? '' }}',
+                        $store.kelas?.setValueKelas(
                             '{{ $x->kode ?? '' }}',
-                            '{{ $isTrashed }}'
-                        );
-                        $flux.modal('kelas-delete').show();
-                "
-                wire:click="{{ $deleteCall }}"
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                            '{{ $x->kelas ?? '' }}',
+                            '{{ $x->deskripsi_kelas ?? '' }}',
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
+                            '{{ $x->pr_id ?? '' }}',
+                            '{{ $x->kode_pr ?? '' }}',
+                            '{{ $x->prodi ?? '' }}',
+                            '{{ $x->pr_rel?->departemen_dp ?? '' }}',
+                            '{{ $x->pr_rel?->fakultas_fk ?? '' }}',
+
+                            '{{ $x->rps_id ?? '' }}',
+                            '{{ $x->kode_rps ?? '' }}',
+                            '{{ $x->rps_rel?->rps ?? '' }}',
+                            '{{ $x->rps_rel?->sks_full ?? '' }}',
+                            '{{ $x->wajib_text ?? '' }}',
+                            '{{ $x->rps_rel?->draf_full ?? '' }}',
+                        );
+
+                        $flux.modal('kelas-modal').show();
+                    "
+                    wire:click="{{ $editCall }}"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Edit {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+
+                <flux:menu.separator />
+
+                <flux:menu.item
+                    @click="
+                        {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
+
+                            $store.kelas?.setDeleteKelas(
+                                '{{ $x->kelas ?? '' }}',
+                                '{{ $x->kode ?? '' }}'
+                            );
+                            $flux.modal('kelas-delete').show();
+                    "
+                    wire:click="{{ $deleteCall }}"
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+            @else
+                {{-- Tombol Restore --}}
+                <flux:menu.item wire:click="{{ $restoreCall }}"
+                    class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Restore {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+
+                <flux:menu.separator />
+
+                {{-- Tombol Delete Permanent --}}
+                <flux:menu.item
+                    @click="
+                                $store.kelas?.setDeleteKelas(
+                                '{{ $x->kelas ?? '' }}',
+                                '{{ $x->kode ?? '' }}',
+                                '{{ $isTrashed }}'
+                            );
+                            $flux.modal('kelas-delete').show();
+                    "
+                    wire:click="{{ $deleteCall }}"
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+            @endif
+
         @endif
 
     </flux:menu>

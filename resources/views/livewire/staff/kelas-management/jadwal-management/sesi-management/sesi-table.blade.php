@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$sesis">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -23,6 +23,33 @@
     @php
         $borderR = 'border-[var(--border-table-color)] border-r';
     @endphp
+
+    <x-slot:sortir>
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'pertemuan_ke',
+            'headString' => 'Pertemuan',
+        ])
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'jumlah_absensi',
+            'headString' => 'Absensi',
+        ])
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'tanggal_pelaksanaan',
+            'headString' => 'Tanggal',
+        ])
+        @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
+    </x-slot:sortir>
+    <x-slot:search>
+        <div class="w-full md:w-96 xl:w-108">
+            <div class="col-start-1 row-start-1 w-full">
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Sesi Pertemuan Kelas...',
+                    'isLive' => 1,
+                    'isBorder' => 2,
+                ])
+            </div>
+        </div>
+    </x-slot:search>
 
     <x-slot:header>
         {{-- BARIS PERTAMA --}}
@@ -57,7 +84,9 @@
                 Informasi Sub-CPMK
             </th>
 
-            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            @endif
 
             {{-- @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
@@ -108,6 +137,7 @@
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'bobot',
+                'isBorderR' => 1,
             ])
 
 
@@ -223,7 +253,7 @@
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                {{ $s->mhs_absensi . ' / ' . $s->count_mahasiswa }}</td>
+                {{ ($s->mhs_absensi ?? 0) . ' / ' . $s->count_mahasiswa }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">
@@ -259,44 +289,38 @@
             <td class="{{ $subKolom }} whitespace-nowrap text-center">
                 {{ $s->w_mandiri ?? 0 }} menit</td>
 
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="{{ $mainKolom }} text-center">
+                    <flux:dropdown>
+                        <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                            inset="top bottom">
+                        </flux:button>
 
-            <td class="{{ $mainKolom }} text-center">
-                <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
-                    </flux:button>
+                        @include(
+                            'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                            [
+                                'x' => $s,
+                                'editString' => 'editSesi',
+                                'nameXString' => 'Sesi',
+                                'confirmDeleteString' => 'deleteSesi',
+                                'copyName' => 'Kode Sub-CPMK',
+                                'copyText' => $s->kode_scpmk ?? '',
+                            ]
+                        )
 
-                    @include(
-                        'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                        [
-                            'x' => $s,
-                            'editString' => 'editSesi',
-                            'nameXString' => 'Sesi',
-                            'confirmDeleteString' => 'deleteSesi',
-                            'copyName' => 'Kode Sub-CPMK',
-                            'copyText' => $s->kode_scpmk ?? '',
-                        ]
-                    )
-
-                </flux:dropdown>
-            </td>
+                    </flux:dropdown>
+                </td>
+            @endif
 
             {{-- <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
         @empty
             <tr>
-                <td colspan="15" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '14' }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Sesi Pertemuan Kelas ditemukan!
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $sesis,
-            ])
-        </x-slot:footer>
 
         </x-admin.global.table.main-layout-table>

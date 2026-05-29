@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Middleware\EnsureCanAccessKelas;
+use App\Http\Middleware\RememberKelasNavigation;
 use App\Http\Middleware\SetTeamUrlDefaults;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\RememberKelasNavigation;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,7 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
             SetTeamUrlDefaults::class,
             RememberKelasNavigation::class,
         ]);
+        $middleware->alias([
+            'kelas.access' => EnsureCanAccessKelas::class,
+        ]);
     })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

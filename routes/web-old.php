@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
         Route::view('rps-management', 'rps-management')->name('rps-management');
         Route::view('kelas-management', 'kelas-management')->name('kelas-management');
         Route::view('kelas-management/kelas/{kode}', 'kelas-management')->name('jadwal-management');
-        Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal}/{id_jadwal}', 'kelas-management')->name('sesi-management');
+        Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal}/{jadwal_id}', 'kelas-management')->name('sesi-management');
     });
 
     Route::redirect('settings', 'settings/profile');

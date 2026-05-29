@@ -15,7 +15,7 @@
                     x-text="$store.cpmk?.kode_cpmk_delete ? '***Kode ' + $store.cpmk?.kode_cpmk_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                Tindakan ini tidak dapat dibatalkan!
             </flux:subheading>
         </div>
 

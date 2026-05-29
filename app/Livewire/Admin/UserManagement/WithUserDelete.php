@@ -28,7 +28,7 @@ trait WithUserDelete
         }
 
         if (Auth::id() === $user->id) {
-            $this->toast(text: 'Anda tidak dapat menghapus akun sendiri!', variant: 'warning');
+            $this->toast(text: 'Anda tidak dapat menghapus Akun sendiri!', variant: 'warning');
             return;
         }
 

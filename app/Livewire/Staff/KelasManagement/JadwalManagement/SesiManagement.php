@@ -11,12 +11,14 @@ use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\KelasSesi;
-use Illuminate\Database\QueryException;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
+    use WithJadwalModal;
     use WithMahasiswaSearchFilters;
     use WithPagination;
     use WithRPSShow;
@@ -34,7 +36,7 @@ class SesiManagement extends Component
 
     public $jadwal;
 
-    public $id_jadwal;
+    public $jadwal_id;
 
     public $perPage = 8;
 
@@ -58,17 +60,72 @@ class SesiManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    public function mount($kode, $kode_jadwal, $id_jadwal, $switchTable = 'sesi-card')
-    {
+    // public function mount($kode, $kode_jadwal, $jadwal_id, $switchTable = 'sesi-card')
+    // {
+    //     $this->kode = $kode;
+    //     $this->kelas = Kelas::where('kode_kelas', $kode)
+    //         ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
+    //         ->firstOrFail();
+
+    //     $this->jadwal_id = $jadwal_id;
+    //     $this->jadwal = KelasJadwal::where('id', $jadwal_id)->firstOrFail();
+    //     $this->kode_jadwal = $this->jadwal->kode_jadwal;
+
+    //     $this->switchTable = $switchTable;
+    // }
+
+    public function mount(
+        $kode,
+        $kode_jadwal,
+        $switchTable = 'sesi-card'
+    ) {
         $this->kode = $kode;
-        $this->kelas = Kelas::where('kode_kelas', $kode)
-            ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
+
+        $this->kelas = Kelas::query()
+            ->where('kode_kelas', $kode)
+            ->orWhereRaw(
+                "REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')",
+                [$kode]
+            )
             ->firstOrFail();
 
-        $this->id_jadwal = $id_jadwal;
-        $this->jadwal = KelasJadwal::where('id', $id_jadwal)->firstOrFail();
-        $this->kode_jadwal = $this->jadwal->kode_jadwal;
+        $this->kode_jadwal = $kode_jadwal;
 
+        $parts = explode('-', $kode_jadwal);
+
+        if (count($parts) < 3) {
+            abort(404, 'Format Kode Jadwal Kelas tidak valid!');
+        }
+
+        $labelKelas = $parts[0];
+        $kodeWilayah = $parts[1];
+
+        $tahunBlok = $parts[2];
+
+        $this->jadwal = KelasJadwal::query()
+            ->where('kelas_id', $this->kelas->id)
+            ->where('label_kelas', $labelKelas)
+            ->where('kode_wilayah', $kodeWilayah)
+            ->whereRaw(
+                '
+            CASE
+                WHEN YEAR(tanggal_mulai) >= 3000
+                    THEN YEAR(tanggal_mulai)
+
+                WHEN YEAR(tanggal_mulai) >= 2100
+                    THEN RIGHT(YEAR(tanggal_mulai), 3)
+
+                WHEN YEAR(tanggal_mulai) >= 2000
+                    THEN RIGHT(YEAR(tanggal_mulai), 2)
+
+                ELSE YEAR(tanggal_mulai)
+            END = ?
+            ',
+                [$tahunBlok]
+            )
+            ->firstOrFail();
+
+        $this->jadwal_id = $this->jadwal->id;
         $this->switchTable = $switchTable;
     }
 
@@ -94,12 +151,13 @@ class SesiManagement extends Component
         $columns = [
             'sesi-card' => [1 => 'pertemuan_ke', 2 => 'jumlah_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
             'sesi-table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'jumlah_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
-            'mahasiswa' => [1 => 'id', 2 => 'nim', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_tidak_masuk', 7 => 'angkatan', 8 => 'status', 9 => 'prodi'],
+            'mahasiswa' => [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_dispensasi', 7 => 'mhs_terlambat', 8 => 'mhs_izin', 9 => 'mhs_sakit', 10 => 'angkatan', 11 => 'status', 12 => 'prodi'],
         ];
         $aliases = [
-            'pertemuan_ke' => ['pertemuan_ke', 'nim', 'name'],
-            'nim' => ['pertemuan_ke'],
-            'jumlah_absensi' => ['jumlah_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_tidak_masuk'],
+            'id' => ['id', 'mahasiswa_id'],
+            'mahasiswa_id' => ['mahasiswa_id', 'id'],
+            'pertemuan_ke' => ['pertemuan_ke', 'name'],
+            'jumlah_absensi' => ['jumlah_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit'],
             'mhs_poin_absensi' => ['jumlah_absensi'],
             'name' => ['pertemuan_ke'],
         ];
@@ -131,12 +189,11 @@ class SesiManagement extends Component
             $this->perPage = min((int) $this->perPage, $limits[$table]);
         }
 
-
-        $targetUrl = route('kelas-management', ['switchTable' => $table]);
+        // $targetUrl = route('kelas-management', ['switchTable' => $table]);
         if ($table == 'sesi-card' || $table == '' || $table == null) {
-            $targetPath = "/kelas-management/kelas/{$this->kode}/jadwal/{$this->kode_jadwal}/{$this->id_jadwal}";
+            $targetPath = "/kelas-management/kelas/{$this->kode}/jadwal/{$this->kode_jadwal}";
         } else {
-            $targetPath = "/kelas-management/kelas/{$this->kode}/jadwal/{$this->kode_jadwal}/{$this->id_jadwal}/{$table}";
+            $targetPath = "/kelas-management/kelas/{$this->kode}/jadwal/{$this->kode_jadwal}/{$table}";
         }
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
@@ -145,34 +202,105 @@ class SesiManagement extends Component
     public function render()
     {
         try {
-            $idJadwal = $this->id_jadwal;
+            $idJadwal = $this->jadwal_id;
             $querySesi = $this->inputSesiSearch($idJadwal);
 
+            if (Auth::user()->mahasiswa) {
+
+                $mahasiswaId = Auth::user()->mahasiswa->id;
+
+                $isInJadwal = KelasJadwal::where('id', $idJadwal)
+                    ->whereHas('mahasiswas', function ($q) use ($mahasiswaId) {
+                        $q->where('mahasiswas.id', $mahasiswaId);
+                    })
+                    ->exists();
+
+                if (! $isInJadwal) {
+                    $message = 'Anda tidak terdaftar di Kelas ini!';
+                    $this->toast(text: $message, variant: 'danger');
+
+                    $history = session('jadwal.history', []);
+                    $compositeKey = $this->kode.'_'.$this->kode_jadwal;
+                    unset($history[$compositeKey]);
+                    session(['jadwal.history' => $history]);
+                    $this->redirect(route('jadwal-management', $this->kode));
+                }
+            }
+
+            /**
+             * =========================
+             * AMBIL SESI + CEK EXPIRED
+             * =========================
+             */
+            $sesiList = KelasSesi::with(['jadwal_rel', 'override'])
+                ->where('kj_id', $idJadwal)
+                ->get();
+
+            $now = now();
+
+            $expiredSesiIds = $sesiList->filter(function ($sesi) {
+
+                $jamAkhir = $sesi->override?->jam_berakhir
+                    ?? $sesi->jadwal_rel?->jam_berakhir;
+
+                if (! $jamAkhir) {
+                    return false;
+                }
+
+                return Carbon::parse($sesi->tanggal.' '.$jamAkhir)
+                    ->lt(now());
+
+            })->pluck('id')->all();
+
+            /**
+             * =========================
+             * STATUS MAP
+             * =========================
+             */
             $statuses = [
-                'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi')",
-                'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir', 'Terlambat')",
+                'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
+                'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
                 'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
                 'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
                 'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
                 'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
                 'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
                 'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
-                'mhs_tidak_masuk' => "(mahasiswa_kehadiran.status IN ('Absen', 'Sakit', 'Izin', 'Dispensasi') OR mahasiswa_kehadiran.status IS NULL)",
+
+                // 'mhs_tidak_masuk' => "
+                //     (
+                //         mahasiswa_kehadiran.status IN ('Absen', 'Sakit', 'Izin')
+                //             OR
+                //             (
+                //                 (mahasiswa_kehadiran.status IS NULL OR mahasiswa_kehadiran.id IS NULL)
+                //                     AND mahasiswa_kehadiran.sesi_id IN (".implode(',', $expiredSesiIds ?: [0]).')
+                //             )
+                //         )
+                //     ',
+
                 'mhs_poin_absensi' => "CASE 
-                            WHEN mahasiswa_kehadiran.status IN ('Hadir', 'Dispensasi') THEN 2
-                            WHEN mahasiswa_kehadiran.status IN ('Terlambat', 'Izin', 'Sakit') THEN 1
-                            ELSE 0 
-                        END",
+                    WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2
+                    WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1
+                    ELSE 0
+                END",
             ];
 
-            $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)->select('users.*');
+            /**
+             * =========================
+             * USER QUERY
+             * =========================
+             */
+            $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)
+                ->select('users.*');
 
             foreach ($statuses as $alias => $condition) {
+
                 $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
+
                     if ($alias === 'mhs_poin_absensi') {
-                        $rawSql = "COALESCE(SUM({$condition}), 0)";
+                        $rawSql = "COALESCE(SUM($condition),0)";
                     } else {
-                        $rawSql = "COALESCE(SUM(CASE WHEN {$condition} THEN 1 ELSE 0 END), 0)";
+                        $rawSql = "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END),0)";
                     }
 
                     $query->selectRaw($rawSql)
@@ -181,33 +309,47 @@ class SesiManagement extends Component
                         ->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')
                         ->whereColumn('mahasiswas.user_id', 'users.id')
                         ->where('kelas_sesi.kj_id', $idJadwal);
+
                 }, $alias);
             }
 
+            /**
+             * =========================
+             * COUNTING
+             * =========================
+             */
             $countSesi = KelasSesi::where('kj_id', $idJadwal);
+
             $countMahasiswa = User::whereHas('mahasiswa.jadwals', function ($q) use ($idJadwal) {
                 $q->where('kj_id', $idJadwal);
             });
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $querySesi->onlyTrashed();
                 $queryUser->onlyTrashed();
-
                 $countSesi->onlyTrashed();
                 $countMahasiswa->onlyTrashed();
             }
 
-            // =========================================================================
-            // [AWALAN TEMPAT MODIFIKASI FITUR SEARCH ABSENSI & PERSEN MAHASISWA]
-            // =========================================================================
+            /**
+             * =========================
+             * SEARCH FILTER
+             * =========================
+             */
             $search = trim($this->search);
+
             if (! empty($search)) {
+
                 $totalSesiUntukPersen = (clone $countSesi)->count() ?: 1;
                 $cleanNumber = preg_replace('/[^0-9.]/', '', $search);
 
                 if (is_numeric($cleanNumber) && $cleanNumber !== '') {
+
                     if (str_contains($search, '%')) {
-                        $queryUser->havingRaw('(mhs_poin_absensi / (2 * ?)) * 100 LIKE ?', [$totalSesiUntukPersen, "%{$cleanNumber}%"]);
+                        $queryUser->havingRaw(
+                            '(mhs_poin_absensi / (2 * ?)) * 100 LIKE ?',
+                            [$totalSesiUntukPersen, "%{$cleanNumber}%"]
+                        );
                     } else {
                         $queryUser->having('mhs_absensi', '=', $cleanNumber)
                             ->orHaving('mhs_masuk', '=', $cleanNumber)
@@ -222,39 +364,182 @@ class SesiManagement extends Component
                     }
                 }
             }
-            // =========================================================================
-            // [AKHIRAN TEMPAT MODIFIKASI FITUR SEARCH]
-            // =========================================================================
 
+            /**
+             * =========================
+             * DEFAULT DATA
+             * =========================
+             */
             $sesis = collect();
             $users = collect();
 
+            $absensi = [
+                'mhs_poin_absensi' => 0,
+                'mhs_poin_absensi_percent' => 0,
+                'mhs_absensi' => 0,
+                'mhs_masuk' => 0,
+                'mhs_hadir' => 0,
+                'mhs_terlambat' => 0,
+                'mhs_izin' => 0,
+                'mhs_sakit' => 0,
+                'mhs_dispensasi' => 0,
+                'mhs_absen' => 0,
+                'mhs_tidak_masuk' => 0,
+            ];
+
+            /**
+             * =========================
+             * OUTPUT SWITCH
+             * =========================
+             */
             switch ($this->switchTable) {
                 case 'sesi-card':
                 case 'sesi-table':
                     $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
                     break;
+
                 case 'mahasiswa':
                     $users = $queryUser->paginate($this->perPage);
                     break;
             }
 
+            /**
+             * =========================
+             * SUMMARY
+             * =========================
+             */
+            $totalSesiKelas = $countSesi->count() ?: 1;
+
+            $summaryQuery = User::query()
+                ->whereHas('mahasiswa.jadwals', function ($q) use ($idJadwal) {
+                    $q->where('kj_id', $idJadwal);
+                })
+                ->select('users.*');
+
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
+                $summaryQuery->onlyTrashed();
+            }
+
+            foreach ($statuses as $alias => $condition) {
+
+                $summaryQuery->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
+
+                    if ($alias === 'mhs_poin_absensi') {
+                        $rawSql = "COALESCE(SUM($condition),0)";
+                    } else {
+                        $rawSql = "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END),0)";
+                    }
+
+                    $query->selectRaw($rawSql)
+                        ->from('mahasiswa_kehadiran')
+                        ->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')
+                        ->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')
+                        ->whereColumn('mahasiswas.user_id', 'users.id')
+                        ->where('kelas_sesi.kj_id', $idJadwal);
+
+                }, $alias);
+            }
+
+            /**
+             * =========================
+             * FINAL CALCULATION
+             * =========================
+             */
+            if (Auth::user()->admin || Auth::user()->dosen) {
+
+                $summary = $summaryQuery->get();
+
+                $expiredCount = count($expiredSesiIds);
+
+                foreach ($summary as $row) {
+                    $hadir = $row->mhs_hadir + $row->mhs_terlambat + $row->mhs_izin + $row->mhs_sakit + $row->mhs_dispensasi;
+                    $row->mhs_tidak_masuk = max(0, $expiredCount - $hadir);
+                }
+
+                $absensi['mhs_poin_absensi'] = $summary->sum('mhs_poin_absensi');
+
+                $maxPoint = $countMahasiswa->count() * $totalSesiKelas * 2;
+
+                $absensi['mhs_poin_absensi_percent'] = $maxPoint > 0
+                    ? round(($absensi['mhs_poin_absensi'] / $maxPoint) * 100, 2)
+                    : 0;
+
+                $absensi['mhs_masuk'] = $summary->sum('mhs_masuk');
+                $absensi['mhs_hadir'] = $summary->sum('mhs_hadir');
+                $absensi['mhs_terlambat'] = $summary->sum('mhs_terlambat');
+                $absensi['mhs_izin'] = $summary->sum('mhs_izin');
+                $absensi['mhs_sakit'] = $summary->sum('mhs_sakit');
+                $absensi['mhs_dispensasi'] = $summary->sum('mhs_dispensasi');
+                $absensi['mhs_absen'] = $summary->sum('mhs_absen');
+                $absensi['mhs_tidak_masuk'] = $summary->sum('mhs_tidak_masuk');
+
+            } elseif (Auth::user()->mahasiswa) {
+
+                $myUser = $summaryQuery->where('users.id', Auth::id())->first();
+
+                $expiredCount = count($expiredSesiIds);
+                $hadir = (
+                    ($myUser?->mhs_hadir ?? 0) +
+                    ($myUser?->mhs_terlambat ?? 0) +
+                    ($myUser?->mhs_izin ?? 0) +
+                    ($myUser?->mhs_sakit ?? 0) +
+                    ($myUser?->mhs_dispensasi ?? 0)
+                );
+
+                $tidakMasuk = max(0, $expiredCount - $hadir);
+
+                $absensi['mahasiswa'] = [
+                    'mhs_poin_absensi' => $myUser?->mhs_poin_absensi ?? 0,
+
+                    'mhs_poin_absensi_percent' => ($totalSesiKelas * 2) > 0
+                        ? round(
+                            (($myUser?->mhs_poin_absensi ?? 0) / ($totalSesiKelas * 2)) * 100,
+                            2
+                        )
+                        : 0,
+
+                    'mhs_absensi' => $myUser?->mhs_absensi ?? 0,
+                    'mhs_masuk' => $myUser?->mhs_masuk ?? 0,
+                    'mhs_hadir' => $myUser?->mhs_hadir ?? 0,
+                    'mhs_terlambat' => $myUser?->mhs_terlambat ?? 0,
+                    'mhs_izin' => $myUser?->mhs_izin ?? 0,
+                    'mhs_sakit' => $myUser?->mhs_sakit ?? 0,
+                    'mhs_dispensasi' => $myUser?->mhs_dispensasi ?? 0,
+                    'mhs_absen' => $myUser?->mhs_absen ?? 0,
+                    'mhs_tidak_masuk' => $tidakMasuk,
+                ];
+            }
+
             return view('livewire.staff.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => $sesis,
                 'users' => $users,
+                'absensi' => $absensi,
                 'kelas' => $this->kelas,
-                'totalSesiKelas' => $countSesi->count() ?? 16,
-                'totalMahasiswaKelas' => $countMahasiswa->count() ?? 500,
+                'totalSesiKelas' => $totalSesiKelas,
+                'totalMahasiswaKelas' => $countMahasiswa->count(),
             ]);
 
-        } catch (QueryException $e) {
+        } catch (\Throwable $e) {
             $message = 'Terjadi kesalahan database: '.$e->getMessage();
             session()->flash('error', $message);
             $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.staff.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => KelasSesi::whereRaw('1 = 0')->paginate($this->perPage),
-                'users' => User::whereRaw('1=0')->whereHas('mahasiswa')->paginate($this->perPage),
+                'users' => User::whereRaw('1 = 0')->paginate($this->perPage),
+                'absensi' => [
+                    'mhs_poin_absensi' => '-',
+                    'mhs_poin_absensi_percent' => '-',
+                    'mhs_absensi' => '-',
+                    'mhs_masuk' => '-',
+                    'mhs_hadir' => '-',
+                    'mhs_terlambat' => '-',
+                    'mhs_izin' => '-',
+                    'mhs_sakit' => '-',
+                    'mhs_dispensasi' => '-',
+                    'mhs_absen' => '-',
+                    // 'mhs_tidak_masuk' => '-',
+                ],
                 'kelas' => $this->kelas,
                 'totalSesiKelas' => '-',
                 'totalMahasiswaKelas' => '-',

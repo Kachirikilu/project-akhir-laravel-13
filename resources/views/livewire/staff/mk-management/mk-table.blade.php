@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$mks">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -145,26 +145,10 @@
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($mk->level_mk)
-                            @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $mk->digit_mk ?? '-' }}
-                                </flux:badge>
-                            @break
-
-                            @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $mk->digit_mk ?? '-' }}
-                                </flux:badge>
-                            @break
-
-                            @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $mk->digit_mk ?? '-' }}
-                                </flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $mk->digit_mk ?? '-' }}
-                                </flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.level-mk-badge', [
+                            'xValue' => $mk->digit_mk,
+                            'sortir' => $mk->level_mk,
+                        ])
                     </button>
 
                     @include('livewire.staff.mk-management.mk-toolbar-table', [
@@ -181,42 +165,10 @@
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($mk->semester)
-                            {{-- Tahun 1: Biru/Cyan --}}
-                            @case(1)
-                                <flux:badge color="blue" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(2)
-                                <flux:badge color="cyan" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 2: Hijau/Emerald --}}
-                            @case(3)
-                                <flux:badge color="green" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(4)
-                                <flux:badge color="emerald" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 3: Kuning/Oranye --}}
-                            @case(5)
-                                <flux:badge color="yellow" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            @case(6)
-                                <flux:badge color="orange" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            {{-- Tahun 4: Merah/Ungu (Fase Tugas Akhir) --}}
-                            @case(7)
-                                <flux:badge color="red" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge color="purple" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.semester-badge', [
+                            'xValue' => $mk->kode,
+                            'sortir' => $mk->semester,
+                        ])
                     </button>
 
                     @include('livewire.staff.mk-management.mk-toolbar-table', [
@@ -258,15 +210,10 @@
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @if ($mk->wajib)
-                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">
-                                {{ $mk->wajib_text }}
-                            </flux:badge>
-                        @else
-                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">
-                                {{ $mk->wajib_text }}
-                            </flux:badge>
-                        @endif
+                        @include('livewire.global.table.badge.wajib-badge', [
+                            'xValue' => $mk->wajib_text,
+                            'sortir' => $mk->wajib,
+                        ])
                     </button>
 
                     @include('livewire.staff.mk-management.mk-toolbar-table', [
@@ -308,12 +255,5 @@
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $mks,
-            ])
-        </x-slot:footer>
 
         </x-admin.global.table.main-layout-table>

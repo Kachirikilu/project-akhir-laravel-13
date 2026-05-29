@@ -21,7 +21,7 @@
             <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
-                <span>Edit Data</span>
+                <span>Edit {{ $nameXString ?? 'Data' }}</span>
                 <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>

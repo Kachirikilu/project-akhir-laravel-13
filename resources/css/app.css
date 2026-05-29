@@ -26,6 +26,10 @@
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
+
+    --breakpoint-3xl: 120rem; /* 1920px / 16 */
+    --breakpoint-4xl: 160rem; /* 2560px / 16 */
+    --breakpoint-5xl: 240rem; /* 3840px / 16 */
 }
 
 @layer utilities {

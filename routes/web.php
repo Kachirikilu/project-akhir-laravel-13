@@ -25,11 +25,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['is_staff'])->group(function () {
         Route::view('mata-kuliah-management/{switchTable?}', 'mata-kuliah-management')->name('mata-kuliah-management');
         Route::view('obe-management/{switchTable?}', 'rps-management')->name('rps-management');
-        Route::view('kelas-management/{switchTable?}', 'kelas-management')->name('kelas-management');
-        Route::view('kelas-management/kelas/{kode}', 'kelas-management')->name('jadwal-management');
-        Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal}/{id_jadwal}/{switchTable?}', 'kelas-management')->name('sesi-management');
     });
 
+    Route::view('kelas-management/{switchTable?}', 'kelas-management')->name('kelas-management');
+    Route::view('kelas-management/kelas/{kode}/{switchTable?}', 'kelas-management')->name('jadwal-management');
+    Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal}/{switchTable?}', 'kelas-management')->name('sesi-management');
+
+    // Route::middleware('kelas.access')->group(function () {
+    // });
     Route::redirect('settings', 'settings/profile');
 });
 

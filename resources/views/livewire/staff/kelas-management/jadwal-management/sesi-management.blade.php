@@ -29,11 +29,21 @@
             @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-table')
         @elseif ($this->switchTable == 'mahasiswa')
             @include('livewire.staff.kelas-management.jadwal-management.sesi-management.mahasiswa-table')
-            {{-- @include('livewire.admin.user-management.user-table') --}}
         @endif
     </div>
 
-    @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-modal-form')
+    @if (Auth::user()->mahasiswa)
+        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-left')
+        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-absen-modal-form')
+    @endif
+    
+
+    @if (Auth::user()->admin || Auth::user()->dosen)
+        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-modal-form')
+        @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form')
+    @elseif (Auth::user()->mahasiswa)
+        @include('livewire.staff.kelas-management.jadwal-management.jadwal-left-modal-form')
+    @endif
 
 </div>
 

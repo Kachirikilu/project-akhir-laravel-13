@@ -24,27 +24,30 @@
             'wireLoading' => 'addJadwal, editJadwal',
         ])
 
-
-        @include('livewire.global.modal-form.search-input-array-form', [
-            'alpine' => 'jadwal',
-            'xResults' => $mahasiswaResults,
-            'selectX' => 'selectMahasiswaArray',
-            'modelString' => 'nama_mahasiswa_search',
-        
-            'idString' => 'mahasiswa_id_array',
-            'itemsAllString' => 'mahasiswa_items_array',
-        
-            'typeXString' => 'name',
-            'typeX2String' => 'prodi',
-            'typeX3String' => 'wilayah',
-            'typeX4String' => 'angkatan_full',
-            'typeX5String' => 'status_full',
-        
-            'nameXString' => 'Mahasiswa',
-            'nameSearchString' => 'mahasiswaNameSearch',
-            'fetchString' => 'fetchMahasiswa',
-            'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchMahasiswa',
-        ])
+        @if ($this->showJadwalModal)
+            @include('livewire.global.modal-form.search-input-array-form', [
+                'alpine' => 'jadwal',
+                'xResults' => $mahasiswaResults,
+                'selectX' => 'selectMahasiswaArray',
+                'modelString' => 'nama_mahasiswa_search',
+            
+                'idString' => 'mahasiswa_id_array',
+                'itemsAllString' => 'mahasiswa_items_array',
+            
+                'typeXString' => 'name',
+                'typeX2String' => 'prodi',
+                'typeX3String' => 'wilayah',
+                'typeX4String' => 'angkatan_full',
+                'typeX5String' => 'status_full',
+            
+                'nameXString' => 'Mahasiswa',
+                'nameSearchString' => 'mahasiswaNameSearch',
+                'fetchString' => 'fetchMahasiswa',
+                'iconString' => 'academic-cap',
+                'wireLoading' => 'fetchMahasiswa',
+            ])
+        @else
+            <div class="h-32"></div>
+        @endif
     </div>
 </div>

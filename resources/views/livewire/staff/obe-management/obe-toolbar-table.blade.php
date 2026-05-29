@@ -4,8 +4,9 @@
 
         @php
             $isTrashed = $x->trashed();
-
-            if ($typeXString == 'ref') {
+            if ($typeXString == 'sub-cpmk') {
+                $typeUpper = 'SCPMK';
+            } elseif ($typeXString == 'referensi') {
                 $typeUpper = 'Ref';
             } else {
                 $typeUpper = strtoupper($typeXString);
@@ -16,9 +17,9 @@
             $restoreCall = "restore{$typeUpper}($x->id)";
 
             $typeX2String = $typeXString;
-            if ($typeX2String == 'scpmk') {
+            if ($typeX2String == 'sub-cpmk') {
                 $typeX2String = 'Sub-CPMK';
-            } elseif ($typeX2String == 'ref') {
+            } elseif ($typeX2String == 'referensi') {
                 $typeX2String = 'Referensi';
             }
         @endphp
@@ -34,11 +35,11 @@
             @include('livewire.staff.obe-management.rps-management.rps-toolbar-table')
         @elseif ($typeXString == 'cpmk')
             @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table')
-        @elseif ($typeXString == 'scpmk')
+        @elseif ($typeXString == 'sub-cpmk')
             @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
         @elseif ($typeXString == 'cpl')
             @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table')
-        @elseif ($typeXString == 'ref')
+        @elseif ($typeXString == 'referensi')
             @include('livewire.staff.obe-management.ref-management.ref-toolbar-table')
         @endif
 

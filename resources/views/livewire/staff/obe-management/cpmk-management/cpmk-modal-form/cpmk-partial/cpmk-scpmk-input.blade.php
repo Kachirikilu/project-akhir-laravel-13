@@ -42,8 +42,9 @@
                     'iconString' => 'academic-cap',
                     'wireLoading' => 'fetchSCPMK',
                 ])
+            @else
+                <div class="h-32"></div>
             @endif
-
         </div>
     </div>
 

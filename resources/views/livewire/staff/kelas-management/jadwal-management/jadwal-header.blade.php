@@ -14,7 +14,7 @@
 
     {{-- Grid Informasi Utama Kelas --}}
     <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-[var(--second-pop-up-color)] p-6 rounded-xl border border-[var(--border-table-color)] shadow-sm">
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border border-[var(--border-table-color)] shadow-sm">
         <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
                 {{ $mainHead }}</span>
@@ -46,8 +46,14 @@
                 class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->kode_rps ?? '---' }}</span>
             <span class="text-xs text-[var(--contrast-main-text)] opacity-70">Sem {{ $kelas->semester ?? '-' }}
                 <strong class="px-2">|</strong>
-                {{ $kelas->sks ?? '-' }} SKS ({{ $kelas->sks_text ?? '-' }})</span>
+                {{ $kelas->sks ?? '-' }} SKS
+                <strong class="px-2">|</strong>
+                {{ $kelas->sks_text ?? '-' }}</span>
         </div>
+
+        @if ($alpine == 'sesi')
+            @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-header')
+        @endif
     </div>
 
     <div class="flex flex-wrap items-center gap-3 my-4">
@@ -78,5 +84,73 @@
             </div>
         </flux:button>
 
+        @if ($alpine == 'jadwal' && (Auth::user()?->admin || Auth::user()?->dosen))
+            <flux:button
+                @click="
+                    $store.kelas?.reset();
+                    $store.kelas?.setEdit(1);
+
+                    $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+
+                    $store.kelas?.setValueKelas(
+                        '{{ $kelas->kode ?? '' }}',
+                        '{{ $kelas->kelas ?? '' }}',
+                        '{{ $kelas->deskripsi_kelas ?? '' }}',
+
+                        '{{ $kelas->pr_id ?? '' }}',
+                        '{{ $kelas->kode_pr ?? '' }}',
+                        '{{ $kelas->prodi ?? '' }}',
+                        '{{ $kelas->pr_rel?->departemen_dp ?? '' }}',
+                        '{{ $kelas->pr_rel?->fakultas_fk ?? '' }}',
+
+                        '{{ $kelas->rps_id ?? '' }}',
+                        '{{ $x->kode_rps ?? '' }}',
+                        '{{ $x->rps_rel?->rps ?? '' }}',
+                        '{{ $x->rps_rel?->sks_full ?? '' }}',
+                        '{{ $x->wajib_text ?? '' }}',
+                        '{{ $x->rps_rel?->draf_full ?? '' }}',
+                    );
+
+                    $flux.modal('kelas-modal').show();
+                "
+                wire:click="editKelas({{ $kelas->id }})" icon="pencil-square" size="sm"
+                class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
+                <div class="flex items-center gap-2">
+                    <span>Edit Kelas</span>
+                </div>
+            </flux:button>
+        @endif
+
+        @if ($alpine == 'sesi' && (Auth::user()?->admin || Auth::user()?->dosen))
+            <flux:button
+                @click="
+                    $store.jadwal?.reset();
+                    $store.jadwal?.setEdit(1);
+
+                    $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+
+                    $store.jadwal?.setValueJadwal(
+                        '{{ $jadwal->label_kelas ?? '' }}',
+                        '{{ $jadwal->kode_wilayah ?? '' }}',
+
+                        '{{ $jadwal->hari_pelaksanaan ?? '' }}',
+                        '{{ $jadwal->jam_mulai ?? '' }}',
+                        '{{ $jadwal->jam_berakhir ?? '' }}',
+                        '{{ $jadwal->tanggal_mulai ?? '' }}',
+                        '{{ $jadwal->tanggal_berakhir ?? '' }}',
+
+                        '{{ $jadwal->kapasitas ?? '' }}',
+                        '{{ $jadwal->password ?? '' }}',
+                    );
+
+                    $flux.modal('jadwal-modal').show();
+                "
+                wire:click="editJadwal({{ $jadwal_id }})" icon="pencil-square" size="sm"
+                class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
+                <div class="flex items-center gap-2">
+                    <span>Edit Jadwal</span>
+                </div>
+            </flux:button>
+        @endif
     </div>
 </div>

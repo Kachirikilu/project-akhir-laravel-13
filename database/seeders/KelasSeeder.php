@@ -6,6 +6,7 @@ use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasSesi;
+use App\Models\Kelas\MahasiswaKehadiran;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -88,6 +89,68 @@ class KelasSeeder extends Seeder
                                         'tanggal' => (clone $tglMulai)->addWeeks($pertemuan - 1),
                                         'catatan' => "Sesi rutin pertemuan ke-$pertemuan",
                                     ]);
+
+                                    // Seeder absensi mahasiswa
+                                    $statuses = [
+                                        'Hadir',
+                                        'Terlambat',
+                                        'Absen',
+                                        'Sakit',
+                                        'Izin',
+                                        'Dispensasi',
+                                    ];
+
+                                    // bobot probabilitas agar realistis
+                                    $weights = [
+                                        'Hadir' => 65,
+                                        'Terlambat' => 10,
+                                        'Absen' => 8,
+                                        'Sakit' => 5,
+                                        'Izin' => 7,
+                                        'Dispensasi' => 5,
+                                    ];
+
+                                    foreach ($mhsIds as $mhsId) {
+
+                                        // random weighted status
+                                        $random = rand(1, array_sum($weights));
+                                        $current = 0;
+                                        $selectedStatus = 'Absen';
+
+                                        foreach ($weights as $status => $weight) {
+                                            $current += $weight;
+
+                                            if ($random <= $current) {
+                                                $selectedStatus = $status;
+                                                break;
+                                            }
+                                        }
+
+                                        MahasiswaKehadiran::create([
+                                            'sesi_id' => $sesi->id,
+                                            'mahasiswa_id' => $mhsId,
+                                            'status' => $selectedStatus,
+
+                                            'waktu_presensi' => in_array($selectedStatus, [
+                                                'Hadir',
+                                                'Terlambat',
+                                                'Izin',
+                                                'Sakit',
+                                                'Dispensasi',
+                                            ])
+                                                ? $sesi->tanggal
+                                                    ->copy()
+                                                    ->setTime(8, rand(0, 45))
+                                                : null,
+
+                                            'keterangan' => match ($selectedStatus) {
+                                                'Sakit' => 'Sakit demam',
+                                                'Izin' => 'Ada keperluan keluarga',
+                                                'Dispensasi' => 'Dispensasi akademik',
+                                                default => null,
+                                            },
+                                        ]);
+                                    }
 
                                     if ($pertemuan == 8 && $totalScpmk < 16 && $rps->bobot_uts) {
                                         $sesi->override()->create([

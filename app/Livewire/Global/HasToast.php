@@ -54,6 +54,7 @@ trait HasToast
 
         return match ($type) {
             'save' => 'Simpan Berhasil!',
+            'join' => 'Bergabung Berhasil!',
             'update' => 'Update Berhasil!',
             'recycle' => 'Recycle Berhasil!',
             'delete' => 'Berhasil Dibuang!',
@@ -73,6 +74,8 @@ trait HasToast
         if ($variant === 'danger') {
             return match ($type) {
                 'save' => "Gagal menyimpan $dataS $message!",
+                'join' => "Gagal bergabung di $message!",
+                'left' => "Gagal keluar dari $message!",
                 'update' => "Gagal memperbarui $dataS $message!",
                 'recycle' => "Gagal mengembalikan $dataS $message!",
                 'delete' => "Gagal membuang $dataS $message!",
@@ -86,12 +89,14 @@ trait HasToast
                 'auth' => "Hanya $message yang dapat akses!",
                 'unfound' => "$dataL $message tidak ditemukan!",
                 // 'permanent' => "Perhatian! $dataS $message tidak bisa dipulihkan setelah ini!",
-                default => "Mohon periksa kembali $dataS $message.",
+                default => "Mohon periksa kembali $dataS $message!",
             };
         }
 
         return match ($type) {
             'save' => "$dataL $message telah disimpan!",
+            'join' => "Kamu berhasil bergabung di $message!",
+            'left' => "Kamu berhasil keluar dari $message!",
             'update' => "Perubahan $dataS $message telah disimpan!",
             'recycle' => "$dataL $message berhasil dikembalikan!",
             'delete' => "$dataL $message dipindahkan ke sampah!",

@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$users">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -24,11 +24,46 @@
         $borderR = 'border-[var(--border-table-color)] border-r';
     @endphp
 
+    <x-slot:sortir>
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'pertemuan_ke',
+            'headString' => 'NIM',
+        ])
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'name',
+            'headString' => 'Nama',
+        ])
+        @if (Auth::user()->admin || Auth::user()->dosen)
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'mhs_poin_absensi',
+                'headString' => 'Absensi',
+            ])
+        @endif
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'angkatan',
+        ])
+        @include('livewire.global.table.head-sortir', [
+            'sortFieldString' => 'status',
+        ])
+    </x-slot:sortir>
+    <x-slot:search>
+        <div class="w-full md:w-96 xl:w-108">
+            <div class="col-start-1 row-start-1 w-full">
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Mahasiswa Kelas...',
+                    'isLive' => 1,
+                    'isBorder' => 2,
+                ])
+            </div>
+        </div>
+    </x-slot:search>
+
     <x-slot:header>
         <tr>
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
+                'sortFieldString' => 'mahasiswa_id',
+                'headString' => 'MHS ID',
                 'rowSpan' => 2,
                 'isMain' => 1,
                 'isCenter' => 1,
@@ -37,7 +72,7 @@
             <th rowspan="2" class="{{ $headKolom }}'">Role</th>
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'nim',
+                'sortFieldString' => 'pertemuan_ke',
                 'headString' => 'NIM',
                 'rowSpan' => 2,
                 'isCenter' => 1,
@@ -52,8 +87,7 @@
                 'isMain' => 1,
             ])
 
-            <th colspan="3"
-                class="{{ $headSubKolom }}">
+            <th colspan="6" class="{{ $headSubKolom }}">
                 Kehadiran
             </th>
 
@@ -61,7 +95,6 @@
             @if ($switchTable == 'mahasiswa')
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'angkatan',
-                    'headString' => 'Angkatan',
                     'modelString' => 'searchAngkatan',
                     'resetXFilter' => 'resetInputAngkatan()',
                     'wInput' => 15,
@@ -88,22 +121,46 @@
         </tr>
 
         <tr>
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'mhs_poin_absensi',
-                'headString' => 'Absensi',
-                'isMain' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'mhs_masuk',
-                'headString' => 'Masuk',
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'mhs_tidak_masuk',
-                'headString' => 'Tidak Masuk',
-                'isCenter' => 1,
-                'isBorderR' => 1,
-            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_poin_absensi',
+                    'headString' => 'Absensi',
+                    'isMain' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_masuk',
+                    'headString' => 'Masuk',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_dispensasi',
+                    'headString' => 'Dispensi',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_terlambat',
+                    'headString' => 'Terlambat',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_izin',
+                    'headString' => 'Izin',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_sakit',
+                    'headString' => 'Sakit',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+            @elseif (Auth::user()->mahasiswa)
+                <th rowspan="1" class="{{ $headKolom }} border-x">Masuk</th>
+                <th rowspan="1" class="{{ $headKolom }}">Masuk</th>
+                <th rowspan="1" class="{{ $headKolom }}">Dispensi</th>
+                <th rowspan="1" class="{{ $headKolom }}">Terlambat</th>
+                <th rowspan="1" class="{{ $headKolom }}">Izin</th>
+                <th rowspan="1" class="{{ $headKolom }} border-r">Sakit</th>
+            @endif
         </tr>
 
 
@@ -118,9 +175,9 @@
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
+            <td class="{{ $mainKolom }} text-center">{{ $user->mahasiswa->id }}</td>
 
-           {{-- Role --}}
+            {{-- Role --}}
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">
                 <flux:dropdown>
 
@@ -138,16 +195,59 @@
 
             <td class="{{ $mainKolom }} {{ $borderR }} text-center">{{ $user->mahasiswa->nim }}</td>
 
- 
+
+            @php
+                $isMahasiswa = false;
+                if (Auth::user()->admin || Auth::user()->dosen) {
+                    $isMahasiswa = true;
+                } elseif (Auth::user()->mahasiswa && Auth::user()->id == $user->id) {
+                    $isMahasiswa = true;
+                }
+            @endphp
+
             <td class="{{ $secondKolom }} {{ $borderR }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }} {{ $borderR }} text-center whitespace-nowrap">
-                {{ $user->mhs_poin_absensi ?? 0 / (2 * $totalSesiKelas) * 100 }}%
+                @if ($isMahasiswa)
+                    {{ round((($user->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100, 2) }}%
+                @else
+                    -
+                @endif
+            </td>
+
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                @if ($isMahasiswa)
+                    {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @else
+                    -
+                @endif
             </td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @if ($isMahasiswa)
+                    {{ $user->mhs_dispensasi ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @else
+                    -
+                @endif
+            </td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                @if ($isMahasiswa)
+                    {{ $user->mhs_terlambat ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @else
+                    -
+                @endif
+            </td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                @if ($isMahasiswa)
+                    {{ $user->mhs_izin ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @else
+                    -
+                @endif
             </td>
             <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
-                {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @if ($isMahasiswa)
+                    {{ $user->mhs_sakit ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                @else
+                    -
+                @endif
             </td>
 
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
@@ -235,17 +335,10 @@
 
         @empty
             <tr>
-                <td colspan="11" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                <td colspan="14" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Mahasiswa Kelas ditemukan!
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $users,
-            ])
-        </x-slot:footer>
 
         </x-admin.global.table.main-layout-table>

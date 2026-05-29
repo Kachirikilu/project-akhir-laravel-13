@@ -6,8 +6,10 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
+// use App\Models\Kelas\KelasMahasiswa;
 use App\Models\Kelas\KelasSesi;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,13 +20,17 @@ trait WithJadwalModal
     use HasErrorCount;
     use HasToast;
 
-    public $selected_id_jadwal;
+    public $selected_jadwal_id;
 
     public $isEditingJadwal = false;
 
     public $showEditJadwal = false;
 
     public $showJadwalModal = false;
+
+    public $showJadwalJoin = false;
+
+    public $showJadwalLeft = false;
 
     public $sesi_1;
 
@@ -77,7 +83,97 @@ trait WithJadwalModal
         $this->showEditJadwal = false;
 
         $this->updatedMahasiswaNameSearch($this->mahasiswaNameSearch);
-        // $this->updatedPrNameSearch($this->prNameSearch);
+    }
+
+    public function joinJadwal($data)
+    {
+        if (! $this->AuthCheck('mahasiswa')) {
+            return;
+        }
+
+        try {
+            $mahasiswa_id = Auth::user()->mahasiswa->id ?? null;
+
+            if (empty($mahasiswa_id)) {
+                $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
+                return;
+            }
+            if (empty($data['jadwal_id'])) {
+                $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
+                return;
+            }
+            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $data['jadwal_id'])->first();
+
+            $pw = $jadwal->password;
+            $message = "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}";
+
+            if ($data['password'] != $pw) {
+                $this->toast(message: $message, type: 'join', variant: 'danger');
+
+                throw ValidationException::withMessages([
+                    'password' => 'Masukkan Password yang benar!',
+                ]);
+            }
+
+            $jadwal->mahasiswas()->sync($mahasiswa_id);
+            $this->toast(message: $message, type: 'join');
+
+            $this->resetInputJadwal();
+            $this->dispatch('refresh-data-jadwal');
+            $this->showJadwalJoin = false;
+
+            $this->redirect(route('sesi-management', [$jadwal->kode_kelas, $jadwal->kode_jadwal]));
+
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
+    }
+
+    public function leftJadwal()
+    {
+        if (! $this->AuthCheck('mahasiswa')) {
+            return;
+        }
+
+        try {
+            $mahasiswa_id = Auth::user()->mahasiswa->id ?? null;
+
+            if (empty($mahasiswa_id)) {
+                $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
+
+                return;
+            }
+            if (! property_exists($this, 'jadwal_id') || empty($this->jadwal_id)) {
+                $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
+                return;
+            }
+            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $this->jadwal_id)->first();
+
+
+            if ($jadwal->mahasiswas()->detach($mahasiswa_id)) {
+                $history = session('jadwal.history', []);
+                $compositeKey =
+                    $jadwal->kelas_rel->kode.'_'.$jadwal->kode_jadwal;
+                unset($history[$compositeKey]);
+                session(['jadwal.history' => $history]);
+                $this->toast(message: "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}", type: 'left');
+                $this->redirect(route('jadwal-management', $jadwal->kode_kelas));
+
+            } else {
+                $this->toast(message: "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}", type: 'left', variant: 'danger');
+
+                return;
+            }
+
+            $this->resetInputJadwal();
+            $this->dispatch('refresh-data-jadwal');
+            $this->showJadwalLeft = false;
+
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
     }
 
     public function editJadwal($id)
@@ -90,7 +186,7 @@ trait WithJadwalModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->selected_id_jadwal = $id;
+        $this->selected_jadwal_id = $id;
         $this->isEditingJadwal = true;
         $this->showEditJadwal = true;
 
@@ -239,10 +335,9 @@ trait WithJadwalModal
                 'date',
                 'after:tanggal_mulai',
             ],
-            
 
             'jam_mulai' => 'required|date_format:H:i',
-            'jam_berakhir' => ['required', 'date_format:H:i', 'after:jam_mulai',],
+            'jam_berakhir' => ['required', 'date_format:H:i', 'after:jam_mulai'],
 
             'kapasitas' => [
                 'required',
@@ -314,7 +409,7 @@ trait WithJadwalModal
                 $query->where(
                     'id',
                     '!=',
-                    $this->selected_id_jadwal
+                    $this->selected_jadwal_id
                 );
             }
 
@@ -351,9 +446,10 @@ trait WithJadwalModal
                 $kelasId
             );
 
-            DB::transaction(function () use ($validated, $data) {
+            DB::transaction(function () use ($validated, $data, $kelasId) {
 
                 $jadwal = KelasJadwal::create([
+                    'kelas_id' => $kelasId,
                     'password' => $validated['password'] ?? null,
                     'kode_wilayah' => $validated['kode_wilayah'],
                     'label_kelas' => $validated['label_kelas'],
@@ -456,7 +552,7 @@ trait WithJadwalModal
             ) {
 
                 $jadwal = KelasJadwal::findOrFail(
-                    $this->selected_id_jadwal
+                    $this->selected_jadwal_id
                 );
 
                 // =========================================
@@ -547,9 +643,9 @@ trait WithJadwalModal
 
             'jam_mulai.required' => 'Jam mulai wajib diisi!',
             'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
-            'jam_mulai.date_format'               => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
+            'jam_mulai.date_format' => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
             'jam_berakhir.required' => 'Jam berakhir wajib diisi!',
-            'jam_berakhir.date_format'            => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
+            'jam_berakhir.date_format' => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
             'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
 
             'kapasitas.required' => 'Kapasitas wajib diisi!',
@@ -595,7 +691,7 @@ trait WithJadwalModal
     private function resetInputJadwal()
     {
         $fields = [
-            'selected_id_jadwal',
+            'selected_jadwal_id',
         ];
 
         $this->mahasiswaNameSearch = '';

@@ -110,6 +110,7 @@
         'modelString' => 'password',
         'iconString' => 'lock-closed',
         'placeholder' => 'Contoh: AIDL22',
+        'isRequired' => 0,
         'message' => $errors->first('password'),
     ])
 

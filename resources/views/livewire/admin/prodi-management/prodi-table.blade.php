@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$xResults" :onlyAdmin="!Auth::user()->admin">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -186,12 +186,5 @@
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $xResults,
-            ])
-        </x-slot:footer>
 
     </x-admin.global.table.main-layout-table>

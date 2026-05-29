@@ -1,4 +1,4 @@
-<x-global.main-layout-table>
+<x-global.main-layout-table :paginator="$xResults">
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -75,7 +75,7 @@
                 ])
             @endif
 
-            @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')
+            @if ($switchTable === 'cpmk' || $switchTable === 'sub-cpmk' || $switchTable === 'cpl')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'deskripsi',
                     'rowSpan' => 2,
@@ -101,7 +101,7 @@
                     'pTop' => 5,
                 ])
             @endif
-            @if ($switchTable === 'scpmk')
+            @if ($switchTable === 'sub-cpmk')
                 <th colspan="4" class="{{ $headSubKolom }}">
                     Pembelajaran
                 </th>
@@ -151,7 +151,7 @@
 
         <tr class="bg-gray-50">
             @if ($switchTable === 'rps')
-                 @include('livewire.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'kode_mk',
                     'isMain' => 1,
                     'isCenter' => 1,
@@ -204,8 +204,7 @@
                 ])
             @endif
 
-            @if ($switchTable === 'scpmk')
-
+            @if ($switchTable === 'sub-cpmk')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'metode',
                     'isCenter' => 1,
@@ -277,27 +276,10 @@
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @if ($switchTable === 'rps')
-                                @switch($x->level_mk)
-                                    @case(1)
-                                        <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '---' }}
-                                        </flux:badge>
-                                    @break
-
-                                    @case(2)
-                                        <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '---' }}
-                                        </flux:badge>
-                                    @break
-
-                                    @case(3)
-                                        <flux:badge icon="building-library" color="indigo" size="sm">
-                                            {{ $x->kode ?? '---' }}
-                                        </flux:badge>
-                                    @break
-
-                                    @default
-                                        <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '---' }}
-                                        </flux:badge>
-                                @endswitch
+                                @include('livewire.global.table.badge.level-mk-badge', [
+                                    'xValue' => $x->kode,
+                                    'sortir' => $x->level_mk,
+                                ])
                             @else
                                 @switch($switchTable)
                                     @case('cpmk')
@@ -305,7 +287,7 @@
                                         </flux:badge>
                                     @break
 
-                                    @case('scpmk')
+                                    @case('sub-cpmk')
                                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '---' }}
                                         </flux:badge>
                                     @break
@@ -337,26 +319,11 @@
                 <td class="{{ $secondKolom }} {{ $borderR }} {{ $borderL }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @switch($x->level_mk)
-                                @case(1)
-                                    <flux:badge color="emerald" size="sm">{{ $x->kode_mk ?? '---' }}
-                                    </flux:badge>
-                                @break
-
-                                @case(2)
-                                    <flux:badge color="amber" size="sm">{{ $x->kode_mk ?? '---' }}
-                                    </flux:badge>
-                                @break
-
-                                @case(3)
-                                    <flux:badge color="indigo" size="sm">{{ $x->kode_mk ?? '---' }}
-                                    </flux:badge>
-                                @break
-
-                                @default
-                                    <flux:badge color="red" size="sm">{{ $x->kode_mk ?? '---' }}
-                                    </flux:badge>
-                            @endswitch
+                            @include('livewire.global.table.badge.level-mk-badge', [
+                                'xValue' => $x->kode_mk,
+                                'sortir' => $x->level_mk,
+                                'noIcon' => 1,
+                            ])
                         </button>
 
                         @include('livewire.staff.obe-management.obe-toolbar-table', [
@@ -374,15 +341,10 @@
                 <td class="{{ $mainKolom }} {{ $borderR }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if ($x->wajib)
-                                <flux:badge icon="check" color="green" size="sm" inset="top bottom">
-                                    {{ $x->wajib_text }}
-                                </flux:badge>
-                            @else
-                                <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">
-                                    {{ $x->wajib_text }}
-                                </flux:badge>
-                            @endif
+                            @include('livewire.global.table.badge.wajib-badge', [
+                                'xValue' => $x->wajib_text,
+                                'sortir' => $x->wajib,
+                            ])
                         </button>
                         @include('livewire.staff.obe-management.obe-toolbar-table', [
                             'x' => $x,
@@ -488,7 +450,7 @@
                     {{ $x->deskripsi_cpl ?? '-' }}</td>
             @endif
 
-            @if ($switchTable === 'scpmk' || $switchTable === 'cpl')
+            @if ($switchTable === 'sub-cpmk' || $switchTable === 'cpl')
                 <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
                     {{ $x->deskripsi ?? '-' }}</td>
             @endif
@@ -499,62 +461,14 @@
                 <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot ? $x->total_bobot . '%' : '-' }}</td>
             @endif
 
-            @if ($switchTable === 'scpmk')
+            @if ($switchTable === 'sub-cpmk')
                 <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @switch($x->metode)
-                                @case('Teori')
-                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
-                                    </flux:badge>
-                                @break
-
-                                @case('Praktik')
-                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
-                                    </flux:badge>
-                                @break
-
-                                @case('Tugas')
-                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
-                                    </flux:badge>
-                                @break
-
-                                @case('UTS')
-                                @case('UAS')
-                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm"
-                                        variant="pill">
-                                        {{ $x->metode }}</flux:badge>
-                                @break
-
-                                @case('Hasil Proyek')
-                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
-                                    </flux:badge>
-                                @break
-
-                                @case('Kerja Praktek')
-                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
-                                    </flux:badge>
-                                @break
-
-                                @case('Skripsi')
-                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
-                                    </flux:badge>
-                                @break
-
-                                @case('Aktivitas Partisipasif')
-                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
-                                    </flux:badge>
-                                @break
-
-                                @case('Mandiri')
-                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
-                                    </flux:badge>
-                                @break
-
-                                @default
-                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
-                                        {{ $x->metode ?? '-' }}</flux:badge>
-                            @endswitch
+                            @include('livewire.global.table.badge.metode-badge', [
+                                'xValue' => $x->metode,
+                                'sortir' => $x->metode,
+                            ])
                         </button>
 
                         @include('livewire.staff.obe-management.obe-toolbar-table', [
@@ -564,12 +478,13 @@
                         ])
                     </flux:dropdown>
 
-                    <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
-                    <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
-                    <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
                 </td>
 
-                <td class="{{ $mainKolom }} text-center">{{ $x->bobot_format ? $x->bobot_format . '%' : '-' }}</td>
+                <td class="{{ $mainKolom }} text-center">{{ $x->bobot_format ? $x->bobot_format . '%' : '-' }}
+                </td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_tugas ?? '60 m/SKS' }}</td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_mandiri ?? '60 m/SKS' }}</td>
@@ -620,7 +535,7 @@
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 16,
                     'cpmk' => 8,
-                    'scpmk' => 14,
+                    'sub-cpmk' => 14,
                     'cpl' => 6,
                     'ref' => 10,
                     default => 9,
@@ -630,12 +545,5 @@
                 </td>
             </tr>
         @endforelse
-
-
-        <x-slot:footer>
-            @include('livewire.global.table.footer-table', [
-                'typeXString' => $xResults,
-            ])
-        </x-slot:footer>
 
         </x-admin.global.table.main-layout-table>

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class KelasJadwal extends Model
 {
@@ -270,6 +271,33 @@ class KelasJadwal extends Model
     //     });
     // }
 
+    // public function scopeWhereKode($query, string $kode)
+    // {
+    //     return $query->whereRaw(
+    //         "
+    //         CONCAT(
+    //             label_kelas,
+    //             '-',
+    //             kode_wilayah,
+    //             '-',
+    //             CASE
+    //                 WHEN YEAR(tanggal_mulai) >= 3000
+    //                     THEN CAST(YEAR(tanggal_mulai) AS CHAR)
+
+    //                 WHEN YEAR(tanggal_mulai) >= 2100
+    //                     THEN RIGHT(CAST(YEAR(tanggal_mulai) AS CHAR), 3)
+
+    //                 WHEN YEAR(tanggal_mulai) >= 2000
+    //                     THEN RIGHT(CAST(YEAR(tanggal_mulai) AS CHAR), 2)
+
+    //                 ELSE CAST(YEAR(tanggal_mulai) AS CHAR)
+    //             END
+    //         ) = ?
+    //         ",
+    //         [$kode]
+    //     );
+    // }
+
     public function scopeSearchKelasJadwal($query, $search)
     {
         if (blank(trim($search))) {
@@ -310,7 +338,7 @@ class KelasJadwal extends Model
                 }
                 $jq->orWhereRaw("REPLACE(CONCAT(label_kelas, kode_wilayah, RIGHT(YEAR(tanggal_mulai), 2)), '-', '') LIKE ?", ['%'.$searchClean.'%']);
             })
-                ->orWhere('password', 'LIKE', $searchTerm)
+                // ->orWhere('password', 'LIKE', $searchTerm)
                 ->orWhere('label_kelas', 'LIKE', $searchTerm)
                 ->orWhere('kode_wilayah', 'LIKE', $searchTerm)
                 ->orWhereRaw("CONCAT(label_kelas, ' ', kode_wilayah) LIKE ?", [$searchTerm])
@@ -338,6 +366,10 @@ class KelasJadwal extends Model
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%W, %d %M %Y')) LIKE ?", [$searchLower]);
                 });
+
+            if (Auth::user()->admin || Auth::user()->dosen) {
+                $q->orWhere('kelas_jadwals.password', $search);
+            }
             if (is_numeric($search)) {
                 $q->orWhere('kelas_jadwals.id', $search);
             }

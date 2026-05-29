@@ -5,6 +5,7 @@ namespace App\Livewire\Staff;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
@@ -32,7 +33,6 @@ use App\Livewire\Staff\RPSManagement\WithOBEExcel;
 use App\Livewire\Staff\RPSManagement\WithRPSDelete;
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
-use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
@@ -46,6 +46,7 @@ use Livewire\WithPagination;
 
 class RPSManagement extends Component
 {
+    use HasToast;
     use WithCPLDelete;
     use WithCPLFilters;
     use WithCPLModal;
@@ -77,7 +78,6 @@ class RPSManagement extends Component
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
-    use HasToast;
 
     public $switchTable = 'rps';
 
@@ -207,7 +207,6 @@ class RPSManagement extends Component
         $this->sortField($table, $sortField, $columns, $aliases);
     }
 
-
     public function switchingTable($table)
     {
         $this->switchTable = $table;
@@ -216,13 +215,13 @@ class RPSManagement extends Component
         $this->resetPage();
 
         $allFilters = [
-            'rps'       => 'filterRPS',
-            'cpmk'      => 'filterCPMK',
-            'sub-cpmk'  => 'filterSCPMK',
-            'cpl'       => 'filterCPL',
-            'referensi' => 'filterRef', 
-            'dosen'     => 'filterDosen',
-            'status'    => 'filterStatus'
+            'rps' => 'filterRPS',
+            'cpmk' => 'filterCPMK',
+            'sub-cpmk' => 'filterSCPMK',
+            'cpl' => 'filterCPL',
+            'referensi' => 'filterRef',
+            'dosen' => 'filterDosen',
+            'status' => 'filterStatus',
         ];
 
         foreach ($allFilters as $tableParam => $filterVariable) {
@@ -232,12 +231,12 @@ class RPSManagement extends Component
         }
 
         $limits = [
-            'rps'   => 200,
-            'cpl'   => 100,
-            'referensi'   => 150,
-            'rps'   => 200,
+            'rps' => 200,
+            'cpl' => 100,
+            'referensi' => 150,
+            'rps' => 200,
             'dosen' => 200,
-            'cpmk'  => 300,
+            'cpmk' => 300,
             'sub-cpmk' => 500,
         ];
 
@@ -291,7 +290,7 @@ class RPSManagement extends Component
             $countRef = Referensi::query();
             $countDosen = User::whereHas('dosen');
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryRPS->onlyTrashed();
                 $queryCPMK->onlyTrashed();
                 $querySCPMK->onlyTrashed();

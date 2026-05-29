@@ -1,4 +1,4 @@
-<flux:modal name="jadwal-modal" wire:model="showJadwalModal" x-data  @refresh-data-jadwal.window="$store.jadwal?.reset()"
+<flux:modal name="jadwal-modal" wire:model="showJadwalModal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
     class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}

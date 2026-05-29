@@ -93,67 +93,67 @@ class KelasSesi extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'sesi_id');
     }
 
-    public function mhsAbsensi(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->whereIn('status', ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi'])->count();
-        });
-    }
-    public function mhsMasuk(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->whereIn('status', ['Hadir', 'Terlambat'])->count();
-        });
-    }
-    public function mhsHadir(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->where('status', 'Hadir')->count();
-        });
-    }
-    public function mhsTerlambat(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->where('status', 'Terlambat')->count();
-        });
-    }
-    public function mhsIzin(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->where('status', 'Izin')->count();
-        });
-    }
-    public function mhsSakit(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->where('status', 'Sakit')->count();
-        });
-    }
-    public function mhsDispensasi(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->kehadirans()->where('status', 'Dispensasi')->count();
-        });
-    }
-    public function mhsAbsen(): Attribute
-    {
-        return Attribute::get(function () {
-            $absenTercatat = $this->kehadirans()->where('status', 'Absen')->count();
-            $tanpaRelasi = $this->hitungSesiTanpaKehadiran();
-            return $absenTercatat + $tanpaRelasi;
-        });
-    }
+    // public function mhsAbsensi(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->whereIn('status', ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi'])->count();
+    //     });
+    // }
+    // public function mhsMasuk(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->whereIn('status', ['Hadir', 'Terlambat'])->count();
+    //     });
+    // }
+    // public function mhsHadir(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->where('status', 'Hadir', 'Dispensasi')->count();
+    //     });
+    // }
+    // public function mhsTerlambat(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->where('status', 'Terlambat')->count();
+    //     });
+    // }
+    // public function mhsIzin(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->where('status', 'Izin')->count();
+    //     });
+    // }
+    // public function mhsSakit(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->where('status', 'Sakit')->count();
+    //     });
+    // }
+    // public function mhsDispensasi(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->kehadirans()->where('status', 'Dispensasi')->count();
+    //     });
+    // }
+    // public function mhsAbsen(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $absenTercatat = $this->kehadirans()->where('status', 'Absen')->count();
+    //         $tanpaRelasi = $this->hitungSesiTanpaKehadiran();
+    //         return $absenTercatat + $tanpaRelasi;
+    //     });
+    // }
 
-    public function mhsTidakMasuk(): Attribute
-    {
-        return Attribute::get(function () {
-            $tidakMasukTercatat = $this->kehadirans()
-                ->whereIn('status', ['Absen', 'Sakit', 'Izin', 'Dispensasi'])
-                ->count();
-            $tanpaRelasi = $this->hitungSesiTanpaKehadiran();
-            return $tidakMasukTercatat + $tanpaRelasi;
-        });
-    }
+    // public function mhsTidakMasuk(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $tidakMasukTercatat = $this->kehadirans()
+    //             ->whereIn('status', ['Absen', 'Sakit', 'Izin'])
+    //             ->count();
+    //         $tanpaRelasi = $this->hitungSesiTanpaKehadiran();
+    //         return $tidakMasukTercatat + $tanpaRelasi;
+    //     });
+    // }
 
     public function countMahasiswa(): Attribute
     {

@@ -2,33 +2,33 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
+use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
+use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
-use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
-use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\HasToast;
-use App\Models\ProgramStudi\Fakultas;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class ProgramStudiManagement extends Component
 {
-    use WithFakultasFilters;
-    use WithFakultasSearchFilters;
+    use HasToast;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
+    use WithFakultasFilters;
+    use WithFakultasSearchFilters;
     use WithPagination;
     use WithProdiDelete;
+    use WithProdiExcel;
     use WithProdiFilters;
     use WithProdiModal;
-    use WithProdiExcel;
-    use HasToast;
 
     public $showModal = false;
 
@@ -115,7 +115,6 @@ class ProgramStudiManagement extends Component
         $this->switchTable = $table;
         $this->syncSortField($table, $this->sortField);
 
-
         $limits = [
             'prodi' => 75,
             'departemen' => 50,
@@ -163,7 +162,7 @@ class ProgramStudiManagement extends Component
             // =========================
             // SOFT DELETE
             // =========================
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryPr = $queryPr->onlyTrashed();
                 $queryDp = $queryDp->onlyTrashed();
                 $queryFk = $queryFk->onlyTrashed();
@@ -188,7 +187,7 @@ class ProgramStudiManagement extends Component
             $countDp = Departemen::query();
             $countFk = Fakultas::query();
 
-            if ($this->showDeleted) {
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $countPr->onlyTrashed();
                 $countDp->onlyTrashed();
                 $countFk->onlyTrashed();

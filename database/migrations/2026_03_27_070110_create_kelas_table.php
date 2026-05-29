@@ -104,7 +104,7 @@ return new class extends Migration
 
         Schema::create('mahasiswa_kelas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mahasiswa_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
             $table->foreignId('kj_id')->constrained('kelas_jadwals')->onDelete('cascade');
             $table->timestamps();
         });
@@ -112,7 +112,7 @@ return new class extends Migration
         Schema::create('mahasiswa_kehadiran', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
-            $table->foreignId('mahasiswa_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
 
             $table->enum('status', [
                 'Hadir',
