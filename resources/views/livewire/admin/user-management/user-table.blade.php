@@ -246,54 +246,9 @@
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
-                        @switch($user->status)
-                            {{-- HIJAU: Status Lulus --}}
-                            @case('Lulus')
-                                <flux:badge color="blue" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- HIJAU: Status Aktif --}}
-                            @case('Aktif')
-                                <flux:badge color="green" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- KUNING: Status Transisi/Sementara --}}
-                            @case('Tugas Belajar')
-                            @case('Izin Belajar')
-
-                            @case('Mutasi')
-                            @case('Cuti')
-
-                            @case('Cuti Sabatika')
-                            @case('Cuti Luar Tanggungan')
-
-                            @case('Pindah')
-                                <flux:badge color="yellow" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- ORANGE: Keluar Prosedural / Masalah Administrasi --}}
-                            @case('Resign')
-                            @case('Pensiun')
-
-                            @case('Alih Tugas')
-                            @case('Mengundurkan Diri')
-
-                            @case('Non-Aktif')
-                                <flux:badge color="orange" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- MERAH: Berhenti Permanen / Sanksi / Masalah Berat --}}
-                            @case('Diberhentikan')
-                            @case('Drop Out')
-
-                            @case('Meninggal Dunia')
-                            @case('Hilang')
-                                <flux:badge color="red" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge size="sm">{{ $user->status }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.status-user-badge', [
+                            'xValue' => $user->status,
+                        ])
                     </button>
 
                     @include('livewire.admin.user-management.user-toolbar-table', [

@@ -6,7 +6,18 @@
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Input Sesi 16 Pertemuan</h4>
 
+
+    <template x-if="$store.jadwal.isEdit == 1">
+        <div class="flex items-center gap-2 p-2">
+            <flux:checkbox x-model.number="$store.jadwal.restart_sesi" :value="1"
+                label="Restart setiap Sesi ke Kondisi Awal"
+                description="Mereset perhitungan setiap sesi perkuliahan yang telah dikustom." class="cursor-pointer" />
+        </div>
+    </template>
+
     <div class="grid sm:grid-cols-2 gap-4">
+
+
 
         @for ($i = 1; $i <= 16; $i++)
             <div class="relative">

@@ -87,9 +87,11 @@
                 'isMain' => 1,
             ])
 
-            <th colspan="6" class="{{ $headSubKolom }}">
-                Kehadiran
-            </th>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <th colspan="7" class="{{ $headSubKolom }}">
+                    Kehadiran
+                </th>
+            @endif
 
             {{-- Angkatan - Autocomplete Input --}}
             @if ($switchTable == 'mahasiswa')
@@ -124,12 +126,12 @@
             @if (Auth::user()->admin || Auth::user()->dosen)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_poin_absensi',
-                    'headString' => 'Absensi',
+                    'headString' => 'Poin',
                     'isMain' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_masuk',
-                    'headString' => 'Masuk',
+                    'headString' => 'Hadir',
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -141,6 +143,7 @@
                     'sortFieldString' => 'mhs_terlambat',
                     'headString' => 'Terlambat',
                     'isCenter' => 1,
+                    'isBorderR' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_izin',
@@ -151,15 +154,21 @@
                     'sortFieldString' => 'mhs_sakit',
                     'headString' => 'Sakit',
                     'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_tidak_masuk',
+                    'headString' => 'Tidak Hadir',
+                    'isCenter' => 1,
                     'isBorderR' => 1,
                 ])
-            @elseif (Auth::user()->mahasiswa)
-                <th rowspan="1" class="{{ $headKolom }} border-x">Masuk</th>
-                <th rowspan="1" class="{{ $headKolom }}">Masuk</th>
+                {{-- @elseif (Auth::user()->mahasiswa)
+                <th rowspan="1" class="{{ $headKolom }} border-x">Poin</th>
+                <th rowspan="1" class="{{ $headKolom }}">Hadir</th>
                 <th rowspan="1" class="{{ $headKolom }}">Dispensi</th>
-                <th rowspan="1" class="{{ $headKolom }}">Terlambat</th>
+                <th rowspan="1" class="{{ $headKolom }} border-r">Terlambat</th>
                 <th rowspan="1" class="{{ $headKolom }}">Izin</th>
-                <th rowspan="1" class="{{ $headKolom }} border-r">Sakit</th>
+                <th rowspan="1" class="{{ $headKolom }}">Sakit</th>
+                <th rowspan="1" class="{{ $headKolom }} border-r whitespace-nowrap">Tidak Hadir</th> --}}
             @endif
         </tr>
 
@@ -180,16 +189,10 @@
             {{-- Role --}}
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">
                 <flux:dropdown>
-
                     <button class="cursor-pointer">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
-
-                    @include('livewire.admin.user-management.user-toolbar-table', [
-                        'x' => $user,
-                        'nameXString' => 'Pengguna',
-                    ])
-
+                    @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table', ['x' => $user])
                 </flux:dropdown>
             </td>
 
@@ -206,111 +209,82 @@
             @endphp
 
             <td class="{{ $secondKolom }} {{ $borderR }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
-            <td class="{{ $secondKolom }} {{ $borderR }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ round((($user->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100, 2) }}%
-                @else
-                    -
-                @endif
-            </td>
 
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
-                @else
-                    -
-                @endif
-            </td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ $user->mhs_dispensasi ?? 0 }} / {{ $totalSesiKelas }} Sesi
-                @else
-                    -
-                @endif
-            </td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ $user->mhs_terlambat ?? 0 }} / {{ $totalSesiKelas }} Sesi
-                @else
-                    -
-                @endif
-            </td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ $user->mhs_izin ?? 0 }} / {{ $totalSesiKelas }} Sesi
-                @else
-                    -
-                @endif
-            </td>
-            <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
-                @if ($isMahasiswa)
-                    {{ $user->mhs_sakit ?? 0 }} / {{ $totalSesiKelas }} Sesi
-                @else
-                    -
-                @endif
-            </td>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                    <flux:dropdown>
+
+                        <button class="cursor-pointer">
+                            @if ($isMahasiswa)
+                                @php
+                                    $poinMhs = round((($user->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100, 2);
+                                @endphp
+                                @include('livewire.global.table.badge.poin-absen-badge', [
+                                    'xValue' => $poinMhs . '%',
+                                    'sortir' => $poinMhs,
+                                ])
+                            @else
+                                -
+                            @endif
+                        </button>
+
+                        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table', ['x' => $user])
+                    </flux:dropdown>
+                </td>
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_terlambat ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_izin ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_sakit ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                    @else
+                        -
+                    @endif
+                </td>
+            @endif
 
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
 
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
-
                     <button class="cursor-pointer">
-                        @switch($user->status)
-                            {{-- HIJAU: Status Lulus --}}
-                            @case('Lulus')
-                                <flux:badge color="blue" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- HIJAU: Status Aktif --}}
-                            @case('Aktif')
-                                <flux:badge color="green" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- KUNING: Status Transisi/Sementara --}}
-                            @case('Tugas Belajar')
-                            @case('Izin Belajar')
-
-                            @case('Mutasi')
-                            @case('Cuti')
-
-                            @case('Cuti Sabatika')
-                            @case('Cuti Luar Tanggungan')
-
-                            @case('Pindah')
-                                <flux:badge color="yellow" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- ORANGE: Keluar Prosedural / Masalah Administrasi --}}
-                            @case('Resign')
-                            @case('Pensiun')
-
-                            @case('Alih Tugas')
-                            @case('Mengundurkan Diri')
-
-                            @case('Non-Aktif')
-                                <flux:badge color="orange" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            {{-- MERAH: Berhenti Permanen / Sanksi / Masalah Berat --}}
-                            @case('Diberhentikan')
-                            @case('Drop Out')
-
-                            @case('Meninggal Dunia')
-                            @case('Hilang')
-                                <flux:badge color="red" size="sm">{{ $user->status }}</flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge size="sm">{{ $user->status }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.status-user-badge', [
+                            'xValue' => $user->status,
+                        ])
                     </button>
-
-                    @include('livewire.admin.user-management.user-toolbar-table', [
-                        'x' => $user,
-                        'nameXString' => 'Pengguna',
-                    ])
-
+                    @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table', ['x' => $user])
                 </flux:dropdown>
             </td>
 
@@ -322,23 +296,19 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    @include('livewire.admin.user-management.user-toolbar-table', [
-                        'x' => $user,
-                        'nameXString' => 'Pengguna',
-                    ])
-
+                    @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table', ['x' => $user])
                 </flux:dropdown>
             </td>
 
         </tr>
 
-        @empty
-            <tr>
-                <td colspan="14" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada data Mahasiswa Kelas ditemukan!
-                </td>
-            </tr>
-        @endforelse
+    @empty
+        <tr>
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '8' }}"
+                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                Tidak ada data Mahasiswa Kelas ditemukan!
+            </td>
+        </tr>
+    @endforelse
 
-        </x-admin.global.table.main-layout-table>
+    </x-admin.global.table.main-layout-table>

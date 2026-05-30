@@ -34,6 +34,10 @@
         @php
             $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
             $isUjian = in_array(strtoupper($s->metode), $daftarUjian);
+
+            if (Auth::user()->mahasiswa) {
+                $kehadiran_mhs = $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first();
+            }
         @endphp
 
         {{-- CARD ITEM --}}
@@ -54,57 +58,9 @@
                         <div>
                             <flux:dropdown>
                                 <button class="cursor-pointer focus:outline-none">
-                                    @switch($s->metode)
-                                        @case('Teori')
-                                            <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
-                                            </flux:badge>
-                                        @break
-
-                                        @case('Praktik')
-                                            <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
-                                            </flux:badge>
-                                        @break
-
-                                        @case('Tugas')
-                                            <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">
-                                                Tugas</flux:badge>
-                                        @break
-
-                                        @case('UTS')
-                                        @case('UAS')
-                                            <flux:badge icon="clipboard-document-check" color="amber" size="sm"
-                                                variant="pill">{{ $s->metode }}</flux:badge>
-                                        @break
-
-                                        @case('Hasil Proyek')
-                                            <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil
-                                                Proyek</flux:badge>
-                                        @break
-
-                                        @case('Kerja Praktek')
-                                            <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja
-                                                Praktek</flux:badge>
-                                        @break
-
-                                        @case('Skripsi')
-                                            <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">
-                                                Skripsi</flux:badge>
-                                        @break
-
-                                        @case('Aktivitas Partisipasif')
-                                            <flux:badge icon="user-group" color="rose" size="sm" variant="pill">
-                                                Partisipasif</flux:badge>
-                                        @break
-
-                                        @case('Mandiri')
-                                            <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
-                                            </flux:badge>
-                                        @break
-
-                                        @default
-                                            <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
-                                                {{ $s->metode ?? '-' }}</flux:badge>
-                                    @endswitch
+                                    @include('livewire.global.table.badge.metode-badge', [
+                                        'xValue' => $s->metode,
+                                    ])
                                 </button>
 
                                 @include(
@@ -218,40 +174,129 @@
                                 </span>
                             </div>
 
-                            <div class="flex items-center justify-between gap-2 flex-wrap">
-                                <flux:dropdown>
-                                    <button class="cursor-pointer focus:outline-none">
-                                        <flux:badge icon="academic-cap" color="fuchsia" size="sm">
-                                            {{ $s->kode_scpmk ?? '---' }}
-                                        </flux:badge>
-                                    </button>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between gap-2 flex-wrap pb-1">
+                                    <flux:dropdown>
+                                        <button class="cursor-pointer focus:outline-none group">
+                                            <flux:badge icon="academic-cap" color="fuchsia" size="sm"
+                                                class="group-hover:opacity-80 transition">
+                                                {{ $s->kode_scpmk ?? '---' }}
+                                            </flux:badge>
+                                        </button>
 
-                                    @include(
-                                        'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                        [
-                                            'x' => $s,
-                                            'editString' => 'editSesi',
-                                            'nameXString' => 'Sesi',
-                                            'confirmDeleteString' => 'deleteSesi',
-                                            'copyName' => 'Kode Sub-CPMK',
-                                            'copyText' => $s->kode_scpmk ?? '',
-                                        ]
-                                    )
-                                </flux:dropdown>
+                                        @include(
+                                            'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                                            [
+                                                'x' => $s,
+                                                'editString' => 'editSesi',
+                                                'nameXString' => 'Sesi',
+                                                'confirmDeleteString' => 'deleteSesi',
+                                                'copyName' => 'Kode Sub-CPMK',
+                                                'copyText' => $s->kode_scpmk ?? '',
+                                            ]
+                                        )
+                                    </flux:dropdown>
 
-                                <x-button-action color="blue"
-                                    @click="
-                                    $store.sesi?.setEdit(0);
-                                    $store.sesi?.setColor('text-blue-700 dark:text-blue-400');
-                                    $flux.modal('sesi-absen').show();
-                                    $store.sesi?.setValueAbsenSesi(
-                                        '{{ $s->id ?? '' }}',
-                                        '{{ $s->pertemuan_ke ?? '' }}',
-                                    );
-                                    ">
-                                    <flux:icon name="user-plus" class="w-3.5 h-3.5" />
-                                    <span>Absensi</span>
-                                </x-button-action>
+                                    @if (Auth::user()->mahasiswa)
+                                        <div x-data="{
+                                            sekarang: '',
+                                            mulai: '{{ $s->waktu_pelaksanaan }}',
+                                            dispensasi: '{{ $s->waktu_dispensasi }}',
+                                        
+                                            getWaktuLokal() {
+                                                let d = new Date();
+                                                let tzOffset = d.getTimezoneOffset() * 60000;
+                                                let waktuLokal = new Date(d.getTime() - tzOffset);
+                                                return waktuLokal.toISOString().slice(0, 16);
+                                            },
+                                        
+                                            init() {
+                                                this.sekarang = this.getWaktuLokal();
+                                        
+                                                setInterval(() => {
+                                                    this.sekarang = this.getWaktuLokal();
+                                                }, 10000);
+                                            }
+                                        }">
+                                            <template x-if="sekarang >= mulai && sekarang <= dispensasi">
+                                                <x-button-action color="blue" size="sm"
+                                                    @click="
+                                                        $store.sesi?.setEdit(0);
+                                                        $store.sesi?.setColor('text-blue-700 dark:text-blue-400');
+                                                        $flux.modal('sesi-absen').show();
+                                                        $store.sesi?.setValueAbsenSesi(
+                                                            '{{ $s->id ?? '' }}',
+                                                            '{{ $s->pertemuan_ke ?? '' }}',
+                                                            '{{ $s->waktu_pelaksanaan ?? '' }}',
+                                                            '{{ $s->waktu_berakhir ?? '' }}',
+                                                            '{{ $s->waktu_telat ?? '' }}',
+                                                            '{{ $s->waktu_dispensasi ?? '' }}'
+                                                        );
+                                                    ">
+                                                    <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                                                    <span>Absensi</span>
+                                                </x-button-action>
+                                            </template>
+                                        </div>
+                                    @endif
+                                </div>
+                                @if (Auth::user()->mahasiswa)
+                                    <div
+                                        class="pt-3 border-t border-zinc-200 dark:border-zinc-700 flex flex-col gap-2 text-sm">
+                                        <span class="text-zinc-500 dark:text-zinc-400 font-medium">Status Absen
+                                            Anda:</span>
+
+                                        <div class="w-full">
+                                            @if ($kehadiran_mhs)
+                                                @php
+                                                    $badgeColor = match ($kehadiran_mhs->status) {
+                                                        'Hadir' => 'green',
+                                                        'Terlambat' => 'amber',
+                                                        'Dispensasi' => 'blue',
+                                                        'Sakit', 'Izin' => 'indigo',
+                                                        default => 'red',
+                                                    };
+                                                @endphp
+
+                                                <div class="flex flex-col items-start gap-1.5">
+
+
+
+                                                    <div
+                                                        class="flex items-center justify-between gap-2 flex-wrap pb-1 w-full">
+                                                        <flux:badge color="{{ $badgeColor }}" size="sm"
+                                                            inset-top-bottom>
+                                                            {{ $kehadiran_mhs->status }}
+                                                        </flux:badge>
+
+                                                        <span
+                                                            class="text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
+                                                            <flux:icon name="clock" class="w-3.5 h-3.5 inline" />
+                                                            {{ $kehadiran_mhs->waktu_presensi?->format('H:i') }} WIB
+                                                        </span>
+                                                    </div>
+
+
+
+
+                                                    @if ($kehadiran_mhs->keterangan)
+                                                        <span
+                                                            class="text-xs text-zinc-500 dark:text-zinc-400 italic bg-zinc-50 dark:bg-zinc-800/50 p-2 rounded-md border border-zinc-100 dark:border-zinc-800/80 w-full block mt-0.5">
+                                                            <strong
+                                                                class="not-italic text-zinc-600 dark:text-zinc-300 block mb-0.5 text-[11px] uppercase tracking-wider">Keterangan:</strong>
+                                                            {{ $kehadiran_mhs->keterangan }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <flux:badge color="zinc" size="sm" class="opacity-70">
+                                                    Belum Presensi
+                                                </flux:badge>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+
                             </div>
 
                             <div
@@ -306,13 +351,13 @@
 
             </div>
         </div>
-        @empty
-            <div
-                class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
-                <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
-                <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!
-                </p>
-            </div>
-        @endforelse
+    @empty
+        <div
+            class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+            <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
+            <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!
+            </p>
+        </div>
+    @endforelse
 
-    </x-global.main-layout-card>
+</x-global.main-layout-card>

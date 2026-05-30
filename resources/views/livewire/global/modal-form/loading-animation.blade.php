@@ -12,7 +12,7 @@
         </svg>
 
         <p class="mt-3 text-sm font-semibold text-[var(--focus-color)] tracking-wide animate-pulse">
-            Sedang Memproses...
+            {{ $textString ?? 'Sedang Memproses...' }}
         </p>
     </div>
 </div>

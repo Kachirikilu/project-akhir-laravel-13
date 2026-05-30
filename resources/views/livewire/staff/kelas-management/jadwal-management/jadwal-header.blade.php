@@ -28,7 +28,10 @@
             <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Mata
                 Kuliah</span>
             <span class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
-            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">{{ $kelas->kode_mk ?? '---' }}</span>
+            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
+                {{ $kelas->kode_mk ?? '---' }}
+                <strong class="px-2">|</strong>
+                Sem {{ $kelas->semester ?? '-' }}</span>
         </div>
         <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Program
@@ -41,11 +44,10 @@
         </div>
         <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">RPS /
-                Semester / SKS</span>
+                SKS</span>
             <span
                 class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->kode_rps ?? '---' }}</span>
-            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">Sem {{ $kelas->semester ?? '-' }}
-                <strong class="px-2">|</strong>
+            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->sks ?? '-' }} SKS
                 <strong class="px-2">|</strong>
                 {{ $kelas->sks_text ?? '-' }}</span>

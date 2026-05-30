@@ -185,6 +185,11 @@ class KelasSesi extends Model
         return $this->jadwal->kelas_rel->rps_rel->dosens;
     }
 
+    protected function sks(): Attribute
+    {
+        return Attribute::get(fn () => $this->jadwal_rel?->kelas_rel?->rps_rel?->sks);
+    }
+
     protected function hari(): Attribute
     {
         return Attribute::get(function () {
@@ -305,6 +310,51 @@ class KelasSesi extends Model
             }
 
             return "{$this->jam_mulai} - {$this->jam_berakhir}";
+        });
+    }
+
+    protected function waktuPelaksanaan(): Attribute
+    {
+        return Attribute::get(function () {
+            $jamMulai = $this->override->jam_mulai ?? $this->jadwal_rel->jam_mulai;
+            if (!$this->tanggal || !$jamMulai) {
+                return null;
+            }
+            return Carbon::parse($this->tanggal . ' ' . $jamMulai)->format('Y-m-d\TH:i');
+        });
+    }
+    protected function waktuBerakhir(): Attribute
+    {
+        return Attribute::get(function () {
+            $jamBerakhir = $this->override->jam_berakhir ?? $this->jadwal_rel->jam_berakhir;
+            if (!$this->tanggal || !$jamBerakhir) {
+                return null;
+            }
+            return Carbon::parse($this->tanggal . ' ' . $jamBerakhir)->format('Y-m-d\TH:i');
+        });
+    }
+    protected function waktuTelat(): Attribute
+    {
+        return Attribute::get(function () {
+            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+            if (!$this->waktu_pelaksanaan || $sks === 0) {
+                return $this->waktu_pelaksanaan;
+            }
+            $menitTambahan = $sks * 30;
+            return Carbon::parse($this->waktu_pelaksanaan)
+                ->addMinutes($menitTambahan)
+                ->format('Y-m-d\TH:i');
+        });
+    }
+    protected function waktuDispensasi(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->waktu_pelaksanaan) {
+                return null;
+            }
+            return Carbon::parse($this->waktu_pelaksanaan)
+                ->addHours(6)
+                ->format('Y-m-d\TH:i');
         });
     }
 

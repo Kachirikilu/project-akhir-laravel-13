@@ -1,4 +1,4 @@
-@switch($sortir)
+@switch($sortir ?? $xValue)
     {{-- Tahun 1: Biru/Cyan --}}
     @case(1)
         <flux:badge color="blue" size="sm">{{ $textString ?? null }} {{ $xValue ?? '---' }}</flux:badge>

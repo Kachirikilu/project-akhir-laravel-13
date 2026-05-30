@@ -180,57 +180,9 @@
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($s->metode)
-                            @case('Teori')
-                                <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
-                                </flux:badge>
-                            @break
-
-                            @case('Praktik')
-                                <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
-                                </flux:badge>
-                            @break
-
-                            @case('Tugas')
-                                <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
-                                </flux:badge>
-                            @break
-
-                            @case('UTS')
-                            @case('UAS')
-                                <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">
-                                    {{ $s->metode }}</flux:badge>
-                            @break
-
-                            @case('Hasil Proyek')
-                                <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
-                                </flux:badge>
-                            @break
-
-                            @case('Kerja Praktek')
-                                <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
-                                </flux:badge>
-                            @break
-
-                            @case('Skripsi')
-                                <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
-                                </flux:badge>
-                            @break
-
-                            @case('Aktivitas Partisipasif')
-                                <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
-                                </flux:badge>
-                            @break
-
-                            @case('Mandiri')
-                                <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
-                                </flux:badge>
-                            @break
-
-                            @default
-                                <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
-                                    {{ $s->metode ?? '-' }}</flux:badge>
-                        @endswitch
+                        @include('livewire.global.table.badge.metode-badge', [
+                            'xValue' => $s->metode,
+                        ])
                     </button>
 
                     @include(
@@ -315,12 +267,13 @@
             {{-- <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
-        @empty
-            <tr>
-                <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '14' }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada data Sesi Pertemuan Kelas ditemukan!
-                </td>
-            </tr>
-        @endforelse
+    @empty
+        <tr>
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '14' }}"
+                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                Tidak ada data Sesi Pertemuan Kelas ditemukan!
+            </td>
+        </tr>
+    @endforelse
 
-        </x-admin.global.table.main-layout-table>
+    </x-admin.global.table.main-layout-table>

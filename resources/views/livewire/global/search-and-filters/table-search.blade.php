@@ -1,10 +1,10 @@
 <th rowspan="{{ $rowSpan ?? 1 }}" rowspan="{{ $rowspan ?? 1 }}" colspan="{{ $colspan ?? 1 }}"
-    class="px-6 py-3 {{ $isSubHeader ?? false ? 'bg-gray-100/50' : '' }}
+    class="p-6 {{ $isSubHeader ?? false ? 'bg-gray-100/50' : '' }}
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
-        {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-3' : 'py-3' }}
-        bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 relative
+        {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-6' : 'py-6' }}
+        bg-[var(--main-table-color)] border-[var(--border-table-color)] relative
         ">
     <div class="flex flex-col gap-1 items-center">
 

@@ -3,17 +3,12 @@
 namespace App\Models\Kelas;
 
 use App\Models\Akademik\RPS;
-use App\Models\Akademik\MataKuliah;
 use App\Models\ProgramStudi\Prodi;
-use App\Models\Kelas\KelasJadwal;
-use App\Models\Auth\Mahasiswa;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class Kelas extends Model
 {
@@ -52,6 +47,7 @@ class Kelas extends Model
     {
         return Attribute::get(fn () => $this->rps_rel?->kode_mk);
     }
+
     protected function kodePr(): Attribute
     {
         return Attribute::get(fn () => $this->pr_rel?->kode);
@@ -72,6 +68,7 @@ class Kelas extends Model
             return $this->deskripsi;
         });
     }
+
     protected function prodi(): Attribute
     {
         return Attribute::get(fn () => $this->pr_rel?->prodi);
@@ -131,13 +128,52 @@ class Kelas extends Model
 
     public function scopeSearchKelas($query, $search)
     {
-        $searchTerm = '%' . $search . '%';
+        $searchTerm = '%'.$search.'%';
         $searchLower = strtolower($search);
+
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
         return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $searchClean) {
-            $q->where('kelas.kode_kelas', 'like', $searchClean)
+
+            if (preg_match('/^([A-Za-z]+[0-9]+)(?:([A-Za-z])(?:([A-Za-z]*)(?:([0-9]{0,4}))?)?)?$/', $searchClean, $matches)) {
+
+                $matchKodeKelas = $matches[1] ?? null;
+                $matchLabelWilayah = $matches[2] ?? null;
+                $matchKodeWilayah = $matches[3] ?? null;
+                $matchTahun = $matches[4] ?? null;
+
+                $q->where(function ($subQ) use ($matchKodeKelas, $matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
+                    $subQ->where('kelas.kode_kelas', 'like', '%'.$matchKodeKelas.'%');
+
+                    if (! empty($matchLabelWilayah)) {
+                        $subQ->whereHas('jadwals', function ($jq) use ($matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
+                            $table = $jq->getModel()->getTable();
+                            $jq->where($table.'.label_kelas', 'like', '%'.$matchLabelWilayah.'%');
+
+                            if (! empty($matchKodeWilayah)) {
+                                $jq->where($table.'.kode_wilayah', 'like', '%'.$matchKodeWilayah.'%');
+                            }
+
+                            if (! empty($matchTahun)) {
+                                if (strlen($matchTahun) === 2) {
+                                    $matchTahun = '20'.$matchTahun;
+                                }
+                                $jq->where($table.'.tanggal_mulai', 'like', '%'.$matchTahun.'%');
+                            }
+                        });
+                    }
+                });
+            }
+
+            $q->orWhere('kelas.kode_kelas', 'like', '%'.$searchClean.'%')
                 ->orWhere('kelas.nama_kelas', 'like', $searchTerm)
+
+                ->orWhereHas('jadwals', function ($jq) use ($searchTerm) {
+                    $table = $jq->getModel()->getTable();
+                    $jq->where($table.'.label_kelas', 'like', $searchTerm)
+                        ->orWhere($table.'.kode_wilayah', 'like', $searchTerm);
+                })
+
                 ->orWhereHas('rps_rel', function ($rq) use ($search) {
                     $rq->searchRPS($search);
                 })
@@ -157,9 +193,10 @@ class Kelas extends Model
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
                 });
-                if (is_numeric($search)) {
-                    $q->orWhere('kelas.id', 'like', $search);
-                }
+
+            if (is_numeric($search)) {
+                $q->orWhere('kelas.id', '=', $search);
+            }
         });
     }
 }

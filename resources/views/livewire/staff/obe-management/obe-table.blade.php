@@ -467,7 +467,6 @@
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.metode-badge', [
                                 'xValue' => $x->metode,
-                                'sortir' => $x->metode,
                             ])
                         </button>
 

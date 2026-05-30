@@ -1,15 +1,14 @@
-<div x-data="{
-    @if ($isLivewire ?? false) @if (isset($itemsString))
-            valueInput: @entangle($modelString . '.' . $itemsString).live,
-        @else
-            valueInput: @entangle($modelString).live, @endif
+<div
+    x-data="{
+        @if($isLivewire ?? false)
+            valueInput: @entangle($modelString).live,
+        @endif
 
-    @endif
-
-    showPassword: false,
+        showPassword: false,
 
         inputType:
-        @if (($isDate ?? false) === 1 || ($isDate ?? false) === true || ($isDate ?? false) === 'date') 'date'
+            @if (($isDate ?? false) === 1 || ($isDate ?? false) === true || ($isDate ?? false) === 'date')
+                'date'
             @elseif (($isDate ?? false) === 'month')
                 'month'
             @elseif (($isDate ?? false) === 'year')
@@ -19,69 +18,27 @@
             @elseif ($isWeek ?? false)
                 'week'
             @else
-                '{{ $typeString ?? 'text' }}' @endif
-}"
-x-effect="
-    const store = $store.{{ $alpine ?? 'config' }};
+                '{{ $typeString ?? 'text' }}'
+            @endif
+    }"
 
-    if (!store) return;
+    x-effect="
+        const store = $store.{{ $alpine ?? 'config' }};
 
-    const setNestedValue = (obj, path, value) => {
-        const keys = path.split('.');
-        let current = obj;
+        if (!store) return;
 
-        for (let i = 0; i < keys.length - 1; i++) {
-
-            const key = isNaN(keys[i])
-                ? keys[i]
-                : Number(keys[i]);
-
-            if (current[key] === undefined) {
-                current[key] = {};
-            }
-
-            current = current[key];
+        if (store.isEdit === 0) {
+            store.{{ $modelString }} = '';
+            return;
         }
 
-        const lastKey = isNaN(keys[keys.length - 1])
-            ? keys[keys.length - 1]
-            : Number(keys[keys.length - 1]);
-
-        current[lastKey] = value;
-    };
-
-    if (store.isEdit === 0) {
-
-        @if ($isLivewire ?? false)
-            @if (isset($itemsString))
-                setNestedValue(
-                    store,
-                    '{{ $modelString . '.' . $itemsString }}',
-                    ''
-                );
-            @else
-                store.{{ $modelString }} = '';
-            @endif
-        @endif
-
-        return;
-    }
-
-    @if ($isLivewire ?? false)
-
-        @if (isset($itemsString))
-            setNestedValue(
-                store,
-                '{{ $modelString . '.' . $itemsString }}',
-                valueInput ?? ''
-            );
-        @else
+        @if($isLivewire ?? false)
             store.{{ $modelString }} = valueInput ?? '';
         @endif
+    "
 
-    @endif
-"
-    wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
+    wire:key="input-form-{{ $modelString }}-{{ $alpine }}"
+>
 
     @include('livewire.global.modal-form.partial.label')
 
@@ -93,29 +50,31 @@ x-effect="
                 x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
-        <input 
-            @if ($isLivewire ?? false)
-                @if (isset($itemsString))
-                    wire:model.live="{{ $modelString . '.' . $itemsString }}"
-                @else
-                    wire:model.live="{{ $modelString }}"
-                @endif
+        <input
+            @if($isLivewire ?? false)
+                wire:model.live="{{ $modelString }}"
+            @endif
+            x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
+            name="{{ $modelString }}"
+            x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''"
+
+            {{-- Tipe input dinamis --}}
+            :type="inputType"
+
+            id="{{ $modelString }}"
+            placeholder="{{ $placeholder ?? null }}"
+
+            class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+            w-full border rounded-lg pl-10 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+
+            {{-- Auto Select --}}
+            @if ($isFocusSelect ?? null)
+                @focus="$el.select()"
             @endif
 
-        @if (isset($itemsString))
-            x-model="valueInput"
-        @else
-            x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
-        @endif
-
-
-        name="{{ $modelString }}"
-        x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
-        :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
-        class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
-            w-full border rounded-lg pl-10 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-        {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}
-        @if (($isDate ?? false) === 'year') inputmode="numeric"
+            {{-- YEAR ONLY --}}
+            @if (($isDate ?? false) === 'year')
+                inputmode="numeric"
                 oninput="
                     this.value = this.value.replace(/[^0-9]/g, '').slice(0,4);
 
@@ -186,11 +145,15 @@ x-effect="
 
             {{-- DEFAULT --}}
             @else
-                maxlength="{{ $maxlength ?? 255 }}" @endif>
+                maxlength="{{ $maxlength ?? 255 }}"
+            @endif
+        >
 
         {{-- Tombol Mata --}}
         @if (($typeString ?? '') === 'password')
-            <button type="button"
+
+            <button
+                type="button"
                 @click="
                     showPassword = !showPassword;
                     inputType = showPassword ? 'text' : 'password'
@@ -199,34 +162,34 @@ x-effect="
 
                 {{-- Icon Mata Terbuka --}}
                 <template x-if="!showPassword">
-                    <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon"
+                    <flux:icon
+                        icon="eye"
+                        variant="mini"
+                        x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon"
                         class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 transition duration-200" />
                 </template>
 
                 {{-- Icon Mata Tertutup --}}
                 <template x-if="showPassword">
-                    <flux:icon icon="eye-slash" variant="mini"
+                    <flux:icon
+                        icon="eye-slash"
+                        variant="mini"
                         class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 transition duration-200" />
                 </template>
 
             </button>
+
         @endif
 
     </div>
 
     {{-- Error Message --}}
-    {{-- @if ($message ?? null)
+    @if ($message ?? null)
         @error($modelString)
             <span class="text-red-500 text-sm mt-1 block">
                 {{ $message }}
             </span>
         @enderror
-    @endif --}}
-
-    @if (!empty($message))
-        <span class="text-red-500 text-sm mt-1 block">
-            {{ $message }}
-        </span>
     @endif
 
 </div>

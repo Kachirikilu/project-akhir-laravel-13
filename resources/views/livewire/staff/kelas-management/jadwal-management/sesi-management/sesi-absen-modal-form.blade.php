@@ -12,7 +12,7 @@
 
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 ml-1">
                     <h3 class="text-lg font-bold tracking-tight text-[var(--contrast-main-text)]">
-                        Absen Kelas {{ $kelas->kode }}
+                        Absen Kelas {{ $jadwal->kode }}
                     </h3>
                     <x-label-card type="lg">
                         <span x-text="'Pertemuan ' + $store.sesi.pertemuan_ke"></span>
@@ -33,97 +33,58 @@
                 </label>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-
-                    @php
-                        $statusAbsen = [
-                            [
-                                'label' => 'Hadir',
-                                'icon' => 'check-circle',
-                                'color' => 'emerald',
-                                'bg_active' =>
-                                    'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-500 ring-emerald-500',
-                                'icon_active' => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-                                'icon_default' => 'text-emerald-500',
-                            ],
-                            [
-                                'label' => 'Terlambat',
-                                'icon' => 'clock',
-                                'color' => 'amber',
-                                'bg_active' => 'bg-amber-50 dark:bg-amber-950/30 border-amber-500 ring-amber-500',
-                                'icon_active' => 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-                                'icon_default' => 'text-amber-500',
-                            ],
-                            [
-                                'label' => 'Dispensasi',
-                                'icon' => 'shield-check',
-                                'color' => 'cyan',
-                                'bg_active' => 'bg-cyan-50 dark:bg-cyan-950/30 border-cyan-500 ring-cyan-500',
-                                'icon_active' => 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
-                                'icon_default' => 'text-cyan-500',
-                            ],
-                            [
-                                'label' => 'Izin',
-                                'icon' => 'document-text',
-                                'color' => 'blue',
-                                'bg_active' => 'bg-blue-50 dark:bg-blue-950/30 border-blue-500 ring-blue-500',
-                                'icon_active' => 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-                                'icon_default' => 'text-blue-500',
-                            ],
-                            [
-                                'label' => 'Sakit',
-                                'icon' => 'heart',
-                                'color' => 'rose',
-                                'bg_active' => 'bg-rose-50 dark:bg-rose-950/30 border-rose-500 ring-rose-500',
-                                'icon_active' => 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-                                'icon_default' => 'text-rose-500',
-                            ],
-                            [
-                                'label' => 'Absen',
-                                'icon' => 'x-circle',
-                                'color' => 'red',
-                                'bg_active' => 'bg-red-50 dark:bg-red-950/30 border-red-500 ring-red-500',
-                                'icon_active' => 'bg-red-500/10 text-red-600 dark:text-red-400',
-                                'icon_default' => 'text-red-500',
-                            ],
-                        ];
-                    @endphp
-
-                    @foreach ($statusAbsen as $item)
-                        <button type="button" @click="$store.sesi.absen = '{{ $item['label'] }}'"
+                    <template x-for="item in $store.sesi.getOpsiStatus()" :key="item.label">
+                        <button type="button" @click="$store.sesi.absen = item.label"
                             class="group relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 text-left cursor-pointer"
-                            :class="$store.sesi.absen === '{{ $item['label'] }}' ?
-                                '{{ $item['bg_active'] }} ring-2 shadow-md scale-[1.02]' :
+                            :class="$store.sesi.absen === item.label ?
+                                item.bg_active + ' ring-2 shadow-md scale-[1.02]' :
                                 'border-[var(--border-table-color)] bg-[var(--second-pop-up-color)] hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm hover:-translate-y-[1px]'">
 
                             <div class="flex items-start gap-3">
-                                {{-- Wadah Ikon --}}
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"
-                                    :class="$store.sesi.absen === '{{ $item['label'] }}' ?
-                                        '{{ $item['icon_active'] }}' :
-                                        'bg-black/5 dark:bg-white/5 {{ $item['icon_default'] }}'">
+                                    :class="$store.sesi.absen === item.label ?
+                                        item.icon_active :
+                                        'bg-black/5 dark:bg-white/5 ' + item.icon_default">
 
-                                    <flux:icon name="{{ $item['icon'] }}" class="w-5 h-5 variant-current" />
+                                    <div x-show="item.icon === 'check-circle'">
+                                        <flux:icon name="check-circle" class="w-5 h-5 variant-current" />
+                                    </div>
+                                    <div x-show="item.icon === 'clock'">
+                                        <flux:icon name="clock" class="w-5 h-5 variant-current" />
+                                    </div>
+                                    <div x-show="item.icon === 'shield-check'">
+                                        <flux:icon name="shield-check" class="w-5 h-5 variant-current" />
+                                    </div>
+                                    <div x-show="item.icon === 'document-text'">
+                                        <flux:icon name="document-text" class="w-5 h-5 variant-current" />
+                                    </div>
+                                    <div x-show="item.icon === 'heart'">
+                                        <flux:icon name="heart" class="w-5 h-5 variant-current" />
+                                    </div>
+                                    <div x-show="item.icon === 'x-circle'">
+                                        <flux:icon name="x-circle" class="w-5 h-5 variant-current" />
+                                    </div>
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-sm text-[var(--contrast-main-text)]">
-                                        {{ $item['label'] }}
-                                    </div>
+                                    <div class="font-semibold text-sm text-[var(--contrast-main-text)]"
+                                        x-text="item.label"></div>
 
                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                        Pilih status {{ strtolower($item['label']) }}
+                                        Pilih status <span x-text="item.label.toLowerCase()"></span>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- Indikator Aktif (Centang) --}}
-                            <div x-show="$store.sesi.absen === '{{ $item['label'] }}'" x-transition
-                                class="absolute top-2 right-2">
-                                <flux:icon name="check-circle" class="w-5 h-5 {{ $item['icon_default'] }}" />
+                            {{-- FIX: Indikator Aktif (Menggunakan div pembungkus x-bind:class agar tidak bentrok dengan PHP) --}}
+                            <div x-show="$store.sesi.absen === item.label" x-transition class="absolute top-2 right-2">
+                                <div :class="item.icon_default">
+                                    <flux:icon name="check-circle" class="w-5 h-5" />
+                                </div>
                             </div>
 
                         </button>
-                    @endforeach
+                    </template>
                 </div>
 
                 @error('absen')

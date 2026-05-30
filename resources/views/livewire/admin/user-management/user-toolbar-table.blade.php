@@ -13,7 +13,7 @@
             $restoreCall = "restoreUser($x->id)";
 
             $typeXString = '';
-            if ($user->role == 'Mahasiswa') {
+            if ($x->role == 'Mahasiswa') {
                 $typeXString = 'NIM';
             } else {
                 $typeXString = 'NIP';
@@ -22,8 +22,8 @@
 
 
         @include('livewire.global.table.text-copy', [
-            'xType' => $user->identity1,
-            'typeXString' => $typeXString . ' ' . $user->role,
+            'xType' => $x->identity1,
+            'typeXString' => $typeXString . ' ' . $x->role,
         ])
 
 

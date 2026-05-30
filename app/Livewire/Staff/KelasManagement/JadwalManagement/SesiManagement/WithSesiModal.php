@@ -21,6 +21,10 @@ trait WithSesiModal
 
     public $selected_id_sesi;
 
+    public $selected_id_mahasiswa;
+
+    public $list_absensi_array = [];
+
     public $isEditingSesi = false;
 
     public $showEditSesi = false;
@@ -28,6 +32,8 @@ trait WithSesiModal
     public $showSesiModal = false;
 
     public $showSesiAbsen = false;
+
+    public $showMahasiswaAbsen = false;
 
     public function addSesi()
     {
@@ -56,11 +62,7 @@ trait WithSesiModal
             $mahasiswa_id = Auth::user()->mahasiswa->id ?? null;
 
             if (empty($mahasiswa_id)) {
-                $this->toast(
-                    message: 'Mahasiswa',
-                    type: 'unfound',
-                    variant: 'danger'
-                );
+                $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
 
                 return;
             }
@@ -74,69 +76,69 @@ trait WithSesiModal
                         'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi',
                     ],
                     'keterangan' => [
+                        'required_if:absen,Dispensasi,Sakit,Izin',
                         'nullable',
                         'string',
+                        'min:5',
                         'max:1000',
                     ],
                 ],
                 [
-                    'sesi_id.required' => 'Sesi kelas tidak ditemukan!',
-                    'sesi_id.exists' => 'Sesi kelas tidak valid!',
+                    'sesi_id.required' => 'Sesi Kelas tidak ditemukan!',
+                    'sesi_id.exists' => 'Sesi Kelas tidak valid!',
 
-                    'absen.required' => 'Status absensi wajib dipilih!',
-                    'absen.in' => 'Status absensi tidak valid!',
+                    'absen.required' => 'Status Absensi wajib dipilih!',
+                    'absen.in' => 'Status Absensi tidak valid!',
 
-                    'keterangan.string' => 'Keterangan harus berupa teks!',
-                    'keterangan.max' => 'Keterangan maksimal 1000 karakter!',
+                    'keterangan.required_if' => 'Keterangan wajib diisi untuk status Izin, Sakit, & Dispensasi!',
+                    'keterangan.string' => 'Keterangan harus berupa text!',
+                    'keterangan.min' => 'Keterangan terlalu pendek (Minimal 5 karakter)!',
+                    'keterangan.max' => 'Keterangan terlalu panjang (Maksimal 1000 karakter)!',
                 ]
             )->validate();
 
-            $sesi = KelasSesi::with(['jadwal_rel.kelas_rel'])
-                ->findOrFail($validated['sesi_id']);
+            $sesi = KelasSesi::with(['jadwal_rel.kelas_rel'])->findOrFail($validated['sesi_id']);
 
-            /**
-             * ===========================
-             * VALIDASI WAKTU ABSENSI
-             * ===========================
-             */
             $now = now();
 
-            $jamMulai = $sesi->override?->jam_mulai
-                ?? $sesi->jadwal_rel?->jam_mulai
-                ?? $sesi->jam_mulai;
+            $mulai = Carbon::parse($sesi->waktu_pelaksanaan);
+            $berakhir = Carbon::parse($sesi->waktu_berakhir);
+            $batasTerlambat = Carbon::parse($sesi->waktu_telat);
+            $batasDispensasi = Carbon::parse($sesi->waktu_dispensasi);
 
-            $jamBerakhir = $sesi->override?->jam_berakhir
-                ?? $sesi->jadwal_rel?->jam_berakhir
-                ?? $sesi->jam_berakhir;
+            $statusDipilih = $validated['absen'];
 
-            $mulai = Carbon::parse(
-                $sesi->tanggal.' '.$jamMulai
-            );
-
-            $berakhir = Carbon::parse(
-                $sesi->tanggal.' '.$jamBerakhir
-            );
-
-            // ❌ terlalu cepat / belum waktunya
-            if ($now->lt($mulai)) {
+            if ($now->lt($mulai) || $now->gt($batasDispensasi)) {
                 $this->toast(
-                    text: 'Absensi belum dibuka. Silakan melakukan presensi sesuai jadwal perkuliahan!',
+                    text: 'Sesi absensi sedang ditutup atau telah kedaluwarsa!',
                     variant: 'danger'
                 );
 
                 return;
             }
 
-            // ❌ sesi sudah lewat tapi belum absen
-            if ($now->gt($berakhir)) {
+            if ($statusDipilih === 'Absen') {
                 $validated['absen'] = 'Absen';
+            } elseif ($now->betweenIncluded($mulai, $batasTerlambat)) {
+                if (! in_array($statusDipilih, ['Hadir', 'Izin', 'Sakit'])) {
+                    $validated['absen'] = 'Hadir';
+                }
+            } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir)) {
+                if ($statusDipilih === 'Sakit') {
+                    $validated['absen'] = 'Sakit';
+                } elseif (in_array($statusDipilih, ['Hadir', 'Terlambat', 'Izin'])) {
+                    $validated['absen'] = 'Terlambat';
+                } else {
+                    $validated['absen'] = 'Absen';
+                }
+            } elseif ($now->gt($berakhir) && $now->lte($batasDispensasi)) {
+                if ($statusDipilih === 'Dispensasi') {
+                    $validated['absen'] = 'Dispensasi';
+                } else {
+                    $validated['absen'] = 'Absen';
+                }
             }
 
-            /**
-             * ===========================
-             * UPSERT ABSENSI
-             * ===========================
-             */
             MahasiswaKehadiran::updateOrCreate(
                 [
                     'sesi_id' => $validated['sesi_id'],
@@ -150,7 +152,6 @@ trait WithSesiModal
             );
 
             $this->showSesiAbsen = false;
-
             $this->dispatch('refresh-data-sesi');
 
             $this->toast(
@@ -163,6 +164,214 @@ trait WithSesiModal
         } catch (\Exception $e) {
             $this->toast(
                 text: 'Gagal Mengambil Data: '.$e->getMessage(),
+                variant: 'danger'
+            );
+        }
+    }
+
+    public function editAbsensi($id, $jadwal_id)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        $this->resetInputSesi();
+        $this->resetValidation();
+        $this->resetErrorBag();
+
+        // dd($this->list_absensi_array);
+
+        if (empty($id)) {
+            $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
+
+            return;
+        }
+
+        if (empty($jadwal_id)) {
+            $this->toast(message: 'Jadwal Kelas', type: 'unfound', variant: 'danger');
+
+            return;
+        }
+
+        $sesis = KelasSesi::with([
+            'kehadirans' => function ($query) use ($id) {
+                $query->where('mahasiswa_id', $id);
+            },
+        ])
+            ->where('kj_id', $jadwal_id)
+            ->orderBy('pertemuan_ke', 'asc')
+            ->get();
+
+        $this->list_absensi_array = $sesis->map(function ($sesi) {
+            $kehadiran = $sesi->kehadirans->first();
+
+            return [
+                'sesi_id' => $sesi->id,
+                'pertemuan_ke' => $sesi->pertemuan_ke,
+                'tanggal' => $sesi->tanggal,
+                'tanggal_carbon' => $sesi->tanggal ? Carbon::parse($sesi->tanggal)->format('d M Y') : '---',
+                'metode' => $sesi->metode ?? '---',
+                'kode_scpmk' => $sesi->kode_scpmk ?? '---',
+                'kehadiran_id' => $kehadiran?->id ?? null,
+                'status' => $kehadiran?->status ?? 'Belum Presensi',
+                'keterangan' => $kehadiran?->keterangan ?? '',
+                'waktu_presensi' => $kehadiran?->waktu_presensi ?? null,
+            ];
+        })->toArray();
+
+        $this->selected_id_mahasiswa = $id;
+        $this->showMahasiswaAbsen = true;
+        $this->dispatch('refresh-component');
+    }
+
+    public function updateAbsensi($data)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Merge data dari frontend dengan aman (Satu kali loop)
+        |--------------------------------------------------------------------------
+        */
+        foreach ($data['list_absensi_array'] ?? [] as $index => $item) {
+            if (! isset($this->list_absensi_array[$index])) {
+                continue;
+            }
+
+            $merged = array_merge($this->list_absensi_array[$index], $item);
+            if (empty(trim($merged['status'] ?? ''))) {
+                $merged['status'] = 'Belum Presensi';
+            }
+
+            $this->list_absensi_array[$index] = $merged;
+        }
+
+        if (empty($this->selected_id_mahasiswa) || empty($this->list_absensi_array)) {
+            $this->toast(
+                message: 'Data mahasiswa atau sesi absensi kosong!',
+                type: 'error',
+                variant: 'danger'
+            );
+
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Bangun Validation Rules & Messages secara Dinamis
+        |--------------------------------------------------------------------------
+        */
+        $rules = [];
+        $messages = [];
+
+        foreach ($this->list_absensi_array as $index => $item) {
+            $prefix = "list_absensi_array.{$index}.";
+
+            $rules[$prefix.'sesi_id'] = ['required', 'exists:kelas_sesi,id'];
+            $rules[$prefix.'status'] = ['required', 'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi,Belum Presensi'];
+
+            $rules[$prefix.'keterangan'] = [
+                Rule::requiredIf(function () use ($item) {
+                    return in_array($item['status'] ?? '', ['Dispensasi', 'Sakit', 'Izin']);
+                }),
+                'nullable',
+                'string',
+                'min:5',
+                'max:1000',
+            ];
+
+            $pertemuan = $item['pertemuan_ke'] ?? ($index + 1);
+
+            $messages[$prefix.'sesi_id.required'] = "Pertemuan Ke-{$pertemuan}: Sesi Kelas tidak ditemukan!";
+            $messages[$prefix.'sesi_id.exists'] = "Pertemuan Ke-{$pertemuan}: Sesi Kelas tidak valid!";
+            $messages[$prefix.'status.required'] = "Pertemuan Ke-{$pertemuan}: Status Absensi wajib dipilih!";
+            $messages[$prefix.'status.in'] = "Pertemuan Ke-{$pertemuan}: Status Absensi tidak valid!";
+            $messages[$prefix.'keterangan.required_if'] = "Pertemuan Ke-{$pertemuan}: Keterangan wajib diisi untuk status Izin, Sakit, & Dispensasi!";
+            $messages[$prefix.'keterangan.required'] = "Pertemuan Ke-{$pertemuan}: Keterangan wajib diisi untuk status Izin, Sakit, & Dispensasi!";
+            $messages[$prefix.'keterangan.string'] = "Pertemuan Ke-{$pertemuan}: Keterangan harus berupa text!";
+            $messages[$prefix.'keterangan.min'] = "Pertemuan Ke-{$pertemuan}: Keterangan terlalu pendek (Minimal 5 karakter)!";
+            $messages[$prefix.'keterangan.max'] = "Pertemuan Ke-{$pertemuan}: Keterangan terlalu panjang (Maksimal 1000 karakter)!";
+        }
+
+        $this->resetValidation();
+
+        $validator = validator(
+            ['list_absensi_array' => $this->list_absensi_array],
+            $rules,
+            $messages
+        );
+
+        if ($validator->fails()) {
+            $this->setErrorBag($validator->errors());
+
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Eksekusi Simpan Database (Jika Lolos Validasi)
+        |--------------------------------------------------------------------------
+        */
+        try {
+            \DB::beginTransaction();
+
+            foreach ($this->list_absensi_array as $index => $item) {
+
+                if (($item['status'] ?? null) === 'Belum Presensi') {
+                    if (! empty($item['kehadiran_id'])) {
+                        MahasiswaKehadiran::destroy($item['kehadiran_id']);
+                    }
+
+                    $this->list_absensi_array[$index]['kehadiran_id'] = null;
+                    $this->list_absensi_array[$index]['status'] = 'Belum Presensi';
+                    $this->list_absensi_array[$index]['keterangan'] = '';
+                    $this->list_absensi_array[$index]['waktu_presensi'] = null;
+
+                    continue;
+                }
+
+                $waktuSaves = $item['waktu_presensi'] ?? now();
+
+                $kehadiran = MahasiswaKehadiran::updateOrCreate(
+                    [
+                        'id' => $item['kehadiran_id'],
+                    ],
+                    [
+                        'sesi_id' => $item['sesi_id'],
+                        'mahasiswa_id' => $this->selected_id_mahasiswa,
+                        'status' => $item['status'],
+                        'keterangan' => $item['keterangan'] ?: null,
+                        'waktu_presensi' => $waktuSaves,
+                    ]
+                );
+
+                $this->list_absensi_array[$index]['kehadiran_id'] = $kehadiran->id;
+                $this->list_absensi_array[$index]['status'] = $kehadiran->status;
+                $this->list_absensi_array[$index]['keterangan'] = $kehadiran->keterangan ?? '';
+                $this->list_absensi_array[$index]['waktu_presensi'] = $kehadiran->waktu_presensi;
+            }
+
+            \DB::commit();
+
+            // dd($this->list_absensi_array);
+
+            $this->resetInputSesi();
+            $this->dispatch('refresh-data-sesi');
+            $this->showMahasiswaAbsen = false;
+
+            $this->toast(
+                message: 'Absensi',
+                type: 'update'
+            );
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+
+            $this->toast(
+                message: 'Gagal menyimpan absensi: '.$e->getMessage(),
+                type: 'error',
                 variant: 'danger'
             );
         }
@@ -490,16 +699,45 @@ trait WithSesiModal
         ];
     }
 
+    public function getAbsensiErrorSections()
+    {
+        return [
+            1 => $this->getErrorCountByIndexes(0, 7),
+            2 => $this->getErrorCountByIndexes(8, 100),
+            3 => 0,
+        ];
+    }
+
+    private function getErrorCountByIndexes($start, $end)
+    {
+        $errors = $this->getErrorBag()->messages();
+        $count = 0;
+
+        for ($i = $start; $i <= $end; $i++) {
+            $prefix = "list_absensi_array.{$i}.";
+
+            if (isset($errors[$prefix.'status'])) {
+                $count += count($errors[$prefix.'status']);
+            }
+            if (isset($errors[$prefix.'keterangan'])) {
+                $count += count($errors[$prefix.'keterangan']);
+            }
+            if (isset($errors[$prefix.'sesi_id'])) {
+                $count += count($errors[$prefix.'sesi_id']);
+            }
+        }
+
+        return $count;
+    }
+
     private function resetInputSesi()
     {
         $fields = [
             'selected_id_sesi',
+            'selected_id_mahasiswa',
         ];
 
-        // $this->mahasiswaNameSearch = '';
-        // $this->mahasiswa_id_array = [];
-        // $this->mahasiswa_items_array = [];
-        // $this->mahasiswa_sub_items_array = [];
+        $this->list_absensi_array = [];
 
         $this->reset($fields);
         $this->resetErrorBag();

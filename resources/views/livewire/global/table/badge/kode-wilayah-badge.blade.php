@@ -1,4 +1,4 @@
-@switch($sortir)
+@switch($sortir ?? $xValue)
     @case('IDL')
         <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $xValue ?? '-' }}
         </flux:badge>

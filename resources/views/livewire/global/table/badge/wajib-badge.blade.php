@@ -1,4 +1,4 @@
-@if ($sortir)
+@if ($sortir ?? $xValue)
     <flux:badge icon="check" color="green" size="sm" inset="top bottom">
         {{ $xValue }}
     </flux:badge>

@@ -96,10 +96,12 @@ trait WithJadwalModal
 
             if (empty($mahasiswa_id)) {
                 $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
+
                 return;
             }
             if (empty($data['jadwal_id'])) {
                 $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
+
                 return;
             }
             $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $data['jadwal_id'])->first();
@@ -147,10 +149,10 @@ trait WithJadwalModal
             }
             if (! property_exists($this, 'jadwal_id') || empty($this->jadwal_id)) {
                 $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
+
                 return;
             }
             $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $this->jadwal_id)->first();
-
 
             if ($jadwal->mahasiswas()->detach($mahasiswa_id)) {
                 $history = session('jadwal.history', []);
@@ -543,13 +545,13 @@ trait WithJadwalModal
             }
         }
 
+        $isRestartSesi = filter_var($data['restart_sesi'] ?? false, FILTER_VALIDATE_BOOLEAN) || ($data['restart_sesi'] ?? 0) == 1;
+
         try {
 
-            $validated = $this->inputModalJadwal(true, $data, $kelasId
-            );
+            $validated = $this->inputModalJadwal(true, $data, $kelasId);
 
-            DB::transaction(function () use ($validated, $data
-            ) {
+            DB::transaction(function () use ($validated, $data, $isRestartSesi) {
 
                 $jadwal = KelasJadwal::findOrFail(
                     $this->selected_jadwal_id
@@ -580,7 +582,7 @@ trait WithJadwalModal
                         continue;
                     }
 
-                    KelasSesi::updateOrCreate(
+                    $sesi = KelasSesi::updateOrCreate(
                         [
                             'kj_id' => $jadwal->id,
                             'pertemuan_ke' => $i,
@@ -589,6 +591,9 @@ trait WithJadwalModal
                             'tanggal' => $tanggalSesi,
                         ]
                     );
+                    if ($isRestartSesi) {
+                        $sesi->override()->delete();
+                    }
                 }
 
                 // =========================================

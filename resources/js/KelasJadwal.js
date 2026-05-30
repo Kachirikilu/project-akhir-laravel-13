@@ -34,6 +34,7 @@ document.addEventListener("alpine:init", () => {
         tanggal_berakhir: "",
 
         kapasitas: "",
+        restart_sesi: 0,
 
         sks_menit: 0,
 
@@ -92,6 +93,8 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = 0;
             this.isForceDelete = 0;
             this.colorIcon = "";
+
+            this.restart_sesi = 0;
 
             this.jadwal_id = "";
             this.kode = "";

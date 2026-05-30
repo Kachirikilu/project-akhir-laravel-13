@@ -55,29 +55,31 @@
     @endif
     @endif
 }"
-    x-init="value = getLabel(
-        getNestedValue(
-            $store.{{ $storeName }},
-            '{{ $fullModelPath }}'
-        )
-    );
-    
-    $watch(
-        () => getNestedValue(
-            $store.{{ $storeName }},
-            '{{ $fullModelPath }}'
-        ),
-        (val) => {
-            value = getLabel(val);
-        }
-    );
-    
-    @if($isLivewire ?? false)
-    $watch('valueInput', (newVal) => {
-        setNestedValue($store.{{ $storeName }}, '{{ $fullModelPath }}', newVal ?? '');
-        value = getLabel(newVal);
-    });
-    @endif"
+    x-init="
+        value = getLabel(
+            getNestedValue(
+                $store.{{ $storeName }},
+                '{{ $fullModelPath }}'
+            )
+        );
+        
+        $watch(
+            () => getNestedValue(
+                $store.{{ $storeName }},
+                '{{ $fullModelPath }}'
+            ),
+            (val) => {
+                value = getLabel(val);
+            }
+        );
+
+        @if($isLivewire ?? false)
+            $watch('valueInput', (newVal) => {
+                setNestedValue($store.{{ $storeName }}, '{{ $fullModelPath }}', newVal ?? '');
+                value = getLabel(newVal);
+            });
+        @endif
+    "
     x-effect="
         options = @js($xOptions);
         values = @js($xValues);
@@ -161,18 +163,13 @@
 
             <div wire:key="option-{{ $i }}"
                 @click="
-                    const selectedValue =
-                        {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }};
-
                     value = '{{ $label }}';
 
                     setNestedValue(
                         $store.{{ $storeName }},
                         '{{ $fullModelPath }}',
-                        selectedValue
+                        {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }}
                     );
-
-                    @if ($isLivewire ?? false) valueInput = selectedValue; @endif
 
                     open = false;
                 "

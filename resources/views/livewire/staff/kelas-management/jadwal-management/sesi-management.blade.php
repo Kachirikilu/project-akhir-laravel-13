@@ -39,6 +39,7 @@
     
 
     @if (Auth::user()->admin || Auth::user()->dosen)
+        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.absensi-modal-form')
         @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-modal-form')
         @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form')
     @elseif (Auth::user()->mahasiswa)

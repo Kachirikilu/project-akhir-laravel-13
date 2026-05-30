@@ -1,6 +1,6 @@
 @if ($withTh ?? true)
     <th wire:key="head-table-{{ $sortFieldString }}" rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
-        class="bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 py-3 relative 
+        class="bg-[var(--main-table-color)] border-[var(--border-table-color)] p-6 relative 
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
@@ -16,10 +16,9 @@
         await $wire.sortBy('{{ $sortFieldString }}')
         this.clicked = false
     }
-}" @click.prevent="doSort()" {{-- Tambahkan h-full agar button memenuhi area TH untuk garis bawah --}}
+}" @click.prevent="doSort()"
     class="w-full h-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs font-medium uppercase whitespace-nowrap transition-all duration-200">
 
-    {{-- Container Teks dengan Border Bawah Dinamis --}}
     <div class="flex items-center gap-1">
 
         <span
@@ -47,7 +46,6 @@
             ↑
         </span>
 
-        {{-- Garis Biru Absolut di Paling Bawah TH --}}
         <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--focus-color)] origin-left"
             x-show="sortField === '{{ $sortFieldString }}' || clicked"
             x-transition:enter="transition transform ease-out duration-200" x-transition:enter-start="scale-x-0"

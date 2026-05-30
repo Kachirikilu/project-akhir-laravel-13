@@ -21,7 +21,7 @@
 
         <span class="text-lg text-[var(--focus-color)]">
             <span class="font-semibold text-emerald-500">{{ $absensi['mhs_masuk'] ?? 0 }}</span>
-            / {{ $totalSesiKelas * $totalMahasiswaKelas }}
+            / {{ ((int) $totalSesiKelas) * ((int) ($totalMahasiswaKelas ?? 0)) }}
         </span>
 
         <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
@@ -35,8 +35,8 @@
         </span>
 
         <span class="text-lg text-[var(--focus-color)]">
-            <span class="font-semibold text-amber-500">{{ ($absensi['mhs_izin'] ?? 0) + ($absensi['mhs_sakit'] ?? 0) }}</span>
-            / {{ $totalSesiKelas * $totalMahasiswaKelas }}
+            <span class="font-semibold text-amber-500">{{ ((int) ($absensi['mhs_izin'] ?? 0)) + ((int) ($absensi['mhs_sakit'] ?? 0)) }}</span>
+            / {{ ((int) $totalSesiKelas) * ((int) ($totalMahasiswaKelas ?? 0)) }}
         </span>
 
         <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
@@ -46,12 +46,12 @@
 
     <div class="flex flex-col gap-1">
         <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-            Tidak Masuk
+            Tidak Hadir
         </span>
 
         <span class="text-lg text-[var(--focus-color)]">
             <span class="font-semibold text-red-500">{{ $absensi['mhs_tidak_masuk'] ?? 0 }}</span>
-            / {{ $totalSesiKelas * $totalMahasiswaKelas }}
+            / {{ ((int) $totalSesiKelas) * ((int) ($totalMahasiswaKelas ?? 0)) }}
         </span>
 
         <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
@@ -107,7 +107,7 @@
 
     <div class="flex flex-col gap-1">
         <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-            Tidak Masuk
+            Tidak Hadir
         </span>
 
         <span class="text-lg text-[var(--focus-color)]">
