@@ -67,6 +67,22 @@ class Mahasiswa extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
+    public function nilais()
+    {
+        return $this->hasMany(
+            NilaiMahasiswa::class,
+            'mahasiswa_id'
+        );
+    }
+
+    public function rekap_cpl()
+    {
+        return $this->hasMany(
+            RekapCPLMahasiswa::class,
+            'mahasiswa_id'
+        );
+    }
+
     protected function angkatanFull(): Attribute
     {
         return Attribute::get(fn () => 'Angkatan: '. $this->angkatan);

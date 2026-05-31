@@ -32,6 +32,27 @@ class SubCPMK extends Model
         'updated_at' => 'date',
     ];
 
+    public function cpmks(): BelongsToMany
+    {
+        return $this->belongsToMany(CPMK::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id')
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
+    public function refs(): BelongsToMany
+    {
+        return $this->belongsToMany(Referensi::class, 'scpmk_pivot_ref', 'scpmk_id', 'ref_id')
+            ->withPivot('sort_order');
+    }
+
+    public function dosens(): BelongsToMany
+    {
+        return $this->belongsToMany(Dosen::class, 'dosen_pivot_scpmk', 'scpmk_id', 'dosen_id')
+            ->withPivot(['rps_id', 'sort_order'])
+            ->withTimestamps()
+            ->orderBy('sort_order');
+    }
+
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
@@ -74,27 +95,6 @@ class SubCPMK extends Model
 
             return $this->updated_at->translatedFormat('D, d M Y');
         });
-    }
-
-    public function cpmks(): BelongsToMany
-    {
-        return $this->belongsToMany(CPMK::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id')
-            ->withPivot('sort_order')
-            ->withTimestamps();
-    }
-
-    public function refs(): BelongsToMany
-    {
-        return $this->belongsToMany(Referensi::class, 'scpmk_pivot_ref', 'scpmk_id', 'ref_id')
-            ->withPivot('sort_order');
-    }
-
-    public function dosens(): BelongsToMany
-    {
-        return $this->belongsToMany(Dosen::class, 'dosen_pivot_scpmk', 'scpmk_id', 'dosen_id')
-            ->withPivot(['rps_id', 'sort_order'])
-            ->withTimestamps()
-            ->orderBy('sort_order');
     }
 
     public function bobotFormat(): Attribute

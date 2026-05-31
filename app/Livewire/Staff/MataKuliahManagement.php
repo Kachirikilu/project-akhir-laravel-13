@@ -111,16 +111,9 @@ class MataKuliahManagement extends Component
     {
         $this->switchTable = $table;
         $this->syncSortField($table, $this->sortField);
-
         $this->resetPage();
 
-        $targetUrl = route('mata-kuliah-management', ['switchTable' => $table]);
-        if ($table == '' || $table == null) {
-            $targetPath = '/mata-kuliah-management';
-        } else {
-            $targetPath = '/mata-kuliah-management/'.$table;
-        }
-
+        $targetPath = '/mata-kuliah-management' . ($table ? '/' . $table : '');
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 

@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             MataKuliahSeeder::class,
             UserRoleSeeder::class,
             RPSSeeder::class,
-            KelasSeeder::class
+            KelasSeeder::class,
+            NilaiSeeder::class,
         ]);
     }
 }

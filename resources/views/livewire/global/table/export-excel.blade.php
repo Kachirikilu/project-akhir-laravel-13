@@ -11,7 +11,7 @@
         '2xl' => 'hidden 2xl:inline',
         default => '',
     };
-
+    
     // padding horizontal tombol
     $buttonWidthClass = match ($breakpoint) {
         'sm' => 'px-2 sm:px-3',
@@ -19,7 +19,7 @@
         'lg' => 'px-2 lg:px-3',
         'xl' => 'px-2 xl:px-3',
         '2xl' => 'px-2 2xl:px-3',
-        default => 'px-3',
+        default => 'px-'.($valuePx ?? '3'),
     };
 
     if ($manualSmall) {
@@ -28,7 +28,7 @@
 @endphp
 
 <div
-    class="flex justify-end md:order-2 pb-2"
+    class="flex justify-end md:order-2 {{ !($isNoPb ?? false) ? 'pb-3' : '' }}"
 
     x-data="{
         confirmExport: false,
@@ -54,12 +54,7 @@
         @click="handleClick"
         size="sm"
 
-        class="cursor-pointer h-8 !text-xs
-               border border-emerald-200
-               transition-colors
-               !text-emerald-600 dark:!text-emerald-400
-               transition-all duration-200 ease-in-out
-               {{ $buttonWidthClass }}"
+        class="cursor-pointer h-8 !text-xs border border-emerald-200 transition-colors !text-emerald-600 dark:!text-emerald-400 transition-all duration-200 ease-in-out {{ $buttonWidthClass }}"
 
         x-bind:class="
             confirmExport
@@ -82,7 +77,7 @@
                     x-bind:class="confirmExport ? 'font-bold' : 'font-medium'"
                     class="{{ $autoSmallClass }}"
                 >
-                    Export Excel
+                    {{ $nameXString ?? 'Export Excel' }}
                 </span>
             @endif
         </div>

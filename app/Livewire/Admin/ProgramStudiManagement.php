@@ -127,13 +127,7 @@ class ProgramStudiManagement extends Component
 
         $this->resetPage();
 
-        $targetUrl = route('program-studi-management', ['switchTable' => $table]);
-        if ($table == 'prodi' || $table == '' || $table == null) {
-            $targetPath = '/program-studi-management';
-        } else {
-            $targetPath = '/program-studi-management/'.$table;
-        }
-
+        $targetPath = '/program-studi-management' . (in_array($table, ['prodi', '', null], true) ? '' : '/' . $table);
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 

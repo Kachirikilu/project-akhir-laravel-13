@@ -20,29 +20,64 @@ class RPSSeeder extends Seeder
         // 1. MASTER CPL (LEBIH BANYAK & VARIATIF)
         // =========================
         $cpls = [];
-
         $cplTemplates = [
+            // --- KELOMPOK 1: PENGETAHUAN & TEORI DASAR (KOGNITIF) ---
             'Mampu menerapkan konsep dasar ilmu %s dalam penyelesaian masalah rekayasa',
+            'Mampu mengidentifikasi, memformulasi, dan menyelesaikan masalah rekayasa kompleks pada bidang %s',
+            'Mampu menguasai prinsip-prinsip teoritis dan matematika terapan dalam sistem %s',
+            'Mampu memodelkan dan mensimulasikan fenomena fisik atau matematis pada teknologi %s',
+            'Mampu melakukan studi literatur dan menelaah perkembangan riset mutakhir di bidang %s',
+
+            // --- KELOMPOK 2: PERANCANGAN & PENGEMBANGAN (DESAIN) ---
             'Mampu merancang sistem %s yang efektif dan efisien',
+            'Mampu mengembangkan solusi inovatif berbasis %s dengan mempertimbangkan aspek keselamatan dan lingkungan',
+            'Mampu merancang komponen, proses, atau sistem spesifik dari %s untuk memenuhi kebutuhan publik',
+            'Mampu membuat prototipe dan arsitektur sistem %s berskala laboratorium maupun industri',
+            'Mampu mengintegrasikan berbagai platform perangkat keras dan perangkat lunak dalam ekosistem %s',
+
+            // --- KELOMPOK 3: ANALISIS, EVALUASI & OPTIMASI (ANALITIK) ---
             'Mampu menganalisis permasalahan %s secara kritis dan sistematis',
-            'Mampu mengembangkan solusi inovatif berbasis %s',
+            'Mampu mengevaluasi kinerja sistem %s secara terukur menggunakan standar internasional',
+            'Mampu mengoptimalkan performa sistem %s berbasis data dan algoritma cerdas',
+            'Mampu melakukan pengujian, *troubleshooting*, dan validasi pada infrastruktur %s',
+            'Mampu mendiagnosis kegagalan fungsi serta melakukan pemeliharaan (*maintenance*) pada sistem %s',
+
+            // --- KELOMPOK 4: TEKNOLOGI TERKINI & METODOLOGI (TERAPAN) ---
+            'Mampu memanfaatkan teknologi terkini dalam bidang %s',
+            'Mampu mengimplementasikan metode %s dalam skala industri',
+            'Mampu mengadopsi perangkat bantu modern berbasis kecerdasan buatan (*AI tools*) untuk rekayasa %s',
+            'Mampu mengelola siklus hidup pengembangan (*lifecycle management*) pada teknologi %s',
+            'Mampu menerapkan standar regulasi, keamanan siber, dan kode etik profesi pada implementasi %s',
+
+            // --- KELOMPOK 5: KETERAMPILAN UMUM & MANAJERIAL (SOFT SKILLS) ---
             'Mampu bekerja dalam tim multidisiplin pada bidang %s',
             'Mampu berkomunikasi secara profesional dalam konteks %s',
-            'Mampu memanfaatkan teknologi terkini dalam bidang %s',
-            'Mampu mengevaluasi kinerja sistem %s secara terukur',
-            'Mampu mengimplementasikan metode %s dalam skala industri',
-            'Mampu mengoptimalkan performa sistem %s berbasis data',
+            'Mampu memimpin dan mengelola proyek implementasi %s dengan prinsip manajemen modern',
+            'Mampu mengambil keputusan taktis dan strategis berdasarkan analisis teknis di bidang %s',
+            'Mampu melakukan pembelajaran sepanjang hayat untuk beradaptasi dengan disrupsi teknologi %s',
         ];
 
         $bidangs = [
+            // Rumpun Utama & Konsentrasi Elektro
             'teknik elektro',
-            'sistem tenaga',
-            'elektronika',
-            'telekomunikasi',
+            'sistem tenaga listrik',
+            'elektronika terapan',
+            'telekomunikasi dan sinyal',
+            'kendali otomatis',
+            'instrumentasi medik dan industri',
+            'energi terbarukan',
+            'instalasi listrik industri',
+
+            // Rumpun Komputer, Informatika & Digital
             'informatika',
             'embedded system',
             'jaringan komputer',
-            'kendali otomatis',
+            'internet of things (IoT)',
+            'kecerdasan buatan dan robotika',
+            'pemrosesan sinyal digital',
+            'keamanan siber dan jaringan',
+            'komputasi awan (*cloud computing*)',
+            'sistem siber-fisik (*cyber-physical systems*)',
         ];
 
         // generate kombinasi lebih besar
@@ -56,8 +91,7 @@ class RPSSeeder extends Seeder
 
         shuffle($kombinasi);
 
-        // 🔥 BUKAN 24 LAGI, tapi minimal 64 CPL
-        $totalCPL = min(300, count($kombinasi));
+        $totalCPL = min(1024, count($kombinasi));
         $this->command->info("Generating $totalCPL CPL records...");
         for ($i = 1; $i <= $totalCPL; $i++) {
             $cpls[] = CPL::updateOrCreate([
@@ -80,7 +114,7 @@ class RPSSeeder extends Seeder
             '2023/2024', '2024/2025', '2025/2026',
         ];
 
-        $targetRps = 256;
+        $targetRps = 512;
         $batchSize = 256;
 
         $rpsCreated = 0;
@@ -178,7 +212,7 @@ class RPSSeeder extends Seeder
             usleep(200000);
         }
 
-        $this->command->info("RPSSeeder finished successfully.");
+        $this->command->info('RPSSeeder finished successfully.');
     }
 
     private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
@@ -243,12 +277,60 @@ class RPSSeeder extends Seeder
         $subs = [];
         $totalBobot = 0;
 
-        for ($i = 1; $i <= $tipe; $i++) {
+        // simpan mapping CPMK → jumlah SCPMK
+        $cpmkAssignments = [];
+
+        // -----------------------------------
+        // 1. Pastikan semua CPMK kebagian dulu
+        // -----------------------------------
+        foreach ($cpmks as $index => $cpmk) {
+
+            $i = $index + 1;
+
+            if ($i > $tipe) {
+                break;
+            }
 
             $isUTS = ($tipe >= 15 && $i == 8);
             $isUAS = ($tipe == 16 && $i == 16);
 
-            $metode = $isUTS ? 'UTS' : ($isUAS ? 'UAS' : 'Teori');
+            $metode = $isUTS
+                ? 'UTS'
+                : ($isUAS ? 'UAS' : 'Teori');
+
+            $bobot = rand(3, 10);
+
+            $sub = SubCPMK::create([
+                'kode_scpmk' => $this->generateUniqueKode(SubCPMK::class, 'kode_scpmk'),
+                'deskripsi' => "Pertemuan $i",
+                'materi' => "Materi $i",
+                'metodologi' => 'Problem Based Learning',
+                'indikator' => 'Pemahaman',
+                'metode' => $metode,
+                'bobot' => $bobot,
+                'created_at' => $waktu,
+            ]);
+
+            $sub->cpmks()->attach($cpmk->id, [
+                'sort_order' => $i,
+            ]);
+
+            $subs[] = $sub;
+            $totalBobot += $bobot;
+        }
+
+        // -----------------------------------
+        // 2. Sisanya random
+        // -----------------------------------
+        for ($i = count($subs) + 1; $i <= $tipe; $i++) {
+
+            $isUTS = ($tipe >= 15 && $i == 8);
+            $isUAS = ($tipe == 16 && $i == 16);
+
+            $metode = $isUTS
+                ? 'UTS'
+                : ($isUAS ? 'UAS' : 'Teori');
+
             $bobot = rand(3, 10);
 
             $sub = SubCPMK::create([

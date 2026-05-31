@@ -93,6 +93,14 @@ class KelasSesi extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'sesi_id');
     }
 
+    public function nilai_details()
+    {
+        return $this->hasMany(
+            NilaiDetail::class,
+            'sesi_id'
+        );
+    }
+
     // public function mhsAbsensi(): Attribute
     // {
     //     return Attribute::get(function () {

@@ -244,12 +244,13 @@ class RPSManagement extends Component
             $this->perPage = min((int) $this->perPage, $limits[$table]);
         }
 
-        $targetUrl = route('rps-management', ['switchTable' => $table]);
-        if ($table == '' || $table == null) {
-            $targetPath = '/obe-management';
-        } else {
-            $targetPath = '/obe-management/'.$table;
-        }
+        // if ($table == '' || $table == null) {
+        //     $targetPath = '/obe-management';
+        // } else {
+        //     $targetPath = '/obe-management/'.$table;
+        // }
+        $targetPath = '/obe-management' . ($table ? '/' . $table : '');
+
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }

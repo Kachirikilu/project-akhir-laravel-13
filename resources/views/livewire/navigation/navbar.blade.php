@@ -12,7 +12,8 @@
 
 
     <nav x-data="{
-        openObeMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
+        openOBEMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
+        openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
     
         init() {
@@ -74,6 +75,21 @@
                     'label' => 'OBE Management',
                     'roles' => ['admin', 'dosen'],
                 ],
+                // [
+                //     'type' => 'link',
+                //     'icon' => 'calendar-days',
+                //     'route' => 'jadwal-mahasiswa',
+                //     'label' => 'Jadwal Kelas',
+                //     'roles' => ['mahasiswa'],
+                // ],
+                [
+                    'type' => 'dropdown-jadwal',
+                    'icon' => 'calendar-days',
+                    'route' => 'jadwal-mahasiswa',
+                    'label' => 'Jadwal Kelas',
+                    'roles' => ['mahasiswa'],
+                    'active_routes' => ['jadwal-mahasiswa', 'sesi-mahasiswa'],
+                ],
                 [
                     'type' => 'dropdown-kelas',
                     'icon' => 'rectangle-group',
@@ -96,11 +112,8 @@
             });
         @endphp
 
-        {{-- Loop Semua Navigasi Berdasarkan Urutan Array --}}
         @foreach ($navItems as $item)
             @if ($item['type'] === 'link')
-                {{-- Render Link Biasa --}}
-
                 @php
                     $isActive = isset($item['active_routes'])
                         ? request()->routeIs(...$item['active_routes'])
@@ -123,371 +136,200 @@
                 </a>
             @elseif ($item['type'] === 'dropdown-obe')
                 @php
+                    $currentTable = request()->route('switchTable') ?? 'rps';
+                    $isOBEActive = request()->routeIs('rps-management');
+
                     $subMenus = [
                         [
                             'label' => 'RPS',
                             'url' => route('rps-management', ['switchTable' => 'rps']),
                             'param' => 'rps',
                             'icon' => 'clipboard-document-list',
+                            'color' => 'text-emerald-600 dark:text-emerald-400',
+                            'active' => $isOBEActive && $currentTable === 'rps',
                         ],
                         [
                             'label' => 'CPMK',
                             'url' => route('rps-management', ['switchTable' => 'cpmk']),
                             'param' => 'cpmk',
                             'icon' => 'academic-cap',
+                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'active' => $isOBEActive && $currentTable === 'cpmk',
                         ],
                         [
                             'label' => 'Sub-CPMK',
                             'url' => route('rps-management', ['switchTable' => 'sub-cpmk']),
                             'param' => 'sub-cpmk',
                             'icon' => 'academic-cap',
+                            'color' => 'text-indigo-600 dark:text-indigo-400',
+                            'active' => $isOBEActive && $currentTable === 'sub-cpmk',
                         ],
                         [
                             'label' => 'CPL',
                             'url' => route('rps-management', ['switchTable' => 'cpl']),
                             'param' => 'cpl',
                             'icon' => 'document-text',
+                            'color' => 'text-red-600 dark:text-red-400',
+                            'active' => $isOBEActive && $currentTable === 'cpl',
                         ],
                         [
                             'label' => 'Referensi',
                             'url' => route('rps-management', ['switchTable' => 'referensi']),
                             'param' => 'referensi',
                             'icon' => 'book-open',
+                            'color' => 'text-fuchsia-600 dark:text-fuchsia-400',
+                            'active' => $isOBEActive && $currentTable === 'referensi',
                         ],
                         [
                             'label' => 'Dosen',
                             'url' => route('rps-management', ['switchTable' => 'dosen']),
                             'param' => 'dosen',
                             'icon' => 'briefcase',
+                            'color' => 'text-lime-600 dark:text-lime-400',
+                            'active' => $isOBEActive && $currentTable === 'dosen',
                         ],
                     ];
 
-                    $isObeActive = request()->routeIs('rps-management');
+                    $openMenuVar = 'openOBEMenu';
+                    $isMenuIndukActive = $isOBEActive;
                 @endphp
 
                 <div class="relative mr-2">
-
-                    {{-- Flux dropdown hidden trigger --}}
-                    <flux:dropdown position="right" align="start">
-                        <button x-ref="obeDropdownTrigger" type="button" tabindex="-1" aria-hidden="true"
-                            class="absolute inset-0 opacity-0 pointer-events-none"></button>
-
-                        {{-- 🚀 REAKTIVITAS 1: Flux Menu mendengarkan Event Global --}}
-                        <flux:menu x-data="{ currentDropdownTable: '{{ request()->route('switchTable') ?? 'rps' }}' }"
-                            @table-switched.window="currentDropdownTable = $event.detail.switchTable === '' ? 'rps' : $event.detail.switchTable"
-                            class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-
-                            <flux:menu.heading>OBE Management</flux:menu.heading>
-
-                            <flux:separator class="my-1" />
-
-                            @foreach ($subMenus as $sub)
-                                @php
-                                    $iconName = 'academic-cap';
-                                    $colorClasses = 'text-amber-600 dark:text-amber-400';
-
-                                    if ($sub['param'] === 'rps') {
-                                        $iconName = 'clipboard-document-list';
-                                        $colorClasses = 'text-emerald-600 dark:text-emerald-400';
-                                    } elseif ($sub['param'] === 'sub-cpmk') {
-                                        $iconName = 'academic-cap';
-                                        $colorClasses = 'text-indigo-600 dark:text-indigo-400';
-                                    } elseif ($sub['param'] === 'cpl') {
-                                        $iconName = 'document-text';
-                                        $colorClasses = 'text-red-600 dark:text-red-400';
-                                    } elseif ($sub['param'] === 'referensi') {
-                                        $iconName = 'book-open';
-                                        $colorClasses = 'text-fuchsia-600 dark:text-fuchsia-400';
-                                    } elseif ($sub['param'] === 'dosen') {
-                                        $iconName = 'briefcase';
-                                        $colorClasses = 'text-lime-600 dark:text-lime-400';
-                                    }
-                                @endphp
-
-                                <flux:menu.item :href="$sub['url']" wire:navigate
-                                    class="group overflow-hidden rounded-md cursor-pointer !shadow-none !border-none hover:!bg-transparent focus:!bg-transparent active:!bg-transparent">
-
-                                    <span
-                                        :class="((currentDropdownTable === '{{ $sub['param'] }}' || (
-                                            currentDropdownTable === '' && '{{ $sub['param'] }}'
-                                            === 'rps')) && {{ $isObeActive ? 'true' : 'false' }}) ?
-                                        'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' :
-                                        'text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5'"
-                                        class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0">
-
-                                        <flux:icon :name="$iconName"
-                                            class="{{ $colorClasses }} mr-2 h-4 w-4 shrink-0" />
-
-                                        <span class="truncate block flex-1 text-left">
-                                            {{ $sub['label'] }}
-                                        </span>
-                                    </span>
-                                </flux:menu.item>
-                            @endforeach
-                        </flux:menu>
-                    </flux:dropdown>
-
-                    {{-- SINGLE BUTTON (seperti link) --}}
-                    <button type="button"
-                        @click="expanded ? openObeMenu = !openObeMenu : $refs.obeDropdownTrigger.click()"
-                        class="cursor-pointer flex items-center text-xs mx-1 p-2 rounded-lg transition-colors w-full
-                                {{ $isObeActive
-                                    ? 'bg-white/20 text-[var(--main-text)]'
-                                    : 'text-[var(--main-text)]/80 hover:bg-white/10 hover:text-[var(--main-text)]' }}"
-                        title="{{ $item['label'] }}">
-
-                        <div class="flex items-center justify-between overflow-hidden w-full">
-                            <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
-
-                            <div x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
-                                x-transition:enter-start="opacity-0 translate-x-4"
-                                x-transition:enter-end="opacity-100 translate-x-0"
-                                x-transition:leave="transition-all duration-200 ease-in"
-                                x-transition:leave-start="opacity-100 translate-x-0"
-                                x-transition:leave-end="opacity-0 translate-x-4"
-                                class="flex flex-1 items-center justify-between overflow-hidden ml-3">
-
-                                <span class="whitespace-nowrap overflow-hidden text-ellipsis block text-left flex-1">
-                                    {{ $item['label'] }}
-                                </span>
-
-                                <span class="transition-transform duration-200 shrink-0 ml-auto"
-                                    :class="{ 'rotate-180': openObeMenu }">
-                                    <flux:icon name="chevron-down" class="w-3 h-3" />
-                                </span>
-                            </div>
-                        </div>
-                    </button>
-
-                    {{-- Submenu Biasa (Saat Sidebar Terbuka Lebar) --}}
-                    <div x-data="{ currentTable: '{{ request()->route('switchTable') ?? 'rps' }}' }"
-                        @table-switched.window="currentTable = $event.detail.switchTable === '' ? 'rps' : $event.detail.switchTable"
-                        x-show="expanded && openObeMenu" x-cloak
-                        x-transition:enter="transition-all duration-300 ease-out"
-                        x-transition:enter-start="opacity-0 -translate-y-4 max-h-0 origin-top"
-                        x-transition:enter-end="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                        x-transition:leave="transition-all duration-200 ease-in"
-                        x-transition:leave-start="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                        x-transition:leave-end="opacity-0 -translate-y-4 max-h-0 origin-top"
-                        class="mt-1 space-y-1 pl-4 w-full ml-1 overflow-hidden">
-
-                        @foreach ($subMenus as $sub)
-                            <a href="{{ $sub['url'] }}" wire:navigate
-                                :class="((currentTable === '{{ $sub['param'] }}' || (currentTable === '' &&
-                                    '{{ $sub['param'] }}'
-                                    === 'rps')) && {{ $isObeActive ? 'true' : 'false' }}) ?
-                                'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' :
-                                'text-[var(--main-text)]/70 hover:bg-white/10 hover:text-[var(--main-text)] border-transparent pl-4'"
-                                class="block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95">
-                                <div class="flex items-center">
-                                    <flux:icon :name="$sub['icon']" class="mr-2 h-4 w-4 shrink-0" />
-
-                                    <span
-                                        class="inline-block text-ellipsis whitespace-nowrap">{{ $sub['label'] }}</span>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="OBE Management"
+                        triggerRef="obeDropdownTrigger" />
+                    <x-livewire::navigation.partial.main-button :item="$item" menu="openOBEMenu"
+                        trigger="obeDropdownTrigger" :active="$isOBEActive" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
-            @elseif($item['type'] === 'dropdown-kelas')
+            @elseif($item['type'] === 'dropdown-jadwal')
                 @php
-                    $kelasHistory = session('kelas.history', []);
-                    $sesiHistory = session('jadwal.history', []);
-
-                    $groupedJadwal = [];
-                    foreach ($sesiHistory as $sesi) {
-                        $kodeKelas = $sesi['kode'];
-                        $kodeJadwal = $sesi['kode_jadwal'];
-                        $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
-                    }
-
-                    foreach ($groupedJadwal as $kodeKelas => $daftarJadwal) {
-                        ksort($groupedJadwal[$kodeKelas]);
-                    }
+                    $sesiHistory = session('jadwal_mahasiswa.history', []);
 
                     $subMenus = [
                         [
-                            'label' => 'Daftar Kelas',
-                            'url' => route('kelas-management'),
-                            'param' => 'kelas-management',
-                            'icon' => 'rectangle-group',
-                            'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'level' => 0,
-                            'active' => request()->routeIs('kelas-management'),
-                            'active-sub' => request()->routeIs('jadwal-management', 'sesi-management'),
+                            'label' => 'Daftar Jadwal Kelas',
+                            'url' => route('jadwal-mahasiswa'),
+                            'param' => 'jadwal-mahasiswa',
+                            'icon' => 'clipboard-document-list',
+                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'active' => request()->routeIs('jadwal-mahasiswa'),
+                            'active-sub' => request()->routeIs('sesi-mahasiswa'),
                         ],
                     ];
 
-                    foreach ($kelasHistory as $kelas) {
-                        $kodeKelas = $kelas['kode'];
+                    foreach ($sesiHistory as $sesi) {
+                        $kodeKelas = $sesi['kode'];
+                        $kodeJadwal = $sesi['kode_jadwal'];
+                        $jadwalId = $sesi['jadwal_id'] ?? null;
+                        $switchTable = $sesi['switchTable'] ?? null;
 
                         $subMenus[] = [
-                            'label' => 'Kelas ' . $kodeKelas,
-                            'url' => $kelas['url'],
-                            'param' => 'jadwal-management',
-                            'icon' => 'clipboard-document-list',
-                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'label' => $kodeKelas . '-' . $kodeJadwal,
+                            'url' => route(
+                                'sesi-mahasiswa',
+                                array_filter([
+                                    'kode' => $kodeKelas,
+                                    'kode_jadwal' => $kodeJadwal,
+                                    'jadwal_id' => $jadwalId,
+                                    'switchTable' => $switchTable,
+                                ]),
+                            ),
+                            'param' => 'sesi-mahasiswa',
+                            'icon' => 'academic-cap',
+                            'color' => 'text-indigo-600 dark:text-indigo-400',
                             'level' => 1,
-                            // 'active' =>
-                            //     request()->routeIs('jadwal-management') &&
-                            //     request()->route('kode') === $kodeKelas,
-                            // 'active' =>
-                            //     request()->routeIs('jadwal-management', 'sesi-management') &&
-                            //     request()->route('kode') === $kodeKelas,
                             'active' =>
-                                request()->routeIs('jadwal-management') && request()->route('kode') === $kodeKelas,
-                            'active-sub' =>
-                                request()->routeIs('sesi-management') && request()->route('kode') === $kodeKelas,
-                            // 'kode' => $kodeKelas,
+                                request()->routeIs('sesi-mahasiswa') &&
+                                request()->route('kode') === $kodeKelas &&
+                                request()->route('kode_jadwal') === $kodeJadwal,
                         ];
-
-                        if (isset($groupedJadwal[$kodeKelas])) {
-                            foreach ($groupedJadwal[$kodeKelas] as $sesi) {
-                                $subMenus[] = [
-                                    'label' => $sesi['kode_jadwal'],
-                                    'url' => $sesi['url'],
-                                    'param' => 'sesi-management',
-                                    'icon' => 'academic-cap',
-                                    'color' => 'text-indigo-600 dark:text-indigo-400',
-                                    'level' => 2,
-                                    'active' =>
-                                        request()->routeIs('sesi-management') &&
-                                        request()->route('kode') === $sesi['kode'] &&
-                                        request()->route('kode_jadwal') === $sesi['kode_jadwal'],
-                                    // 'kode' => $sesi['kode'],
-                                    // 'kode_jadwal' => $sesi['kode_jadwal'],
-                                ];
-                            }
-                        }
                     }
 
-                    $isKelasActive = request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management');
+                    $openMenuVar = 'openJadwalMenu';
+                    $isJadwalActive = request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa');
                 @endphp
 
-                <div class="relative mr-2">
-                    <flux:dropdown position="right" align="start">
-                        <button x-ref="kelasDropdownTrigger" type="button" tabindex="-1"
-                            class="absolute inset-0 opacity-0 pointer-events-none">
-                        </button>
-
-                        <flux:menu x-data="{
-                            currentRoute: '{{ Route::currentRouteName() }}',
-                            currentKode: '{{ request()->route('kode') }}',
-                            currentJadwal: '{{ request()->route('kode_jadwal') }}'
-                        }"
-                            @kelas-switched.window="
-                                        currentRoute = $event.detail.route;
-                                        currentKode = $event.detail.kode;
-                                        currentJadwal = $event.detail.kode_jadwal;
-                                    "
-                            class="min-w-48 !bg-[var(--second-pop-up-color)]
-                                        !border-[var(--border-table-color)]
-                                        !text-[var(--contrast-main-text)]">
-
-                            <flux:menu.heading>
-                                Kelas Management
-                            </flux:menu.heading>
-
-                            <flux:separator class="my-1" />
-
-                            @foreach ($subMenus as $sub)
-                                <flux:menu.item :href="$sub['url']" wire:navigate
-                                    class="group overflow-hidden rounded-md cursor-pointer
-                                                    !shadow-none !border-none hover:!bg-transparent
-                                                    focus:!bg-transparent active:!bg-transparent">
-                                    <span @class([
-                                        // 1. Base Class Utama
-                                        'pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0',
-                                        // 2. KONDISI ACTIVE (Menu Utama Aktif Penuh)
-                                        'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' =>
-                                            $sub['active'],
-                                        // 3. KONDISI ACTIVE-SUB (Hanya Border-Left Menyala)
-                                        'border-l-2 border-[var(--border-main-color)] text-[var(--contrast-main-text)] bg-[var(--main-pop-up-color)]/30 dark:bg-white/5' =>
-                                            isset($sub['active-sub']) && $sub['active-sub'],
-                                        // 4. KONDISI TIDAK AKTIF (Sama sekali bebas dari active & active-sub)
-                                        'border-l-2 border-transparent text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5' =>
-                                            !$sub['active'] && !(isset($sub['active-sub']) && $sub['active-sub']),
-                                    ])
-                                        style="margin-left: {{ $sub['level'] == 1 ? 18 : ($sub['level'] == 2 ? 48 : '') }}px;">
-
-                                        <flux:icon :name="$sub['icon']"
-                                            class="{{ $sub['color'] }} mr-2 h-4 w-4 shrink-0" />
-
-                                        <span class="truncate block flex-1 text-left">
-                                            {{ $sub['label'] }}
-                                        </span>
-                                    </span>
-                                </flux:menu.item>
-                            @endforeach
-                        </flux:menu>
-                    </flux:dropdown>
-
-                    <button type="button"
-                        @click="expanded ? openKelasMenu = !openKelasMenu : $refs.kelasDropdownTrigger.click()"
-                        class="cursor-pointer flex items-center text-xs mx-1 p-2
-                                rounded-lg transition-colors w-full
-                                {{ $isKelasActive
-                                    ? 'bg-white/20 text-[var(--main-text)]'
-                                    : 'text-[var(--main-text)]/80 hover:bg-white/10 hover:text-[var(--main-text)]' }}"
-                        title="{{ $item['label'] }}">
-
-                        <div class="flex items-center justify-between overflow-hidden w-full">
-                            <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
-
-                            <div x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
-                                x-transition:enter-start="opacity-0 translate-x-4"
-                                x-transition:enter-end="opacity-100 translate-x-0"
-                                x-transition:leave="transition-all duration-200 ease-in"
-                                x-transition:leave-start="opacity-100 translate-x-0"
-                                x-transition:leave-end="opacity-0 translate-x-4"
-                                class="flex flex-1 items-center justify-between overflow-hidden ml-3">
-
-                                <span class="whitespace-nowrap overflow-hidden text-ellipsis block text-left flex-1">
-                                    {{ $item['label'] }}
-                                </span>
-
-                                <span class="transition-transform duration-200 shrink-0 ml-auto"
-                                    :class="{ 'rotate-180': openKelasMenu }">
-                                    <flux:icon name="chevron-down" class="w-3 h-3" />
-                                </span>
-                            </div>
-                        </div>
-                    </button>
-
-                    <div x-show="expanded && openKelasMenu" x-cloak
-                        x-transition:enter="transition-all duration-300 ease-out"
-                        x-transition:enter-start="opacity-0 -translate-y-4 max-h-0 origin-top"
-                        x-transition:enter-end="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                        x-transition:leave="transition-all duration-200 ease-in"
-                        x-transition:leave-start="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                        x-transition:leave-end="opacity-0 -translate-y-4 max-h-0 origin-top"
-                        class="mt-1 space-y-1 pl-4 w-full ml-1 overflow-hidden">
-                        @foreach ($subMenus as $sub)
-                            <a href="{{ $sub['url'] }}" wire:navigate
-                                style="margin-left: {{ $sub['level'] == 1 ? 18 : ($sub['level'] == 2 ? 48 : '') }}px"
-                                @class([
-                                    // 1. Base Class Utama
-                                    'block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95',
-                                    // 2. KONDISI ACTIVE (Menu Utama Aktif Penuh)
-                                    'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' =>
-                                        $sub['active'],
-                                    // 3. KONDISI ACTIVE-SUB (Hanya border-left yang menyala, background & teks semi-transparan mengikuti hover)
-                                    'border-[var(--main-text)] bg-white/5 text-[var(--main-text)] pl-3' =>
-                                        isset($sub['active-sub']) && $sub['active-sub'],
-                                    // 4. KONDISI TIDAK AKTIF (Sama sekali tidak berada di menu induk maupun sub)
-                                    'text-[var(--main-text)]/70 hover:bg-white/10 hover:text-[var(--main-text)] border-transparent pl-4' =>
-                                        !$sub['active'] && !(isset($sub['active-sub']) && $sub['active-sub']),
-                                ])>
-                                <div class="flex items-center">
-                                    <flux:icon :name="$sub['icon']" class="mr-2 h-4 w-4 shrink-0" />
-                                    <span
-                                        class="inline-block text-ellipsis whitespace-nowrap">{{ $sub['label'] }}</span>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
+                <div class="relative mr-2" @toggle-menu-obe.window="openJadwalMenu = !openJadwalMenu">
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Jadwal Mahasiswa"
+                        triggerRef="jadwalDropdownTrigger" />
+                    <x-livewire::navigation.partial.main-button :item="$item" menu="openJadwalMenu"
+                        trigger="jadwalDropdownTrigger" :active="$isJadwalActive" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
-            @endif
+            @elseif($item['type'] === 'dropdown-kelas')
+            @php
+                $kelasHistory = session('kelas.history', []);
+                $sesiHistory = session('jadwal.history', []);
+
+                $groupedJadwal = [];
+                foreach ($sesiHistory as $sesi) {
+                    $kodeKelas = $sesi['kode'];
+                    $kodeJadwal = $sesi['kode_jadwal'];
+                    $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
+                }
+
+                foreach ($groupedJadwal as $kodeKelas => $daftarJadwal) {
+                    ksort($groupedJadwal[$kodeKelas]);
+                }
+
+                $subMenus = [
+                    [
+                        'label' => 'Daftar Kelas',
+                        'url' => route('kelas-management'),
+                        'param' => 'kelas-management',
+                        'icon' => 'rectangle-group',
+                        'color' => 'text-emerald-600 dark:text-emerald-400',
+                        'active' => request()->routeIs('kelas-management'),
+                        'active-sub' => request()->routeIs('jadwal-management', 'sesi-management'),
+                    ],
+                ];
+
+                foreach ($kelasHistory as $kelas) {
+                    $kodeKelas = $kelas['kode'];
+
+                    $subMenus[] = [
+                        'label' => 'Kelas ' . $kodeKelas,
+                        'url' => $kelas['url'],
+                        'param' => 'jadwal-management',
+                        'icon' => 'clipboard-document-list',
+                        'color' => 'text-amber-600 dark:text-amber-400',
+                        'level' => 1,
+                        'active' => request()->routeIs('jadwal-management') && request()->route('kode') === $kodeKelas,
+                        'active-sub' =>
+                            request()->routeIs('sesi-management') && request()->route('kode') === $kodeKelas,
+                    ];
+
+                    if (isset($groupedJadwal[$kodeKelas])) {
+                        foreach ($groupedJadwal[$kodeKelas] as $sesi) {
+                            $subMenus[] = [
+                                'label' => $sesi['kode_jadwal'],
+                                'url' => $sesi['url'],
+                                'param' => 'sesi-management',
+                                'icon' => 'academic-cap',
+                                'color' => 'text-indigo-600 dark:text-indigo-400',
+                                'level' => 2,
+                                'active' =>
+                                    request()->routeIs('sesi-management') &&
+                                    request()->route('kode') === $sesi['kode'] &&
+                                    request()->route('kode_jadwal') === $sesi['kode_jadwal'],
+                            ];
+                        }
+                    }
+                }
+
+                $openMenuVar = 'openKelasMenu';
+                $isKelasActive = request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management');
+            @endphp
+
+            <div class="relative mr-2" @toggle-menu-obe.window="openKelasMenu = !openKelasMenu">
+                <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Kelas Management"
+                    triggerRef="kelasDropdownTrigger" />
+                <x-livewire::navigation.partial.main-button :item="$item" menu="openKelasMenu"
+                    trigger="kelasDropdownTrigger" :active="$isKelasActive" />
+                <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
+
+            </div>
+        @endif
         @endforeach
 
         <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-300 ease-out"

@@ -30,8 +30,8 @@ return new class extends Migration
             
             $table->string('password')->nullable();
 
-            $table->enum('kode_wilayah', ['IDL', 'PLG']);
             $table->string('label_kelas');
+            $table->enum('kode_wilayah', ['IDL', 'PLG']);
             
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_berakhir')->nullable();
@@ -44,6 +44,7 @@ return new class extends Migration
             
             $table->softDeletes();
             $table->timestamps();
+            $table->unique(['kelas_id', 'label_kelas', 'kode_wilayah']);
         });
 
         Schema::create('kelas_sesi', function (Blueprint $table) {
@@ -56,6 +57,7 @@ return new class extends Migration
 
             $table->softDeletes();
             $table->timestamps();
+            $table->unique(['kj_id', 'pertemuan_ke']);
         });
 
         Schema::create('kelas_sesi_overrides', function (Blueprint $table) {
@@ -85,23 +87,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('sesi_pivot_dosen', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
-            $table->enum('peran', ['Koordinator', 'Pengajar', 'Asisten'])->default('Pengajar');
-            $table->boolean('is_ketua')->default(false);
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
-
-        Schema::create('sesi_pivot_ref', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
-            $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
-            $table->timestamps();
-        });
-
         Schema::create('mahasiswa_kelas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
@@ -125,6 +110,24 @@ return new class extends Migration
 
             $table->dateTime('waktu_presensi')->nullable();
             $table->text('keterangan')->nullable();
+            $table->timestamps();
+        });
+
+
+        Schema::create('sesi_pivot_dosen', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->enum('peran', ['Koordinator', 'Pengajar', 'Asisten'])->default('Pengajar');
+            $table->boolean('is_ketua')->default(false);
+            $table->integer('sort_order')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('sesi_pivot_ref', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
+            $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
             $table->timestamps();
         });
 

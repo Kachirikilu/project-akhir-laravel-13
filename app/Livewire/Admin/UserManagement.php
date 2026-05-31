@@ -171,13 +171,7 @@ class UserManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        $targetUrl = route('user-management', ['switchTable' => $table]);
-        if ($table == '' || $table == null) {
-            $targetPath = '/user-management';
-        } else {
-            $targetPath = '/user-management/'.$table;
-        }
-
+        $targetPath = '/user-management' . ($table ? '/' . $table : '');
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 

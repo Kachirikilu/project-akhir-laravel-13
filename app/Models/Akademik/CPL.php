@@ -21,6 +21,14 @@ class CPL extends Model
         'updated_at' => 'date',
     ];
 
+    public function rekap_mahasiswas()
+    {
+        return $this->hasMany(
+            RekapCPLMahasiswa::class,
+            'cpl_id'
+        );
+    }
+
     protected function kode(): Attribute
     {
         return Attribute::get(function () {

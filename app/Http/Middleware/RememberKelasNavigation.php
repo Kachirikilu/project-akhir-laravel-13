@@ -13,98 +13,68 @@ class RememberKelasNavigation
     {
         $routeName = $request->route()?->getName();
 
-        if ($routeName === 'jadwal-management') {
+        // 1. HANDLER JADWAL (LEVEL 0 MANAGEMENT / LEVEL 0 MAHASISWA)
+        if ($routeName === 'jadwal-management' || $routeName === 'jadwal-mahasiswa') {
             $currentKode = $request->route('kode');
             $currentKodeDb = str_replace('-', '', $currentKode);
 
             $kelasExists = Kelas::query()
-                ->whereRaw(
-                    "REPLACE(kode_kelas, '-', '') = ?",
-                    [$currentKodeDb]
-                )
+                ->whereRaw("REPLACE(kode_kelas, '-', '') = ?", [$currentKodeDb])
                 ->exists();
 
             if (! $kelasExists) {
                 return $next($request);
             }
 
-            $kelasHistory = session('kelas.history', []);
-
+            // Tentukan key session berdasarkan scope user
+            $sessionKey = ($routeName === 'jadwal-mahasiswa') ? 'kelas_mahasiswa.history' : 'kelas.history';
+            $kelasHistory = session($sessionKey, []);
+            
             unset($kelasHistory[$currentKode]);
 
             $kelasHistory[$currentKode] = [
                 'kode' => $currentKode,
-                'url' => route('jadwal-management', [
-                    'kode' => $currentKode,
-                ]),
+                'url' => route($routeName, ['kode' => $currentKode]),
             ];
 
-            $kelasHistory = array_slice(
-                $kelasHistory,
-                -3,
-                null,
-                true
-            );
+            $kelasHistory = array_slice($kelasHistory, -3, null, true);
+            uasort($kelasHistory, fn ($a, $b) => strcmp($a['kode'], $b['kode']));
 
-            uasort($kelasHistory, function ($a, $b) {
-                return strcmp($a['kode'], $b['kode']);
-            });
-
-            session([
-                'kelas.history' => $kelasHistory,
-            ]);
+            session([$sessionKey => $kelasHistory]);
         }
 
-        if ($routeName === 'sesi-management') {
-
+        // 2. HANDLER SESI (LEVEL 2 MANAGEMENT / LEVEL 1 MAHASISWA)
+        if ($routeName === 'sesi-management' || $routeName === 'sesi-mahasiswa') {
             $currentKode = $request->route('kode');
             $currentKodeJadwal = $request->route('kode_jadwal');
             $currentIdJadwal = $request->route('jadwal_id');
-            $sesiHistory = session('jadwal.history', []);
             $currentKodeDb = str_replace('-', '', $currentKode);
 
             $jadwalExists = KelasJadwal::query()
-                ->whereRelation(
-                    'kelas_rel',
-                    'kode_kelas',
-                    $currentKodeDb
-                )
-                ->whereRaw(
-                    "
-            CONCAT(
-                label_kelas,
-                '-',
-                kode_wilayah,
-                '-',
-                CASE
-                    WHEN YEAR(tanggal_mulai) >= 3000
-                        THEN YEAR(tanggal_mulai)
-
-                    WHEN YEAR(tanggal_mulai) >= 2100
-                        THEN RIGHT(YEAR(tanggal_mulai), 3)
-
-                    WHEN YEAR(tanggal_mulai) >= 2000
-                        THEN RIGHT(YEAR(tanggal_mulai), 2)
-
-                    ELSE YEAR(tanggal_mulai)
-                END
-            ) = ?
-            ",
-                    [$currentKodeJadwal]
-                )
-                ->when(
-                    $currentIdJadwal,
-                    fn ($q) => $q->where('id', $currentIdJadwal)
-                )
+                ->whereRelation('kelas_rel', 'kode_kelas', $currentKodeDb)
+                ->whereRaw("
+                    CONCAT(
+                        label_kelas, '-', kode_wilayah, '-',
+                        CASE
+                            WHEN YEAR(tanggal_mulai) >= 3000 THEN YEAR(tanggal_mulai)
+                            WHEN YEAR(tanggal_mulai) >= 2100 THEN RIGHT(YEAR(tanggal_mulai), 3)
+                            WHEN YEAR(tanggal_mulai) >= 2000 THEN RIGHT(YEAR(tanggal_mulai), 2)
+                            ELSE YEAR(tanggal_mulai)
+                        END
+                    ) = ?
+                ", [$currentKodeJadwal])
+                ->when($currentIdJadwal, fn ($q) => $q->where('id', $currentIdJadwal))
                 ->exists();
 
             if (! $jadwalExists) {
                 return $next($request);
             }
 
-            $compositeKey =
-                $currentKode.'_'.$currentKodeJadwal;
+            // Tentukan key session berdasarkan scope user
+            $sessionKey = ($routeName === 'sesi-mahasiswa') ? 'jadwal_mahasiswa.history' : 'jadwal.history';
+            $sesiHistory = session($sessionKey, []);
 
+            $compositeKey = $currentKode.'_'.$currentKodeJadwal;
             unset($sesiHistory[$compositeKey]);
 
             $sesiHistory[$compositeKey] = [
@@ -112,41 +82,22 @@ class RememberKelasNavigation
                 'kode_jadwal' => $currentKodeJadwal,
                 'jadwal_id' => $currentIdJadwal,
                 'switchTable' => $request->route('switchTable'),
-                'url' => route('sesi-management', [
+                'url' => route($routeName, array_filter([
                     'kode' => $currentKode,
                     'kode_jadwal' => $currentKodeJadwal,
                     'jadwal_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
-                ]),
+                ])),
             ];
 
-            // max 12 history
-            $sesiHistory = array_slice(
-                $sesiHistory,
-                -12,
-                null,
-                true
-            );
-
-            // urut
+            $sesiHistory = array_slice($sesiHistory, -12, null, true);
+            
             uasort($sesiHistory, function ($a, $b) {
-
-                $kodeCompare =
-                    strcmp($a['kode'], $b['kode']);
-
-                if ($kodeCompare !== 0) {
-                    return $kodeCompare;
-                }
-
-                return strcmp(
-                    $a['kode_jadwal'],
-                    $b['kode_jadwal']
-                );
+                $kodeCompare = strcmp($a['kode'], $b['kode']);
+                return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal'], $b['kode_jadwal']);
             });
 
-            session([
-                'jadwal.history' => $sesiHistory,
-            ]);
+            session([$sessionKey => $sesiHistory]);
         }
 
         return $next($request);

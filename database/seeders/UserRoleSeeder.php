@@ -23,12 +23,12 @@ class UserRoleSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
 
-        $totalUsers = 1024;
+        $totalUsers = 2160;
         $batchSize = 512;
 
         $prodiIds = Prodi::pluck('id')->toArray();
         if (empty($prodiIds)) {
-            throw new \Exception('Tabel prodis kosong! Jalankan SilsilahSeeder terlebih dahulu.');
+            throw new \Exception('Tabel prodis kosong! Jalankan SilsilahSeeder terlebih dahulu!');
         }
 
         // --- 1. AKUN UTAMA (Diproses sekali) ---

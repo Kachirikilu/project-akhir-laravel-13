@@ -34,6 +34,14 @@ class KelasJadwal extends Model
             ->withTimestamps();
     }
 
+    public function nilais()
+    {
+        return $this->hasMany(
+            NilaiMahasiswa::class,
+            'kj_id'
+        );
+    }
+
     protected function kodeKelas(): Attribute
     {
         return Attribute::get(function () {

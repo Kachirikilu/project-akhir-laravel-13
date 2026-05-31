@@ -2,9 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Kelas\Kelas;
+use App\Models\Kelas\KelasJadwal;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // 👈 Gunakan DB atau Model Anda
 
 class RememberKelasNavigation
 {
@@ -12,92 +13,140 @@ class RememberKelasNavigation
     {
         $routeName = $request->route()?->getName();
 
-        // ==========================================
-        // SINKRONISASI JADWAL MANAGEMENT
-        // ==========================================
         if ($routeName === 'jadwal-management') {
             $currentKode = $request->route('kode');
-            $kelasHistory = session('kelas.history', []);
+            $currentKodeDb = str_replace('-', '', $currentKode);
 
-            // 1. Bersihkan histori dari kode-kode yang sudah tidak ada di database
-            $activeKodes = DB::table('kelas') // ⚠️ Ganti 'kelas' dengan nama tabel kelas Anda
-                ->whereIn('kode_kelas', array_keys($kelasHistory))
-                ->pluck('kode_kelas')
-                ->toArray();
-                
-            $kelasHistory = array_intersect_key($kelasHistory, array_flip($activeKodes));
+            $kelasExists = Kelas::query()
+                ->whereRaw(
+                    "REPLACE(kode_kelas, '-', '') = ?",
+                    [$currentKodeDb]
+                )
+                ->exists();
 
-            // 2. Cek apakah kode saat ini valid, jika valid baru masukkan histori
-            $isValid = DB::table('kelas')->where('kode_kelas', $currentKode)->exists();
-
-            if ($isValid) {
-                unset($kelasHistory[$currentKode]);
-                $kelasHistory[$currentKode] = [
-                    'kode' => $currentKode,
-                    'url' => route('jadwal-management', ['kode' => $currentKode]),
-                ];
-
-                // ambil 3 terbaru (di komen tertulis 2, tapi di code -3, sesuaikan kebutuhan)
-                $kelasHistory = array_slice($kelasHistory, -3, null, true);
-
-                uasort($kelasHistory, function ($a, $b) {
-                    return strcmp($a['kode'], $b['kode']);
-                });
+            if (! $kelasExists) {
+                return $next($request);
             }
 
-            session(['kelas.history' => $kelasHistory]);
+            $kelasHistory = session('kelas.history', []);
+
+            unset($kelasHistory[$currentKode]);
+
+            $kelasHistory[$currentKode] = [
+                'kode' => $currentKode,
+                'url' => route('jadwal-management', [
+                    'kode' => $currentKode,
+                ]),
+            ];
+
+            $kelasHistory = array_slice(
+                $kelasHistory,
+                -3,
+                null,
+                true
+            );
+
+            uasort($kelasHistory, function ($a, $b) {
+                return strcmp($a['kode'], $b['kode']);
+            });
+
+            session([
+                'kelas.history' => $kelasHistory,
+            ]);
         }
 
-        // ==========================================
-        // SINKRONISASI SESI MANAGEMENT
-        // ==========================================
         if ($routeName === 'sesi-management') {
+
             $currentKode = $request->route('kode');
             $currentKodeJadwal = $request->route('kode_jadwal');
             $currentIdJadwal = $request->route('jadwal_id');
-
             $sesiHistory = session('jadwal.history', []);
+            $currentKodeDb = str_replace('-', '', $currentKode);
 
-            // 1. Bersihkan histori sesi dari jadwal_id yang sudah dihapus di DB
-            $activeJadwalIds = DB::table('kelas_jadwals') // ⚠️ Ganti dengan nama tabel jadwal Anda
-                ->whereIn('id', array_column($sesiHistory, 'jadwal_id'))
-                ->pluck('id')
-                ->toArray();
+            $jadwalExists = KelasJadwal::query()
+                ->whereRelation(
+                    'kelas_rel',
+                    'kode_kelas',
+                    $currentKodeDb
+                )
+                ->whereRaw(
+                    "
+                    CONCAT(
+                        label_kelas,
+                        '-',
+                        kode_wilayah,
+                        '-',
+                        CASE
+                            WHEN YEAR(tanggal_mulai) >= 3000
+                                THEN YEAR(tanggal_mulai)
 
-            $sesiHistory = array_filter($sesiHistory, function($item) use ($activeJadwalIds) {
-                return in_array($item['jadwal_id'], $activeJadwalIds);
-            });
+                            WHEN YEAR(tanggal_mulai) >= 2100
+                                THEN RIGHT(YEAR(tanggal_mulai), 3)
 
-            // 2. Cek apakah ID jadwal saat ini valid sebelum disimpan
-            $isValidJadwal = DB::table('kelas_jadwals')->where('id', $currentIdJadwal)->exists();
+                            WHEN YEAR(tanggal_mulai) >= 2000
+                                THEN RIGHT(YEAR(tanggal_mulai), 2)
 
-            if ($isValidJadwal) {
-                $compositeKey = $currentKode.'_'.$currentKodeJadwal;
-                unset($sesiHistory[$compositeKey]);
+                            ELSE YEAR(tanggal_mulai)
+                        END
+                    ) = ?
+                    ",
+                    [$currentKodeJadwal]
+                )
+                ->when(
+                    $currentIdJadwal,
+                    fn ($q) => $q->where('id', $currentIdJadwal)
+                )
+                ->exists();
 
-                $sesiHistory[$compositeKey] = [
+            if (! $jadwalExists) {
+                return $next($request);
+            }
+
+            $compositeKey =
+                $currentKode.'_'.$currentKodeJadwal;
+
+            unset($sesiHistory[$compositeKey]);
+
+            $sesiHistory[$compositeKey] = [
+                'kode' => $currentKode,
+                'kode_jadwal' => $currentKodeJadwal,
+                'jadwal_id' => $currentIdJadwal,
+                'switchTable' => $request->route('switchTable'),
+                'url' => route('sesi-management', [
                     'kode' => $currentKode,
                     'kode_jadwal' => $currentKodeJadwal,
                     'jadwal_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
-                    'url' => route('sesi-management', [
-                        'kode' => $currentKode,
-                        'kode_jadwal' => $currentKodeJadwal,
-                        'jadwal_id' => $currentIdJadwal,
-                        'switchTable' => $request->route('switchTable'),
-                    ]),
-                ];
+                ]),
+            ];
 
-                $sesiHistory = array_slice($sesiHistory, -12, null, true);
+            // max 12 history
+            $sesiHistory = array_slice(
+                $sesiHistory,
+                -12,
+                null,
+                true
+            );
 
-                uasort($sesiHistory, function ($a, $b) {
-                    $kodeCompare = strcmp($a['kode'], $b['kode']);
-                    if ($kodeCompare !== 0) return $kodeCompare;
-                    return strcmp($a['kode_jadwal'], $b['kode_jadwal']);
-                });
-            }
+            // urut
+            uasort($sesiHistory, function ($a, $b) {
 
-            session(['jadwal.history' => $sesiHistory]);
+                $kodeCompare =
+                    strcmp($a['kode'], $b['kode']);
+
+                if ($kodeCompare !== 0) {
+                    return $kodeCompare;
+                }
+
+                return strcmp(
+                    $a['kode_jadwal'],
+                    $b['kode_jadwal']
+                );
+            });
+
+            session([
+                'jadwal.history' => $sesiHistory,
+            ]);
         }
 
         return $next($request);

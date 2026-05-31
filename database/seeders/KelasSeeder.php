@@ -15,7 +15,6 @@ class KelasSeeder extends Seeder
     public function run(): void
     {
         // 1. Ambil RPS yang memiliki 14-16 SCPMK melalui CPMK
-        // Gunakan chunk agar tidak membebani RAM
         $batchSize = 50;
         $totalProcessed = 0;
 
@@ -24,14 +23,11 @@ class KelasSeeder extends Seeder
         RPS::with(['cpmks.scpmks', 'mk_rel.prodis'])
             ->chunk($batchSize, function ($allRps) use (&$totalProcessed) {
                 foreach ($allRps as $rps) {
-                    // Ambil SCPMK unik dari semua CPMK yang terhubung
                     $scpmkList = $rps->cpmks->flatMap(function ($cpmk) {
                         return $cpmk->scpmks;
                     })->unique('id')->sortBy('pivot.sort_order')->values();
 
                     $totalScpmk = $scpmkList->count();
-
-                    // Filter sesuai kriteria Anda (14-16)
                     if ($totalScpmk < 14 || $totalScpmk > 16) {
                         continue;
                     }

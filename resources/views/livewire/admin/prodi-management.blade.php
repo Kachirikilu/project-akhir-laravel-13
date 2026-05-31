@@ -7,7 +7,7 @@
         let segment = window.location.pathname.split('/').pop();
         activeTable = (segment === 'program-studi-management' || segment === '') ? '' : segment;
      " class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
-    {{-- <h2 class="text-2xl font-bold mb-4 text-gray-700">Manajemen Program Studi</h2> --}}
+     
     @include('livewire.admin.prodi-management.prodi-toolbar')
     @include('livewire.admin.prodi-management.prodi-switch-table')
 
