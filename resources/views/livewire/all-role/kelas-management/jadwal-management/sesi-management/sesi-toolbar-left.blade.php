@@ -1,6 +1,6 @@
 <div class="flex flex-col w-full">
     <div
-        class="mt-9 flex items-center justify-between gap-3 p-2 pl-6 pr-4 bg-[var(--second-pop-up-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm">
+        class="mt-4 flex items-center justify-between gap-3 p-2 pl-6 pr-4 bg-[var(--second-pop-up-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm">
 
         <span class="text-sm font-semibold text-[var(--contrast-main-text)]">
             {{ $kelas->kode }}

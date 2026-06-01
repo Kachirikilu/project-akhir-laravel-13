@@ -7,17 +7,25 @@
         </h3>
 
         <div class="shrink-0 flex lg:hidden">
-            <div x-show="activeTab === 'sesi-card' || activeTab === 'sesi-table'">
+            <div x-show="activeTab === 'sesi-card'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [2, 4, 8, 16],
-                    'key' => 'page-control-sesi',
+                    'alpine' => 'sesi',
+                    'key' => 'page-control-sesi-card',
+                    'withB' => 0,
+                ])
+            </div>
+            <div x-show="activeTab === 'sesi-table'">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [2, 4, 8, 16],
+                    'key' => 'page-control-sesi-table',
                     'withB' => 0,
                 ])
             </div>
             <div x-show="activeTab === 'mahasiswa'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-                    'key' => 'page-control-sesi',
+                    'key' => 'page-control-mahasiswa',
                     'withB' => 0,
                 ])
             </div>
@@ -49,13 +57,13 @@
                 ])
 
                 {{-- @if (Auth::user()->admin || Auth::user()->dosen) --}}
-                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                        'xString' => 'switchingTable',
-                        'xFilter' => $switchTable ?? null,
-                        'tabFilter' => $totalMahasiswaKelas ?? null,
-                        'tabString' => 'mahasiswa',
-                        'icon' => 'users',
-                    ])
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable ?? null,
+                    'tabFilter' => $totalMahasiswaKelas ?? null,
+                    'tabString' => 'mahasiswa',
+                    'icon' => 'users',
+                ])
                 {{-- @endif --}}
             </div>
 
@@ -66,23 +74,31 @@
                 </div>
             @endif
             </div> --}}
-        <div class="shrink-0 hidden lg:flex">
+            <div class="shrink-0 hidden lg:flex">
 
-            <div x-show="activeTab === 'sesi-card' || activeTab === 'sesi-table'">
-                @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [2, 4, 8, 16],
-                    'key' => 'page-control-sesi',
-                    'withB' => 0,
-                ])
+                <div x-show="activeTab === 'sesi-card'">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [2, 4, 8, 16],
+                        'alpine' => 'sesi',
+                        'key' => 'page-control-sesi-card',
+                        'withB' => 0,
+                    ])
+                </div>
+                <div x-show="activeTab === 'sesi-table'">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [2, 4, 8, 16],
+                        'key' => 'page-control-sesi-table',
+                        'withB' => 0,
+                    ])
+                </div>
+                <div x-show="activeTab === 'mahasiswa'">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                        'key' => 'page-control-mahasiswa',
+                        'withB' => 0,
+                    ])
+                </div>
             </div>
-            <div x-show="activeTab === 'mahasiswa'">
-                @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-                    'key' => 'page-control-sesi',
-                    'withB' => 0,
-                ])
-            </div>
-        </div>
 
         </div>
     </div>

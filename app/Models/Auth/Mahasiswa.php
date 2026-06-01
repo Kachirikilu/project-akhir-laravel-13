@@ -3,6 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Models\Kelas\MahasiswaKehadiran;
+use App\Models\Penilaian\NilaiMahasiswa;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +68,7 @@ class Mahasiswa extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
-    public function nilais()
+    public function nilaiMahasiswa()
     {
         return $this->hasMany(
             NilaiMahasiswa::class,

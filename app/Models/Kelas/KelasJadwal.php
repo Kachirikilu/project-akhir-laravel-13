@@ -49,6 +49,20 @@ class KelasJadwal extends Model
         });
     }
 
+    protected function kodeMk(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->kode_mk;
+        });
+    }
+
+    protected function namaMk(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->mk;
+        });
+    }
+
     protected function ganjilGenap(): Attribute
     {
         return Attribute::get(function () {
@@ -57,6 +71,7 @@ class KelasJadwal extends Model
             return $kode ? (int) $kode : null;
         });
     }
+    
 
     protected function tahun(): Attribute
     {

@@ -172,7 +172,7 @@
 
 
     @forelse($sesis as $s)
-        <tr wire:key="kelas-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
+        <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $s->id }}</td>
@@ -229,7 +229,7 @@
                 </flux:dropdown>
             </td>
             <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
-                {{ $s->bobot ? $s->bobot . '%' : '-' }}</td>
+                {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}</td>
             {{-- <td class="{{ $subKolom }} min-w-84">{{ $s->deskripsi ?? '-' }}</td>
             <td class="{{ $subKolom }} min-w-48">{{ $s->materi ?? '-' }}</td>
             <td class="{{ $subKolom }} min-w-48">{{ $s->metodologi ?? '-' }}</td>

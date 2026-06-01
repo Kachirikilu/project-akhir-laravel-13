@@ -117,10 +117,11 @@ trait WithSesiModal
                 return;
             }
 
+
             if ($statusDipilih === 'Absen') {
                 $validated['absen'] = 'Absen';
             } elseif ($now->betweenIncluded($mulai, $batasTerlambat)) {
-                if (! in_array($statusDipilih, ['Hadir', 'Izin', 'Sakit'])) {
+                if (! in_array($statusDipilih, ['Hadir', 'Izin', 'Sakit', 'Dispensasi'])) {
                     $validated['absen'] = 'Hadir';
                 }
             } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir)) {
@@ -131,7 +132,7 @@ trait WithSesiModal
                 } else {
                     $validated['absen'] = 'Absen';
                 }
-            } elseif ($now->gt($berakhir) && $now->lte($batasDispensasi)) {
+            } elseif ($now->gt($mulai) && $now->lte($batasDispensasi)) {
                 if ($statusDipilih === 'Dispensasi') {
                     $validated['absen'] = 'Dispensasi';
                 } else {
@@ -150,6 +151,8 @@ trait WithSesiModal
                     'keterangan' => $validated['keterangan'] ?? null,
                 ]
             );
+
+
 
             $this->showSesiAbsen = false;
             $this->dispatch('refresh-data-sesi');

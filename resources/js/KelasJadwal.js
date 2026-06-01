@@ -14,6 +14,13 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        search: "",
+        perPage: 8,
+        sortField: "label_full",
+        sortDirection: "asc",
+        currentPage: 1,
+        totalPages: 1,
+
         jadwal_id: "",
         kode: "",
         kode_kelas: "",

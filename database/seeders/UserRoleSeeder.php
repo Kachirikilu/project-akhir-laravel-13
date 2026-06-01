@@ -23,7 +23,7 @@ class UserRoleSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
 
-        $totalUsers = 2160;
+        $totalUsers = 512;
         $batchSize = 512;
 
         $prodiIds = Prodi::pluck('id')->toArray();

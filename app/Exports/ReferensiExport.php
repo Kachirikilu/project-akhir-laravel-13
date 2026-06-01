@@ -21,14 +21,11 @@ class ReferensiExport extends DefaultValueBinder implements FromCollection, Shou
 {
     protected $queryRef;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($queryRef, $switchTable, $title)
+    public function __construct($queryRef, $title)
     {
         $this->queryRef = $queryRef;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 

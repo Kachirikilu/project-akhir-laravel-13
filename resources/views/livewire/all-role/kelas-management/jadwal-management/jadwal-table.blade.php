@@ -114,7 +114,7 @@
 
 
     @forelse($jadwals as $j)
-        <tr wire:key="kelas-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
+        <tr wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $j->id }}</td>

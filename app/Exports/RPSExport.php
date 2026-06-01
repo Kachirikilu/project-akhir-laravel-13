@@ -20,14 +20,11 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
 {
     protected $queryRPS;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($queryRPS, $switchTable, $title)
+    public function __construct($queryRPS, $title)
     {
         $this->queryRPS = $queryRPS;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithMahasiswaNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
@@ -19,6 +20,7 @@ use Livewire\WithPagination;
 class SesiManagement extends Component
 {
     use WithJadwalModal;
+    use WithMahasiswaNilaiExcel;
     use WithMahasiswaSearchFilters;
     use WithPagination;
     use WithRPSShow;
@@ -188,18 +190,30 @@ class SesiManagement extends Component
             }
         }
 
-        $limits = [
-            'sesi-card' => 16,
-            'sesi-table' => 16,
-            'mahasiswa' => 200,
-        ];
-
-        if (isset($limits[$table])) {
-            $this->perPage = min((int) $this->perPage, $limits[$table]);
+        $currentTable = $table ?? $this->table ?? 'sesi-table';
+        
+        if ($this->switchTable == 'mahasiswa') {
+            if ($this->perPage == 2) {
+                $this->perPage = 3;
+            } elseif ($this->perPage == 4) {
+                $this->perPage = 5;
+            } elseif ($this->perPage == 16) {
+                $this->perPage = 15;
+            }
+        } elseif ($this->switchTable == 'sesi-card' || $this->switchTable == 'sesi-table') {
+            if ($this->perPage == 3) {
+                $this->perPage = 2;
+            } elseif ($this->perPage == 5) {
+                $this->perPage = 4;
+            } elseif ($this->perPage == 10) {
+                $this->perPage = 8;
+            } elseif ($this->perPage >= 15) {
+                $this->perPage = 16;
+            }
         }
 
-        $base = $this->isJadwalMhs ? "jadwal-kelas" : "kelas-management/kelas";
-        $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : "";
+        $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
+        $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode}/jadwal/{$this->kode_jadwal}{$suffix}";
 
@@ -398,10 +412,11 @@ class SesiManagement extends Component
              */
             switch ($this->switchTable) {
                 case 'sesi-card':
+                    $sesis = $querySesi->get();
+                    break;
                 case 'sesi-table':
                     $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
                     break;
-
                 case 'mahasiswa':
                     $users = $queryUser->paginate($this->perPage);
                     break;
@@ -412,7 +427,7 @@ class SesiManagement extends Component
              * SUMMARY
              * =========================
              */
-            $totalSesiKelas = $countSesi->count() ?: 1;
+            $totalSesiKelas = $countSesi->count() ?: 0;
 
             $summaryQuery = User::query()
                 ->whereHas('mahasiswa.jadwals', function ($q) use ($idJadwal) {

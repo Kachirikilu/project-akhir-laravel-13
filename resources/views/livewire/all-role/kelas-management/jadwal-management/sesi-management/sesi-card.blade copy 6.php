@@ -17,7 +17,7 @@
                 'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                 'metode' => strtolower($s->metode ?? ''),
                 'tugas' => strtolower($s->tugas ?? ''),
-                'kode_scpmk' => strtolower($stringKodeScpmk),
+                'kode_scpmk_raw' => strtolower($stringKodeScpmk),
                 'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeScpmk)),
                 'searchPertemuan' => [
                     (string) $p,
@@ -28,7 +28,7 @@
                     'ke' . $p,
                     'ke-' . $p,
                 ],
-                'bobot' => [
+                'searchBobot' => [
                     $bobotClean,
                     str_replace('.', ',', $bobotClean),
                     $bobotClean . '%',
@@ -48,25 +48,23 @@
 
     get filteredAndSortedIds() {
         let query = (this.$store.sesi?.search || '').toLowerCase().trim();
+        if (!query) {
+            return this.rawItems.filter(() => true);
+        }
         let cleanQuery = query.replace(/[^a-z0-9]/g, '');
         let dotQuery = query.replace(',', '.');
 
         let filtered = this.rawItems.filter(item => {
-            if (!query) return true;
-
             if (String(item.metode).includes(query) || String(item.tugas).includes(query)) {
                 return true;
             }
-
-            if (item.kode_scpmk.includes(query) || (cleanQuery && item.searchKodeSCPMK.includes(cleanQuery))) {
+            if (cleanQuery && item.searchKodeSCPMK.includes(cleanQuery)) {
                 return true;
             }
-
-            let cocokPertemuan = item.searchPertemuan.some(pText => pText === query || pText.includes(query));
-            if (cocokPertemuan) return true;
-
-            let cocokBobot = item.bobot.some(bText => bText === query || bText === dotQuery || bText.includes(query) || bText.includes(dotQuery));
-            if (cocokBobot) return true;
+            $cocokPertemuan = item.searchPertemuan.some(pText => pText === query || pText.includes(query));
+            if ($cocokPertemuan) return true;
+            $cocokBobot = item.searchBobot.some(bText => bText === query || bText === dotQuery || bText.includes(query) || bText.includes(dotQuery));
+            if ($cocokBobot) return true;
 
             return false;
         });
@@ -117,7 +115,7 @@
     }
 }" class="w-full">
 
-    <x-global.main-layout-card>
+    <x-global.main-layout-card :paginator="$sesis">
 
         {{-- Slot Sortir --}}
         <x-slot:sortir>
@@ -126,17 +124,18 @@
                 'alpine' => 'sesi',
                 'headString' => 'Pertemuan',
             ])
-            {{-- @include('livewire.global.table.head-sortir', [
+            @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'jumlah_absensi',
                 'alpine' => 'sesi',
                 'headString' => 'Absensi',
-            ]) --}}
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'metode',
-                'alpine' => 'sesi',
             ])
             @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'bobot',
+                'sortFieldString' => 'tanggal_pelaksanaan',
+                'alpine' => 'sesi',
+                'headString' => 'Tanggal',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'metode',
                 'alpine' => 'sesi',
             ])
         </x-slot:sortir>
@@ -144,12 +143,9 @@
         {{-- Slot Search --}}
         <x-slot:search>
             <div class="w-full md:w-96 xl:w-108">
-                @include('livewire.global.search-and-filters.main-search', [
-                    'placeholder' => 'Cari Sesi Pertemuan Kelas...',
-                    'alpine' => 'sesi',
-                    'isLive' => 1,
-                    'isBorder' => 2,
-                ])
+                <input x-model="$store.sesi.search" type="search"
+                    placeholder="Cari pertemuan, metode, tugas, atau kode Sub-CPMK..."
+                    class="w-full px-3 py-2 rounded-lg border bg-transparent" />
             </div>
         </x-slot:search>
 
@@ -441,8 +437,37 @@
 
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
-            @include('livewire.global.table.pagination-alpine')
-            @include('livewire.global.table.trash-delete')
+            <div x-show="totalFilteredItems > perPage"
+                class="flex items-center justify-between border-[var(--border-table-color)] mt-4">
+                <div class="text-xs text-[var(--contrast-second-text)]">
+                    Menampilkan
+                    <span class="font-semibold text-[var(--contrast-main-text)]"
+                        x-text="Math.min(((currentPage - 1) * perPage) + 1, totalFilteredItems)"></span>
+                    sampai
+                    <span class="font-semibold text-[var(--contrast-main-text)]"
+                        x-text="Math.min(currentPage * perPage, totalFilteredItems)"></span>
+                    dari
+                    <span class="font-semibold text-[var(--contrast-main-text)]" x-text="totalFilteredItems"></span>
+                    data sesi
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <button type="button" @click="if(currentPage > 1) currentPage--" :disabled="currentPage <= 1"
+                        class="px-3 py-1 text-xs font-medium rounded-lg border border-[var(--border-table-color)] bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer">
+                        Sebelumnya
+                    </button>
+                    <div class="flex items-center gap-1 mx-2 text-xs text-[var(--contrast-second-text)]">
+                        Halaman <span class="font-semibold text-[var(--contrast-main-text)]"
+                            x-text="currentPage"></span> dari <span
+                            class="font-semibold text-[var(--contrast-main-text)]" x-text="totalPages"></span>
+                    </div>
+                    <button type="button" @click="if(currentPage < totalPages) currentPage++"
+                        :disabled="currentPage >= totalPages"
+                        class="px-3 py-1 text-xs font-medium rounded-lg border border-[var(--border-table-color)] bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer">
+                        Selanjutnya
+                    </button>
+                </div>
+            </div>
         </x-slot:footer>
 
     </x-global.main-layout-card>

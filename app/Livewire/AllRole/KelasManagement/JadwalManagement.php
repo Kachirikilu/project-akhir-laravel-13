@@ -36,7 +36,7 @@ class JadwalManagement extends Component
 
     public Kelas $kelas;
 
-    public $perPage = 6;
+    public $perPage = 8;
 
     public $sortField = 'label_kelas';
 
@@ -131,7 +131,11 @@ class JadwalManagement extends Component
                 $countJadwal->onlyTrashed();
             }
 
-            $jadwals = $queryJadwal->paginate($this->perPage);
+            // if ($this->switchTable == 'jadwal-table') {
+                $jadwals = $queryJadwal->paginate($this->perPage);
+            // } else {
+            //     $jadwals = $queryJadwal->get();
+            // }
 
             if (Auth::user()->mahasiswa) {
                 $userId = Auth::id();

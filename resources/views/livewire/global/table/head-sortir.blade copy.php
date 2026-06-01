@@ -1,38 +1,11 @@
-@php
-    $alpineStore = $alpine ?? false;
-@endphp
-
 <button type="button" x-cloak x-data="{
-    {{-- KONDISIONAL BINDING STATE SORTIR --}}
-    @if($alpineStore)
-        get sortField() { return this.$store.{{ $alpineStore }}.sortField },
-        set sortField(val) { this.$store.{{ $alpineStore }}.sortField = val },
-        get sortDirection() { return this.$store.{{ $alpineStore }}.sortDirection },
-        set sortDirection(val) { this.$store.{{ $alpineStore }}.sortDirection = val },
-    @else
-        sortField: @entangle('sortField'),
-        sortDirection: @entangle('sortDirection'),
-    @endif
-
+    sortField: @entangle('sortField'),
+    sortDirection: @entangle('sortDirection'),
     clicked: false,
-
     async doSort() {
-        this.clicked = true;
-
-        @if($alpineStore)
-            {{-- LOGIKA SORTIR LOKAL ALPINE STORE --}}
-            if (this.sortField === '{{ $sortFieldString }}') {
-                this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                this.sortField = '{{ $sortFieldString }}';
-                this.sortDirection = 'asc';
-            }
-        @else
-            {{-- LOGIKA SORTIR LIVEWIRE BACKEND --}}
-            await $wire.sortBy('{{ $sortFieldString }}');
-        @endif
-
-        this.clicked = false;
+        this.clicked = true
+        await $wire.sortBy('{{ $sortFieldString }}')
+        this.clicked = false
     }
 }" @click.prevent="doSort()" 
     class="relative cursor-pointer flex items-center pt-2.5 pb-3 px-3 text-sm font-medium transition-all duration-300 whitespace-nowrap outline-none bg-transparent group {{ $isCenter ?? false ? 'justify-center' : 'justify-start' }}"
@@ -41,6 +14,7 @@
         : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)]'">
 
     <div class="flex items-center gap-2">
+        
         <span class="tracking-wider text-xs uppercase transition-colors duration-300">
             {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
         </span>

@@ -48,7 +48,7 @@ trait WithSesiFilters
 
     public function searchOutputSesi($querySesi, $idJadwal)
     {
-        $accessorFields = ['metode', 'kode_scpmk', 'bobot', 'tugas', 'w_tugas', 'w_mandiri', 'mhs_absensi'];
+        $accessorFields = ['metode', 'kode_scpmk', 'bobot', 'tugas', 'w_tugas', 'w_mandiri', 'mhs_absensi', 'bobot_normalisasi'];
         
         $search = trim($this->search);
         $pureSearchLower = strtolower($search);
@@ -82,11 +82,16 @@ trait WithSesiFilters
                 $isNumericQuery = is_numeric($cleanNumber) && $cleanNumber !== '';
 
                 $allSesi = $allSesi->filter(function ($sesi) use ($pureSearchLower, $searchClean, $dbMatchedIds, $cleanNumber, $isNumericQuery, $isPercentSearch, $targetKeywords) {
-                    $rawBobot = $sesi->override->bobot ?? $sesi->scpmk_atr->bobot ?? null;
-                    $matchBobot = $isNumericQuery && is_numeric($rawBobot) && abs((float)$rawBobot - (float)$cleanNumber) < 0.01;
-                    if ($isPercentSearch) {
-                        return $matchBobot;
-                    }
+                $rawBobot = $sesi->override->bobot
+                    ?? $sesi->scpmk_atr->bobot
+                    ?? null;
+                $rawBobotNormalisasi = $sesi->bobot_normalisasi ?? null;
+                $matchBobot = $isNumericQuery
+                    && is_numeric($rawBobot)
+                    && abs((float) $rawBobot - (float) $cleanNumber) < 0.01;
+                $matchBobotNormalisasi = $isNumericQuery
+                    && is_numeric($rawBobotNormalisasi)
+                    && abs((float) $rawBobotNormalisasi - (float) $cleanNumber) < 0.01;
                     $matchTextGrup = false;
                     $metodeLower = strtolower($sesi->metode ?? '');
                     $tugasLower = strtolower($sesi->tugas ?? '');
@@ -126,6 +131,7 @@ trait WithSesiFilters
                         || $matchTextGrup
                         || $matchSubCPMK
                         || $matchBobot
+                        || $matchBobotNormalisasi
                         || $matchTugas
                         || $matchWTugas
                         || $matchWMandiri

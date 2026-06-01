@@ -33,8 +33,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col items-stretch md:items-end gap-3 w-full md:w-auto shrink-0">
-        <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+    <div class="flex flex-col items-stretch md:items-end gap-3 w-full md:w-auto shrink-0"> <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
 
             <div class="shrink-0">
                 @include('livewire.global.search-and-filters.page-control', [
@@ -46,40 +45,37 @@
                 ])
             </div>
 
-            @if (Auth::user()->admin || Auth::user()->dosen)
-                <div class="shrink-0">
-                    <flux:dropdown>
-                        <flux:button variant="primary" icon="plus" size="sm"
-                            class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out whitespace-nowrap"
-                            wire:target="addJadwal">
-                            Tambah Jadwal
-                        </flux:button>
+            <div class="shrink-0">
+                <flux:dropdown>
+                    <flux:button variant="primary" icon="plus" size="sm"
+                        class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out whitespace-nowrap"
+                        wire:target="addJadwal">
+                        Tambah Jadwal
+                    </flux:button>
 
-                        <flux:menu
-                            class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-                            <flux:menu.heading>Tambah Jadwal</flux:menu.heading>
-                            <flux:menu.separator />
+                    <flux:menu
+                        class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+                        <flux:menu.heading>Tambah Jadwal</flux:menu.heading>
+                        <flux:menu.separator />
 
-                            <flux:menu.item
-                                @click="
+                        <flux:menu.item
+                            @click="
                                 $store.jadwal?.setEdit(0);
                                 $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
                                 $flux.modal('jadwal-modal').show();
                                 $wire.addJadwal();
                             "
-                                class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
-                                <flux:icon name="calendar-days"
-                                    class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
-                                <div class="flex justify-between items-center w-full">
-                                    <span class="mr-7">Jadwal Perkuliahan</span>
-                                    <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
-                                        class="animate-spin h-4 w-4 ml-2" />
-                                </div>
-                            </flux:menu.item>
-                        </flux:menu>
-                    </flux:dropdown>
-                </div>
-            @endif
+                            class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
+                            <flux:icon name="calendar-days" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
+                            <div class="flex justify-between items-center w-full">
+                                <span class="mr-7">Jadwal Perkuliahan</span>
+                                <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
+                                    class="animate-spin h-4 w-4 ml-2" />
+                            </div>
+                        </flux:menu.item>
+                    </flux:menu>
+                </flux:dropdown>
+            </div>
 
         </div>
 

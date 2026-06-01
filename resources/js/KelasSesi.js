@@ -14,6 +14,17 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        search: "",
+        perPage: 8,
+        sortField: "pertemuan_ke",
+        sortDirection: "asc",
+        currentPage: 1,
+        totalPages: 1,
+
+        fromItem: 1,
+        toItem: 8,
+        totalItems: 0,
+
         sesi_id: "",
         pertemuan_ke: "",
         absen: "",
@@ -279,7 +290,6 @@ document.addEventListener("alpine:init", () => {
             ((this.absen = ""), (this.keterangan = ""), (this.jam_mulai = ""));
             this.jam_berakhir = "";
 
-            this.pertemuan_ke = "";
             this.pertemuan_ke_name = "";
             this.tanggal = "";
 

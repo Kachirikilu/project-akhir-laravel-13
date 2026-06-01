@@ -21,14 +21,11 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
 {
     protected $queryCPL;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($queryCPL, $switchTable, $title)
+    public function __construct($queryCPL, $title)
     {
         $this->queryCPL = $queryCPL;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 

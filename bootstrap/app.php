@@ -22,7 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'kelas.access' => EnsureCanAccessKelas::class,
         ]);
     })
-
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Throwable $e) {
+            return response()->view('errors.plain', [
+                'message' => $e->getMessage(),
+            ], 500);
+        });
     })->create();

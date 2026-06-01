@@ -157,7 +157,7 @@
             <div class="shrink-0">
                 @include('livewire.global.table.export-excel', [
                     'nameXString' => 'Export Nilai',
-                    'xString' => 'exportJadwalExcel',
+                    'xString' => 'exportMahasiswaNilaiExcel',
                     'isNoPb' => 1,
                     'valuePx' => 6
                 ])

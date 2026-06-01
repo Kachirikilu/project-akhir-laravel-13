@@ -21,14 +21,11 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
 {
     protected $querySCPMK;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($querySCPMK, $switchTable, $title)
+    public function __construct($querySCPMK, $title)
     {
         $this->querySCPMK = $querySCPMK;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 

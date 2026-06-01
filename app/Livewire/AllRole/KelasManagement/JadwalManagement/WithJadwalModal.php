@@ -680,15 +680,24 @@ trait WithJadwalModal
 
     public function getJadwalErrorSections()
     {
+        $sesiFields = array_map(fn ($i) => "sesi_$i", range(1, 16));
+
         return [
             1 => $this->getErrorCount([
-                'kode_jadwal',
-                'nama_jadwal',
-                'deskripsi',
+                'kode_wilayah',
+                'label_kelas',
+                'password',
             ]),
-            2 => $this->getErrorCount([
-            ]),
+            2 => $this->getErrorCount(array_merge([
+                'hari_pelaksanaan',
+                'tanggal_mulai',
+                'tanggal_berakhir',
+                'jam_mulai',
+                'jam_berakhir',
+            ], $sesiFields)),
             3 => $this->getErrorCount([
+                'kapasitas',
+                'mahasiswe_id_array',
             ]),
         ];
     }

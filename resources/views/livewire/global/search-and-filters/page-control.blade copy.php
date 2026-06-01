@@ -1,7 +1,6 @@
 @php
     $breakpoint = $autoSmall ?? null;
     $manualSmall = $isSmall ?? false;
-    $alpineStore = $alpine ?? false;
 
     // ===== small mode state =====
     $isResponsiveSmall = match ($breakpoint) {
@@ -52,41 +51,24 @@
         $pbClass = "pb-{$autoBSmall}";
         $ptClass = "pt-{$autoTSmall}";
     }
-
-    $perPageOptions = $perPageOptions ?? [6, 12, 24, 48];
 @endphp
 
 <div wire:key="{{ $key ?? 'page-control-default' }}" @class([
     'flex items-center justify-end',
+
     $pbClass => $withB ?? true,
     $ptClass => $withT ?? ($withTValue ?? false),
 ])>
-    {{-- 
-        KONDISIONAL REAKTIF KEDUA:
-        Menggunakan Getter dan Setter untuk mengikat (bind) properti 'selected' 
-        langsung ke Alpine Store secara real-time dan global tanpa mengandalkan urutan DOM parent.
-    --}}
-    <div x-data="{ 
-            open: false, 
-            @if($alpineStore)
-                get selected() { return this.$store.{{ $alpineStore }}.perPage },
-                set selected(val) { this.$store.{{ $alpineStore }}.perPage = val }
-            @else
-                selected: @entangle('perPage').live
-            @endif
-         }" 
-         @class([
-            'relative',
-            'w-14' => $manualSmall,
-            'w-16' => !$manualSmall && !$breakpoint,
-            'w-14 sm:w-16' => $breakpoint === 'sm' && !$manualSmall,
-            'w-14 md:w-16' => $breakpoint === 'md' && !$manualSmall,
-            'w-14 lg:w-16' => $breakpoint === 'lg' && !$manualSmall,
-            'w-14 xl:w-16' => $breakpoint === 'xl' && !$manualSmall,
-            'w-14 2xl:w-16' => $breakpoint === '2xl' && !$manualSmall,
-         ]) 
-         @click.away="open = false">
-        
+    <div x-data="{ open: false, selected: @entangle('perPage').live }" @class([
+        'relative',
+        'w-14' => $manualSmall,
+        'w-16' => !$manualSmall && !$breakpoint,
+        'w-14 sm:w-16' => $breakpoint === 'sm' && !$manualSmall,
+        'w-14 md:w-16' => $breakpoint === 'md' && !$manualSmall,
+        'w-14 lg:w-16' => $breakpoint === 'lg' && !$manualSmall,
+        'w-14 xl:w-16' => $breakpoint === 'xl' && !$manualSmall,
+        'w-14 2xl:w-16' => $breakpoint === '2xl' && !$manualSmall,
+    ]) @click.away="open = false">
         {{-- Tombol utama --}}
         <button type="button" @click="open = !open"
             class="cursor-pointer flex items-center justify-between border rounded-md shadow-sm
@@ -95,7 +77,7 @@
                    py-1 px-2 text-sm w-full
                    hover:border-[var(--hover-focus-color)]
                    transition-[border-color] duration-200">
-            <span x-text="selected"></span>
+            <span x-text="selected">8</span>
 
             <svg
                 @class([
@@ -143,7 +125,9 @@
 
     {{-- Label "Baris" --}}
     @if (!$manualSmall)
-        <span class="text-sm font-medium text-gray-500 dark:text-gray-400 ml-2 {{ $autoSmallClass }}">
+        <span
+            class="text-sm font-medium text-gray-500 dark:text-gray-400 ml-2
+                   {{ $autoSmallClass }}">
             Baris
         </span>
     @endif

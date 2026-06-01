@@ -187,22 +187,22 @@ trait WithOBEExcel
 
         switch ($this->switchTable) {
             case 'rps':
-                return Excel::download(new RPSExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
+                return Excel::download(new RPSExport($queryOBE, $title), $fileNameSafe);
                 break;
             case 'cpmk':
-                return Excel::download(new CPMKExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
+                return Excel::download(new CPMKExport($queryOBE, $title), $fileNameSafe);
                 break;
             case 'sub-cpmk':
-                return Excel::download(new SubCPMKExport($queryOBE, $this->switchTable, $title), $fileNameSafe);
+                return Excel::download(new SubCPMKExport($queryOBE, $title), $fileNameSafe);
                 break;
             case 'cpl':
-                return Excel::download(new CPLExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new CPLExport($queryOBE, $title), $fileName);
                 break;
             case 'referensi':
-                return Excel::download(new ReferensiExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new ReferensiExport($queryOBE, $title), $fileName);
                 break;
             case 'dosen':
-                return Excel::download(new DosenExport($queryOBE, $this->switchTable, $title), $fileName);
+                return Excel::download(new DosenExport($queryOBE, $title), $fileName);
                 break;
         }
     }

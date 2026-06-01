@@ -5,6 +5,8 @@ namespace App\Exports;
 use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
+use App\Models\Auth\User;
+use App\ModelsAuth\Mahasiswa;
 use Auth;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -27,9 +29,9 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
+class MahasiswaNilaiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
 {
-    protected $queryMK;
+    protected $queryMahasiswaNilai;
 
     protected $filterMK;
 
@@ -41,9 +43,9 @@ class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoS
 
     protected $title;
 
-    public function __construct($queryMK, $filterMK, $prId, $dpId, $fkId, $title)
+    public function __construct($queryMahasiswaNilai, $filterMK, $prId, $dpId, $fkId, $title)
     {
-        $this->queryMK = $queryMK;
+        $this->queryMK = $queryMahasiswaNilai;
         $this->filterMK = $filterMK;
         $this->selectedPrId = $prId;
         $this->selectedDpId = $dpId;

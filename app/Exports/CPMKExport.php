@@ -21,14 +21,11 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
 {
     protected $queryCPMK;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($queryCPMK, $switchTable, $title)
+    public function __construct($queryCPMK, $title)
     {
         $this->queryCPMK = $queryCPMK;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 

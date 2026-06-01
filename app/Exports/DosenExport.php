@@ -24,18 +24,14 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
-    // class DosenExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $queryDosen;
 
-    protected $switchTable;
-
     protected $title;
 
-    public function __construct($queryDosen, $switchTable, $title)
+    public function __construct($queryDosen, $title)
     {
         $this->queryDosen = $queryDosen;
-        $this->switchTable = $switchTable;
         $this->title = $title;
     }
 
