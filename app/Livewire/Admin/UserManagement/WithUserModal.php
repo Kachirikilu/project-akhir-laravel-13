@@ -9,8 +9,8 @@ use App\Models\Akademik\RPS;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
-use App\Models\Auth\Team;
 use App\Models\Auth\Membership;
+use App\Models\Auth\Team;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -80,7 +80,7 @@ trait WithUserModal
         $this->isEditingUser = false;
         $this->roleType = $role;
 
-        if ($role == 'file') {
+        if ($role == 'excel') {
             $this->showUserExcelModal = true;
             $this->showUserModal = false;
         } else {
@@ -652,9 +652,9 @@ trait WithUserModal
             'pr_id.required' => 'Program Studi wajib dipilih!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
             'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
-            'excel_file.required' => 'File Excel wajib diunggah!',
-            'excel_file.file' => 'File Excel harus berupa file yang valid!',
-            'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
+            'excel_user_file.required' => 'File Excel wajib diunggah!',
+            'excel_user_file.file' => 'File Excel harus berupa file yang valid!',
+            'excel_user_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
             'kode_wilayah.required' => 'Kode Wilayah untuk Admin & Mahasiswa wajib dipilih!',
             'kode_wilayah.in' => "Kode Wilayah hanya boleh 'IDL' & 'PLG'!",
             'status.required' => 'Status pengguna wajib dipilih!',

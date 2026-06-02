@@ -3,6 +3,7 @@ document.addEventListener("alpine:init", () => {
         isEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
+        colorIconBg: "",
 
         nama_sesi_delete: "",
         kode_sesi_delete: "",
@@ -10,8 +11,9 @@ document.addEventListener("alpine:init", () => {
         setEdit(val) {
             this.isEdit = val;
         },
-        setColor(val) {
+        setColor(val, val2) {
             this.colorIcon = val;
+            this.colorIconBg = val2;
         },
 
         search: "",
@@ -267,6 +269,7 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = 0;
             this.isForceDelete = 0;
             this.colorIcon = "";
+            this.colorIconBg = "";
 
             this.w_pelaksaan = "";
             this.w_berakhir = "";

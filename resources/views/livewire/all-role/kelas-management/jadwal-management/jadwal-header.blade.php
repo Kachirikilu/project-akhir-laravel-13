@@ -73,17 +73,13 @@
             "
             wire:click="showRPS({{ $kelas->rps_id }})" icon="eye" size="sm"
             class="!cursor-pointer px-6 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200">
-            <div class="flex items-center gap-2">
-                <span>Show RPS</span>
-            </div>
+            <span>Show RPS</span>
         </flux:button>
 
 
         <flux:button wire:click="printPDFRPS({{ $kelas->rps_id }})" icon="printer" size="sm"
             class="!cursor-pointer px-6 !text-rose-600 dark:!text-rose-400 !bg-rose-50 hover:!bg-rose-100 dark:!bg-rose-950/20 dark:hover:!bg-rose-900/30 !border-rose-200/60 dark:!border-rose-800/40 transition-all duration-200">
-            <div class="flex items-center gap-2">
-                <span>Print PDF RPS</span>
-            </div>
+            <span>Print PDF RPS</span>
         </flux:button>
 
         @if ($alpine == 'jadwal' && (Auth::user()?->admin || Auth::user()?->dosen))
@@ -117,9 +113,7 @@
                 "
                 wire:click="editKelas({{ $kelas->id }})" icon="pencil-square" size="sm"
                 class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
-                <div class="flex items-center gap-2">
-                    <span>Edit Kelas</span>
-                </div>
+                <span>Edit Kelas</span>
             </flux:button>
         @endif
 
@@ -149,17 +143,28 @@
                 "
                 wire:click="editJadwal({{ $jadwal_id }})" icon="pencil-square" size="sm"
                 class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
-                <div class="flex items-center gap-2">
-                    <span>Edit Jadwal</span>
-                </div>
+                <span>Edit Jadwal</span>
+            </flux:button>
+
+            <flux:button
+                @click="
+                    $store.sesi?.reset();
+                    $store.sesi?.setEdit(0);
+                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600');
+                    {{-- $wire.addUser('excel'); --}}
+                    $flux.modal('nilai-excel-modal').show();
+                "
+                 icon="printer" size="sm"
+                class="!cursor-pointer px-6 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200">
+                <span>Import Nilai</span>
             </flux:button>
 
             <div class="shrink-0">
                 @include('livewire.global.table.export-excel', [
                     'nameXString' => 'Export Nilai',
-                    'xString' => 'exportMahasiswaNilaiExcel',
+                    'xString' => 'exportNilaiExcel',
                     'isNoPb' => 1,
-                    'valuePx' => 6
+                    'valuePx' => 6,
                 ])
             </div>
         @endif

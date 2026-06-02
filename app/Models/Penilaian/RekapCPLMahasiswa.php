@@ -3,10 +3,9 @@
 namespace App\Models\Penilaian;
 
 use App\Models\Akademik\CPL;
-use App\Models\Auth\Mahasiswa;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RekapCPLMahasiswa extends Model
 {
@@ -15,14 +14,14 @@ class RekapCPLMahasiswa extends Model
     protected $table = 'rekap_cpl_mahasiswa';
 
     protected $fillable = [
-        'nilai_id',
-        'mahasiswa_id',
         'cpl_id',
+        'nilai',
         'persentase',
         'jumlah_pertemuan',
     ];
 
     protected $casts = [
+        'nilai' => 'decimal:2',
         'persentase' => 'decimal:2',
         'jumlah_pertemuan' => 'integer',
     ];
@@ -32,22 +31,6 @@ class RekapCPLMahasiswa extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-
-    public function nilai_rel(): BelongsTo
-    {
-        return $this->belongsTo(
-            NilaiMahasiswa::class,
-            'nilai_id'
-        );
-    }
-
-    public function mahasiswa_rel(): BelongsTo
-    {
-        return $this->belongsTo(
-            Mahasiswa::class,
-            'mahasiswa_id'
-        );
-    }
 
     public function cpl_rel(): BelongsTo
     {

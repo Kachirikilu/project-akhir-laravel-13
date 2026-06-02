@@ -91,6 +91,9 @@
                 <th colspan="7" class="{{ $headSubKolom }}">
                     Kehadiran
                 </th>
+                <th colspan="3" class="{{ $headSubKolom }}">
+                    Nilai
+                </th>
             @endif
 
             {{-- Angkatan - Autocomplete Input --}}
@@ -127,6 +130,7 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_poin_absensi',
                     'headString' => 'Poin',
+                    'isCenter' => 1,
                     'isMain' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -158,6 +162,22 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_tidak_masuk',
                     'headString' => 'Tidak Hadir',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_nilai_akhir',
+                    'headString' => 'Angka',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_nilai_index',
+                    'headString' => 'Index',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mhs_nilai_huruf',
+                    'headString' => 'Huruf',
                     'isCenter' => 1,
                     'isBorderR' => 1,
                 ])
@@ -282,6 +302,28 @@
                         -
                     @endif
                 </td>
+
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_nilai_akhir ?? 0 }}
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_nilai_index ?? 0 }}
+                    @else
+                        -
+                    @endif
+                </td>
+                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                    @if ($isMahasiswa)
+                        {{ $user->mhs_nilai_huruf ?? 0 }}
+                    @else
+                        -
+                    @endif
+                </td>
             @endif
 
             <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
@@ -319,7 +361,7 @@
 
     @empty
         <tr>
-            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '8' }}"
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '18' : '8' }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Mahasiswa Kelas ditemukan!
             </td>

@@ -114,7 +114,7 @@ class RPSSeeder extends Seeder
             '2023/2024', '2024/2025', '2025/2026',
         ];
 
-        $targetRps = 192;
+        $targetRps = 12;
         $batchSize = 256;
 
         $rpsCreated = 0;

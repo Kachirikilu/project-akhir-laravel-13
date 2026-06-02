@@ -20,7 +20,10 @@
 
     <div class="relative">
 
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
+        @include('livewire.global.modal-form.loading-animation', [
+            'wireLoading' => 'addRPS, editRPS',
+            'heightContainer' => 32,
+        ])
 
         @if ($this->showRPSModal)
             @include('livewire.global.modal-form.search-input-dosen-form', [
@@ -44,8 +47,6 @@
                 'iconString' => 'user',
                 'wireLoading' => 'fetchDosen',
             ])
-        @else
-            <div class="h-32"></div>
         @endif
 
     </div>

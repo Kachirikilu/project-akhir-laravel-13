@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Akademik\CPL;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
+use App\Models\Penilaian\RekapCPLMahasiswa;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -26,8 +26,7 @@ class NilaiSeeder extends Seeder
 
         KelasJadwal::with([
             'mahasiswas',
-            'sesis.override',
-            'kelas_rel.rps_rel.cpmks.scpmks',
+            'sesis.jadwal_rel.kelas_rel.rps_rel.cpmks.scpmks',
             'kelas_rel.rps_rel.cpmks.cpls',
         ])
             ->chunk($chunkSize, function ($jadwals) use (
@@ -49,40 +48,55 @@ class NilaiSeeder extends Seeder
                             ->sortBy('pertemuan_ke')
                             ->values();
 
+                        if ($sesis->isEmpty()) {
+                            return;
+                        }
+
+                        // =====================================
+                        // NORMALISASI BOBOT
+                        // =====================================
+                        $rawBobots = [];
+
+                        foreach ($sesis as $sesi) {
+
+                            $scpmk = $sesi->scpmk_atr;
+
+                            $rawBobots[] =
+                                $scpmk?->bobot
+                                ?? $sesi->override?->bobot
+                                ?? rand(3, 10);
+                        }
+
+                        $totalBobot = collect($rawBobots)->sum();
+
+                        $normalizedBobots = collect($rawBobots)
+                            ->map(fn ($bobot) => $totalBobot > 0
+                                    ? round($bobot / $totalBobot, 6)
+                                    : 0
+                            )
+                            ->values()
+                            ->toArray();
+
                         foreach ($jadwal->mahasiswas as $mahasiswa) {
 
                             $processedMahasiswa++;
 
                             // =====================================
-                            // PROFIL NILAI MAHASISWA (realistis)
+                            // PROFIL NILAI MAHASISWA
                             // =====================================
                             $baseNilai = rand(55, 95);
 
-                            $nilaiMahasiswa = NilaiMahasiswa::create([
-                                'mahasiswa_id' => $mahasiswa->id,
-                                'kj_id' => $jadwal->id,
-                                'nilai' => null,
-                                'is_locked' => rand(1, 100) <= 25,
-                            ]);
-
-                            $totalNilaiBobot = 0;
-                            $totalBobot = 0;
+                            $nilaiArray = [];
+                            $nilaiAkhir = 0;
 
                             $rekapCpl = [];
 
-                            foreach ($sesis as $sesi) {
+                            foreach ($sesis as $index => $sesi) {
 
-                                $scpmk = $sesi->scpmk;
-
-                                // =====================================
-                                // Ambil bobot sesi
-                                // =====================================
-                                $bobot = $scpmk?->bobot
-                                    ?? $sesi->override?->bobot
-                                    ?? rand(3, 10);
+                                $scpmk = $sesi->scpmk_atr;
 
                                 // =====================================
-                                // Generate nilai realistis
+                                // GENERATE NILAI REALISTIS
                                 // =====================================
                                 $noise = rand(-15, 10);
 
@@ -91,13 +105,13 @@ class NilaiSeeder extends Seeder
                                     min(100, $baseNilai + $noise)
                                 );
 
-                                // UTS/UAS sedikit lebih sulit
                                 $metode = strtolower(
                                     $scpmk?->metode
                                     ?? $sesi->override?->metode
                                     ?? ''
                                 );
 
+                                // UTS/UAS sedikit lebih sulit
                                 if (in_array($metode, [
                                     'uts',
                                     'uas',
@@ -109,27 +123,26 @@ class NilaiSeeder extends Seeder
 
                                 $nilai = round($nilai, 2);
 
-                                $nilaiBobot =
-                                    ($nilai * $bobot) / 100;
-
-                                $nilaiMahasiswa->details()->create([
-                                    'sesi_id' => $sesi->id,
-                                    'nilai' => $nilai,
-                                    'bobot' => $bobot,
-                                    'nilai_bobot' => $nilaiBobot,
-                                    'is_generated' => true,
-                                ]);
-
-                                $totalNilaiBobot += $nilaiBobot;
-                                $totalBobot += $bobot;
+                                $nilaiArray[] = $nilai;
 
                                 // =====================================
-                                // Rekap CPL
+                                // HITUNG NILAI AKHIR
                                 // =====================================
-                                if ($scpmk) {
+                                $nilaiAkhir +=
+                                    $nilai *
+                                    ($normalizedBobots[$index] ?? 0);
 
-                                    $cpls = $scpmk->cpmks
-                                        ->flatMap(fn ($cpmk) => $cpmk->cpls)
+                                // =====================================
+                                // REKAP CPL
+                                // =====================================
+                                if (
+                                    $scpmk &&
+                                    isset($scpmk->cpmks) &&
+                                    filled($scpmk->cpmks)
+                                ) {
+
+                                    $cpls = collect($scpmk->cpmks)
+                                        ->flatMap(fn ($cpmk) => $cpmk->cpls ?? [])
                                         ->unique('id');
 
                                     foreach ($cpls as $cpl) {
@@ -139,33 +152,39 @@ class NilaiSeeder extends Seeder
                                             'jumlah' => 0,
                                         ];
 
-                                        $rekapCpl[$cpl->id]['total'] += $nilai;
+                                        $rekapCpl[$cpl->id]['total']
+                                            += $nilai;
+
                                         $rekapCpl[$cpl->id]['jumlah']++;
                                     }
                                 }
                             }
 
                             // =====================================
-                            // Final nilai
+                            // SIMPAN NILAI MAHASISWA
                             // =====================================
-                            $nilaiAkhir =
-                                $totalBobot > 0
-                                    ? round(
-                                        ($totalNilaiBobot /
-                                            $totalBobot)
-                                        * 100,
+                            $nilaiMahasiswa =
+                                NilaiMahasiswa::create([
+                                    'mahasiswa_id' => $mahasiswa->id,
+                                    'kj_id' => $jadwal->id,
+
+                                    'nilai' => round(
+                                        $nilaiAkhir,
                                         2
-                                    )
-                                    : 0;
+                                    ),
 
-                            $nilaiMahasiswa->update([
-                                'nilai' => $nilaiAkhir,
-                            ]);
+                                    'nilai_array' => $nilaiArray,
+                                    'bobot_array' => $normalizedBobots,
+
+                                    'is_locked' => rand(1, 100) <= 25,
+                                ]);
 
                             // =====================================
-                            // Simpan rekap CPL
+                            // SIMPAN REKAP CPL
                             // =====================================
-                            foreach ($rekapCpl as $cplId => $data) {
+                            foreach (
+                                $rekapCpl as $cplId => $data
+                            ) {
 
                                 $persentase =
                                     $data['jumlah'] > 0
@@ -176,16 +195,17 @@ class NilaiSeeder extends Seeder
                                         )
                                         : 0;
 
-                                DB::table(
-                                    'rekap_cpl_mahasiswa'
-                                )->insert([
-                                    'nilai_id' => $nilaiMahasiswa->id,
-                                    'mahasiswa_id' => $mahasiswa->id,
+                                RekapCPLMahasiswa::create([
                                     'cpl_id' => $cplId,
+
+                                    'nilai' => round(
+                                        $persentase,
+                                        2
+                                    ),
+
                                     'persentase' => $persentase,
+
                                     'jumlah_pertemuan' => $data['jumlah'],
-                                    'created_at' => now(),
-                                    'updated_at' => now(),
                                 ]);
                             }
                         }

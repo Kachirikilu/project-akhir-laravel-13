@@ -6,7 +6,7 @@
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
                 filterByKelas,
                 showDeleted,
-                saveAllRows, processImport,
+                saveUserExcel, procesImportUserExcel,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
                 saveMK, updateMK, destroyMK, restoreMK,
@@ -83,7 +83,7 @@
         <div class="mt-4 pt-4 border-t border-[var(--border-table-color)]">
             @include('livewire.global.table.footer-table', [
                 'typeXString' => $paginator,
-                'onlyAdmin' => $onlyAdmin
+                'onlyAdmin' => $onlyAdmin,
             ])
         </div>
     @endif

@@ -4,7 +4,7 @@
                 wire:target="
                 filterByUser, filterByStrata, filterByMK, filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef,
                 showDeleted,
-                saveAllRows, processImport,
+                saveUserExcel, procesImportUserExcel,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
                 saveMK, updateMK, destroyMK, restoreMK,

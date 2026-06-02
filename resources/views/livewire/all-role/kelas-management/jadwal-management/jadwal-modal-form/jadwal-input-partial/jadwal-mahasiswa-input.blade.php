@@ -22,6 +22,7 @@
 
         @include('livewire.global.modal-form.loading-animation', [
             'wireLoading' => 'addJadwal, editJadwal',
+            'heightContainer' => 32,
         ])
 
         @if ($this->showJadwalModal)
@@ -46,8 +47,6 @@
                 'iconString' => 'academic-cap',
                 'wireLoading' => 'fetchMahasiswa',
             ])
-        @else
-            <div class="h-32"></div>
         @endif
     </div>
 </div>

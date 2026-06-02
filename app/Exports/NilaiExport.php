@@ -16,30 +16,24 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
+class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
 {
     protected $jadwalId;
-
-    protected $title;
 
     protected $jadwal;
 
     protected $sesis;
 
-    public function __construct($jadwalId, $title)
+    public function __construct($jadwalId)
     {
         $this->jadwalId = $jadwalId;
-        $this->title = $title;
 
         $this->jadwal = KelasJadwal::with([
             'kelas_rel',
             'sesis',
         ])->findOrFail($jadwalId);
 
-        $this->sesis = $this->jadwal
-            ->sesis
-            ->sortBy('pertemuan_ke')
-            ->values();
+        $this->sesis = $this->jadwal->sesis->sortBy('pertemuan_ke')->values();
     }
 
     public function array(): array
@@ -70,7 +64,6 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
         foreach ($this->sesis as $sesi) {
             $scpmk = $sesi->scpmk_atr;
 
-            $cpmkKode;
             if ($scpmk instanceof SubCPMK) {
                 $cpmkKode = $scpmk->cpmks
                     ?->first()
@@ -83,11 +76,9 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
             $bobotAsli = $scpmk->bobot ?? 0;
             $bobotNormalisasi = $totalBobotAsli > 0 ? ($bobotAsli / $totalBobotAsli) : 0;
 
-            // Menyimpan nilai desimal murni untuk perhitungan formula Excel (Akan diformat % di Style)
             $header3[] = $bobotNormalisasi;
         }
 
-        // Tambahkan Header untuk Kolom Baru
         $header1[] = 'Nilai Angka';
         $header1[] = 'Nilai Index';
         $header1[] = 'Nilai Huruf';
@@ -109,7 +100,7 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
             ->mahasiswas()
             ->with([
                 'nilaiMahasiswa' => function ($q) {
-                    $q->where('kj_id', $this->jadwalId)->with('details');
+                    $q->where('kj_id', $this->jadwalId);
                 },
             ])
             ->get();
@@ -118,8 +109,12 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
         foreach ($mahasiswas as $index => $mhs) {
             $currentRow = $startRow + $index;
 
-            $nilaiMahasiswa = $mhs->nilaiMahasiswa->first();
-            $detailMap = $nilaiMahasiswa?->details->keyBy('sesi_id') ?? collect();
+            $nilaiMahasiswa =
+                $mhs->nilaiMahasiswa->first();
+
+            $nilaiArray =
+                $nilaiMahasiswa?->nilai_array
+                ?? [];
 
             $row = [
                 $this->jadwal->kode_mk,
@@ -130,26 +125,22 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
                 $mhs->user?->mahasiswa->angkatan,
             ];
 
-            foreach ($this->sesis as $sesi) {
-                $nilai = $detailMap[$sesi->id]->nilai ?? '';
+            foreach ($this->sesis as $index => $sesi) {
+
+                $nilai =
+                    $nilaiArray[$index]
+                    ?? '';
+
                 $row[] = $nilai;
             }
 
-            // Menentukan Koordinat Huruf Kolom Dinamis untuk Formula
-            $startSesiCol = Coordinate::stringFromColumnIndex(7); // Kolom F
+            $startSesiCol = Coordinate::stringFromColumnIndex(7);
             $endSesiCol = Coordinate::stringFromColumnIndex(6 + count($this->sesis));
 
             $nilaiAngkaCoordinate = Coordinate::stringFromColumnIndex(7 + count($this->sesis)).$currentRow;
-
-            // 1. Formula Nilai Angka: SUMPRODUCT(Range_Nilai_Mhs, Range_Persen_Bobot_Baris_5)
             $row[] = "=SUMPRODUCT({$startSesiCol}{$currentRow}:{$endSesiCol}{$currentRow}, {$startSesiCol}3:{$endSesiCol}3)";
-
-            // 2. Formula Nilai Index Bertingkat (Nested IF)
             $row[] = "=IF({$nilaiAngkaCoordinate}>=86, 4, IF({$nilaiAngkaCoordinate}>=76, 3, IF({$nilaiAngkaCoordinate}>=56, 2, IF({$nilaiAngkaCoordinate}>=41, 1, 0))))";
-
-            // 3. Formula Nilai Huruf Bertingkat (Nested IF)
             $row[] = "=IF({$nilaiAngkaCoordinate}>=86, \"A\", IF({$nilaiAngkaCoordinate}>=76, \"B\", IF({$nilaiAngkaCoordinate}>=56, \"C\", IF({$nilaiAngkaCoordinate}>=41, \"D\", \"E\"))))";
-
             $rows[] = $row;
         }
 
@@ -336,7 +327,6 @@ class MahasiswaNilaiExport implements FromArray, ShouldAutoSize, WithEvents, Wit
                     8 + $totalSesis,
                     9 + $totalSesis,
                 ];
-                
 
                 foreach (
                     $columnsToRowspan as $colIndex

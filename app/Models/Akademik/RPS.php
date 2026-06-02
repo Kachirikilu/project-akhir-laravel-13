@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RPS extends Model
@@ -179,6 +178,12 @@ class RPS extends Model
     protected function rps(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->mk ?? 'Tanpa MK'
+        );
+    }
+
+    protected function rpsWithKode(): Attribute
+    {
+        return Attribute::get(fn () => $this->kode.' - '.$this->mk_rel?->mk ?? 'Tanpa MK'
         );
     }
 
@@ -368,17 +373,14 @@ class RPS extends Model
                     $group->orWhere('akademik', 'like', $searchTerm);
                 });
 
-
                 if (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $search, $matches)) {
                     $number = (int) $matches[1];
-                    $q->orWhereHas('rps.cpmks', function ($sq) {
-                    }, '=', $number);
+                    $q->orWhereHas('rps.cpmks', function ($sq) {}, '=', $number);
                 }
 
                 if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $matches)) {
                     $number = (int) $matches[1];
-                    $q->orWhereHas('rps.scpmks', function ($sq) {
-                    }, '=', $number);
+                    $q->orWhereHas('rps.scpmks', function ($sq) {}, '=', $number);
                 }
 
                 // 3. Logika Status
@@ -447,7 +449,6 @@ class RPS extends Model
     //     $searchLower = '%'.strtolower($search).'%';
     //     $searchTerm = '%'.$search.'%';
     //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
-
 
     //     return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $withBobot) {
 

@@ -14,78 +14,218 @@ class KelasSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Ambil RPS yang memiliki 14-16 SCPMK melalui CPMK
         $batchSize = 50;
+        $kelasPerRPS = 2;
+
+        $kelasPerMahasiswaMin = 6;
+        $kelasPerMahasiswaMax = 10;
+
         $totalProcessed = 0;
 
-        $this->command->info("Starting KelasSeeder with chunk size $batchSize...");
+        $this->command->info(
+            "Starting KelasSeeder with chunk size {$batchSize}..."
+        );
 
-        RPS::with(['cpmks.scpmks', 'mk_rel.prodis'])
-            ->chunk($batchSize, function ($allRps) use (&$totalProcessed) {
+        $targetKelasMahasiswa = Mahasiswa::pluck('id')
+            ->mapWithKeys(fn ($id) => [
+                $id => rand(
+                    $kelasPerMahasiswaMin,
+                    $kelasPerMahasiswaMax
+                ),
+            ])
+            ->toArray();
+
+        $kelasDiambilMahasiswa = [];
+
+        RPS::with([
+            'cpmks.scpmks',
+            'mk_rel.prodis',
+        ])
+            ->chunk($batchSize, function (
+                $allRps
+            ) use (
+                &$totalProcessed,
+                $kelasPerRPS,
+                $targetKelasMahasiswa,
+                &$kelasDiambilMahasiswa
+            ) {
+
                 foreach ($allRps as $rps) {
-                    $scpmkList = $rps->cpmks->flatMap(function ($cpmk) {
-                        return $cpmk->scpmks;
-                    })->unique('id')->sortBy('pivot.sort_order')->values();
 
-                    $totalScpmk = $scpmkList->count();
-                    if ($totalScpmk < 14 || $totalScpmk > 16) {
+                    $scpmkList = $rps->cpmks
+                        ->flatMap(function ($cpmk) {
+                            return $cpmk->scpmks;
+                        })
+                        ->unique('id')
+                        ->sortBy('pivot.sort_order')
+                        ->values();
+
+                    $totalScpmk =
+                        $scpmkList->count();
+
+                    if (
+                        $totalScpmk < 14 ||
+                        $totalScpmk > 16
+                    ) {
                         continue;
                     }
 
                     $prodis = $rps->mk_rel?->prodis;
-                    if (! $prodis) {
+
+                    if ($prodis?->isEmpty()) {
                         continue;
                     }
 
-                    foreach ($prodis as $prodi) {
-                        DB::transaction(function () use ($rps, $scpmkList, $totalScpmk, $prodi) {
-                            $hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'][rand(0, 4)];
-                            $tglMulai = now()->addDays(rand(1, 30));
+                    // ===================================
+                    // kelas per RPS (TOTAL)
+                    // ===================================
+                    for (
+                        $kelasIndex = 1;
+                        $kelasIndex <= $kelasPerRPS;
+                        $kelasIndex++
+                    ) {
 
-                            // 2. Buat Kelas sesuai Schema baru
+                        // pilih salah satu prodi random
+                        $prodi = $prodis->random();
+
+                        DB::transaction(function () use (
+                            $rps,
+                            $scpmkList,
+                            $totalScpmk,
+                            $prodi,
+                            $kelasIndex,
+                            $targetKelasMahasiswa,
+                            &$kelasDiambilMahasiswa
+                        ) {
                             $kelas = Kelas::create([
-                                'kode_kelas' => $this->generateUniqueKode(Kelas::class, 'kode_kelas'),
+                                'kode_kelas' => $this->generateUniqueKode(
+                                    Kelas::class,
+                                    'kode_kelas'
+                                ),
+
                                 'rps_id' => $rps->id,
+
                                 'pr_id' => $prodi->id,
-                                'nama_kelas' => 'Kelas '.$rps->deskripsi.' - '.$prodi->nama_pr,
+
+                                'nama_kelas' => 'Kelas '.
+                                    $rps->deskripsi.
+                                    ' - '.
+                                    $prodi->nama_pr.
+                                    ' - '.
+                                    chr(64 + $kelasIndex),
                             ]);
 
-                            // Tambahkan KelasJadwal (Min 2 jadwal)
-                            $wilayah = ['IDL', 'PLG'][rand(0, 1)];
-                            $labels = ['A', 'B', 'C', 'D'];
-                            $jumlahJadwal = rand(2, 4);
+                            // ==========================
+                            // Jadwal
+                            // ==========================
+                            $wilayah =
+                                ['IDL', 'PLG'][rand(0, 1)];
 
-                            for ($i = 0; $i < $jumlahJadwal; $i++) {
-                                $hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'][rand(0, 4)];
-                                $tglMulai = now()->addDays(rand(1, 30));
+                            $labels =
+                                ['A', 'B', 'C', 'D'];
 
-                                $jadwal = $kelas->jadwals()->create([
-                                    'kode_wilayah' => $wilayah,
-                                    'password' => strtoupper(str()->random(6)),
-                                    'label_kelas' => $labels[$i],
-                                    'tanggal_mulai' => $tglMulai,
-                                    'tanggal_berakhir' => (clone $tglMulai)->addMonths(4),
-                                    'hari_pelaksanaan' => $hari,
-                                    'jam_mulai' => '08:00:00',
-                                    'jam_berakhir' => '10:30:00',
-                                    'kapasitas' => rand(30, 40),
-                                ]);
+                            $jumlahJadwal =
+                                rand(2, 4);
 
-                                // 3. Pasang Mahasiswa (max kapasitas)
-                                $mhsIds = Mahasiswa::inRandomOrder()->take(rand(20, $jadwal->kapasitas))->pluck('id');
-                                $jadwal->mahasiswas()->attach($mhsIds);
+                            for (
+                                $i = 0;
+                                $i < $jumlahJadwal;
+                                $i++
+                            ) {
+
+                                $hari = [
+                                    'Senin',
+                                    'Selasa',
+                                    'Rabu',
+                                    'Kamis',
+                                    'Jumat',
+                                ][rand(0, 4)];
+
+                                $tglMulai =
+                                    now()->addDays(
+                                        rand(1, 30)
+                                    );
+
+                                $jadwal =
+                                    $kelas
+                                        ->jadwals()
+                                        ->create([
+                                            'kode_wilayah' => $wilayah,
+                                            'password' => strtoupper(
+                                                str()->random(6)
+                                            ),
+                                            'label_kelas' => $labels[$i],
+                                            'tanggal_mulai' => $tglMulai,
+                                            'tanggal_berakhir' => (clone $tglMulai)
+                                                ->addMonths(4),
+                                            'hari_pelaksanaan' => $hari,
+                                            'jam_mulai' => '08:00:00',
+                                            'jam_berakhir' => '10:30:00',
+                                            'kapasitas' => rand(30, 40),
+                                        ]);
+                                // ==========================
+                                // FILTER mahasiswa yang masih bisa ambil kelas
+                                // ==========================
+                                $candidateIds = collect($targetKelasMahasiswa)
+                                    ->filter(function ($target, $mhsId) use ($kelasDiambilMahasiswa) {
+
+                                        return (
+                                            $kelasDiambilMahasiswa[$mhsId] ?? 0
+                                        ) < $target;
+                                    })
+                                    ->keys()
+                                    ->shuffle();
+
+                                $maxMahasiswa = min(
+                                    $jadwal->kapasitas,
+                                    $candidateIds->count()
+                                );
+
+                                if ($maxMahasiswa === 0) {
+                                    continue;
+                                }
+
+                                $jumlahMahasiswa = rand(
+                                    min(20, $maxMahasiswa),
+                                    $maxMahasiswa
+                                );
+
+                                $mhsIds = $candidateIds
+                                    ->take($jumlahMahasiswa)
+                                    ->values();
+
+                                // update counter mahasiswa
+                                foreach ($mhsIds as $mhsId) {
+
+                                    $kelasDiambilMahasiswa[$mhsId] =
+                                        ($kelasDiambilMahasiswa[$mhsId] ?? 0)
+                                        + 1;
+                                }
+
+                                $jadwal
+                                    ->mahasiswas()
+                                    ->attach($mhsIds);
 
                                 $scpmkIndex = 0;
 
-                                // 4. Generate 16 Sesi
-                                for ($pertemuan = 1; $pertemuan <= 16; $pertemuan++) {
-                                    $sesi = KelasSesi::create([
-                                        'kj_id' => $jadwal->id,
-                                        'pertemuan_ke' => $pertemuan,
-                                        'tanggal' => (clone $tglMulai)->addWeeks($pertemuan - 1),
-                                        'catatan' => "Sesi rutin pertemuan ke-$pertemuan",
-                                    ]);
+                                for (
+                                    $pertemuan = 1;
+                                    $pertemuan <= 16;
+                                    $pertemuan++
+                                ) {
 
+                                    $sesi =
+                                        KelasSesi::create([
+                                            'kj_id' => $jadwal->id,
+                                            'pertemuan_ke' => $pertemuan,
+                                            'tanggal' => (clone $tglMulai)
+                                                ->addWeeks(
+                                                    $pertemuan - 1
+                                                ),
+                                            'catatan' => "Sesi rutin pertemuan ke-{$pertemuan}",
+                                        ]);
+
+                                    // 4. Generate 16 Sesi
                                     // Seeder absensi mahasiswa
                                     $statuses = [
                                         'Hadir',
@@ -171,16 +311,31 @@ class KelasSeeder extends Seeder
                                     if (isset($scpmkList[$scpmkIndex])) {
                                         $scpmkIndex++;
                                     }
+
+                                    if (
+                                        isset(
+                                            $scpmkList[
+                                                $scpmkIndex
+                                            ]
+                                        )
+                                    ) {
+                                        $scpmkIndex++;
+                                    }
                                 }
                             }
                         });
                     }
                     $totalProcessed++;
                 }
-                $this->command->info("Processed $totalProcessed RPS records...");
+
+                $this->command->info(
+                    "Processed {$totalProcessed} RPS records..."
+                );
             });
 
-        $this->command->info("KelasSeeder finished. Total RPS processed: $totalProcessed");
+        $this->command->info(
+            "KelasSeeder finished. Total RPS processed: {$totalProcessed}"
+        );
     }
 
     private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 3)

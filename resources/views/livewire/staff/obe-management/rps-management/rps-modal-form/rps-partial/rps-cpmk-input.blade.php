@@ -6,15 +6,22 @@
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
-    <h4
-        class="text-[var(--contrast-main-text)] text-lg font-medium">
-        Pilih Capaian Pembelajaran Mata Kuliah</h4>
+        <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
+            Pilih Capaian Pembelajaran Mata Kuliah</h4>
 
         @if (!$this->showCPMKModal || $this->isEditingCPMK == false)
             @if (!$this->showSCPMKModal || $this->isEditingSCPMK == false)
-                @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk-scpmk', 'isFlyout' => 1, 'isSmall' => 1])
+                @include('livewire.staff.obe-management.obe-toolbar', [
+                    'typeXString' => 'cpmk-scpmk',
+                    'isFlyout' => 1,
+                    'isSmall' => 1,
+                ])
             @else
-                @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk', 'isFlyout' => 1, 'isSmall' => 1])
+                @include('livewire.staff.obe-management.obe-toolbar', [
+                    'typeXString' => 'cpmk',
+                    'isFlyout' => 1,
+                    'isSmall' => 1,
+                ])
             @endif
         @endif
     </div>
@@ -22,7 +29,10 @@
     <div class="relative">
 
 
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
+        @include('livewire.global.modal-form.loading-animation', [
+            'wireLoading' => 'addRPS, editRPS',
+            'heightContainer' => 32,
+        ])
 
         <div class="space-y-4">
             @if ($this->showRPSModal)
@@ -46,8 +56,6 @@
                     'iconString' => 'academic-cap',
                     'wireLoading' => 'fetchCPMK',
                 ])
-            @else
-                <div class="h-32"></div>
             @endif
         </div>
 

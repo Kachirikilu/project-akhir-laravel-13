@@ -3,7 +3,7 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithMahasiswaNilaiExcel;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
@@ -20,8 +20,8 @@ use Livewire\WithPagination;
 class SesiManagement extends Component
 {
     use WithJadwalModal;
-    use WithMahasiswaNilaiExcel;
     use WithMahasiswaSearchFilters;
+    use WithNilaiExcel;
     use WithPagination;
     use WithRPSShow;
     use WithSesiFilters;
@@ -191,7 +191,7 @@ class SesiManagement extends Component
         }
 
         $currentTable = $table ?? $this->table ?? 'sesi-table';
-        
+
         if ($this->switchTable == 'mahasiswa') {
             if ($this->perPage == 2) {
                 $this->perPage = 3;
@@ -283,6 +283,7 @@ class SesiManagement extends Component
             })->pluck('id')->all();
 
             $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)->select('users.*');
+
             $expiredCount = (int) count($expiredSesiIds ?: []);
 
             if (Auth::user()->admin || Auth::user()->dosen) {
@@ -301,6 +302,53 @@ class SesiManagement extends Component
                         ELSE 0
                     END",
                 ];
+
+                $queryUser->selectSub(function ($query) use ($idJadwal) {
+                    $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                        ->whereColumn('mahasiswas.user_id', 'users.id')
+                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                        ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')
+                        ->limit(1);
+
+                }, 'mhs_nilai_akhir');
+
+                $queryUser->selectSub(function ($query) use ($idJadwal) {
+
+                    $query->from('nilai_mahasiswa')
+                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                        ->whereColumn('mahasiswas.user_id', 'users.id')
+                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                        ->selectRaw('
+                            CASE
+                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4
+                                WHEN nilai_mahasiswa.nilai >= 71 THEN 3
+                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2
+                                WHEN nilai_mahasiswa.nilai >= 41 THEN 1
+                                ELSE 0
+                            END
+                        ')
+                        ->limit(1);
+
+                }, 'mhs_nilai_index');
+
+                $queryUser->selectSub(function ($query) use ($idJadwal) {
+
+                    $query->from('nilai_mahasiswa')
+                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                        ->whereColumn('mahasiswas.user_id', 'users.id')
+                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                        ->selectRaw("
+                            CASE
+                                WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
+                                WHEN nilai_mahasiswa.nilai >= 71 THEN 'B'
+                                WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
+                                WHEN nilai_mahasiswa.nilai >= 41 THEN 'D'
+                                ELSE 'E'
+END
+                        ")
+                        ->limit(1);
+
+                }, 'mhs_nilai_huruf');
 
                 foreach ($statuses as $alias => $condition) {
                     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
@@ -354,34 +402,34 @@ class SesiManagement extends Component
              * SEARCH FILTER
              * =========================
              */
-            $search = trim($this->search);
+            // $search = trim($this->search);
 
-            if (! empty($search)) {
+            // if (! empty($search)) {
 
-                $totalSesiUntukPersen = (clone $countSesi)->count() ?: 1;
-                $cleanNumber = preg_replace('/[^0-9.]/', '', $search);
+            //     $totalSesiUntukPersen = (clone $countSesi)->count() ?: 1;
+            //     $cleanNumber = preg_replace('/[^0-9.]/', '', $search);
 
-                if (is_numeric($cleanNumber) && $cleanNumber !== '') {
+            //     if (is_numeric($cleanNumber) && $cleanNumber !== '') {
 
-                    if (str_contains($search, '%')) {
-                        $queryUser->havingRaw(
-                            '(mhs_poin_absensi / (2 * ?)) * 100 LIKE ?',
-                            [$totalSesiUntukPersen, "%{$cleanNumber}%"]
-                        );
-                    } else {
-                        $queryUser->having('mhs_absensi', '=', $cleanNumber)
-                            ->orHaving('mhs_masuk', '=', $cleanNumber)
-                            ->orHaving('mhs_hadir', '=', $cleanNumber)
-                            ->orHaving('mhs_terlambat', '=', $cleanNumber)
-                            ->orHaving('mhs_izin', '=', $cleanNumber)
-                            ->orHaving('mhs_sakit', '=', $cleanNumber)
-                            ->orHaving('mhs_dispensasi', '=', $cleanNumber)
-                            ->orHaving('mhs_absen', '=', $cleanNumber)
-                            ->orHaving('mhs_tidak_masuk', '=', $cleanNumber)
-                            ->orHaving('mhs_poin_absensi', '=', $cleanNumber);
-                    }
-                }
-            }
+            //         if (str_contains($search, '%')) {
+            //             $queryUser->havingRaw(
+            //                 '(mhs_poin_absensi / (2 * ?)) * 100 LIKE ?',
+            //                 [$totalSesiUntukPersen, "%{$cleanNumber}%"]
+            //             );
+            //         } else {
+            //             $queryUser->having('mhs_absensi', '=', $cleanNumber)
+            //                 ->orHaving('mhs_masuk', '=', $cleanNumber)
+            //                 ->orHaving('mhs_hadir', '=', $cleanNumber)
+            //                 ->orHaving('mhs_terlambat', '=', $cleanNumber)
+            //                 ->orHaving('mhs_izin', '=', $cleanNumber)
+            //                 ->orHaving('mhs_sakit', '=', $cleanNumber)
+            //                 ->orHaving('mhs_dispensasi', '=', $cleanNumber)
+            //                 ->orHaving('mhs_absen', '=', $cleanNumber)
+            //                 ->orHaving('mhs_tidak_masuk', '=', $cleanNumber)
+            //                 ->orHaving('mhs_poin_absensi', '=', $cleanNumber);
+            //         }
+            //     }
+            // }
 
             /**
              * =========================
@@ -418,7 +466,8 @@ class SesiManagement extends Component
                     $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
                     break;
                 case 'mahasiswa':
-                    $users = $queryUser->paginate($this->perPage);
+                    // $users = $queryUser->paginate($this->perPage);
+                    $users = $this->searchOutputMahasiswa($queryUser, $idJadwal);
                     break;
             }
 

@@ -78,7 +78,7 @@
             @include('livewire.global.search-and-filters.partial.reset-button', [
                 'xShow' => 'search.length > 0',
                 'xClick' => "search = ''",
-                'xWire' => '',
+                'xWire' => 'resetInputFilter()',
                 'isRelative' => true,
             ])
         @endif

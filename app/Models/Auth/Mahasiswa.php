@@ -2,20 +2,20 @@
 
 namespace App\Models\Auth;
 
+use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-use App\Models\Kelas\KelasJadwal;
-use App\Models\ProgramStudi\Prodi;
-
 class Mahasiswa extends Model
 {
     use HasFactory;
+
     protected $table = 'mahasiswas';
 
     protected $fillable = [
@@ -44,7 +44,7 @@ class Mahasiswa extends Model
     ];
 
     protected $appends = [
-        'status_full'
+        'status_full',
     ];
 
     public function user(): BelongsTo
@@ -86,14 +86,13 @@ class Mahasiswa extends Model
 
     protected function angkatanFull(): Attribute
     {
-        return Attribute::get(fn () => 'Angkatan: '. $this->angkatan);
+        return Attribute::get(fn () => 'Angkatan: '.$this->angkatan);
     }
 
     protected function statusFull(): Attribute
     {
-        return Attribute::get(fn () => 'Status: '. $this->status);
+        return Attribute::get(fn () => 'Status: '.$this->status);
     }
-
 
     protected function wilayah(): Attribute
     {
@@ -120,7 +119,7 @@ class Mahasiswa extends Model
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Pencarian Identitas Langsung di Tabel Dosens
-            $fields = ['name', 'nim', 'nik', 'status', 'angkatan'];
+            $fields = ['name', 'nim', 'status', 'angkatan'];
             foreach ($fields as $field) {
                 $q->orWhere("mahasiswas.$field", 'like', $searchTerm);
             }

@@ -14,8 +14,9 @@ document.addEventListener("alpine:init", () => {
         setEdit(val) {
             this.isEdit = val;
         },
-        setColor(val) {
+        setColor(val, val2) {
             this.colorIcon = val;
+            this.colorIconBg = val2;
         },
 
         // User
@@ -97,6 +98,7 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = 0;
             this.isForceDelete = 0;
             this.colorIcon = "";
+            this.colorIconBg = "";
 
             this.email = "";
             this.password = "";

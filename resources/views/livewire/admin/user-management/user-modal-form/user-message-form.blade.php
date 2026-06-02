@@ -11,7 +11,7 @@
         </div>
 
         <div class="space-y-3">
-            <template x-if="$store.user?.typeModal == 'file'" x-cloak>
+            <template x-if="$store.user?.typeModal == 'excel'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
@@ -60,7 +60,7 @@
                                 'admin': ['NIP', 'NITK', 'NIK'],
                                 'dosen': ['NIP', 'NIDN', 'NIDK', 'NIK'],
                                 'mahasiswa': ['NIM', 'NIK'],
-                                'file': ['NIP', 'NITK', 'NIDN', 'NIDK', 'NIM', 'NIK']
+                                'excel': ['NIP', 'NITK', 'NIDN', 'NIDK', 'NIM', 'NIK']
                             };
                             return mapping[$store.user?.typeModal] || [];
                         },
@@ -78,7 +78,7 @@
                 </p>
             </div>
 
-            <template x-if="$store.user?.typeModal == 'mahasiswa' || $store.user?.typeModal == 'file'" x-cloak>
+            <template x-if="$store.user?.typeModal == 'mahasiswa' || $store.user?.typeModal == 'excel'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">

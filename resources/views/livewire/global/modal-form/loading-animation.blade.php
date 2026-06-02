@@ -1,3 +1,6 @@
+@if ($heightContainer ?? false)
+    <div wire:loading wire:target="{{ $wireLoading ?? null }}" class="h-{{ $heightContainer }}">
+@endif
 <div wire:loading wire:target="{{ $wireLoading ?? null }}"
     class="absolute inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-[2px] rounded-lg">
 
@@ -16,3 +19,6 @@
         </p>
     </div>
 </div>
+@if ($heightContainer ?? false)
+    </div>
+@endif

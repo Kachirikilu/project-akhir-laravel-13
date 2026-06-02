@@ -134,10 +134,10 @@ trait WithMKSearchFilters
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($mk) use ($value, $normalizedValue) {
-                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($mk->kode));
+                $normalizedMKKode = str_replace(['-', ' '], '', strtolower($mk->kode));
 
                 return strtolower($mk->mk) === strtolower($value)
-                    || $normalizedMkKode === $normalizedValue;
+                    || $normalizedMKKode === $normalizedValue;
             });
 
             if ($exactMatch) {

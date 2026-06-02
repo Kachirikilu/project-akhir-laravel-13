@@ -454,17 +454,35 @@ class User extends Authenticatable
                     });
 
                     $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
-                        $p->where('nama_pr', 'like', $searchTerm)
+                        $p->where(function ($pGroup) use ($searchTerm) {
+                            $pGroup->where('nama_pr', 'like', $searchTerm)
+                                ->orWhere('kode_pr', 'like', $searchTerm);
+                            $pGroup->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+                            $aliasStrataSql = "
+            CASE 
+                WHEN LOWER(strata) LIKE '%sarjana%' THEN 'S1'
+                WHEN LOWER(strata) LIKE '%magister%' THEN 'S2'
+                WHEN LOWER(strata) LIKE '%doktor%' THEN 'S3'
+                ELSE strata
+            END
+        ";
+                            $pGroup->orWhereRaw("CONCAT($aliasStrataSql, ' ', nama_pr) LIKE ?", [$searchTerm]);
+                        })
                             ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
-                                $j->where('nama_dp', 'like', $searchTerm)
-                                    ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
+                                $j->where(function ($jGroup) use ($searchTerm) {
+                                    $jGroup->where('nama_dp', 'like', $searchTerm)
+                                        ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
+                                        ->orWhere('kode_dp', 'like', $searchTerm);
+                                })
                                     ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
-                                        $f->where('nama_fk', 'like', $searchTerm)
-                                            ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+                                        $f->where(function ($fGroup) use ($searchTerm) {
+                                            $fGroup->where('nama_fk', 'like', $searchTerm)
+                                                ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm])
+                                                ->orWhere('kode_fk', 'like', $searchTerm);
+                                        });
                                     });
                             });
                     });
-
                     if (str_contains($searchLower, $role)) {
                         $q->orWhereHas($role);
                     }

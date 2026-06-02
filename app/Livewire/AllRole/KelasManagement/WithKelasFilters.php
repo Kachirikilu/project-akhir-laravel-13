@@ -50,8 +50,8 @@ trait WithKelasFilters
         if (! empty($this->selectedFkId)) {
             $queryKelas->whereHas('pr_rel.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
-        if (! empty($this->selectedRpsId)) {
-            $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('id', $this->selectedRpsId));
+        if (! empty($this->selectedRPSId)) {
+            $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('id', $this->selectedRPSId));
         }
         if (! empty($this->selectedMKId)) {
             $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('mk_id', $this->selectedMKId));

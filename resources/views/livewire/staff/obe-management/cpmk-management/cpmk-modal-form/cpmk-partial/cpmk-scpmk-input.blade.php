@@ -17,7 +17,10 @@
 
     <div class="relative">
 
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addCPMK, editCPMK'])
+        @include('livewire.global.modal-form.loading-animation', [
+            'wireLoading' => 'addCPMK, editCPMK',
+            'heightContainer' => 32,
+        ])
 
         <div class="space-y-4">
 
@@ -42,8 +45,6 @@
                     'iconString' => 'academic-cap',
                     'wireLoading' => 'fetchSCPMK',
                 ])
-            @else
-                <div class="h-32"></div>
             @endif
         </div>
     </div>

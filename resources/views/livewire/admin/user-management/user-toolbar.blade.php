@@ -76,17 +76,17 @@
                 {{-- Input File --}}
                 <flux:menu.item
                     @click="
-                        $store.user?.setType('file');
+                        $store.user?.setType('excel');
                         $store.user?.setEdit(0);
-                        $store.user?.setColor('text-green-700 dark:text-green-400');
+                        $store.user?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600');
                         $flux.modal('user-excel-modal').show();
-                        $wire.addUser('file');
+                        $wire.addUser('excel');
                     "
                     class="cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30">
                     <flux:icon name="table-cells" class="!text-green-600 dark:!text-green-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7">Input File Excel</span>
-                        <flux:icon wire:loading wire:target="addUser('file')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addUser('excel')" name="arrow-path"
                             class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>

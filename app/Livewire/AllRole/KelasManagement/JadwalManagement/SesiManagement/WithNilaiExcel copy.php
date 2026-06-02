@@ -1,21 +1,12 @@
 <?php
 
-namespace App\Livewire\Admin\UserManagement;
+namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
-use App\Exports\UserExport;
+use App\Exports\NilaiExport;
 use App\Livewire\Global\HasToast;
-use App\Models\Auth\Admin;
-use App\Models\Auth\Dosen;
-use App\Models\Auth\Mahasiswa;
-use App\Models\Auth\Membership;
-use App\Models\Auth\Team;
-use App\Models\Auth\User;
-use App\Models\ProgramStudi\Departemen;
-use App\Models\ProgramStudi\Fakultas;
-use App\Models\ProgramStudi\Prodi;
-// use Illuminate\Support\LazyCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\LazyCollection;
@@ -25,73 +16,42 @@ use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-trait WithUserExcel
+trait WithNilaiExcel
 {
     use HasToast;
     use WithFileUploads;
 
-    public $excel_user_file;
+    public $showNilaiExcelModal;
 
-    public array $parsedUserRows = [];
+    public $excel_nilai_file;
 
-    public array $rowUserErrors = [];
+    public array $parsedNilaiRows = [];
 
-    public $excelUserPerPage = 20;
+    public array $rowNilaiErrors = [];
 
-    public function exportUserExcel()
+    public $excelNilaiPerPage = 30;
+
+    public function exportNilaiExcel()
     {
-        $queryUser = $this->inputUserSearch();
-        $this->buttonUserFilter($queryUser);
-
-        $queryUser->with(['pendidikans' => fn ($q) => $q->orderByJenjang()]);
-        if (! empty($this->switchTable)) {
-            $queryUser->whereHas($this->switchTable);
+        if (! $this->AuthCheck('staff')) {
+            return;
         }
+        if (Auth::user()->admin || Auth::user()->dosen) {
+            $kelas = $this->kelas->kode;
+            $kode_mk = $this->kelas->kode_mk;
+            $mk = $this->kelas->mk;
+            $jadwal = $this->jadwal->kode_jadwal;
 
-        $univ = env('UNIVERSITAS');
-        $UNIV = strtoupper($univ);
+            $fileName = $kelas.'_'.$kode_mk.'_'.$mk.'_'.$jadwal.'_'.now()->format('Y-m-d').'.xlsx';
+            $fileNameSafe = str_replace('/', '-', $fileName);
 
-        $filter = '';
-        if ($this->filterStatus == 'user-aktif') {
-            $filter = ' Aktif';
-        } elseif ($this->filterStatus == 'user-non-aktif') {
-            $filter = ' Tidak Aktif';
+            return Excel::download(new NilaiExport($this->jadwal_id), $fileNameSafe);
         }
-
-        $tag = ucwords(empty($this->switchTable) ? 'Pengguna' : $this->switchTable).$filter;
-        $TAG = strtoupper($tag);
-
-        $sInput = '';
-        $sINPUT = '';
-        if ($this->filterStatus !== '') {
-            if ($this->selectedFkId) {
-                $fk = Fakultas::find($this->selectedFkId);
-                $sInput = $fk->fakultas_fk.'_';
-                $sINPUT = strtoupper($fk->fakultas_fk.' ');
-            } elseif ($this->selectedDpId) {
-                $dp = Departemen::find($this->selectedDpId);
-                $sInput = $dp->departemen_dp.'_';
-                $sINPUT = strtoupper($dp->departemen_dp.' ');
-            } elseif ($this->selectedPrId) {
-                $pr = Prodi::find($this->selectedPrId);
-                $sInput = $pr->prodi.'_';
-                $sINPUT = strtoupper($pr->prodi_pr.' ');
-            }
-        } else {
-            $sInput = Auth::user()->prodi.'_';
-            $sINPUT = strtoupper(Auth::user()->prodi_pr.' ');
-        }
-
-        $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-        $fileNameSafe = str_replace('/', '-', $fileName);
-        $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
-
-        return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileNameSafe);
     }
 
-    public function getPaginatedUserRowsProperty()
+    public function getPaginatedNilaiRowsProperty()
     {
-        $items = collect($this->parsedUserRows)
+        $items = collect($this->parsedNilaiRows)
             ->map(function ($row, $index) {
 
                 return array_merge($row, [
@@ -102,9 +62,9 @@ trait WithUserExcel
         $page = $this->getPage('excelPage');
 
         return new LengthAwarePaginator(
-            $items->forPage($page, $this->excelUserPerPage)->values()->toArray(),
+            $items->forPage($page, $this->excelNilaiPerPage)->values()->toArray(),
             $items->count(),
-            $this->excelUserPerPage,
+            $this->excelNilaiPerPage,
             $page,
             [
                 'path' => request()->url(),
@@ -113,22 +73,19 @@ trait WithUserExcel
         );
     }
 
-    public function importUserExcel()
+    public function importNilaiExcel()
     {
-        if (! $this->AuthCheck()) {
-            return;
-        }
-        if ($this->roleType !== 'excel') {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        $this->reset(['parsedUserRows', 'rowUserErrors']);
+        $this->reset(['parsedNilaiRows', 'rowNilaiErrors']);
 
         $this->validate([
-            'excel_user_file' => 'required|file|mimes:xlsx,xls|max:10240',
+            'excel_nilai_file' => 'required|file|mimes:xlsx,xls|max:10240',
         ]);
 
-        $spreadsheet = IOFactory::load($this->excel_user_file->getRealPath());
+        $spreadsheet = IOFactory::load($this->excel_nilai_file->getRealPath());
         $worksheet = $spreadsheet->getActiveSheet();
         $allData = $worksheet->toArray();
 
@@ -200,7 +157,7 @@ trait WithUserExcel
             }
 
             // Mapping yang lebih fleksibel untuk mendukung berbagai format header
-            $this->parsedUserRows[] = [
+            $this->parsedNilaiRows[] = [
                 'email' => $data['email'] ?? '',
                 'password' => $data['password'] ?? '12345678',
                 'name' => $data['name'] ?? $data['nama'] ?? '',
@@ -219,42 +176,42 @@ trait WithUserExcel
         $this->toast(text: 'File Excel berhasil dimuat. Silakan periksa data!');
     }
 
-    public function updatedExcelUserFile()
+    public function updatedExcelNilaiFile()
     {
         if ($this->roleType !== 'excel') {
             return;
         }
 
-        if (! $this->excel_user_file) {
+        if (! $this->excel_nilai_file) {
             return;
         }
 
         try {
-            $this->importUserExcel();
+            $this->importNilaiExcel();
         } catch (\Throwable $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
 
         }
     }
 
-    public function removeParsedUserRow($index)
+    public function removeParsedNilaiRow($index)
     {
-        if (isset($this->parsedUserRows[$index])) {
-            unset($this->parsedUserRows[$index]);
-            $this->parsedUserRows = array_values($this->parsedUserRows);
+        if (isset($this->parsedNilaiRows[$index])) {
+            unset($this->parsedNilaiRows[$index]);
+            $this->parsedNilaiRows = array_values($this->parsedNilaiRows);
             $this->toast(text: 'Baris dihapus!');
         }
     }
 
-    public function saveUserExcel()
+    public function saveNilaiExcel()
     {
         $rules = [
-            'excel_user_file' => 'required|file|mimes:xlsx,xls|max:10240',
+            'excel_nilai_file' => 'required|file|mimes:xlsx,xls|max:10240',
             'pr_id' => 'required|exists:prodis,id',
         ];
-        $this->validate($rules, $this->validationMessagesUser());
+        $this->validate($rules, $this->validationMessagesNilai());
 
-        if (empty($this->parsedUserRows)) {
+        if (empty($this->parsedNilaiRows)) {
             $this->toast(text: 'Tidak ada data untuk disimpan!', variant: 'warning');
 
             return;
@@ -262,22 +219,22 @@ trait WithUserExcel
 
         try {
             $this->stream('import-progress', 'Inisialisasi pemrosesan...');
-            $this->procesImportUserExcel();
+            $this->procesImportNilaiExcel();
         } catch (\Throwable $e) {
             $this->dispatch('toast', message: '❌ '.$e->getMessage());
         }
     }
 
-    public function procesImportUserExcel()
+    public function procesImportNilaiExcel()
     {
         $successCount = 0;
-        $this->rowUserErrors = [];
+        $this->rowNilaiErrors = [];
         $successfulIndices = [];
         $originalRoleType = $this->roleType;
 
-        $total = count($this->parsedUserRows);
+        $total = count($this->parsedNilaiRows);
 
-        LazyCollection::make($this->parsedUserRows)
+        LazyCollection::make($this->parsedNilaiRows)
             ->chunk(50)
             ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
                 foreach ($chunk as $index => $row) {
@@ -291,15 +248,15 @@ trait WithUserExcel
                             $dataToValidate['status'] = 'Aktif';
                         }
 
-                        $validatedData = $this->inputModalUser(false, $dataToValidate);
-                        $this->saveUserFromExcel($validatedData, $row['role']);
+                        $validatedData = $this->inputModalNilai(false, $dataToValidate);
+                        $this->saveNilaiFromExcel($validatedData, $row['role']);
 
                         $successfulIndices[] = $index;
                         $successCount++;
                     } catch (ValidationException $e) {
-                        $this->rowUserErrors[$index] = $e->errors();
+                        $this->rowNilaiErrors[$index] = $e->errors();
                     } catch (\Throwable $e) {
-                        $this->rowUserErrors[$index] = ['general' => [$e->getMessage()]];
+                        $this->rowNilaiErrors[$index] = ['general' => [$e->getMessage()]];
                     }
                 }
                 $message = "Sedang memproses... $successCount dari $total data berhasil masuk.";
@@ -314,26 +271,26 @@ trait WithUserExcel
         $this->roleType = $originalRoleType;
 
         foreach (array_reverse($successfulIndices) as $idx) {
-            unset($this->parsedUserRows[$idx]);
-            unset($this->rowUserErrors[$idx]);
+            unset($this->parsedNilaiRows[$idx]);
+            unset($this->rowNilaiErrors[$idx]);
         }
 
-        $this->parsedUserRows = array_values($this->parsedUserRows);
+        $this->parsedNilaiRows = array_values($this->parsedNilaiRows);
 
         $newRowErrors = [];
         $i = 0;
-        foreach ($this->rowUserErrors as $oldIdx => $errors) {
+        foreach ($this->rowNilaiErrors as $oldIdx => $errors) {
             $newRowErrors[$i] = $errors;
             $i++;
         }
-        $this->rowUserErrors = $newRowErrors;
+        $this->rowNilaiErrors = $newRowErrors;
 
-        $failCount = count($this->parsedUserRows);
+        $failCount = count($this->parsedNilaiRows);
         $messageText = "Import selesai | Berhasil: $successCount | Gagal: $failCount";
 
         if ($failCount === 0) {
             $this->toast(text: $messageText);
-            $this->reset('excel_user_file');
+            $this->reset('excel_nilai_file');
             $this->resetInputUser();
             $this->dispatch('refresh-data-user');
             $this->showUserExcelModal = false;
@@ -344,7 +301,7 @@ trait WithUserExcel
         $this->dispatch('refresh-data-user');
     }
 
-    private function saveUserFromExcel($validated, $role)
+    private function saveNilaiFromExcel($validated, $role)
     {
         DB::transaction(function () use ($validated, $role) {
             $user = User::create([
@@ -359,28 +316,6 @@ trait WithUserExcel
                     'nip' => $validated['nip'],
                     'nitk' => $validated['nitk'] ?? null,
                     'nik' => $validated['nik'],
-                    'pr_id' => $validated['pr_id'],
-                    'kode_wilayah' => $validated['kode_wilayah'],
-                    'status' => $validated['status'],
-                ]);
-            } elseif ($role === 'dosen') {
-                Dosen::create([
-                    'user_id' => $user->id,
-                    'name' => $validated['name'],
-                    'nip' => $validated['nip'],
-                    'nidn' => $validated['nidn'] ?? null,
-                    'nidk' => $validated['nidk'] ?? null,
-                    'nik' => $validated['nik'],
-                    'pr_id' => $validated['pr_id'],
-                    'status' => $validated['status'],
-                ]);
-            } elseif ($role === 'mahasiswa') {
-                Mahasiswa::create([
-                    'user_id' => $user->id,
-                    'name' => $validated['name'],
-                    'nim' => $validated['nim'],
-                    'nik' => $validated['nik'],
-                    'angkatan' => $validated['angkatan'],
                     'pr_id' => $validated['pr_id'],
                     'kode_wilayah' => $validated['kode_wilayah'],
                     'status' => $validated['status'],
@@ -403,5 +338,65 @@ trait WithUserExcel
         });
     }
 
-    public function loadingUserExcel() {}
+    public function loadingNilaiExcel() {}
+
+    private function inputModalNilai($isEditingNilai, $data)
+    {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
+        $rules = [
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->selected_id_user),
+            ],
+            'password' => $isEditingNilai ? 'nullable|min:8' : 'required|min:8',
+            'name' => 'required|string|max:255',
+            'nip' => 'nullable|string|max:20',
+        ];
+
+        /* ===================== ADMIN ===================== */
+        if ($this->roleType === 'admin') {
+            $rules['kode_wilayah'] = [
+                'required',
+                Rule::in(['IDL', 'PLG']),
+            ];
+
+            $rules['status'] = [
+                'required',
+                Rule::in([
+                    'Aktif',                  // Hijau (Produktif)
+                    'Tugas Belajar',          // Kuning (Transisi/Sementara)
+                    'Mutasi',                 // Kuning (Transisi/Sementara)
+                    'Cuti Luar Tanggungan',   // Kuning (Transisi/Sementara)
+                    'Resign',                 // Orange (Keluar Prosedural)
+                    'Pensiun',                // Orange (Keluar Prosedural)
+                    'Diberhentikan',          // Merah (Masalah/Sanksi)
+                    'Meninggal Dunia',         // Merah (Permanen)
+                ]),
+            ];
+        }
+
+        $rules['pr_id'] = 'required|exists:prodis,id';
+
+        $validator = Validator::make($data, $rules, $this->validationMessagesNilai());
+
+        $validator->after(function ($validator) {});
+
+        return $validator->validate();
+    }
+
+    public function validationMessagesNilai()
+    {
+        return [
+            'email.required' => 'Alamat email wajib diisi!',
+            'email.email' => 'Format email tidak valid!',
+            'email.unique' => 'Email ini sudah terdaftar di sistem!',
+            'password.required' => 'Password wajib diisi!',
+            'password.min' => 'Password minimal harus 8 karakter!',
+            'name.required' => 'Nama lengkap wajib diisi!',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
+        ];
+    }
 }

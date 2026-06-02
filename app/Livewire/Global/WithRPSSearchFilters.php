@@ -47,6 +47,7 @@ trait WithRPSSearchFilters
             'kode_blok' => $r->kode_blok,
             'kode' => $r->kode,
             'rps' => $r->rps,
+            'rps_with_kode' => $r->rps_with_kode,
             'mk' => $r->mk,
             'deskripsi' => $r->deskripsi,
             'akademik' => $r->akademik,
@@ -77,6 +78,7 @@ trait WithRPSSearchFilters
             'id' => $r->id,
             'kode' => $r->kode,
             'rps' => $r->rps,
+            'rps_with_kode' => $r->rps_with_kode,
             'draf_text' => $r->draf_text,
             'draf_full' => $r->draf_full,
             'wajib_text' => $r->wajib_text,
@@ -157,11 +159,11 @@ trait WithRPSSearchFilters
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
-                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($r->kode));
+                $normalizedRPSKode = str_replace(['-', ' '], '', strtolower($r->kode));
 
                 return strtolower($r->rps) === strtolower($value)
                     || strtolower($r->mk) === strtolower($value)
-                    || $normalizedMkKode === $normalizedValue;
+                    || $normalizedRPSKode === $normalizedValue;
             });
 
             if ($exactMatch) {
@@ -287,6 +289,7 @@ trait WithRPSSearchFilters
                 });
             }
         }
+
         return $query;
     }
 }

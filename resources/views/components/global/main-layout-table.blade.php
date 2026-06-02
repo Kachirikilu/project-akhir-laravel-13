@@ -6,7 +6,7 @@
         filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
         filterByKelas,
         showDeleted,
-        saveAllRows, processImport,
+        saveUserExcel, procesImportUserExcel,
         saveUser, updateUser, destroyUser, restoreUser,
         saveProdi, updateProdi, destroyProdi, restoreProdi,
         saveMK, updateMK, destroyMK, restoreMK,
@@ -88,7 +88,7 @@
     @elseif($paginator)
         @include('livewire.global.table.footer-table', [
             'typeXString' => $paginator,
-            'onlyAdmin' => $onlyAdmin
+            'onlyAdmin' => $onlyAdmin,
         ])
     @endif
 </div>

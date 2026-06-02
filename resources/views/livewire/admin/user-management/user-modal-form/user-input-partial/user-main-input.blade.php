@@ -39,7 +39,7 @@
             'modelString' => 'password',
             'typeString' => 'password',
             'iconString' => 'lock-closed',
-            'placeholder' => 'Kosongkan jika tidak ingin diubah',
+            'placeholder' => 'Kosongkan jika tidak ingin diubah...',
             'message' => $errors->first('password'),
             'isRequired' => 0,
         ])
