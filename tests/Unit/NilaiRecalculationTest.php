@@ -2,20 +2,32 @@
 
 namespace Tests\Unit;
 
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class NilaiRecalculationTest extends TestCase
 {
     public function test_grade_recalculation()
     {
-        $dummy = new class {
-            use \App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
+        $dummy = new class
+        {
+            use WithNilaiExcel;
 
             // Mock methods used by trait
-            public function AuthCheck($role = null) { return true; }
+            public function AuthCheck($role = null)
+            {
+                return true;
+            }
+
             public function toast($text, $variant = 'success') {}
+
             public function dispatch($event, ...$args) {}
-            public function getPage($pageName) { return 1; }
+
+            public function getPage($pageName)
+            {
+                return 1;
+            }
         };
 
         // Set up test data
@@ -28,7 +40,7 @@ class NilaiRecalculationTest extends TestCase
                 'nilai_angka' => 0,
                 'nilai_index' => null,
                 'nilai_huruf' => null,
-            ]
+            ],
         ];
 
         // Recalculate
@@ -84,11 +96,61 @@ class NilaiRecalculationTest extends TestCase
     {
         $excelKey = 'Sub-CPMK-1';
         $dbKey = 'Sub-CPMK-1';
-        
+
         $normalizedExcelKey = preg_replace('/[^A-Za-z0-9]/', '', $excelKey);
         $normalizedDbKey = preg_replace('/[^A-Za-z0-9]/', '', $dbKey);
-        
+
         $this->assertEquals($normalizedExcelKey, $normalizedDbKey);
         $this->assertEquals('SubCPMK1', $normalizedExcelKey);
+    }
+
+    public function test_sub_cpmk_validation_error_keys()
+    {
+        $dummy = new class
+        {
+            use WithNilaiExcel;
+
+            public function AuthCheck($role = null)
+            {
+                return true;
+            }
+
+            public function toast($text, $variant = 'success') {}
+
+            public function dispatch($event, ...$args) {}
+
+            public function getPage($pageName)
+            {
+                return 1;
+            }
+
+            public function callInputModalNilai($data)
+            {
+                return $this->inputModalNilai($data);
+            }
+        };
+
+        $invalidData = [
+            'nim' => '123456',
+            'nama' => 'Test Mahasiswa',
+            'nilai_angka' => 80,
+            'sub_cpmk' => [
+                [
+                    'kode_scpmk' => 'SCPMK-1',
+                    'nilai' => 150, // Invalid (max is 100)
+                    'bobot' => 0.5,
+                ],
+            ],
+        ];
+
+        $this->expectException(ValidationException::class);
+
+        try {
+            $dummy->callInputModalNilai($invalidData);
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+            $this->assertArrayHasKey('sub_cpmk.0.nilai', $errors);
+            throw $e;
+        }
     }
 }

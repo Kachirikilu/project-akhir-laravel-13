@@ -370,9 +370,9 @@ trait WithRefModal
             'kode_ref_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)
-            'kode_ref_2.required' => 'Nomor kode (input kanan) wajib diisi!',
-            'kode_ref_2.numeric' => 'Nomor kode harus berupa angka!',
-            'kode_ref_2.min' => 'Nomor kode minimal adalah 1!',
+            'kode_ref_2.required' => 'Nomor Kode (input kanan) wajib diisi!',
+            'kode_ref_2.numeric' => 'Nomor Kode harus berupa angka!',
+            'kode_ref_2.min' => 'Nomor Kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
             'kode_ref.required' => 'Kode Referensi lengkap wajib terbentuk!',

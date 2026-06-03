@@ -208,6 +208,20 @@ trait WithUserModal
                 Rule::unique('mahasiswas', 'nik'),
             ];
 
+            $rules['nik'] = [
+                'required',
+                'min:14', 'max:16',
+                $this->uniqueRule('admins', 'nik'),
+                Rule::unique('admins', 'nip'),
+                Rule::unique('admins', 'nitk'),
+                Rule::unique('dosens', 'nip'),
+                Rule::unique('dosens', 'nidn'),
+                Rule::unique('dosens', 'nidk'),
+                Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
+            ];
+
             $rules['kode_wilayah'] = [
                 'required',
                 Rule::in(['IDL', 'PLG']),
@@ -270,6 +284,20 @@ trait WithUserModal
                 Rule::unique('mahasiswas', 'nik'),
             ];
 
+            $rules['nik'] = [
+                'required',
+                'min:14', 'max:16',
+                $this->uniqueRule('dosens', 'nik'),
+                Rule::unique('admins', 'nip'),
+                Rule::unique('admins', 'nitk'),
+                Rule::unique('dosens', 'nip'),
+                Rule::unique('dosens', 'nidn'),
+                Rule::unique('dosens', 'nidk'),
+                Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
+            ];
+
             $rules['status'] = [
                 'required',
                 Rule::in([
@@ -300,6 +328,21 @@ trait WithUserModal
                 Rule::unique('admins', 'nik'),
                 Rule::unique('dosens', 'nik'),
                 Rule::unique('mahasiswas', 'nik'),
+            ];
+
+            $rules['nik'] = [
+                'required',
+                'min:14', 'max:16',
+
+                $this->uniqueRule('mahasiswas', 'nik'),
+                Rule::unique('admins', 'nip'),
+                Rule::unique('admins', 'nitk'),
+                Rule::unique('dosens', 'nip'),
+                Rule::unique('dosens', 'nidn'),
+                Rule::unique('dosens', 'nidk'),
+                Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
             ];
 
             $rules['kode_wilayah'] = [

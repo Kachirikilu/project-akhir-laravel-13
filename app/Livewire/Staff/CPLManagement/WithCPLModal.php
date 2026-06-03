@@ -61,7 +61,7 @@ trait WithCPLModal
         $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
 
         $this->showCPLModal = true;
-        
+
         $this->showEditCPL = false;
 
     }
@@ -266,7 +266,7 @@ trait WithCPLModal
 
             $this->toast(message: "CPL {$validated['kode_cpl_1']}-{$validated['kode_cpl_2']}");
             $this->resetInputCPL();
-            
+
             $this->dispatch('refresh-data-cpl');
             $this->showCPLModal = false;
 
@@ -342,9 +342,9 @@ trait WithCPLModal
             'kode_cpl_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPL Bagian 2 (Angka - Kanan)
-            'kode_cpl_2.required' => 'Nomor kode (input kanan) wajib diisi!',
-            'kode_cpl_2.numeric' => 'Nomor kode harus berupa angka!',
-            'kode_cpl_2.min' => 'Nomor kode minimal adalah 1!',
+            'kode_cpl_2.required' => 'Nomor Kode (input kanan) wajib diisi!',
+            'kode_cpl_2.numeric' => 'Nomor Kode harus berupa angka!',
+            'kode_cpl_2.min' => 'Nomor Kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
             'kode_cpl.required' => 'Kode CPL lengkap wajib terbentuk!',

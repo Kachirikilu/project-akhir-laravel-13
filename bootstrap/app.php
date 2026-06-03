@@ -23,9 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (Throwable $e) {
-            return response()->view('errors.plain', [
-                'message' => $e->getMessage(),
-            ], 500);
-        });
+        // $exceptions->render(function (Throwable $e) {
+        //     return response()->view('errors.plain', [
+        //         'message' => $e->getMessage(),
+        //     ], 500);
+        // });
     })->create();

@@ -103,7 +103,6 @@ trait WithKelasModal
 
         $prId = $data['pr_id'] ?? $this->pr_id ?? null;
 
-
         $rules = [
             'kode_kelas_1' => 'required|alpha|max:10',
             'kode_kelas_2' => 'required|numeric|min:1',
@@ -223,7 +222,7 @@ trait WithKelasModal
             $validated = $this->inputModalKelas(true, $data);
 
             DB::transaction(function () use ($validated) {
-                 $kelas = Kelas::findOrFail($this->selected_id_kelas);
+                $kelas = Kelas::findOrFail($this->selected_id_kelas);
 
                 $kelas->update([
                     'kode_kelas' => $validated['kode_kelas'],
@@ -236,9 +235,9 @@ trait WithKelasModal
 
             $this->resetInputKelas();
             $this->dispatch('refresh-data-kelas');
-            
+
             $this->showKelasModal = false;
-            $this->toast(message:  "Kelas {$validated['nama_kelas']} ({$validated['kode_kelas']})", type: 'update');
+            $this->toast(message: "Kelas {$validated['nama_kelas']} ({$validated['kode_kelas']})", type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -258,9 +257,9 @@ trait WithKelasModal
             'kode_kelas_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)
-            'kode_kelas_2.required' => 'Nomor kode (input kanan) wajib diisi!',
-            'kode_kelas_2.numeric' => 'Nomor kode harus berupa angka!',
-            'kode_kelas_2.min' => 'Nomor kode minimal adalah 1!',
+            'kode_kelas_2.required' => 'Nomor Kode (input kanan) wajib diisi!',
+            'kode_kelas_2.numeric' => 'Nomor Kode harus berupa angka!',
+            'kode_kelas_2.min' => 'Nomor Kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
             'kode_kelas.required' => 'Kode Kelas lengkap wajib terbentuk!',

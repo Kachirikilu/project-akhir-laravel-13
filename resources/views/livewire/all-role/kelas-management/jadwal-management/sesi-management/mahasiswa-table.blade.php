@@ -319,7 +319,7 @@
                 </td>
                 <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_huruf ?? 0 }}
+                        {{ $user->mhs_nilai_huruf_asli ?? 'E' }}
                     @else
                         -
                     @endif

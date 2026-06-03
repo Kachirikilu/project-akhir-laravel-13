@@ -139,11 +139,10 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
 
             $nilaiAngkaCoordinate = Coordinate::stringFromColumnIndex(7 + count($this->sesis)).$currentRow;
             $row[] = "=SUMPRODUCT({$startSesiCol}{$currentRow}:{$endSesiCol}{$currentRow}, {$startSesiCol}3:{$endSesiCol}3)";
-            $row[] = "=IF({$nilaiAngkaCoordinate}>=86, 4, IF({$nilaiAngkaCoordinate}>=76, 3, IF({$nilaiAngkaCoordinate}>=56, 2, IF({$nilaiAngkaCoordinate}>=41, 1, 0))))";
-            $row[] = "=IF({$nilaiAngkaCoordinate}>=86, \"A\", IF({$nilaiAngkaCoordinate}>=76, \"B\", IF({$nilaiAngkaCoordinate}>=56, \"C\", IF({$nilaiAngkaCoordinate}>=41, \"D\", \"E\"))))";
+            $row[] = "=IF({$nilaiAngkaCoordinate}>=86,4.00,IF({$nilaiAngkaCoordinate}>=80,3.70,IF({$nilaiAngkaCoordinate}>=75,3.30,IF({$nilaiAngkaCoordinate}>=70,3.00,IF({$nilaiAngkaCoordinate}>=65,2.70,IF({$nilaiAngkaCoordinate}>=60,2.30,IF({$nilaiAngkaCoordinate}>=56,2.00,IF({$nilaiAngkaCoordinate}>=40,1.00,0.00))))))))";
+            $row[] = "=IF({$nilaiAngkaCoordinate}>=86,\"A\",IF({$nilaiAngkaCoordinate}>=80,\"A-\",IF({$nilaiAngkaCoordinate}>=75,\"B+\",IF({$nilaiAngkaCoordinate}>=70,\"B\",IF({$nilaiAngkaCoordinate}>=65,\"B-\",IF({$nilaiAngkaCoordinate}>=60,\"C+\",IF({$nilaiAngkaCoordinate}>=56,\"C\",IF({$nilaiAngkaCoordinate}>=40,\"D\",\"E\"))))))))";
             $rows[] = $row;
         }
-
         return $rows;
     }
 

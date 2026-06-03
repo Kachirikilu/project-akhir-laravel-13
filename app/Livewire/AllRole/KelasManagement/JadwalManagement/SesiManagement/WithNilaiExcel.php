@@ -325,13 +325,13 @@ trait WithNilaiExcel
         }
     }
 
-    public function updatedParsedNilaiRows($value, $key)
-    {
-        if (preg_match('/^(\d+)\.sub_cpmk\.(\d+)\.nilai$/', $key, $matches)) {
-            $rowIndex = (int) $matches[1];
-            $this->recalculateRowNilai($rowIndex);
-        }
-    }
+    // public function updatedParsedNilaiRows($value, $key)
+    // {
+    //     if (preg_match('/^(\d+)\.sub_cpmk\.(\d+)\.nilai$/', $key, $matches)) {
+    //         $rowIndex = (int) $matches[1];
+    //         $this->recalculateRowNilai($rowIndex);
+    //     }
+    // }
 
     public function recalculateRowNilai(int $rowIndex)
     {
@@ -383,6 +383,9 @@ trait WithNilaiExcel
         }
 
         try {
+            foreach ($this->parsedNilaiRows as $rowIndex => $row) {
+                $this->recalculateRowNilai($rowIndex);
+            }
             $this->stream('import-progress', 'Inisialisasi pemrosesan simpan nilai...');
             $this->procesImportNilaiExcel();
         } catch (\Throwable $e) {
@@ -562,22 +565,16 @@ trait WithNilaiExcel
         $rules = [
             'nim' => 'required|string',
             'nama' => 'required|string|max:255',
-
             'nilai_angka' => 'required|numeric|min:0|max:100',
-
             'nilai_index' => 'nullable|numeric',
-
             'nilai_huruf' => 'nullable|string|max:2',
 
             // ==========================
             // SUB CPMK
             // ==========================
             'sub_cpmk' => 'nullable|array',
-
             'sub_cpmk.*.kode_scpmk' => 'nullable|string',
-
             'sub_cpmk.*.nilai' => 'nullable|numeric|min:0|max:100',
-
             'sub_cpmk.*.bobot' => 'nullable|numeric',
         ];
 
@@ -586,16 +583,18 @@ trait WithNilaiExcel
             $rules,
             [
                 'nim.required' => 'NIM mahasiswa wajib diisi!',
-
                 'nama.required' => 'Nama mahasiswa wajib diisi!',
-
                 'nilai_angka.required' => 'Nilai angka wajib diisi!',
-
                 'nilai_angka.numeric' => 'Nilai harus berupa angka!',
+                'nilai_angka.min' => 'Nilai minimal adalah 0!',
+                'nilai_angka.max' => 'Nilai maksimal adalah 100!',
 
-                'nilai_angka.min' => 'Nilai minimal 0!',
-
-                'nilai_angka.max' => 'Nilai maksimal 100!',
+                'sub_cpmk.array' => 'Format data Sub-CPMK tidak valid!',
+                'sub_cpmk.*.kode_scpmk.string' => 'Kode Sub-CPMK harus berupa teks!',
+                'sub_cpmk.*.nilai.numerik' => 'Nilai Sub-CPMK harus berupa angka!',
+                'sub_cpmk.*.nilai.min' => 'Nilai Sub-CPMK minimal adalah 0!',
+                'sub_cpmk.*.nilai.max' => 'Nilai Sub-CPMK maksimal adalah 100!',
+                'sub_cpmk.*.bobot.numerik' => 'Bobot Sub-CPMK harus berupa teks!!',
             ]
         )->validate();
     }

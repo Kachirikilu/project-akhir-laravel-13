@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Staff\CPMKManagement;
 
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasErrorCount;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SCPMK;
 use App\Models\Akademik\SubCPMK;
@@ -14,8 +14,8 @@ use Livewire\WithPagination;
 
 trait WithSubCPMKModal
 {
-    use HasToast;
     use HasErrorCount;
+    use HasToast;
     use WithPagination;
 
     public $selected_id_scpmk;
@@ -46,7 +46,6 @@ trait WithSubCPMKModal
         }
     }
 
-
     public function addSCPMK($key = 'scpmk')
     {
         if (! $this->AuthCheck('staff')) {
@@ -63,7 +62,7 @@ trait WithSubCPMKModal
         $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         $this->showSCPMKModal = true;
-        
+
         $this->showEditSCPMK = false;
 
         $this->refNameSearch['scpmk'] = '';
@@ -88,7 +87,6 @@ trait WithSubCPMKModal
         $this->isEditingSCPMK = true;
         $this->showEditSCPMK = true;
         $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
-
 
         try {
             $scpmk = SubCPMK::with([
@@ -374,7 +372,7 @@ trait WithSubCPMKModal
 
                 foreach ($relatedRps as $rps) {
                     $updateData = [];
-                    
+
                     $hasUTSInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
                             $query->whereIn('metode', SubCPMK::$UTS_FIELDS);
@@ -496,9 +494,9 @@ trait WithSubCPMKModal
             'kode_scpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode SCPMK Bagian 2 (Angka - Kanan)
-            'kode_scpmk_2.required' => 'Nomor kode (input kanan) wajib diisi!',
-            'kode_scpmk_2.numeric' => 'Nomor kode harus berupa angka!',
-            'kode_scpmk_2.min' => 'Nomor kode minimal adalah 1!',
+            'kode_scpmk_2.required' => 'Nomor Kode (input kanan) wajib diisi!',
+            'kode_scpmk_2.numeric' => 'Nomor Kode harus berupa angka!',
+            'kode_scpmk_2.min' => 'Nomor Kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
             'kode_scpmk.required' => 'Kode Sub-CPMK lengkap wajib terbentuk!',
@@ -517,12 +515,12 @@ trait WithSubCPMKModal
             'materi.string' => 'Materi Sub-CPMK harus berupa text!',
             'materi.min' => 'Materi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'materi.max' => 'Materi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
-            
+
             'metodologi.required' => 'Metodologi Sub-CPMK wajib diisi!',
             'metodologi.string' => 'Metodologi Sub-CPMK harus berupa text!',
             'metodologi.min' => 'Metodologi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'metodologi.max' => 'Metodologi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
-            
+
             'indikator.required' => 'Indikator Sub-CPMK wajib diisi!',
             'indikator.string' => 'Indikator Sub-CPMK harus berupa text!',
             'indikator.min' => 'Indikator Sub-CPMK terlalu pendek (Minimal 5 karakter)!',

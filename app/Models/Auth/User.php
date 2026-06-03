@@ -439,9 +439,9 @@ class User extends Authenticatable
                 });
 
                 $roleConfigs = [
-                    'admin' => ['name', 'nip', 'nitk', 'status', 'id'],
-                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status', 'id'],
-                    'mahasiswa' => ['name', 'nim', 'angkatan', 'status', 'id'],
+                    'admin' => ['name', 'nip', 'nitk', 'nik', 'status', 'id'],
+                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'nik', 'status', 'id'],
+                    'mahasiswa' => ['name', 'nim', 'nik', 'angkatan', 'status', 'id'],
                 ];
 
                 foreach ($roleConfigs as $role => $fields) {

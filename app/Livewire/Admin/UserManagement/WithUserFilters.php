@@ -168,7 +168,7 @@ trait WithUserFilters
         $accessorFields = [
             'mhs_absensi', 'mhs_masuk', 'mhs_terlambat', 'mhs_izin',
             'mhs_sakit', 'mhs_dispensasi', 'mhs_poin_absensi',
-            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_tidak_masuk',
+            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_nilai_huruf_asli', 'mhs_tidak_masuk',
         ];
 
         $search = trim($this->search);
@@ -180,8 +180,10 @@ trait WithUserFilters
         preg_match_all('/[0-9.,]+/', $search, $matchesNumbers);
         $searchNumbers = $matchesNumbers[0] ?? [];
 
-        preg_match('/\b[a-eA-E][+-]?\b/', $search, $matchesGrade);
-        $searchGrade = isset($matchesGrade[0]) ? strtolower($matchesGrade[0]) : null;
+        preg_match('/(^|\s)([a-eA-E](?:\+|\-)?)(?=\s|$)/i', $search, $matchesGrade);
+        $searchGrade = isset($matchesGrade[2])
+            ? strtolower(trim($matchesGrade[2]))
+            : null;
 
         $searchCleanText = trim(preg_replace('/[^A-Za-z ]/', '', $searchLower));
         if ($searchGrade) {
@@ -196,9 +198,12 @@ trait WithUserFilters
 
         // Helper pencocok angka parsial
         $anyNumberMatches = function ($value) use ($searchNumbers) {
-            if ($value === null || empty($searchNumbers)) {
+            $value = $value ?? 0;
+
+            if (empty($searchNumbers)) {
                 return false;
             }
+
             $valRaw = strtolower(trim((string) $value));
             $valFloat = strtolower(trim(number_format((float) $value, 2, '.', '')));
             $valInt = strtolower(trim(number_format((float) $value, 0, '.', '')));
@@ -234,12 +239,23 @@ trait WithUserFilters
             if (! empty($search)) {
                 $allUsers = $allUsers->filter(function ($user) use ($searchLower, $searchCleanText, $searchNumbers, $searchGrade, $anyNumberMatches, $dbMatchedIds, $totalSesiKelas) {
 
-                    $userHuruf = strtolower(trim((string) $user->mhs_nilai_huruf));
+                    $userHuruf = strtolower(
+                        trim(
+                            (string) ($user->mhs_nilai_huruf_asli ?? 'E')
+                        )
+                    );
 
                     // A. KUNCI UTAMA: Jika dosen mengetik/mencari Huruf Mutu Spesifik (Cth: "A", "b+", "huruf B")
                     if ($searchGrade !== null) {
-                        if ($userHuruf === $searchGrade) {
-                            return true;
+                        if (str_contains($searchGrade, '+') || str_contains($searchGrade, '-')) {
+                            if ($userHuruf === $searchGrade) {
+                                return true;
+                            }
+                        } else {
+                            if (str_starts_with($userHuruf, $searchGrade)) {
+                                return true;
+                            }
+
                         }
                         if (in_array($user->id, $dbMatchedIds)) {
                             return true;
@@ -355,7 +371,7 @@ trait WithUserFilters
     //         'mhs_poin_absensi',
     //         'mhs_nilai_akhir',
     //         'mhs_nilai_index',
-    //         'mhs_nilai_huruf',
+    //         'mhs_nilai_huruf_asli',
     //     ];
 
     //     $search = trim($this->search);
@@ -405,7 +421,7 @@ trait WithUserFilters
     //                 $matchPoinAbsensi = $matchesNumeric($user->mhs_poin_absensi, $search);
 
     //                 $matchNilaiHuruf = ! empty($searchClean) && str_contains(
-    //                     strtolower((string) $user->mhs_nilai_huruf),
+    //                     strtolower((string) $user->mhs_nilai_huruf_asli),
     //                     strtolower($searchClean)
     //                 );
 
@@ -459,7 +475,7 @@ trait WithUserFilters
     //         'mhs_absensi', 'mhs_masuk', 'mhs_hadir', 'mhs_terlambat',
     //         'mhs_izin', 'mhs_sakit', 'mhs_dispensasi', 'mhs_absen',
     //         'mhs_tidak_masuk', 'mhs_poin_absensi', 'mhs_nilai_akhir',
-    //         'mhs_nilai_index', 'mhs_nilai_huruf',
+    //         'mhs_nilai_index', 'mhs_nilai_huruf_asli',
     //     ];
 
     //     $search = trim($this->search);
@@ -548,24 +564,24 @@ trait WithUserFilters
             'mhs_poin_absensi' => "CASE WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2 WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1 ELSE 0 END",
         ];
 
-        $queryUser->selectSub(function ($query) use ($idJadwal) {
-            $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                ->whereColumn('mahasiswas.user_id', 'users.id')->where('nilai_mahasiswa.kj_id', $idJadwal)
-                ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')->limit(1);
-        }, 'mhs_nilai_akhir');
+        // $queryUser->selectSub(function ($query) use ($idJadwal) {
+        //     $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+        //         ->whereColumn('mahasiswas.user_id', 'users.id')->where('nilai_mahasiswa.kj_id', $idJadwal)
+        //         ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')->limit(1);
+        // }, 'mhs_nilai_akhir');
 
-        $queryUser->selectSub(function ($query) use ($idJadwal) {
-            $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                ->whereColumn('mahasiswas.user_id', 'users.id')->where('nilai_mahasiswa.kj_id', $idJadwal)
-                ->selectRaw("CASE WHEN nilai_mahasiswa.nilai >= 86 THEN 'A' WHEN nilai_mahasiswa.nilai >= 71 THEN 'B' WHEN nilai_mahasiswa.nilai >= 56 THEN 'C' WHEN nilai_mahasiswa.nilai >= 41 THEN 'D' ELSE 'E' END")->limit(1);
-        }, 'mhs_nilai_huruf');
+        // $queryUser->selectSub(function ($query) use ($idJadwal) {
+        //     $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+        //         ->whereColumn('mahasiswas.user_id', 'users.id')->where('nilai_mahasiswa.kj_id', $idJadwal)
+        //         ->selectRaw("CASE WHEN nilai_mahasiswa.nilai >= 86 THEN 'A' WHEN nilai_mahasiswa.nilai >= 71 THEN 'B' WHEN nilai_mahasiswa.nilai >= 56 THEN 'C' WHEN nilai_mahasiswa.nilai >= 41 THEN 'D' ELSE 'E' END")->limit(1);
+        // }, 'mhs_nilai_huruf_asli');
 
-        foreach ($statuses as $alias => $condition) {
-            $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
-                $rawSql = ($alias === 'mhs_poin_absensi') ? "COALESCE(SUM($condition), 0)" : "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END), 0)";
-                $query->selectRaw($rawSql)->from('mahasiswa_kehadiran')->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')->whereColumn('mahasiswas.user_id', 'users.id')->where('kelas_sesi.kj_id', $idJadwal);
-            }, $alias);
-        }
+        // foreach ($statuses as $alias => $condition) {
+        //     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
+        //         $rawSql = ($alias === 'mhs_poin_absensi') ? "COALESCE(SUM($condition), 0)" : "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END), 0)";
+        //         $query->selectRaw($rawSql)->from('mahasiswa_kehadiran')->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')->whereColumn('mahasiswas.user_id', 'users.id')->where('kelas_sesi.kj_id', $idJadwal);
+        //     }, $alias);
+        // }
 
         $queryUser->selectRaw("GREATEST(0, ? - ((SELECT COALESCE(SUM(CASE WHEN status='Hadir' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Terlambat' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Izin' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Sakit' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Dispensasi' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?))) as mhs_tidak_masuk", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
     }

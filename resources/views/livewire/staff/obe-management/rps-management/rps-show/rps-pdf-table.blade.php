@@ -376,6 +376,9 @@
                         Rentang Nilai
                     </th>
                     <th class="w-[50%] text-center font-bold py-0.5 px-1 leading-tight !border-0">
+                        Index Nilai
+                    </th>
+                    <th class="w-[50%] text-center font-bold py-0.5 px-1 leading-tight !border-0">
                         Predikat
                     </th>
                 </tr>
@@ -384,27 +387,56 @@
                 <tr>
                     <td class="py-0.5 px-1 leading-tight !border-0">A</td>
                     <td class="py-0.5 px-1 leading-tight !border-0">86-100</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Sangat Baik</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">4.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">71-85</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">A-</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">80-85</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.70</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
+                </tr>
+                <tr>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B+</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">75-79</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.30</td>
                     <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">70-74</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
+                </tr>
+                <tr>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B-</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">65-69</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.70</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
+                </tr>
+                <tr>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">C+</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">60-64</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.30</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
+                </tr>
+                <tr>
                     <td class="font-medium py-0.5 px-1 leading-tight !border-0">C</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">56-70</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">56-59</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.00</td>
                     <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
                 </tr>
                 <tr>
                     <td class="font-medium py-0.5 px-1 leading-tight !border-0">D</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">41-55</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">40-55</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">1.00</td>
                     <td class="py-0.5 px-1 leading-tight !border-0">Kurang</td>
                 </tr>
                 <tr>
                     <td class="font-medium py-0.5 px-1 leading-tight !border-0">E</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">0-40</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Sangat Kurang</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">0-39</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">0.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Kurang</td>
                 </tr>
             </tbody>
         </table>

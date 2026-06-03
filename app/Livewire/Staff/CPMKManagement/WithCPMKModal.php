@@ -87,7 +87,7 @@ trait WithCPMKModal
         $this->isEditingCPMK = true;
         $this->showEditCPMK = true;
         $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
-        
+
         try {
             // 1. Load data CPMK dengan relasi yang sangat lengkap
             $cpmk = CPMK::with([
@@ -498,9 +498,9 @@ trait WithCPMKModal
             'kode_cpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPMK Bagian 2 (Angka - Kanan)
-            'kode_cpmk_2.required' => 'Nomor kode (input kanan) wajib diisi!',
-            'kode_cpmk_2.numeric' => 'Nomor kode harus berupa angka!',
-            'kode_cpmk_2.min' => 'Nomor kode minimal adalah 1!',
+            'kode_cpmk_2.required' => 'Nomor Kode (input kanan) wajib diisi!',
+            'kode_cpmk_2.numeric' => 'Nomor Kode harus berupa angka!',
+            'kode_cpmk_2.min' => 'Nomor Kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
             'kode_cpmk.required' => 'Kode CPMK lengkap wajib terbentuk!',

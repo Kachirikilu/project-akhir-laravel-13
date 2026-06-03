@@ -320,10 +320,14 @@ class SesiManagement extends Component
                         ->where('nilai_mahasiswa.kj_id', $idJadwal)
                         ->selectRaw('
                             CASE
-                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4
-                                WHEN nilai_mahasiswa.nilai >= 71 THEN 3
-                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2
-                                WHEN nilai_mahasiswa.nilai >= 41 THEN 1
+                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
+                                WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
+                                WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
+                                WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
+                                WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
+                                WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
+                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
+                                WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
                                 ELSE 0
                             END
                         ')
@@ -339,16 +343,41 @@ class SesiManagement extends Component
                         ->where('nilai_mahasiswa.kj_id', $idJadwal)
                         ->selectRaw("
                             CASE
-                                WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
-                                WHEN nilai_mahasiswa.nilai >= 71 THEN 'B'
-                                WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
-                                WHEN nilai_mahasiswa.nilai >= 41 THEN 'D'
-                                ELSE 'E'
-END
+                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
+                                WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
+                                WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
+                                WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
+                                WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
+                                WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
+                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
+                                WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
+                                ELSE 0
+                            END
                         ")
                         ->limit(1);
-
                 }, 'mhs_nilai_huruf');
+
+                $queryUser->selectSub(function ($query) use ($idJadwal) {
+
+                    $query->from('nilai_mahasiswa')
+                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                        ->whereColumn('mahasiswas.user_id', 'users.id')
+                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                        ->selectRaw("
+                            CASE
+                                WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
+                                WHEN nilai_mahasiswa.nilai >= 80 THEN 'A-'
+                                WHEN nilai_mahasiswa.nilai >= 75 THEN 'B+'
+                                WHEN nilai_mahasiswa.nilai >= 70 THEN 'B'
+                                WHEN nilai_mahasiswa.nilai >= 65 THEN 'B-'
+                                WHEN nilai_mahasiswa.nilai >= 60 THEN 'C+'
+                                WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
+                                WHEN nilai_mahasiswa.nilai >= 40 THEN 'D'
+                                ELSE 'E'
+                            END
+                        ")
+                        ->limit(1);
+                }, 'mhs_nilai_huruf_asli');
 
                 foreach ($statuses as $alias => $condition) {
                     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
