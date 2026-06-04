@@ -35,12 +35,12 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         {{-- @include('livewire.admin.nilai-management.nilai-modal-form.nilai-message-form') --}}
 
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => 'excel',
                             'wireLoading' => 'excel_nilai_file, parseExcelNilaiFile, procesImportNilaiExcel',
                             'wireLoading2' => 'saveNilaiExcel',
                             'targetX' => 'addNilai, saveNilai, editNilai, updateNilai',
-                            'isLeft' => 1
+                            'isLeft' => 1,
                         ])
                     </div>
 

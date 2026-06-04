@@ -35,8 +35,7 @@
 
         <div class="relative">
             @if (empty($parsedNilaiRows))
-                <div class="text-sm text-gray-500 italic h-16" wire:loading.remove
-                    wire:target="excel_nilai_file, parseExcelNilaiFile">
+                <div class="text-sm text-gray-500 italic h-16">
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
@@ -226,9 +225,7 @@
                                                 <input type="number" step="0.01" min="0" max="100"
                                                     x-model="nilaiInputs[{{ $loop->index }}]"
                                                     @input="
-                                                        let val = $el.value;
-                                                        if (val.length > 3) $el.value = val.slice(0, 3);
-                                                        if (parseFloat($el.value) > 100) $el.value = 100;
+                                                        $el.value = $store.sesi?.normalizeFloat($el.value);
                                                         nilaiInputs[{{ $loop->index }}] = $el.value;
                                                     "
                                                     wire:model.blur="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"

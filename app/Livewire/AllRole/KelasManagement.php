@@ -56,6 +56,7 @@ class KelasManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filterKelas' => ['except' => ''],
+        'filterKelasGG' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
@@ -80,7 +81,7 @@ class KelasManagement extends Component
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filterKelas']);
+        $this->reset(['search', 'filterKelas', 'filterKelasGG']);
         $this->resetPage();
     }
 
@@ -126,7 +127,7 @@ class KelasManagement extends Component
         // } else {
         //     $targetPath = '/kelas-management/'.$table;
         // }
-        $targetPath = '/kelas-management' . ($table ? '/' . $table : '');
+        $targetPath = '/kelas-management'.($table ? '/'.$table : '');
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -201,8 +202,8 @@ class KelasManagement extends Component
             }
 
             if (Auth::user()->dosen) {
-                $totalKelasSaya = (clone $tabQuery)->where(function ($mainQuery) {
-                    $mainQuery->whereHas('rps_rel.dosens', function ($q) {
+                $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
+                    $mk->whereHas('rps_rel.dosens', function ($q) {
                         $q->where('dosens.id', Auth::user()->dosen->id);
                     })
                         ->orWhereHas('jadwals.sesis.dosens', function ($q) {
@@ -210,15 +211,15 @@ class KelasManagement extends Component
                         });
                 })->count();
             } elseif (Auth::user()->mahasiswa) {
-                $totalKelasSaya = (clone $tabQuery)->where(function ($mainQuery) {
-                    $mainQuery->whereHas('jadwals.mahasiswas', function ($q) {
+                $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
+                    $mk->whereHas('jadwals.mahasiswas', function ($q) {
                         $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
                     });
                 })->count();
             }
 
-            $totalKelasProdi = (clone $tabQuery)->where(function ($mainQuery) {
-                $mainQuery->whereHas('pr_rel', function ($q) {
+            $totalKelasProdi = (clone $tabQuery)->where(function ($mk) {
+                $mk->whereHas('pr_rel', function ($q) {
                     $q->where('prodis.id', Auth::user()->pr_id);
                 });
             })->count();
@@ -233,6 +234,13 @@ class KelasManagement extends Component
                 $q->where('mata_kuliahs.level_mk', 4);
             })->count();
 
+            // $totalGanjil = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
+            //     $q->whereRaw('mata_kuliahs.semester % 2 = 1');
+            // })->count();
+            // $totalGenap = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
+            //     $q->whereRaw('mata_kuliahs.semester % 2 = 0');
+            // })->count();
+
             // =========================
             // QUERY FINAL TABLE
             // =========================
@@ -246,6 +254,10 @@ class KelasManagement extends Component
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $queryKelas->paginate($this->perPage),
+
+                'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
+                'totalGanjil' => $this->totalGanjil,
+                'totalGenap' => $this->totalGenap,
 
                 'totalWajib' => $totalWajib,
                 'totalPilihan' => $totalPilihan,
@@ -267,6 +279,10 @@ class KelasManagement extends Component
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => Kelas::whereRaw('1 = 0')->paginate($this->perPage),
+
+                'totalGanjilGanjil' => '-',
+                'totalGanjil' => '-',
+                'totalGenap' => '-',
 
                 'totalWajib' => '-',
                 'totalPilihan' => '-',

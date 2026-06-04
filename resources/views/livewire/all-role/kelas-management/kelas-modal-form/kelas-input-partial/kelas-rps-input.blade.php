@@ -6,7 +6,7 @@
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Input Program Studi & Rencana Pembelajaran Semester</h4>
 
-    @include('livewire.global.modal-form.search-input-form', [
+    @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'kelas',
         'xResults' => $prResults,
         'selectX' => 'selectPr',
@@ -28,7 +28,7 @@
         'wireLoading' => 'fetchPr',
     ])
 
-    @include('livewire.global.modal-form.search-input-form', [
+    @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'kelas',
         'xResults' => $rpsResults,
         'selectX' => 'selectRPS',
@@ -42,7 +42,7 @@
         'typeX2String' => 'sks_full',
         'typeX3String' => 'wajib_text',
         'typeX4String' => 'draf_full',
-
+    
         'nameXString' => 'Rencana Pembelajaran Semester',
         'nameSearchString' => 'rpsNameSearch',
         'fetchString' => 'fetchRPS',

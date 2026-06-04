@@ -47,7 +47,7 @@
                                 'noLabel' => 1,
                                 'modelString' => 'kode_cpl_2',
                                 'numberOnly' => 1,
-                                'maxlength' => 6,
+                                'maxLength' => 6,
                                 'iconString' => 'variable',
                                 'placeholder' => 'Contoh: 121104',
                                 'isFocusSelect' => 1,

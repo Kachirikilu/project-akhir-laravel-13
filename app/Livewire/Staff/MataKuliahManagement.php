@@ -49,6 +49,7 @@ class MataKuliahManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filterMK' => ['except' => ''],
+        'filterMKGG' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
@@ -113,7 +114,7 @@ class MataKuliahManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        $targetPath = '/mata-kuliah-management' . ($table ? '/' . $table : '');
+        $targetPath = '/mata-kuliah-management'.($table ? '/'.$table : '');
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
@@ -260,6 +261,7 @@ class MataKuliahManagement extends Component
                 $q->where('prodis.id', Auth::user()->pr_id);
             })->count();
             $totalMKOpsi = (clone $tabQuery)->count();
+
             $totalWajib = (clone $tabQuery)->where('is_wajib', true)->count();
             $totalPilihan = (clone $tabQuery)->where('is_wajib', false)->count();
             $totalUni = (clone $tabQuery)->where('level_mk', 4)->count();
@@ -273,17 +275,21 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => $queryMK->paginate($this->perPage),
 
-                'totalMKProdi' => $totalMKProdi,
-                'totalMKOpsi' => $totalMKOpsi,
-                'totalWajib' => $totalWajib,
-                'totalPilihan' => $totalPilihan,
-                'totalUni' => $totalUni,
+                'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
+                'totalGanjil' => $this->totalGanjil,
+                'totalGenap' => $this->totalGenap,
 
                 'totalMK' => $totalMK,
                 'totalTatapMuka' => $totalTatapMuka,
                 'totalPraktikum' => $totalPraktikum,
                 'totalPraktek' => $totalPraktek,
                 'totalSimulasi' => $totalSimulasi,
+
+                'totalMKProdi' => $totalMKProdi,
+                'totalMKOpsi' => $totalMKOpsi,
+                'totalWajib' => $totalWajib,
+                'totalPilihan' => $totalPilihan,
+                'totalUni' => $totalUni,
             ]);
 
         } catch (QueryException $e) {
@@ -294,17 +300,23 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
 
+                'totalGanjilGanjil' => '-',
+                'totalGanjil' => '-',
+                'totalGenap' => '-',
+
+                'totalMK' => '-',
+                'totalGanjil' => '-',
+                'totalGenap' => '-',
+                'totalTatapMuka' => '-',
+                'totalPraktikum' => '-',
+                'totalPraktek' => '-',
+                'totalSimulasi' => '-',
+
                 'totalMKProdi' => '-',
                 'totalMKOpsi' => '-',
                 'totalWajib' => '-',
                 'totalPilihan' => '-',
                 'totalUni' => '-',
-
-                'totalMK' => '-',
-                'totalTatapMuka' => '-',
-                'totalPraktikum' => '-',
-                'totalPraktek' => '-',
-                'totalSimulasi' => '-',
             ]);
         }
     }

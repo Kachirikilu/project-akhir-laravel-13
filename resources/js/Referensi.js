@@ -6,8 +6,8 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal_delete: "",
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
@@ -16,6 +16,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -24,7 +27,7 @@ document.addEventListener("alpine:init", () => {
         kode_ref: "",
         kode_ref_1: "",
         kode_ref_2: "",
-        
+
         judul: "",
         penulis: "",
         penerbit: "",
@@ -56,21 +59,24 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        reset() {
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.kode_ref = "";
+                this.kode_ref_1 = "";
+                this.kode_ref_2 = "";
 
-            this.kode_ref = "",
-            this.kode_ref_1 = "",
-            this.kode_ref_2 = "",
-
-            this.judul = ""
-            this.penulis = ""
-            this.penerbit = ""
-            this.tahun = ""
-            this.link = ""
+                this.judul = "";
+                this.penulis = "";
+                this.penerbit = "";
+                this.tahun = "";
+                this.link = "";
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+            }
         },
     });
 });

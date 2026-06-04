@@ -16,6 +16,12 @@ trait WithMKFilters
 
     public $filterMK = '';
 
+    public $filterMKGG = '';
+
+    public $totalGanjil = '';
+
+    public $totalGenap = '';
+
     public function inputMKSearch()
     {
         $queryMK = MataKuliah::query()
@@ -63,6 +69,15 @@ trait WithMKFilters
         } elseif ($this->filterMK === 'mk-universitas') {
             $queryMK->where('level_mk', 4);
         }
+
+        $this->totalGanjil = (clone $queryMK)->whereRaw('semester % 2 = 1')->count();
+        $this->totalGenap = (clone $queryMK)->whereRaw('semester % 2 = 0')->count();
+
+        if ($this->filterMKGG === 'mk-ganjil') {
+            $queryMK->whereRaw('semester % 2 = 1');
+        } elseif ($this->filterMKGG === 'mk-genap') {
+            $queryMK->whereRaw('semester % 2 = 0');
+        }
     }
 
     public function buttonMKSwitch($queryMK)
@@ -84,6 +99,12 @@ trait WithMKFilters
     public function filterByMK($mk)
     {
         $this->filterMK = $mk;
+        $this->resetPage();
+    }
+
+    public function filterByMKGG($mk)
+    {
+        $this->filterMKGG = $mk;
         $this->resetPage();
     }
 

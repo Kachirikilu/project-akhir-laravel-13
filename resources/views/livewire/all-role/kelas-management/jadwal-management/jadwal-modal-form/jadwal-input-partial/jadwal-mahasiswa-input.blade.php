@@ -12,7 +12,7 @@
         'nameXString' => 'Kapasitas Kelas',
         'modelString' => 'kapasitas',
         'numberOnly' => 1,
-        'maxlength' => 3,
+        'maxLength' => 3,
         'iconString' => 'users',
         'placeholder' => 'Contoh: 50',
         'message' => $errors->first('kapasitas'),
@@ -26,7 +26,7 @@
         ])
 
         @if ($this->showJadwalModal)
-            @include('livewire.global.modal-form.search-input-array-form', [
+            @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'jadwal',
                 'xResults' => $mahasiswaResults,
                 'selectX' => 'selectMahasiswaArray',

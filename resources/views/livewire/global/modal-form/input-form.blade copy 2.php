@@ -97,7 +97,7 @@
             {{-- KODE ONLY --}}
             @elseif (!empty($isKode) && $isKode > 0)
 
-                maxlength="{{ $isKode }}"
+                maxLength="{{ $isKode }}"
 
                 oninput="
                     this.value = this.value
@@ -123,7 +123,7 @@
                         parts = val.split('.');
                     }
 
-                    parts[0] = parts[0].slice(0, {{ $maxlength ?? 255 }});
+                    parts[0] = parts[0].slice(0, {{ $maxLength ?? 255 }});
 
                     if (parts.length > 1) {
                         parts[1] = parts[1].slice(0, 2);
@@ -140,12 +140,12 @@
                 oninput="
                     this.value = this.value
                         .replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '')
-                        .slice(0, {{ $maxlength ?? 255 }})
+                        .slice(0, {{ $maxLength ?? 255 }})
                 "
 
             {{-- DEFAULT --}}
             @else
-                maxlength="{{ $maxlength ?? 255 }}"
+                maxLength="{{ $maxLength ?? 255 }}"
             @endif
         >
 

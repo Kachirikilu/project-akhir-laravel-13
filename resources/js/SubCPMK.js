@@ -6,8 +6,8 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal_delete: "",
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
@@ -16,6 +16,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -32,10 +35,19 @@ document.addEventListener("alpine:init", () => {
         deskripsi_tugas: "",
         waktu_tugas: "",
         waktu_mandiri: "",
-        bobot: 0,
+        bobot: "",
 
-        setValueSCPMK(kode, deskripsi, materi, metodologi, indikator,
-            metode, desTugas, wTugas, wMandiri, bobot
+        setValueSCPMK(
+            kode,
+            deskripsi,
+            materi,
+            metodologi,
+            indikator,
+            metode,
+            desTugas,
+            wTugas,
+            wMandiri,
+            bobot,
         ) {
             this.kode_scpmk = kode;
             this.deskripsi = deskripsi;
@@ -65,25 +77,29 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        reset() {
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.deskripsi = "";
+                this.materi = "";
+                this.metodologi = "";
+                this.indikator = "";
+                this.metode = "";
+                this.deskripsi_tugas = "";
+                this.waktu_tugas = "";
+                this.waktu_mandiri = "";
+                this.bobot = "";
 
-            this.deskripsi = "";
-            this.materi = "";
-            this.metodologi = "";
-            this.indikator = "";
-            this.metode = "";
-            this.deskripsi_tugas = "";
-            this.waktu_tugas = "";
-            this.waktu_mandiri = "";
-            this.bobot = "";
+                this.kode_scpmk = "";
+                this.kode_scpmk_1 = "";
+                this.kode_scpmk_2 = "";
+                this.showEdit = 0;
+            }
 
-            this.kode_scpmk = "";
-            this.kode_scpmk_1 = "";
-            this.kode_scpmk_2 = "";
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+            }
         },
     });
 });

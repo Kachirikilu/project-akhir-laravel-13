@@ -20,6 +20,7 @@
                         $store.user?.setEdit(0);
                         {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-red-700 dark:text-red-400');
+                        $store.user?.reset(1);
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
                     "
@@ -40,6 +41,7 @@
                         $store.user?.setEdit(0);
                         {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                        $store.user?.reset(1);
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
                     "
@@ -59,6 +61,7 @@
                         $store.user?.setEdit(0);
                         {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-cyan-700 dark:text-cyan-400');
+                        $store.user?.reset(1);
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');
                     "
@@ -79,6 +82,7 @@
                         $store.user?.setType('excel');
                         $store.user?.setEdit(0);
                         $store.user?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600');
+                        $store.user?.reset(1);
                         $flux.modal('user-excel-modal').show();
                         $wire.addUser('excel');
                     "

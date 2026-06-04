@@ -8,7 +8,7 @@
                     'nameXString' => 'Kode Mata Kuliah',
                     'modelString' => 'kode',
                     'valueString' => 'UNI',
-                    'iconString' => 'globe-alt'
+                    'iconString' => 'globe-alt',
                 ])
             </div>
 
@@ -22,10 +22,10 @@
                     'nameXString' => 'Urutan Mata Kuliah',
                     'modelString' => 'digit_mk',
                     'numberOnly' => 1,
-                    'maxlength' => 2,
+                    'maxValue' => 200,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1
+                    'isFocusSelect' => 1,
                 ])
             </div>
         </div>
@@ -34,23 +34,23 @@
         @enderror
     </div>
 
-    @include('livewire.global.modal-form.search-input-array-form', [
+    @include('livewire.global.modal-form.input-array.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prResults,
         'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
-
+    
         'idString' => 'pr_id_array',
         'itemsAllString' => 'pr_items_array',
-
+    
         'typeXString' => 'prodi',
         'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
-
+    
         'nameXString' => 'Program Studi',
         'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr'
+        'wireLoading' => 'fetchPr',
     ])
 </div>

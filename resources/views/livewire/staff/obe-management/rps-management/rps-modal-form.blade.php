@@ -1,6 +1,4 @@
-<flux:modal
-    {{-- :flyout="$isFlyoutRPS" wire:key="rps-modal-{{ $isFlyoutRPS }}" --}}
-    name="rps-modal" wire:model.live="showRPSModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutRPS" wire:key="rps-modal-{{ $isFlyoutRPS }}" --}} name="rps-modal" wire:model.live="showRPSModal" x-data
     @refresh-data-rps.window="$store.rps.reset()"
     class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
@@ -37,7 +35,7 @@
                             'livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form',
                             ['show' => $showRPSModal]
                         )
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addRPS, saveRPS, editRPS, updateRPS',
                         ])
                     </div>

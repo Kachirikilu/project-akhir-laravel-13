@@ -40,8 +40,8 @@
             <div class="scrollbar-thin -mb-px flex items-center space-x-3 overflow-x-auto w-full lg:w-auto pb-1">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
-                    'xFilter' => $switchTable ?? null,
-                    'tabFilter' => $totalSesiKelas ?? null,
+                    'xFilter' => $switchTable,
+                    'tabFilter' => $totalSesiKelas,
                     'tabString' => 'sesi-card',
                     'tabNameString' => 'Pertemuan',
                     'icon' => 'academic-cap',
@@ -49,8 +49,8 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
-                    'xFilter' => $switchTable ?? null,
-                    'tabFilter' => $totalSesiKelas ?? null,
+                    'xFilter' => $switchTable,
+                    'tabFilter' => $totalSesiKelas,
                     'tabString' => 'sesi-table',
                     'tabNameString' => 'Tabel Pertemuan',
                     'icon' => 'table-cells',
@@ -59,8 +59,8 @@
                 {{-- @if (Auth::user()->admin || Auth::user()->dosen) --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
-                    'xFilter' => $switchTable ?? null,
-                    'tabFilter' => $totalMahasiswaKelas ?? null,
+                    'xFilter' => $switchTable,
+                    'tabFilter' => $totalMahasiswaKelas,
                     'tabString' => 'mahasiswa',
                     'icon' => 'users',
                 ])

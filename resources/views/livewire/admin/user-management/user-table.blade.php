@@ -94,7 +94,7 @@
                     'resetXFilter' => 'resetInputAngkatan()',
                     'wInput' => 15,
                     'numberOnly' => 1,
-                    'maxlength' => 4,
+                    'maxLength' => 4,
                     'placeholder' => 'Tahun',
                     'rowSpan' => 2,
                     'isBorderR' => 1,
@@ -128,15 +128,18 @@
 
         <tr>
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => $switchTable == '' ? 'identity1' : ($switchTable == 'mahasiswa' ? 'nim' : 'nip'),
+                'sortFieldString' =>
+                    $switchTable == '' ? 'identity1' : ($switchTable == 'mahasiswa' ? 'nim' : 'nip'),
                 'headString' => $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
             @if ($switchTable !== 'mahasiswa')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => $switchTable == '' ? 'identity2' : ($switchTable == 'dosen' ? 'nidn' : 'nitk'),
-                    'headString' => $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
+                    'sortFieldString' =>
+                        $switchTable == '' ? 'identity2' : ($switchTable == 'dosen' ? 'nidn' : 'nitk'),
+                    'headString' =>
+                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
                     'isCenter' => 1,
                     'isBorderR' => $switchTable == 'admin' ? 1 : 0,
                 ])

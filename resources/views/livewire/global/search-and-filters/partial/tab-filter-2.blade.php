@@ -17,7 +17,7 @@
         <span class="tracking-wider text-xs uppercase">{{ $tabNameString ?? str($tabString)->replace(['-', '_'], ' ')->ucfirst() }}</span>
         
         <!-- Badge Jumlah Minimalis -->
-        @if (!is_null($tabFilter))
+        @if (!is_null($tabFilter ?? null))
             <span class="px-1.5 py-0.5 text-[10px] font-bold rounded-sm transition-colors duration-300 border"
                 :class="activeTab === '{{ $tabString }}' || activeTab === '{{ $tabHiddenString ?? $tabString }}'
                     ? 'bg-[var(--focus-color)] text-white border-transparent' 

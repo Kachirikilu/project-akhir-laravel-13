@@ -1,6 +1,7 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("sesi", {
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
         colorIconBg: "",
@@ -10,6 +11,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val, val2) {
             this.colorIcon = val;
@@ -59,8 +63,11 @@ document.addEventListener("alpine:init", () => {
         mhs_terlambat: 0,
         mhs_izin: 0,
         mhs_sakit: 0,
-        mhs_mangkir: 0,
         mhs_tidak_masuk: 0,
+        mhs_nilai_akhir: 0,
+        mhs_nilai_index: 0,
+        mhs_nilai_huruf: "E",
+
 
         w_pelaksaan: "",
         w_berakhir: "",
@@ -232,22 +239,27 @@ document.addEventListener("alpine:init", () => {
             terlambat,
             izin,
             sakit,
-            mangkir,
             tidakMasuk,
+
+            nilaiAkhir,
+            nilaiIndex,
+            nilaiHuruf,
         ) {
             this.nama_mahasiswa = name;
             this.nim_mahasiswa = nim;
 
             this.mhs_poin_absensi = poin;
             this.mhs_masuk = masuk;
+                  
             this.mhs_dispensasi = dispensasi;
             this.mhs_terlambat = terlambat;
             this.mhs_izin = izin;
             this.mhs_sakit = sakit;
-            this.mhs_mangkir = mangkir;
             this.mhs_tidak_masuk = tidakMasuk;
+            this.mhs_nilai_akhir = nilaiAkhir;
+            this.mhs_nilai_index = nilaiIndex;
+            this.mhs_nilai_huruf = nilaiHuruf;
         },
-
         setShowRPS(idRPS) {
             this.resetShow();
             this.rps_id_show = idRPS;
@@ -263,51 +275,94 @@ document.addEventListener("alpine:init", () => {
             this.rps_id_show = "";
         },
 
-        reset() {
-            this.typeModal = "";
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
-            this.colorIconBg = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.w_pelaksaan = "";
+                this.w_berakhir = "";
+                this.w_telat = "";
+                this.w_dispensasi = "";
 
-            this.w_pelaksaan = "";
-            this.w_berakhir = "";
-            this.w_telat = "";
-            this.w_dispensasi = "";
+                this.nama_mahasiswa = "";
+                this.nim_mahasiswa = "";
 
-            this.nama_mahasiswa = "";
-            this.nim_mahasiswa = "";
+                this.mhs_poin_absensi = 0;
+                this.mhs_masuk = 0;
+                this.mhs_dispensasi = 0;
+                this.mhs_terlambat = 0;
+                this.mhs_izin = 0;
+                this.mhs_sakit = 0;
+                this.mhs_tidak_masuk = 0;
+                this.mhs_nilai_akhir = 0;
+                this.mhs_nilai_index = 0;
+                this.mhs_nilai_huruf = "E";
 
-            this.mhs_poin_absensi = 0;
-            this.mhs_masuk = 0;
-            this.mhs_dispensasi = 0;
-            this.mhs_terlambat = 0;
-            this.mhs_izin = 0;
-            this.mhs_sakit = 0;
-            this.mhs_mangkir = 0;
-            this.mhs_tidak_masuk = 0;
+                this.sesi_id = "";
+                this.pertemuan_ke = "";
+                ((this.absen = ""),
+                    (this.keterangan = ""),
+                    (this.jam_mulai = ""));
+                this.jam_berakhir = "";
 
-            this.sesi_id = "";
-            this.pertemuan_ke = "";
-            ((this.absen = ""), (this.keterangan = ""), (this.jam_mulai = ""));
-            this.jam_berakhir = "";
+                this.pertemuan_ke_name = "";
+                this.tanggal = "";
 
-            this.pertemuan_ke_name = "";
-            this.tanggal = "";
+                this.deskripsi = "";
+                this.materi = "";
+                this.metodologi = "";
+                this.indikator = "";
+                this.deskripsi_tugas = "";
+                this.waktu_tugas = "";
+                this.waktu_mandiri = "";
 
-            this.deskripsi = "";
-            this.materi = "";
-            this.metodologi = "";
-            this.indikator = "";
-            this.deskripsi_tugas = "";
-            this.waktu_tugas = "";
-            this.waktu_mandiri = "";
-
-            this.sks = "";
+                this.sks = "";
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+                this.colorIconBg = "";
+            }
         },
 
-        init() {
+        isFloat(val) {
+            if (val === null || val === undefined) return '';
+
+            val = String(val);
+            val = val.replace(/,/g, '.');
+            val = val.replace(/[^0-9.]/g, '');
+
+            const parts = val.split('.');
+            if (parts.length > 2) {
+                val = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            return val;
+        },
+
+        normalizeFloat(val, max = 100, length = 3) {
+            val = this.isFloat(val);
+
+            let parts = val.split('.');
+            parts[0] = (parts[0] || '').slice(0, length);
+
+            if (parts.length > 1) {
+                parts[1] = (parts[1] || '').slice(0, 2);
+            }
+
+            val = parts.join('.');
+
+            let num = Number(val);
+
+            if (!isNaN(num)) {
+                if (num > max) num = max;
+                if (num < 0) num = 0;
+                val = num.toString();
+            }
+
+            return val;
+        },
+                init() {
             // =========================================
             // AUTO JAM BERAKHIR
             // =========================================

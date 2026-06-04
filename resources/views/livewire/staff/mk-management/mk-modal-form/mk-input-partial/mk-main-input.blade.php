@@ -109,7 +109,7 @@
                 'nameXString' => 'SKS',
                 'modelString' => 'sks_kuliah',
                 'numberOnly' => 1,
-                'maxlength' => 1,
+                'maxValue' => 9,
                 'noZero' => 1,
                 'iconString' => 'identification',
                 'placeholder' => 'SKS',

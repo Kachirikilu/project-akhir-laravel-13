@@ -68,7 +68,7 @@
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.prodi-management.prodi-modal-form.prodi-message-form')
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $prodiType,
                             'targetX' => 'addProdi, saveProdi, editProdi, updateProdi',
                         ])

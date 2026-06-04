@@ -375,12 +375,26 @@ class RPS extends Model
 
                 if (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $search, $matches)) {
                     $number = (int) $matches[1];
-                    $q->orWhereHas('rps.cpmks', function ($sq) {}, '=', $number);
+                    $q->orWhereHas('cpmks', function ($sq) {}, '=', $number);
                 }
 
                 if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $matches)) {
                     $number = (int) $matches[1];
-                    $q->orWhereHas('rps.scpmks', function ($sq) {}, '=', $number);
+
+                    $q->orWhere(function ($subQuery) use ($number) {
+
+                        $subQuery->whereRaw(
+                            '(
+                SELECT COUNT(*)
+                FROM rps_pivot_cpmk rpc
+                JOIN cpmk_pivot_scpmk cps
+                    ON rpc.cpmk_id = cps.cpmk_id
+                WHERE rpc.rps_id = rps.id
+            ) = ?',
+                            [$number]
+                        );
+
+                    });
                 }
 
                 // 3. Logika Status

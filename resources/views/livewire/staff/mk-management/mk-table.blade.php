@@ -30,6 +30,40 @@
         }
     @endphp
 
+    <x-slot:sortir>
+
+        <div x-data="{ activeTab: @entangle('filterMKGG') }"
+            class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByMKGG',
+                'xFilter' => 'filterMKGG',
+                'tabFilter' => $totalGanjilGenap,
+                'tabString' => '',
+                'tabNameString' => 'Semua',
+                'icon' => 'table-cells',
+            ])
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByMKGG',
+                'xFilter' => 'filterMKGG',
+                'tabFilter' => $totalGanjil,
+                'tabString' => 'mk-ganjil',
+                'tabNameString' => 'Ganjil',
+                'icon' => 'calendar-days',
+            ])
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByMKGG',
+                'xFilter' => 'filterMKGG',
+                'tabFilter' => $totalGenap,
+                'tabString' => 'mk-genap',
+                'tabNameString' => 'Genap',
+                'icon' => 'calendar-days',
+            ])
+        </div>
+
+    </x-slot:sortir>
+
     <x-slot:header>
         {{-- BARIS PERTAMA --}}
         <tr>
@@ -247,13 +281,13 @@
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
-        @empty
-            <tr>
-                <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
-                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada data Mata Kuliah ditemukan!
-                </td>
-            </tr>
-        @endforelse
+    @empty
+        <tr>
+            <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
+                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                Tidak ada data Mata Kuliah ditemukan!
+            </td>
+        </tr>
+    @endforelse
 
-        </x-admin.global.table.main-layout-table>
+    </x-admin.global.table.main-layout-table>

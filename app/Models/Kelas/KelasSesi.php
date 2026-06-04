@@ -42,7 +42,14 @@ class KelasSesi extends Model
         }
 
         return $rps->cpmks->flatMap(function ($cpmk) {
-            return $cpmk->scpmks;
+
+            return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
+
+                $scpmk->cpmk_atr = $cpmk;
+
+                return $scpmk;
+            });
+
         })->values();
     }
 
@@ -66,25 +73,25 @@ class KelasSesi extends Model
                 $targetIndex = $p - 1;
             } elseif ($hasUtsInRps && ! $hasUasInRps) {
                 if ($p == 16) {
-                    return (object) ['kode' => 'UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                    return (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
                 }
                 $targetIndex = $p - 1;
             } elseif (! $hasUtsInRps && $hasUasInRps) {
                 if ($p == 8) {
-                    return (object) ['kode' => 'UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
+                    return (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
                 }
                 $targetIndex = ($p < 8) ? ($p - 1) : ($p - 2);
             } else {
                 if ($p == 8) {
-                    return (object) ['kode' => 'UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
+                    return (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
                 }
                 if ($p == 16) {
-                    return (object) ['kode' => 'UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                    return (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
                 }
                 $targetIndex = ($p < 8) ? ($p - 1) : ($p - 2);
             }
 
-            return $allScpmk->get($targetIndex) ?? (object) ['kode' => '-', 'bobot' => '-', 'metode' => '-', 'deskripsi' => 'Materi belum ditentukan'];
+            return $allScpmk->get($targetIndex) ?? (object) ['kode' => '-', 'kode_cpmk' => '-', 'bobot' => '-', 'metode' => '-', 'deskripsi' => 'Materi belum ditentukan'];
         });
     }
 
@@ -120,13 +127,13 @@ class KelasSesi extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'sesi_id');
     }
 
-    public function nilai_details()
-    {
-        return $this->hasMany(
-            NilaiDetail::class,
-            'sesi_id'
-        );
-    }
+    // public function nilai_details()
+    // {
+    //     return $this->hasMany(
+    //         NilaiDetail::class,
+    //         'sesi_id'
+    //     );
+    // }
 
     // public function mhsAbsensi(): Attribute
     // {
@@ -240,6 +247,13 @@ class KelasSesi extends Model
     {
         return Attribute::get(function () {
             return $this->override->metode ?? $this->scpmk_atr->metode ?? null;
+        });
+    }
+
+    protected function kodeCpmk(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->scpmk_atr?->cpmk_atr?->kode ?? $this->scpmk_atr?->kode_cpmk ?? null;
         });
     }
 

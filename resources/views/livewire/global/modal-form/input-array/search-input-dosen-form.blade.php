@@ -147,7 +147,7 @@
 
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
-    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
+    @include('livewire.global.modal-form.input-array.partial.input-search', ['typeInput' => 'array'])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"

@@ -1,19 +1,22 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("mk", {
         typeModal: "",
-        typeModal_delete: "",
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
         nama_mk_delete: "",
         kode_mk_delete: "",
-        
+
         setType(val) {
             this.typeModal = val;
         },
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -36,22 +39,21 @@ document.addEventListener("alpine:init", () => {
         pr_items: "",
         pr_items_array: [],
 
-
         // nama_pr_search_array: [],
         // pr_id: "",
         // pr_items: "",
         // pr_id_array: [],
         // pr_items_array: [],
 
-    // init() {
-    //     // Listener untuk mengisi store dari Livewire
-    //     window.addEventListener('fill-store-mk', (event) => {
-    //         this.isEdit = event.detail.isEdit;
-    //         this.pr_id = event.detail.pr_id;
-    //         this.nama_pr = event.detail.nama_pr;
-    //         this.pr_items = event.detail.pr_items;
-    //     });
-    // },
+        // init() {
+        //     // Listener untuk mengisi store dari Livewire
+        //     window.addEventListener('fill-store-mk', (event) => {
+        //         this.isEdit = event.detail.isEdit;
+        //         this.pr_id = event.detail.pr_id;
+        //         this.nama_pr = event.detail.nama_pr;
+        //         this.pr_items = event.detail.pr_items;
+        //     });
+        // },
 
         setValueMK(
             tingkatanMode,
@@ -69,7 +71,7 @@ document.addEventListener("alpine:init", () => {
             tipeSKS,
             isWajib,
             deskripsi,
-            bahanKajian
+            bahanKajian,
         ) {
             this.typeModal = tingkatanMode;
             this.nama_mk = namaMK;
@@ -80,7 +82,7 @@ document.addEventListener("alpine:init", () => {
 
             this.semester = semester;
             this.sks_kuliah = sksKuliah;
-            this.tipe_sks = tipeSKS; 
+            this.tipe_sks = tipeSKS;
             this.is_wajib = isWajib;
 
             this.deskripsi = deskripsi;
@@ -97,11 +99,7 @@ document.addEventListener("alpine:init", () => {
             // };
         },
 
-        setDeleteMK(
-            namaMK,
-            kodeMKDelete,
-            forceDelete
-        ) {
+        setDeleteMK(namaMK, kodeMKDelete, forceDelete) {
             this.nama_mk_delete = namaMK;
             this.kode_mk_delete = kodeMKDelete;
             this.isForceDelete = forceDelete;
@@ -110,39 +108,42 @@ document.addEventListener("alpine:init", () => {
         // resetSelect() {
         //     this.kode_blok = "";
         //     this.semester = "";
-        //     this.tipe_sks = ""; 
+        //     this.tipe_sks = "";
         //     this.is_wajib = "";
         // },
-        
-        reset() {
-            this.typeModal = "";
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
 
-            this.nama_mk = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.nama_mk = "";
 
-            this.kode_blok = "";
-            this.digit_semester = "";
-            this.digit_mk = "";
+                this.kode_blok = "";
+                this.digit_semester = "";
+                this.digit_mk = "";
 
-            this.semester = "";
-            this.sks_kuliah = "";
-            this.tipe_sks = ""; 
-            this.is_wajib = "";
+                this.semester = "";
+                this.sks_kuliah = "";
+                this.tipe_sks = "";
+                this.is_wajib = "";
 
-            this.pr_id = "";
-            this.nama_pr_search = "";
-            this.pr_items = "";
-            this.pr_id_array = [];
-            this.pr_items_array = [];
+                this.pr_id = "";
+                this.nama_pr_search = "";
+                this.pr_items = "";
+                this.pr_id_array = [];
+                this.pr_items_array = [];
 
-            this.deskripsi = "";
-            this.bahan_kajian = "";
+                this.deskripsi = "";
+                this.bahan_kajian = "";
 
-            this.nama_mk_delete = "";
-            this.kode_mk_delete = "";
-        }
+                this.nama_mk_delete = "";
+                this.kode_mk_delete = "";
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.typeModal = "";
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+            }
+        },
     });
 });

@@ -181,13 +181,19 @@ trait WithMahasiswaSearchFilters
 
         $query = $this->mahasiswaQuery();
 
-        // 1. Jalankan Query Pencarian Biasa (untuk filter dropdown mengetik nama/nim biasa)
+        // 1. Jalankan Query Pencarian Biasa
         $results = $query->searchMahasiswa($value)->limit(12)->get();
         $this->mahasiswaResults = $this->mapMahasiswa($results);
 
         // 2. Deteksi Pola Multi / Parameter Acak
         $hasSemicolon = str_contains($value, ';');
         $searchClean = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $value));
+
+        // --- PERBAIKAN 1: Deteksi kode NIM dilakukan di awal menggunakan $value asli ---
+        $nimFilterCode = null;
+        if (preg_match('/NIM(\d{3});/i', $value, $matches)) {
+            $nimFilterCode = $matches[1];
+        }
 
         preg_match('/(?=.*(\d{4}))/i', $searchClean, $mAngkatan);
         preg_match('/(?=.*\b([AB])\b)/i', preg_replace('/(S1|S2|S3)/', '', strtoupper($value)), $mKelas);
@@ -212,15 +218,21 @@ trait WithMahasiswaSearchFilters
             default => null,
         };
 
-        // KUNCI PERUBAHAN: Wajib mengandung ';' agar logic multi-search ini bisa dieksekusi
-        $allowExecution = $hasSemicolon && ($angkatan || $kelas || $wilayah || $strata || $kodeProdi);
+        $allowExecution = $hasSemicolon && ($angkatan || $kelas || $wilayah || $strata || $kodeProdi || $nimFilterCode);
 
         if ($this->modeMahasiswa !== 'single' && $allowExecution) {
+
             $multiQuery = $this->mahasiswaQuery();
-            $multiQuery->where(function ($q) use ($angkatan, $kelas, $wilayah, $strata, $kodeProdi) {
+            $multiQuery->where(function ($q) use ($angkatan, $kelas, $wilayah, $strata, $kodeProdi, $nimFilterCode) {
                 if ($angkatan) {
                     $q->where('angkatan', $angkatan);
                 }
+
+                // Filter digit tengah NIM UNSRI (Karakter ke-5 sebanyak 3 digit)
+                if ($nimFilterCode) {
+                    $q->whereRaw('SUBSTRING(nim, 5, 3) = ?', [$nimFilterCode]);
+                }
+
                 if ($kelas === 'A') {
                     $q->whereRaw('RIGHT(nim, 1) % 2 != 0');
                 }
@@ -261,9 +273,6 @@ trait WithMahasiswaSearchFilters
                 return;
             }
         }
-
-        // 3. Pencarian Exact Match Biasa (Jika input biasa nama/nim/email)
-        // Bagian ini akan selalu berjalan mendeteksi NIM/Email secara real-time tanpa perlu tanda ';'
         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
         $exactMatch = $results->first(function ($d) use ($value, $normalizedValue) {
             $normalizedMahasiswaNIM = str_replace(['-', ' '], '', strtolower($d->nim));

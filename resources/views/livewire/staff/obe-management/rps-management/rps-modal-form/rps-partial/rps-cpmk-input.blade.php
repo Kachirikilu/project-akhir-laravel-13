@@ -36,7 +36,7 @@
 
         <div class="space-y-4">
             @if ($this->showRPSModal)
-                @include('livewire.global.modal-form.search-input-cpmk-form', [
+                @include('livewire.global.modal-form.input-array.search-input-cpmk-form', [
                     'alpine' => 'rps',
                     'xResults' => $cpmkResults,
                     'selectX' => 'selectCPMKArray',

@@ -6,8 +6,8 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal_delete: "",
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
@@ -16,6 +16,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -47,16 +50,19 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        reset() {
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
-
-            this.deskripsi = "";
-            this.kode_cpl = "";
-            this.kode_cpl_1 = "";
-            this.kode_cpl_2 = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.deskripsi = "";
+                this.kode_cpl = "";
+                this.kode_cpl_1 = "";
+                this.kode_cpl_2 = "";
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+            }
         },
     });
 });

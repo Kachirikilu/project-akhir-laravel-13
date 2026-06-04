@@ -16,7 +16,7 @@
         'isRequired' => 0,
     ])
 
-    @include('livewire.global.modal-form.search-input-form', [
+    @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'rps',
         'xResults' => $mkResults,
         'selectX' => 'selectMK',
@@ -126,7 +126,7 @@
                                 'nameXString' => 'Tahun Akademik',
                                 'modelString' => 'akademik_1',
                                 'numberOnly' => 1,
-                                'maxlength' => 4,
+                                'maxLength' => 4,
                                 'iconString' => 'calendar-days',
                                 'placeholder' => 'Contoh: 2025',
                                 'isFocusSelect' => 1,
@@ -139,7 +139,7 @@
                                 'nameXString' => 'Tahun Akademik',
                                 'modelString' => 'akademik_2',
                                 'numberOnly' => 1,
-                                'maxlength' => 4,
+                                'maxLength' => 4,
                                 'iconString' => 'calendar-days',
                                 'placeholder' => 'Contoh: 2026',
                                 'isFocusSelect' => 1,

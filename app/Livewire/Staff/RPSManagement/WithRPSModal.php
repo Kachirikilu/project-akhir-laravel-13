@@ -743,6 +743,7 @@ trait WithRPSModal
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
         $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
 
+        $this->mkNameSearch = '';
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];

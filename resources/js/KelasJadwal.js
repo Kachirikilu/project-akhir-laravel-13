@@ -1,6 +1,7 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("jadwal", {
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
@@ -9,6 +10,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -56,7 +60,7 @@ document.addEventListener("alpine:init", () => {
             tanggalBerakhir,
 
             kapasitas,
-            password
+            password,
         ) {
             this.label_kelas = label;
             this.kode_wilayah = wilayah;
@@ -94,38 +98,40 @@ document.addEventListener("alpine:init", () => {
             this.rps_id_show = "";
         },
 
-        reset() {
-            this.typeModal = "";
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.restart_sesi = 0;
 
-            this.restart_sesi = 0;
+                this.jadwal_id = "";
+                this.kode = "";
+                this.kode_kelas = "";
+                this.label_extra = "";
 
-            this.jadwal_id = "";
-            this.kode = "";
-            this.kode_kelas = "";
-            this.label_extra = "";
+                this.kode_wilayah = "";
+                this.label_kelas = "";
 
-            this.kode_wilayah = "";
-            this.label_kelas = "";
+                this.password = "";
 
-            this.password = "";
+                this.hari_pelaksanaan = "";
 
-            this.hari_pelaksanaan = "";
+                this.jam_mulai = "";
+                this.jam_berakhir = "";
 
-            this.jam_mulai = "";
-            this.jam_berakhir = "";
+                this.tanggal_mulai = "";
+                this.tanggal_berakhir = "";
 
-            this.tanggal_mulai = "";
-            this.tanggal_berakhir = "";
+                this.kapasitas = "";
 
-            this.kapasitas = "";
-
-            for (let i = 1; i <= 16; i++) {
-                this[`sesi_${i}`] = "";
-                this[`base_sesi_${i}`] = "";
+                for (let i = 1; i <= 16; i++) {
+                    this[`sesi_${i}`] = "";
+                    this[`base_sesi_${i}`] = "";
+                }
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
             }
         },
 

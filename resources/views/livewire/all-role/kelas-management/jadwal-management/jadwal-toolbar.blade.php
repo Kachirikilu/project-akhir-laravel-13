@@ -64,6 +64,7 @@
                                 @click="
                                 $store.jadwal?.setEdit(0);
                                 $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+                                $store.jadwal?.reset(1);
                                 $flux.modal('jadwal-modal').show();
                                 $wire.addJadwal();
                             "

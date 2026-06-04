@@ -19,8 +19,7 @@
 
                 <input x-model="value" wire:model.live.debounce.300ms="{{ $modelString }}" type="text"
                     placeholder="{{ $placeholder }}"
-                    @if (isset($floatOnly) && $floatOnly)
-                        inputmode="decimal"
+                    @if (isset($floatOnly) && $floatOnly) inputmode="decimal"
                         oninput="
                             let val = this.value.replace(/,/g, '.');
                             val = val.replace(/[^0-9.]/g, '');
@@ -31,7 +30,7 @@
                                 parts = val.split('.');
                             }
 
-                            parts[0] = parts[0].slice(0, {{ $maxlength ?? 255 }});
+                            parts[0] = parts[0].slice(0, {{ $maxLength ?? 255 }});
 
                             if (parts.length > 1) {
                                 parts[1] = parts[1].slice(0, 2);
@@ -41,9 +40,9 @@
                         "
                     @elseif (isset($numberOnly) && $numberOnly) 
                         inputmode="numeric" 
-                        oninput="this.value = this.value.replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxlength ?? 255 }})"
+                        oninput="this.value = this.value.replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxLength ?? 255 }})"
                     @else
-                        maxlength="{{ $maxlength ?? 255 }}" @endif
+                        maxLength="{{ $maxLength ?? 255 }}" @endif
                     class="mt-1 text-[10px] w-{{ $wInput ?? '13' }} border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
                 {{-- Tombol Reset --}}

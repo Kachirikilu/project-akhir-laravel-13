@@ -22,11 +22,11 @@
 
         @include('livewire.global.modal-form.loading-animation', [
             'wireLoading' => 'addRPS, editRPS',
-            'heightContainer' => 32,
+            'heightContainer' => '32',
         ])
 
         @if ($this->showRPSModal)
-            @include('livewire.global.modal-form.search-input-dosen-form', [
+            @include('livewire.global.modal-form.input-array.search-input-dosen-form', [
                 'alpine' => 'rps',
                 'xResults' => $dosenResults,
                 'selectX' => 'selectDosenArray',

@@ -10,7 +10,11 @@
             Referensi Sub-CPMK</h4>
 
         @if (!$this->showRefModal || $this->isEditingRef == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => 1, 'isSmall' => 1])
+            @include('livewire.staff.obe-management.obe-toolbar', [
+                'typeXString' => 'ref',
+                'isFlyout' => 1,
+                'isSmall' => 1,
+            ])
         @endif
     </div>
 
@@ -19,7 +23,7 @@
 
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addSCPMK, editSCPMK'])
 
-        @include('livewire.global.modal-form.search-input-array-form', [
+        @include('livewire.global.modal-form.input-array.search-input-array-form', [
             'alpine' => 'scpmk',
             'xResults' => $refResults['scpmk'] ?? [],
             'selectX' => 'selectRefArray',
@@ -43,7 +47,7 @@
             // 'message' => $errors->first('referensi'),
         ])
 
-        
+
 
     </div>
 

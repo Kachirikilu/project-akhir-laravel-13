@@ -35,7 +35,7 @@
                             'livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-message-form',
                             ['show' => $showSCPMKModal]
                         )
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addSCPMK, saveSCPMK, editSCPMK, updateSCPMK',
                         ])
                     </div>

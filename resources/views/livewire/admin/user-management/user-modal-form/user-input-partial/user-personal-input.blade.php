@@ -27,33 +27,33 @@
             'nameXString' => 'Kode Wilayah',
             'modelString' => 'kode_wilayah',
             'xOptions' => ['IDL (Kampus Indralaya)', 'PLG (Kampus Bukit)'],
-            'xValues' => ['IDL', 'PLG'],  
+            'xValues' => ['IDL', 'PLG'],
             'iconString' => 'map-pin',
             'placeholder' => 'Pilih Kode Wilayah...',
             'message' => $errors->first('kode_wilayah'),
         ])
     </template>
 
-        @include('livewire.global.modal-form.search-input-form', [
-            'alpine' => 'user',
-            'xResults' => $prResults,
-            'selectX' => 'selectPr',
-            'modelString' => 'nama_pr',
-        
-            'idString' => 'pr_id',
-            'itemsAllString' => 'pr_items',
-        
-            'resetXInput' => 'resetPrInput()',
-            'typeXString' => 'prodi',
-            'typeX2String' => 'departemen',
-            'typeX3String' => 'fakultas',
-        
-            'nameXString' => 'Program Studi',
-            'nameSearchString' => 'prNameSearch',
-            'fetchString' => 'fetchPr',
-            'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchPr',
-        ])
+    @include('livewire.global.modal-form.input-array.search-input-form', [
+        'alpine' => 'user',
+        'xResults' => $prResults,
+        'selectX' => 'selectPr',
+        'modelString' => 'nama_pr',
+    
+        'idString' => 'pr_id',
+        'itemsAllString' => 'pr_items',
+    
+        'resetXInput' => 'resetPrInput()',
+        'typeXString' => 'prodi',
+        'typeX2String' => 'departemen',
+        'typeX3String' => 'fakultas',
+    
+        'nameXString' => 'Program Studi',
+        'nameSearchString' => 'prNameSearch',
+        'fetchString' => 'fetchPr',
+        'iconString' => 'academic-cap',
+        'wireLoading' => 'fetchPr',
+    ])
 
 
 
@@ -112,7 +112,7 @@
             'nameXString' => 'Tahun Angkatan',
             'modelString' => 'angkatan',
             'numberOnly' => 1,
-            'maxlength' => 4,
+            'maxLength' => 4,
             'iconString' => 'calendar-days',
             'placeholder' => 'Masukkan Tahun Angkatan (Contoh: 2022)',
             'message' => $errors->first('angkatan'),

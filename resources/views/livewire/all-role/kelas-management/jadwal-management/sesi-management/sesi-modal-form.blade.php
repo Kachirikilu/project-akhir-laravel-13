@@ -38,7 +38,7 @@
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-message-form')
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addSesi, saveSesi, editSesi, updateSesi',
                         ])
                     </div>

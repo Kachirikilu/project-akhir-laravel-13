@@ -66,7 +66,7 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')
 
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $roleType,
                             'targetX' => 'addUser, saveUser, editUser, updateUser',
                         ])

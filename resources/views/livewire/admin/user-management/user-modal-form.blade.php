@@ -40,7 +40,8 @@
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
 
-            <form x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)" enctype="multipart/form-data" id="userForm">
+            <form x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)"
+                enctype="multipart/form-data" id="userForm">
 
                 @include('livewire.admin.user-management.user-modal-form.user-input')
 
@@ -51,7 +52,7 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')
 
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $roleType,
                             'targetX' => 'addUser, saveUser, editUser, updateUser',
                         ])

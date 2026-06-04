@@ -9,12 +9,29 @@
 
         {{-- KIRI: Badge nama & status --}}
         <div class="flex items-center gap-2">
-            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)" icon="printer" size="sm"
+            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)" icon="printer"
+                size="sm"
                 class="!cursor-pointer px-6 !text-rose-600 dark:!text-rose-400 !bg-rose-50 hover:!bg-rose-100 dark:!bg-rose-950/20 dark:hover:!bg-rose-900/30 !border-rose-200/60 dark:!border-rose-800/40 transition-all duration-200">
                 <span>Print PDF RPS</span>
                 <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"
                     class="animate-spin h-4 w-4 ml-3 dark:!text-rose-600" />
             </flux:button>
+
+            {{-- @include('livewire.global.table.export-button', [
+                'nameXString' => 'Export Excel Mahasiswa',
+                'xClick' => "\$wire.exportExcel()",
+                'xString' => 'exportExcel',
+                'isFull' => 1,
+                'color' => 'green',
+            ]) --}}
+            {{-- @include('livewire.global.table.export-button', [
+                'nameXString' => 'Print PDF RPS',
+                'xString' => "printPDFRPS(\$store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)",
+                'valuePx' => 6,
+                'isFull' => 1,
+                'isTextMd' => 1,
+                'color' => 'rose',
+            ]) --}}
 
             @if ($isEdit ?? true)
                 @if (!$this->showRPSModal)
@@ -40,7 +57,7 @@
                     $wire.editRPS($store.rps?.id ?? null)
                 "
                         wire:loading.attr="disabled" wire:target="showRPS, editRPS" icon="pencil-square" size="sm"
-                       class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
+                        class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
                         <span>Edit RPS</span>
                         <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
                             class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
@@ -70,7 +87,8 @@
                 @break
 
                 @default
-                    <flux:badge icon="globe-alt" color="red" size="lg" class="px-4">{{ $r['kode_rps'] ?? 'YYYY-0X-XXXZZZZ' }}
+                    <flux:badge icon="globe-alt" color="red" size="lg" class="px-4">
+                        {{ $r['kode_rps'] ?? 'YYYY-0X-XXXZZZZ' }}
                     </flux:badge>
             @endswitch
             <flux:badge color="emerald" size="lg" class="px-4">

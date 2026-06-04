@@ -1,6 +1,4 @@
-<flux:modal
-    {{-- :flyout="$isFlyoutRef" wire:key="ref-modal-{{ $isFlyoutRef }}" --}}
-    name="ref-modal" wire:model.live="showRefModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutRef" wire:key="ref-modal-{{ $isFlyoutRef }}" --}} name="ref-modal" wire:model.live="showRefModal" x-data
     @refresh-data-ref.window="$store.ref.reset()"
     class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
     <div class="flex flex-col h-full relative">
@@ -35,7 +33,7 @@
                             'livewire.staff.obe-management.ref-management.ref-modal-form.ref-message-form',
                             ['show' => $showRefModal]
                         )
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addRef, saveRef, editRef, updateRef',
                         ])
                     </div>

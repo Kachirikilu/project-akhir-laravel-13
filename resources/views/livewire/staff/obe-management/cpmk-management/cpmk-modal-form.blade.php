@@ -1,6 +1,4 @@
-<flux:modal
-    {{-- :flyout="$isFlyoutCPMK" wire:key="cpmk-modal-{{ $isFlyoutCPMK }}" --}}
-    name="cpmk-modal" wire:model.live="showCPMKModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutCPMK" wire:key="cpmk-modal-{{ $isFlyoutCPMK }}" --}} name="cpmk-modal" wire:model.live="showCPMKModal" x-data
     @refresh-data-cpmk.window="$store.cpmk.reset()"
     class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
@@ -37,7 +35,7 @@
                             'livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-message-form',
                             ['show' => $showCPMKModal]
                         )
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addCPMK, saveCPMK, editCPMK, updateCPMK',
                         ])
                     </div>

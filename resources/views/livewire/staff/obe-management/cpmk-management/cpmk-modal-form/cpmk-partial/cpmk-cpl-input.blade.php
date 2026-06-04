@@ -10,7 +10,11 @@
         </h4>
 
         @if (!$this->showCPLModal || $this->isEditingCPL == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => 1, 'isSmall' => 1])
+            @include('livewire.staff.obe-management.obe-toolbar', [
+                'typeXString' => 'cpl',
+                'isFlyout' => 1,
+                'isSmall' => 1,
+            ])
         @endif
     </div>
 
@@ -22,7 +26,7 @@
 
         <div class="space-y-6">
 
-            @include('livewire.global.modal-form.search-input-array-form', [
+            @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'cpmk',
                 'xResults' => $cplResults['cpmk'] ?? [],
                 'selectX' => 'selectCPLArray',
@@ -61,7 +65,7 @@
                 'modelString' => 'deskripsi',
                 'iconString' => 'academic-cap',
                 'placeholder' => 'Kosongkan jika ingin sama persis dengan CPL...',
-                'parentIdString' => 'cpl_id_array.cpmk', 
+                'parentIdString' => 'cpl_id_array.cpmk',
                 'nameXParent' => 'CPL',
                 'isRequired' => 0,
                 'message' => $errors->first('deskripsi'),

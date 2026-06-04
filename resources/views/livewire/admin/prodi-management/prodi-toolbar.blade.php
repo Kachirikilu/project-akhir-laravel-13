@@ -19,6 +19,7 @@
                         $store.prodi?.setType('prodi');
                         $store.prodi?.setEdit(0);
                         $store.prodi?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $store.prodi?.reset(1);
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
@@ -37,6 +38,7 @@
                         $store.prodi?.setType('departemen');
                         $store.prodi?.setEdit(0);
                         $store.prodi?.setColor('text-amber-700 dark:text-amber-400');
+                        $store.prodi?.reset(1);
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('departemen');
                     "
@@ -55,6 +57,7 @@
                         $store.prodi?.setType('fakultas');
                         $store.prodi?.setEdit(0);
                         $store.prodi?.setColor('text-[var(--focus-color)]');
+                        $store.prodi?.reset(1);
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "

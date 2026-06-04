@@ -1,6 +1,4 @@
-<flux:modal
-    {{-- :flyout="$isFlyoutCPL" wire:key="cpl-modal-{{ $isFlyoutCPL }}" --}}
-    name="cpl-modal" wire:model.live="showCPLModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutCPL" wire:key="cpl-modal-{{ $isFlyoutCPL }}" --}} name="cpl-modal" wire:model.live="showCPLModal" x-data
     @refresh-data-cpl.window="$store.cpl.reset()"
     class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
@@ -38,7 +36,7 @@
                             'livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-message-form',
                             ['show' => $showCPLModal]
                         )
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addCPL, saveCPL, editCPL, updateCPL',
                         ])
                     </div>

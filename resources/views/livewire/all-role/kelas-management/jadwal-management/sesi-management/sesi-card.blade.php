@@ -3,7 +3,8 @@
 
     $alpineData = $sesis
         ->map(function ($s, $index) use ($daftarUjian) {
-            $stringKodeScpmk = $s->kode_scpmk ?? '';
+            $stringKodeSCPMK = $s->kode_scpmk ?? '';
+            $stringKodeCPMK = $s->kode_cpmk ?? '';
             $p = (int) $s->pertemuan_ke;
 
             $bobotRaw = $s->bobot_normalisasi ?? '';
@@ -17,8 +18,9 @@
                 'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                 'metode' => strtolower($s->metode ?? ''),
                 'tugas' => strtolower($s->tugas ?? ''),
-                'kode_scpmk' => strtolower($stringKodeScpmk),
-                'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeScpmk)),
+                'kode_scpmk' => strtolower($stringKodeSCPMK),
+                'kode_cpmk' => strtolower($stringKodeCPMK),
+                'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeSCPMK)),
                 'searchPertemuan' => [
                     (string) $p,
                     'p' . $p,
@@ -59,6 +61,10 @@
             }
 
             if (item.kode_scpmk.includes(query) || (cleanQuery && item.searchKodeSCPMK.includes(cleanQuery))) {
+                return true;
+            }
+
+            if (item.kode_cpmk.includes(query) || (cleanQuery && item.searchKodeCPMK.includes(cleanQuery))) {
                 return true;
             }
 
@@ -126,11 +132,11 @@
                 'alpine' => 'sesi',
                 'headString' => 'Pertemuan',
             ])
-            {{-- @include('livewire.global.table.head-sortir', [
+            @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'jumlah_absensi',
                 'alpine' => 'sesi',
                 'headString' => 'Absensi',
-            ]) --}}
+            ])
             @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'metode',
                 'alpine' => 'sesi',

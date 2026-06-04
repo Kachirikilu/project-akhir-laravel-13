@@ -104,7 +104,7 @@
                     'resetXFilter' => 'resetInputAngkatan()',
                     'wInput' => 15,
                     'numberOnly' => 1,
-                    'maxlength' => 4,
+                    'maxLength' => 4,
                     'placeholder' => 'Tahun',
                     'rowSpan' => 2,
                     'isBorderR' => 1,
@@ -319,7 +319,17 @@
                 </td>
                 <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_huruf_asli ?? 'E' }}
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                    'xValue' => $user->mhs_nilai_huruf_asli ?? 'E',
+                                ])
+                            </button>
+                            @include(
+                                'livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table',
+                                ['x' => $user]
+                            )
+                        </flux:dropdown>
                     @else
                         -
                     @endif

@@ -6,8 +6,8 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal_delete: "",
         isEdit: 0,
+        showEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
@@ -16,6 +16,9 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            if (val == 1) {
+                this.showEdit = 1;
+            }
         },
         setColor(val) {
             this.colorIcon = val;
@@ -40,8 +43,8 @@ document.addEventListener("alpine:init", () => {
 
         count_scpmk: 0,
 
-        bobot_uts: 0,
-        bobot_uas: 0,
+        bobot_uts: "",
+        bobot_uas: "",
         total_bobot: 0,
 
         setCountSCPMK(val) {
@@ -172,27 +175,31 @@ document.addEventListener("alpine:init", () => {
             this.rps_id_show = "";
         },
 
-        reset() {
-            this.typeModal_delete = "";
-            this.isEdit = 0;
-            this.isForceDelete = 0;
-            this.colorIcon = "";
+        reset(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.deskripsi = "";
+                this.bobot_uts = "";
+                this.bobot_uas = "";
 
-            this.deskripsi = "";
+                this.mk_id = "";
+                this.nama_mk_search = "";
+                this.mk_items = "";
 
-            this.mk_id = "";
-            this.nama_mk_search = "";
-            this.mk_items = "";
+                this.digit_akademik = "";
+                this.akademik = "";
+                this.akademik_1 = "";
+                this.akademik_2 = "";
 
-            this.digit_akademik = "";
-            this.akademik = "";
-            this.akademik_1 = "";
-            this.akademik_2 = "";
-
-            this.is_draf = "";
+                this.is_draf = "";
+                this.showEdit = 0;
+            }
+            if (isAdd == 0) {
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+            }
         },
         resetShow() {
-            this.typeModal_delete = "";
             this.colorIcon = "";
 
             this.id = "";

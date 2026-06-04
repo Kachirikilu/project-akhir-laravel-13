@@ -1,6 +1,6 @@
 <div>
     {{-- ⚠️ 1. Error Validation (Paling Atas) --}}
-    @include('livewire.global.modal-form.error-validation')
+    @include('livewire.global.modal-form.footer.error-validation')
 
     {{-- 💡 2. Tips (Di bawah Error) --}}
     <div
@@ -61,7 +61,7 @@
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
                         Pastikan <strong class="text-[var(--focus-color)] font-semibold">Strata</strong>
-                        telah dipilih dengan sesuai (contoh: 
+                        telah dipilih dengan sesuai (contoh:
                         <strong class="text-[var(--contrast-main-text)] font-semibold italic">Sarjana</strong>,
                         <strong class="text-[var(--contrast-main-text)] font-semibold italic">Magister</strong>,
                         <strong class="text-[var(--contrast-main-text)] font-semibold italic">Doktor</strong>).
@@ -70,7 +70,7 @@
 
             </template>
 
-                @include('livewire.global.modal-form.template-pesan')
+            @include('livewire.global.modal-form.template-pesan')
         </div>
     </div>
 </div>

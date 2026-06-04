@@ -1,6 +1,6 @@
 <div>
     {{-- ⚠️ 1. Error Validation (Paling Atas) --}}
-    @include('livewire.global.modal-form.error-validation')
+    @include('livewire.global.modal-form.footer.error-validation')
 
     <div
         class="rounded-xl bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] border p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
@@ -55,7 +55,8 @@
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
                     Pastikan <strong class="text-[var(--focus-color)] font-semibold">Kode Mata Kuliah
-                    </strong> terpenuhi (contoh: <strong class="text-[var(--contrast-main-text)] font-semibold italic">TKE1107</strong>).
+                    </strong> terpenuhi (contoh: <strong
+                        class="text-[var(--contrast-main-text)] font-semibold italic">TKE1107</strong>).
                 </p>
             </div>
 

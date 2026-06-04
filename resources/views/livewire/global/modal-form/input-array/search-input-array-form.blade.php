@@ -67,7 +67,7 @@
 
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
-    @include('livewire.global.modal-form.partial.input-search', [
+    @include('livewire.global.modal-form.input-array.partial.input-search', [
         'typeInput' => 'array',
         'searchKey' => $key ?? 'default',
         'nameSearchString' => $nameSearchString,
@@ -99,6 +99,13 @@
 
                         @include('livewire.global.modal-form.partial.dropdown-items')
 
+                        @php
+                            $param2 = isset($typeX2String) ? "'" . addslashes($itemLabel2) . "'" : 'null';
+                            $param3 = isset($typeX3String) ? "'" . addslashes($itemLabel3) . "'" : 'null';
+                            $param4 = isset($typeX4String) ? "'" . addslashes($itemLabel4) . "'" : 'null';
+                            $param5 = isset($typeX5String) ? "'" . addslashes($itemLabel5) . "'" : 'null';
+                            $paramLink = isset($typeLinkString) ? "'" . addslashes($itemLink) . "'" : 'null';
+                        @endphp
                         <button type="button"
                             @click="
                             if (items.includes({{ $itemId }})) {
@@ -110,13 +117,13 @@
                             } else {
                                addItem(
                                     {{ $itemId }}, 
-                                    '{{ $itemKode }}', 
-                                    '{{ $itemLabel }}', 
-                                    @isset($typeX2String) '{{ $itemLabel2 }}' @else null @endisset, 
-                                    @isset($typeX3String) '{{ $itemLabel3 }}' @else null @endisset,
-                                    @isset($typeX4String) '{{ $itemLabel4 }}' @else null @endisset,
-                                    @isset($typeX5String) '{{ $itemLabel5 }}' @else null @endisset,
-                                    @isset($typeLinkString) '{{ $itemLink }}' @else null @endisset,
+                                    '{{ addslashes($itemKode) }}', 
+                                    '{{ addslashes($itemLabel) }}', 
+                                    {{ $param2 }}, 
+                                    {{ $param3 }},
+                                    {{ $param4 }},
+                                    {{ $param5 }},
+                                    {{ $paramLink }}
                                 );
                                 @isset($selectX)
                                     $wire.{{ $selectX }}({{ $itemId }}@isset($key), '{{ addslashes($key) }}'@endisset);

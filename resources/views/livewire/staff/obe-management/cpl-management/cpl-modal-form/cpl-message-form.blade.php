@@ -1,6 +1,6 @@
 <div>
     {{-- ⚠️ 1. Error Validation (Paling Atas) --}}
-    @include('livewire.global.modal-form.error-validation', ['show' => $show])
+    @include('livewire.global.modal-form.footer.error-validation', ['show' => $show])
 
     <div
         class="rounded-xl bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] border p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">

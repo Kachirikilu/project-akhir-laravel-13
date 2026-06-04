@@ -42,6 +42,7 @@
                             $store.rps?.setEdit(0);
                             $store.rps?.setFlyout({{ $isFlyout ?? false }});
                             $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                            $store.rps?.reset(1);
                             $flux.modal('rps-modal').show();
                             $wire.addRPS();
                         "
@@ -63,6 +64,7 @@
                             $store.cpmk?.setEdit(0);
                             $store.cpmk?.setFlyout({{ $isFlyout ?? false }});
                             $store.cpmk?.setColor('text-amber-700 dark:text-amber-400');
+                            $store.cpmk?.reset(1);
                             $flux.modal('cpmk-modal').show();
                             $wire.addCPMK();
                         "
@@ -83,6 +85,7 @@
                             $store.scpmk?.setEdit(0);
                             $store.scpmk?.setFlyout({{ $isFlyout ?? false }});
                             $store.scpmk?.setColor('text-indigo-700 dark:text-indigo-400');
+                            $store.scpmk?.reset(1);
                             $flux.modal('scpmk-modal').show();
                             $wire.addSCPMK();
                         "
@@ -103,6 +106,7 @@
                             $store.cpl?.setEdit(0);
                             $store.cpl?.setFlyout({{ $isFlyout ?? false }});
                             $store.cpl?.setColor('text-red-700 dark:text-red-400');
+                            $store.cpl?.reset(1);
                             $flux.modal('cpl-modal').show();
                             $wire.addCPL();
                         "
@@ -123,6 +127,7 @@
                             $store.ref?.setEdit(0);
                             $store.ref?.setFlyout({{ $isFlyout ?? false }});
                             $store.ref?.setColor('text-fuchsia-700 dark:text-fuchsia-400');
+                            $store.ref?.reset(1);
                             $flux.modal('ref-modal').show();
                             $wire.addRef();
                         "
@@ -144,6 +149,7 @@
                         $store.user?.setEdit(0);
                         {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                        $store.user?.reset(1);
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
                     "

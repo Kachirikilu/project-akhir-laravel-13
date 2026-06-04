@@ -35,12 +35,12 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')
 
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $roleType,
                             'wireLoading' => 'excel_user_file, parseExcelUserFile, procesImportUserExcel',
                             'wireLoading2' => 'saveUserExcel',
                             'targetX' => 'addUser, saveUser, editUser, updateUser',
-                            'isLeft' => 1
+                            'isLeft' => 1,
                         ])
                     </div>
 

@@ -7,7 +7,8 @@
             ? 'bg-gray-100 dark:bg-neutral-800'
             : 'bg-white dark:bg-neutral-600');
 @endphp
-<td class="{{ $bgClass }} {{ $isSticky ?? null ? 'sticky left-0 z-10' : '' }} p-0 border border-gray-200 dark:border-neutral-700 align-top">
+<td
+    class="{{ $bgClass }} {{ $isSticky ?? null ? 'sticky left-0 z-10' : '' }} p-0 border border-gray-200 dark:border-neutral-700 align-top">
     <div class="flex flex-col h-full min-h-[34px] w-full">
         <div class="grid w-full items-center" style="{{ $widthStyle }}">
 
@@ -36,7 +37,7 @@
                     oninput="
                         this.value = this.value
                             .replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '')
-                            .slice(0, {{ $maxlength ?? 255 }})
+                            .slice(0, {{ $maxLength ?? 255 }})
                     " @endif
                     class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none cursor-text select-text">
             @endif

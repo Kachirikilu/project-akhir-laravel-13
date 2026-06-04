@@ -77,10 +77,16 @@
         </flux:button>
 
 
-        <flux:button wire:click="printPDFRPS({{ $kelas->rps_id }})" icon="printer" size="sm"
-            class="!cursor-pointer px-6 !text-rose-600 dark:!text-rose-400 !bg-rose-50 hover:!bg-rose-100 dark:!bg-rose-950/20 dark:hover:!bg-rose-900/30 !border-rose-200/60 dark:!border-rose-800/40 transition-all duration-200">
-            <span>Print PDF RPS</span>
-        </flux:button>
+        <div class="shrink-0">
+            @include('livewire.global.table.export-button', [
+                'nameXString' => 'Print RPS',
+                'xString' => "printPDFRPS($kelas->rps_id)",
+                'valuePx' => 6,
+                'isFull' => 1,
+                'isTextMd' => 1,
+                'color' => 'rose',
+            ])
+        </div>
 
         @if ($alpine == 'jadwal' && (Auth::user()?->admin || Auth::user()?->dosen))
             <flux:button
@@ -154,17 +160,18 @@
                     {{-- $wire.addUser('excel'); --}}
                     $flux.modal('nilai-excel-modal').show();
                 "
-                 icon="printer" size="sm"
+                icon="printer" size="sm"
                 class="!cursor-pointer px-6 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200">
                 <span>Import Nilai</span>
             </flux:button>
 
             <div class="shrink-0">
-                @include('livewire.global.table.export-excel', [
+                @include('livewire.global.table.export-button', [
                     'nameXString' => 'Export Nilai',
                     'xString' => 'exportNilaiExcel',
-                    'isNoPb' => 1,
                     'valuePx' => 6,
+                    'isTextMd' => 1,
+                    'isNoPb' => 1,
                 ])
             </div>
         @endif

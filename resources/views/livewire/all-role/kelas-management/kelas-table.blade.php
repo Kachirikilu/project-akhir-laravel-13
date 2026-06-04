@@ -25,6 +25,40 @@
         $borderL = 'border-[var(--border-table-color)] border-l';
     @endphp
 
+    <x-slot:sortir>
+
+        <div x-data="{ activeTab: @entangle('filterKelasGG') }"
+            class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasGG',
+                'xFilter' => 'filterKelasGG',
+                'tabFilter' => $totalGanjilGenap,
+                'tabString' => '',
+                'tabNameString' => 'Semua',
+                'icon' => 'table-cells',
+            ])
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasGG',
+                'xFilter' => 'filterKelasGG',
+                'tabFilter' => $totalGanjil,
+                'tabString' => 'kelas-ganjil',
+                'tabNameString' => 'Ganjil',
+                'icon' => 'calendar-days',
+            ])
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasGG',
+                'xFilter' => 'filterKelasGG',
+                'tabFilter' => $totalGenap,
+                'tabString' => 'kelas-genap',
+                'tabNameString' => 'Genap',
+                'icon' => 'calendar-days',
+            ])
+        </div>
+
+    </x-slot:sortir>
+
     <x-slot:header>
         {{-- BARIS PERTAMA --}}
         <tr>

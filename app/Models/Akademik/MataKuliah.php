@@ -12,12 +12,15 @@ class MataKuliah extends Model
     use SoftDeletes;
 
     protected $table = 'mata_kuliahs';
+
     protected $fillable = [
         'level_mk', 'kode_mk', 'digit_semester', 'digit_mk',
         'nama_mk', 'semester', 'sks_kuliah', 'tipe_sks',
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
+
     protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'sks_text'];
+
     protected $casts = [
         'created_at' => 'date',
         'updated_at' => 'date',
@@ -30,6 +33,7 @@ class MataKuliah extends Model
             ->withPivot('sort_order')
             ->orderBy('prodi_pivot_mk.sort_order', 'asc');
     }
+
     public function rps()
     {
         return $this->hasMany(RPS::class, 'mk_id');
@@ -86,13 +90,17 @@ class MataKuliah extends Model
         });
     }
 
+    protected function ganjilGenap(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->semester % 2 === 1 ? 'Ganjil' : 'Genap';
+        });
+    }
+
     protected function kodeSemester(): Attribute
     {
         return Attribute::get(function () {
-            $semester = $this->semester;
-            $ganjilGenap = $semester % 2 === 1 ? '01' : '02';
-
-            return $ganjilGenap;
+            return $this->semester % 2 === 1 ? '01' : '02';
         });
     }
 
@@ -214,13 +222,14 @@ class MataKuliah extends Model
                 0 => 'Teori',
                 default => 'Tidak Diketahui',
             };
+
             return $this->sks_kuliah.' SKS '.$sksPart;
         });
     }
 
     protected function semesterText(): Attribute
     {
-        return Attribute::get(fn () => 'Semester ' . $this->semester);
+        return Attribute::get(fn () => 'Semester '.$this->semester);
     }
 
     protected function wajib(): Attribute
@@ -239,6 +248,7 @@ class MataKuliah extends Model
             if (! $this->created_at) {
                 return null;
             }
+
             return $this->created_at->translatedFormat('D, d M Y');
         });
     }
@@ -249,6 +259,7 @@ class MataKuliah extends Model
             if (! $this->updated_at) {
                 return null;
             }
+
             return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
@@ -298,6 +309,22 @@ class MataKuliah extends Model
                     $sub->where('mata_kuliahs.id', $search)
                         ->orWhere('mata_kuliahs.semester', $cleanSearch);
                 });
+            } else {
+                $searchLower = strtolower(trim($search));
+                // ganjil
+                if (
+                    str_starts_with('ganjil', $searchLower) ||
+                    str_starts_with('odd', $searchLower)
+                ) {
+                    $q->orWhereRaw('mata_kuliahs.semester % 2 = 1');
+                }
+                // genap
+                if (
+                    str_starts_with('genap', $searchLower) ||
+                    str_starts_with('even', $searchLower)
+                ) {
+                    $q->orWhereRaw('mata_kuliahs.semester % 2 = 0');
+                }
             }
 
             // 3. Wajib atau Pilihan

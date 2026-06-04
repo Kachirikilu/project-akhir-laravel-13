@@ -3,6 +3,7 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithAbsenModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
@@ -19,6 +20,7 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
+    use WithAbsenModal;
     use WithJadwalModal;
     use WithMahasiswaSearchFilters;
     use WithNilaiExcel;
@@ -280,29 +282,29 @@ class SesiManagement extends Component
 
                 return Carbon::parse($sesi->tanggal.' '.$jamAkhir)
                     ->lt(now());
-            })->pluck('id')->all();
+                })->pluck('id')->all();
 
             $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)->select('users.*');
 
             $expiredCount = (int) count($expiredSesiIds ?: []);
 
-            if (Auth::user()->admin || Auth::user()->dosen) {
-                $statuses = [
-                    'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
-                    'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
-                    'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
-                    'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
-                    'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
-                    'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
-                    'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
-                    'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
-                    'mhs_poin_absensi' => "CASE 
+            $statuses = [
+                'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
+                'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
+                'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
+                'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
+                'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
+                'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
+                'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
+                'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
+                'mhs_poin_absensi' => "CASE 
                         WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2
                         WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1
                         ELSE 0
                     END",
-                ];
+            ];
 
+            if (Auth::user()->admin || Auth::user()->dosen) {
                 $queryUser->selectSub(function ($query) use ($idJadwal) {
                     $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                         ->whereColumn('mahasiswas.user_id', 'users.id')
@@ -341,7 +343,7 @@ class SesiManagement extends Component
                         ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                         ->whereColumn('mahasiswas.user_id', 'users.id')
                         ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                        ->selectRaw("
+                        ->selectRaw('
                             CASE
                                 WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
                                 WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
@@ -353,7 +355,7 @@ class SesiManagement extends Component
                                 WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
                                 ELSE 0
                             END
-                        ")
+                        ')
                         ->limit(1);
                 }, 'mhs_nilai_huruf');
 
@@ -396,16 +398,29 @@ class SesiManagement extends Component
                     }, $alias);
                 }
 
+                // $queryUser->selectRaw("
+                //     GREATEST(0, ? - (
+                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Hadir' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
+                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Terlambat' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
+                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Izin' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
+                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Sakit' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
+                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Dispensasi' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?)
+                //     )) as mhs_tidak_masuk
+                // ", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
                 $queryUser->selectRaw("
-                    GREATEST(0, ? - (
-                        (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Hadir' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                        (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Terlambat' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                        (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Izin' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                        (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Sakit' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                        (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Dispensasi' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?)
-                    )) as mhs_tidak_masuk
-                ", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
-
+                        GREATEST(0, ? - (
+                            SELECT COUNT(*)
+                            FROM mahasiswa_kehadiran
+                            JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id
+                            JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id
+                            WHERE mahasiswas.user_id = users.id
+                            AND kelas_sesi.kj_id = ?
+                            AND mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')
+                        )) as mhs_tidak_masuk
+                    ", [
+                    $expiredCount,
+                    $idJadwal,
+                ]);
             }
 
             /**
@@ -517,7 +532,7 @@ class SesiManagement extends Component
                 $summaryQuery->onlyTrashed();
             }
 
-            if (Auth::user()->admin || Auth::user()->dosen) {
+            if (Auth::user()->admin || Auth::user()->dosen || Auth::user()->mahasiswa) {
                 foreach ($statuses as $alias => $condition) {
 
                     $summaryQuery->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
@@ -551,7 +566,7 @@ class SesiManagement extends Component
                 $expiredCountX = count($expiredSesiIds);
 
                 foreach ($summary as $row) {
-                    $hadir = $row->mhs_hadir + $row->mhs_terlambat + $row->mhs_izin + $row->mhs_sakit + $row->mhs_dispensasi;
+                    $hadir = $row->mhs_hadir + $row->mhs_terlambat + $row->mhs_dispensasi;
                     $row->mhs_tidak_masuk = max(0, $expiredCountX - $hadir);
                 }
 

@@ -32,9 +32,9 @@
 
                 <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)] p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
-
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-message-form')
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'editAbsensi, updateAbsensi',
                         ])
                     </div>

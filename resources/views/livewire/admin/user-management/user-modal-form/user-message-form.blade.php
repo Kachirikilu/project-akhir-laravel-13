@@ -1,6 +1,6 @@
 <div>
     {{-- ⚠️ 1. Error Validation (Paling Atas) --}}
-    @include('livewire.global.modal-form.error-validation')
+    @include('livewire.global.modal-form.footer.error-validation')
 
     {{-- 💡 2. Tips (Di bawah Error) --}}
     <div
@@ -26,7 +26,8 @@
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
                     Pastikan <strong class="text-[var(--focus-color)] font-semibold">Email</strong> diisi dengan format
-                    yang sesuai (contoh: <strong class="text-[var(--contrast-main-text)] font-semibold italic">muttaqien.wildan12@gmail.com</strong>).
+                    yang sesuai (contoh: <strong
+                        class="text-[var(--contrast-main-text)] font-semibold italic">muttaqien.wildan12@gmail.com</strong>).
                 </p>
             </div>
 

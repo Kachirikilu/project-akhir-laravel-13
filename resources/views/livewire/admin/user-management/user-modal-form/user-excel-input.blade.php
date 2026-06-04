@@ -28,7 +28,7 @@
     <div
         class="px-4 py-6 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)] shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
-        @include('livewire.global.modal-form.search-input-form', [
+        @include('livewire.global.modal-form.input-array.search-input-form', [
             'alpine' => 'user',
             'xResults' => $prResults,
             'selectX' => 'selectPr',
@@ -56,8 +56,7 @@
 
         <div class="relative">
             @if (empty($parsedUserRows))
-                <div class="text-sm text-gray-500 italic" wire:loading.remove
-                    wire:target="excel_user_file, parseExcelUserFile">
+                <div class="text-sm text-gray-500 italic h-16">
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
@@ -137,7 +136,7 @@
                                         'model' => $this->parsedUserRows[$i]['nip'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nip",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nip'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -146,7 +145,7 @@
                                         'model' => $this->parsedUserRows[$i]['nitk'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nitk",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nitk'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -155,7 +154,7 @@
                                         'model' => $this->parsedUserRows[$i]['nidn'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nidn",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nidn'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -164,7 +163,7 @@
                                         'model' => $this->parsedUserRows[$i]['nidk'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nidk",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nidk'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -173,7 +172,7 @@
                                         'model' => $this->parsedUserRows[$i]['nim'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nim",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nim'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -181,7 +180,7 @@
                                         'model' => $this->parsedUserRows[$i]['nik'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.nik",
                                         'numberOnly' => 1,
-                                        'maxlength' => 20,
+                                        'maxLength' => 20,
                                         'message' => $rowUserErrors[$i]['nik'] ?? null,
                                         'minW' => '192',
                                     ])
@@ -191,7 +190,7 @@
                                         'model' => $this->parsedUserRows[$i]['angkatan'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.angkatan",
                                         'numberOnly' => 1,
-                                        'maxlength' => 4,
+                                        'maxLength' => 4,
                                         'message' => $rowUserErrors[$i]['angkatan'] ?? null,
                                         'isDark' => 1,
                                         'minW' => '16',
@@ -253,7 +252,8 @@
                 {{-- 📄 Pagination Controls (Tailwind Style) --}}
 
                 @if ($this->paginatedUserRows->hasPages())
-                    <div class="mt-6" wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedUserRows->getPageName() }}">
+                    <div class="mt-6"
+                        wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedUserRows->getPageName() }}">
                         {{ $this->paginatedUserRows->links('vendor.pagination.tailwind', [
                             'typeXLoading' => 'loadingUserExcel',
                         ]) }}

@@ -30,7 +30,7 @@
 
             <div class="flex justify-between items-center w-full">
                 <span>Edit {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $editCall }}({{ $x->id }})" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+                <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>
 
@@ -53,7 +53,7 @@
 
             <div class="flex justify-between items-center w-full">
                 <span>Hapus {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $deleteCall }}({{ $x->id }})" name="arrow-path"
+                <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
                     class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>
@@ -88,7 +88,7 @@
 
             <div class="flex justify-between items-center w-full">
                 <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $deleteCall }}({{ $x->id }})" name="arrow-path"
+                <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
                     class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>

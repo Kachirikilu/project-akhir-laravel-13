@@ -28,7 +28,7 @@
                     'noLabel' => 1,
                     'modelString' => 'kode_cpmk_2',
                     'numberOnly' => 1,
-                    'maxlength' => 6,
+                    'maxLength' => 6,
                     'iconString' => 'variable',
                     'placeholder' => 'Contoh: 1211',
                     'isFocusSelect' => 1,

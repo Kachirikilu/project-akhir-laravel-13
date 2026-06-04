@@ -5,12 +5,15 @@
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
-    <h4
-        class="text-[var(--contrast-main-text)] text-lg font-medium">
-        Referensi RPS</h4>
+        <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
+            Referensi RPS</h4>
 
         @if (!$this->showRefModal || $this->isEditingRef == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => 1, 'isSmall' => 1])
+            @include('livewire.staff.obe-management.obe-toolbar', [
+                'typeXString' => 'ref',
+                'isFlyout' => 1,
+                'isSmall' => 1,
+            ])
         @endif
     </div>
 
@@ -49,7 +52,7 @@
             </div>
 
             @if ($this->showRPSModal)
-                @include('livewire.global.modal-form.search-input-array-form', [
+                @include('livewire.global.modal-form.input-array.search-input-array-form', [
                     'alpine' => 'rps',
                     'xResults' => $refResults['rps'] ?? [],
                     'selectX' => 'selectRefArray',

@@ -20,6 +20,7 @@
                         $store.mk?.setEdit(0);
                         {{-- $store.mk?.resetSelect(); --}}
                         $store.mk?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
                         $wire.addMK(1);
                     "
@@ -39,6 +40,7 @@
                         $store.mk?.setEdit(0);
                         {{-- $store.mk?.resetSelect(); --}}
                         $store.mk?.setColor('text-amber-700 dark:text-amber-400');
+                        $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
                         $wire.addMK(2);
                     "
@@ -58,6 +60,7 @@
                         $store.mk?.setEdit(0);
                         {{-- $store.mk?.resetSelect(); --}}
                         $store.mk?.setColor('text-indigo-700 dark:text-indigo-400');
+                        $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
                         $wire.addMK(3);
                     "
@@ -77,6 +80,7 @@
                         $store.mk?.setEdit(0);
                         {{-- $store.mk?.resetSelect(); --}}
                         $store.mk?.setColor('text-red-700 dark:text-red-400');
+                        $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
                         $wire.addMK(4);
                     "

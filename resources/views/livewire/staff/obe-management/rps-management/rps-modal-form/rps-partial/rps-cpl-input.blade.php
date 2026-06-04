@@ -10,7 +10,11 @@
             Capaian Pembelajaran Lulusan</h4>
 
         @if (!$this->showCPLModal || $this->isEditingCPL == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => 1, 'isSmall' => 1])
+            @include('livewire.staff.obe-management.obe-toolbar', [
+                'typeXString' => 'cpl',
+                'isFlyout' => 1,
+                'isSmall' => 1,
+            ])
         @endif
     </div>
 
@@ -24,7 +28,7 @@
             @include('livewire.staff.obe-management.obe-partial.cpl-list')
 
             @if ($this->showRPSModal)
-                @include('livewire.global.modal-form.search-input-array-form', [
+                @include('livewire.global.modal-form.input-array.search-input-array-form', [
                     'alpine' => 'rps',
                     'xResults' => $cplResults['rps'] ?? [],
                     'selectX' => 'selectCPLArray',
@@ -49,7 +53,7 @@
                 
                     'isRequired' => 0,
                 ])
-             @endif
+            @endif
 
         </div>
 

@@ -39,7 +39,7 @@
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form.jadwal-message-form')
-                        @include('livewire.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addJadwal, saveJadwal, editJadwal, updateJadwal',
                         ])
                     </div>

@@ -1,4 +1,8 @@
-<div class="flex flex-col-reverse sm:flex-row sm:justify-{{ $isLeft ?? null ? 'start' : 'end' }} sm:items-start gap-2 w-full sm:w-auto mt-auto">
+
+@php
+    $justifyClass = $isLeft ?? false ? 'justify-start' : 'justify-end';
+@endphp
+<div class="flex flex-col-reverse sm:flex-row sm:{{ $justifyClass }} sm:items-start gap-2 w-full sm:w-auto mt-auto">
     <div class="flex flex-col sm:flex-row gap-2 mt-2">
 
         {{-- Button Simpan Excel (Green) --}}

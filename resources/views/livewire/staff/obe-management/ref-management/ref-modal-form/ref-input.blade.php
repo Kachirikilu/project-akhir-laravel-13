@@ -47,7 +47,7 @@
                                 'noLabel' => 1,
                                 'modelString' => 'kode_ref_2',
                                 'numberOnly' => 1,
-                                'maxlength' => 6,
+                                'maxLength' => 6,
                                 'iconString' => 'variable',
                                 'placeholder' => 'Contoh: 121104',
                                 'isFocusSelect' => 1,
@@ -82,7 +82,7 @@
                     'nameXString' => 'Penerbit',
                     'modelString' => 'penerbit',
                     'iconString' => 'building-office-2',
-                    'placeholder' => 'Contoh: IEEE atau '.env('UNIVERSITAS'),
+                    'placeholder' => 'Contoh: IEEE atau ' . env('UNIVERSITAS'),
                     'message' => $errors->first('penerbit'),
                 ])
 
@@ -92,7 +92,7 @@
                     'modelString' => 'tahun',
                 
                     'numberOnly' => 1,
-                    'maxlength' => 4,
+                    'maxLength' => 4,
                     'iconString' => 'calendar-days',
                     'placeholder' => 'Masukkan Tahun (Contoh: 2022)',
                     'message' => $errors->first('tahun'),

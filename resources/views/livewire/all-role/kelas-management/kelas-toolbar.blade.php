@@ -19,6 +19,7 @@
                         @click="
                             $store.kelas?.setEdit(0);
                             $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+                            $store.kelas?.reset(1);
                             $flux.modal('kelas-modal').show();
                             $wire.addKelas();
                         "

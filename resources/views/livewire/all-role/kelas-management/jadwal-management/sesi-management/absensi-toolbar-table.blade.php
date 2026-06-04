@@ -11,12 +11,10 @@
             'typeXString' => 'NIM Mahasiswa',
         ])
 
-@if (Auth::user()?->admin || Auth::user()?->dosen)
-
-
-        {{-- Tombol Edit --}}
-        <flux:menu.item
-            @click="
+        @if (Auth::user()?->admin || Auth::user()?->dosen)
+            {{-- Tombol Edit --}}
+            <flux:menu.item
+                @click="
                 $store.sesi?.reset();
                 $store.sesi?.setEdit(1);
                 $store.sesi?.setColor('text-cyan-700 dark:text-cyan-400');
@@ -30,23 +28,27 @@
                     '{{ $x->mhs_terlambat ?? 0 }}',
                     '{{ $x->mhs_izin ?? 0 }}',
                     '{{ $x->mhs_sakit ?? 0 }}',
-                    '{{ $x->mhs_mangkir ?? 0 }}',
-                    '{{ $x->mhs_tidak_masuk ?? 0 }}'
+                    '{{ $x->mhs_tidak_masuk ?? 0 }}',
+                    '{{ $x->mhs_nilai_akhir ?? 0 }}',
+                    '{{ $x->mhs_nilai_index ?? 0 }}',
+                    '{{ $x->mhs_nilai_huruf_asli ?? 'E' }}'
+                    
                 );
                 $flux.modal('absensi-modal').show();
             "
-            wire:click="{{ $editCall }}"
-            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                wire:click="{{ $editCall }}"
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
 
-            <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Edit Absensi</span>
+                <div class="flex justify-between items-center w-full">
+                    <span>Edit Absensi</span>
 
-                <flux:icon wire:loading wire:target="editAbsensi" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
-@endif
+                    <flux:icon wire:loading wire:target="editAbsensi" name="arrow-path"
+                        class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+        @endif
 
 
     </flux:menu>

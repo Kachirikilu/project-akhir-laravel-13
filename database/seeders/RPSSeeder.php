@@ -16,6 +16,9 @@ class RPSSeeder extends Seeder
 {
     public function run(): void
     {
+        $targetRps = 50;
+        $batchSize = 256;
+
         // =========================
         // 1. MASTER CPL (LEBIH BANYAK & VARIATIF)
         // =========================
@@ -113,9 +116,6 @@ class RPSSeeder extends Seeder
             '2020/2021', '2021/2022', '2022/2023',
             '2023/2024', '2024/2025', '2025/2026',
         ];
-
-        $targetRps = 12;
-        $batchSize = 256;
 
         $rpsCreated = 0;
 

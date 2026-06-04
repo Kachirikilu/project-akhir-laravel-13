@@ -23,7 +23,7 @@
                     'nameXString' => 'Urutan Mata Kuliah',
                     'modelString' => 'digit_mk',
                     'numberOnly' => 1,
-                    'maxlength' => 2,
+                    'maxValue' => 200,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
                     'isFocusSelect' => 1,
@@ -35,7 +35,7 @@
         @enderror
     </div>
 
-    @include('livewire.global.modal-form.search-input-form', [
+    @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'mk',
         'xResults' => $prResults,
         'selectX' => 'selectPr',

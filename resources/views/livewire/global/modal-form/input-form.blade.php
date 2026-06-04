@@ -21,7 +21,7 @@
             @else
                 '{{ $typeString ?? 'text' }}' @endif
 }"
-x-effect="
+    x-effect="
     const store = $store.{{ $alpine ?? 'config' }};
 
     if (!store) return;
@@ -59,8 +59,8 @@ x-effect="
                     '{{ $modelString . '.' . $itemsString }}',
                     ''
                 );
-            @else
-                store.{{ $modelString }} = '';
+@else
+store.{{ $modelString }} = '';
             @endif
         @endif
 
@@ -75,8 +75,8 @@ x-effect="
                 '{{ $modelString . '.' . $itemsString }}',
                 valueInput ?? ''
             );
-        @else
-            store.{{ $modelString }} = valueInput ?? '';
+@else
+store.{{ $modelString }} = valueInput ?? '';
         @endif
 
     @endif
@@ -93,27 +93,25 @@ x-effect="
                 x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
-        <input 
-            @if ($isLivewire ?? false)
-                @if (isset($itemsString))
+        <input
+            @if ($readonly ?? null) readonly @endif
+            
+            @if ($isLivewire ?? false) @if (isset($itemsString))
                     wire:model.live="{{ $modelString . '.' . $itemsString }}"
                 @else
-                    wire:model.live="{{ $modelString }}"
-                @endif
+                    wire:model.live="{{ $modelString }}" @endif
             @endif
 
-        @if (isset($itemsString))
-            x-model="valueInput"
+        @if (isset($itemsString)) x-model="valueInput"
         @else
-            x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
-        @endif
+            x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}" @endif
 
 
         name="{{ $modelString }}"
         x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
         :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
         class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
-            w-full border rounded-lg pl-10 px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            focus:ring-2 {{ $readonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
         {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}
         @if (($isDate ?? false) === 'year') inputmode="numeric"
                 oninput="
@@ -138,7 +136,7 @@ x-effect="
             {{-- KODE ONLY --}}
             @elseif (!empty($isKode) && $isKode > 0)
 
-                maxlength="{{ $isKode }}"
+                maxLength="{{ $isKode }}"
 
                 oninput="
                     this.value = this.value
@@ -147,7 +145,8 @@ x-effect="
                         .slice(0, {{ $isKode }})
                 "
 
-            {{-- FLOAT ONLY --}}
+            {{-- Number/ FLOAT ONLY --}}
+
             @elseif (isset($floatOnly) && $floatOnly)
 
                 inputmode="decimal"
@@ -164,29 +163,51 @@ x-effect="
                         parts = val.split('.');
                     }
 
-                    parts[0] = parts[0].slice(0, {{ $maxlength ?? 255 }});
+                    parts[0] = parts[0].slice(0, {{ $maxLength ?? 255 }});
 
                     if (parts.length > 1) {
                         parts[1] = parts[1].slice(0, 2);
                     }
 
-                    this.value = parts.join('.');
+                    val = parts.join('.');
+
+                    @if ($maxValue ?? null)
+                        let numVal = parseFloat(val);
+                        let maxVal = {{ $maxValue }};
+
+                        if (!isNaN(numVal) && numVal > maxVal) {
+                            val = maxVal.toString();
+                        } @endif
+
+                        this.value = val;
+                        "
+                @elseif (isset($numberOnly) && $numberOnly)
+                    inputmode="numeric"
+
+                    oninput=" let val = this.value;
+                        val = val.replace(/[^0-9]/g, '');
+                        @if ($maxLength ?? null) if (val.length > {{ $maxLength }}) {
+                                val = val.slice(0, {{ $maxLength }});
+                            } @endif
+
+                        @if ($maxValue ?? null) let numVal = parseInt(val || 0);
+                            let maxVal = {{ $maxValue }};
+
+                            if (numVal > maxVal) {
+                                val = maxVal.toString();
+                            }
+                        @endif
+                        this.value = val;
+                    "
+
+                onkeydown="
+                    if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
+                        event.preventDefault();
+                    }
                 "
-
-            {{-- NUMBER ONLY --}}
-            @elseif (isset($numberOnly) && $numberOnly)
-
-                inputmode="numeric"
-
-                oninput="
-                    this.value = this.value
-                        .replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '')
-                        .slice(0, {{ $maxlength ?? 255 }})
-                "
-
-            {{-- DEFAULT --}}
-            @else
-                maxlength="{{ $maxlength ?? 255 }}" @endif>
+    @else
+        maxLength="{{ $maxLength ?? 255 }}"
+        @endif>
 
         {{-- Tombol Mata --}}
         @if (($typeString ?? '') === 'password')

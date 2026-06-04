@@ -33,11 +33,8 @@
             'sortFieldString' => 'jumlah_absensi',
             'headString' => 'Absensi',
         ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'tanggal_pelaksanaan',
-            'headString' => 'Tanggal',
-        ])
         @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
+        @include('livewire.global.table.head-sortir', ['sortFieldString' => 'bobot'])
     </x-slot:sortir>
     <x-slot:search>
         <div class="w-full md:w-96 xl:w-108">
@@ -80,7 +77,7 @@
                 Informasi Sesi Kelas
             </th>
 
-            <th colspan="5" class="{{ $headSubKolom }}">
+            <th colspan="6" class="{{ $headSubKolom }}">
                 Informasi Sub-CPMK
             </th>
 
@@ -167,6 +164,13 @@
                 'headString' => 'Waktu Mandiri',
             ])
 
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'kode_cpmk',
+                'headString' => 'CPMK',
+                'isMain' => 1,
+                'isCenter' => 1,
+            ])
+
         </tr>
     </x-slot:header>
 
@@ -238,8 +242,27 @@
             <td class="{{ $subKolom }} min-w-48">{{ $s->tugas ?? '-' }}</td>
             <td class="{{ $subKolom }} whitespace-nowrap text-center">
                 {{ $s->w_tugas ?? 0 }} menit</td>
-            <td class="{{ $subKolom }} whitespace-nowrap text-center">
+            <td class="{{ $subKolom }} {{ $borderR }} whitespace-nowrap text-center">
                 {{ $s->w_mandiri ?? 0 }} menit</td>
+
+            <td class="{{ $secondKolom }} text-center whitespace-nowrap">
+
+                <flux:dropdown>
+                    <button class="cursor-pointer">
+                        <flux:badge icon="academic-cap" color="sky" size="sm">{{ $s->kode_cpmk ?? '---' }}
+                        </flux:badge>
+                    </button>
+
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', [
+                            'x' => $s,
+                            'editString' => 'editSesi',
+                            'nameXString' => 'Sesi',
+                            'confirmDeleteString' => 'deleteSesi',
+                            'copyName' => 'Kode CPMK',
+                            'copyText' => $s->kode_cpmk ?? '',
+                        ])
+                </flux:dropdown>
+            </td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <td class="{{ $mainKolom }} text-center">
@@ -248,28 +271,26 @@
                             inset="top bottom">
                         </flux:button>
 
-                        @include(
-                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                            [
-                                'x' => $s,
-                                'editString' => 'editSesi',
-                                'nameXString' => 'Sesi',
-                                'confirmDeleteString' => 'deleteSesi',
-                                'copyName' => 'Kode Sub-CPMK',
-                                'copyText' => $s->kode_scpmk ?? '',
-                            ]
-                        )
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', [
+                            'x' => $s,
+                            'editString' => 'editSesi',
+                            'nameXString' => 'Sesi',
+                            'confirmDeleteString' => 'deleteSesi',
+                            'copyName' => 'Kode Sub-CPMK',
+                            'copyText' => $s->kode_scpmk ?? '',
+                        ])
 
                     </flux:dropdown>
                 </td>
             @endif
+
 
             {{-- <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
             <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
     @empty
         <tr>
-            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '15' : '14' }}"
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '16' : '15' }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Sesi Pertemuan Kelas ditemukan!
             </td>

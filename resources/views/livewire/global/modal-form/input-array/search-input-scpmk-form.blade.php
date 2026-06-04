@@ -1,119 +1,120 @@
-<div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}" x-data="{
-    open: false,
-    search: @entangle($nameSearchString).live,
-    items: @entangle($idString).live,
-    itemsAll: @entangle($itemsAllString).live,
-    subItems: @entangle($subItemsString).live,
-
-    expanded: [],
-
-    init() {
-        if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-    },
-
-    init() {
-        if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-        if (!Array.isArray(this.subItems)) this.subItems = [];
-
-        this.$nextTick(() => {
-            this.syncToScpmkStore();
-        });
-
-        this.$watch('subItems', (value) => {
-            this.syncToScpmkStore();
-        });
-    },
-
-
-    syncToScpmkStore() {
-        if (typeof $store.cpmk !== 'undefined') {
-            $store.cpmk.update(this.subItems);
-
-            $store.cpmk.setCountSCPMK(this.totalSubCPMK);
-            $store.cpmk.total_bobot = this.grandTotalBobot;
-        }
-    },
-
-    get grandTotalBobot() {
-        return (this.subItems || []).reduce((total, item) => {
-            // Karena subItems[index] berisi { ref: [...], scpmk: [...] }
-            const subArray = item?.scpmk || [];
-            return total + subArray.reduce((subTotal, sub) => {
-                return subTotal + (parseFloat(sub?.bobot) || 0);
-            }, 0);
-        }, 0);
-    },
-
-    parentSelectedId: @entangle($parentIdString ?? null).live,
-
-    get isParentReady() {
-        return this.parentSelectedId != null && this.parentSelectedId != '';
-    },
-
-    addItem(id, kode, slot1, slot2, slot3, subData) {
-        let normalizedId = Number(id);
-        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-            this.items.push(normalizedId);
-
-            this.itemsAll.push({
-                kode: kode,
-                slot1: slot1,
-                slot2: slot2,
-                slot3: slot3
-            });
-
-            this.subItems.push(subData);
-            this.syncToScpmkStore();
-        }
-    },
-
-    removeItem(index) {
-        this.items.splice(index, 1);
-        this.itemsAll.splice(index, 1);
-        this.subItems.splice(index, 1);
-
-        if (this.expanded === index) this.expanded = null;
-        this.syncToScpmkStore();
-    },
-
-    move(index, direction) {
-        let to = index + direction;
-        if (to < 0 || to >= this.items.length) return;
-        const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
-
-        swap(this.items, index, to);
-        swap(this.itemsAll, index, to);
-        swap(this.subItems, index, to);
-
-        if (this.expanded === index) this.expanded = to;
-        else if (this.expanded === to) this.expanded = index;
-
-        this.syncToScpmkStore();
-    },
-
-
-    get totalSubCPMK() {
-        return (this.subItems || []).reduce((total, item) => {
-            return total + (item?.scpmk?.length || 0);
-        }, 0);
-    },
-
-    resetItems() {
-        Flux.modal('reset-confirm-modal-{{ $idString }}').show();
-    },
+<div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
+    x-data="{
+        open: false,
+        search: @entangle($nameSearchString).live,
+        items: @entangle($idString).live,
+        itemsAll: @entangle($itemsAllString).live,
+        subItems: @entangle($subItemsString).live,
     
-    clearAllItems() {
-        this.items = [];
-        this.itemsAll = [];
-        this.subItems = [];
-    },
-}">
+        expanded: [],
+    
+        init() {
+            if (!Array.isArray(this.items)) this.items = [];
+            if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
+        },
+    
+        init() {
+            if (!Array.isArray(this.items)) this.items = [];
+            if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
+            if (!Array.isArray(this.subItems)) this.subItems = [];
+    
+            this.$nextTick(() => {
+                this.syncToScpmkStore();
+            });
+    
+            this.$watch('subItems', (value) => {
+                this.syncToScpmkStore();
+            });
+        },
+    
+    
+        syncToScpmkStore() {
+            if (typeof $store.cpmk !== 'undefined') {
+                $store.cpmk.update(this.subItems);
+    
+                $store.cpmk.setCountSCPMK(this.totalSubCPMK);
+                $store.cpmk.total_bobot = this.grandTotalBobot;
+            }
+        },
+    
+        get grandTotalBobot() {
+            return (this.subItems || []).reduce((total, item) => {
+                // Karena subItems[index] berisi { ref: [...], scpmk: [...] }
+                const subArray = item?.scpmk || [];
+                return total + subArray.reduce((subTotal, sub) => {
+                    return subTotal + (parseFloat(sub?.bobot) || 0);
+                }, 0);
+            }, 0);
+        },
+    
+        parentSelectedId: @entangle($parentIdString ?? null).live,
+    
+        get isParentReady() {
+            return this.parentSelectedId != null && this.parentSelectedId != '';
+        },
+    
+        addItem(id, kode, slot1, slot2, slot3, subData) {
+            let normalizedId = Number(id);
+            if (!this.items.map(i => Number(i)).includes(normalizedId)) {
+                this.items.push(normalizedId);
+    
+                this.itemsAll.push({
+                    kode: kode,
+                    slot1: slot1,
+                    slot2: slot2,
+                    slot3: slot3
+                });
+    
+                this.subItems.push(subData);
+                this.syncToScpmkStore();
+            }
+        },
+    
+        removeItem(index) {
+            this.items.splice(index, 1);
+            this.itemsAll.splice(index, 1);
+            this.subItems.splice(index, 1);
+    
+            if (this.expanded === index) this.expanded = null;
+            this.syncToScpmkStore();
+        },
+    
+        move(index, direction) {
+            let to = index + direction;
+            if (to < 0 || to >= this.items.length) return;
+            const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
+    
+            swap(this.items, index, to);
+            swap(this.itemsAll, index, to);
+            swap(this.subItems, index, to);
+    
+            if (this.expanded === index) this.expanded = to;
+            else if (this.expanded === to) this.expanded = index;
+    
+            this.syncToScpmkStore();
+        },
+    
+    
+        get totalSubCPMK() {
+            return (this.subItems || []).reduce((total, item) => {
+                return total + (item?.scpmk?.length || 0);
+            }, 0);
+        },
+    
+        resetItems() {
+            Flux.modal('reset-confirm-modal-{{ $idString }}').show();
+        },
+    
+        clearAllItems() {
+            this.items = [];
+            this.itemsAll = [];
+            this.subItems = [];
+        },
+    }">
 
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
-    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
+    @include('livewire.global.modal-form.input-array.partial.input-search', ['typeInput' => 'array'])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -124,7 +125,7 @@
             @forelse ($xResults as $x)
                 <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}-{{ $alpine }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-                    
+
                     @include('livewire.global.modal-form.partial.dropdown-items')
 
                     <button type="button"
@@ -189,7 +190,7 @@
     <div
         class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
-        @include('livewire.global.modal-form.partial.scpmk-bobot-akumulasi', [
+        @include('livewire.global.modal-form.input-array.partial.scpmk-bobot-akumulasi', [
             'nilai1' => 5,
             'nilai2' => 15,
             'nilai3' => 25,
@@ -200,20 +201,21 @@
             <template x-for="(id, index) in items" :key="id">
                 <div
                     class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
-                    @include('livewire.global.modal-form.partial.scpmk-header')
-                    @include('livewire.global.modal-form.partial.scpmk-table')
+                    @include('livewire.global.modal-form.input-array.partial.scpmk-header')
+                    @include('livewire.global.modal-form.input-array.partial.scpmk-table')
                 </div>
             </template>
 
             {{-- Empty State --}}
             <div x-show="items.length === 0" class="py-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="academic-cap" variant="outline" class="mb-2 w-8 h-8" />
-                <p class="text-xs font-medium italic">Belum ada {{ $nameXString ?? ucfirst($modelString) }} yang dipilih!</p>
+                <p class="text-xs font-medium italic">Belum ada {{ $nameXString ?? ucfirst($modelString) }} yang
+                    dipilih!</p>
             </div>
         </div>
 
         {{-- Footer Keseluruhan (Total Semua Sub-CPMK dari berbagai CPMK) --}}
-        @include('livewire.global.modal-form.partial.scpmk-bobot-pesan', [
+        @include('livewire.global.modal-form.input-array.partial.scpmk-bobot-pesan', [
             'nilai1' => 5,
             'nilai2' => 15,
             'nilai3' => 25,

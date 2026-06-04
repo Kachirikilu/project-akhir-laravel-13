@@ -11,39 +11,39 @@
 
     <div class="relative space-y-4">
 
-            @include('livewire.global.modal-form.textarea-form', [
-                'alpine' => 'sesi',
-                'nameXString' => 'Deskripsi',
-                'modelString' => 'deskripsi',
-                'iconString' => 'document-text',
-                'placeholder' => 'Masukkan deskripsi ringkas tentang Sub-CPMK...',
-                'message' => $errors->first('deskripsi'),
-            ])
+        @include('livewire.global.modal-form.textarea-form', [
+            'alpine' => 'sesi',
+            'nameXString' => 'Deskripsi',
+            'modelString' => 'deskripsi',
+            'iconString' => 'document-text',
+            'placeholder' => 'Masukkan deskripsi ringkas tentang Sub-CPMK...',
+            'message' => $errors->first('deskripsi'),
+        ])
 
-            @include('livewire.global.modal-form.textarea-form', [
-                'alpine' => 'sesi',
-                'modelString' => 'materi',
-                'iconString' => 'book-open',
-                'placeholder' => 'Masukkan Materi Sub-CPMK...',
-                'message' => $errors->first('materi'),
-                'isRequired' => 0,
-            ])
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'sesi',
-                'modelString' => 'metodologi',
-                'iconString' => 'beaker',
-                'placeholder' => 'Masukkan Metodologi Sub-CPMK...',
-                'message' => $errors->first('metodologi'),
-                'isRequired' => 0,
-            ])
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'sesi',
-                'modelString' => 'indikator',
-                'iconString' => 'clipboard-document-check',
-                'placeholder' => 'Masukkan Indikator Sub-CPMK...',
-                'message' => $errors->first('indikator'),
-                'isRequired' => 0,
-            ])
+        @include('livewire.global.modal-form.textarea-form', [
+            'alpine' => 'sesi',
+            'modelString' => 'materi',
+            'iconString' => 'book-open',
+            'placeholder' => 'Masukkan Materi Sub-CPMK...',
+            'message' => $errors->first('materi'),
+            'isRequired' => 0,
+        ])
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'sesi',
+            'modelString' => 'metodologi',
+            'iconString' => 'beaker',
+            'placeholder' => 'Masukkan Metodologi Sub-CPMK...',
+            'message' => $errors->first('metodologi'),
+            'isRequired' => 0,
+        ])
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'sesi',
+            'modelString' => 'indikator',
+            'iconString' => 'clipboard-document-check',
+            'placeholder' => 'Masukkan Indikator Sub-CPMK...',
+            'message' => $errors->first('indikator'),
+            'isRequired' => 0,
+        ])
 
     </div>
 
@@ -80,7 +80,7 @@
                     'nameXString' => 'Waktu Tugas (Menit)',
                     'modelString' => 'waktu_tugas',
                     'numberOnly' => 1,
-                    'maxlength' => 3,
+                    'maxLength' => 3,
                     'iconString' => 'clock',
                     'placeholder' => 'Default: ' . $kelas->sks * 60 . ' menit',
                     'isRequired' => 0,
@@ -93,7 +93,7 @@
                     'nameXString' => 'Waktu Mandiri (Menit)',
                     'modelString' => 'waktu_mandiri',
                     'numberOnly' => 1,
-                    'maxlength' => 3,
+                    'maxLength' => 3,
                     'iconString' => 'clock',
                     'placeholder' => 'Default: ' . $kelas->sks * 60 . ' menit',
                     'isRequired' => 0,
@@ -105,4 +105,3 @@
     </div>
 
 </div>
-
