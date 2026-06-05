@@ -2,17 +2,15 @@
 
 namespace App\Livewire\Staff\MKManagement;
 
-use App\Livewire\Global\HasSortir;
+// use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithMKFilters
 {
-    use HasSortir;
+    // use HasSortir;
     use WithPagination;
-
-    public $search = '';
 
     public $filterMK = '';
 
@@ -27,11 +25,11 @@ trait WithMKFilters
         $queryMK = MataKuliah::query()
             ->with(['prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel']);
 
-        $search = $this->search;
+        // $search = $this->search;
 
-        if (! empty($search)) {
-            $queryMK->searchMK($search);
-        }
+        // if (! empty($search)) {
+        //     $queryMK->searchMK($search);
+        // }
 
         // Filter Dropdown Silsilah (Tetap di luar closure search)
         if (! empty($this->selectedPrId)) {
@@ -51,7 +49,7 @@ trait WithMKFilters
         //     }
         // }
 
-        $this->sortFieldOrderMK($queryMK);
+        // $this->sortFieldOrderMK($queryMK);
 
         return $queryMK;
     }
@@ -108,44 +106,44 @@ trait WithMKFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderMK($queryMK)
-    {
-        $queryMK->select('mata_kuliahs.*');
+    // public function sortFieldOrderMK($queryMK)
+    // {
+    //     $queryMK->select('mata_kuliahs.*');
 
-        return match ($this->sortField) {
-            'mk' => $queryMK->orderBy('nama_mk', $this->sortDirection),
-            'semester' => $queryMK->orderBy('semester', $this->sortDirection),
-            'sks' => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
-            'wajib' => $queryMK->orderBy('is_wajib', $this->sortDirection),
+    //     return match ($this->sortField) {
+    //         'mk' => $queryMK->orderBy('nama_mk', $this->sortDirection),
+    //         'semester' => $queryMK->orderBy('semester', $this->sortDirection),
+    //         'sks' => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
+    //         'wajib' => $queryMK->orderBy('is_wajib', $this->sortDirection),
 
-            'sks_tm' => $this->applyMKSksTypeSort($queryMK),
-            'sks_pr' => $this->applyMKSksTypeSort($queryMK),
-            'sks_pl' => $this->applyMKSksTypeSort($queryMK),
-            'sks_sm' => $this->applyMKSksTypeSort($queryMK),
+    //         'sks_tm' => $this->applyMKSksTypeSort($queryMK),
+    //         'sks_pr' => $this->applyMKSksTypeSort($queryMK),
+    //         'sks_pl' => $this->applyMKSksTypeSort($queryMK),
+    //         'sks_sm' => $this->applyMKSksTypeSort($queryMK),
 
-            'digit_mk' => $queryMK->orderBy('digit_mk', $this->sortDirection),
-            'created_at' => $queryMK->orderBy('created_at', $this->sortDirection),
-            'updated_at' => $queryMK->orderBy('updated_at', $this->sortDirection),
+    //         'digit_mk' => $queryMK->orderBy('digit_mk', $this->sortDirection),
+    //         'created_at' => $queryMK->orderBy('created_at', $this->sortDirection),
+    //         'updated_at' => $queryMK->orderBy('updated_at', $this->sortDirection),
 
-            'kode' => $this->applyMKKodeSort($queryMK),
+    //         'kode' => $this->applyMKKodeSort($queryMK),
 
-            default => $queryMK->orderBy('mata_kuliahs.id', $this->sortDirection),
-        };
-    }
+    //         default => $queryMK->orderBy('mata_kuliahs.id', $this->sortDirection),
+    //     };
+    // }
 
-    private function applyMKSksTypeSort($queryMK)
-    {
-        $typeMap = [
-            'sks_tm' => 1,
-            'sks_pr' => 2,
-            'sks_pl' => 3,
-            'sks_sm' => 4,
-        ];
+    // private function applyMKSksTypeSort($queryMK)
+    // {
+    //     $typeMap = [
+    //         'sks_tm' => 1,
+    //         'sks_pr' => 2,
+    //         'sks_pl' => 3,
+    //         'sks_sm' => 4,
+    //     ];
 
-        $targetType = $typeMap[$this->sortField];
+    //     $targetType = $typeMap[$this->sortField];
 
-        return $queryMK->orderByRaw("
-            CASE WHEN tipe_sks = $targetType THEN sks_kuliah ELSE 0 END $this->sortDirection
-        ");
-    }
+    //     return $queryMK->orderByRaw("
+    //         CASE WHEN tipe_sks = $targetType THEN sks_kuliah ELSE 0 END $this->sortDirection
+    //     ");
+    // }
 }

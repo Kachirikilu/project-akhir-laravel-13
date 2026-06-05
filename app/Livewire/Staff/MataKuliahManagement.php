@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
@@ -19,6 +20,7 @@ use Livewire\WithPagination;
 class MataKuliahManagement extends Component
 {
     use HasToast;
+    use WithMKSearchFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKDelete;
@@ -33,6 +35,8 @@ class MataKuliahManagement extends Component
     public $perPage = 8;
 
     public $switchTable = '';
+    
+    public $search = '';
 
     protected $paginationTheme = 'tailwind';
 
@@ -118,96 +122,7 @@ class MataKuliahManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
-    // public function render()
-    // {
-    //     // 1. Jalankan filter input (Prodi, Departemen, Fakultas)
-    //     $this->inputPrFilter();
-    //     $this->inputDpFilter();
-    //     $this->inputFkFilter();
-
-    //     try {
-    //         // 2. Inisialisasi Base Query (Pencarian Utama)
-    //         $queryMK = $this->inputMKSearch()
-    //             ->when($this->showDeleted, fn ($q) => $q->onlyTrashed());
-
-    //         // 3. Ambil Data Mentah untuk Statistik (Gunakan clone agar tidak merusak queryMK)
-    //         $baseMK = $queryMK->clone()
-    //             ->get([
-    //                 'mata_kuliahs.id',
-    //                 'mata_kuliahs.tipe_sks',
-    //                 'mata_kuliahs.is_wajib',
-    //                 'mata_kuliahs.level_mk',
-    //             ])
-    //             ->unique('id');
-
-    //         // --- Perhitungan Statistik Statistik ---
-    //         $totalMK = $baseMK->count();
-    //         $totalTatapMuka = $baseMK->where('tipe_sks', 1)->count();
-    //         $totalPraktikum = $baseMK->where('tipe_sks', 2)->count();
-    //         $totalPraktek = $baseMK->where('tipe_sks', 3)->count();
-    //         $totalSimulasi = $baseMK->where('tipe_sks', 4)->count();
-
-    //         // 4. Filter berdasarkan Tab (Switch Table)
-    //         $mapTipe = [
-    //             'tatap_muka' => 1,
-    //             'praktikum' => 2,
-    //             'praktek_lapangan' => 3,
-    //             'simulasi' => 4,
-    //         ];
-
-    //         $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
-
-    //         // Filter data untuk counter Opsi (Wajib, Pilihan, Uni) berdasarkan tab aktif
-    //         $currentTabData = $currentTabTipe
-    //             ? $baseMK->where('tipe_sks', $currentTabTipe)
-    //             : $baseMK;
-
-    //         $totalAllOpsi = $currentTabData->count();
-    //         $totalWajib = $currentTabData->where('is_wajib', true)->count();
-    //         $totalPilihan = $currentTabData->where('is_wajib', false)->count();
-    //         $totalUni = $currentTabData->where('level_mk', 4)->count();
-
-    //         // 5. Query Final untuk Tabel (Pagination)
-    //         $queryMK = $queryMK->clone();
-
-    //         if ($currentTabTipe) {
-    //             $queryMK->where('tipe_sks', $currentTabTipe);
-    //         }
-
-    //         // Terapkan filter tambahan dari button (jika ada)
-    //         $this->buttonMKFilter($queryMK);
-
-    //         return view('livewire.staff.mk-management', [
-    //             'mks' => $queryMK->paginate($this->perPage),
-    //             'totalAllOpsi' => $totalAllOpsi,
-    //             'totalWajib' => $totalWajib,
-    //             'totalPilihan' => $totalPilihan,
-    //             'totalUni' => $totalUni,
-    //             'totalMK' => $totalMK,
-    //             'totalTatapMuka' => $totalTatapMuka,
-    //             'totalPraktikum' => $totalPraktikum,
-    //             'totalPraktek' => $totalPraktek,
-    //             'totalSimulasi' => $totalSimulasi,
-    //         ]);
-
-    //     } catch (QueryException $e) {
-    //         $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
-
-    //         return view('livewire.staff.mk-management', [
-    //             'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
-    //             'totalAllOpsi' => '-',
-    //             'totalWajib' => '-',
-    //             'totalPilihan' => '-',
-    //             'totalUni' => '-',
-    //             'totalMK' => '-',
-    //             'totalTatapMuka' => '-',
-    //             'totalPraktikum' => '-',
-    //             'totalPraktek' => '-',
-    //             'totalSimulasi' => '-',
-    //         ]);
-    //     }
-    // }
-
+    
     public function render()
     {
         $this->inputPrFilter();
@@ -215,32 +130,13 @@ class MataKuliahManagement extends Component
         $this->inputFkFilter();
 
         try {
-            // =========================
-            // QUERY UTAMA (TABLE)
-            // =========================
             $queryMK = $this->inputMKSearch();
-
-            // =========================
-            // QUERY COUNT (TERPISAH 🔥)
-            // =========================
             $countMK = MataKuliah::query();
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryMK->onlyTrashed();
                 $countMK->onlyTrashed();
             }
-
-            // // =========================
-            // // MAP TAB
-            // // =========================
-            // $mapTipe = [
-            //     'tatap-muka' => 1,
-            //     'praktikum' => 2,
-            //     'praktek-lapangan' => 3,
-            //     'simulasi' => 4,
-            // ];
-
-            // $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
 
             // =========================
             // STATS GLOBAL (FULL DATA)
@@ -272,8 +168,10 @@ class MataKuliahManagement extends Component
             $this->buttonMKSwitch($queryMK);
             $this->buttonMKFilter($queryMK);
 
+            $mk = $this->searchOutputMK($queryMK, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+
             return view('livewire.staff.mk-management', [
-                'mks' => $queryMK->paginate($this->perPage),
+                'mks' => $mk,
 
                 'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
                 'totalGanjil' => $this->totalGanjil,

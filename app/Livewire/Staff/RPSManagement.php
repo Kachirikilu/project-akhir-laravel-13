@@ -333,8 +333,8 @@ class RPSManagement extends Component
             switch ($this->switchTable) {
                 case 'rps':
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
-                    // $data['rps'] = $this->searchOutputRPS($queryRPS);
-                    $data['rps'] = $queryRPS->paginate($this->perPage);
+                    $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $data['rps'] = $queryRPS->paginate($this->perPage);
                     break;
                 case 'cpmk':
                     $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);

@@ -54,7 +54,7 @@
                     'rowSpan' => 2,
                 ])
 
-                <th colspan="5" class="{{ $headSubKolom }}">
+                <th colspan="6" class="{{ $headSubKolom }}">
                     Mata Kuliah
                 </th>
                 <th colspan="3" class="{{ $headSubKolom }}">
@@ -160,6 +160,10 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
                     'headString' => 'Mata Kuliah',
+                    'isBorderR' => 1
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'semester',
                 ])
 
                 @include('livewire.global.table.head-table', [
@@ -168,15 +172,13 @@
                 ])
 
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks_text',
-                    'headString' => 'Pembelajaran',
+                    'sortFieldString' => 'pembelajaran',
                     'isCenter' => 1,
                     'isBorderR' => 1,
                 ])
 
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'is_wajib',
-                    'headString' => 'Wajib',
+                    'sortFieldString' => 'wajib',
                     'isMain' => 1,
                     'isCenter' => 1,
                 ])
@@ -336,7 +338,8 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $subKolom }} whitespace-nowrap">{{ $x->mk ?? '-' }}</td>
+                <td class="{{ $subKolom }} {{ $borderR }} whitespace-nowrap">{{ $x->mk ?? '-' }}</td>
+                <td class="{{ $subKolom }} whitespace-nowrap">Semester {{ $x->semester ?? '-' }}</td>
                 <td class="{{ $subKolom }} whitespace-nowrap text-center">{{ $x->sks ?? '-' }} SKS</td>
                 <td class="{{ $subKolom }} whitespace-nowrap text-center">{{ $x->sks_text ?? '-' }}</td>
                 <td class="{{ $mainKolom }} {{ $borderR }} text-center">
@@ -358,7 +361,8 @@
                 </td>
 
                 <td class="{{ $secondKolom }} {{ $borderL }} whitespace-nowrap text-center">
-                    {{ $x->cpmks_count . ' CPMK' ?? '-' }}
+                    {{-- {{ $x->cpmks_count . ' CPMK' ?? '-' }} --}}
+                    {{ $x->count_cpmk . ' CPMK' ?? '-' }}
                 </td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">
 
@@ -534,7 +538,7 @@
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'rps' => 16,
+                    'rps' => 17,
                     'cpmk' => 8,
                     'sub-cpmk' => 14,
                     'cpl' => 6,

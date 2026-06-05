@@ -4,6 +4,7 @@ namespace App\Models\Penilaian;
 
 use App\Models\Auth\Mahasiswa;
 use App\Models\Kelas\KelasJadwal;
+use App\Models\Akademik\RPS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,12 +26,8 @@ class NilaiMahasiswa extends Model
 
     protected $casts = [
         'nilai' => 'decimal:2',
-
-        // otomatis jadi array PHP
         'nilai_array' => 'array',
         'bobot_array' => 'array',
-
-        'is_locked' => 'boolean',
     ];
 
     /*
@@ -52,6 +49,14 @@ class NilaiMahasiswa extends Model
         return $this->belongsTo(
             KelasJadwal::class,
             'kj_id'
+        );
+    }
+
+    public function rps_rel(): BelongsTo
+    {
+        return $this->belongsTo(
+            RPS::class,
+            'rps_id'
         );
     }
 

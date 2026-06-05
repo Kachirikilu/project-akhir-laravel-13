@@ -71,7 +71,26 @@ class KelasJadwal extends Model
             return $kode ? (int) $kode : null;
         });
     }
-    
+
+    protected function tahunAkademik(): Attribute
+    {
+        return Attribute::get(function () {
+
+            if (empty($this->tanggal_mulai)) {
+                return null;
+            }
+
+            $tanggal = Carbon::parse($this->tanggal_mulai);
+
+            if ($tanggal->month >= 8) {
+                $tahunAwal = $tanggal->year;
+            } else {
+                $tahunAwal = $tanggal->year - 1;
+            }
+
+            return $tahunAwal.'/'.($tahunAwal + 1);
+        });
+    }
 
     protected function tahun(): Attribute
     {

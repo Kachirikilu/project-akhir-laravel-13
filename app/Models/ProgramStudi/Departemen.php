@@ -117,49 +117,49 @@ class Departemen extends Model
         });
     }
 
-    public function scopeSearchDepartemen(Builder $query, $search)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
+    // public function scopeSearchDepartemen(Builder $query, $search)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
 
-        $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
-        $searchTerm = '%'.$search.'%';
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-            // 1. Filter dasar Departemen
-            $q->where('departemens.nama_dp', 'like', $searchTerm)
-                ->orWhere('departemens.kode_dp', 'like', $searchTerm)
-                ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+    //         // 1. Filter dasar Departemen
+    //         $q->where('departemens.nama_dp', 'like', $searchTerm)
+    //             ->orWhere('departemens.kode_dp', 'like', $searchTerm)
+    //             ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
 
-            if (is_numeric($search)) {
-                $q->orWhere('departemens.id', 'like', $search);
-            }
+    //         if (is_numeric($search)) {
+    //             $q->orWhere('departemens.id', 'like', $search);
+    //         }
 
-                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(departemens.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(departemens.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("DATE_FORMAT(departemens.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(departemens.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-                });
+    //             $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+    //                 $dq->whereRaw("DATE_FORMAT(departemens.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(departemens.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("DATE_FORMAT(departemens.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(departemens.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(departemens.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+    //             });
 
-            // 2. Filter berdasarkan Fakultas (Relasi)
-            $q->orWhereHas('fk_rel', function ($sq) use ($searchTerm) {
-                $sq->withTrashed()->where(function($ssf) use ($searchTerm) {
-                    $ssf->where('nama_fk', 'like', $searchTerm)
-                        ->orWhere('kode_fk', 'like', $searchTerm)
-                        ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
-                });
-            });
-        });
-    }
+    //         // 2. Filter berdasarkan Fakultas (Relasi)
+    //         $q->orWhereHas('fk_rel', function ($sq) use ($searchTerm) {
+    //             $sq->withTrashed()->where(function($ssf) use ($searchTerm) {
+    //                 $ssf->where('nama_fk', 'like', $searchTerm)
+    //                     ->orWhere('kode_fk', 'like', $searchTerm)
+    //                     ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+    //             });
+    //         });
+    //     });
+    // }
 }

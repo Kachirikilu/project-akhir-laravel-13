@@ -204,70 +204,70 @@ class Prodi extends Model
         });
     }
 
-    public function scopeSearchProdi(Builder $query, $search)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
+    // public function scopeSearchProdi(Builder $query, $search)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
 
-        $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
-        $searchTerm = '%'.$search.'%';
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-            // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
-            $q->where('prodis.nama_pr', 'like', $searchTerm)
-                ->orWhere('prodis.kode_pr', 'like', $searchTerm);
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+    //         // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
+    //         $q->where('prodis.nama_pr', 'like', $searchTerm)
+    //             ->orWhere('prodis.kode_pr', 'like', $searchTerm);
 
-            if (is_numeric($search)) {
-                $q->orWhere('prodis.id', 'like', $search);
-            }
+    //         if (is_numeric($search)) {
+    //             $q->orWhere('prodis.id', 'like', $search);
+    //         }
 
-            // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
-            $q->orWhereRaw("
-                CONCAT(
-                    CASE 
-                        WHEN strata = 'Sarjana' THEN 'S1' 
-                        WHEN strata = 'Magister' THEN 'S2' 
-                        WHEN strata = 'Doktor' THEN 'S3' 
-                        ELSE strata 
-                    END, 
-                    ' ', 
-                    nama_pr
-                ) LIKE ?", [$searchTerm])
-                ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+    //         // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
+    //         $q->orWhereRaw("
+    //             CONCAT(
+    //                 CASE 
+    //                     WHEN strata = 'Sarjana' THEN 'S1' 
+    //                     WHEN strata = 'Magister' THEN 'S2' 
+    //                     WHEN strata = 'Doktor' THEN 'S3' 
+    //                     ELSE strata 
+    //                 END, 
+    //                 ' ', 
+    //                 nama_pr
+    //             ) LIKE ?", [$searchTerm])
+    //             ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
 
-            $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-                $dq->whereRaw("DATE_FORMAT(prodis.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(prodis.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-            });
+    //         $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+    //             $dq->whereRaw("DATE_FORMAT(prodis.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(prodis.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+    //         });
 
-            // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
-            $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
-                $j->withTrashed()->where(function ($sq) use ($searchTerm) {
-                    $sq->where('nama_dp', 'like', $searchTerm)
-                        ->orWhere('kode_dp', 'like', $searchTerm)
-                        ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
-                })
-                // 4. Filter Relasi ke Fakultas (Termasuk kode_fk)
-                    ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
-                        $f->withTrashed()->where(function ($sf) use ($searchTerm) {
-                            $sf->where('nama_fk', 'like', $searchTerm)
-                                ->orWhere('kode_fk', 'like', $searchTerm)
-                                ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
-                        });
-                    });
-            });
-        });
-    }
+    //         // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
+    //         $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+    //             $j->withTrashed()->where(function ($sq) use ($searchTerm) {
+    //                 $sq->where('nama_dp', 'like', $searchTerm)
+    //                     ->orWhere('kode_dp', 'like', $searchTerm)
+    //                     ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
+    //             })
+    //             // 4. Filter Relasi ke Fakultas (Termasuk kode_fk)
+    //                 ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+    //                     $f->withTrashed()->where(function ($sf) use ($searchTerm) {
+    //                         $sf->where('nama_fk', 'like', $searchTerm)
+    //                             ->orWhere('kode_fk', 'like', $searchTerm)
+    //                             ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+    //                     });
+    //                 });
+    //         });
+    //     });
+    // }
 }

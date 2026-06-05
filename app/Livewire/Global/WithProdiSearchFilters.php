@@ -3,11 +3,15 @@
 namespace App\Livewire\Global;
 
 use App\Models\ProgramStudi\Prodi;
+use App\Livewire\Global\LogicSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithProdiSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $prSearchQuery = '';
@@ -70,9 +74,8 @@ trait WithProdiSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->pr_name) {
             $this->prSearchResults = $this->mapPr(
-                $this->prQuery()
-                    ->searchProdi($search)
-                    ->limit(12)->get()
+                // $this->prQuery()->searchProdi($search)->limit(12)->get()
+                $this->searchOutputPr($this->prQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->pr_name) {
             $this->prSearchResults = $this->getPrbyUser();
@@ -133,7 +136,8 @@ trait WithProdiSearchFilters
         }
 
         // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
-        $results = $query->searchProdi($value)->limit(12)->get();
+        // $results = $query->searchProdi($value)->limit(12)->get();
+        $results = $this->searchOutputPr($query, $value, 12);
         $this->prResults = $this->mapPr($results);
 
         // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
@@ -312,6 +316,7 @@ trait WithProdiSearchFilters
             }
         }
     }
+
     public function havePrParent($query)
     {
         if (property_exists($this, 'showMKModal') && property_exists($this, 'mkType')) {
@@ -324,6 +329,160 @@ trait WithProdiSearchFilters
             //     $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $fakultasId));
             // }
         }
+
         return $query;
+    }
+
+    public function searchOutputPr($queryPr, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || $sortField) {
+
+            $allPr = (clone $queryPr)->get();
+
+            if (! empty($search)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allPr = $allPr->filter(function ($pr) use ($searchLower, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+
+                    $matchID = $this->matchID(
+                        $pr->id,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KODE RPS
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchKode = $this->matchKode(
+                        $pr->kode,
+                        $searchLower
+                    );
+                    $matchKodeDp = $this->matchKode(
+                        $pr->kode_dp,
+                        $searchLower
+                    );
+                    $matchKodeFk = $this->matchKode(
+                        $pr->kode_fk,
+                        $searchLower
+                    );
+
+                    $matchPr = $this->containsStrict(
+                        $pr->prodi,
+                        $searchLower
+                    );
+
+                    $baseDp = [
+                        $pr->departemen,
+                        $pr->departemen_dp,
+                    ];
+                    $matchDp = false;
+                    foreach ($baseDp as $fak) {
+                        $candidates = [
+                            $fak.' '.$pr->kode_dp,
+                            $fak.' ('.$pr->kode_dp.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchDp = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $baseFk = [
+                        $pr->fakultas,
+                        $pr->fakultas_fk,
+                    ];
+                    $matchFk = false;
+                    foreach ($baseFk as $fak) {
+                        $candidates = [
+                            $fak.' '.$pr->kode_fk,
+                            $fak.' ('.$pr->kode_fk.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchFk = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $matchStrata = $this->containsStrict(
+                        $pr->strata,
+                        $searchLower
+                    );
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $pr->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $pr->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                    }
+
+                    return
+                        $matchID
+                        || $matchKode
+                        || $matchKodeDp
+                        || $matchKodeFk
+
+                        || $matchPr
+                        || $matchDp
+                        || $matchFk
+
+                        || $matchStrata
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'kode' => fn ($pr) => $pr->kode,
+
+                'prodi', 'program-studi' => fn ($pr) => $pr->prodi,
+                'departemen' => fn ($pr) => $pr->departemen,
+                'fakultas' => fn ($pr) => $pr->fakultas,
+                'strata' => fn ($pr) => $pr->strata,
+
+                'created_at' => fn ($pr) => $pr->created_at,
+                'updated_at' => fn ($pr) => $pr->updated_at,
+
+                default => fn ($pr) => $pr->id,
+            };
+
+            $allPr = $sortDirection === 'asc'
+                ? $allPr->sortBy($sortValue)
+                : $allPr->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allPr->forPage($currentPage, $perPage)->values(),
+                $allPr->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $queryPr->paginate($perPage);
     }
 }

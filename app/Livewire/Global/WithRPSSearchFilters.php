@@ -3,12 +3,16 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\RPS;
+use App\Livewire\Global\LogicSearch;
 use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithRPSSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $rpsSearchQuery = '';
@@ -29,7 +33,6 @@ trait WithRPSSearchFilters
 
     public $selectedRPSId = null;
 
-    // Properti Array untuk Multiple Selection jika dibutuhkan
     public $rps_id_array = [];
 
     public $rps_items_array = [];
@@ -114,7 +117,8 @@ trait WithRPSSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->rps_name) {
             $this->rpsSearchResults = $this->mapRPSSearch(
-                $this->rpsQuery()->searchRPS($search)->limit(12)->get()
+                // $this->rpsQuery()->searchRPS($search)->limit(12)->get()
+                $this->searchOutputRPS($this->rpsQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->rps_name) {
             $this->rpsSearchResults = $this->getRPSbyUser('search');
@@ -154,7 +158,8 @@ trait WithRPSSearchFilters
         $this->haveRPSParent($query);
 
         if (trim(strlen($value)) > 0) {
-            $results = $query->searchRPS($value)->limit(12)->get();
+            // $results = $query->searchRPS($value)->limit(12)->get();
+            $results = $this->searchOutputRPS($query, $value, null, 12);
             $this->rpsResults = $this->mapRPS($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -291,5 +296,264 @@ trait WithRPSSearchFilters
         }
 
         return $query;
+    }
+
+    public function searchOutputRPS($queryRPS, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchBobot = strtolower(trim($searchBobot));
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || ! empty($searchBobot) || $sortField) {
+
+            $allRPS = (clone $queryRPS)->get();
+
+            if (! empty($search) || ! empty($searchBobot)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allRPS = $allRPS->filter(function ($rps) use ($searchLower, $searchBobot, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    $numberBobot = preg_replace('/[^0-9.]/', '', $searchBobot);
+                    $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
+
+                    $matchID = $this->matchID(
+                        $rps->id,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KODE RPS
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchKode = $this->matchKode(
+                        $rps->kode,
+                        $searchLower
+                    );
+                    $matchKodeMK = $this->matchKode(
+                        $rps->kode_mk,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | NAMA MK
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchMK = $this->containsStrict(
+                        $rps->mk,
+                        $searchLower
+                    );
+                    $matchRPS = $this->containsStrict(
+                        $rps->rps,
+                        $searchLower
+                    );
+                    $matchAkademik = $this->matchAkademik(
+                        $rps->akademik,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SEMESTER
+                    |--------------------------------------------------------------------------
+                    */
+                    $semester = (int) ($rps->semester ?? 0);
+                    $matchSemester = false;
+                    if ($isNumericSearch
+                        && (
+                            str_contains($searchLower, 'sem')
+                            || str_contains($searchLower, 'semester')
+                        )
+                    ) {
+                        $matchSemester = $semester === (int) $number;
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SKS
+                    |--------------------------------------------------------------------------
+                    */
+                    $sks = (int) ($rps->sks ?? 0);
+                    $matchSKS = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetSKS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchSKS = $sks === $targetSKS;
+                    }
+
+                    $matchSKSText = $this->matchSKSText(
+                        $rps->sks_text,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | GANJIL / GENAP
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchSemesterJenis = $this->matchSemesterJenis(
+                        $rps->semester,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CPMK COUNT
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchCPMK = $this->matchCount(
+                        $rps->count_cpmk,
+                        $searchLower,
+                        ['cpmk', 'cpl']
+                    );
+
+                    $matchSCPMK = $this->matchCount(
+                        $rps->count_scpmk,
+                        $searchLower,
+                        [
+                            'scpmk',
+                            'sub-cpmk',
+                            'subcpmk',
+                            'pertemuan',
+                        ]
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | TOTAL BOBOT
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchBobot = false;
+                    if ($isNumericSearch) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $rps->total_bobot,
+                            $searchLower
+                        );
+                    }
+                    if (! empty($searchBobot)) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $rps->total_bobot,
+                            $searchBobot
+                        );
+                    }
+
+                    $matchDraf = $this->matchDraf(
+                        $rps->draf_text,
+                        $searchLower
+                    );
+
+                    $matchWajib = $this->matchWajib(
+                        $rps->wajib_text,
+                        $searchLower
+                    );
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $rps->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $rps->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    $matchRevisi = $this->matchDateField(
+                        $rps->revisi,
+                        $searchLower,
+                        ['revisi', 'revision']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                        case 'semester':
+                            return $matchSemester || $matchSemesterJenis;
+                        case 'sks':
+                            return $matchSKS || $matchSKSText;
+                        case 'cpmk':
+                            return $matchCPMK;
+                        case 'scpmk':
+                            return $matchSCPMK;
+                        case 'bobot':
+                            return $matchBobot;
+                        case 'wajib':
+                            return $matchWajib;
+                        case 'status':
+                            return $matchDraf;
+                    }
+
+                    return
+                        $matchID
+                        || $matchKode
+                        || $matchAkademik
+
+                        || $matchKodeMK
+                        || $matchMK
+                        || $matchRPS
+                        || $matchSemester
+                        || $matchSemesterJenis
+                        || $matchSKS
+                        || $matchSKSText
+
+                        || $matchCPMK
+                        || $matchSCPMK
+                        || $matchBobot
+
+                        || $matchDraf
+                        || $matchWajib
+                        || $matchRevisi
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'kode' => fn ($rps) => $rps->kode,
+                'akademik' => fn ($rps) => $rps->akademik,
+
+                'kode_mk' => fn ($rps) => $rps->kode_mk,
+                'mk' => fn ($rps) => $rps->mk,
+                'semester' => fn ($rps) => (int) $rps->semester,
+                'sks' => fn ($rps) => (int) $rps->sks,
+                'sks_text', 'pembelajaran' => fn ($rps) => $rps->sks_text,
+                'is_wajib', 'wajib' => fn ($rps) => $rps->wajib_text,
+
+                'count_cpmk' => fn ($rps) => (int) $rps->count_cpmk,
+                'count_scpmk' => fn ($rps) => (int) $rps->count_scpmk,
+                'total_bobot' => fn ($rps) => (float) $rps->total_bobot,
+
+                'is_draf', 'status' => fn ($rps) => $rps->draf_text,
+                'revisi' => fn ($rps) => $rps->revisi,
+
+                'created_at' => fn ($rps) => $rps->created_at,
+                'updated_at' => fn ($rps) => $rps->updated_at,
+
+                default => fn ($rps) => $rps->id,
+            };
+
+            $allRPS = $sortDirection === 'asc'
+                ? $allRPS->sortBy($sortValue)
+                : $allRPS->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allRPS->forPage($currentPage, $perPage)->values(),
+                $allRPS->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+        return $queryRPS->paginate($perPage);
     }
 }

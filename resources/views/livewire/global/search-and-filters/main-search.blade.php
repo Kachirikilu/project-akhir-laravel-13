@@ -7,7 +7,7 @@
 
 <div x-data="{
     search: @entangle('search'){{ $isLive ? '.live' : '' }},
-    isRealtime: false,
+    isRealtime: true,
     clickTimer: null,
     lastClick: 0,
 

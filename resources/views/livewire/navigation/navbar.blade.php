@@ -98,6 +98,14 @@
                     'roles' => ['admin', 'dosen', 'mahasiswa'],
                     'active_routes' => ['kelas-management', 'jadwal-management', 'sesi-management'],
                 ],
+                [
+                    'type' => 'link',
+                    'icon' => 'academic-cap',
+                    'route' => 'nilai-mahasiswa',
+                    'label' => 'Nilai Kuliah',
+                    'roles' => ['mahasiswa'],
+                    'active_routes' => ['nilai-mahasiswa'],
+                ],
             ];
 
             $navItems = array_filter($allNavItems, function ($item) use ($user) {

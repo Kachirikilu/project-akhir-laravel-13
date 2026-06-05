@@ -14,17 +14,26 @@ return new class extends Migration
         Schema::create('nilai_mahasiswa', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->cascadeOnDelete();
-            $table->foreignId('kj_id')->constrained('kelas_jadwals')->cascadeOnDelete();
+            $table->foreignId('kj_id')->nullable()->constrained('kelas_jadwals')->nullOnDelete();
+
+            $table->foreignId('rps_id')->nullable()->constrained('rps')->nullOnDelete();
+            $table->enum('ganjil_genap', ['Ganjil', 'Genap'])->nullable();
+            $table->string('tahun_akademik', 20)->nullable();
 
             $table->decimal('nilai', 5, 2)->nullable();
             $table->json('nilai_array')->nullable();
             $table->json('bobot_array')->nullable();
 
-            $table->boolean('is_locked')->default(false);
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique(['mahasiswa_id', 'kj_id']);
+            $table->unique([
+                'mahasiswa_id',
+                'rps_id',
+                'ganjil_genap',
+                'tahun_akademik',
+            ], 'nm_mhs_rps_sem_ta_unique'
+            );
         });
 
         Schema::create('rekap_cpl_mahasiswa', function (Blueprint $table) {

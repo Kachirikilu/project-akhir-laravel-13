@@ -75,10 +75,9 @@
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'digit_mk',
+                'sortFieldString' => 'no_mk',
                 'rowSpan' => 2,
                 'isCenter' => 1,
-                'headString' => 'No',
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',

@@ -3,11 +3,15 @@
 namespace App\Livewire\Global;
 
 use App\Models\ProgramStudi\Departemen;
+use App\Livewire\Global\LogicSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithDepartemenSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $dpSearchQuery = '';
@@ -72,9 +76,8 @@ trait WithDepartemenSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dp_name) {
             $this->dpSearchResults = $this->mapDpSearch(
-                $this->dpQuery()
-                    ->searchDepartemen($search)
-                    ->limit(12)->get()
+                // $this->dpQuery()->searchDepartemen($search)->limit(12)->get()
+                $this->searchOutputPr($this->dpQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->dp_name) {
             $this->dpSearchResults = $this->getDpbyUser('search');
@@ -112,8 +115,9 @@ trait WithDepartemenSearchFilters
         $query = $this->dpQuery()->select('departemens.*');
 
         if (trim(strlen($value)) > 0) {
+            // $results = $query->searchDepartemen($value)->limit(12)->get();
+            $results = $this->searchOutputPr($query, $value, 12);
 
-            $results = $query->searchDepartemen($value)->limit(12)->get();
             $this->dpResults = $this->mapDp($results);
 
             $exactMatch = $results->first(function ($departemen) use ($value) {
@@ -234,4 +238,138 @@ trait WithDepartemenSearchFilters
             }
         }
     }
+
+    // public function searchOutputDp($queryDp, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    // {
+    //     $search = trim($searchRaw);
+    //     $searchLower = strtolower($search);
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+    //     if (! empty($search) || $sortField) {
+
+    //         $allDp = (clone $queryDp)->get();
+
+    //         if (! empty($search)) {
+
+    //             $mode = $this->detectSearchMode($searchLower);
+
+    //             $allDp = $allDp->filter(function ($dp) use ($searchLower, $mode) {
+    //                 $number = preg_replace('/[^0-9.]/', '', $searchLower);
+    //                 $isNumericSearch = is_numeric($number) && $number !== '';
+
+    //                 $matchID = $this->matchID(
+    //                     $dp->id,
+    //                     $searchLower
+    //                 );
+
+    //                 /*
+    //                 |--------------------------------------------------------------------------
+    //                 | KODE RPS
+    //                 |--------------------------------------------------------------------------
+    //                 */
+    //                 $matchKode = $this->matchKode(
+    //                     $dp->kode,
+    //                     $searchLower
+    //                 );
+    //                 $matchKodeFk = $this->matchKode(
+    //                     $dp->kode_fk,
+    //                     $searchLower
+    //                 );
+
+    //                 $baseDp = [
+    //                     $dp->departemen,
+    //                     $dp->departemen_dp,
+    //                 ];
+                    
+    //                 $matchDp = false;
+    //                 foreach ($baseDp as $fak) {
+    //                     $candidates = [
+    //                         $fak.' '.$dp->kode_dp,
+    //                         $fak.' ('.$dp->kode_dp.')',
+    //                     ];
+    //                     foreach ($candidates as $candidate) {
+    //                         if ($this->containsStrict($candidate, $searchLower)) {
+    //                             $matchDp = true;
+    //                             break 2;
+    //                         }
+    //                     }
+    //                 }
+
+    //                 $baseFk = [
+    //                     $dp->fakultas,
+    //                     $dp->fakultas_fk,
+    //                 ];
+    //                 $matchFk = false;
+    //                 foreach ($baseFk as $fak) {
+    //                     $candidates = [
+    //                         $fak.' '.$dp->kode_fk,
+    //                         $fak.' ('.$dp->kode_fk.')',
+    //                     ];
+    //                     foreach ($candidates as $candidate) {
+    //                         if ($this->containsStrict($candidate, $searchLower)) {
+    //                             $matchFk = true;
+    //                             break 2;
+    //                         }
+    //                     }
+    //                 }
+
+    //                 $matchCreatedAt = $this->matchDateField(
+    //                     $dp->created_at,
+    //                     $searchLower,
+    //                     ['created', 'dibuat', 'create']
+    //                 );
+
+    //                 $matchUpdatedAt = $this->matchDateField(
+    //                     $dp->updated_at,
+    //                     $searchLower,
+    //                     ['updated', 'diubah', 'update']
+    //                 );
+
+    //                 switch ($mode) {
+    //                     case 'id':
+    //                         return $matchID;
+    //                 }
+
+    //                 return
+    //                     $matchID
+    //                     || $matchKode
+    //                     || $matchKodeFk
+
+    //                     || $matchDp
+    //                     || $matchFk
+
+    //                     || $matchCreatedAt
+    //                     || $matchUpdatedAt;
+    //             });
+    //         }
+
+    //         $sortValue = match ($sortField) {
+    //             'kode' => fn ($dp) => $dp->kode,
+
+    //             'departemen' => fn ($dp) => $dp->departemen,
+    //             'fakultas' => fn ($dp) => $dp->fakultas,
+
+    //             'created_at' => fn ($dp) => $dp->created_at,
+    //             'updated_at' => fn ($dp) => $dp->updated_at,
+
+    //             default => fn ($dp) => $dp->id,
+    //         };
+
+    //         $allDp = $sortDirection === 'asc'
+    //             ? $allDp->sortBy($sortValue)
+    //             : $allDp->sortByDesc($sortValue);
+
+    //         $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+    //         return new LengthAwarePaginator(
+    //             $allDp->forPage($currentPage, $perPage)->values(),
+    //             $allDp->count(),
+    //             $perPage,
+    //             $currentPage,
+    //             ['path' => Paginator::resolveCurrentPath()]
+    //         );
+    //     }
+
+    //     return $queryDp->paginate($perPage);
+    // }
 }

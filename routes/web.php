@@ -27,11 +27,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['is_staff'])->group(function () {
         Route::view('mata-kuliah-management/{switchTable?}', 'mata-kuliah-management')->name('mata-kuliah-management');
         Route::view('obe-management/{switchTable?}', 'rps-management')->name('rps-management');
+        Route::view('rps-management/{switchTable?}', 'rps-management')->name('rps-management');
     });
 
     Route::middleware(['is_mahasiswa'])->group(function () {
         Route::view('jadwal-kelas/{switchTable?}', 'jadwal-mahasiswa')->name('jadwal-mahasiswa');
         Route::view('jadwal-kelas/{kode}/jadwal/{kode_jadwal}/{switchTable?}', 'jadwal-mahasiswa')->name('sesi-mahasiswa');
+        Route::view('nilai-mahasiswa/{switchTable?}', 'nilai-mahasiswa')->name('nilai-mahasiswa');
     });
 
     Route::view('kelas-management/{switchTable?}', 'kelas-management')->name('kelas-management');

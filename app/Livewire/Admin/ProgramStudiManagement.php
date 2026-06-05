@@ -9,6 +9,7 @@ use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Models\ProgramStudi\Departemen;
@@ -20,6 +21,7 @@ use Livewire\WithPagination;
 class ProgramStudiManagement extends Component
 {
     use HasToast;
+    use WithProdiSearchFilters;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;
@@ -35,6 +37,8 @@ class ProgramStudiManagement extends Component
     public $perPage = 8;
 
     public $switchTable = 'prodi';
+
+    public $search = '';
 
     protected $paginationTheme = 'tailwind';
 
@@ -167,11 +171,14 @@ class ProgramStudiManagement extends Component
             // =========================
             if ($this->switchTable === 'prodi') {
                 $this->buttonStrataFilter($queryPr);
-                $prodis = $queryPr->paginate($this->perPage);
+                // $prodis = $queryPr->paginate($this->perPage);
+                $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } elseif ($this->switchTable === 'departemen') {
-                $departemens = $queryDp->paginate($this->perPage);
+                // $departemens = $queryDp->paginate($this->perPage);
+                $departemens = $this->searchOutputPr($queryDp, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } elseif ($this->switchTable === 'fakultas') {
-                $fakultas = $queryFk->paginate($this->perPage);
+                // $fakultas = $queryFk->paginate($this->perPage);
+                $fakultas = $this->searchOutputPr($queryFk, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             }
 
             // =========================
