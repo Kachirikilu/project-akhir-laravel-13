@@ -126,77 +126,77 @@ class Kelas extends Model
         });
     }
 
-    public function scopeSearchKelas($query, $search)
-    {
-        $searchTerm = '%'.$search.'%';
-        $searchLower = strtolower($search);
+    // public function scopeSearchKelas($query, $search)
+    // {
+    //     $searchTerm = '%'.$search.'%';
+    //     $searchLower = strtolower($search);
 
-        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $searchClean) {
+    //     return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $searchClean) {
 
-            if (preg_match('/^([A-Za-z]+[0-9]+)(?:([A-Za-z])(?:([A-Za-z]*)(?:([0-9]{0,4}))?)?)?$/', $searchClean, $matches)) {
+    //         if (preg_match('/^([A-Za-z]+[0-9]+)(?:([A-Za-z])(?:([A-Za-z]*)(?:([0-9]{0,4}))?)?)?$/', $searchClean, $matches)) {
 
-                $matchKodeKelas = $matches[1] ?? null;
-                $matchLabelWilayah = $matches[2] ?? null;
-                $matchKodeWilayah = $matches[3] ?? null;
-                $matchTahun = $matches[4] ?? null;
+    //             $matchKodeKelas = $matches[1] ?? null;
+    //             $matchLabelWilayah = $matches[2] ?? null;
+    //             $matchKodeWilayah = $matches[3] ?? null;
+    //             $matchTahun = $matches[4] ?? null;
 
-                $q->where(function ($subQ) use ($matchKodeKelas, $matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
-                    $subQ->where('kelas.kode_kelas', 'like', '%'.$matchKodeKelas.'%');
+    //             $q->where(function ($subQ) use ($matchKodeKelas, $matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
+    //                 $subQ->where('kelas.kode_kelas', 'like', '%'.$matchKodeKelas.'%');
 
-                    if (! empty($matchLabelWilayah)) {
-                        $subQ->whereHas('jadwals', function ($jq) use ($matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
-                            $table = $jq->getModel()->getTable();
-                            $jq->where($table.'.label_kelas', 'like', '%'.$matchLabelWilayah.'%');
+    //                 if (! empty($matchLabelWilayah)) {
+    //                     $subQ->whereHas('jadwals', function ($jq) use ($matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
+    //                         $table = $jq->getModel()->getTable();
+    //                         $jq->where($table.'.label_kelas', 'like', '%'.$matchLabelWilayah.'%');
 
-                            if (! empty($matchKodeWilayah)) {
-                                $jq->where($table.'.kode_wilayah', 'like', '%'.$matchKodeWilayah.'%');
-                            }
+    //                         if (! empty($matchKodeWilayah)) {
+    //                             $jq->where($table.'.kode_wilayah', 'like', '%'.$matchKodeWilayah.'%');
+    //                         }
 
-                            if (! empty($matchTahun)) {
-                                if (strlen($matchTahun) === 2) {
-                                    $matchTahun = '20'.$matchTahun;
-                                }
-                                $jq->where($table.'.tanggal_mulai', 'like', '%'.$matchTahun.'%');
-                            }
-                        });
-                    }
-                });
-            }
+    //                         if (! empty($matchTahun)) {
+    //                             if (strlen($matchTahun) === 2) {
+    //                                 $matchTahun = '20'.$matchTahun;
+    //                             }
+    //                             $jq->where($table.'.tanggal_mulai', 'like', '%'.$matchTahun.'%');
+    //                         }
+    //                     });
+    //                 }
+    //             });
+    //         }
 
-            $q->orWhere('kelas.kode_kelas', 'like', '%'.$searchClean.'%')
-                ->orWhere('kelas.nama_kelas', 'like', $searchTerm)
+    //         $q->orWhere('kelas.kode_kelas', 'like', '%'.$searchClean.'%')
+    //             ->orWhere('kelas.nama_kelas', 'like', $searchTerm)
 
-                ->orWhereHas('jadwals', function ($jq) use ($searchTerm) {
-                    $table = $jq->getModel()->getTable();
-                    $jq->where($table.'.label_kelas', 'like', $searchTerm)
-                        ->orWhere($table.'.kode_wilayah', 'like', $searchTerm);
-                })
+    //             ->orWhereHas('jadwals', function ($jq) use ($searchTerm) {
+    //                 $table = $jq->getModel()->getTable();
+    //                 $jq->where($table.'.label_kelas', 'like', $searchTerm)
+    //                     ->orWhere($table.'.kode_wilayah', 'like', $searchTerm);
+    //             })
 
-                ->orWhereHas('rps_rel', function ($rq) use ($search) {
-                    $rq->searchRPS($search);
-                })
-                ->orWhereHas('rps_rel.mk_rel', function ($mq) use ($search) {
-                    $mq->searchMK($search);
-                })
-                ->orWhereHas('pr_rel', function ($pq) use ($search) {
-                    $pq->searchProdi($search);
-                })
-                ->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(kelas.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(kelas.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(kelas.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(kelas.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("DATE_FORMAT(kelas.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(kelas.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-                });
+    //             ->orWhereHas('rps_rel', function ($rq) use ($search) {
+    //                 $rq->searchRPS($search);
+    //             })
+    //             ->orWhereHas('rps_rel.mk_rel', function ($mq) use ($search) {
+    //                 $mq->searchMK($search);
+    //             })
+    //             ->orWhereHas('pr_rel', function ($pq) use ($search) {
+    //                 $pq->searchProdi($search);
+    //             })
+    //             ->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+    //                 $dq->whereRaw("DATE_FORMAT(kelas.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(kelas.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("DATE_FORMAT(kelas.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(kelas.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+    //             });
 
-            if (is_numeric($search)) {
-                $q->orWhere('kelas.id', '=', $search);
-            }
-        });
-    }
+    //         if (is_numeric($search)) {
+    //             $q->orWhere('kelas.id', '=', $search);
+    //         }
+    //     });
+    // }
 }

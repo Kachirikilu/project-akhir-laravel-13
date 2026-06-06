@@ -42,6 +42,31 @@ class KelasJadwal extends Model
         );
     }
 
+    protected function countMahasiswa(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->mahasiswas->count();
+        });
+    }
+
+    protected function countSesi(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->sesis->count();
+        });
+    }
+
+    protected function countMhsJadwal(): Attribute
+    {
+        return Attribute::get(function () {
+
+            $mahasiswa = $this->count_mahasiswa;
+            $kapasitas = $this->kapasitas;
+
+            return $mahasiswa.' / '.$kapasitas;
+        });
+    }
+
     protected function kodeKelas(): Attribute
     {
         return Attribute::get(function () {
@@ -56,12 +81,55 @@ class KelasJadwal extends Model
         });
     }
 
-    protected function namaMk(): Attribute
+    protected function kodeRps(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->kode_rps;
+        });
+    }
+
+    protected function mk(): Attribute
     {
         return Attribute::get(function () {
             return $this->kelas_rel->rps_rel?->mk;
         });
     }
+
+    protected function semester(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->semester;
+        });
+    }
+
+    protected function sks(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->sks;
+        });
+    }
+
+    protected function sksText(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->sks_text;
+        });
+    }
+
+    protected function wajib(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->wajib;
+        });
+    }
+
+    protected function wajibText(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kelas_rel->rps_rel?->wajib_text;
+        });
+    }
+
 
     protected function ganjilGenap(): Attribute
     {

@@ -326,6 +326,15 @@ class User extends Authenticatable
         });
     }
 
+    protected function prodiStrata(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->prodi_strata;
+        });
+    }
+
     protected function kodePr(): Attribute
     {
         return Attribute::get(function () {
@@ -344,12 +353,66 @@ class User extends Authenticatable
         });
     }
 
+    protected function kodeDp(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->kode_dp;
+        });
+    }
+
+    protected function departemen(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->departemen;
+        });
+    }
+
+    protected function departemenDp(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->departemen_dp;
+        });
+    }
+
     protected function fkId(): Attribute
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
             return $profile?->pr_rel?->dp_rel?->fk_id;
+        });
+    }
+
+    protected function kodeFk(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->kode_fk;
+        });
+    }
+
+    protected function fakultas(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->fakkultas;
+        });
+    }
+
+    protected function fakultasFk(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->fakkultas_fk;
         });
     }
 
@@ -403,94 +466,93 @@ class User extends Authenticatable
         });
     }
 
-    // --- GLOBAL SCOPE SEARCH USER ---
-    public function scopeSearchUser($query, $search, $withTahun = false)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
+    // public function scopeSearchUser($query, $search, $withTahun = false)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
 
-        $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
-        $searchTerm = '%'.$search.'%';
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
 
-            if ($withTahun == false) {
-                $q->where('email', 'like', $searchTerm);
+    //         if ($withTahun == false) {
+    //             $q->where('email', 'like', $searchTerm);
 
-                if (is_numeric($search)) {
-                    $q->orWhere('users.id', $search);
-                }
+    //             if (is_numeric($search)) {
+    //                 $q->orWhere('users.id', $search);
+    //             }
 
-                $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-                });
+    //             $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+    //                 $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+    //             });
 
-                $roleConfigs = [
-                    'admin' => ['name', 'nip', 'nitk', 'nik', 'status', 'id'],
-                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'nik', 'status', 'id'],
-                    'mahasiswa' => ['name', 'nim', 'nik', 'angkatan', 'status', 'id'],
-                ];
+    //             $roleConfigs = [
+    //                 'admin' => ['name', 'nip', 'nitk', 'nik', 'status', 'id'],
+    //                 'dosen' => ['name', 'nip', 'nidn', 'nidk', 'nik', 'status', 'id'],
+    //                 'mahasiswa' => ['name', 'nim', 'nik', 'angkatan', 'status', 'id'],
+    //             ];
 
-                foreach ($roleConfigs as $role => $fields) {
-                    $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
-                        $r->where(function ($sub) use ($searchTerm, $fields) {
-                            foreach ($fields as $field) {
-                                $sub->orWhere($field, 'like', $searchTerm);
-                            }
-                        });
-                    });
+    //             foreach ($roleConfigs as $role => $fields) {
+    //                 $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
+    //                     $r->where(function ($sub) use ($searchTerm, $fields) {
+    //                         foreach ($fields as $field) {
+    //                             $sub->orWhere($field, 'like', $searchTerm);
+    //                         }
+    //                     });
+    //                 });
 
-                    $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
-                        $p->where(function ($pGroup) use ($searchTerm) {
-                            $pGroup->where('nama_pr', 'like', $searchTerm)
-                                ->orWhere('kode_pr', 'like', $searchTerm);
-                            $pGroup->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
-                            $aliasStrataSql = "
-            CASE 
-                WHEN LOWER(strata) LIKE '%sarjana%' THEN 'S1'
-                WHEN LOWER(strata) LIKE '%magister%' THEN 'S2'
-                WHEN LOWER(strata) LIKE '%doktor%' THEN 'S3'
-                ELSE strata
-            END
-        ";
-                            $pGroup->orWhereRaw("CONCAT($aliasStrataSql, ' ', nama_pr) LIKE ?", [$searchTerm]);
-                        })
-                            ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
-                                $j->where(function ($jGroup) use ($searchTerm) {
-                                    $jGroup->where('nama_dp', 'like', $searchTerm)
-                                        ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
-                                        ->orWhere('kode_dp', 'like', $searchTerm);
-                                })
-                                    ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
-                                        $f->where(function ($fGroup) use ($searchTerm) {
-                                            $fGroup->where('nama_fk', 'like', $searchTerm)
-                                                ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm])
-                                                ->orWhere('kode_fk', 'like', $searchTerm);
-                                        });
-                                    });
-                            });
-                    });
-                    if (str_contains($searchLower, $role)) {
-                        $q->orWhereHas($role);
-                    }
-                }
+    //                 $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
+    //                     $p->where(function ($pGroup) use ($searchTerm) {
+    //                         $pGroup->where('nama_pr', 'like', $searchTerm)
+    //                             ->orWhere('kode_pr', 'like', $searchTerm);
+    //                         $pGroup->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+    //                         $aliasStrataSql = "
+    //                         CASE 
+    //                             WHEN LOWER(strata) LIKE '%sarjana%' THEN 'S1'
+    //                             WHEN LOWER(strata) LIKE '%magister%' THEN 'S2'
+    //                             WHEN LOWER(strata) LIKE '%doktor%' THEN 'S3'
+    //                             ELSE strata
+    //                         END
+    //                     ";
+    //                         $pGroup->orWhereRaw("CONCAT($aliasStrataSql, ' ', nama_pr) LIKE ?", [$searchTerm]);
+    //                     })
+    //                         ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+    //                             $j->where(function ($jGroup) use ($searchTerm) {
+    //                                 $jGroup->where('nama_dp', 'like', $searchTerm)
+    //                                     ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
+    //                                     ->orWhere('kode_dp', 'like', $searchTerm);
+    //                             })
+    //                                 ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+    //                                     $f->where(function ($fGroup) use ($searchTerm) {
+    //                                         $fGroup->where('nama_fk', 'like', $searchTerm)
+    //                                             ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm])
+    //                                             ->orWhere('kode_fk', 'like', $searchTerm);
+    //                                     });
+    //                                 });
+    //                         });
+    //                 });
+    //                 if (str_contains($searchLower, $role)) {
+    //                     $q->orWhereHas($role);
+    //                 }
+    //             }
 
-            } else {
-                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm]));
-            }
-        });
-    }
+    //         } else {
+    //             $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm]));
+    //         }
+    //     });
+    // }
 }

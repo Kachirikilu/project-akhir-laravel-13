@@ -7,7 +7,7 @@ use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithRPSFilters

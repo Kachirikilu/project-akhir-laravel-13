@@ -10,6 +10,7 @@ use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
@@ -58,6 +59,7 @@ class RPSManagement extends Component
     use WithDepartemenSearchFilters;
     use WithDosenFilters;
     use WithDosenSearchFilters;
+    use WithUserSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKSearchFilters;
     use WithOBEExcel;
@@ -338,23 +340,28 @@ class RPSManagement extends Component
                     break;
                 case 'cpmk':
                     $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['cpmk'] = $queryCPMK->paginate($this->perPage);
+                    $data['cpmk'] = $this->searchOutputCPMK($queryCPMK, $this->search, $this->searchBobotCPMK, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $data['cpmk'] = $queryCPMK->paginate($this->perPage);
                     break;
                 case 'sub-cpmk':
                     $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['scpmk'] = $querySCPMK->paginate($this->perPage);
+                    $data['scpmk'] = $this->searchOutputSCPMK($querySCPMK, $this->search, $this->searchBobotSCPMK, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $data['scpmk'] = $querySCPMK->paginate($this->perPage);
                     break;
                 case 'cpl':
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['cpl'] = $queryCPL->paginate($this->perPage);
+                    $data['cpl'] = $this->searchOutputCPL($queryCPL, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $data['cpl'] = $queryCPL->paginate($this->perPage);
                     break;
                 case 'referensi':
                     $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
-                    $data['ref'] = $queryRef->paginate($this->perPage);
+                    $data['ref'] = $this->searchOutputRef($queryRef, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $data['ref'] = $queryRef->paginate($this->perPage);
                     break;
                 case 'dosen':
                     $this->buttonUserFilter($queryUser);
-                    $users = $queryUser->paginate($this->perPage);
+                    $users = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection);
+                    // $users = $queryUser->paginate($this->perPage);
                     break;
             }
 

@@ -55,6 +55,7 @@
                         @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $roleType,
                             'targetX' => 'addUser, saveUser, editUser, updateUser',
+                            'isLeft' => 0
                         ])
                     </div>
 

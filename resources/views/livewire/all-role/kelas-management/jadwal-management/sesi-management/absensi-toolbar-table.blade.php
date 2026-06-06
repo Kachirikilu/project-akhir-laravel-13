@@ -31,7 +31,7 @@
                     '{{ $x->mhs_tidak_masuk ?? 0 }}',
                     '{{ $x->mhs_nilai_akhir ?? 0 }}',
                     '{{ $x->mhs_nilai_index ?? 0 }}',
-                    '{{ $x->mhs_nilai_huruf_asli ?? 'E' }}'
+                    '{{ $x->mhs_nilai_huruf ?? 'E' }}'
                     
                 );
                 $flux.modal('absensi-modal').show();

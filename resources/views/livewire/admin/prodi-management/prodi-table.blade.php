@@ -40,8 +40,7 @@
 
             @if ($switchTable === 'prodi')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'prodi',
-                    'headString' => 'Program Studi'
+                    'sortFieldString' => 'program_studi',
                 ])
             @endif
 

@@ -67,12 +67,12 @@ class SubCPMK extends Model
 
     protected function wTugas(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_tugas);
+        return Attribute::get(fn () => $this->waktu_tugas ?? 60);
     }
 
     protected function wMandiri(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_mandiri);
+        return Attribute::get(fn () => $this->waktu_mandiri ?? 60);
     }
 
     protected function createdDay(): Attribute
@@ -111,70 +111,70 @@ class SubCPMK extends Model
         });
     }
 
-    public function scopeSearchSCPMK($query, $search, $withBobot = false)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
+    // public function scopeSearchSCPMK($query, $search, $withBobot = false)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
 
-        $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
-        $searchTerm = '%'.$search.'%';
-        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean, $withBobot) {
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean, $withBobot) {
 
-            if ($withBobot == false) {
+    //         if ($withBobot == false) {
 
-                $q->where('sub_cpmks.kode_scpmk', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.kode_scpmk', 'like', $searchClean)
-                    ->orWhere('sub_cpmks.deskripsi', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.materi', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.metodologi', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.indikator', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.deskripsi_tugas', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.waktu_tugas', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.waktu_mandiri', 'like', $searchTerm);
+    //             $q->where('sub_cpmks.kode_scpmk', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.kode_scpmk', 'like', $searchClean)
+    //                 ->orWhere('sub_cpmks.deskripsi', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.materi', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.metodologi', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.indikator', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.deskripsi_tugas', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.waktu_tugas', 'like', $searchTerm)
+    //                 ->orWhere('sub_cpmks.waktu_mandiri', 'like', $searchTerm);
 
-                $termLower = strtolower(trim($searchTerm, '% '));
+    //             $termLower = strtolower(trim($searchTerm, '% '));
 
-                $q->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
-                    if (str_contains('ujian tengah semester', $termLower) || str_contains('uts', $termLower)) {
-                        $enumQ->orWhere('sub_cpmks.metode', 'UTS');
-                    }
-                    if (str_contains('ujian akhir semester', $termLower) || str_contains('uas', $termLower)) {
-                        $enumQ->orWhere('sub_cpmks.metode', 'UAS');
-                    }
-                    if ($termLower === 'ujian') {
-                        $enumQ->orWhereIn('sub_cpmks.metode', ['UTS', 'UAS']);
-                    }
-                    $enumQ->orWhere('sub_cpmks.metode', 'like', $searchTerm);
-                });
+    //             $q->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
+    //                 if (str_contains('ujian tengah semester', $termLower) || str_contains('uts', $termLower)) {
+    //                     $enumQ->orWhere('sub_cpmks.metode', 'UTS');
+    //                 }
+    //                 if (str_contains('ujian akhir semester', $termLower) || str_contains('uas', $termLower)) {
+    //                     $enumQ->orWhere('sub_cpmks.metode', 'UAS');
+    //                 }
+    //                 if ($termLower === 'ujian') {
+    //                     $enumQ->orWhereIn('sub_cpmks.metode', ['UTS', 'UAS']);
+    //                 }
+    //                 $enumQ->orWhere('sub_cpmks.metode', 'like', $searchTerm);
+    //             });
 
-                if (is_numeric($search)) {
-                    $q->orWhere('sub_cpmks.id', 'like', $search);
-                }
+    //             if (is_numeric($search)) {
+    //                 $q->orWhere('sub_cpmks.id', 'like', $search);
+    //             }
 
-                $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(sub_cpmks.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(sub_cpmks.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("DATE_FORMAT(sub_cpmks.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(sub_cpmks.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-                });
-            }
+    //             $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+    //                 $dq->whereRaw("DATE_FORMAT(sub_cpmks.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(sub_cpmks.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("DATE_FORMAT(sub_cpmks.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(sub_cpmks.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                     ->orWhereRaw("LOWER(DATE_FORMAT(sub_cpmks.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+    //             });
+    //         }
 
-            $searchConverted = str_replace(',', '.', $searchTerm);
-            $q->orWhere('sub_cpmks.bobot', 'like', '%'.$searchConverted.'%');
-        });
-    }
+    //         $searchConverted = str_replace(',', '.', $searchTerm);
+    //         $q->orWhere('sub_cpmks.bobot', 'like', '%'.$searchConverted.'%');
+    //     });
+    // }
 
     /**
      * Cek apakah item adalah UTS atau setara UTS

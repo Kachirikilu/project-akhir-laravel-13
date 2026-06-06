@@ -17,11 +17,10 @@ trait WithCPLFilters
             'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
         if ($this->switchTable === 'cpl') {
-            $search = $this->search;
-
-            if (! empty($search)) {
-                $queryCPL->searchCPL($search);
-            }
+            // $search = $this->search;
+            // if (! empty($search)) {
+            //     $queryCPL->searchCPL($search);
+            // }
 
             if (! empty($this->selectedPrId)) {
                 $queryCPL->where(function ($q) {
@@ -57,7 +56,7 @@ trait WithCPLFilters
                 $queryCPL->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId);
             }
 
-            $this->sortFieldOrderCPL($queryCPL);
+            // $this->sortFieldOrderCPL($queryCPL);
         }
 
         return $queryCPL;
@@ -83,20 +82,20 @@ trait WithCPLFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderCPL($queryCPL)
-    {
-        $queryCPL->select('cpls.*');
+    // public function sortFieldOrderCPL($queryCPL)
+    // {
+    //     $queryCPL->select('cpls.*');
 
-        return match ($this->sortField) {
-            'kode' => $queryCPL->orderBy('kode_cpl', $this->sortDirection),
+    //     return match ($this->sortField) {
+    //         'kode' => $queryCPL->orderBy('kode_cpl', $this->sortDirection),
 
-            'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
-            'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
-            'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
+    //         'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
+    //         'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
+    //         'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
 
-            default => $queryCPL->orderBy('id', $this->sortDirection),
-        };
+    //         default => $queryCPL->orderBy('id', $this->sortDirection),
+    //     };
 
-        return $queryCPL;
-    }
+    //     return $queryCPL;
+    // }
 }

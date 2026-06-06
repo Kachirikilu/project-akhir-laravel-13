@@ -107,8 +107,7 @@
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'prodi',
-                'headString' => 'Program Studi',
+                'sortFieldString' => 'program_studi',
                 'rowSpan' => 2,
             ])
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>

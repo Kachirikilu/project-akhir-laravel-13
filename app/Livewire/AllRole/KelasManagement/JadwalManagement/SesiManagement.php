@@ -7,6 +7,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithAbs
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Models\Auth\User;
@@ -22,6 +23,7 @@ class SesiManagement extends Component
 {
     use WithAbsenModal;
     use WithJadwalModal;
+    use WithUserSearchFilters;
     use WithMahasiswaSearchFilters;
     use WithNilaiExcel;
     use WithPagination;
@@ -343,28 +345,6 @@ class SesiManagement extends Component
                         ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                         ->whereColumn('mahasiswas.user_id', 'users.id')
                         ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                        ->selectRaw('
-                            CASE
-                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
-                                WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
-                                WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
-                                WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
-                                WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
-                                WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
-                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
-                                WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
-                                ELSE 0
-                            END
-                        ')
-                        ->limit(1);
-                }, 'mhs_nilai_huruf');
-
-                $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-                    $query->from('nilai_mahasiswa')
-                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                        ->whereColumn('mahasiswas.user_id', 'users.id')
-                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
                         ->selectRaw("
                             CASE
                                 WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
@@ -379,7 +359,7 @@ class SesiManagement extends Component
                             END
                         ")
                         ->limit(1);
-                }, 'mhs_nilai_huruf_asli');
+                }, 'mhs_nilai_huruf');
 
                 foreach ($statuses as $alias => $condition) {
                     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
@@ -511,7 +491,8 @@ class SesiManagement extends Component
                     break;
                 case 'mahasiswa':
                     // $users = $queryUser->paginate($this->perPage);
-                    $users = $this->searchOutputMahasiswa($queryUser, $idJadwal);
+                    // $users = $this->searchOutputUser($queryUser, $idJadwal);
+                    $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
                     break;
             }
 

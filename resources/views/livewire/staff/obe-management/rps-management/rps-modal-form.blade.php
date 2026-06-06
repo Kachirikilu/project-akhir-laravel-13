@@ -37,6 +37,7 @@
                         )
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addRPS, saveRPS, editRPS, updateRPS',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

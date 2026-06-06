@@ -40,6 +40,7 @@
                         @include('livewire.all-role.kelas-management.kelas-modal-form.kelas-message-form')
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addKelas, saveKelas, editKelas, updateKelas',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

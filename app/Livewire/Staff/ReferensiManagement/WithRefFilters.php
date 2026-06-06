@@ -22,11 +22,10 @@ trait WithRefFilters
         
         if ($this->switchTable === 'referensi') {
 
-            $search = $this->search;
-
-            if (! empty($search)) {
-                $queryRef->searchRef($search);
-            }
+            // $search = $this->search;
+            // if (! empty($search)) {
+            //     $queryRef->searchRef($search);
+            // }
 
             // if (! empty($this->selectedPrId)) {
             //     $queryRef->where(function ($q) {
@@ -73,8 +72,7 @@ trait WithRefFilters
                 $queryRef->whereHas('scpmks', fn ($q) => $q->where('sub_cpmks.id', $this->selectedSCPMKId));
             }
 
-            $this->sortFieldOrderRef($queryRef);
-
+            // $this->sortFieldOrderRef($queryRef);
         }
 
         return $queryRef;
@@ -102,25 +100,25 @@ trait WithRefFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderRef($queryRef)
-    {
-        $queryRef->select('referensis.*');
+    // public function sortFieldOrderRef($queryRef)
+    // {
+    //     $queryRef->select('referensis.*');
 
-        return match ($this->sortField) {
-            'kode' => $queryRef->orderBy('kode_ref', $this->sortDirection),
+    //     return match ($this->sortField) {
+    //         'kode' => $queryRef->orderBy('kode_ref', $this->sortDirection),
 
-            'judul' => $queryRef->orderBy('judul', $this->sortDirection),
-            'penulis' => $queryRef->orderBy('penulis', $this->sortDirection),
-            'penerbit' => $queryRef->orderBy('penerbit', $this->sortDirection),
-            'tahun' => $queryRef->orderBy('tahun', $this->sortDirection),
-            'link' => $queryRef->orderBy('link', $this->sortDirection),
+    //         'judul' => $queryRef->orderBy('judul', $this->sortDirection),
+    //         'penulis' => $queryRef->orderBy('penulis', $this->sortDirection),
+    //         'penerbit' => $queryRef->orderBy('penerbit', $this->sortDirection),
+    //         'tahun' => $queryRef->orderBy('tahun', $this->sortDirection),
+    //         'link' => $queryRef->orderBy('link', $this->sortDirection),
 
-            'created_at' => $queryRef->orderBy('created_at', $this->sortDirection),
-            'updated_at' => $queryRef->orderBy('updated_at', $this->sortDirection),
+    //         'created_at' => $queryRef->orderBy('created_at', $this->sortDirection),
+    //         'updated_at' => $queryRef->orderBy('updated_at', $this->sortDirection),
 
-            default => $queryRef->orderBy('id', $this->sortDirection),
-        };
+    //         default => $queryRef->orderBy('id', $this->sortDirection),
+    //     };
 
-        return $queryRef;
-    }
+    //     return $queryRef;
+    // }
 }

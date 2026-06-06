@@ -67,6 +67,13 @@ class Prodi extends Model
         });
     }
 
+    protected function prodiStrata(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->strata.' '.$this->nama_pr;
+        });
+    }
+
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
@@ -83,6 +90,13 @@ class Prodi extends Model
             }
 
             return 'UNI';
+        });
+    }
+
+    protected function kodePr(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kode;
         });
     }
 

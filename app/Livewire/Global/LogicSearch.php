@@ -79,24 +79,44 @@ trait LogicSearch
         if ($target === '' || $search === '') {
             return false;
         }
+
+        // normalize spasi
         $target = preg_replace('/\s+/', ' ', $target);
         $search = preg_replace('/\s+/', ' ', $search);
 
-        if ($target === $search) {
+        // 🔥 normalize untuk match fleksibel
+        $targetClean = preg_replace('/[^a-z0-9]/', '', $target);
+        $searchClean = preg_replace('/[^a-z0-9]/', '', $search);
+
+        // 1. exact match
+        if ($targetClean === $searchClean) {
             return true;
         }
-        if (str_starts_with($target, $search)) {
+
+        // 2. substring anywhere (INI YANG PALING PENTING)
+        if (str_contains($targetClean, $searchClean)) {
             return true;
         }
+
+        // 3. word-level contains (lebih aman dari typo kecil)
         $targetWords = explode(' ', $target);
         $searchWords = explode(' ', $search);
 
-        foreach ($searchWords as $i => $word) {
-            if (! isset($targetWords[$i])) {
-                return false;
+        foreach ($searchWords as $word) {
+            $found = false;
+
+            foreach ($targetWords as $tWord) {
+
+                $tClean = preg_replace('/[^a-z0-9]/', '', $tWord);
+                $wClean = preg_replace('/[^a-z0-9]/', '', $word);
+
+                if ($wClean !== '' && str_contains($tClean, $wClean)) {
+                    $found = true;
+                    break;
+                }
             }
 
-            if ($targetWords[$i] !== $word) {
+            if (! $found) {
                 return false;
             }
         }
@@ -113,7 +133,6 @@ trait LogicSearch
             return false;
         }
 
-        // 1. exact / contains
         if (str_contains($target, $search)) {
             return true;
         }
@@ -124,13 +143,9 @@ trait LogicSearch
         foreach ($searchWords as $sWord) {
 
             foreach ($targetWords as $tWord) {
-
-                // skip kata terlalu pendek biar gak noise
                 if (strlen($sWord) < 3 || strlen($tWord) < 3) {
                     continue;
                 }
-
-                // fuzzy ringan saja
                 if (levenshtein($sWord, $tWord) <= 1) {
                     return true;
                 }
@@ -169,18 +184,54 @@ trait LogicSearch
         string $search,
         array $keywords = []
     ): bool {
+        $search = strtolower($search);
 
-        $number = preg_replace('/[^0-9]/', '', $search);
+        preg_match('/\d+/', $search, $m);
+        $number = $m[0] ?? null;
 
-        if (! is_numeric($number)) {
+        if ($number === null) {
             return false;
         }
 
-        $search = strtolower($search);
-
+        $cleanSearch = preg_replace('/[^a-z0-9]/', '', $search);
         foreach ($keywords as $keyword) {
+            $cleanKeyword = preg_replace('/[^a-z0-9]/', '', strtolower($keyword));
+            // dd($cleanSearch, $cleanKeyword);
+            if (str_contains($cleanSearch, $cleanKeyword)) {
+                return (int) $value === (int) $number;
+            }
+        }
 
-            if ($this->typoContains($keyword, $search)) {
+        return false;
+    }
+
+    protected function matchOnlyCount(
+        mixed $value,
+        string $search,
+        array $keywords = []
+    ): bool {
+        $search = strtolower(trim($search));
+        preg_match('/\d+/', $search, $m);
+        $number = $m[0] ?? null;
+
+        if ($number === null) {
+            return false;
+        }
+
+        if (preg_match('/^\d+$/', $search)) {
+            return (int) $value === (int) $number;
+        }
+
+        $cleanSearch = preg_replace('/[^a-z0-9]/', '', $search);
+        foreach ($keywords as $keyword) {
+            $cleanKeyword = preg_replace(
+                '/[^a-z0-9]/',
+                '',
+                strtolower($keyword)
+            );
+            if (
+                str_contains($cleanSearch, $cleanKeyword)
+            ) {
                 return (int) $value === (int) $number;
             }
         }
@@ -453,24 +504,15 @@ trait LogicSearch
         return $queryYear === $tahun1;
     }
 
-    protected function matchDateField(
-        $date,
-        string $search,
-        array $keywords
-    ): bool {
+    protected function matchDateField($date, string $search, array $keywords): bool
+    {
+        if ($this->matchDate($date, $search)) {
+            return true;
+        }
 
         foreach ($keywords as $keyword) {
-
-            if (
-                $this->typoContains(
-                    $keyword,
-                    $search
-                )
-            ) {
-                return $this->matchDate(
-                    $date,
-                    $search
-                );
+            if ($this->containsStrict($keyword, $search)) {
+                return $this->matchDate($date, $search);
             }
         }
 
@@ -498,44 +540,61 @@ trait LogicSearch
             $year = (int) $dt->year;
             $nums = array_map('intval', $nums);
 
-            if (count($nums) >= 3) {
+            // Mapping nama bulan ke nomor bulan
+            $monthNameMap = [
+                'jan' => 1, 'januari' => 1, 'january' => 1,
+                'feb' => 2, 'februari' => 2, 'february' => 2,
+                'mar' => 3, 'maret' => 3, 'march' => 3,
+                'apr' => 4, 'april' => 4,
+                'mei' => 5, 'may' => 5,
+                'jun' => 6, 'juni' => 6, 'june' => 6,
+                'jul' => 7, 'juli' => 7, 'july' => 7,
+                'agu' => 8, 'agustus' => 8, 'aug' => 8, 'august' => 8,
+                'sep' => 9, 'september' => 9,
+                'okt' => 10, 'oktober' => 10, 'oct' => 10, 'october' => 10,
+                'nov' => 11, 'november' => 11,
+                'des' => 12, 'desember' => 12, 'dec' => 12, 'december' => 12,
+            ];
 
+            // Cek apakah input mengandung nama bulan dan validasi month cocok
+            $searchMonthNum = null;
+            foreach ($monthNameMap as $monthName => $monthNum) {
+                if (str_contains($search, $monthName)) {
+                    $searchMonthNum = $monthNum;
+                    break;
+                }
+            }
+
+            // Jika ada nama bulan, validasi bulan data harus cocok + salah satu day/year cocok
+            if ($searchMonthNum !== null) {
+                if ($month !== $searchMonthNum) {
+                    return false;
+                }
+
+                foreach ($nums as $n) {
+                    if ($n === $day || $n === $year) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Jika input punya 3+ angka, cek ketiganya harus match (format numeric ketat)
+            if (count($nums) >= 3) {
                 return in_array($day, $nums)
                     && in_array($month, $nums)
                     && in_array($year, $nums);
             }
 
+            // Jika < 3 angka, cek lenient (salah satu cocok)
             foreach ($nums as $n) {
-
                 if (
                     $n === $day ||
                     $n === $month ||
                     $n === $year
                 ) {
                     return true;
-                }
-            }
-
-            $monthNames = [
-                1 => ['jan', 'januari', 'january'],
-                2 => ['feb', 'februari', 'february'],
-                3 => ['mar', 'maret', 'march'],
-                4 => ['apr', 'april'],
-                5 => ['mei', 'may'],
-                6 => ['jun', 'juni', 'june'],
-                7 => ['jul', 'juli', 'july'],
-                8 => ['agu', 'agustus', 'aug', 'august'],
-                9 => ['sep', 'september'],
-                10 => ['okt', 'oktober', 'oct', 'october'],
-                11 => ['nov', 'november'],
-                12 => ['des', 'desember', 'dec', 'december'],
-            ];
-
-            foreach ($monthNames as $mNum => $aliases) {
-                foreach ($aliases as $alias) {
-                    if (str_contains($search, $alias) && $month === $mNum) {
-                        return true;
-                    }
                 }
             }
 
@@ -546,91 +605,168 @@ trait LogicSearch
         }
     }
 
+    protected function matchNilaiAkhir(
+        mixed $nilai,
+        string $search
+    ): bool {
+        if (
+            ! preg_match(
+                '/nilai\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
+                $search,
+                $matches
+            )
+        ) {
+            return false;
+        }
+
+        return $this->compareNumber(
+            (float) $nilai,
+            ($matches[1] ?? '=').($matches[2] ?? '')
+        );
+
+    }
+
+    protected function matchNilaiIndex(
+        mixed $index,
+        string $search
+    ): bool {
+        if (
+            ! preg_match(
+                '/(index|indeks|ip)\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
+                $search,
+                $matches
+            )
+        ) {
+            return false;
+        }
+
+        return $this->compareNumber(
+            (float) $index,
+            ($matches[2] ?? '=').($matches[3] ?? '')
+
+        );
+
+    }
+
+    protected function matchNilaiHuruf(
+        ?string $huruf,
+        string $search
+    ): bool {
+
+        $huruf = strtoupper(trim($huruf ?? ''));
+        $search = strtolower(trim($search));
+
+        if (! str_starts_with($search, 'nilai ')) {
+            return false;
+        }
+
+        $targetHuruf = strtoupper(
+            trim(substr($search, 6))
+        );
+
+        return $huruf === $targetHuruf;
+    }
+
     protected function detectSearchMode(string $search): ?string
     {
         $search = strtolower(trim($search));
 
-        if (
-            preg_match('/\b(id)\b/i', $search)
-        ) {
+        if (preg_match('/\b(id)\b/i', $search)) {
             return 'id';
         }
 
-        if (
-            preg_match('/\b(no|nomor|number)\b/i', $search)
-        ) {
+        if (preg_match('/\b(no|nomor|number)\b/i', $search)) {
             return 'nomor';
         }
 
         if (
-            str_contains($search, 'sks')
-            || in_array($search, ['tm', 'tp', 'pr', 'pl', 'sm'])
+            str_contains($search, 'nilai ')
+            || str_contains($search, 'nilai=')
+            || str_contains($search, 'nilai>')
+            || str_contains($search, 'nilai<')
+        ) {
+            return 'nilai';
+        }
+
+        if (
+            str_contains($search, 'index ')
+            || str_contains($search, 'ip ')
+            || str_contains($search, 'indeks ')
+        ) {
+            return 'index';
+        }
+
+        if (
+            str_contains($search, 'huruf ')
+            || str_contains($search, 'grade ')
+        ) {
+            return 'huruf';
+        }
+
+        if (
+            str_contains($search, 'sks') ||
+            in_array($search, ['tm', 'tp', 'pr', 'pl', 'sm'])
         ) {
             return 'sks';
         }
 
         if (
-            str_contains($search, 'sem')
-            || str_contains($search, 'semester')
-            || str_contains($search, 'ganjil')
-            || str_contains($search, 'genap')
+            str_contains($search, 'sem') ||
+            str_contains($search, 'semester') ||
+            str_contains($search, 'ganjil') ||
+            str_contains($search, 'genap')
         ) {
             return 'semester';
         }
 
+        /*
+        |------------------------------------------------
+        | 🔥 PENTING: SCMPK HARUS DI ATAS CPMK
+        |------------------------------------------------
+        */
         if (
-            str_contains($search, 'cpmk')
-            || str_contains($search, 'cpl')
-        ) {
-            return 'cpmk';
-        }
-
-        if (
-            str_contains($search, 'scpmk')
-            || str_contains($search, 'sub-cpmk')
-            || str_contains($search, 'subcpmk')
-            || str_contains($search, 'pertemuan')
+            str_contains($search, 'scpmk') ||
+            str_contains($search, 'sub-cpmk') ||
+            str_contains($search, 'subcpmk') ||
+            str_contains($search, 'pertemuan')
         ) {
             return 'scpmk';
         }
 
         if (
-            str_contains($search, '%')
-            || str_contains($search, 'bobot')
-            || str_contains($search, 'persen')
+            str_contains($search, 'cpmk') ||
+            str_contains($search, 'cpl')
+        ) {
+            return 'cpmk';
+        }
+
+        if (
+            str_contains($search, '%') ||
+            str_contains($search, 'bobot') ||
+            str_contains($search, 'persen')
         ) {
             return 'bobot';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATUS
-        |--------------------------------------------------------------------------
-        */
         if (
-            $this->typoContains('aktif', $search)
-            || $this->typoContains('draf', $search)
-            || $this->typoContains('draft', $search)
-            || $this->typoContains('publish', $search)
-            || $this->typoContains('published', $search)
-            || $this->typoContains('konsep', $search)
-            || $this->typoContains('approved', $search)
+            $this->typoContains('aktif', $search) ||
+            $this->typoContains('draf', $search) ||
+            $this->typoContains('draft', $search) ||
+            $this->typoContains('publish', $search) ||
+            $this->typoContains('published', $search) ||
+            $this->typoContains('konsep', $search) ||
+            $this->typoContains('approved', $search)
         ) {
             return 'status';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | WAJIB / PILIHAN
-        |--------------------------------------------------------------------------
-        */
         if (
-            $this->typoContains('wajib', $search)
-            || $this->typoContains('pilihan', $search)
-            || $this->typoContains('mandatory', $search)
-            || $this->typoContains('optional', $search)
-            || $this->typoContains('elective', $search)
-            || $this->typoContains('opsional', $search)
+            $this->typoContains('wajib', $search) ||
+            $this->typoContains('pilihan', $search) ||
+            $this->typoContains('mandatory', $search) ||
+            $this->typoContains('optional', $search) ||
+            $this->typoContains('elective', $search) ||
+            $this->typoContains('opsional', $search)
         ) {
             return 'wajib';
         }

@@ -3,11 +3,14 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\CPMK;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithCPMKSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $cpmkSearchQuery = '';
@@ -112,7 +115,8 @@ trait WithCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
             $this->cpmkSearchResults = $this->mapCPMKSearch(
-                $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
+                // $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
+                $this->searchOutputCPMK($this->cpmkQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->cpmk_name) {
             $this->cpmkSearchResults = $this->getCPMKbyUser('search');
@@ -150,7 +154,8 @@ trait WithCPMKSearchFilters
         $query = $this->cpmkQuery();
 
         if (trim(strlen($value)) > 0) {
-            $results = $query->searchCPMK($value)->limit(12)->get();
+            // $results = $query->searchCPMK($value)->limit(12)->get();
+            $results = $this->searchOutputCPMK($query, $value, null, 12);
             $this->cpmkResults = $this->mapCPMK($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -289,5 +294,180 @@ trait WithCPMKSearchFilters
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
         $this->cpmkNameSearch = '';
+    }
+
+    public function searchOutputCPMK($queryCPMK, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchBobot = strtolower(trim($searchBobot));
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || ! empty($searchBobot) || $sortField) {
+
+            $allCPMK = (clone $queryCPMK)->get();
+
+            if (! empty($search) || ! empty($searchBobot)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allCPMK = $allCPMK->filter(function ($cpmk) use ($searchLower, $searchBobot, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $numberBobot = preg_replace('/[^0-9.]/', '', $searchBobot);
+                    // $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
+
+                    $matchID = $this->matchID(
+                        $cpmk->id,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KODE CPMK
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchKode = $this->matchKode(
+                        $cpmk->kode,
+                        $searchLower
+                    );
+
+                    $matchDes = $this->containsStrict(
+                        $cpmk->deskripsi_cpl,
+                        $searchLower
+                    ) || $this->containsStrict(
+                        $cpmk->deskripsi,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Sub-CPMK COUNT
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchCPL = $this->matchCount(
+                        $cpmk->count_cpl,
+                        $searchLower,
+                        [
+                            'cpl',
+                            'cpmk',
+                        ]
+                    );
+                    $matchSCPMK = $this->matchCount(
+                        $cpmk->count_scpmk,
+                        $searchLower,
+                        [
+                            'subcpmk',
+                            'per',
+                            'pertem',
+                            'pertemuan',
+                        ]
+                    );
+                    $matchSCPMK = $this->matchCount(
+                        $cpmk->count_scpmk,
+                        $searchLower,
+                        [
+                            'scpmk',
+                            'sub-cpmk',
+                            'subcpmk',
+                            'per',
+                            'pertem',
+                            'pertemuan',
+                        ]
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | TOTAL BOBOT
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchBobot = false;
+                    if ($isNumericSearch) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $cpmk->total_bobot,
+                            $searchLower
+                        ) || $this->containsStrict(
+                            $cpmk->total_bobot,
+                            $searchLower
+                        );
+                    }
+                    if (! empty($searchBobot)) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $cpmk->total_bobot,
+                            $searchBobot
+                        ) || $this->containsStrict(
+                            $cpmk->total_bobot,
+                            $searchBobot
+                        );
+                    }
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $cpmk->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $cpmk->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                        case 'cpmk':
+                            return $matchCPL;
+                        case 'scpmk':
+                            return $matchSCPMK;
+                        case 'bobot':
+                            return $matchBobot;
+                    }
+
+                    return
+                        $matchID
+                        || $matchKode
+
+                        || $matchDes
+
+                        || $matchSCPMK
+                        || $matchBobot
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'kode' => fn ($cpmk) => $cpmk->kode,
+
+                'deskripsi' => fn ($cpmk) => $cpmk->deskripsi_cpl,
+
+                'count_cpl' => fn ($cpmk) => (int) $cpmk->count_cpl,
+                'count_scpmk' => fn ($cpmk) => (int) $cpmk->count_scpmk,
+                'total_bobot' => fn ($cpmk) => (float) $cpmk->total_bobot,
+
+                'created_at' => fn ($cpmk) => $cpmk->created_at,
+                'updated_at' => fn ($cpmk) => $cpmk->updated_at,
+
+                default => fn ($cpmk) => $cpmk->id,
+            };
+
+            $allCPMK = $sortDirection === 'asc'
+                ? $allCPMK->sortBy($sortValue)
+                : $allCPMK->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allCPMK->forPage($currentPage, $perPage)->values(),
+                $allCPMK->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $queryCPMK->paginate($perPage);
     }
 }

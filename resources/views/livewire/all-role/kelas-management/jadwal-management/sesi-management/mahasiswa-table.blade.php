@@ -117,8 +117,7 @@
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'prodi',
-                'headString' => 'Program Studi',
+                'sortFieldString' => 'program_studi',
                 'rowSpan' => 2,
             ])
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
@@ -322,7 +321,7 @@
                         <flux:dropdown>
                             <button class="cursor-pointer">
                                 @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                    'xValue' => $user->mhs_nilai_huruf_asli ?? 'E',
+                                    'xValue' => $user->mhs_nilai_huruf ?? 'E',
                                 ])
                             </button>
                             @include(

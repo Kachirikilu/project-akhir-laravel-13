@@ -36,6 +36,7 @@
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-message-form')
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'editAbsensi, updateAbsensi',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

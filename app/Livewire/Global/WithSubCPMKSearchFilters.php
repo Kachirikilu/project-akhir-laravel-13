@@ -3,11 +3,14 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\SubCPMK;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithSubCPMKSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $scpmkSearchQuery = '';
@@ -52,9 +55,9 @@ trait WithSubCPMKSearchFilters
             'waktu_mandiri' => $s->waktu_mandiri,
             'bobot' => $s->bobot ?? 0,
             'bobot' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.'),
-            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.') . '% Bobot',
+            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.').'% Bobot',
             'ref' => $this->mapRef($s->refs),
-            'dosen' => $this->mapDosen($s->dosens)
+            'dosen' => $this->mapDosen($s->dosens),
         ])->toArray();
     }
 
@@ -65,7 +68,7 @@ trait WithSubCPMKSearchFilters
             'kode' => $s->kode,
             'deskripsi' => $s->deskripsi,
             'metode' => $s->metode,
-            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.') . '% Bobot',
+            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.').'% Bobot',
         ])->toArray();
     }
 
@@ -93,7 +96,7 @@ trait WithSubCPMKSearchFilters
 
         if ($mappedData) {
             $this->scpmk_sub_items_array[] = [
-                'scpmk' => [$mappedData]
+                'scpmk' => [$mappedData],
             ];
         }
     }
@@ -105,7 +108,8 @@ trait WithSubCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->scpmk_name) {
             $this->scpmkSearchResults = $this->mapSCPMKSearch(
-                $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
+                // $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
+                $this->searchOutputSCPMK($this->scpmkQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->scpmk_name) {
             $this->scpmkSearchResults = $this->getSCPMKbyUser('search');
@@ -143,7 +147,8 @@ trait WithSubCPMKSearchFilters
         $query = $this->scpmkQuery();
 
         if (trim(strlen($value)) > 0) {
-            $results = $query->searchSCPMK($value)->limit(12)->get();
+            // $results = $query->searchSCPMK($value)->limit(12)->get();
+            $results = $this->searchOutputSCPMK($query, $value, null, 12);
             $this->scpmkResults = $this->mapSCPMK($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -277,5 +282,190 @@ trait WithSubCPMKSearchFilters
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
         $this->scpmkNameSearch = '';
+    }
+
+    public function searchOutputSCPMK($querySCPMK, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchBobot = strtolower(trim($searchBobot));
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || ! empty($searchBobot) || $sortField) {
+
+            $allSCPMK = (clone $querySCPMK)->get();
+
+            if (! empty($search) || ! empty($searchBobot)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allSCPMK = $allSCPMK->filter(function ($scpmk) use ($searchLower, $searchBobot, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $numberBobot = preg_replace('/[^0-9.]/', '', $searchBobot);
+                    // $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
+
+                    $matchID = $this->matchID(
+                        $scpmk->id,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KODE CPMK
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchKode = $this->matchKode(
+                        $scpmk->kode,
+                        $searchLower
+                    );
+
+                    $matchDes = $this->containsStrict(
+                        $scpmk->deskripsi,
+                        $searchLower
+                    );
+
+                    $matchMetode = $this->containsStrict(
+                        $scpmk->metode,
+                        $searchLower
+                    );
+                    $matchMateri = $this->containsStrict(
+                        $scpmk->materi,
+                        $searchLower
+                    );
+                    $matchMetodologi = $this->containsStrict(
+                        $scpmk->metodologi,
+                        $searchLower
+                    );
+                    $matchIndikator = $this->containsStrict(
+                        $scpmk->indikator,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | TOTAL BOBOT
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchBobot = false;
+                    if ($isNumericSearch) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $scpmk->bobot,
+                            $searchLower
+                        ) || $this->containsStrict(
+                            $scpkmk->bobot,
+                            $searchLower
+                        );
+                    }
+                    if (! empty($searchBobot)) {
+                        $matchBobot = $this->compareNumber(
+                            (float) $scpmk->bobot,
+                            $searchBobot
+                        ) || $this->containsStrict(
+                            $scpmk->bobot,
+                            $searchBobot
+                        );
+                    }
+
+                    $matchTugas = $this->containsStrict(
+                        $scpmk->tugas,
+                        $searchLower
+                    );
+              
+                    $matchWTugas = $this->matchCount(
+                        $scpmk->w_tugas,
+                        $searchLower,
+                        [
+                            'min',
+                            'menit',
+                            'm/SKS',
+                        ]
+                    );
+                    $matchWMandiri = $this->matchCount(
+                        $scpmk->w_mandiri,
+                        $searchLower,
+                        [
+                            'min',
+                            'menit',
+                            'm/SKS',
+                        ]
+                    );
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $scpmk->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $scpmk->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                        case 'bobot':
+                            return $matchBobot;
+                    }
+
+                    return
+                        $matchID
+                        || $matchKode
+
+                        || $matchDes
+                        || $matchMetode
+                        || $matchMateri
+                        || $matchMetodologi
+                        || $matchIndikator
+
+                        || $matchBobot
+
+                        || $matchTugas
+                        || $matchWTugas
+                        || $matchWMandiri
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'kode' => fn ($scpmk) => $scpmk->kode,
+                'deskripsi' => fn ($scpmk) => $scpmk->deskripsi,
+
+                'metode' => fn ($scpmk) => $scpmk->metode,
+                'materi' => fn ($scpmk) => $scpmk->materi,
+                'metodologi' => fn ($scpmk) => $scpmk->metodologi,
+                'indikator' => fn ($scpmk) => $scpmk->indikator,
+
+                'bobot' => fn ($scpmk) => (float) $scpmk->bobot,
+                'tugas' => fn ($scpmk) => $scpmk->tugas,
+                'waktu_tugas', 'w_tugas' => fn ($scpmk) => $scpmk->w_tugas,
+                'waktu_mandiri', 'w_mandiri' => fn ($scpmk) => $scpmk->w_mandiri,
+
+                'created_at' => fn ($scpmk) => $scpmk->created_at,
+                'updated_at' => fn ($scpmk) => $scpmk->updated_at,
+
+                default => fn ($scpmk) => $scpmk->id,
+            };
+
+            $allSCPMK = $sortDirection === 'asc'
+                ? $allSCPMK->sortBy($sortValue)
+                : $allSCPMK->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allSCPMK->forPage($currentPage, $perPage)->values(),
+                $allSCPMK->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $querySCPMK->paginate($perPage);
     }
 }

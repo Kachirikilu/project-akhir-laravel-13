@@ -78,12 +78,17 @@
             @if ($switchTable === 'cpmk' || $switchTable === 'sub-cpmk' || $switchTable === 'cpl')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'deskripsi',
-                    'isBorderR' => 1,
                     'rowSpan' => 2,
                 ])
             @endif
 
             @if ($switchTable === 'cpmk')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_cpl',
+                    'headString' => 'CPL',
+                    'isBorderR' => 1,
+                    'isCenter' => 1,
+                ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_scpmk',
                     'headString' => 'Sub-CPMK',
@@ -95,7 +100,7 @@
                     'modelString' => 'searchBobotCPMK',
                     'resetXFilter' => 'resetInputBobotCPMK()',
                     'maxLength' => 2,
-                    'floatOnly' => 1,
+                    'withSimbol' => 1,
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
                     'rowSpan' => 2,
@@ -160,7 +165,7 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
                     'headString' => 'Mata Kuliah',
-                    'isBorderR' => 1
+                    'isBorderR' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'semester',
@@ -190,6 +195,7 @@
                     'isCenter' => 1,
                     'isBorderL' => 1,
                 ])
+
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_scpmk',
                     'headString' => 'Sub-CPMK',
@@ -200,7 +206,7 @@
                     'modelString' => 'searchBobotRPS',
                     'resetXFilter' => 'resetInputBobotRPS()',
                     'maxLength' => 3,
-                    'floatOnly' => 1,
+                    'withSimbol' => 1,
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
                     'pTop' => 5,
@@ -238,7 +244,7 @@
                     'modelString' => 'searchBobotSCPMK',
                     'resetXFilter' => 'resetInputBobotSCPMK()',
                     'maxLength' => 2,
-                    'floatOnly' => 1,
+                    'withSimbol' => 1,
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
                     'isMain' => 1,
@@ -451,8 +457,7 @@
             @endif
 
             @if ($switchTable === 'cpmk')
-                <td
-                    class="{{ $secondKolom }} {{ $borderR }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
+                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
                     {{ $x->deskripsi_cpl ?? '-' }}</td>
             @endif
 
@@ -462,6 +467,8 @@
             @endif
 
             @if ($switchTable === 'cpmk')
+                <td class="{{ $secondKolom }} {{ $borderR }} whitespace-nowrap text-center">
+                    {{ $x->count_cpl ?? '-' }} CPL</td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">
                     {{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
                 <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot ? $x->total_bobot . '%' : '-' }}</td>
@@ -491,8 +498,8 @@
                 <td class="{{ $mainKolom }} text-center">{{ $x->bobot_format ? $x->bobot_format . '%' : '-' }}
                 </td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_tugas ?? '60 m/SKS' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_mandiri ?? '60 m/SKS' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->waktu_tugas ? $x->w_tugas . ' menit' : '60 m/SKS' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->waktu_mandiri ? $x->w_mandiri . ' menit' : '60 m/SKS' }}</td>
             @endif
 
             @if ($switchTable === 'referensi')
@@ -539,7 +546,7 @@
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 17,
-                    'cpmk' => 8,
+                    'cpmk' => 9,
                     'sub-cpmk' => 14,
                     'cpl' => 6,
                     'referensi' => 10,

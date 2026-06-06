@@ -10,6 +10,15 @@
             'sortFieldString' => 'label_kelas',
             'headString' => 'Label',
         ])
+        @if ($kelas == null)
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode_mk',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'mk',
+                'headString' => 'Mata Kuliah',
+            ])
+        @endif
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'hari_pelaksanaan',
             'headString' => 'Hari',
@@ -76,6 +85,26 @@
                 {{-- INFORMASI UTAMA JADWAL --}}
                 <div
                     class="text-xs bg-[var(--second-table-color)]/30 p-2 rounded-lg border border-[var(--border-table-color)]/40">
+                    @if ($kelas == null)
+                        <div class="space-y-1 mb-2">
+                            <p
+                                class="font-semibold text-sm text-[var(--contrast-main-text)] leading-snug tracking-tight">
+                                {{ $j->mk ?? '---' }}
+                            </p>
+                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
+                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                {{ $j->kode_mk ?? '-' }}
+                            </p>
+                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
+                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                {{ $j->semester ?? '-' }} Semester
+                            </p>
+                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
+                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                {{ $j->sks ?? '-' }} SKS {{ $j->sks_text }}
+                            </p>
+                        </div>
+                    @endif
                     <div class="space-y-1">
                         <p class="font-semibold text-sm text-[var(--contrast-main-text)] leading-snug tracking-tight">
                             Tanggal Kelas
@@ -182,7 +211,7 @@
                         class="text-left block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">
                         Kapasitas</span>
                     <span class="text-left font-bold text-[var(--focus-color)] block truncate">
-                        {{ $j->mahasiswas_count }} / {{ $j->kapasitas }}
+                        {{ $j->count_mhs_jadwal }}
                     </span>
                 </div>
 

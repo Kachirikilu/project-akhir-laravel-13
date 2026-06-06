@@ -41,6 +41,7 @@
                         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form.jadwal-message-form')
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addJadwal, saveJadwal, editJadwal, updateJadwal',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

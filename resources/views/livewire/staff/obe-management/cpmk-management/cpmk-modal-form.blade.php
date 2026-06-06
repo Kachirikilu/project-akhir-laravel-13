@@ -37,6 +37,7 @@
                         )
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addCPMK, saveCPMK, editCPMK, updateCPMK',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

@@ -35,6 +35,7 @@
                         )
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addRef, saveRef, editRef, updateRef',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

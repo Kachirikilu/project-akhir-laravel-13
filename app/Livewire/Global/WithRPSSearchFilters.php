@@ -316,8 +316,8 @@ trait WithRPSSearchFilters
                 $allRPS = $allRPS->filter(function ($rps) use ($searchLower, $searchBobot, $mode) {
                     $number = preg_replace('/[^0-9.]/', '', $searchLower);
                     $isNumericSearch = is_numeric($number) && $number !== '';
-                    $numberBobot = preg_replace('/[^0-9.]/', '', $searchBobot);
-                    $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
+                    // $numberBobot = preg_replace('/[^0-9.]/', '', $searchBobot);
+                    // $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
 
                     $matchID = $this->matchID(
                         $rps->id,
@@ -392,6 +392,11 @@ trait WithRPSSearchFilters
                         $searchLower
                     );
 
+                    $matchNo = $this->matchNo(
+                        $rps->mk_rel->digit_mk,
+                        $searchLower
+                    );
+
                     /*
                     |--------------------------------------------------------------------------
                     | GANJIL / GENAP
@@ -417,10 +422,12 @@ trait WithRPSSearchFilters
                         $rps->count_scpmk,
                         $searchLower,
                         [
+                            'per',
+                            'pertem',
+                            'pertemuan',
                             'scpmk',
                             'sub-cpmk',
                             'subcpmk',
-                            'pertemuan',
                         ]
                     );
 
@@ -434,11 +441,17 @@ trait WithRPSSearchFilters
                         $matchBobot = $this->compareNumber(
                             (float) $rps->total_bobot,
                             $searchLower
+                        ) || $this->containsStrict(
+                            $rps->total_bobot,
+                            $searchLower
                         );
                     }
                     if (! empty($searchBobot)) {
                         $matchBobot = $this->compareNumber(
                             (float) $rps->total_bobot,
+                            $searchBobot
+                        ) || $this->containsStrict(
+                            $rps->total_bobot,
                             $searchBobot
                         );
                     }
@@ -453,23 +466,96 @@ trait WithRPSSearchFilters
                         $searchLower
                     );
 
-                    $matchCreatedAt = $this->matchDateField(
-                        $rps->created_at,
-                        $searchLower,
-                        ['created', 'dibuat', 'create']
-                    );
+                    // /*
+                    // |--------------------------------------------------------------------------
+                    // | Kodse Program Studi
+                    // |--------------------------------------------------------------------------
+                    // */
+                    // $matchKodePr = $this->matchKode(
+                    //     $rps->pr_rel->kode_pr,
+                    //     $searchLower
+                    // );
+                    // $matchKodeDp = $this->matchKode(
+                    //     $rps->pr_rel->kode_dp,
+                    //     $searchLower
+                    // );
+                    // $matchKodeFk = $this->matchKode(
+                    //     $rps->pr_rel->kode_fk,
+                    //     $searchLower
+                    // );
 
-                    $matchUpdatedAt = $this->matchDateField(
-                        $rps->updated_at,
-                        $searchLower,
-                        ['updated', 'diubah', 'update']
-                    );
+                    // $basePr = [
+                    //     $rps->pr_rel->prodi,
+                    //     $rps->pr_rel->prodi_pr,
+                    //     $rps->pr_rel->prodi_strata,
+                    // ];
+                    // $matchPr = false;
+                    // foreach ($basePr as $pr) {
+                    //     $candidates = [
+                    //         $pr.' '.$rps->pr_rel->kode_dp,
+                    //         $pr.' ('.$rps->pr_rel->kode_dp.')',
+                    //     ];
+                    //     foreach ($candidates as $candidate) {
+                    //         if ($this->containsStrict($candidate, $searchLower)) {
+                    //             $matchPr = true;
+                    //             break 2;
+                    //         }
+                    //     }
+                    // }
+
+                    // $baseDp = [
+                    //     $rps->pr_rel->departemen,
+                    //     $rps->pr_rel->departemen_dp,
+                    // ];
+                    // $matchDp = false;
+                    // foreach ($baseDp as $dp) {
+                    //     $candidates = [
+                    //         $dp.' '.$rps->pr_rel->kode_dp,
+                    //         $dp.' ('.$rps->pr_rel->kode_dp.')',
+                    //     ];
+                    //     foreach ($candidates as $candidate) {
+                    //         if ($this->containsStrict($candidate, $searchLower)) {
+                    //             $matchDp = true;
+                    //             break 2;
+                    //         }
+                    //     }
+                    // }
+
+                    // $baseFk = [
+                    //     $rps->pr_rel->fakultas,
+                    //     $rps->pr_rel->fakultas_fk,
+                    // ];
+                    // $matchFk = false;
+                    // foreach ($baseFk as $fk) {
+                    //     $candidates = [
+                    //         $fk.' '.$rps->pr_rel->kode_fk,
+                    //         $fk.' ('.$rps->pr_rel->kode_fk.')',
+                    //     ];
+                    //     foreach ($candidates as $candidate) {
+                    //         if ($this->containsStrict($candidate, $searchLower)) {
+                    //             $matchFk = true;
+                    //             break 2;
+                    //         }
+                    //     }
+                    // }
 
                     $matchRevisi = $this->matchDateField(
                         $rps->revisi,
                         $searchLower,
                         ['revisi', 'revision']
                     );
+                    $matchCreatedAt = $this->matchDateField(
+                        $rps->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+                    $matchUpdatedAt = $this->matchDateField(
+                        $rps->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+
 
                     switch ($mode) {
                         case 'id':
@@ -478,6 +564,8 @@ trait WithRPSSearchFilters
                             return $matchSemester || $matchSemesterJenis;
                         case 'sks':
                             return $matchSKS || $matchSKSText;
+                        case 'nomor':
+                            return $matchNo;
                         case 'cpmk':
                             return $matchCPMK;
                         case 'scpmk':
@@ -502,6 +590,7 @@ trait WithRPSSearchFilters
                         || $matchSemesterJenis
                         || $matchSKS
                         || $matchSKSText
+                        || $matchNo
 
                         || $matchCPMK
                         || $matchSCPMK

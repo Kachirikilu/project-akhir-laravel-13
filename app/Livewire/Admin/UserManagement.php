@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
@@ -9,6 +10,7 @@ use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
@@ -25,6 +27,7 @@ class UserManagement extends Component
     use WithFakultasFilters;
     use WithFakultasSearchFilters;
     use WithPagination;
+    use WithUserSearchFilters;
     use WithProdiSearchFilters;
     use WithUserDelete;
     use WithUserExcel;
@@ -244,11 +247,13 @@ class UserManagement extends Component
                     ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif'));
             });
 
+            $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
+
             // =========================
             // RESULT VIEW
             // =========================
             return view('livewire.admin.user-management', [
-                'users' => $queryUser->paginate($this->perPage),
+                'users' => $users,
 
                 'totalUserProdi' => $statsPr->count(),
                 'totalAllOpsi' => $statsAll->count(),

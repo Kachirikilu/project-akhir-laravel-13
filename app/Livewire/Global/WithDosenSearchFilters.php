@@ -3,11 +3,16 @@
 namespace App\Livewire\Global;
 
 use App\Models\Auth\Dosen;
+use App\Livewire\Global\LogicSearch;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithDosenSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $dosenSearchQuery = '';
@@ -88,7 +93,8 @@ trait WithDosenSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dosen_name) {
             $this->dosenSearchResults = $this->mapDosenSearch(
-                $this->dosenQuery()->searchDosen($search)->limit(12)->get()
+                // $this->dosenQuery()->searchDosen($search)->limit(12)->get()
+                $this->searchOutputUser($this->dosenQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->dosen_name) {
             $this->dosenSearchResults = $this->getDosenbyUser('search');
@@ -126,7 +132,8 @@ trait WithDosenSearchFilters
         $query = $this->dosenQuery();
 
         if (trim(strlen($value)) > 0) {
-            $results = $query->searchDosen($value)->limit(12)->get();
+            // $results = $query->searchDosen($value)->limit(12)->get();
+            $results = $this->searchOutputUser($query, $value, null, 12);
             $this->dosenResults = $this->mapDosen($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));

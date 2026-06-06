@@ -5,6 +5,7 @@ namespace App\Livewire\AllRole;
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasModal;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithKelasSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
@@ -29,6 +30,7 @@ class KelasManagement extends Component
     // use WithKelasDelete;
     use WithKelasFilters;
     use WithKelasModal;
+    use WithKelasSearchFilters;
     use WithMKSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -40,6 +42,8 @@ class KelasManagement extends Component
     public $perPage = 8;
 
     public $switchTable = '';
+
+    public $search = '';
 
     protected $paginationTheme = 'tailwind';
 
@@ -251,9 +255,11 @@ class KelasManagement extends Component
             }
 
             $this->buttonKelasFilter($queryKelas);
+            $kelas = $this->searchOutputKelas($queryKelas, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+            
 
             return view('livewire.all-role.kelas-management', [
-                'kelas' => $queryKelas->paginate($this->perPage),
+                'kelas' => $kelas,
 
                 'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
                 'totalGanjil' => $this->totalGanjil,

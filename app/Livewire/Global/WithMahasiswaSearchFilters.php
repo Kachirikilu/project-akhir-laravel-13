@@ -3,11 +3,16 @@
 namespace App\Livewire\Global;
 
 use App\Models\Auth\Mahasiswa;
+use App\Livewire\Global\LogicSearch;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithMahasiswaSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $mahasiswaSearchQuery = '';

@@ -61,9 +61,28 @@
                 <th rowspan="2" class="{{ $headKolom }}">Password</th>
             @endif
 
+            @if ($kelas == null)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mk',
+                    'headString' => 'Mata Kuliah',
+                    'rowSpan' => 2,
+                ])
+            @endif
+
             <th colspan="4" class="{{ $headSubKolom }}">
                 Informasi Jadwal Kelas
             </th>
+
+            @if ($kelas == null)
+                <th colspan="5" class="{{ $headSubKolom }}">
+                    Informasi Mata Kuliah
+                </th>
+
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'program_studi',
+                'rowSpan' => 2,
+            ])
+            @endif
 
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
@@ -82,6 +101,7 @@
         </tr>
 
         <tr>
+
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'hari_pelaksanaan',
                 'headString' => 'Hari',
@@ -108,7 +128,31 @@
                 'isCenter' => 1,
             ])
 
-
+            @if ($kelas == null)
+                {{-- Informasi MK --}}
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'kode_mk',
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'semester',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'sks',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'pembelajaran',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'wajib',
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
+            @endif
         </tr>
     </x-slot:header>
 
@@ -217,43 +261,99 @@
                     @endif
                 @endif
 
-            <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $j->hari }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                {{ $j->mahasiswas_count . ' / ' . $j->kapasitas }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
+                @if ($kelas == null)
+            <td class="{{ $secondKolom }} min-w-42">{{ $j->mk ?? '-' }}</td>
+    @endif
 
-            @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="{{ $mainKolom }} text-center">
-                    <flux:dropdown>
-                        <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                            inset="top bottom">
-                        </flux:button>
 
-                        @include(
-                            'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
-                            [
-                                'x' => $j,
-                                'editString' => 'editJadwal',
-                                'nameXString' => 'Jadwal',
-                                'confirmDeleteString' => 'deleteJadwal',
-                            ]
-                        )
+    <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $j->hari }}</td>
+    <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
+    <td class="{{ $subKolom }} text-center whitespace-nowrap">
+        {{ $j->count_mhs_jadwal }}</td>
+    <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
 
-                    </flux:dropdown>
-                </td>
 
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
-            @endif
-        </tr>
-    @empty
-        <tr>
+    @if ($kelas == null)
+        <td class="{{ $mainKolom }} text-center">
+            <flux:dropdown>
+                <button class="cursor-pointer">
+                    @include('livewire.global.table.badge.level-mk-badge', [
+                        'xValue' => $j->kode_mk,
+                        'sortir' => $j->rps_rel?->mk_rel?->level_mk,
+                    ])
+                </button>
+
+                @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
+                    'x' => $j,
+                    'editString' => 'editKelas',
+                    'nameXString' => 'Kelas',
+                    'confirmDeleteString' => 'deleteKelas',
+                    'copyName' => 'Kode MK',
+                    'copyText' => $j->kode_mk ?? '',
+                ])
+
+            </flux:dropdown>
+        </td>
+        <td class="{{ $subKolom }} text-center">{{ $j->semester ?? '-' }}</td>
+        <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->sks ?? '-' }} SKS</td>
+        <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->sks_text ?? '-' }}</td>
+
+        <td class="{{ $secondKolom }} {{ $borderR }} {{ $borderL }} text-center">
+            <flux:dropdown>
+                <button class="cursor-pointer">
+                    @include('livewire.global.table.badge.wajib-badge', [
+                        'xValue' => $j->wajib_text,
+                        'sortir' => $j->wajib,
+                    ])
+                </button>
+
+                @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
+                    'x' => $j,
+                    'editString' => 'editKelas',
+                    'nameXString' => 'Kelas',
+                    'confirmDeleteString' => 'deleteKelas',
+                    'copyName' => 'Kode MK',
+                    'copyText' => $j->kode_mk ?? '',
+                ])
+
+            </flux:dropdown>
+        </td>
+        <td class="{{ $secondKolom }} min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }} ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
+    @endif
+    @if (Auth::user()->admin || Auth::user()->dosen)
+        <td class="{{ $mainKolom }} text-center">
+            <flux:dropdown>
+                <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    inset="top bottom">
+                </flux:button>
+
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
+                    'x' => $j,
+                    'editString' => 'editJadwal',
+                    'nameXString' => 'Jadwal',
+                    'confirmDeleteString' => 'deleteJadwal',
+                ])
+
+            </flux:dropdown>
+        </td>
+
+        <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
+        <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
+    @endif
+    </tr>
+@empty
+    <tr>
+        @if ($kelas == null)
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '19' : '16' }}"
+                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+            @else
             <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '12' : '9' }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                Tidak ada data Jadwal Kelas ditemukan!
-            </td>
-        </tr>
+        @endif
+
+        Tidak ada data Jadwal Kelas ditemukan!
+        </td>
+    </tr>
     @endforelse
 
     </x-admin.global.table.main-layout-table>

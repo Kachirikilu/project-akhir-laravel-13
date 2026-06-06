@@ -5,6 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalModal;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
@@ -22,6 +23,7 @@ class JadwalManagement extends Component
     use WithJadwalFilters;
     use WithJadwalModal;
     use WithKelasModal;
+    use WithKelasJadwalSearchFilters;
     use WithMahasiswaSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -131,11 +133,9 @@ class JadwalManagement extends Component
                 $countJadwal->onlyTrashed();
             }
 
-            // if ($this->switchTable == 'jadwal-table') {
-                $jadwals = $queryJadwal->paginate($this->perPage);
-            // } else {
-            //     $jadwals = $queryJadwal->get();
-            // }
+            // $jadwals = $queryJadwal->paginate($this->perPage);
+            $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+           
 
             if (Auth::user()->mahasiswa) {
                 $userId = Auth::id();
@@ -156,6 +156,7 @@ class JadwalManagement extends Component
                     return $jadwal;
                 });
             }
+
 
             return view('livewire.all-role.kelas-management.jadwal-management', [
                 'jadwals' => $jadwals,

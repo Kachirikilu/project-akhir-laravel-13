@@ -126,19 +126,19 @@ trait WithUserFilters
             }
         }
 
-        $search = trim($this->search);
+        // $search = trim($this->search);
 
-        if (! empty($search) && ! $jadwal_id) {
-            if (! str_contains($search, '%')) {
-                $queryUser->where(function ($q) use ($search) {
-                    $q->searchUser($search);
-                });
-            }
-        }
+        // if (! empty($search) && ! $jadwal_id) {
+        //     if (! str_contains($search, '%')) {
+        //         $queryUser->where(function ($q) use ($search) {
+        //             $q->searchUser($search);
+        //         });
+        //     }
+        // }
 
-        if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
-            $queryUser->searchUser($this->searchAngkatan, true);
-        }
+        // if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
+        //     $queryUser->searchUser($this->searchAngkatan, true);
+        // }
 
         if ($this->filterStatus !== '') {
             if ($this->selectedPrId) {
@@ -158,7 +158,7 @@ trait WithUserFilters
             });
         }
 
-        $this->sortFieldOrderUser($queryUser);
+        // $this->sortFieldOrderUser($queryUser);
 
         return $queryUser;
     }
@@ -168,7 +168,7 @@ trait WithUserFilters
         $accessorFields = [
             'mhs_absensi', 'mhs_masuk', 'mhs_terlambat', 'mhs_izin',
             'mhs_sakit', 'mhs_dispensasi', 'mhs_poin_absensi',
-            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_nilai_huruf_asli', 'mhs_tidak_masuk',
+            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_nilai_huruf', 'mhs_tidak_masuk',
         ];
 
         $search = trim($this->search);
@@ -241,7 +241,7 @@ trait WithUserFilters
 
                     $userHuruf = strtolower(
                         trim(
-                            (string) ($user->mhs_nilai_huruf_asli ?? 'E')
+                            (string) ($user->mhs_nilai_huruf ?? 'E')
                         )
                     );
 
@@ -371,7 +371,7 @@ trait WithUserFilters
     //         'mhs_poin_absensi',
     //         'mhs_nilai_akhir',
     //         'mhs_nilai_index',
-    //         'mhs_nilai_huruf_asli',
+    //         'mhs_nilai_huruf',
     //     ];
 
     //     $search = trim($this->search);
@@ -421,7 +421,7 @@ trait WithUserFilters
     //                 $matchPoinAbsensi = $matchesNumeric($user->mhs_poin_absensi, $search);
 
     //                 $matchNilaiHuruf = ! empty($searchClean) && str_contains(
-    //                     strtolower((string) $user->mhs_nilai_huruf_asli),
+    //                     strtolower((string) $user->mhs_nilai_huruf),
     //                     strtolower($searchClean)
     //                 );
 
@@ -475,7 +475,7 @@ trait WithUserFilters
     //         'mhs_absensi', 'mhs_masuk', 'mhs_hadir', 'mhs_terlambat',
     //         'mhs_izin', 'mhs_sakit', 'mhs_dispensasi', 'mhs_absen',
     //         'mhs_tidak_masuk', 'mhs_poin_absensi', 'mhs_nilai_akhir',
-    //         'mhs_nilai_index', 'mhs_nilai_huruf_asli',
+    //         'mhs_nilai_index', 'mhs_nilai_huruf',
     //     ];
 
     //     $search = trim($this->search);
@@ -574,7 +574,7 @@ trait WithUserFilters
         //     $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
         //         ->whereColumn('mahasiswas.user_id', 'users.id')->where('nilai_mahasiswa.kj_id', $idJadwal)
         //         ->selectRaw("CASE WHEN nilai_mahasiswa.nilai >= 86 THEN 'A' WHEN nilai_mahasiswa.nilai >= 71 THEN 'B' WHEN nilai_mahasiswa.nilai >= 56 THEN 'C' WHEN nilai_mahasiswa.nilai >= 41 THEN 'D' ELSE 'E' END")->limit(1);
-        // }, 'mhs_nilai_huruf_asli');
+        // }, 'mhs_nilai_huruf');
 
         // foreach ($statuses as $alias => $condition) {
         //     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
@@ -648,75 +648,75 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderUser($queryUser)
-    {
-        $profileFields = [
-            'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
-            'name', 'identity1', 'identity2', 'identity3', 'nik',
-            'prodi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
-            'nip', 'nitk', 'nidn', 'nidk', 'nim',
-        ];
+    // public function sortFieldOrderUser($queryUser)
+    // {
+    //     $profileFields = [
+    //         'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
+    //         'name', 'identity1', 'identity2', 'identity3', 'nik',
+    //         'prodi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
+    //         'nip', 'nitk', 'nidn', 'nidk', 'nim',
+    //     ];
 
-        if (in_array($this->sortField, $profileFields)) {
-            return $this->applyUserCombinedSort($queryUser);
-        }
+    //     if (in_array($this->sortField, $profileFields)) {
+    //         return $this->applyUserCombinedSort($queryUser);
+    //     }
 
-        $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
+    //     $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
 
-        return $queryUser->orderBy($field, $this->sortDirection);
-    }
+    //     return $queryUser->orderBy($field, $this->sortDirection);
+    // }
 
-    private function applyUserCombinedSort($queryUser)
-    {
-        $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-            ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-            ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-            ->select('users.*');
+    // private function applyUserCombinedSort($queryUser)
+    // {
+    //     $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
+    //         ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
+    //         ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
+    //         ->select('users.*');
 
-        if ($this->sortField === 'prodi') {
-            return $this->applyProdiSort($queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
-                ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
-                ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
-                'COALESCE(ap.strata, dp.strata, mp.strata)',
-                'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)');
-        }
+    //     if ($this->sortField === 'prodi') {
+    //         return $this->applyProdiSort($queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+    //             ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
+    //             ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
+    //             'COALESCE(ap.strata, dp.strata, mp.strata)',
+    //             'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)');
+    //     }
 
-        // if (Auth::user()->mahasiswa) {
-        //     $sort = $this->sortField;
-        //     if ($sort == 'mhs_poin_absensi' || $sort == 'mhs_absensi' || $sort == 'mhs_masuk' || $sort == 'mhs_hadir' || $sort == 'mhs_terlambat' || $sort == 'mhs_izin' || $sort == 'mhs_sakit' || $sort == 'mhs_dispensasi' || $sort == 'mhs_tidak_masuk' || $sort == 'mhs_absen' || $sort == 'mhs_poin_absensi') {
-        //         $this->sortField == 'id';
-        //     }
-        // }
+    //     // if (Auth::user()->mahasiswa) {
+    //     //     $sort = $this->sortField;
+    //     //     if ($sort == 'mhs_poin_absensi' || $sort == 'mhs_absensi' || $sort == 'mhs_masuk' || $sort == 'mhs_hadir' || $sort == 'mhs_terlambat' || $sort == 'mhs_izin' || $sort == 'mhs_sakit' || $sort == 'mhs_dispensasi' || $sort == 'mhs_tidak_masuk' || $sort == 'mhs_absen' || $sort == 'mhs_poin_absensi') {
+    //     //         $this->sortField == 'id';
+    //     //     }
+    //     // }
 
-        $orderByRaw = match ($this->sortField) {
-            'admin_id' => 'admins.id',
-            'dosen_id' => 'dosens.id',
-            'mahasiswa_id' => 'mahasiswas.id',
-            'role' => 'CASE 
-                            WHEN admins.id IS NOT NULL THEN 1
-                            WHEN dosens.id IS NOT NULL THEN 2
-                            WHEN mahasiswas.id IS NOT NULL THEN 3
-                            ELSE 4
-                        END',
-            'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
-            'kode' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
-            'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
-            'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
-            'identity3' => 'dosens.nidk',
-            'nip' => 'COALESCE(admins.nip, dosens.nip)',
-            'nitk' => 'admins.nitk',
-            'nidn' => 'dosens.nidn',
-            'nidk' => 'dosens.nidk',
-            'nim' => 'mahasiswas.nim',
-            'pertemuan_ke' => 'mahasiswas.nim',
-            'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
-            'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
-            'angkatan' => 'mahasiswas.angkatan',
-            'created_at' => 'users.created_at',
-            'updated_at' => 'users.updated_at',
-            default => 'users.id'
-        };
+    //     $orderByRaw = match ($this->sortField) {
+    //         'admin_id' => 'admins.id',
+    //         'dosen_id' => 'dosens.id',
+    //         'mahasiswa_id' => 'mahasiswas.id',
+    //         'role' => 'CASE 
+    //                         WHEN admins.id IS NOT NULL THEN 1
+    //                         WHEN dosens.id IS NOT NULL THEN 2
+    //                         WHEN mahasiswas.id IS NOT NULL THEN 3
+    //                         ELSE 4
+    //                     END',
+    //         'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+    //         'kode' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+    //         'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
+    //         'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
+    //         'identity3' => 'dosens.nidk',
+    //         'nip' => 'COALESCE(admins.nip, dosens.nip)',
+    //         'nitk' => 'admins.nitk',
+    //         'nidn' => 'dosens.nidn',
+    //         'nidk' => 'dosens.nidk',
+    //         'nim' => 'mahasiswas.nim',
+    //         'pertemuan_ke' => 'mahasiswas.nim',
+    //         'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
+    //         'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
+    //         'angkatan' => 'mahasiswas.angkatan',
+    //         'created_at' => 'users.created_at',
+    //         'updated_at' => 'users.updated_at',
+    //         default => 'users.id'
+    //     };
 
-        return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
-    }
+    //     return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
+    // }
 }

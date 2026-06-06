@@ -3,11 +3,16 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\CPL;
+use App\Livewire\Global\LogicSearch;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithCPLSearchFilters
 {
+    use LogicSearch;
     use WithPagination;
 
     public $cplSearchQuery = '';
@@ -95,7 +100,8 @@ trait WithCPLSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpl_name) {
             $this->cplSearchResults = $this->mapCPLSearch(
-                $this->cplQuery()->searchCPL($search)->limit(12)->get()
+                // $this->cplQuery()->searchCPL($search)->limit(12)->get()
+                $this->searchOutputCPL($this->cplQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->cpl_name) {
             $this->cplSearchResults = $this->getCPLbyUser('search');
@@ -145,7 +151,8 @@ trait WithCPLSearchFilters
         $query = $this->cplQuery();
 
         if (trim(strlen((string) $value)) > 0) {
-            $results = $query->searchCPL($value)->limit(12)->get();
+            // $results = $query->searchCPL($value)->limit(12)->get();
+            $results = $this->searchOutputCPL($query, $value, 12);
             $this->cplResults[$key] = $this->mapCPL($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -342,5 +349,101 @@ trait WithCPLSearchFilters
         // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
         //     $this->deskripsi_cpmk = '';
         // }
+    }
+
+    public function searchOutputCPL($queryCPL, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || $sortField) {
+
+            $allCPL = (clone $queryCPL)->get();
+
+            if (! empty($search)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allCPL = $allCPL->filter(function ($cpl) use ($searchLower, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+
+                    $matchID = $this->matchID(
+                        $cpl->id,
+                        $searchLower
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | KODE CPMK
+                    |--------------------------------------------------------------------------
+                    */
+                    $matchKode = $this->matchKode(
+                        $cpl->kode,
+                        $searchLower
+                    );
+
+                    $matchDes = $this->containsStrict(
+                        $cpl->deskripsi,
+                        $searchLower
+                    );
+
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $cpl->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $cpl->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                        case 'bobot':
+                            return $matchBobot;
+                    }
+
+                    return
+                        $matchID
+                        || $matchKode
+                        || $matchDes
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'kode' => fn ($cpl) => $cpl->kode,
+                'deskripsi' => fn ($cpl) => $cpl->deskripsi,
+
+                'created_at' => fn ($cpl) => $cpl->created_at,
+                'updated_at' => fn ($cpl) => $cpl->updated_at,
+
+                default => fn ($cpl) => $cpl->id,
+            };
+
+            $allCPL = $sortDirection === 'asc'
+                ? $allCPL->sortBy($sortValue)
+                : $allCPL->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allCPL->forPage($currentPage, $perPage)->values(),
+                $allCPL->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $queryCPL->paginate($perPage);
     }
 }

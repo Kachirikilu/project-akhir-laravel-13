@@ -74,41 +74,41 @@ class CPL extends Model
                     ->withPivot('sort_order');
     }
 
-    public function scopeSearchCPL($query, $search)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
+    // public function scopeSearchCPL($query, $search)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
 
-        $search = trim($search);
-        $searchTerm = '%'.$search.'%';
-        $searchLower = '%'.strtolower($search).'%';
-        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+    //     $search = trim($search);
+    //     $searchTerm = '%'.$search.'%';
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
-            $q->where('cpls.kode_cpl', 'like', $searchTerm)
-                    ->orWhere('cpls.kode_cpl', 'like', $searchClean)
-                    ->orWhere('cpls.deskripsi', 'like', $searchTerm);
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+    //         $q->where('cpls.kode_cpl', 'like', $searchTerm)
+    //                 ->orWhere('cpls.kode_cpl', 'like', $searchClean)
+    //                 ->orWhere('cpls.deskripsi', 'like', $searchTerm);
 
-                if (is_numeric($search)) {
-                    $q->orWhere('cpls.id', 'like', $search);
-                }
+    //             if (is_numeric($search)) {
+    //                 $q->orWhere('cpls.id', 'like', $search);
+    //             }
 
-                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(cpls.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(cpls.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-                });
-                ;
-        });
-    }
+    //             $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+    //                 $dq->whereRaw("DATE_FORMAT(cpls.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(cpls.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+    //             });
+    //             ;
+    //     });
+    // }
 }

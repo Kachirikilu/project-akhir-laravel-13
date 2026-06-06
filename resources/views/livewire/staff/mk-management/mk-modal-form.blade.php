@@ -71,6 +71,7 @@
                         @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $mkType,
                             'targetX' => 'addMK, saveMK, editMK, updateMK',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

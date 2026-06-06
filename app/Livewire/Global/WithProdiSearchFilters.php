@@ -358,7 +358,7 @@ trait WithProdiSearchFilters
 
                     /*
                     |--------------------------------------------------------------------------
-                    | KODE RPS
+                    | KODE SEARCH MATCHING LOGIC
                     |--------------------------------------------------------------------------
                     */
                     $matchKode = $this->matchKode(
@@ -374,20 +374,34 @@ trait WithProdiSearchFilters
                         $searchLower
                     );
 
-                    $matchPr = $this->containsStrict(
+                    $basePr = [
                         $pr->prodi,
-                        $searchLower
-                    );
+                        $pr->prodi_pr,
+                        $pr->prodi_strata,
+                    ];
+                    $matchPr = false;
+                    foreach ($basePr as $pro) {
+                        $candidates = [
+                            $pro.' '.$pr->kode_pr,
+                            $pro.' ('.$pr->kode_pr.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchPr = true;
+                                break 2;
+                            }
+                        }
+                    }
 
                     $baseDp = [
                         $pr->departemen,
                         $pr->departemen_dp,
                     ];
                     $matchDp = false;
-                    foreach ($baseDp as $fak) {
+                    foreach ($baseDp as $dp) {
                         $candidates = [
-                            $fak.' '.$pr->kode_dp,
-                            $fak.' ('.$pr->kode_dp.')',
+                            $dp.' '.$pr->kode_dp,
+                            $dp.' ('.$pr->kode_dp.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {
@@ -402,10 +416,10 @@ trait WithProdiSearchFilters
                         $pr->fakultas_fk,
                     ];
                     $matchFk = false;
-                    foreach ($baseFk as $fak) {
+                    foreach ($baseFk as $fk) {
                         $candidates = [
-                            $fak.' '.$pr->kode_fk,
-                            $fak.' ('.$pr->kode_fk.')',
+                            $fk.' '.$pr->kode_fk,
+                            $fk.' ('.$pr->kode_fk.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {
@@ -414,11 +428,6 @@ trait WithProdiSearchFilters
                             }
                         }
                     }
-
-                    $matchStrata = $this->containsStrict(
-                        $pr->strata,
-                        $searchLower
-                    );
 
                     $matchCreatedAt = $this->matchDateField(
                         $pr->created_at,
@@ -447,8 +456,6 @@ trait WithProdiSearchFilters
                         || $matchDp
                         || $matchFk
 
-                        || $matchStrata
-
                         || $matchCreatedAt
                         || $matchUpdatedAt;
                 });
@@ -457,7 +464,7 @@ trait WithProdiSearchFilters
             $sortValue = match ($sortField) {
                 'kode' => fn ($pr) => $pr->kode,
 
-                'prodi', 'program-studi' => fn ($pr) => $pr->prodi,
+                'prodi', 'program_studi' => fn ($pr) => $pr->prodi,
                 'departemen' => fn ($pr) => $pr->departemen,
                 'fakultas' => fn ($pr) => $pr->fakultas,
                 'strata' => fn ($pr) => $pr->strata,

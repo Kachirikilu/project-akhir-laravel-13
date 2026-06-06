@@ -19,7 +19,39 @@
 
                 <input x-model="value" wire:model.live.debounce.300ms="{{ $modelString }}" type="text"
                     placeholder="{{ $placeholder }}"
-                    @if (isset($floatOnly) && $floatOnly) inputmode="decimal"
+                    @if (isset($withSimbol) && $withSimbol) inputmode="text"
+                        oninput="
+                            let val = this.value.replace(/,/g, '.');
+                            val = val.replace(/[^0-9.><=≥≤]/g, '');
+                            let operator = '';
+                            let number = val;
+
+                            const match = val.match(/^(>=|<=|=>|=<|>|<|=|≥|≤)/);
+                            if (match) {
+                                operator = match[0]
+                                    .replace('=>', '>=')
+                                    .replace('=<', '<=');
+                                number = val.substring(match[0].length);
+                            }
+
+                            number = number.replace(/[^0-9.]/g, '');
+                            let parts = number.split('.');
+
+                            if (parts.length > 2) {
+                                number = parts[0] + '.' + parts.slice(1).join('');
+                                parts = number.split('.');
+                            }
+
+                            parts[0] = parts[0].slice(0, {{ $maxLength ?? 255 }});
+                            if (parts.length > 1) {
+                                parts[1] = parts[1].slice(0, 2);
+                            }
+
+                            this.value = operator + parts.join('');
+                        "
+                    @elseif (isset($floatOnly) && $floatOnly)
+                    {{-- @if (isset($floatOnly) && $floatOnly) --}}
+                    inputmode="decimal"
                         oninput="
                             let val = this.value.replace(/,/g, '.');
                             val = val.replace(/[^0-9.]/g, '');

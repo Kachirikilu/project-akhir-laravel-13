@@ -224,4 +224,6 @@ trait WithReferensiSearchFilters
         $this->ref_items_array = [];
         $this->refNameSearch = '';
     }
+
+
 }

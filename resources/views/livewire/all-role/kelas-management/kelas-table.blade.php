@@ -87,9 +87,8 @@
                 'rowSpan' => 2,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'prodi',
+                'sortFieldString' => 'program_studi',
                 'rowSpan' => 2,
-                'headString' => 'Program Studi',
             ])
 
             <th colspan="4" class="{{ $headSubKolom }}">
@@ -141,7 +140,7 @@
                 'headString' => 'Tanggal',
             ])
 
-            {{-- Informasi Kelas --}}
+            {{-- Informasi MK --}}
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode_mk',
                 'isCenter' => 1,
@@ -160,14 +159,12 @@
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'sks_text',
+                'sortFieldString' => 'pembelajaran',
                 'isCenter' => 1,
-                'headString' => 'Pembelajaran',
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'is_wajib',
+                'sortFieldString' => 'wajib',
                 'isCenter' => 1,
-                'headString' => 'Wajib',
                 'isMain' => 1,
             ])
 
@@ -263,7 +260,7 @@
                 @else
                     <ul class="text-left text-sm whitespace-nowrap align-top">
                         @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                            <li class="text-center">{{ $jadwal->kapasitas ?? '-' }}</li>
+                            <li class="text-center">{{ $jadwal->count_mhs_jadwal }}</li>
                         @endforeach
                     </ul>
                 @endif

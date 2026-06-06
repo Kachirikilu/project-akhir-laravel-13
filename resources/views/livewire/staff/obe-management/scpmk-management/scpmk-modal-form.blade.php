@@ -37,6 +37,7 @@
                         )
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addSCPMK, saveSCPMK, editSCPMK, updateSCPMK',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

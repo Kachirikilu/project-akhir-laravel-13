@@ -3,11 +3,8 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\MataKuliah;
-use App\Livewire\Global\LogicSearch;
-use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
@@ -316,7 +313,7 @@ trait WithMKSearchFilters
                         $mk->kode,
                         $searchLower
                     );
-                
+
                     /*
                     |--------------------------------------------------------------------------
                     | NAMA MK
@@ -326,7 +323,7 @@ trait WithMKSearchFilters
                         $mk->mk,
                         $searchLower
                     );
-                 
+
                     /*
                     |--------------------------------------------------------------------------
                     | SEMESTER
@@ -390,7 +387,6 @@ trait WithMKSearchFilters
                         ['updated', 'diubah', 'update']
                     );
 
-
                     switch ($mode) {
                         case 'id':
                             return $matchID;
@@ -433,7 +429,7 @@ trait WithMKSearchFilters
                 'sks_pr' => fn ($mk) => (int) $mk->sks_pr,
                 'sks_pl' => fn ($mk) => (int) $mk->sks_pl,
                 'sks_sm' => fn ($mk) => (int) $mk->sks_sm,
-                
+
                 'is_wajib', 'wajib' => fn ($mk) => $mk->wajib_text,
 
                 'created_at' => fn ($mk) => $mk->created_at,
@@ -456,6 +452,7 @@ trait WithMKSearchFilters
                 ['path' => Paginator::resolveCurrentPath()]
             );
         }
+
         return $queryMK->paginate($perPage);
     }
 }

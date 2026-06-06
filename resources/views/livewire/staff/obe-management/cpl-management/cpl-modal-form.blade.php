@@ -38,6 +38,7 @@
                         )
                         @include('livewire.global.modal-form.footer.button-form', [
                             'targetX' => 'addCPL, saveCPL, editCPL, updateCPL',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>

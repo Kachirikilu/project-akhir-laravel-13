@@ -71,6 +71,7 @@
                         @include('livewire.global.modal-form.footer.button-form', [
                             'xType' => $prodiType,
                             'targetX' => 'addProdi, saveProdi, editProdi, updateProdi',
+                            'isLeft' => 0
                         ])
                     </div>
                 </div>
