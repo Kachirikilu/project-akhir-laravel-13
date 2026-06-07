@@ -46,7 +46,7 @@ class RememberKelasNavigation
         // 2. HANDLER SESI (LEVEL 2 MANAGEMENT / LEVEL 1 MAHASISWA)
         if ($routeName === 'sesi-management' || $routeName === 'sesi-mahasiswa') {
             $currentKode = $request->route('kode');
-            $currentKodeJadwal = $request->route('kode_jadwal');
+            $currentKodeJadwal = $request->route('kode_jadwal_url');
             $currentIdJadwal = $request->route('jadwal_id');
             $currentKodeDb = str_replace('-', '', $currentKode);
 
@@ -79,12 +79,12 @@ class RememberKelasNavigation
 
             $sesiHistory[$compositeKey] = [
                 'kode' => $currentKode,
-                'kode_jadwal' => $currentKodeJadwal,
+                'kode_jadwal_url' => $currentKodeJadwal,
                 'jadwal_id' => $currentIdJadwal,
                 'switchTable' => $request->route('switchTable'),
                 'url' => route($routeName, array_filter([
                     'kode' => $currentKode,
-                    'kode_jadwal' => $currentKodeJadwal,
+                    'kode_jadwal_url' => $currentKodeJadwal,
                     'jadwal_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
                 ])),
@@ -94,7 +94,7 @@ class RememberKelasNavigation
             
             uasort($sesiHistory, function ($a, $b) {
                 $kodeCompare = strcmp($a['kode'], $b['kode']);
-                return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal'], $b['kode_jadwal']);
+                return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal_url'], $b['kode_jadwal_url']);
             });
 
             session([$sessionKey => $sesiHistory]);

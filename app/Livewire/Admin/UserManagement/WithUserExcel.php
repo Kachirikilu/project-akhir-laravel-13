@@ -123,100 +123,117 @@ trait WithUserExcel
         }
 
         $this->reset(['parsedUserRows', 'rowUserErrors']);
-
+        if (method_exists($this, 'setPage')) {
+            $this->setPage(1, 'excelPage');
+        }
         $this->validate([
-            'excel_user_file' => 'required|file|mimes:xlsx,xls|max:10240',
+            'excel_user_file' => 'required|array',
+            'excel_user_file.*' => 'file|mimes:xlsx,xls|max:10240',
         ]);
 
-        $spreadsheet = IOFactory::load($this->excel_user_file->getRealPath());
-        $worksheet = $spreadsheet->getActiveSheet();
-        $allData = $worksheet->toArray();
+        $this->parsedUserRows = [];
 
-        if (empty($allData)) {
-            throw new \Exception('File Excel kosong!');
-        }
+        foreach ($this->excel_user_file as $singleFile) {
 
-        /** ===============================
-         *  CARI HEADER (Robust Search)
-         *  =============================== */
-        $headerRowIndex = null;
-        $secondHeaderRowIndex = null;
+            $spreadsheet = IOFactory::load($singleFile->getRealPath());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $allData = $worksheet->toArray();
 
-        foreach ($allData as $i => $row) {
-            $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
-
-            // Cari baris yang mengandung kata kunci utama (Email/Role/Nama)
-            // Lewati judul (biasanya cuma 1 cell besar)
-            if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
-                $headerRowIndex = $i;
-                // Jika baris berikutnya juga punya konten (untuk handle double header)
-                if (isset($allData[$i + 1])) {
-                    $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
-                    if ($nextRow->count() > 0) {
-                        $secondHeaderRowIndex = $i + 1;
-                    }
-                }
-                break;
-            }
-        }
-
-        if ($headerRowIndex === null) {
-            throw new \Exception('Header tidak ditemukan. Pastikan file memiliki kolom Email/Nama/Role!');
-        }
-
-        $rawHeader1 = $allData[$headerRowIndex];
-        $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
-
-        $headers = [];
-        foreach ($rawHeader1 as $idx => $value) {
-            $val1 = Str::lower(trim((string) $value));
-            $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
-
-            // Gabungkan atau pilih header yang lebih spesifik
-            $finalHeader = $val1;
-            if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
-                $finalHeader = $val2;
-            }
-
-            if ($finalHeader !== '') {
-                $headers[$idx] = $finalHeader;
-            }
-        }
-
-        /** ===============================
-         *  PARSE DATA KE TABLE PREVIEW
-         *  =============================== */
-        $startDataIndex = ($secondHeaderRowIndex ?? $headerRowIndex) + 1;
-        $dataRows = array_slice($allData, $startDataIndex);
-
-        foreach ($dataRows as $excelIndex => $row) {
-            if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() === 0) {
+            if (empty($allData)) {
                 continue;
             }
 
-            $data = [];
-            foreach ($headers as $col => $header) {
-                $data[$header] = trim((string) ($row[$col] ?? ''));
+            /** ===============================
+             * CARI HEADER (Robust Search)
+             * =============================== */
+            $headerRowIndex = null;
+            $secondHeaderRowIndex = null;
+
+            foreach ($allData as $i => $row) {
+                $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
+
+                if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
+                    $headerRowIndex = $i;
+                    if (isset($allData[$i + 1])) {
+                        $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
+                        if ($nextRow->count() > 0) {
+                            $secondHeaderRowIndex = $i + 1;
+                        }
+                    }
+                    break;
+                }
             }
 
-            // Mapping yang lebih fleksibel untuk mendukung berbagai format header
-            $this->parsedUserRows[] = [
-                'email' => $data['email'] ?? '',
-                'password' => $data['password'] ?? '12345678',
-                'name' => $data['name'] ?? $data['nama'] ?? '',
-                'nip' => $data['nip'] ?? '',
-                'nitk' => $data['nitk'] ?? '',
-                'nidn' => $data['nidn'] ?? '',
-                'nidk' => $data['nidk'] ?? '',
-                'nim' => $data['nim'] ?? '',
-                'nik' => $data['nik'] ?? '',
-                'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
-                'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
-                'role' => strtolower($data['role'] ?? ''),
-            ];
+            if ($headerRowIndex === null) {
+                continue;
+            }
+
+            $rawHeader1 = $allData[$headerRowIndex];
+            $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
+
+            $headers = [];
+            foreach ($rawHeader1 as $idx => $value) {
+                $val1 = Str::lower(trim((string) $value));
+                $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
+
+                $finalHeader = $val1;
+                if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
+                    $finalHeader = $val2;
+                }
+
+                if ($finalHeader !== '') {
+                    $headers[$idx] = $finalHeader;
+                }
+            }
+
+            /** ===============================
+             * PARSE DATA KE TABLE PREVIEW
+             * =============================== */
+            $startDataIndex = ($secondHeaderRowIndex ?? $headerRowIndex) + 1;
+            $dataRows = array_slice($allData, $startDataIndex);
+
+            foreach ($dataRows as $excelIndex => $row) {
+                if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() === 0) {
+                    continue;
+                }
+
+                $data = [];
+                foreach ($headers as $col => $header) {
+                    $data[$header] = trim((string) ($row[$col] ?? ''));
+                }
+                $this->parsedUserRows[] = [
+                    'email' => $data['email'] ?? '',
+                    'password' => $data['password'] ?? '12345678',
+                    'name' => $data['name'] ?? $data['nama'] ?? '',
+                    'nip' => $data['nip'] ?? '',
+                    'nitk' => $data['nitk'] ?? '',
+                    'nidn' => $data['nidn'] ?? '',
+                    'nidk' => $data['nidk'] ?? '',
+                    'nim' => $data['nim'] ?? '',
+                    'nik' => $data['nik'] ?? '',
+                    'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
+                    'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
+                    'role' => strtolower($data['role'] ?? ''),
+                ];
+            }
         }
 
-        $this->toast(text: 'File Excel berhasil dimuat. Silakan periksa data!');
+        $this->toast(text: 'Semua file Excel ('.count($this->excel_user_file).' file) berhasil dimuat. Silakan periksa data!');
+    }
+
+    public function clearUserNilaiFile()
+    {
+        $this->excel_user_file = null;
+        $this->reset([
+            'parsedUserRows',
+            'rowUserErrors',
+        ]);
+        if (method_exists($this, 'setPage')) {
+            $this->setPage(1, 'excelPage');
+        }
+        $this->dispatch('reset-file-input', id: 'excel_user_file');
+
+        $this->toast(type: 'info', text: 'File berkas user berhasil dihapus.');
     }
 
     public function updatedExcelUserFile()
@@ -249,7 +266,8 @@ trait WithUserExcel
     public function saveUserExcel()
     {
         $rules = [
-            'excel_user_file' => 'required|file|mimes:xlsx,xls|max:10240',
+            'excel_user_file' => 'required|array',
+            'excel_user_file.*' => 'file|mimes:xlsx,xls|max:27648',
             'pr_id' => 'required|exists:prodis,id',
         ];
         $this->validate($rules, $this->validationMessagesUser());
@@ -302,7 +320,7 @@ trait WithUserExcel
                         $this->rowUserErrors[$index] = ['general' => [$e->getMessage()]];
                     }
                 }
-                $message = "Sedang memproses... $successCount dari $total data berhasil masuk.";
+                $message = "Sedang memproses... $successCount dari $total data berhasil masuk!";
                 $this->stream(
                     to: 'import-progress',
                     content: $message,
@@ -340,8 +358,6 @@ trait WithUserExcel
         } else {
             $this->toast(text: $messageText, variant: 'warning');
         }
-
-        $this->dispatch('refresh-data-user');
     }
 
     private function saveUserFromExcel($validated, $role)

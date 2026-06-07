@@ -144,7 +144,9 @@
                 </a>
             @elseif ($item['type'] === 'dropdown-obe')
                 @php
-                    $currentTable = request()->route('switchTable') ?? 'rps';
+                    $currentTable = null;
+                    // $currentTable = request()->route('switchTable');
+                    // $currentTable = $this->switchTable ?? 'rps';
                     $isOBEActive = request()->routeIs('rps-management');
 
                     $subMenus = [
@@ -227,7 +229,7 @@
 
                     foreach ($sesiHistory as $sesi) {
                         $kodeKelas = $sesi['kode'];
-                        $kodeJadwal = $sesi['kode_jadwal'];
+                        $kodeJadwal = $sesi['kode_jadwal_url'];
                         $jadwalId = $sesi['jadwal_id'] ?? null;
                         $switchTable = $sesi['switchTable'] ?? null;
 
@@ -237,7 +239,7 @@
                                 'sesi-mahasiswa',
                                 array_filter([
                                     'kode' => $kodeKelas,
-                                    'kode_jadwal' => $kodeJadwal,
+                                    'kode_jadwal_url' => $kodeJadwal,
                                     'jadwal_id' => $jadwalId,
                                     'switchTable' => $switchTable,
                                 ]),
@@ -249,7 +251,7 @@
                             'active' =>
                                 request()->routeIs('sesi-mahasiswa') &&
                                 request()->route('kode') === $kodeKelas &&
-                                request()->route('kode_jadwal') === $kodeJadwal,
+                                request()->route('kode_jadwal_url') === $kodeJadwal,
                         ];
                     }
 
@@ -272,7 +274,7 @@
                 $groupedJadwal = [];
                 foreach ($sesiHistory as $sesi) {
                     $kodeKelas = $sesi['kode'];
-                    $kodeJadwal = $sesi['kode_jadwal'];
+                    $kodeJadwal = $sesi['kode_jadwal_url'];
                     $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
                 }
 
@@ -310,7 +312,7 @@
                     if (isset($groupedJadwal[$kodeKelas])) {
                         foreach ($groupedJadwal[$kodeKelas] as $sesi) {
                             $subMenus[] = [
-                                'label' => $sesi['kode_jadwal'],
+                                'label' => $sesi['kode_jadwal_url'],
                                 'url' => $sesi['url'],
                                 'param' => 'sesi-management',
                                 'icon' => 'academic-cap',
@@ -319,7 +321,7 @@
                                 'active' =>
                                     request()->routeIs('sesi-management') &&
                                     request()->route('kode') === $sesi['kode'] &&
-                                    request()->route('kode_jadwal') === $sesi['kode_jadwal'],
+                                    request()->route('kode_jadwal_url') === $sesi['kode_jadwal_url'],
                             ];
                         }
                     }

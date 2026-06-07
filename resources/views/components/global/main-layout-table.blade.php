@@ -4,7 +4,7 @@
     'targetLoading' => "
         filterByStatus, filterByStrata, filterByMK,
         filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
-        filterByKelas, filterByMKGG, filterByKelasGG,
+        filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
         showDeleted,
         saveUserExcel, procesImportUserExcel,
         saveUser, updateUser, destroyUser, restoreUser,

@@ -48,12 +48,6 @@ trait WithJadwalFilters
         $this->resetPage();
     }
 
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filterJadwal']);
-        $this->resetPage();
-    }
-
     // public function sortFieldOrderJadwal($queryJadwal)
     // {
     //     $queryJadwal->select('kelas_jadwals.*')->withCount('mahasiswas');

@@ -8,6 +8,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNil
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
 use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Models\Auth\User;
@@ -24,6 +25,7 @@ class SesiManagement extends Component
     use WithAbsenModal;
     use WithJadwalModal;
     use WithUserSearchFilters;
+    use WithKelasSesiSearchFilters;
     use WithMahasiswaSearchFilters;
     use WithNilaiExcel;
     use WithPagination;
@@ -38,13 +40,19 @@ class SesiManagement extends Component
 
     public $kode;
 
-    public $kode_jadwal;
+    public $kode_jadwal_url;
 
     public $kelas;
 
     public $jadwal;
 
     public $jadwal_id;
+
+    public $kode_jadwal;
+
+    public $rps_id;
+
+    public $kode_rps;
 
     public $perPage = 8;
 
@@ -68,7 +76,7 @@ class SesiManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    // public function mount($kode, $kode_jadwal, $jadwal_id, $switchTable = 'sesi-card')
+    // public function mount($kode, $kode_jadwal_url, $jadwal_id, $switchTable = 'sesi-card')
     // {
     //     $this->kode = $kode;
     //     $this->kelas = Kelas::where('kode_kelas', $kode)
@@ -77,7 +85,7 @@ class SesiManagement extends Component
 
     //     $this->jadwal_id = $jadwal_id;
     //     $this->jadwal = KelasJadwal::where('id', $jadwal_id)->firstOrFail();
-    //     $this->kode_jadwal = $this->jadwal->kode_jadwal;
+    //     $this->kode_jadwal_url = $this->jadwal->kode_jadwal_url;
 
     //     $this->switchTable = $switchTable;
     // }
@@ -85,7 +93,7 @@ class SesiManagement extends Component
     public function mount(
         $isJadwalMhs = false,
         $kode = null,
-        $kode_jadwal = null,
+        $kode_jadwal_url = null,
         $switchTable = 'sesi-card'
     ) {
         $this->kode = $kode;
@@ -99,9 +107,9 @@ class SesiManagement extends Component
             )
             ->firstOrFail();
 
-        $this->kode_jadwal = $kode_jadwal;
+        $this->kode_jadwal_url = $kode_jadwal_url;
 
-        $parts = explode('-', $kode_jadwal);
+        $parts = explode('-', $kode_jadwal_url);
 
         if (count($parts) < 3) {
             abort(404, 'Format Kode Jadwal Kelas tidak valid!');
@@ -136,6 +144,9 @@ class SesiManagement extends Component
             ->firstOrFail();
 
         $this->jadwal_id = $this->jadwal->id;
+        $this->kode_jadwal = $this->jadwal->kode;
+        $this->rps_id = $this->jadwal->rps_id;
+        $this->kode_rps = $this->jadwal->kode_rps;
         $this->switchTable = $switchTable;
     }
 
@@ -143,6 +154,12 @@ class SesiManagement extends Component
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterSesi']);
         $this->resetPage();
     }
 
@@ -219,7 +236,7 @@ class SesiManagement extends Component
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
 
-        $targetPath = "/{$base}/{$this->kode}/jadwal/{$this->kode_jadwal}{$suffix}";
+        $targetPath = "/{$base}/{$this->kode}/jadwal/{$this->kode_jadwal_url}{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -243,7 +260,7 @@ class SesiManagement extends Component
                     $this->toast(text: $message, variant: 'danger');
 
                     $history = session('jadwal.history', []);
-                    $compositeKey = $this->kode.'_'.$this->kode_jadwal;
+                    $compositeKey = $this->kode.'_'.$this->kode_jadwal_url;
                     unset($history[$compositeKey]);
                     session(['jadwal.history' => $history]);
                     $this->redirect(route('jadwal-management', $this->kode));
@@ -487,7 +504,8 @@ class SesiManagement extends Component
                     $sesis = $querySesi->get();
                     break;
                 case 'sesi-table':
-                    $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
+                    // $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
+                    $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
                     break;
                 case 'mahasiswa':
                     // $users = $queryUser->paginate($this->perPage);

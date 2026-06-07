@@ -24,6 +24,8 @@ return new class extends Migration
             $table->json('nilai_array')->nullable();
             $table->json('bobot_array')->nullable();
 
+            $table->boolean('is_loocked')->default(false);
+
             $table->softDeletes();
             $table->timestamps();
 

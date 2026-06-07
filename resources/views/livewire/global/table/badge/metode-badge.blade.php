@@ -1,27 +1,43 @@
 @switch($sortir ?? $xValue)
     @case('Teori')
-        <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">{{ $xValue }}
+        <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">
+            {{ $xValue }}
         </flux:badge>
     @break
 
     @case('Praktik')
-        <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">{{ $xValue }}
+    @case('Responsi')
+        <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">
+            {{ $xValue }}
         </flux:badge>
     @break
 
     @case('Tugas')
+    @case('Logbook')
         <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">
             {{ $xValue }}
         </flux:badge>
     @break
 
     @case('UTS')
-    @case('UAS')
+    @case('Evaluasi Awal')
+    @case('Kuis')
         <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">
-            {{ $xValue }}</flux:badge>
+            {{ $xValue }}
+        </flux:badge>
+    @break
+
+    @case('UAS')
+    @case('Evaluasi Akhir')
+    @case('Laporan Akhir')
+        <flux:badge icon="document-check" color="orange" size="sm" variant="pill">
+            {{ $xValue }}
+        </flux:badge>
     @break
 
     @case('Hasil Proyek')
+    @case('Hasil Projek') {{-- Cadangan jika ada variasi ketikan c --}}
+    @case('Portofolio')
         <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">
             {{ $xValue }}
         </flux:badge>
@@ -46,11 +62,13 @@
     @break
 
     @case('Mandiri')
-        <flux:badge icon="user" color="slate" size="sm" variant="pill">{{ $xValue }}
+        <flux:badge icon="user" color="slate" size="sm" variant="pill">
+            {{ $xValue }}
         </flux:badge>
     @break
 
     @default
         <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
-            {{ $xValue ?? '-' }}</flux:badge>
+            {{ $xValue ?? '-' }}
+        </flux:badge>
 @endswitch

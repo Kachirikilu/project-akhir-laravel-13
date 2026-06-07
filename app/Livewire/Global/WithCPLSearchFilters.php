@@ -98,7 +98,7 @@ trait WithCPLSearchFilters
         $search = trim($this->cplSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpl_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->cpl_name)) {
             $this->cplSearchResults = $this->mapCPLSearch(
                 // $this->cplQuery()->searchCPL($search)->limit(12)->get()
                 $this->searchOutputCPL($this->cplQuery(), $search, 12)

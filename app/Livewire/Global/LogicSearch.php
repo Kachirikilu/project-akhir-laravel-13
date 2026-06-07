@@ -179,6 +179,85 @@ trait LogicSearch
         return (string) $number === $matches[0];
     }
 
+    protected function matchMetode(?string $target, ?string $search): bool
+    {
+        $target = strtolower(trim($target ?? ''));
+        $search = strtolower(trim($search ?? ''));
+
+        if ($target === '' || $search === '') {
+            return false;
+        }
+
+        // 1. Ambil data alias dari ENV
+        $utsFields = array_map('trim', explode(',', strtolower(env('UTS_FIELDS', 'UTS,EVALUASI AWAL'))));
+        $uasFields = array_map('trim', explode(',', strtolower(env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK'))));
+
+        // Normalize target dan search spasi agar rapi
+        $targetNormalized = preg_replace('/\s+/', ' ', $target);
+        $searchNormalized = preg_replace('/\s+/', ' ', $search);
+
+        // 🔥 Bersihkan karakter non-alphanumeric untuk pencarian kata kunci 'uts' atau 'uas' yang fleksibel
+        $searchClean = preg_replace('/[^a-z0-9\s]/', '', $searchNormalized);
+        $searchWords = explode(' ', $searchClean);
+
+        // 2. LOGIKA INTERSEPTOR DENGAN KATA TAMBAHAN (Menggunakan Cek Word/Kata)
+        if (in_array('uts', $searchWords)) {
+            // Jika input mengandung kata 'uts' (misal: "metode uts", "uts rps"), cocokkan ke $utsFields
+            foreach ($utsFields as $field) {
+                if (str_contains($targetNormalized, $field) || str_contains(preg_replace('/[^a-z0-9]/', '', $targetNormalized), preg_replace('/[^a-z0-9]/', '', $field))) {
+                    return true;
+                }
+            }
+        }
+
+        if (in_array('uas', $searchWords)) {
+            // Jika input mengandung kata 'uas' (misal: "metode uas baru"), cocokkan ke $uasFields
+            foreach ($uasFields as $field) {
+                if (str_contains($targetNormalized, $field) || str_contains(preg_replace('/[^a-z0-9]/', '', $targetNormalized), preg_replace('/[^a-z0-9]/', '', $field))) {
+                    return true;
+                }
+            }
+        }
+
+        // 3. JALUR PENCARIAN REGULER (Jika tidak masuk kondisi interseptor di atas atau mencari kata lain)
+        $targetClean = preg_replace('/[^a-z0-9]/', '', $targetNormalized);
+        $searchCleanReguler = preg_replace('/[^a-z0-9]/', '', $searchNormalized);
+
+        // exact match
+        if ($targetClean === $searchCleanReguler) {
+            return true;
+        }
+
+        // substring anywhere
+        if (str_contains($targetClean, $searchCleanReguler)) {
+            return true;
+        }
+
+        // word-level contains
+        $targetWords = explode(' ', $targetNormalized);
+        $searchWordsReguler = explode(' ', $searchNormalized);
+
+        foreach ($searchWordsReguler as $word) {
+            $found = false;
+
+            foreach ($targetWords as $tWord) {
+                $tClean = preg_replace('/[^a-z0-9]/', '', $tWord);
+                $wClean = preg_replace('/[^a-z0-9]/', '', $word);
+
+                if ($wClean !== '' && str_contains($tClean, $wClean)) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (! $found) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected function matchCount(
         mixed $value,
         string $search,
@@ -219,7 +298,7 @@ trait LogicSearch
         }
 
         if (preg_match('/^\d+$/', $search)) {
-            return (int) $value === (int) $number;
+            return str_starts_with((string) $value, (string) $number);
         }
 
         $cleanSearch = preg_replace('/[^a-z0-9]/', '', $search);
@@ -232,7 +311,7 @@ trait LogicSearch
             if (
                 str_contains($cleanSearch, $cleanKeyword)
             ) {
-                return (int) $value === (int) $number;
+                return str_starts_with((string) $value, (string) $number);
             }
         }
 
@@ -686,6 +765,13 @@ trait LogicSearch
             || str_contains($search, 'nilai<')
         ) {
             return 'nilai';
+        }
+
+        if (
+            str_contains($search, 'metode')
+            || preg_match('/\b(uts|uas)\b/i', $search)
+        ) {
+            return 'metode';
         }
 
         if (

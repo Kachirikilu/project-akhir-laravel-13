@@ -52,7 +52,7 @@ trait WithKelasJadwalSearchFilters
             'id' => $j->id,
             'kode' => $j->kode,
             'kode_text' => 'Kode: '.$j->kode,
-            'kode_rps' => $j->rps_rel?->kode,
+            'kode_rps' => $j->kode_rps,
         ])->toArray();
     }
 
@@ -98,7 +98,7 @@ trait WithKelasJadwalSearchFilters
         $search = trim($this->jadwalSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->jadwal_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->jadwal_name)) {
             $this->jadwalSearchResults = $this->mapJadwalSearch(
                 // $this->jadwalQuery()->searchJadwal($search)->limit(12)->get()
                 $this->searchOutputJadwal($this->jadwalQuery(), $search, 12)
@@ -122,8 +122,8 @@ trait WithKelasJadwalSearchFilters
 
         if ($data) {
             $this->selectedJadwalId = $id;
-            $this->jadwal_name = $data->deskripsi;
-            $this->jadwalSearchQuery = $data->deskripsi;
+            $this->jadwal_name = $data->kode;
+            $this->jadwalSearchQuery = $data->kode;
             $this->jadwal_items = $this->itemsJadwal($data);
             $this->jadwalSearchResults = [];
             $this->resetPage();
@@ -159,14 +159,13 @@ trait WithKelasJadwalSearchFilters
             $exactMatch = $results->first(function ($jadwal) use ($value, $normalizedValue) {
                 $normalizedJadwalKode = str_replace(['-', ' '], '', strtolower($jadwal->kode));
 
-                return strtolower($jadwal->deskripsi) === strtolower($value)
-                    || $normalizedJadwalKode === $normalizedValue;
+                return $normalizedJadwalKode === $normalizedValue;
             });
 
             if ($exactMatch) {
                 $currentMode = $this->modeJadwal[$key] ?? 'array';
                 if ($currentMode == 'single') {
-                    $this->jadwalNameSearch[$key] = $exactMatch->deskripsi;
+                    $this->jadwalNameSearch[$key] = $exactMatch->kode;
                     $this->jadwal_id[$key] = $exactMatch->id;
                     $this->jadwal_items[$key] = $this->itemsJadwal($exactMatch);
                     $this->jadwalResults[$key] = [];
@@ -213,14 +212,14 @@ trait WithKelasJadwalSearchFilters
     //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
     //         $exactMatch = $results->first(function ($jadwal) use ($value, $normalizedValue) {
     //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($jadwal->kode));
-    //             return strtolower($jadwal->deskripsi) === strtolower($value)
+    //             return strtolower($jadwal->kode) === strtolower($value)
     //                 || $normalizedMkKode === $normalizedValue;
     //         });
 
     //         if ($exactMatch) {
     //             $currentMode = $this->modeJadwal[$key] ?? 'array';
     //             if ($currentMode == 'single') {
-    //                 $this->selectJadwal($exactMatch->id, $exactMatch->deskripsi, $key);
+    //                 $this->selectJadwal($exactMatch->id, $exactMatch->kode, $key);
     //             } else {
     //                 $this->selectJadwalArray($exactMatch->id, $key);
     //                 $this->jadwalNameSearch[$key] = ''; // Kosongkan search setelah add
@@ -290,8 +289,8 @@ trait WithKelasJadwalSearchFilters
         if ($data) {
             $this->jadwal_items[$key] = $this->itemsJadwal($data);
 
-            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-            //     $this->deskripsi_cpmk = $data->deskripsi;
+            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
+            //     $this->kode_cpmk = $data->kode;
             // }
         }
 
@@ -315,16 +314,16 @@ trait WithKelasJadwalSearchFilters
                 $this->jadwal_items_array[$key][] = $this->itemsJadwal($data);
             }
 
-            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-            //     $newDesc = trim($data->deskripsi);
+            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
+            //     $newDesc = trim($data->kode);
             //     if (!str_ends_with($newDesc, '.')) {
             //         $newDesc .= '.';
             //     }
 
-            //     if (!empty($this->deskripsi_cpmk)) {
-            //         $this->deskripsi_cpmk = rtrim($this->deskripsi_cpmk) . ' ' . $newDesc;
+            //     if (!empty($this->kode_cpmk)) {
+            //         $this->kode_cpmk = rtrim($this->kode_cpmk) . ' ' . $newDesc;
             //     } else {
-            //         $this->deskripsi_cpmk = $newDesc;
+            //         $this->kode_cpmk = $newDesc;
             //     }
             // }
         }
@@ -335,8 +334,8 @@ trait WithKelasJadwalSearchFilters
         $this->reset(['jadwal_id', 'jadwal_items', 'jadwalNameSearch']);
         $this->jadwalResults[$key] = $this->getJadwalbyUser();
 
-        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-        //     $this->deskripsi_cpmk = '';
+        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
+        //     $this->kode_cpmk = '';
         // }
     }
 
@@ -346,8 +345,8 @@ trait WithKelasJadwalSearchFilters
         $this->jadwal_items_array[$key] = [];
         $this->jadwalNameSearch[$key] = '';
 
-        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-        //     $this->deskripsi_cpmk = '';
+        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
+        //     $this->kode_cpmk = '';
         // }
     }
 
@@ -500,6 +499,13 @@ trait WithKelasJadwalSearchFilters
                         );
                         $matchSKS = $sks === $targetSKS;
                     }
+                    $matchSKS = $this->matchCount(
+                        $sks,
+                        $searchLower, ['sks']
+                    ) || $this->containsStrict(
+                        $sks. 'SKS',
+                        $searchLower
+                    );
 
                     $matchSKSText = $this->matchSKSText(
                         $j->sks_text,
@@ -634,6 +640,7 @@ trait WithKelasJadwalSearchFilters
                         || $matchJam
                         || $matchKapasitas
                         || $matchCountMhs
+                        || $matchPassword
 
                         || $matchNo
 

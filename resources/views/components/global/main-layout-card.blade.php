@@ -4,7 +4,7 @@
     'targetLoading' => "
                 filterByStatus, filterByStrata, filterByMK,
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
-                filterByKelas, filterByMKGG, filterByKelasGG,
+                filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
                 showDeleted,
                 saveUserExcel, procesImportUserExcel,
                 saveUser, updateUser, destroyUser, restoreUser,
@@ -31,6 +31,7 @@
                 perPage, loadingTable, sortBy
                 {{-- gotoPage, previousPage, nextPage, page --}}
             ",
+    'layoutGrid' => true,
 ])
 
 <div class="space-y-6">
@@ -68,11 +69,17 @@
         </div>
     @endif
 
-    <div class="max-w-[4500px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start"
+    @php
+        if ($layoutGrid) {
+            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
+        } else {
+            $layout_grid = 'space-y-4';
+        }
+    @endphp
+
+    <div class="max-w-[4500px] {{ $layout_grid ?? null }}"
         wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
-
         {{ $slot }}
-
     </div>
 
     @if (isset($footer))

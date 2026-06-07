@@ -164,30 +164,22 @@ class NilaiSeeder extends Seeder
                             // SIMPAN NILAI MAHASISWA
                             // =====================================
                             $rps = $jadwal->kelas_rel?->rps_rel;
-
-                            $search = [
-                                'mahasiswa_id' => $mahasiswa->id,
-                            ];
-
-                            if ($rps?->id) {
-                                $search['rps_id'] = $rps->id;
-                                $search['ganjil_genap'] = $jadwal->ganjil_genap;
-                                $search['tahun_akademik'] = $jadwal->tahun_akademik;
-                            }
-
                             NilaiMahasiswa::updateOrCreate(
-                                $search,
+                                [
+                                    'mahasiswa_id' => $mahasiswa->id,
+                                    'rps_id' => $rps->id,
+                                    'ganjil_genap' => $jadwal->ganjil_genap,
+                                    'tahun_akademik' => $jadwal->tahun_akademik,
+                                ],
                                 [
                                     'kj_id' => $jadwal->id,
-
-                                    'rps_id' => $rps?->id,
-                                    'ganjil_genap' => $rps ? $jadwal->ganjil_genap : null,
-                                    'tahun_akademik' => $rps ? $jadwal->tahun_akademik : null,
 
                                     'nilai' => round($nilaiAkhir, 2),
 
                                     'nilai_array' => $nilaiArray,
                                     'bobot_array' => $normalizedBobots,
+
+                                    'is_loocked' => false,
                                 ]
                             );
 

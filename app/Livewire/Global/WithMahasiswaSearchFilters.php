@@ -96,9 +96,10 @@ trait WithMahasiswaSearchFilters
         $search = trim($this->mahasiswaSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->mahasiswa_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->mahasiswa_name)) {
             $this->mahasiswaSearchResults = $this->mapMahasiswaSearch(
-                $this->mahasiswaQuery()->searchMahasiswa($search)->limit(12)->get()
+                // $this->mahasiswaQuery()->searchMahasiswa($search)->limit(12)->get()
+                $this->searchOutputMahasiswa($this->mahasiswaQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->mahasiswa_name) {
             $this->mahasiswaSearchResults = $this->getMahasiswabyUser('search');
@@ -185,9 +186,7 @@ trait WithMahasiswaSearchFilters
         }
 
         $query = $this->mahasiswaQuery();
-
-        // 1. Jalankan Query Pencarian Biasa
-        $results = $query->searchMahasiswa($value)->limit(12)->get();
+        $results = $this->searchOutputMahasiswa($query, $value, 12);
         $this->mahasiswaResults = $this->mapMahasiswa($results);
 
         // 2. Deteksi Pola Multi / Parameter Acak
@@ -389,5 +388,192 @@ trait WithMahasiswaSearchFilters
         $this->mahasiswa_id_array = [];
         $this->mahasiswa_items_array = [];
         $this->mahasiswaNameSearch = '';
+    }
+
+    public function searchOutputMahasiswa($queryMahasiswa, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || $sortField) {
+
+            $allMahasiswa = (clone $queryMahasiswa)->get();
+
+            if (! empty($search)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allMahasiswa = $allMahasiswa->filter(function ($mahasiswa) use ($searchLower, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+
+                    $matchID = $this->matchID(
+                        $mahasiswa->id,
+                        $searchLower
+                    );
+
+                    $matchName = $this->containsStrict(
+                        $mahasiswa->name,
+                        $searchLower
+                    );
+                    $matchEmail = $this->containsStrict(
+                        $mahasiswa->user->email,
+                        $searchLower
+                    );
+                    $matchStatus = $this->containsStrict(
+                        $mahasiswa->status,
+                        $searchLower
+                    );
+                  
+                    $matchNIM = $this->matchOnlyCount(
+                        $mahasiswa->nim ?? null,
+                        $searchLower, ['nim', 'id1', 'identity1']
+                    );
+                    $matchNIK = $this->matchOnlyCount(
+                        $mahasiswa->nik,
+                        $searchLower, ['nik']
+                    );
+
+
+                    $matchKodePr = $this->matchKode(
+                        $mahasiswa->pr_rel->kode_pr,
+                        $searchLower
+                    );
+                    $matchKodeDp = $this->matchKode(
+                        $mahasiswa->pr_rel->kode_dp,
+                        $searchLower
+                    );
+                    $matchKodeFk = $this->matchKode(
+                        $mahasiswa->pr_rel->kode_fk,
+                        $searchLower
+                    );
+
+                    $basePr = [
+                        $mahasiswa->pr_rel->prodi,
+                        $mahasiswa->pr_rel->prodi_pr,
+                        $mahasiswa->pr_rel->prodi_strata,
+                    ];
+                    $matchPr = false;
+                    foreach ($basePr as $pr) {
+                        $candidates = [
+                            $pr.' '.$mahasiswa->pr_rel->kode_dp,
+                            $pr.' ('.$mahasiswa->pr_rel->kode_dp.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchPr = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $baseDp = [
+                        $mahasiswa->pr_rel->departemen,
+                        $mahasiswa->pr_rel->departemen_dp,
+                    ];
+                    $matchDp = false;
+                    foreach ($baseDp as $dp) {
+                        $candidates = [
+                            $dp.' '.$mahasiswa->pr_rel->kode_dp,
+                            $dp.' ('.$mahasiswa->pr_rel->kode_dp.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchDp = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $baseFk = [
+                        $mahasiswa->pr_rel->fakultas,
+                        $mahasiswa->pr_rel->fakultas_fk,
+                    ];
+                    $matchFk = false;
+                    foreach ($baseFk as $fk) {
+                        $candidates = [
+                            $fk.' '.$mahasiswa->pr_rel->kode_fk,
+                            $fk.' ('.$mahasiswa->pr_rel->kode_fk.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchFk = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $mahasiswa->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $mahasiswa->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                    }
+
+                    return
+                        $matchID
+                        || $matchName
+                        || $matchEmail
+                        || $matchStatus
+
+                        || $matchNIM
+                        || $matchNIK
+
+                        || $matchKodePr
+                        || $matchKodeDp
+                        || $matchKodeFk
+
+                        || $matchPr
+                        || $matchDp
+                        || $matchFk
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'name' => fn ($mahasiswa) => $mahasiswa->name,
+                'email' => fn ($mahasiswa) => $mahasiswa->email,
+
+                'nim' => fn ($mahasiswa) => $mahasiswa->nim ?? null,
+                'nik' => fn ($mahasiswa) => $mahasiswa->nik ?? null,
+
+                'status' => fn ($mahasiswa) => $mahasiswa->status ?? null,
+                'prodi', 'program_studi' => fn ($mahasiswa) => $mahasiswa->pr_rel->prodi ?? null,
+
+                'created_at' => fn ($mahasiswa) => $mahasiswa->created_at,
+                'updated_at' => fn ($mahasiswa) => $mahasiswa->updated_at,
+
+                default => fn ($mahasiswa) => $mahasiswa->id,
+            };
+
+            $allMahasiswa = $sortDirection === 'asc'
+                ? $allMahasiswa->sortBy($sortValue)
+                : $allMahasiswa->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allMahasiswa->forPage($currentPage, $perPage)->values(),
+                $allMahasiswa->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $queryMahasiswa->paginate($perPage);
     }
 }

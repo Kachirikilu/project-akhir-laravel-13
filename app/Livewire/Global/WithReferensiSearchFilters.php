@@ -96,7 +96,7 @@ trait WithReferensiSearchFilters
         $search = trim($this->refSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->ref_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->ref_name)) {
             $this->refSearchResults = $this->mapRef(
                 // $this->refQuery()->searchRef($search)->limit(12)->get()
                 $this->searchOutputRef($this->refQuery(), $search, 12)

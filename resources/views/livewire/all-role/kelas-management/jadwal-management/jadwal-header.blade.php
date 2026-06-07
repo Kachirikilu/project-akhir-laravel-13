@@ -45,8 +45,7 @@
         <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">RPS /
                 SKS</span>
-            <span
-                class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->kode_rps ?? '---' }}</span>
+            <span class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps ?? '---' }}</span>
             <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->sks ?? '-' }} SKS
                 <strong class="px-2">|</strong>
@@ -123,9 +122,10 @@
             </flux:button>
         @endif
 
-        @if ($alpine == 'sesi' && (Auth::user()?->admin || Auth::user()?->dosen))
-            <flux:button
-                @click="
+        @if (Auth::user()?->admin || Auth::user()?->dosen)
+            @if ($alpine == 'sesi')
+                <flux:button
+                    @click="
                     $store.jadwal?.reset();
                     $store.jadwal?.setEdit(1);
 
@@ -147,10 +147,11 @@
 
                     $flux.modal('jadwal-modal').show();
                 "
-                wire:click="editJadwal({{ $jadwal_id }})" icon="pencil-square" size="sm"
-                class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
-                <span>Edit Jadwal</span>
-            </flux:button>
+                    wire:click="editJadwal({{ $jadwal_id }})" icon="pencil-square" size="sm"
+                    class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
+                    <span>Edit Jadwal</span>
+                </flux:button>
+            @endif
 
             <flux:button
                 @click="
@@ -164,16 +165,25 @@
                 class="!cursor-pointer px-6 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200">
                 <span>Import Nilai</span>
             </flux:button>
-
-            <div class="shrink-0">
-                @include('livewire.global.table.export-button', [
-                    'nameXString' => 'Export Nilai',
-                    'xString' => 'exportNilaiExcel',
-                    'valuePx' => 6,
-                    'isTextMd' => 1,
-                    'isNoPb' => 1,
-                ])
-            </div>
+                <div class="shrink-0">
+                    @include('livewire.global.table.export-button', [
+                        'nameXString' => 'Export Nilai',
+                        'xString' => 'exportNilaiExcel()',
+                        'valuePx' => 6,
+                        'isTextMd' => 1,
+                        'isNoPb' => 1,
+                    ])
+                    <script>
+                        document.addEventListener('livewire:init', () => {
+                            Livewire.on('trigger-next-download', () => {
+                                setTimeout(() => {
+                                    @this.call('downloadNextInQueue');
+                                }, 200);
+                            });
+                        });
+                    </script>
+                </div>
         @endif
+
     </div>
 </div>

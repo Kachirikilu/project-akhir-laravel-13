@@ -15,7 +15,7 @@ class KelasSeeder extends Seeder
     public function run(): void
     {
         $batchSize = 50;
-        $kelasPerRPS = 2;
+        $kelasPerRPS = 4;
 
         $kelasPerMahasiswaMin = 6;
         $kelasPerMahasiswaMax = 10;

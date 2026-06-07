@@ -50,7 +50,7 @@
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
-                'xString' => 'exportMKExcel',
+                'xString' => 'exportMKExcel()',
                 'autoSmall' => 'lg',
             ])
         </div>

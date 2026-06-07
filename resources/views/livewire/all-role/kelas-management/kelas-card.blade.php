@@ -1,7 +1,39 @@
 <x-global.main-layout-card :paginator="$kelas">
 
     {{-- 1. Isi bagian Sortir --}}
-    <x-slot:sortir>
+<x-slot:sortir>
+<div class="flex flex-col md:flex-row md:flex-wrap lg:items-center lg:justify-between gap-y-4 gap-x-6 w-full">
+    
+    <div x-data="{ activeTab: @entangle('filterKelasgg') }"
+        class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+        @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+            'xString' => 'filterByKelasgg',
+            'xFilter' => 'filterKelasgg',
+            'tabFilter' => $totalGanjil + $totalGenap,
+            'tabString' => '',
+            'tabNameString' => 'Semua',
+            'icon' => 'table-cells',
+        ])
+
+        @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+            'xString' => 'filterByKelasgg',
+            'xFilter' => 'filterKelasgg',
+            'tabFilter' => $totalGanjil,
+            'tabString' => 'mk-ganjil',
+            'tabNameString' => 'Ganjil',
+            'icon' => 'calendar-days',
+        ])
+
+        @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+            'xString' => 'filterByKelasgg',
+            'xFilter' => 'filterKelasgg',
+            'tabFilter' => $totalGenap,
+            'tabString' => 'mk-genap',
+            'tabNameString' => 'Genap',
+            'icon' => 'calendar-days',
+        ])
+    </div>
+    <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'kode',
             'headString' => 'Kode Kelas',
@@ -21,14 +53,10 @@
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'semester',
         ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'sks',
-        ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'sks_text',
-            'headString' => 'Pembelajaran',
-        ])
-    </x-slot:sortir>
+    </div>
+    
+</div>
+</x-slot:sortir>
 
     {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
     @forelse($kelas as $k)

@@ -163,199 +163,199 @@ trait WithUserFilters
         return $queryUser;
     }
 
-    public function searchOutputMahasiswa($queryUser, $idJadwal)
-    {
-        $accessorFields = [
-            'mhs_absensi', 'mhs_masuk', 'mhs_terlambat', 'mhs_izin',
-            'mhs_sakit', 'mhs_dispensasi', 'mhs_poin_absensi',
-            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_nilai_huruf', 'mhs_tidak_masuk',
-        ];
+    // public function searchOutputMahasiswa($queryUser, $idJadwal)
+    // {
+    //     $accessorFields = [
+    //         'mhs_absensi', 'mhs_masuk', 'mhs_terlambat', 'mhs_izin',
+    //         'mhs_sakit', 'mhs_dispensasi', 'mhs_poin_absensi',
+    //         'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf', 'mhs_nilai_huruf', 'mhs_tidak_masuk',
+    //     ];
 
-        $search = trim($this->search);
-        $searchLower = strtolower($search);
+    //     $search = trim($this->search);
+    //     $searchLower = strtolower($search);
 
-        // ====================================================
-        // 1. EKSTRAKSI ANGKA, TEKS KATEGORI, DAN HURUF MUTU
-        // ====================================================
-        preg_match_all('/[0-9.,]+/', $search, $matchesNumbers);
-        $searchNumbers = $matchesNumbers[0] ?? [];
+    //     // ====================================================
+    //     // 1. EKSTRAKSI ANGKA, TEKS KATEGORI, DAN HURUF MUTU
+    //     // ====================================================
+    //     preg_match_all('/[0-9.,]+/', $search, $matchesNumbers);
+    //     $searchNumbers = $matchesNumbers[0] ?? [];
 
-        preg_match('/(^|\s)([a-eA-E](?:\+|\-)?)(?=\s|$)/i', $search, $matchesGrade);
-        $searchGrade = isset($matchesGrade[2])
-            ? strtolower(trim($matchesGrade[2]))
-            : null;
+    //     preg_match('/(^|\s)([a-eA-E](?:\+|\-)?)(?=\s|$)/i', $search, $matchesGrade);
+    //     $searchGrade = isset($matchesGrade[2])
+    //         ? strtolower(trim($matchesGrade[2]))
+    //         : null;
 
-        $searchCleanText = trim(preg_replace('/[^A-Za-z ]/', '', $searchLower));
-        if ($searchGrade) {
-            $searchCleanText = trim(str_replace($searchGrade, '', $searchCleanText));
-        }
+    //     $searchCleanText = trim(preg_replace('/[^A-Za-z ]/', '', $searchLower));
+    //     if ($searchGrade) {
+    //         $searchCleanText = trim(str_replace($searchGrade, '', $searchCleanText));
+    //     }
 
-        // ==========================
-        // AMBIL DATA PEMBAGI PERSEN
-        // ==========================
-        $totalSesiKelas = isset($this->countSesi) ? (clone $this->countSesi)->count() : 16;
-        $totalSesiKelas = $totalSesiKelas ?: 1;
+    //     // ==========================
+    //     // AMBIL DATA PEMBAGI PERSEN
+    //     // ==========================
+    //     $totalSesiKelas = isset($this->countSesi) ? (clone $this->countSesi)->count() : 16;
+    //     $totalSesiKelas = $totalSesiKelas ?: 1;
 
-        // Helper pencocok angka parsial
-        $anyNumberMatches = function ($value) use ($searchNumbers) {
-            $value = $value ?? 0;
+    //     // Helper pencocok angka parsial
+    //     $anyNumberMatches = function ($value) use ($searchNumbers) {
+    //         $value = $value ?? 0;
 
-            if (empty($searchNumbers)) {
-                return false;
-            }
+    //         if (empty($searchNumbers)) {
+    //             return false;
+    //         }
 
-            $valRaw = strtolower(trim((string) $value));
-            $valFloat = strtolower(trim(number_format((float) $value, 2, '.', '')));
-            $valInt = strtolower(trim(number_format((float) $value, 0, '.', '')));
+    //         $valRaw = strtolower(trim((string) $value));
+    //         $valFloat = strtolower(trim(number_format((float) $value, 2, '.', '')));
+    //         $valInt = strtolower(trim(number_format((float) $value, 0, '.', '')));
 
-            foreach ($searchNumbers as $num) {
-                $cleanNum = str_replace(',', '.', $num);
-                if (
-                    str_starts_with($valRaw, $cleanNum) ||
-                    str_starts_with($valFloat, $cleanNum) ||
-                    str_starts_with($valInt, $cleanNum) ||
-                    $valRaw === $cleanNum
-                ) {
-                    return true;
-                }
-            }
+    //         foreach ($searchNumbers as $num) {
+    //             $cleanNum = str_replace(',', '.', $num);
+    //             if (
+    //                 str_starts_with($valRaw, $cleanNum) ||
+    //                 str_starts_with($valFloat, $cleanNum) ||
+    //                 str_starts_with($valInt, $cleanNum) ||
+    //                 $valRaw === $cleanNum
+    //             ) {
+    //                 return true;
+    //             }
+    //         }
 
-            return false;
-        };
+    //         return false;
+    //     };
 
-        if (! empty($search) || in_array($this->sortField, $accessorFields)) {
+    //     if (! empty($search) || in_array($this->sortField, $accessorFields)) {
 
-            // 1. Ambil ID Database yang Lolos Pencarian Teks Standar (Nama, NIM, Angkatan)
-            $dbMatchedIds = (! empty($search) && ! str_contains($search, '%'))
-                ? (clone $queryUser)->where(function ($q) use ($search) {
-                    $q->searchUser($search);
-                })->pluck('users.id')->toArray()
-                : [];
+    //         // 1. Ambil ID Database yang Lolos Pencarian Teks Standar (Nama, NIM, Angkatan)
+    //         $dbMatchedIds = (! empty($search) && ! str_contains($search, '%'))
+    //             ? (clone $queryUser)->where(function ($q) use ($search) {
+    //                 $q->searchUser($search);
+    //             })->pluck('users.id')->toArray()
+    //             : [];
 
-            // 2. Ambil Seluruh Data Master dengan Subquery Absensi Lengkap
-            $allUsers = (clone $queryUser)->get();
+    //         // 2. Ambil Seluruh Data Master dengan Subquery Absensi Lengkap
+    //         $allUsers = (clone $queryUser)->get();
 
-            // 3. Lakukan Filter Koleksi di Memori PHP
-            if (! empty($search)) {
-                $allUsers = $allUsers->filter(function ($user) use ($searchLower, $searchCleanText, $searchNumbers, $searchGrade, $anyNumberMatches, $dbMatchedIds, $totalSesiKelas) {
+    //         // 3. Lakukan Filter Koleksi di Memori PHP
+    //         if (! empty($search)) {
+    //             $allUsers = $allUsers->filter(function ($user) use ($searchLower, $searchCleanText, $searchNumbers, $searchGrade, $anyNumberMatches, $dbMatchedIds, $totalSesiKelas) {
 
-                    $userHuruf = strtolower(
-                        trim(
-                            (string) ($user->mhs_nilai_huruf ?? 'E')
-                        )
-                    );
+    //                 $userHuruf = strtolower(
+    //                     trim(
+    //                         (string) ($user->mhs_nilai_huruf ?? 'E')
+    //                     )
+    //                 );
 
-                    // A. KUNCI UTAMA: Jika dosen mengetik/mencari Huruf Mutu Spesifik (Cth: "A", "b+", "huruf B")
-                    if ($searchGrade !== null) {
-                        if (str_contains($searchGrade, '+') || str_contains($searchGrade, '-')) {
-                            if ($userHuruf === $searchGrade) {
-                                return true;
-                            }
-                        } else {
-                            if (str_starts_with($userHuruf, $searchGrade)) {
-                                return true;
-                            }
+    //                 // A. KUNCI UTAMA: Jika dosen mengetik/mencari Huruf Mutu Spesifik (Cth: "A", "b+", "huruf B")
+    //                 if ($searchGrade !== null) {
+    //                     if (str_contains($searchGrade, '+') || str_contains($searchGrade, '-')) {
+    //                         if ($userHuruf === $searchGrade) {
+    //                             return true;
+    //                         }
+    //                     } else {
+    //                         if (str_starts_with($userHuruf, $searchGrade)) {
+    //                             return true;
+    //                         }
 
-                        }
-                        if (in_array($user->id, $dbMatchedIds)) {
-                            return true;
-                        }
+    //                     }
+    //                     if (in_array($user->id, $dbMatchedIds)) {
+    //                         return true;
+    //                     }
 
-                        return false;
-                    }
+    //                     return false;
+    //                 }
 
-                    // B. Bypass jika lolos pencarian teks standar Nama/NIM (ketika tidak sedang mengunci huruf mutu)
-                    if (in_array($user->id, $dbMatchedIds)) {
-                        return true;
-                    }
+    //                 // B. Bypass jika lolos pencarian teks standar Nama/NIM (ketika tidak sedang mengunci huruf mutu)
+    //                 if (in_array($user->id, $dbMatchedIds)) {
+    //                     return true;
+    //                 }
 
-                    // C. Deteksi Teks Indikator Kategori Akademik & Kehadiran
-                    $hasTextMasuk = (str_contains($searchLower, 'hadir') || str_contains($searchLower, 'masuk')) && ! str_contains($searchLower, 'tidak');
-                    $hasTextTidakMasuk = str_contains($searchLower, 'tidak hadir') || str_contains($searchLower, 'tidak masuk');
-                    $hasTextDispensasi = str_contains($searchLower, 'dispensasi') || str_contains($searchLower, 'dispensi');
-                    $hasTextTerlambat = str_contains($searchLower, 'terlambat');
-                    $hasTextIzin = str_contains($searchLower, 'izin');
-                    $hasTextSakit = str_contains($searchLower, 'sakit');
-                    $hasTextIndex = str_contains($searchLower, 'index') || str_contains($searchLower, 'indeks');
-                    $hasTextHuruf = str_contains($searchLower, 'huruf') || str_contains($searchLower, 'mutu') || str_contains($searchLower, 'predikat');
+    //                 // C. Deteksi Teks Indikator Kategori Akademik & Kehadiran
+    //                 $hasTextMasuk = (str_contains($searchLower, 'hadir') || str_contains($searchLower, 'masuk')) && ! str_contains($searchLower, 'tidak');
+    //                 $hasTextTidakMasuk = str_contains($searchLower, 'tidak hadir') || str_contains($searchLower, 'tidak masuk');
+    //                 $hasTextDispensasi = str_contains($searchLower, 'dispensasi') || str_contains($searchLower, 'dispensi');
+    //                 $hasTextTerlambat = str_contains($searchLower, 'terlambat');
+    //                 $hasTextIzin = str_contains($searchLower, 'izin');
+    //                 $hasTextSakit = str_contains($searchLower, 'sakit');
+    //                 $hasTextIndex = str_contains($searchLower, 'index') || str_contains($searchLower, 'indeks');
+    //                 $hasTextHuruf = str_contains($searchLower, 'huruf') || str_contains($searchLower, 'mutu') || str_contains($searchLower, 'predikat');
 
-                    $hasAnyCategoryText = $hasTextMasuk || $hasTextTidakMasuk || $hasTextDispensasi || $hasTextTerlambat || $hasTextIzin || $hasTextSakit || $hasTextIndex || $hasTextHuruf;
+    //                 $hasAnyCategoryText = $hasTextMasuk || $hasTextTidakMasuk || $hasTextDispensasi || $hasTextTerlambat || $hasTextIzin || $hasTextSakit || $hasTextIndex || $hasTextHuruf;
 
-                    // D. Eksekusi Filter Berdasarkan Kategori Teks Pendamping
-                    if ($hasAnyCategoryText) {
-                        if ($hasTextMasuk) {
-                            return empty($searchNumbers) ? ($user->mhs_masuk > 0) : $anyNumberMatches($user->mhs_masuk);
-                        }
-                        if ($hasTextTidakMasuk) {
-                            return empty($searchNumbers) ? ($user->mhs_tidak_masuk > 0) : $anyNumberMatches($user->mhs_tidak_masuk);
-                        }
-                        if ($hasTextDispensasi) {
-                            return empty($searchNumbers) ? ($user->mhs_dispensasi > 0) : $anyNumberMatches($user->mhs_dispensasi);
-                        }
-                        if ($hasTextTerlambat) {
-                            return empty($searchNumbers) ? ($user->mhs_terlambat > 0) : $anyNumberMatches($user->mhs_terlambat);
-                        }
-                        if ($hasTextIzin) {
-                            return empty($searchNumbers) ? ($user->mhs_izin > 0) : $anyNumberMatches($user->mhs_izin);
-                        }
-                        if ($hasTextSakit) {
-                            return empty($searchNumbers) ? ($user->mhs_sakit > 0) : $anyNumberMatches($user->mhs_sakit);
-                        }
-                        if ($hasTextIndex) {
-                            return empty($searchNumbers) ? true : $anyNumberMatches($user->mhs_nilai_index);
-                        }
-                        if ($hasTextHuruf) {
-                            return ! empty($userHuruf);
-                        }
-                    }
+    //                 // D. Eksekusi Filter Berdasarkan Kategori Teks Pendamping
+    //                 if ($hasAnyCategoryText) {
+    //                     if ($hasTextMasuk) {
+    //                         return empty($searchNumbers) ? ($user->mhs_masuk > 0) : $anyNumberMatches($user->mhs_masuk);
+    //                     }
+    //                     if ($hasTextTidakMasuk) {
+    //                         return empty($searchNumbers) ? ($user->mhs_tidak_masuk > 0) : $anyNumberMatches($user->mhs_tidak_masuk);
+    //                     }
+    //                     if ($hasTextDispensasi) {
+    //                         return empty($searchNumbers) ? ($user->mhs_dispensasi > 0) : $anyNumberMatches($user->mhs_dispensasi);
+    //                     }
+    //                     if ($hasTextTerlambat) {
+    //                         return empty($searchNumbers) ? ($user->mhs_terlambat > 0) : $anyNumberMatches($user->mhs_terlambat);
+    //                     }
+    //                     if ($hasTextIzin) {
+    //                         return empty($searchNumbers) ? ($user->mhs_izin > 0) : $anyNumberMatches($user->mhs_izin);
+    //                     }
+    //                     if ($hasTextSakit) {
+    //                         return empty($searchNumbers) ? ($user->mhs_sakit > 0) : $anyNumberMatches($user->mhs_sakit);
+    //                     }
+    //                     if ($hasTextIndex) {
+    //                         return empty($searchNumbers) ? true : $anyNumberMatches($user->mhs_nilai_index);
+    //                     }
+    //                     if ($hasTextHuruf) {
+    //                         return ! empty($userHuruf);
+    //                     }
+    //                 }
 
-                    // E. Jika Dosen Hanya Mengetik Angka Murni atau Nilai Persentase Absen
-                    if (empty($searchCleanText) || $searchCleanText === 'persen') {
-                        if ($anyNumberMatches($user->mhs_nilai_akhir)) {
-                            return true;
-                        }
+    //                 // E. Jika Dosen Hanya Mengetik Angka Murni atau Nilai Persentase Absen
+    //                 if (empty($searchCleanText) || $searchCleanText === 'persen') {
+    //                     if ($anyNumberMatches($user->mhs_nilai_akhir)) {
+    //                         return true;
+    //                     }
 
-                        $poinMhs = round((($user->mhs_poin_absensi ?? 0) / (2 * $totalSesiKelas)) * 100, 2);
-                        if ($anyNumberMatches($poinMhs)) {
-                            return true;
-                        }
+    //                     $poinMhs = round((($user->mhs_poin_absensi ?? 0) / (2 * $totalSesiKelas)) * 100, 2);
+    //                     if ($anyNumberMatches($poinMhs)) {
+    //                         return true;
+    //                     }
 
-                        return $anyNumberMatches($user->mhs_nilai_index)
-                            || $anyNumberMatches($user->mhs_masuk)
-                            || $anyNumberMatches($user->mhs_dispensasi)
-                            || $anyNumberMatches($user->mhs_terlambat)
-                            || $anyNumberMatches($user->mhs_izin)
-                            || $anyNumberMatches($user->mhs_sakit)
-                            || $anyNumberMatches($user->mhs_tidak_masuk)
-                            || $anyNumberMatches($user->mhs_absensi);
-                    }
+    //                     return $anyNumberMatches($user->mhs_nilai_index)
+    //                         || $anyNumberMatches($user->mhs_masuk)
+    //                         || $anyNumberMatches($user->mhs_dispensasi)
+    //                         || $anyNumberMatches($user->mhs_terlambat)
+    //                         || $anyNumberMatches($user->mhs_izin)
+    //                         || $anyNumberMatches($user->mhs_sakit)
+    //                         || $anyNumberMatches($user->mhs_tidak_masuk)
+    //                         || $anyNumberMatches($user->mhs_absensi);
+    //                 }
 
-                    return false;
-                });
-            }
+    //                 return false;
+    //             });
+    //         }
 
-            // ==========================
-            // SORTING & PAGINATION
-            // ==========================
-            $fieldToSort = in_array($this->sortField, $accessorFields) ? $this->sortField : 'id';
+    //         // ==========================
+    //         // SORTING & PAGINATION
+    //         // ==========================
+    //         $fieldToSort = in_array($this->sortField, $accessorFields) ? $this->sortField : 'id';
 
-            $sortedUsers = $this->sortDirection === 'asc'
-                ? $allUsers->sortBy(fn ($user) => $user->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE)
-                : $allUsers->sortByDesc(fn ($user) => $user->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE);
+    //         $sortedUsers = $this->sortDirection === 'asc'
+    //             ? $allUsers->sortBy(fn ($user) => $user->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE)
+    //             : $allUsers->sortByDesc(fn ($user) => $user->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE);
 
-            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+    //         $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
-            return new LengthAwarePaginator(
-                $sortedUsers->forPage($currentPage, $this->perPage)->values(),
-                $sortedUsers->count(),
-                $this->perPage,
-                $currentPage,
-                ['path' => Paginator::resolveCurrentPath()]
-            );
-        }
+    //         return new LengthAwarePaginator(
+    //             $sortedUsers->forPage($currentPage, $this->perPage)->values(),
+    //             $sortedUsers->count(),
+    //             $this->perPage,
+    //             $currentPage,
+    //             ['path' => Paginator::resolveCurrentPath()]
+    //         );
+    //     }
 
-        return $queryUser->paginate($this->perPage);
-    }
+    //     return $queryUser->paginate($this->perPage);
+    // }
 
     // public function searchOutputMahasiswa($queryUser, $idJadwal)
     // {

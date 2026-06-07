@@ -40,129 +40,129 @@ trait WithSesiFilters
         $querySesi = KelasSesi::where('kj_id', $idJadwal)
             ->with(['jadwal_rel', 'jadwal_rel.kelas_rel']);
 
-        $this->sortFieldOrderSesi($querySesi);
+        // $this->sortFieldOrderSesi($querySesi);
 
         return $querySesi;
     }
 
-    public function searchOutputSesi($querySesi, $idJadwal)
-    {
-        $accessorFields = ['metode', 'kode_scpmk', 'kode_cpmk', 'bobot', 'tugas', 'w_tugas', 'w_mandiri', 'mhs_absensi', 'bobot_normalisasi'];
+    // public function searchOutputSesi($querySesi, $idJadwal)
+    // {
+    //     $accessorFields = ['metode', 'kode_scpmk', 'kode_cpmk', 'bobot', 'tugas', 'w_tugas', 'w_mandiri', 'mhs_absensi', 'bobot_normalisasi'];
 
-        $search = trim($this->search);
-        $pureSearchLower = strtolower($search);
-        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+    //     $search = trim($this->search);
+    //     $pureSearchLower = strtolower($search);
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        $utsFields = array_map('trim', explode(',', strtolower(env('UTS_FIELDS', 'UTS,EVALUASI AWAL'))));
-        $uasFields = array_map('trim', explode(',', strtolower(env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK'))));
+    //     $utsFields = array_map('trim', explode(',', strtolower(env('UTS_FIELDS', 'UTS,EVALUASI AWAL'))));
+    //     $uasFields = array_map('trim', explode(',', strtolower(env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK'))));
 
-        $targetKeywords = [$pureSearchLower];
+    //     $targetKeywords = [$pureSearchLower];
 
-        if (in_array($pureSearchLower, $utsFields)) {
-            $targetKeywords = $utsFields;
-        } elseif (in_array($pureSearchLower, $uasFields)) {
-            $targetKeywords = $uasFields;
-        }
+    //     if (in_array($pureSearchLower, $utsFields)) {
+    //         $targetKeywords = $utsFields;
+    //     } elseif (in_array($pureSearchLower, $uasFields)) {
+    //         $targetKeywords = $uasFields;
+    //     }
 
-        $isPercentSearch = str_contains($search, '%');
+    //     $isPercentSearch = str_contains($search, '%');
 
-        if (! empty($search) || in_array($this->sortField, $accessorFields)) {
+    //     if (! empty($search) || in_array($this->sortField, $accessorFields)) {
 
-            $dbMatchedIds = (! empty($search) && ! $isPercentSearch)
-                ? (clone $querySesi)->searchKelasSesi($search)->pluck('kelas_sesi.id')->toArray()
-                : [];
+    //         $dbMatchedIds = (! empty($search) && ! $isPercentSearch)
+    //             ? (clone $querySesi)->searchKelasSesi($search)->pluck('kelas_sesi.id')->toArray()
+    //             : [];
 
-            $allSesi = KelasSesi::where('kj_id', $idJadwal)
-                ->with(['override', 'jadwal_rel.kelas_rel.rps_rel.cpmks.scpmks'])
-                ->get();
+    //         $allSesi = KelasSesi::where('kj_id', $idJadwal)
+    //             ->with(['override', 'jadwal_rel.kelas_rel.rps_rel.cpmks.scpmks'])
+    //             ->get();
 
-            if (! empty($search)) {
-                $cleanNumber = preg_replace('/[^0-9.]/', '', $pureSearchLower);
-                $isNumericQuery = is_numeric($cleanNumber) && $cleanNumber !== '';
+    //         if (! empty($search)) {
+    //             $cleanNumber = preg_replace('/[^0-9.]/', '', $pureSearchLower);
+    //             $isNumericQuery = is_numeric($cleanNumber) && $cleanNumber !== '';
 
-                $allSesi = $allSesi->filter(function ($sesi) use ($pureSearchLower, $searchClean, $dbMatchedIds, $cleanNumber, $isNumericQuery, $targetKeywords) {
-                    $rawBobot = $sesi->override->bobot
-                        ?? $sesi->scpmk_atr->bobot
-                        ?? null;
-                    $rawBobotNormalisasi = $sesi->bobot_normalisasi ?? null;
-                    $matchBobot = $isNumericQuery
-                        && is_numeric($rawBobot)
-                        && abs((float) $rawBobot - (float) $cleanNumber) < 0.01;
-                    $matchBobotNormalisasi = $isNumericQuery
-                        && is_numeric($rawBobotNormalisasi)
-                        && abs((float) $rawBobotNormalisasi - (float) $cleanNumber) < 0.01;
-                    $matchTextGrup = false;
-                    $metodeLower = strtolower($sesi->metode ?? '');
-                    $tugasLower = strtolower($sesi->tugas ?? '');
+    //             $allSesi = $allSesi->filter(function ($sesi) use ($pureSearchLower, $searchClean, $dbMatchedIds, $cleanNumber, $isNumericQuery, $targetKeywords) {
+    //                 $rawBobot = $sesi->override->bobot
+    //                     ?? $sesi->scpmk_atr->bobot
+    //                     ?? null;
+    //                 $rawBobotNormalisasi = $sesi->bobot_normalisasi ?? null;
+    //                 $matchBobot = $isNumericQuery
+    //                     && is_numeric($rawBobot)
+    //                     && abs((float) $rawBobot - (float) $cleanNumber) < 0.01;
+    //                 $matchBobotNormalisasi = $isNumericQuery
+    //                     && is_numeric($rawBobotNormalisasi)
+    //                     && abs((float) $rawBobotNormalisasi - (float) $cleanNumber) < 0.01;
+    //                 $matchTextGrup = false;
+    //                 $metodeLower = strtolower($sesi->metode ?? '');
+    //                 $tugasLower = strtolower($sesi->tugas ?? '');
 
-                    foreach ($targetKeywords as $keyword) {
-                        if (str_contains($metodeLower, $keyword) || str_contains($tugasLower, $keyword)) {
-                            $matchTextGrup = true;
-                            break;
-                        }
-                    }
-                    $matchSubCPMK = false;
-                    if (! empty($searchClean) && ! is_null($sesi->kode_scpmk)) {
-                        $scpmkClean = preg_replace('/[^A-Za-z0-9]/', '', $sesi->kode_scpmk);
-                        $matchSubCPMK = str_contains(strtolower($scpmkClean), strtolower($searchClean));
-                    }
+    //                 foreach ($targetKeywords as $keyword) {
+    //                     if (str_contains($metodeLower, $keyword) || str_contains($tugasLower, $keyword)) {
+    //                         $matchTextGrup = true;
+    //                         break;
+    //                     }
+    //                 }
+    //                 $matchSubCPMK = false;
+    //                 if (! empty($searchClean) && ! is_null($sesi->kode_scpmk)) {
+    //                     $scpmkClean = preg_replace('/[^A-Za-z0-9]/', '', $sesi->kode_scpmk);
+    //                     $matchSubCPMK = str_contains(strtolower($scpmkClean), strtolower($searchClean));
+    //                 }
 
-                    $matchCPMK = false;
-                    if (! empty($searchClean) && ! is_null($sesi->kode_cpmk)) {
-                        $cpmkClean = preg_replace('/[^A-Za-z0-9]/', '', $sesi->kode_cpmk);
-                        $matchCPMK = str_contains(strtolower($cpmkClean), strtolower($searchClean));
-                    }
+    //                 $matchCPMK = false;
+    //                 if (! empty($searchClean) && ! is_null($sesi->kode_cpmk)) {
+    //                     $cpmkClean = preg_replace('/[^A-Za-z0-9]/', '', $sesi->kode_cpmk);
+    //                     $matchCPMK = str_contains(strtolower($cpmkClean), strtolower($searchClean));
+    //                 }
 
-                    $matchAbsensi = $isNumericQuery && (int) $sesi->mhs_absensi === (int) $cleanNumber;
+    //                 $matchAbsensi = $isNumericQuery && (int) $sesi->mhs_absensi === (int) $cleanNumber;
 
-                    $matchTugas = false;
-                    if (! empty($searchClean) && ! is_null($sesi->tugas)) {
-                        $matchTugas = str_contains(strtolower($scpmkClean), strtolower($searchClean));
-                    }
+    //                 $matchTugas = false;
+    //                 if (! empty($searchClean) && ! is_null($sesi->tugas)) {
+    //                     $matchTugas = str_contains(strtolower($scpmkClean), strtolower($searchClean));
+    //                 }
 
-                    $matchWTugas = false;
-                    $matchWMandiri = false;
+    //                 $matchWTugas = false;
+    //                 $matchWMandiri = false;
 
-                    if (preg_match('/(\d+)\s*(?:m|menit)?/i', $pureSearchLower, $wMatches)) {
-                        $searchMinutes = (int) $wMatches[1];
-                        $rawWTugas = (int) ($sesi->override->w_tugas ?? $sesi->scpmk_atr->w_tugas ?? $sesi->w_tugas ?? 0);
-                        $rawWMandiri = (int) ($sesi->override->w_mandiri ?? $sesi->scpmk_atr->w_mandiri ?? $sesi->w_mandiri ?? 0);
+    //                 if (preg_match('/(\d+)\s*(?:m|menit)?/i', $pureSearchLower, $wMatches)) {
+    //                     $searchMinutes = (int) $wMatches[1];
+    //                     $rawWTugas = (int) ($sesi->override->w_tugas ?? $sesi->scpmk_atr->w_tugas ?? $sesi->w_tugas ?? 0);
+    //                     $rawWMandiri = (int) ($sesi->override->w_mandiri ?? $sesi->scpmk_atr->w_mandiri ?? $sesi->w_mandiri ?? 0);
 
-                        $matchWTugas = $rawWTugas === $searchMinutes;
-                        $matchWMandiri = $rawWMandiri === $searchMinutes;
-                    }
+    //                     $matchWTugas = $rawWTugas === $searchMinutes;
+    //                     $matchWMandiri = $rawWMandiri === $searchMinutes;
+    //                 }
 
-                    return in_array($sesi->id, $dbMatchedIds)
-                        || $matchTextGrup
-                        || $matchSubCPMK
-                        || $matchCPMK
-                        || $matchBobot
-                        || $matchBobotNormalisasi
-                        || $matchTugas
-                        || $matchWTugas
-                        || $matchWMandiri
-                        || $matchAbsensi;
-                });
-            }
+    //                 return in_array($sesi->id, $dbMatchedIds)
+    //                     || $matchTextGrup
+    //                     || $matchSubCPMK
+    //                     || $matchCPMK
+    //                     || $matchBobot
+    //                     || $matchBobotNormalisasi
+    //                     || $matchTugas
+    //                     || $matchWTugas
+    //                     || $matchWMandiri
+    //                     || $matchAbsensi;
+    //             });
+    //         }
 
-            $fieldToSort = in_array($this->sortField, $accessorFields) ? $this->sortField : 'pertemuan_ke';
-            $sortedSesi = $this->sortDirection === 'asc'
-                ? $allSesi->sortBy(fn ($sesi) => $sesi->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE)
-                : $allSesi->sortByDesc(fn ($sesi) => $sesi->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE);
+    //         $fieldToSort = in_array($this->sortField, $accessorFields) ? $this->sortField : 'pertemuan_ke';
+    //         $sortedSesi = $this->sortDirection === 'asc'
+    //             ? $allSesi->sortBy(fn ($sesi) => $sesi->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE)
+    //             : $allSesi->sortByDesc(fn ($sesi) => $sesi->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE);
 
-            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+    //         $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
-            return new LengthAwarePaginator(
-                $sortedSesi->forPage($currentPage, $this->perPage)->values(),
-                $sortedSesi->count(),
-                $this->perPage,
-                $currentPage,
-                ['path' => Paginator::resolveCurrentPath()]
-            );
-        }
+    //         return new LengthAwarePaginator(
+    //             $sortedSesi->forPage($currentPage, $this->perPage)->values(),
+    //             $sortedSesi->count(),
+    //             $this->perPage,
+    //             $currentPage,
+    //             ['path' => Paginator::resolveCurrentPath()]
+    //         );
+    //     }
 
-        return $querySesi->paginate($this->perPage);
-    }
+    //     return $querySesi->paginate($this->perPage);
+    // }
 
     public function filterBySesi($kelas)
     {
@@ -170,33 +170,27 @@ trait WithSesiFilters
         $this->resetPage();
     }
 
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filterSesi']);
-        $this->resetPage();
-    }
+    // public function sortFieldOrderSesi($querySesi)
+    // {
+    //     $querySesi->select('kelas_sesi.*')
+    //         ->withCount('kehadirans')
+    //         ->leftJoin('kelas_sesi_overrides', 'kelas_sesi.id', '=', 'kelas_sesi_overrides.sesi_id')
+    //         ->leftJoin('kelas_jadwals', 'kelas_sesi.kj_id', '=', 'kelas_jadwals.id');
 
-    public function sortFieldOrderSesi($querySesi)
-    {
-        $querySesi->select('kelas_sesi.*')
-            ->withCount('kehadirans')
-            ->leftJoin('kelas_sesi_overrides', 'kelas_sesi.id', '=', 'kelas_sesi_overrides.sesi_id')
-            ->leftJoin('kelas_jadwals', 'kelas_sesi.kj_id', '=', 'kelas_jadwals.id');
+    //     return match ($this->sortField) {
+    //         'pertemuan_ke' => $querySesi->orderBy('kelas_sesi.pertemuan_ke', $this->sortDirection),
+    //         'hari_pelaksanaan' => $querySesi->orderByRaw('WEEKDAY(kelas_sesi.tanggal) '.$this->sortDirection),
+    //         'tanggal_pelaksanaan' => $querySesi->orderBy('kelas_sesi.tanggal', $this->sortDirection),
+    //         'jam_pelaksanaan' => $querySesi->orderByRaw('COALESCE(kelas_sesi_overrides.jam_mulai, kelas_jadwals.jam_mulai) '.$this->sortDirection),
+    //         'jumlah_absensi' => $querySesi->orderBy('kehadirans_count', $this->sortDirection),
 
-        return match ($this->sortField) {
-            'pertemuan_ke' => $querySesi->orderBy('kelas_sesi.pertemuan_ke', $this->sortDirection),
-            'hari_pelaksanaan' => $querySesi->orderByRaw('WEEKDAY(kelas_sesi.tanggal) '.$this->sortDirection),
-            'tanggal_pelaksanaan' => $querySesi->orderBy('kelas_sesi.tanggal', $this->sortDirection),
-            'jam_pelaksanaan' => $querySesi->orderByRaw('COALESCE(kelas_sesi_overrides.jam_mulai, kelas_jadwals.jam_mulai) '.$this->sortDirection),
-            'jumlah_absensi' => $querySesi->orderBy('kehadirans_count', $this->sortDirection),
+    //         // 'metode' => $this->applyMetodeSort($querySesi),
 
-            // 'metode' => $this->applyMetodeSort($querySesi),
-
-            'created_at' => $querySesi->orderBy('kelas_sesi.created_at', $this->sortDirection),
-            'updated_at' => $querySesi->orderBy('kelas_sesi.updated_at', $this->sortDirection),
-            default => $querySesi->orderBy('kelas_sesi.id', $this->sortDirection),
-        };
-    }
+    //         'created_at' => $querySesi->orderBy('kelas_sesi.created_at', $this->sortDirection),
+    //         'updated_at' => $querySesi->orderBy('kelas_sesi.updated_at', $this->sortDirection),
+    //         default => $querySesi->orderBy('kelas_sesi.id', $this->sortDirection),
+    //     };
+    // }
 
     // private function applyMetodeSort($querySesi)
     // {

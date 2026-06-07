@@ -66,7 +66,7 @@ trait WithFakultasSearchFilters
     {
         $search = trim($this->fkSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fk_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->fk_name)) {
             $this->fkSearchResults = $this->mapFkSearch(
                 // $this->fkQuery()->searchFakultas($search)->limit(12)->get()
                 $this->searchOutputPr($this->fkQuery(), $search, 12)

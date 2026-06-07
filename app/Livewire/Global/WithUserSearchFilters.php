@@ -97,7 +97,7 @@ trait WithUserSearchFilters
         $search = trim($this->userSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->user_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->user_name)) {
             $this->userSearchResults = $this->mapUserSearch(
                 // $this->userQuery()->searchUser($search)->limit(12)->get()
                 $this->searchOutputUser($this->userQuery(), $search, null, 12)
@@ -304,6 +304,10 @@ trait WithUserSearchFilters
                     );
                     $matchEmail = $this->containsStrict(
                         $user->email,
+                        $searchLower
+                    );
+                    $matchStatus = $this->containsStrict(
+                        $user->status,
                         $searchLower
                     );
 
@@ -552,6 +556,7 @@ trait WithUserSearchFilters
                         || $matchRole
                         || $matchName
                         || $matchEmail
+                        || $matchStatus
 
                         || $matchIdentity1
                         || $matchIdentity2

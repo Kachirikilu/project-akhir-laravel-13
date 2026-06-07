@@ -4,6 +4,7 @@ namespace App\Livewire\AllRole\KelasManagement;
 
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalModal;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
@@ -22,8 +23,9 @@ class JadwalManagement extends Component
     use HasToast;
     use WithJadwalFilters;
     use WithJadwalModal;
-    use WithKelasModal;
+    use WithNilaiExcel;
     use WithKelasJadwalSearchFilters;
+    use WithKelasModal;
     use WithMahasiswaSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -37,6 +39,10 @@ class JadwalManagement extends Component
     public $kode;
 
     public Kelas $kelas;
+
+    public $rps_id;
+
+    public $kode_rps;
 
     public $perPage = 8;
 
@@ -82,6 +88,9 @@ class JadwalManagement extends Component
             $this->kelas = Kelas::where('kode_kelas', $kode)
                 ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
                 ->firstOrFail();
+
+            $this->rps_id = $this->kelas->rps_id;
+            $this->kode_rps = $this->kelas->kode_rps;
         }
     }
 
@@ -89,6 +98,12 @@ class JadwalManagement extends Component
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterJadwal']);
         $this->resetPage();
     }
 
@@ -109,10 +124,10 @@ class JadwalManagement extends Component
 
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'jadwal-card') ? "/{$table}" : '';
-        
+
         $targetPath = "/{$base}/{$this->kode}{$suffix}";
         $targetPath = preg_replace('#(?<!:)/+#', '/', $targetPath);
-        $targetPath = '/' . ltrim(rtrim($targetPath, '/'), '/');
+        $targetPath = '/'.ltrim(rtrim($targetPath, '/'), '/');
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -135,7 +150,6 @@ class JadwalManagement extends Component
 
             // $jadwals = $queryJadwal->paginate($this->perPage);
             $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-           
 
             if (Auth::user()->mahasiswa) {
                 $userId = Auth::id();
@@ -156,7 +170,6 @@ class JadwalManagement extends Component
                     return $jadwal;
                 });
             }
-
 
             return view('livewire.all-role.kelas-management.jadwal-management', [
                 'jadwals' => $jadwals,

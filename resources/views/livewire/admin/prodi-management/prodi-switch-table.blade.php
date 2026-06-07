@@ -32,7 +32,7 @@
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
-                'xString' => 'exportProdiExcel',
+                'xString' => 'exportProdiExcel()',
                 'autoSmall' => 'sm',
             ])
         </div>

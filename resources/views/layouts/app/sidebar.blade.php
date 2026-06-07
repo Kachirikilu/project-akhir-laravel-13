@@ -79,6 +79,7 @@
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
 
         <x-livewire::navigation.navbar />
+        {{-- @livewire('navigation.navbar') --}}
 
     </div>
 

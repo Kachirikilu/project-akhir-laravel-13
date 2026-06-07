@@ -108,7 +108,7 @@ trait WithKelasSearchFilters
         $search = trim($this->kelasSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->kelas_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->kelas_name)) {
             $this->kelasSearchResults = $this->mapKelasSearch(
                 // $this->kelasQuery()->searchKelas($search)->limit(12)->get()
                 $this->searchOutputKelas($this->kelasQuery(), $search, 12)
@@ -416,46 +416,52 @@ trait WithKelasSearchFilters
                     | Jadwal
                     |--------------------------------------------------------------------------
                     */
-                    $matchJadwals = $k->jadwals->contains(function ($ja) use ($searchLower) {
+                    $matchJadwals = $k->jadwals->contains(function ($j) use ($searchLower) {
                         return
                             $this->matchKode(
-                                $ja->kode,
+                                $j->kode,
                                 $searchLower
-                            ) ||
+                            )
+                            ||
                             $this->containsStrict(
-                                $ja->label_full,
+                                $j->kode,
+                                $searchLower
+                            )
+                            ||
+                            $this->containsStrict(
+                                $j->label_full,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->label_kelas,
+                                $j->label_kelas,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->kode_wilayah,
+                                $j->kode_wilayah,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->hari,
+                                $j->hari,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->tanggal_pelaksanaan,
+                                $j->tanggal_pelaksanaan,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->jam_pelaksanaan,
+                                $j->jam_pelaksanaan,
                                 $searchLower
                             )
                             || $this->containsStrict(
-                                $ja->kapasitas,
+                                $j->kapasitas,
                                 $searchLower
                             )
                             || $this->compareNumber(
-                                (float) ($ja->kapasitas ?? null),
+                                (float) ($j->kapasitas ?? null),
                                 $searchLower
                             )
                             || $this->matchOnlyCount(
-                                $ja->kapasitas ?? null,
+                                $j->kapasitas ?? null,
                                 $searchLower, ['kapasitas', 'kap', 'kapisa', 'kps']
                             ) || $this->containsStrict(
                                 $j->count_mhs_jadwal,
@@ -477,16 +483,19 @@ trait WithKelasSearchFilters
                     | SEMESTER
                     |--------------------------------------------------------------------------
                     */
-                    $semester = (int) ($k->semester ?? 0);
-                    $matchSemester = false;
-                    if ($isNumericSearch
-                        && (
-                            str_contains($searchLower, 'sem')
-                            || str_contains($searchLower, 'semester')
-                        )
-                    ) {
-                        $matchSemester = $semester === (int) $number;
-                    }
+                    $matchSemester = $this->matchCount(
+                        $k->semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$k->semester,
+                        $searchLower
+                    );
 
                     /*
                     |--------------------------------------------------------------------------
@@ -502,6 +511,13 @@ trait WithKelasSearchFilters
                         );
                         $matchSKS = $sks === $targetSKS;
                     }
+                    $matchSKS = $this->matchCount(
+                        $k->sks,
+                        $searchLower, ['sks']
+                    ) || $this->containsStrict(
+                        $k->sks. 'SKS',
+                        $searchLower
+                    );
 
                     $matchSKSText = $this->matchSKSText(
                         $k->sks_text,

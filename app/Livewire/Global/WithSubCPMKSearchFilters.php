@@ -106,7 +106,7 @@ trait WithSubCPMKSearchFilters
         $search = trim($this->scpmkSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->scpmk_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->scpmk_name)) {
             $this->scpmkSearchResults = $this->mapSCPMKSearch(
                 // $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
                 $this->searchOutputSCPMK($this->scpmkQuery(), $search, null, 12)
@@ -325,7 +325,7 @@ trait WithSubCPMKSearchFilters
                         $searchLower
                     );
 
-                    $matchMetode = $this->containsStrict(
+                    $matchMetode = $this->matchMetode(
                         $scpmk->metode,
                         $searchLower
                     );
@@ -353,7 +353,7 @@ trait WithSubCPMKSearchFilters
                             (float) $scpmk->bobot,
                             $searchLower
                         ) || $this->containsStrict(
-                            $scpkmk->bobot,
+                            $scpmk->bobot,
                             $searchLower
                         );
                     }
@@ -378,6 +378,7 @@ trait WithSubCPMKSearchFilters
                         [
                             'min',
                             'menit',
+                            'mnt',
                             'm/SKS',
                         ]
                     );
@@ -387,6 +388,7 @@ trait WithSubCPMKSearchFilters
                         [
                             'min',
                             'menit',
+                            'mnt',
                             'm/SKS',
                         ]
                     );
@@ -406,6 +408,8 @@ trait WithSubCPMKSearchFilters
                     switch ($mode) {
                         case 'id':
                             return $matchID;
+                        case 'metode':
+                            return $matchMetode;
                         case 'bobot':
                             return $matchBobot;
                     }

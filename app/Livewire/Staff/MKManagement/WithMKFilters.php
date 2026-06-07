@@ -14,7 +14,7 @@ trait WithMKFilters
 
     public $filterMK = '';
 
-    public $filterMKGG = '';
+    public $filterMKgg = '';
 
     public $totalGanjil = '';
 
@@ -71,9 +71,9 @@ trait WithMKFilters
         $this->totalGanjil = (clone $queryMK)->whereRaw('semester % 2 = 1')->count();
         $this->totalGenap = (clone $queryMK)->whereRaw('semester % 2 = 0')->count();
 
-        if ($this->filterMKGG === 'mk-ganjil') {
+        if ($this->filterMKgg === 'mk-ganjil') {
             $queryMK->whereRaw('semester % 2 = 1');
-        } elseif ($this->filterMKGG === 'mk-genap') {
+        } elseif ($this->filterMKgg === 'mk-genap') {
             $queryMK->whereRaw('semester % 2 = 0');
         }
     }
@@ -100,9 +100,9 @@ trait WithMKFilters
         $this->resetPage();
     }
 
-    public function filterByMKGG($mk)
+    public function filterByMKgg($mk)
     {
-        $this->filterMKGG = $mk;
+        $this->filterMKgg = $mk;
         $this->resetPage();
     }
 

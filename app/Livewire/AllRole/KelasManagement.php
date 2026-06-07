@@ -60,7 +60,7 @@ class KelasManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filterKelas' => ['except' => ''],
-        'filterKelasGG' => ['except' => ''],
+        'filterKelasgg' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
@@ -76,16 +76,16 @@ class KelasManagement extends Component
         $this->resetPage();
     }
 
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterKelas', 'filterKelasgg']);
+        $this->resetPage();
+    }
+
     public function loadingTable() {}
 
     public function updatedPerPage()
     {
-        $this->resetPage();
-    }
-
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filterKelas', 'filterKelasGG']);
         $this->resetPage();
     }
 
@@ -260,10 +260,6 @@ class KelasManagement extends Component
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,
-
-                'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
-                'totalGanjil' => $this->totalGanjil,
-                'totalGenap' => $this->totalGenap,
 
                 'totalWajib' => $totalWajib,
                 'totalPilihan' => $totalPilihan,

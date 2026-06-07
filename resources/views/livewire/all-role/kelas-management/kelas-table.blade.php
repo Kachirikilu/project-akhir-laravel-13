@@ -26,21 +26,20 @@
     @endphp
 
     <x-slot:sortir>
-
-        <div x-data="{ activeTab: @entangle('filterKelasGG') }"
+        <div x-data="{ activeTab: @entangle('filterKelasgg') }"
             class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByKelasGG',
-                'xFilter' => 'filterKelasGG',
-                'tabFilter' => $totalGanjilGenap,
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
+                'tabFilter' => $totalGanjil + $totalGenap,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
             ])
 
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByKelasGG',
-                'xFilter' => 'filterKelasGG',
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
                 'tabFilter' => $totalGanjil,
                 'tabString' => 'kelas-ganjil',
                 'tabNameString' => 'Ganjil',
@@ -48,15 +47,14 @@
             ])
 
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByKelasGG',
-                'xFilter' => 'filterKelasGG',
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
                 'tabFilter' => $totalGenap,
                 'tabString' => 'kelas-genap',
                 'tabNameString' => 'Genap',
                 'icon' => 'calendar-days',
             ])
         </div>
-
     </x-slot:sortir>
 
     <x-slot:header>

@@ -91,10 +91,10 @@ trait WithDosenSearchFilters
         $search = trim($this->dosenSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dosen_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->dosen_name)) {
             $this->dosenSearchResults = $this->mapDosenSearch(
                 // $this->dosenQuery()->searchDosen($search)->limit(12)->get()
-                $this->searchOutputUser($this->dosenQuery(), $search, null, 12)
+                $this->searchOutputDosen($this->dosenQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->dosen_name) {
             $this->dosenSearchResults = $this->getDosenbyUser('search');
@@ -133,20 +133,22 @@ trait WithDosenSearchFilters
 
         if (trim(strlen($value)) > 0) {
             // $results = $query->searchDosen($value)->limit(12)->get();
-            $results = $this->searchOutputUser($query, $value, null, 12);
+            $results = $this->searchOutputDosen($query, $value, 12);
             $this->dosenResults = $this->mapDosen($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($d) use ($value, $normalizedValue) {
                 $normalizedDosenNIP = str_replace(['-', ' '], '', strtolower($d->nip));
                 $normalizedDosenNIDN = str_replace(['-', ' '], '', strtolower($d->nidn));
-                $normalizedDosenNIDK = str_replace(['-', ' '], '', strtolower($d->nidnk));
+                $normalizedDosenNIDK = str_replace(['-', ' '], '', strtolower($d->nidk));
+                $normalizedDosenNIK = str_replace(['-', ' '], '', strtolower($d->nik));
                 
                 return strtolower($d->name) === strtolower($value) 
                     || strtolower($d->user->email) === strtolower($value) 
                     || $normalizedDosenNIP === $normalizedValue
                     || $normalizedDosenNIDN === $normalizedValue
-                    || $normalizedDosenNIDK === $normalizedValue;
+                    || $normalizedDosenNIDK === $normalizedValue
+                    || $normalizedDosenNIK === $normalizedValue;
             });
 
             if ($exactMatch) {
@@ -268,5 +270,204 @@ trait WithDosenSearchFilters
         $this->dosen_id_array = [];
         $this->dosen_items_array = [];
         $this->dosenNameSearch = '';
+    }
+
+    public function searchOutputDosen($queryDosen, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        if (! empty($search) || $sortField) {
+
+            $allDosen = (clone $queryDosen)->get();
+
+            if (! empty($search)) {
+
+                $mode = $this->detectSearchMode($searchLower);
+
+                $allDosen = $allDosen->filter(function ($dosen) use ($searchLower, $mode) {
+                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    $isNumericSearch = is_numeric($number) && $number !== '';
+
+                    $matchID = $this->matchID(
+                        $dosen->id,
+                        $searchLower
+                    );
+
+                    $matchName = $this->containsStrict(
+                        $dosen->name,
+                        $searchLower
+                    );
+                    $matchEmail = $this->containsStrict(
+                        $dosen->user->email,
+                        $searchLower
+                    );
+                    $matchStatus = $this->containsStrict(
+                        $dosen->status,
+                        $searchLower
+                    );
+                  
+                    $matchNIP = $this->matchOnlyCount(
+                        $dosen->nip ?? null,
+                        $searchLower, ['nip', 'id1', 'identity1']
+                    );
+                    $matchNIDN = $this->matchOnlyCount(
+                        $dosen->nidn ?? null,
+                        $searchLower, ['nidn', 'id2', 'identity2']
+                    );
+                    $matchNIDK = $this->matchOnlyCount(
+                        $dosen->nidk ?? null,
+                        $searchLower, ['nidk', 'id3', 'identity3']
+                    );
+                    $matchNIK = $this->matchOnlyCount(
+                        $dosen->nik,
+                        $searchLower, ['nik']
+                    );
+
+
+                    $matchKodePr = $this->matchKode(
+                        $dosen->pr_rel->kode_pr,
+                        $searchLower
+                    );
+                    $matchKodeDp = $this->matchKode(
+                        $dosen->pr_rel->kode_dp,
+                        $searchLower
+                    );
+                    $matchKodeFk = $this->matchKode(
+                        $dosen->pr_rel->kode_fk,
+                        $searchLower
+                    );
+
+                    $basePr = [
+                        $dosen->pr_rel->prodi,
+                        $dosen->pr_rel->prodi_pr,
+                        $dosen->pr_rel->prodi_strata,
+                    ];
+                    $matchPr = false;
+                    foreach ($basePr as $pr) {
+                        $candidates = [
+                            $pr.' '.$dosen->pr_rel->kode_dp,
+                            $pr.' ('.$dosen->pr_rel->kode_dp.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchPr = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $baseDp = [
+                        $dosen->pr_rel->departemen,
+                        $dosen->pr_rel->departemen_dp,
+                    ];
+                    $matchDp = false;
+                    foreach ($baseDp as $dp) {
+                        $candidates = [
+                            $dp.' '.$dosen->pr_rel->kode_dp,
+                            $dp.' ('.$dosen->pr_rel->kode_dp.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchDp = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $baseFk = [
+                        $dosen->pr_rel->fakultas,
+                        $dosen->pr_rel->fakultas_fk,
+                    ];
+                    $matchFk = false;
+                    foreach ($baseFk as $fk) {
+                        $candidates = [
+                            $fk.' '.$dosen->pr_rel->kode_fk,
+                            $fk.' ('.$dosen->pr_rel->kode_fk.')',
+                        ];
+                        foreach ($candidates as $candidate) {
+                            if ($this->containsStrict($candidate, $searchLower)) {
+                                $matchFk = true;
+                                break 2;
+                            }
+                        }
+                    }
+
+                    $matchCreatedAt = $this->matchDateField(
+                        $dosen->created_at,
+                        $searchLower,
+                        ['created', 'dibuat', 'create']
+                    );
+
+                    $matchUpdatedAt = $this->matchDateField(
+                        $dosen->updated_at,
+                        $searchLower,
+                        ['updated', 'diubah', 'update']
+                    );
+
+                    switch ($mode) {
+                        case 'id':
+                            return $matchID;
+                    }
+
+                    return
+                        $matchID
+                        || $matchName
+                        || $matchEmail
+                        || $matchStatus
+
+                        || $matchNIP
+                        || $matchNIDN
+                        || $matchNIDK
+                        || $matchNIK
+
+                        || $matchKodePr
+                        || $matchKodeDp
+                        || $matchKodeFk
+
+                        || $matchPr
+                        || $matchDp
+                        || $matchFk
+
+                        || $matchCreatedAt
+                        || $matchUpdatedAt;
+                });
+            }
+
+            $sortValue = match ($sortField) {
+                'name' => fn ($dosen) => $dosen->name,
+                'email' => fn ($dosen) => $dosen->email,
+
+                'nip' => fn ($dosen) => $dosen->nip ?? null,
+                'nidn' => fn ($dosen) => $dosen->dosen->nidn ?? null,
+                'nidk' => fn ($dosen) => $dosen->dosen->nidk ?? null,
+                'nik' => fn ($dosen) => $dosen->nik ?? null,
+
+                'status' => fn ($dosen) => $dosen->status ?? null,
+                'prodi', 'program_studi' => fn ($dosen) => $dosen->pr_rel->prodi ?? null,
+
+                'created_at' => fn ($dosen) => $dosen->created_at,
+                'updated_at' => fn ($dosen) => $dosen->updated_at,
+
+                default => fn ($dosen) => $dosen->id,
+            };
+
+            $allDosen = $sortDirection === 'asc'
+                ? $allDosen->sortBy($sortValue)
+                : $allDosen->sortByDesc($sortValue);
+
+            $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+            return new LengthAwarePaginator(
+                $allDosen->forPage($currentPage, $perPage)->values(),
+                $allDosen->count(),
+                $perPage,
+                $currentPage,
+                ['path' => Paginator::resolveCurrentPath()]
+            );
+        }
+
+        return $queryDosen->paginate($perPage);
     }
 }

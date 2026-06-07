@@ -113,7 +113,7 @@ trait WithCPMKSearchFilters
         $search = trim($this->cpmkSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->cpmk_name)) {
             $this->cpmkSearchResults = $this->mapCPMKSearch(
                 // $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
                 $this->searchOutputCPMK($this->cpmkQuery(), $search, null, 12)

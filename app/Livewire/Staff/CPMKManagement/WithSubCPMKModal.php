@@ -182,7 +182,7 @@ trait WithSubCPMKModal
             'materi' => 'required|string|min:5|max:1000',
             'metodologi' => 'required|string|min:5|max:1000',
             'indikator' => 'required|string|min:5|max:1000',
-            'metode' => 'required|in:Teori,Aktivitas Partisipasif,Tugas,Mandiri,UTS,UAS,Kuis,Laporan Akhir,Hasil Proyek,Skripsi,Kerja Praktek,Responsi,Logbook,Portofolio',
+            'metode' => 'required|in:Teori,Aktivitas Partisipasif,Tugas,Mandiri,UTS,UAS,Kuis,Evaluasi Awal,Evaluasi Akhir,Laporan Akhir,Hasil Proyek,Skripsi,Kerja Praktek,Responsi,Logbook,Portofolio',
             'deskripsi_tugas' => 'nullable|min:5|max:1000',
             'waktu_tugas' => 'nullable|integer|min:60',
             'waktu_mandiri' => 'nullable|integer|min:60',

@@ -2,30 +2,14 @@
 
 namespace App\Livewire\Mahasiswa;
 
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
-use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
-use App\Livewire\AllRole\KelasManagement\WithKelasModal;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithDosenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithNilaiSearchFilters;
 // use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
-use App\Livewire\Global\WithMKSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithRPSShow;
-use App\Models\Kelas\Kelas;
-use App\Models\Kelas\KelasJadwal;
-
-
-// use App\Models\Kelas\NilaiMahasiswa;
 use App\Livewire\Mahasiswa\NilaiMahasiswa\WithNilaiFilters;
-
-
-
-
-
+// use App\Models\Kelas\NilaiMahasiswa;
 use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -33,21 +17,11 @@ use Livewire\WithPagination;
 class NilaiMahasiswa extends Component
 {
     use HasToast;
-    use WithDepartemenSearchFilters;
-    use WithDosenSearchFilters;
-    use WithFakultasSearchFilters;
-
-    use WithJadwalFilters;
     // use WithKelasDelete;
-    use WithKelasFilters;
-    use WithKelasModal;
-    use WithMKSearchFilters;
-    use WithPagination;
-    use WithProdiSearchFilters;
-    use WithRPSSearchFilters;
-    use WithRPSShow;
-
     use WithNilaiFilters;
+
+    use WithNilaiSearchFilters;
+    use WithPagination;
 
     public $showModal = false;
 
@@ -57,7 +31,7 @@ class NilaiMahasiswa extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    public $sortField = 'id';
+    public $sortField = 'semester';
 
     public $sortDirection = 'asc';
 
@@ -73,13 +47,19 @@ class NilaiMahasiswa extends Component
         'perPage' => ['except' => 8],
         'filterNilai' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
-        'sortField' => ['except' => 'id'],
+        'sortField' => ['except' => 'semester'],
         'sortDirection' => ['except' => 'asc'],
     ];
 
     public function mount($switchTable = '')
     {
         $this->switchTable = $switchTable;
+
+        if (! $this->AuthCheck('mahasiswa')) {
+            return;
+        } else {
+            $this->mahasiswa_id = Auth::user()->mahasiswa->id;
+        }
     }
 
     public function updatingSearch()
@@ -147,47 +127,116 @@ class NilaiMahasiswa extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
+    // public function render()
+    // {
+    //     try {
+    //         $queryNilai = $this->inputNilaiSearch($this->mahasiswa_id);
+
+    //         if ($this->showDeleted && $this->AuthCheck('staff')) {
+    //             $queryNilai->onlyTrashed();
+    //         }
+
+    //         return view('livewire.mahasiswa.nilai-mahasiswa', [
+    //             'nilai' => $queryNilai->paginate($this->perPage),
+    //         ]);
+
+    //     } catch (QueryException $e) {
+    //         $message = 'Terjadi kesalahan database: '.$e->getMessage();
+    //         session()->flash('error', $message);
+    //         $this->toast(text: $message, variant: 'danger');
+
+    //         return view('livewire.mahasiswa.nilai-mahasiswa', [
+
+    //         ]);
+    //     }
+    // }
+
+    // public function render()
+    // {
+    //     try {
+    //         $mahasiswa = Auth::user()->mahasiswa ?? null;
+    //         $angkatan = $mahasiswa?->angkatan ? (int) $mahasiswa->angkatan : null;
+
+    //         $queryNilai = $this->inputNilaiSemesterSearch($this->mahasiswa_id);
+
+    //         if ($this->showDeleted && $this->AuthCheck('staff')) {
+    //             $queryNilai->onlyTrashed();
+    //         }
+
+    //         // $queryNilaiSearch = $this->searchOutputNilai($queryNilai, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+
+    //         $allNilaiRaw = $queryNilai->get();
+    //         $calculatedPeriode = $this->indexIPK($allNilaiRaw, $angkatan);
+
+    //         $currentPage = Paginator::resolveCurrentPage() ?: 1;
+    //         $perPage = $this->perPage ?? 8;
+    //         $currentItems = $calculatedPeriode->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+    //         $paginatedPeriode = new LengthAwarePaginator(
+    //             $currentItems,
+    //             $calculatedPeriode->count(),
+    //             $perPage,
+    //             $currentPage,
+    //             [
+    //                 'path' => Paginator::resolveCurrentPath(),
+    //                 'pageName' => method_exists($this, 'paginatorPageName') ? $this->paginatorPageName() : 'page',
+    //             ]
+    //         );
+
+    //         return view('livewire.mahasiswa.nilai-mahasiswa', [
+    //             'periodeNilai' => $paginatedPeriode,
+    //         ]);
+
+    //     } catch (QueryException $e) {
+    //         $message = 'Terjadi kesalahan database: '.$e->getMessage();
+    //         session()->flash('error', $message);
+    //         if (method_exists($this, 'toast')) {
+    //             $this->toast(text: $message, variant: 'danger');
+    //         }
+
+    //         return view('livewire.mahasiswa.nilai-mahasiswa', [
+    //             'periodeNilai' => new LengthAwarePaginator([], 0, $this->perPage ?? 10),
+    //         ]);
+    //     }
+    // }
+
     public function render()
     {
-        if (Auth::user()->mahasiswa) {
-            $this->mahasiswa_id = Auth::user()->mahasiswa->id;
-        }
-
-        // $this->inputPrFilter();
-        // $this->inputDpFilter();
-        // $this->inputFkFilter();
-        // $this->inputRPSFilter();
-        // $this->inputMKFilter();
-        // $this->inputDosenFilter();
-
         try {
-            // =========================
-            // QUERY UTAMA (TABLE)
-            // =========================
-            $queryNilai = $this->inputNilaiSearch();
+            $mahasiswa = Auth::user()->mahasiswa ?? null;
+            $angkatan = $mahasiswa?->angkatan ? (int) $mahasiswa->angkatan : null;
 
-            // =========================
-            // QUERY COUNT (TERPISAH 🔥)
-            // =========================
-            // $countNilai = Nilai::query();
+            $queryNilai = $this->inputNilaiSemesterSearch($this->mahasiswa_id);
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryNilai->onlyTrashed();
-                // $countNilai->onlyTrashed();
             }
 
+            $allNilaiRaw = $queryNilai->get();
+            $calculatedPeriode = $this->indexIPK($allNilaiRaw, $angkatan);
+
+            $perPage = $this->perPage ?? 8;
+            $paginatedPeriode = $this->searchOutputNilai(
+                $calculatedPeriode,
+                $this->search,
+                $perPage,
+                $this->sortField,
+                $this->sortDirection
+            );
 
             return view('livewire.mahasiswa.nilai-mahasiswa', [
-                'nilai' => $queryNilai->paginate($this->perPage),
+                'periodeNilai' => $paginatedPeriode,
             ]);
 
         } catch (QueryException $e) {
             $message = 'Terjadi kesalahan database: '.$e->getMessage();
             session()->flash('error', $message);
-            $this->toast(text: $message, variant: 'danger');
+            if (method_exists($this, 'toast')) {
+                $this->toast(text: $message, variant: 'danger');
+            }
 
             return view('livewire.mahasiswa.nilai-mahasiswa', [
-              
+                'periodeNilai' => new LengthAwarePaginator([], 0, $this->perPage ?? 8),
             ]);
         }
     }

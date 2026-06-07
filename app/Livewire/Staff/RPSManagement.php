@@ -100,6 +100,7 @@ class RPSManagement extends Component
         'perPage' => ['except' => 8],
         // 'switchTable' => ['except' => 'rps'],
         'filterRPS' => ['except' => ''],
+        'filterRPSgg' => ['except' => ''],
         'filterCPMK' => ['except' => ''],
         'filterSCPMK' => ['except' => ''],
         'filterCPL' => ['except' => ''],
@@ -159,7 +160,7 @@ class RPSManagement extends Component
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
+        $this->reset(['search', 'filterRPS', 'filterRPSgg', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
         $this->resetPage();
     }
 
@@ -187,7 +188,7 @@ class RPSManagement extends Component
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
-            'dosen' => [1 => 'id', 2 => 'name', 3 => 'identity1', 4 => 'identity2', 5 => 'identity3', 6 => 'role', 7 => 'prodi', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
+            'dosen' => [1 => 'id', 2 => 'kode', 3 => 'identity1', 4 => 'identity2', 5 => 'identity3', 6 => 'role', 7 => 'prodi', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
         ];
         $aliases = [
             'kode' => ['kode', 'name'],
@@ -255,6 +256,11 @@ class RPSManagement extends Component
 
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    }
+
+    public function updatedSwitchTable($value)
+    {
+        $this->dispatch('switch-table-changed', table: $value);
     }
 
     public function render()

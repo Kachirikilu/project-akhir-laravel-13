@@ -17,7 +17,7 @@
                 <livewire:all-role.kelas-management.jadwal-management :kode="request()->route('kode')" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-management'))
                 <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode="request()->route('kode')"
-                    :kode_jadwal="request()->route('kode_jadwal')" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
+                    :kode_jadwal_url="request()->route('kode_jadwal_url')" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
             @endif
         </div>
     </div>

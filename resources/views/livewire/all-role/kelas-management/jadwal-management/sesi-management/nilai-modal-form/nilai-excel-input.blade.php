@@ -17,6 +17,8 @@
             'wireKeyString' => 'excel-input-field',
             'nameXString' => 'Pilih File Excel Nilai',
             'wireLoading' => 'parseExcelNilaiFile',
+            'multiFile' => 1,
+            'fileDelete' => 'clearNilaiExcelFile',
             'message' => $errors->first('excel_nilai_file'),
         ])
     </div>
@@ -74,7 +76,7 @@
                             {{-- ============================= --}}
                             <tr class="text-left">
                                 <th rowspan="3" class="{{ $headColumn }}">#</th>
-                                <th rowspan="3" class="{{ $headColumn }}">Kode MK</th>
+                                <th rowspan="3" class="{{ $headColumn }}">Kode RPS</th>
                                 <th rowspan="3" class="{{ $headColumn }}">Nama MK</th>
                                 <th rowspan="3" class="{{ $headColumn }}">Nama Kelas</th>
 
@@ -182,9 +184,9 @@
                                     </td>
 
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => $this->parsedNilaiRows[$i]['kode_mk'] ?? '',
-                                        'wireModel' => "parsedNilaiRows.$i.kode_mk",
-                                        'message' => $rowNilaiErrors[$i]['kode_mk'] ?? null,
+                                        'model' => $this->parsedNilaiRows[$i]['kode_rps'] ?? '',
+                                        'wireModel' => "parsedNilaiRows.$i.kode_rps",
+                                        'message' => $rowNilaiErrors[$i]['kode_rps'] ?? null,
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
@@ -194,9 +196,9 @@
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => $this->parsedNilaiRows[$i]['kelas_kuliah'] ?? '',
-                                        'wireModel' => "parsedNilaiRows.$i.kelas_kuliah",
-                                        'message' => $rowNilaiErrors[$i]['kelas_kuliah'] ?? null,
+                                        'model' => $this->parsedNilaiRows[$i]['kode_jadwal'] ?? '',
+                                        'wireModel' => "parsedNilaiRows.$i.kode_jadwal",
+                                        'message' => $rowNilaiErrors[$i]['kode_jadwal'] ?? null,
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
@@ -313,7 +315,7 @@
             <div>
                 @include('livewire.global.modal-form.loading-animation', [
                     'wireLoading' => 'excel_nilai_file, parseExcelNilaiFile, removeParsedNilaiRow',
-                    'heightContainer' => 32,
+                    // 'heightContainer' => 32,
                     'textString' => 'Memproses data dari file Excel...',
                 ])
             </div>

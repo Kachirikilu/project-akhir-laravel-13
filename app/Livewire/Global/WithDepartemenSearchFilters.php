@@ -3,7 +3,6 @@
 namespace App\Livewire\Global;
 
 use App\Models\ProgramStudi\Departemen;
-use App\Livewire\Global\LogicSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -74,9 +73,33 @@ trait WithDepartemenSearchFilters
     {
         $search = trim($this->dpSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dp_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->dp_name)) {
             $this->dpSearchResults = $this->mapDpSearch(
                 // $this->dpQuery()->searchDepartemen($search)->limit(12)->get()
+                $this->searchOutputPr($this->dpQuery(), $search, 12)
+            );
+        } elseif (empty($search) || $this->dp_name) {
+            $this->dpSearchResults = $this->getDpbyUser('search');
+        } else {
+            $this->dpSearchResults = [];
+        }
+    }
+
+    public function inputDpFilter3()
+    {
+        $search = trim($this->dpSearchQuery);
+
+        // 1. Jika teks query yang diketik BERBEDA dengan nama yang sedang terselect,
+        //    artinya user sedang mengetik pencarian baru. Hancurkan status select lama!
+        if ($this->dp_name && $search !== $this->dp_name) {
+            $this->dp_name = null;
+            $this->selectedDpId = null;
+            $this->dp_items = null;
+        }
+
+        // 2. Sekarang filter pencarian dapat dievaluasi dengan bersih tanpa intervensi dp_name lama
+        if (strlen($search) > 1 || is_numeric($search)) {
+            $this->dpSearchResults = $this->mapDpSearch(
                 $this->searchOutputPr($this->dpQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->dp_name) {
@@ -280,7 +303,7 @@ trait WithDepartemenSearchFilters
     //                     $dp->departemen,
     //                     $dp->departemen_dp,
     //                 ];
-                    
+
     //                 $matchDp = false;
     //                 foreach ($baseDp as $fak) {
     //                     $candidates = [

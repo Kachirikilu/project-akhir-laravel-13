@@ -115,7 +115,7 @@ trait WithRPSSearchFilters
         $search = trim($this->rpsSearchQuery);
 
         // Jika ada input search
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->rps_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->rps_name)) {
             $this->rpsSearchResults = $this->mapRPSSearch(
                 // $this->rpsQuery()->searchRPS($search)->limit(12)->get()
                 $this->searchOutputRPS($this->rpsQuery(), $search, null, 12)
@@ -361,16 +361,19 @@ trait WithRPSSearchFilters
                     | SEMESTER
                     |--------------------------------------------------------------------------
                     */
-                    $semester = (int) ($rps->semester ?? 0);
-                    $matchSemester = false;
-                    if ($isNumericSearch
-                        && (
-                            str_contains($searchLower, 'sem')
-                            || str_contains($searchLower, 'semester')
-                        )
-                    ) {
-                        $matchSemester = $semester === (int) $number;
-                    }
+                    $matchSemester = $this->matchCount(
+                        $rps->semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$rps->semester,
+                        $searchLower
+                    );
 
                     /*
                     |--------------------------------------------------------------------------
@@ -386,6 +389,13 @@ trait WithRPSSearchFilters
                         );
                         $matchSKS = $sks === $targetSKS;
                     }
+                    $matchSKS = $this->matchCount(
+                        $sks,
+                        $searchLower, ['sks']
+                    ) || $this->containsStrict(
+                        $sks. 'SKS',
+                        $searchLower
+                    );
 
                     $matchSKSText = $this->matchSKSText(
                         $rps->sks_text,

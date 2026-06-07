@@ -53,7 +53,7 @@ class MataKuliahManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filterMK' => ['except' => ''],
-        'filterMKGG' => ['except' => ''],
+        'filterMKgg' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
@@ -172,10 +172,6 @@ class MataKuliahManagement extends Component
 
             return view('livewire.staff.mk-management', [
                 'mks' => $mk,
-
-                'totalGanjilGenap' => $this->totalGanjil + $this->totalGenap,
-                'totalGanjil' => $this->totalGanjil,
-                'totalGenap' => $this->totalGenap,
 
                 'totalMK' => $totalMK,
                 'totalTatapMuka' => $totalTatapMuka,

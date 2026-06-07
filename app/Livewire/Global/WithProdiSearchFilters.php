@@ -72,7 +72,7 @@ trait WithProdiSearchFilters
     {
         $search = trim($this->prSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->pr_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->pr_name)) {
             $this->prSearchResults = $this->mapPr(
                 // $this->prQuery()->searchProdi($search)->limit(12)->get()
                 $this->searchOutputPr($this->prQuery(), $search, 12)

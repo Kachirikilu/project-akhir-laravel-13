@@ -37,8 +37,6 @@ trait WithAbsenModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        // dd($this->list_absensi_array);
-
         if (empty($id)) {
             $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
 
@@ -57,15 +55,21 @@ trait WithAbsenModal
             },
         ])->where('kj_id', $jadwal_id)->orderBy('pertemuan_ke', 'asc')->get();
 
-        $nilaiMahasiswa = NilaiMahasiswa::where('kj_id', $jadwal_id)
-            ->where('mahasiswa_id', $id)
+        $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
+            ->where('rps_id', $this->rps_id)
+            ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
+            ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
             ->first();
 
         $nilaiArray = $nilaiMahasiswa?->nilai_array ?? [];
         $bobotArray = $nilaiMahasiswa?->bobot_array ?? [];
+
         $this->list_absensi_array = $sesis->map(function ($sesi) use ($nilaiArray, $bobotArray) {
             $kehadiran = $sesi->kehadirans->first();
             $index = $sesi->pertemuan_ke - 1;
+
+            $nilaiRaw = $nilaiArray[$index] ?? null;
+            $nilaiFinal = ($nilaiRaw === null || $nilaiRaw === '') ? 0 : (float) $nilaiRaw;
 
             return [
                 'sesi_id' => $sesi->id,
@@ -86,9 +90,9 @@ trait WithAbsenModal
                 'keterangan' => $kehadiran?->keterangan ?? '',
                 'waktu_presensi' => $kehadiran?->waktu_presensi,
 
-                'nilai' => $nilaiArray[$index] ?? null,
+                'nilai' => $nilaiFinal,
                 'bobot' => isset($bobotArray[$index])
-                    ? round($bobotArray[$index] * 100, 2) . '%'
+                    ? round($bobotArray[$index] * 100, 2).'%'
                     : '0%',
             ];
         })->toArray();
@@ -140,7 +144,21 @@ trait WithAbsenModal
         $rules = [];
         $messages = [];
 
-        $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)->where('kj_id', $this->jadwal_id)->first();
+        // --- PERBAIKAN: Langsung gunakan $this->jadwal untuk kondisi Unique Key ---
+        $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)
+            ->where('rps_id', $this->rps_id)
+            ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
+            ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
+            ->first();
+
+        if (! $nilaiMahasiswa) {
+            $nilaiMahasiswa = new NilaiMahasiswa([
+                'mahasiswa_id' => $this->selected_id_mahasiswa,
+                'rps_id' => $this->rps_id,
+                'ganjil_genap' => (string) $this->jadwal->ganjil_genap,
+                'tahun_akademik' => (string) $this->jadwal->tahun_akademik,
+            ]);
+        }
 
         foreach ($this->list_absensi_array as $index => $item) {
             $prefix = "list_absensi_array.{$index}.";
@@ -196,30 +214,25 @@ trait WithAbsenModal
             return;
         }
 
-        if ($nilaiMahasiswa) {
-
-            $nilaiArray = $nilaiMahasiswa->nilai_array ?? [];
-
-            foreach ($this->list_absensi_array as $index => $item) {
-
-                $nilaiArray[$index] = $item['nilai'] ?? 0;
-            }
-
-            $nilaiMahasiswa->nilai_array = $nilaiArray;
-            $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
-            $totalNilai = 0;
-            foreach ($nilaiArray as $i => $nilai) {
-                $bobot = $bobotArray[$i] ?? 0;
-                $totalNilai += ((float) $nilai) * ((float) $bobot);
-            }
-
-            $nilaiMahasiswa->nilai = round($totalNilai, 2);
-            $nilaiMahasiswa->save();
+        $nilaiArray = $nilaiMahasiswa->nilai_array ?? [];
+        foreach ($this->list_absensi_array as $index => $item) {
+            $nilaiArray[$index] = (float) ($item['nilai'] ?? 0);
         }
+
+        $nilaiMahasiswa->nilai_array = $nilaiArray;
+        $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
+        $totalNilai = 0;
+        foreach ($nilaiArray as $i => $nilai) {
+            $bobot = $bobotArray[$i] ?? 0;
+            $totalNilai += ((float) $nilai) * ((float) $bobot);
+        }
+
+        $nilaiMahasiswa->kj_id = $this->jadwal->id;
+        $nilaiMahasiswa->nilai = round($totalNilai, 2);
 
         /*
         |--------------------------------------------------------------------------
-        | 3. Eksekusi Simpan Database (Jika Lolos Validasi)
+        | 3. Eksekusi Simpan Database
         |--------------------------------------------------------------------------
         */
         try {
@@ -261,34 +274,16 @@ trait WithAbsenModal
                 $this->list_absensi_array[$index]['waktu_presensi'] = $kehadiran->waktu_presensi;
             }
 
-            if ($nilaiMahasiswa) {
-                $nilaiArray = $nilaiMahasiswa->nilai_array ?? [];
-                foreach ($this->list_absensi_array as $index => $item) {
-                    $nilaiArray[$index] = (float) ($item['nilai'] ?? 0);
-                }
+            $nilaiMahasiswa->save();
 
-                $nilaiMahasiswa->nilai_array = $nilaiArray;
-                $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
-                $totalNilai = 0;
-
-                foreach ($nilaiArray as $i => $nilai) {
-                    $bobot = $bobotArray[$i] ?? 0;
-                    $totalNilai += ((float) $nilai) * ((float) $bobot);
-                }
-
-                $nilaiMahasiswa->nilai = round($totalNilai, 2);
-                $nilaiMahasiswa->save();
-            }
             \DB::commit();
-
-            // dd($this->list_absensi_array);
 
             $this->resetInputAbsen();
             $this->dispatch('refresh-data-sesi');
             $this->showMahasiswaAbsen = false;
 
             $this->toast(
-                message: 'Absensi',
+                message: 'Absensi berhasil diperbarui!',
                 type: 'update'
             );
 

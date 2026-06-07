@@ -4,7 +4,6 @@ namespace App\Exports;
 
 use App\Models\Akademik\RPS;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -92,9 +91,10 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
         $rpsAktif = $allRps->where('is_draf', 0);
         $rpsNonAktif = $allRps->where('is_draf', 1);
 
-        $kelas = $d->sesiMengajars->map(function ($sesi) {
-            return $sesi->jadwal?->kelas_rel;
-        })->filter()->unique('id');
+        $kelas = $allRps
+            ->flatMap(fn ($rps) => $rps->kelas)
+            ->unique('id')
+            ->values();
 
         return [
             $u->id ?? '', // A
@@ -127,6 +127,7 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
     {
         if (in_array($cell->getColumn(), ['E', 'F', 'G', 'H'])) {
             $cell->setValueExplicit($value, DataType::TYPE_STRING);
+
             return true;
         }
 

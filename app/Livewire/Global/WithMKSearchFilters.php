@@ -88,7 +88,7 @@ trait WithMKSearchFilters
     {
         $search = trim($this->mkSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->mk_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->mk_name)) {
             $this->mkSearchResults = $this->mapMKSearch(
                 // $this->mkQuery()->searchMK($search)->limit(12)->get()
                 $this->searchOutputMK($this->mkQuery(), $search, 12)
@@ -329,16 +329,20 @@ trait WithMKSearchFilters
                     | SEMESTER
                     |--------------------------------------------------------------------------
                     */
-                    $semester = (int) ($mk->semester ?? 0);
-                    $matchSemester = false;
-                    if ($isNumericSearch
-                        && (
-                            str_contains($searchLower, 'sem')
-                            || str_contains($searchLower, 'semester')
-                        )
-                    ) {
-                        $matchSemester = $semester === (int) $number;
-                    }
+                    $matchSemester = $this->matchCount(
+                        $mk->semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$mk->semester,
+                        $searchLower
+                    );
+
 
                     /*
                     |--------------------------------------------------------------------------
@@ -354,6 +358,13 @@ trait WithMKSearchFilters
                         );
                         $matchSKS = $sks === $targetSKS;
                     }
+                    $matchSKS = $this->matchCount(
+                        $sks,
+                        $searchLower, ['sks']
+                    ) || $this->containsStrict(
+                        $sks. 'SKS',
+                        $searchLower
+                    );
 
                     $matchSKSText = $this->matchSKSText(
                         $mk->sks_text,

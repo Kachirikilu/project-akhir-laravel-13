@@ -25,6 +25,40 @@
         $borderL = 'border-[var(--border-table-color)] border-l';
     @endphp
 
+    @if ($this->switchTable == 'rps')
+        <x-slot:sortir>
+            <div x-data="{ activeTab: @entangle('filterRPSgg') }"
+                class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByRPSgg',
+                    'xFilter' => 'filterRPSgg',
+                    'tabFilter' => $totalGanjil + $totalGenap,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua',
+                    'icon' => 'table-cells',
+                ])
+
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByRPSgg',
+                    'xFilter' => 'filterRPSgg',
+                    'tabFilter' => $totalGanjil ?? 0,
+                    'tabString' => 'rps-ganjil',
+                    'tabNameString' => 'Ganjil',
+                    'icon' => 'calendar-days',
+                ])
+
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByRPSgg',
+                    'xFilter' => 'filterRPSgg',
+                    'tabFilter' => $totalGenap ?? 0,
+                    'tabString' => 'rps-genap',
+                    'tabNameString' => 'Genap',
+                    'icon' => 'calendar-days',
+                ])
+            </div>
+        </x-slot:sortir>
+    @endif
+
     <x-slot:header>
 
         <tr>
@@ -498,8 +532,10 @@
                 <td class="{{ $mainKolom }} text-center">{{ $x->bobot_format ? $x->bobot_format . '%' : '-' }}
                 </td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->waktu_tugas ? $x->w_tugas . ' menit' : '60 m/SKS' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->waktu_mandiri ? $x->w_mandiri . ' menit' : '60 m/SKS' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">
+                    {{ $x->waktu_tugas ? $x->w_tugas . ' menit' : '60 m/SKS' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">
+                    {{ $x->waktu_mandiri ? $x->w_mandiri . ' menit' : '60 m/SKS' }}</td>
             @endif
 
             @if ($switchTable === 'referensi')

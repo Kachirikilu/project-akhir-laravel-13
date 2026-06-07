@@ -17,6 +17,8 @@
             'wireKeyString' => 'excel-input-field',
             'nameXString' => 'Pilih File Excel Pengguna',
             'wireLoading' => 'parseExcelUserFile',
+            'multiFile' => 1,
+            'fileDelete' => 'clearUserNilaiFile',
             'message' => $errors->first('excel_user_file'),
         ])
     </div>
@@ -264,7 +266,7 @@
             <div>
                 @include('livewire.global.modal-form.loading-animation', [
                     'wireLoading' => 'excel_user_file, parseExcelUserFile, removeParsedUserRow',
-                    'heightContainer' => 32,
+                    // 'heightContainer' => 32,
                     'textString' => 'Memproses data dari file Excel...',
                 ])
             </div>

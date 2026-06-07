@@ -209,7 +209,7 @@
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">
-                {{ ($s->mhs_absensi ?? 0) . ' / ' . $s->count_mahasiswa }}</td>
+                {{ ($s->mhs_absensi ?? 0) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">

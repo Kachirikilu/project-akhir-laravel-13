@@ -15,7 +15,7 @@ trait WithKelasFilters
 
     public $filterKelas = '';
 
-    public $filterKelasGG = '';
+    public $filterKelasgg = '';
 
     public $searchBobotKelas = '';
 
@@ -131,11 +131,11 @@ trait WithKelasFilters
             $q->whereRaw('mata_kuliahs.semester % 2 = 0');
         })->count();
 
-        if ($this->filterKelasGG === 'kelas-ganjil') {
+        if ($this->filterKelasgg === 'kelas-ganjil') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->whereRaw('mata_kuliahs.semester % 2 = 1');
             });
-        } elseif ($this->filterKelasGG === 'kelas-genap') {
+        } elseif ($this->filterKelasgg === 'kelas-genap') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->whereRaw('mata_kuliahs.semester % 2 = 0');
             });
@@ -149,15 +149,9 @@ trait WithKelasFilters
         $this->resetPage();
     }
 
-    public function filterByKelasGG($kelas)
+    public function filterByKelasgg($kelas)
     {
-        $this->filterKelasGG = $kelas;
-        $this->resetPage();
-    }
-
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filterKelas', 'filterKelasGG', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
+        $this->filterKelasgg = $kelas;
         $this->resetPage();
     }
 

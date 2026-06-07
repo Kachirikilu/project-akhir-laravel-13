@@ -17,6 +17,12 @@ trait WithRPSFilters
 
     public $filterRPS = '';
 
+    public $filterRPSgg = '';
+
+    public $totalGanjil = '';
+
+    public $totalGenap = '';
+
     public $searchBobotRPS = '';
 
     public function updatingSearchBobotRPS()
@@ -107,6 +113,23 @@ trait WithRPSFilters
         } elseif ($this->filterRPS === 'rps-older-5') {
             $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
         }
+
+        $this->totalGanjil = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
+            $q->whereRaw('mata_kuliahs.semester % 2 = 1');
+        })->count();
+        $this->totalGenap = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
+            $q->whereRaw('mata_kuliahs.semester % 2 = 0');
+        })->count();
+
+        if ($this->filterRPSgg === 'rps-ganjil') {
+            $queryRPS->whereHas('mk_rel', function ($q) {
+                $q->whereRaw('mata_kuliahs.semester % 2 = 1');
+            });
+        } elseif ($this->filterRPSgg === 'rps-genap') {
+            $queryRPS->whereHas('mk_rel', function ($q) {
+                $q->whereRaw('mata_kuliahs.semester % 2 = 0');
+            });
+        }
     }
 
     public function filterByRPS($rps)
@@ -114,10 +137,9 @@ trait WithRPSFilters
         $this->filterRPS = $rps;
         $this->resetPage();
     }
-
-    public function resetInputFilter()
+    public function filterByRPSgg($rps)
     {
-        $this->reset(['search', 'filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
+        $this->filterRPSgg = $rps;
         $this->resetPage();
     }
 

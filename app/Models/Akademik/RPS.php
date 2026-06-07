@@ -3,6 +3,7 @@
 namespace App\Models\Akademik;
 
 use App\Models\Auth\Dosen;
+use App\Models\Kelas\Kelas;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,6 +63,11 @@ class RPS extends Model
             ->withPivot(['peran', 'is_ketua', 'sort_order'])
             ->orderBy('sort_order')
             ->withTimestamps();
+    }
+
+    public function kelas()
+    {
+        return $this->hasMany(Kelas::class, 'rps_id');
     }
 
     public function getDosensSubCpmk($subCpmkId)

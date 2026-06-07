@@ -44,9 +44,9 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         // HEADER 3 LAPIS ASLI
         // ==========================
         $header1 = [
-            'Kode Mata Kuliah',
+            'Kode RPS',
             'Nama Mata Kuliah',
-            'Nama Kelas Kuliah',
+            'Kode Kelas',
             'NIM',
             'Nama Mahasiswa',
             'Angkatan',
@@ -100,7 +100,9 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
             ->mahasiswas()
             ->with([
                 'nilaiMahasiswa' => function ($q) {
-                    $q->where('kj_id', $this->jadwalId);
+                    $q->where('kj_id', $this->jadwalId)
+                      ->where('ganjil_genap', $this->jadwal->ganjil_genap)
+                      ->where('tahun_akademik', $this->jadwal->tahun_akademik);
                 },
             ])
             ->get();
@@ -117,8 +119,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                 ?? [];
 
             $row = [
-                $this->jadwal->kode_mk,
-                $this->jadwal->nama_mk,
+                $this->jadwal->kode_rps,
+                $this->jadwal->mk,
                 $this->jadwal->kode,
                 $mhs->nim,
                 $mhs->user?->name,

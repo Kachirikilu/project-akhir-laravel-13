@@ -32,20 +32,20 @@
 
     <x-slot:sortir>
 
-        <div x-data="{ activeTab: @entangle('filterMKGG') }"
+        <div x-data="{ activeTab: @entangle('filterMKgg') }"
             class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKGG',
-                'xFilter' => 'filterMKGG',
-                'tabFilter' => $totalGanjilGenap,
+                'xString' => 'filterByMKgg',
+                'xFilter' => 'filterMKgg',
+                'tabFilter' => $totalGanjil + $totalGenap,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
             ])
 
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKGG',
-                'xFilter' => 'filterMKGG',
+                'xString' => 'filterByMKgg',
+                'xFilter' => 'filterMKgg',
                 'tabFilter' => $totalGanjil,
                 'tabString' => 'mk-ganjil',
                 'tabNameString' => 'Ganjil',
@@ -53,8 +53,8 @@
             ])
 
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKGG',
-                'xFilter' => 'filterMKGG',
+                'xString' => 'filterByMKgg',
+                'xFilter' => 'filterMKgg',
                 'tabFilter' => $totalGenap,
                 'tabString' => 'mk-genap',
                 'tabNameString' => 'Genap',
