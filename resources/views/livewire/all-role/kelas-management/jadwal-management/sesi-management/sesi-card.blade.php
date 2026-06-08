@@ -53,29 +53,40 @@
         let cleanQuery = query.replace(/[^a-z0-9]/g, '');
         let dotQuery = query.replace(',', '.');
 
-        let filtered = this.rawItems.filter(item => {
-            if (!query) return true;
+    let filtered = this.rawItems.filter(item => {
+        if (!query) return true;
 
-            if (String(item.metode).includes(query) || String(item.tugas).includes(query)) {
-                return true;
-            }
+        let metode = String(item.metode || '').toLowerCase();
+        let tugas = String(item.tugas || '').toLowerCase();
+        let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
+        let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
+        let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
+        let searchCpmk = String(item.searchKodeCPMK || '').toLowerCase();
 
-            if (item.kode_scpmk.includes(query) || (cleanQuery && item.searchKodeSCPMK.includes(cleanQuery))) {
-                return true;
-            }
+        if (metode.includes(query) || tugas.includes(query)) {
+            return true;
+        }
 
-            if (item.kode_cpmk.includes(query) || (cleanQuery && item.searchKodeCPMK.includes(cleanQuery))) {
-                return true;
-            }
+        if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) {
+            return true;
+        }
 
-            let cocokPertemuan = item.searchPertemuan.some(pText => pText === query || pText.includes(query));
-            if (cocokPertemuan) return true;
+        if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) {
+            return true;
+        }
 
-            let cocokBobot = item.bobot.some(bText => bText === query || bText === dotQuery || bText.includes(query) || bText.includes(dotQuery));
-            if (cocokBobot) return true;
+        let cocokPertemuan = item.searchPertemuan?.some(pText => String(pText).includes(query)) || false;
+        if (cocokPertemuan) return true;
 
-            return false;
-        });
+        let cocokBobot = item.bobot?.some(bText => {
+            let text = String(bText);
+            return text === query || text === dotQuery || text.includes(query) || text.includes(dotQuery);
+        }) || false;
+        
+        if (cocokBobot) return true;
+
+        return false;
+    });
 
         let field = this.$store.sesi?.sortField || this.sortField;
         let direction = (this.$store.sesi?.sortDirection || this.sortDirection) === 'desc' ? -1 : 1;
@@ -173,7 +184,7 @@
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? 999)"
                     @click="expanded = !expanded"
-                    class="card-sesi-item relative flex flex-col self-start p-3 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300 {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }}">
+                    class="card-sesi-item relative flex flex-col self-start p-3 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : '' }}">
 
                     {{-- CARD HEADER --}}
                     <div class="flex items-start justify-between gap-4 pb-3 border-b border-[var(--border-table-color)]"

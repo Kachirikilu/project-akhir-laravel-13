@@ -366,7 +366,7 @@ class RPSManagement extends Component
                     break;
                 case 'dosen':
                     $this->buttonUserFilter($queryUser);
-                    $users = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection);
+                    $users = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection, null, 1);
                     // $users = $queryUser->paginate($this->perPage);
                     break;
             }

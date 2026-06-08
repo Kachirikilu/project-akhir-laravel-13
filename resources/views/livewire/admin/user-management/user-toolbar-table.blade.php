@@ -32,16 +32,16 @@
                 @if ($x->role == 'Dosen' && ($withRPS ?? false))
                     <flux:menu.item
                         @click="
-                    $store.user?.reset();
+                            $store.user?.reset();
 
-                    const type = '{{ strtolower($x->role) }}';
+                            const type = '{{ strtolower($x->role) }}';
 
-                    {{-- $store.user?.setType(type); --}}
-                    {{-- $store.user?.setEdit(1); --}}
+                            {{-- $store.user?.setType(type); --}}
+                            {{-- $store.user?.setEdit(1); --}}
 
-                    $store.user?.setColor('text-lime-700 dark:text-lime-400');
-                    $flux.modal('user-rps-modal').show();
-                    "
+                            $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                            $flux.modal('user-rps-modal').show();
+                        "
                     wire:click="{{ $editRPSCall }}"
                     class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-yellow-900/30 transition-colors">
                     <flux:icon name="eye" class="mr-2 h-4 w-4" />

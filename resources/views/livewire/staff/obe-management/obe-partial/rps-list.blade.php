@@ -122,7 +122,7 @@
                                                     <flux:icon.credit-card variant="micro"
                                                         class="opacity-50 text-emerald-600 dark:text-emerald-400" />
                                                     <span class="text-xs text-zinc-500">Bobot: <b
-                                                            class="text-zinc-700 dark:text-zinc-200">{{ $r['sks_text'] }}</b></span>
+                                                            class="text-zinc-700 dark:text-zinc-200">{{ $r['sks'] }} SKS - {{ $r['sks_text'] }}</b></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.shield-check variant="micro"

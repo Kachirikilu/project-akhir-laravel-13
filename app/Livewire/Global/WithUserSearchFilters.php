@@ -267,7 +267,7 @@ trait WithUserSearchFilters
         $this->userNameSearch = '';
     }
 
-    public function searchOutputUser($queryUser, $searchRaw, $searchAngkatan, $perPage, $sortField = null, $sortDirection = 'asc', $idJadwal = null)
+    public function searchOutputUser($queryUser, $searchRaw, $searchAngkatan, $perPage, $sortField = null, $sortDirection = 'asc', $idJadwal = null, $withRPS = false)
     {
         $search = trim($searchRaw);
         $searchLower = strtolower($search);
@@ -282,7 +282,7 @@ trait WithUserSearchFilters
 
                 $mode = $this->detectSearchMode($searchLower);
 
-                $allUser = $allUser->filter(function ($user) use ($searchLower, $searchAngkatan, $mode, $idJadwal) {
+                $allUser = $allUser->filter(function ($user) use ($searchLower, $searchAngkatan, $mode, $idJadwal, $withRPS) {
                     $number = preg_replace('/[^0-9.]/', '', $searchLower);
                     $isNumericSearch = is_numeric($number) && $number !== '';
                     // $numberBobot = preg_replace('/[^0-9.]/', '', $searchAngkatan);
@@ -528,6 +528,45 @@ trait WithUserSearchFilters
                         );
                     }
 
+                    $matchRPS = false;
+                    $matchSKS = false;
+
+                    if ($withRPS) {
+                        $rps = (int) ($user->dosen->count_rps ?? 0);
+                        $matchRPS = false;
+                        if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                            $targetSKS = (int) max(
+                                $matches[1] ?? 0,
+                                $matches[2] ?? 0
+                            );
+                            $matchRPS = $rps === $targetSKS;
+                        }
+                        $matchRPS = $this->matchCount(
+                            $rps,
+                            $searchLower, ['rps']
+                        ) || $this->containsStrict(
+                            $rps. 'RPS',
+                            $searchLower
+                        );
+
+                        $sks = (int) ($user->dosen->count_sks ?? 0);
+                        $matchSKS = false;
+                        if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                            $targetSKS = (int) max(
+                                $matches[1] ?? 0,
+                                $matches[2] ?? 0
+                            );
+                            $matchSKS = $sks === $targetSKS;
+                        }
+                        $matchSKS = $this->matchCount(
+                            $sks,
+                            $searchLower, ['sks']
+                        ) || $this->containsStrict(
+                            $sks. 'SKS',
+                            $searchLower
+                        );
+                    }
+
                     $matchCreatedAt = $this->matchDateField(
                         $user->created_at,
                         $searchLower,
@@ -588,6 +627,9 @@ trait WithUserSearchFilters
                         || $matchNilaiIndex
                         || $matchNilaiHuruf
 
+                        || $matchRPS
+                        || $matchSKS
+
                         || $matchCreatedAt
                         || $matchUpdatedAt;
                 });
@@ -605,7 +647,7 @@ trait WithUserSearchFilters
                 'nitk' => fn ($user) => $user->admin->nitk ?? null,
                 'nidn' => fn ($user) => $user->dosen->nidn ?? null,
                 'nidk' => fn ($user) => $user->dosen->nidk ?? null,
-                'nim' => fn ($user) => $user->dosen->nim ?? null,
+                'nim' => fn ($user) => $user->mahasiswa->nim ?? null,
                 'nik' => fn ($user) => $user->nik ?? null,
 
                 'angkatan' => fn ($user) => $user->mahasiswa->angkatan ?? null,
@@ -620,6 +662,9 @@ trait WithUserSearchFilters
                 'mhs_sakit' => fn ($user) => $user->mhs_sakit ?? null,
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
                 'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? null,
+
+                'total_rps' => fn ($user) => $user->dosen->count_rps ?? null,
+                'total_sks' => fn ($user) => $user->dosen->count_sks ?? null,
 
                 'created_at' => fn ($user) => $user->created_at,
                 'updated_at' => fn ($user) => $user->updated_at,

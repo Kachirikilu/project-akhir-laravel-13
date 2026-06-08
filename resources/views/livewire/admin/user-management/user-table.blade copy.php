@@ -22,7 +22,6 @@
 
     @php
         $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderX = 'border-[var(--border-table-color)] border-x';
     @endphp
 
     <x-slot:header>
@@ -82,8 +81,9 @@
                 'rowSpan' => 2,
             ])
 
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th colspan="3" class="{{ $headSubKolom }}">
+            @if ($withRPS && $switchTable == 'dosen')
+                <th colspan=2"
+                    class="{{ $headSubKolom }}">
                     RPS
                 </th>
             @endif
@@ -133,12 +133,10 @@
         </tr>
 
         <tr>
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th class="{{ $headKolom }} border-x">Show</th>
+            @if ($withRPS && $switchTable == 'dosen')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'total_rps',
                     'isCenter' => 1,
-                    'isBorderL' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'total_sks',
@@ -244,28 +242,9 @@
             </td>
             <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <td class="{{ $secondKolom }} {{ $borderX }} text-center">
-                    <x-button-action
-                        @click="
-                            $store.user?.reset();
-
-                            const type = '{{ strtolower($user->role) }}';
-
-                            {{-- $store.user?.setType(type); --}}
-                            {{-- $store.user?.setEdit(1); --}}
-
-                            $store.user?.setColor('text-lime-700 dark:text-lime-400');
-                            $flux.modal('user-rps-modal').show();
-                        "
-                        wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="blue"
-                        wire:navigate>
-                        <flux:icon name="eye" class="w-3.5 h-3.5" />
-                        <span>RPS</span>
-                    </x-button-action>
-                </td>
-                <td class="{{ $subKolom }} text-center">{{ $user->dosen->count_rps }} RPS</td>
-                <td class="{{ $subKolom }} text-center">{{ $user->dosen->count_sks }} SKS</td>
+            @if ($withRPS && $switchTable == 'dosen')
+                <td class="{{ $secondKolom }}">{{ $user->dosen->count_rps }} RPS</td>
+                <td class="{{ $secondKolom }}">{{ $user->dosen->count_sks }} SKS</td>
             @endif
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
             @if ($switchTable != 'mahasiswa')

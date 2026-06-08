@@ -4,6 +4,7 @@ namespace App\Models\Auth;
 
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
+use App\Models\Kelas\KelasSesi;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
-use App\Models\Kelas\KelasSesi;
 
 class Dosen extends Model
 {
@@ -40,7 +40,6 @@ class Dosen extends Model
         'tmt_jabatan',
         'status',
     ];
-
 
     public function rps(): BelongsToMany
     {
@@ -80,6 +79,24 @@ class Dosen extends Model
     //         return "NIDN: {$nidn} / NIDK: {$nidk}";
     //     });
     // }
+
+    protected function countRps(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->rps->count();
+        });
+    }
+
+    protected function countSks(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return (float) $this->rps->sum(function ($rps) {
+                    return $rps->mk_rel() ? $rps->mk_rel()->sum('sks_kuliah') : 0;
+                });
+            }
+        );
+    }
 
     protected static function booted()
     {
