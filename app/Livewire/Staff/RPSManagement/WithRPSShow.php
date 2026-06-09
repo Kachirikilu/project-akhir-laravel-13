@@ -67,6 +67,7 @@ trait WithRPSShow
                 ->noSandbox()
                 ->format('A4')
                 ->showBackground()
+->setChromePath('/usr/bin/google-chrome-stable')
                 ->pdf();
         }, $fileNameSafe, [
             'Content-Type' => 'application/pdf',
