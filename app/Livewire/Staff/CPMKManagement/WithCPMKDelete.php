@@ -34,7 +34,7 @@ trait WithCPMKDelete
         }
 
         $this->cpmkIdToDelete = $id;
-        $this->cpmkNamaToDelete = "CPMK-{$cpmk->sort_order}";
+        $this->cpmkNamaToDelete = 'CPMK '.$cpmk->kode;
         $this->cpmkKodeToDelete = $cpmk->kode;
         $this->isPermanentDelete = $isTrashed;
         
@@ -59,9 +59,9 @@ trait WithCPMKDelete
 
             if ($this->isPermanentDelete) {
                 // Safety: RPS is_draf = 0
-                $isConnected = RPS::whereHas('cpmks', function($q) use ($cpmk) {
-                    $q->where('cpmk_id', $cpmk->id);
-                })->where('is_draf', 0)->exists();
+                $isConnected = $cpmk->rps()
+                    ->where('is_draf', 0)
+                    ->exists();
 
                 if ($isConnected) {
                     throw new \Exception('Gagal hapus permanen: CPMK masih terhubung ke RPS yang sudah Aktif!');
@@ -101,7 +101,7 @@ trait WithCPMKDelete
             $cpmk = CPMK::withTrashed()->findOrFail($id);
             $cpmk->restore();
 
-            $this->toast(message: "CPMK-{$cpmk->sort_order}", type: 'recycle');
+            $this->toast(message: 'CPMK '.$cpmk->kode, type: 'recycle');
             $this->dispatch('refresh-data-cpmk');
 
         } catch (\Exception $e) {

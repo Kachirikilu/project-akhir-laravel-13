@@ -99,7 +99,7 @@
                     'sortFieldString' => 'angkatan',
                     'modelString' => 'searchAngkatan',
                     'resetXFilter' => 'resetInputAngkatan()',
-                    'wInput' => 15,
+                    'wInput' => 20,
                     'numberOnly' => 1,
                     'maxLength' => 4,
                     'placeholder' => 'Tahun',
@@ -108,6 +108,15 @@
                 ])
             @endif
 
+
+
+            @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'kampus',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+            @endif
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'status',
                 'rowSpan' => 2,
@@ -190,13 +199,10 @@
 
             <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
 
-            @if ($switchTable == 'admin')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->admin->id }}</td>
-            @elseif ($switchTable == 'dosen')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->dosen->id }}</td>
-            @elseif ($switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->mahasiswa->id }}</td>
-                {{-- @php
+            @if ($switchTable !== '')
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->role_id }}</td>
+            @endif
+            {{-- @php
                     
                     $jadwalId = 5;
 
@@ -211,7 +217,6 @@
     
                 @endphp
                 <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
-            @endif
             {{-- Role --}}
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
@@ -249,12 +254,7 @@
                     <x-button-action
                         @click="
                             $store.user?.reset();
-
                             const type = '{{ strtolower($user->role) }}';
-
-                            {{-- $store.user?.setType(type); --}}
-                            {{-- $store.user?.setEdit(1); --}}
-
                             $store.user?.setColor('text-lime-700 dark:text-lime-400');
                             $flux.modal('user-rps-modal').show();
                         "
@@ -286,15 +286,31 @@
                 <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
+            @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
+                <td class="{{ $secondKolom }} text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer focus:outline-none">
+                            @include('livewire.global.table.badge.kode-wilayah-badge', [
+                                'xValue' => $user->wilayah,
+                                'sortir' => $user->kode_wilayah,
+                            ])
+                        </button>
+
+                        @include('livewire.admin.user-management.user-toolbar-table', [
+                            'x' => $user,
+                            'nameXString' => 'Pengguna',
+                        ])
+                    </flux:dropdown>
+                </td>
+            @endif
+
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
-
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
                         ])
                     </button>
-
                     @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
@@ -302,6 +318,7 @@
 
                 </flux:dropdown>
             </td>
+
 
             <td class="{{ $secondKolom }} min-w-48">
                 {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
@@ -326,13 +343,14 @@
 
         @empty
             <tr>
-                <td colspan="{{ match ($switchTable) {
-                    'admin' => 13,
+                {{-- <td colspan="{{ match ($switchTable) {
+                    'admin' => 14,
                     'dosen' => 14,
-                    'mahasiswa' => 13,
-                    default => 13,
+                    'mahasiswa' => 14,
+                    default => 14,
                 } }}"
-                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center"> --}}
+                <td colspan="{{ $withRPS ?? null ? 17 : 14 }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data {{ !empty($switchTable) ? ucfirst($switchTable) : 'Pengguna' }} ditemukan!
                 </td>
             </tr>

@@ -68,8 +68,8 @@ trait WithFakultasSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->fk_name)) {
             $this->fkSearchResults = $this->mapFkSearch(
-                // $this->fkQuery()->searchFakultas($search)->limit(12)->get()
-                $this->searchOutputPr($this->fkQuery(), $search, 12)
+                $this->fkQuery()->searchFakultas($search)->limit(12)->get()
+                // $this->searchOutputPr($this->fkQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->fk_name) {
             $this->fkSearchResults = $this->getFkbyUser('search');
@@ -107,8 +107,8 @@ trait WithFakultasSearchFilters
             ->select('fakultas.*');
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchFakultas($value)->limit(12)->get();
-            $results = $this->searchOutputPr($query, $value, 12);
+            $results = $query->searchFakultas($value)->limit(12)->get();
+            // $results = $this->searchOutputPr($query, $value, 12);
 
             $this->fkResults = $this->mapFk($results);
 

@@ -99,8 +99,8 @@ trait WithUserSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->user_name)) {
             $this->userSearchResults = $this->mapUserSearch(
-                // $this->userQuery()->searchUser($search)->limit(12)->get()
-                $this->searchOutputUser($this->userQuery(), $search, null, 12)
+                $this->userQuery()->searchUser($search)->limit(12)->get()
+                // $this->searchOutputUser($this->userQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->user_name) {
             $this->userSearchResults = $this->getUserbyUser('search');
@@ -138,8 +138,8 @@ trait WithUserSearchFilters
         $query = $this->userQuery();
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchUser($value)->limit(12)->get();
-            $results = $this->searchOutputUser($query, $value, null, 12);
+            $results = $query->searchUser($value)->limit(12)->get();
+            // $results = $this->searchOutputUser($query, $value, null, 12);
             $this->userResults = $this->mapUser($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -166,6 +166,15 @@ trait WithUserSearchFilters
                     $this->userNameSearch = '';
                     $this->user_id_array[] = $exactMatch->id;
                     $this->user_items_array[] = $this->itemsUser($exactMatch);
+
+                    $this->user_id_array = collect($this->user_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->user_items_array = collect($this->user_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $this->userResults = $this->getUserbyUser();
             }
@@ -310,39 +319,41 @@ trait WithUserSearchFilters
                         $user->status,
                         $searchLower
                     );
+                    $matchKampus = $this->containsStrict(
+                        'Kampus '.$user->kode_wilayah,
+                        $searchLower
+                    ) || $this->containsStrict(
+                        'Kampus '.$user->wilayah,
+                        $searchLower
+                    );
 
                     $matchIdentity1 = $this->matchOnlyCount(
                         $user->identity1,
                         $searchLower, ['nip', 'nim', 'id1', 'identity1']
+                    ) || $this->containsStrict(
+                        $user->identity1,
+                        $searchLower
                     );
                     $matchIdentity2 = $this->matchOnlyCount(
                         $user->identity2,
                         $searchLower, ['nitk', 'nidn', 'id2', 'identity2']
+                    ) || $this->containsStrict(
+                        $user->identity2,
+                        $searchLower
                     );
-                    $matchNIP = $this->matchOnlyCount(
-                        $user->admin->nip ?? $user->dosen->nip ?? null,
-                        $searchLower, ['nip', 'id1', 'identity1']
-                    );
-                    $matchNITK = $this->matchOnlyCount(
-                        $user->admin->nitk ?? null,
-                        $searchLower, ['nitk', 'id2', 'identity2']
-                    );
-                    $matchNIDN = $this->matchOnlyCount(
-                        $user->dosen->nidn ?? null,
-                        $searchLower, ['nidn', 'id2', 'identity2']
-                    );
-                    $matchNIDK = $this->matchOnlyCount(
-                        $user->dosen->nidk ?? null,
+                    $matchIdentity3 = $this->matchOnlyCount(
+                        $user->identity3 ?? null,
                         $searchLower, ['nidk', 'id3', 'identity3']
+                    ) || $this->containsStrict(
+                        $user->nidk,
+                        $searchLower
                     );
-                    $matchNIM = $this->matchOnlyCount(
-                        $user->dosen->nim ?? null,
-                        $searchLower, ['nim', 'id1', 'identity1']
-                    );
-
                     $matchNIK = $this->matchOnlyCount(
                         $user->nik,
                         $searchLower, ['nik']
+                    ) || $this->containsStrict(
+                        $user->nik,
+                        $searchLower
                     );
 
                     /*
@@ -459,55 +470,37 @@ trait WithUserSearchFilters
                         );
 
                         $mhsMsk = $user->mhs_masuk;
-                        $matchMasuk = $this->compareNumber(
-                            (float) ($mhsMsk ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchMasuk =$this->matchOnlyCount(
                             $mhsMsk ?? null,
                             $searchLower, ['hadir', 'hdr', 'hadi', 'masuk', 'msk', 'mas']
                         );
 
                         $mhsDis = $user->mhs_dispensasi;
-                        $matchDispensi = $this->compareNumber(
-                            (float) ($mhsDis ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchDispensi =  $this->matchOnlyCount(
                             $mhsDis ?? null,
                             $searchLower, ['dispen', 'dispensi', 'dispensasi', 'dspn']
                         );
 
                         $mhsTrlmb = $user->mhs_terlambat;
-                        $matchTerlambat = $this->compareNumber(
-                            (float) ($mhsTrlmb ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchTerlambat = $this->matchOnlyCount(
                             $mhsTrlmb ?? null,
                             $searchLower, ['terlambat', 'lambat', 'lmbt', 'lmt', 'terlam', 'terl', 'lam']
                         );
 
                         $mhsIzn = $user->mhs_izin;
-                        $matchIzin = $this->compareNumber(
-                            (float) ($mhsIzn ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchIzin = $this->matchOnlyCount(
                             $mhsIzn ?? null,
                             $searchLower, ['izin', 'izn', 'izi']
                         );
 
                         $mhsSkt = $user->mhs_sakit;
-                        $matchSakit = $this->compareNumber(
-                            (float) ($mhsSkt ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchSakit = $this->matchOnlyCount(
                             $mhsSkt ?? null,
                             $searchLower, ['sakit', 'meninggal', 'skt', 'meninggoy', 'sak']
                         );
 
                         $mhsTdkMsk = $user->mhs_tidak_masuk;
-                        $matchTidakMasuk = $this->compareNumber(
-                            (float) ($mhsTdkMsk ?? null),
-                            $searchLower
-                        ) || $this->matchOnlyCount(
+                        $matchTidakMasuk = $this->matchOnlyCount(
                             $mhsTdkMsk ?? null,
                             $searchLower, ['tidak masuk', 'tidak msk', 'kabur', 'tdk msk', 'kbr']
                         );
@@ -596,14 +589,11 @@ trait WithUserSearchFilters
                         || $matchName
                         || $matchEmail
                         || $matchStatus
+                        || $matchKampus
 
                         || $matchIdentity1
                         || $matchIdentity2
-                        || $matchNIP
-                        || $matchNITK
-                        || $matchNIDN
-                        || $matchNIDK
-                        || $matchNIM
+                        || $matchIdentity3
                         || $matchNIK
 
                         || $matchAngkatan
@@ -652,6 +642,7 @@ trait WithUserSearchFilters
 
                 'angkatan' => fn ($user) => $user->mahasiswa->angkatan ?? null,
                 'status' => fn ($user) => $user->status ?? null,
+                'kampus' =>  fn ($user) => $user->kode_wilayah ?? null,
                 'prodi', 'program_studi' => fn ($user) => $user->prodi ?? null,
 
                 'mhs_poin_absensi' => fn ($user) => $user->mhs_poin_absensi ?? null,

@@ -88,6 +88,33 @@ trait HasSortir
         ");
     }
 
+    public function applyCPLKodeSort($queryCPL, $sortir = 'cpls.id')
+    {
+        return $queryCPL->orderByRaw("
+            (
+                SELECT CONCAT(
+                    MIN(
+                        CASE
+                            WHEN c.level_cpl = 1 THEN COALESCE(p.kode_pr, d.kode_dp, f.kode_fk, 'UNI')
+                            WHEN c.level_cpl = 2 THEN COALESCE(d.kode_dp, f.kode_fk, 'UNI')
+                            WHEN c.level_cpl = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN c.level_cpl = 4 THEN 'UNI'
+                            ELSE ''
+                        END
+                    ),
+                    '-',
+                    c.kode_cpl
+                )
+                FROM cpls c
+                LEFT JOIN prodi_pivot_cpl ppc ON c.id = ppc.cpl_id
+                LEFT JOIN prodis p ON ppc.pr_id = p.id
+                LEFT JOIN departemens d ON p.dp_id = d.id
+                LEFT JOIN fakultas f ON d.fk_id = f.id
+                WHERE c.id = {$sortir}
+            ) {$this->sortDirection}
+        ");
+    }
+
     public function applyRPSKodeSort($queryRPS, $sortir = 'rps')
     {
         return $queryRPS->orderByRaw("

@@ -6,6 +6,7 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
+        typeModal: "",
         isEdit: 0,
         showEdit: 0,
         isForceDelete: 0,
@@ -14,6 +15,9 @@ document.addEventListener("alpine:init", () => {
         cpl_delete: "",
         kode_cpl_delete: "",
 
+        setType(val) {
+            this.typeModal = val;
+        },
         setEdit(val) {
             this.isEdit = val;
             if (val == 1) {
@@ -29,7 +33,8 @@ document.addEventListener("alpine:init", () => {
         kode_cpl_2: "",
         deskripsi: "",
 
-        setValueCPL(kode, deskripsi) {
+        setValueCPL(tingkatanMode, kode, deskripsi) {
+            this.typeModal = tingkatanMode;
             this.kode_cpl = kode;
             this.deskripsi = deskripsi;
 
@@ -59,6 +64,7 @@ document.addEventListener("alpine:init", () => {
                 this.showEdit = 0;
             }
             if (isAdd == 0) {
+                this.typeModal = "";
                 this.isEdit = 0;
                 this.isForceDelete = 0;
                 this.colorIcon = "";

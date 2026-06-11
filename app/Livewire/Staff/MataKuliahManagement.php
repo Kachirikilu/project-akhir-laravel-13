@@ -3,9 +3,9 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKExcel;
@@ -20,13 +20,13 @@ use Livewire\WithPagination;
 class MataKuliahManagement extends Component
 {
     use HasToast;
-    use WithMKSearchFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKDelete;
     use WithMKExcel;
     use WithMKFilters;
     use WithMKModal;
+    use WithMKSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
 
@@ -35,8 +35,10 @@ class MataKuliahManagement extends Component
     public $perPage = 8;
 
     public $switchTable = '';
-    
+
     public $search = '';
+
+    public $searchMode = 'simple';
 
     protected $paginationTheme = 'tailwind';
 
@@ -51,6 +53,7 @@ class MataKuliahManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'filterMK' => ['except' => ''],
         'filterMKgg' => ['except' => ''],
@@ -122,7 +125,6 @@ class MataKuliahManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
-    
     public function render()
     {
         $this->inputPrFilter();
@@ -168,10 +170,14 @@ class MataKuliahManagement extends Component
             $this->buttonMKSwitch($queryMK);
             $this->buttonMKFilter($queryMK);
 
-            $mk = $this->searchOutputMK($queryMK, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+            if ($this->searchMode == 'full') {
+                $mks = $this->searchOutputMK($queryMK, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+            } else {
+                $mks = $queryMK->paginate($this->perPage);
+            }
 
             return view('livewire.staff.mk-management', [
-                'mks' => $mk,
+                'mks' => $mks,
 
                 'totalMK' => $totalMK,
                 'totalTatapMuka' => $totalTatapMuka,

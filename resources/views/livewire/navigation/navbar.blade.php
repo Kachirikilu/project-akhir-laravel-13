@@ -155,15 +155,23 @@
                             'url' => route('rps-management', ['switchTable' => 'rps']),
                             'param' => 'rps',
                             'icon' => 'clipboard-document-list',
-                            'color' => 'text-emerald-600 dark:text-emerald-400',
+                            'color' => 'text-green-600 dark:text-green-400',
                             'active' => $isOBEActive && $currentTable === 'rps',
+                        ],
+                        [
+                            'label' => 'CPL',
+                            'url' => route('rps-management', ['switchTable' => 'cpl']),
+                            'param' => 'cpl',
+                            'icon' => 'document-text',
+                            'color' => 'text-sky-600 dark:text-sky-400',
+                            'active' => $isOBEActive && $currentTable === 'cpl',
                         ],
                         [
                             'label' => 'CPMK',
                             'url' => route('rps-management', ['switchTable' => 'cpmk']),
                             'param' => 'cpmk',
                             'icon' => 'academic-cap',
-                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'color' => 'text-violet-600 dark:text-violet-400',
                             'active' => $isOBEActive && $currentTable === 'cpmk',
                         ],
                         [
@@ -171,23 +179,15 @@
                             'url' => route('rps-management', ['switchTable' => 'sub-cpmk']),
                             'param' => 'sub-cpmk',
                             'icon' => 'academic-cap',
-                            'color' => 'text-indigo-600 dark:text-indigo-400',
+                            'color' => 'text-fuchsia-600 dark:text-fuchsia-400',
                             'active' => $isOBEActive && $currentTable === 'sub-cpmk',
-                        ],
-                        [
-                            'label' => 'CPL',
-                            'url' => route('rps-management', ['switchTable' => 'cpl']),
-                            'param' => 'cpl',
-                            'icon' => 'document-text',
-                            'color' => 'text-red-600 dark:text-red-400',
-                            'active' => $isOBEActive && $currentTable === 'cpl',
                         ],
                         [
                             'label' => 'Referensi',
                             'url' => route('rps-management', ['switchTable' => 'referensi']),
                             'param' => 'referensi',
                             'icon' => 'book-open',
-                            'color' => 'text-fuchsia-600 dark:text-fuchsia-400',
+                            'color' => 'text-orange-600 dark:text-orange-400',
                             'active' => $isOBEActive && $currentTable === 'referensi',
                         ],
                         [
@@ -267,79 +267,80 @@
                     <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
             @elseif($item['type'] === 'dropdown-kelas')
-            @php
-                $kelasHistory = session('kelas.history', []);
-                $sesiHistory = session('jadwal.history', []);
+                @php
+                    $kelasHistory = session('kelas.history', []);
+                    $sesiHistory = session('jadwal.history', []);
 
-                $groupedJadwal = [];
-                foreach ($sesiHistory as $sesi) {
-                    $kodeKelas = $sesi['kode'];
-                    $kodeJadwal = $sesi['kode_jadwal_url'];
-                    $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
-                }
+                    $groupedJadwal = [];
+                    foreach ($sesiHistory as $sesi) {
+                        $kodeKelas = $sesi['kode'];
+                        $kodeJadwal = $sesi['kode_jadwal_url'];
+                        $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
+                    }
 
-                foreach ($groupedJadwal as $kodeKelas => $daftarJadwal) {
-                    ksort($groupedJadwal[$kodeKelas]);
-                }
+                    foreach ($groupedJadwal as $kodeKelas => $daftarJadwal) {
+                        ksort($groupedJadwal[$kodeKelas]);
+                    }
 
-                $subMenus = [
-                    [
-                        'label' => 'Daftar Kelas',
-                        'url' => route('kelas-management'),
-                        'param' => 'kelas-management',
-                        'icon' => 'rectangle-group',
-                        'color' => 'text-emerald-600 dark:text-emerald-400',
-                        'active' => request()->routeIs('kelas-management'),
-                        'active-sub' => request()->routeIs('jadwal-management', 'sesi-management'),
-                    ],
-                ];
-
-                foreach ($kelasHistory as $kelas) {
-                    $kodeKelas = $kelas['kode'];
-
-                    $subMenus[] = [
-                        'label' => 'Kelas ' . $kodeKelas,
-                        'url' => $kelas['url'],
-                        'param' => 'jadwal-management',
-                        'icon' => 'clipboard-document-list',
-                        'color' => 'text-amber-600 dark:text-amber-400',
-                        'level' => 1,
-                        'active' => request()->routeIs('jadwal-management') && request()->route('kode') === $kodeKelas,
-                        'active-sub' =>
-                            request()->routeIs('sesi-management') && request()->route('kode') === $kodeKelas,
+                    $subMenus = [
+                        [
+                            'label' => 'Daftar Kelas',
+                            'url' => route('kelas-management'),
+                            'param' => 'kelas-management',
+                            'icon' => 'rectangle-group',
+                            'color' => 'text-emerald-600 dark:text-emerald-400',
+                            'active' => request()->routeIs('kelas-management'),
+                            'active-sub' => request()->routeIs('jadwal-management', 'sesi-management'),
+                        ],
                     ];
 
-                    if (isset($groupedJadwal[$kodeKelas])) {
-                        foreach ($groupedJadwal[$kodeKelas] as $sesi) {
-                            $subMenus[] = [
-                                'label' => $sesi['kode_jadwal_url'],
-                                'url' => $sesi['url'],
-                                'param' => 'sesi-management',
-                                'icon' => 'academic-cap',
-                                'color' => 'text-indigo-600 dark:text-indigo-400',
-                                'level' => 2,
-                                'active' =>
-                                    request()->routeIs('sesi-management') &&
-                                    request()->route('kode') === $sesi['kode'] &&
-                                    request()->route('kode_jadwal_url') === $sesi['kode_jadwal_url'],
-                            ];
+                    foreach ($kelasHistory as $kelas) {
+                        $kodeKelas = $kelas['kode'];
+
+                        $subMenus[] = [
+                            'label' => 'Kelas ' . $kodeKelas,
+                            'url' => $kelas['url'],
+                            'param' => 'jadwal-management',
+                            'icon' => 'clipboard-document-list',
+                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'level' => 1,
+                            'active' =>
+                                request()->routeIs('jadwal-management') && request()->route('kode') === $kodeKelas,
+                            'active-sub' =>
+                                request()->routeIs('sesi-management') && request()->route('kode') === $kodeKelas,
+                        ];
+
+                        if (isset($groupedJadwal[$kodeKelas])) {
+                            foreach ($groupedJadwal[$kodeKelas] as $sesi) {
+                                $subMenus[] = [
+                                    'label' => $sesi['kode_jadwal_url'],
+                                    'url' => $sesi['url'],
+                                    'param' => 'sesi-management',
+                                    'icon' => 'academic-cap',
+                                    'color' => 'text-indigo-600 dark:text-indigo-400',
+                                    'level' => 2,
+                                    'active' =>
+                                        request()->routeIs('sesi-management') &&
+                                        request()->route('kode') === $sesi['kode'] &&
+                                        request()->route('kode_jadwal_url') === $sesi['kode_jadwal_url'],
+                                ];
+                            }
                         }
                     }
-                }
 
-                $openMenuVar = 'openKelasMenu';
-                $isKelasActive = request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management');
-            @endphp
+                    $openMenuVar = 'openKelasMenu';
+                    $isKelasActive = request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management');
+                @endphp
 
-            <div class="relative mr-2" @toggle-menu-obe.window="openKelasMenu = !openKelasMenu">
-                <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Kelas Management"
-                    triggerRef="kelasDropdownTrigger" />
-                <x-livewire::navigation.partial.main-button :item="$item" menu="openKelasMenu"
-                    trigger="kelasDropdownTrigger" :active="$isKelasActive" />
-                <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
+                <div class="relative mr-2" @toggle-menu-obe.window="openKelasMenu = !openKelasMenu">
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Kelas Management"
+                        triggerRef="kelasDropdownTrigger" />
+                    <x-livewire::navigation.partial.main-button :item="$item" menu="openKelasMenu"
+                        trigger="kelasDropdownTrigger" :active="$isKelasActive" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
 
-            </div>
-        @endif
+                </div>
+            @endif
         @endforeach
 
         <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-300 ease-out"

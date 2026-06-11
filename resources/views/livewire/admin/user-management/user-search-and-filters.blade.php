@@ -1,6 +1,6 @@
 <div x-data="{ activeFilter: @entangle('filterStatus') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
-    
+
     <div class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
         <div class="min-w-0 flex-1 overflow-hidden">
             @include('livewire.global.search-and-filters.filter-mode', [
@@ -40,6 +40,9 @@
             <div class="sm:col-span-7 relative">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
+                    'searchMode' => $searchMode,
+                    'searchValues' => ['simple', 'full'],
+                    'searchOptions' => ['Cari Email & Identitas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
@@ -54,6 +57,9 @@
                 <div class="sm:col-span-4 relative">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
+                        'searchMode' => $searchMode,
+                        'searchValues' => ['simple', 'full'],
+                        'searchOptions' => ['Cari Email & Identitas', 'Pencarian Kompleks'],
                     ])
                 </div>
 

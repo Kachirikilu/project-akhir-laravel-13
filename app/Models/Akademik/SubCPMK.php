@@ -111,6 +111,41 @@ class SubCPMK extends Model
         });
     }
 
+    public function scopeSearchSCPMK($query, $search, $withBobot = false)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean, $withBobot) {
+
+            if ($withBobot == false) {
+                $q->where('sub_cpmks.kode_scpmk', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.kode_scpmk', 'like', $searchClean)
+                    ->orWhere('sub_cpmks.deskripsi', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.materi', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.metodologi', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.indikator', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.metode', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.deskripsi_tugas', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.waktu_tugas', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.waktu_mandiri', 'like', $searchTerm);
+
+                if (is_numeric($search)) {
+                    $q->orWhere('sub_cpmks.id', 'like', $search);
+                }
+            }
+
+            $searchConverted = str_replace(',', '.', $searchTerm);
+            $q->orWhere('sub_cpmks.bobot', 'like', '%'.$searchConverted.'%');
+        });
+    }
+
     // public function scopeSearchSCPMK($query, $search, $withBobot = false)
     // {
     //     if (empty(trim($search))) {
@@ -136,16 +171,14 @@ class SubCPMK extends Model
     //                 ->orWhere('sub_cpmks.waktu_tugas', 'like', $searchTerm)
     //                 ->orWhere('sub_cpmks.waktu_mandiri', 'like', $searchTerm);
 
-    //             $termLower = strtolower(trim($searchTerm, '% '));
-
-    //             $q->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
-    //                 if (str_contains('ujian tengah semester', $termLower) || str_contains('uts', $termLower)) {
+    //             $q->orWhere(function ($enumQ) use ($searchTerm, $searchLower) {
+    //                 if (str_contains('ujian tengah semester', $searchLower) || str_contains('uts', $searchLower)) {
     //                     $enumQ->orWhere('sub_cpmks.metode', 'UTS');
     //                 }
-    //                 if (str_contains('ujian akhir semester', $termLower) || str_contains('uas', $termLower)) {
+    //                 if (str_contains('ujian akhir semester', $searchLower) || str_contains('uas', $searchLower)) {
     //                     $enumQ->orWhere('sub_cpmks.metode', 'UAS');
     //                 }
-    //                 if ($termLower === 'ujian') {
+    //                 if ($searchLower === 'ujian') {
     //                     $enumQ->orWhereIn('sub_cpmks.metode', ['UTS', 'UAS']);
     //                 }
     //                 $enumQ->orWhere('sub_cpmks.metode', 'like', $searchTerm);

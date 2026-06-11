@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin;
 
-
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
@@ -10,10 +9,10 @@ use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -27,12 +26,12 @@ class UserManagement extends Component
     use WithFakultasFilters;
     use WithFakultasSearchFilters;
     use WithPagination;
-    use WithUserSearchFilters;
     use WithProdiSearchFilters;
     use WithUserDelete;
     use WithUserExcel;
     use WithUserFilters;
     use WithUserModal;
+    use WithUserSearchFilters;
 
     public $showModal = false;
 
@@ -46,6 +45,8 @@ class UserManagement extends Component
 
     public $switchTable = '';
 
+    public $searchMode = 'simple';
+
     protected $listeners = ['refresh-table' => 'refreshUsersList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
@@ -53,6 +54,7 @@ class UserManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'sortField' => ['except' => 'name'],
@@ -140,14 +142,15 @@ class UserManagement extends Component
     {
         $columns = [
             '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
-            'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
+            'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'kampus', 9 => 'status', 10 => 'created_at', 11 => 'updated_at'],
             'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
-            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'status', 9 => 'prodi', 10 => 'created_at', 11 => 'updated_at'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'kampus', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
         ];
         $aliases = [
             'name' => ['name'],
             'email' => ['email'],
             'prodi' => ['prodi'],
+            'kampus' => ['kampus'],
             'status' => ['status'],
             'admin_id' => ['admin_id', 'dosen_id', 'mahasiswa_id'],
             'dosen_id' => ['dosen_id', 'admin_id', 'mahasiswa_id'],
@@ -174,7 +177,7 @@ class UserManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        $targetPath = '/user-management' . ($table ? '/' . $table : '');
+        $targetPath = '/user-management'.($table ? '/'.$table : '');
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
@@ -247,13 +250,19 @@ class UserManagement extends Component
                     ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif'));
             });
 
-            $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
-
+            if ($this->searchMode == 'full') {
+                $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
+            } else {
+                 $users = $queryUser->paginate($this->perPage);
+            }
             // =========================
             // RESULT VIEW
             // =========================
             return view('livewire.admin.user-management', [
                 'users' => $users,
+                //  'users' => User::where('id', 'like', '%' . $this->search . '%')
+                // ->orWhere('email', 'like', '%' . $this->search . '%')
+                // ->paginate(10),
 
                 'totalUserProdi' => $statsPr->count(),
                 'totalAllOpsi' => $statsAll->count(),

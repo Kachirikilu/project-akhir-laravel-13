@@ -132,7 +132,7 @@
         @else
             {{-- Tombol Restore --}}
             <flux:menu.item wire:click="{{ $restoreCall }}"
-                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">

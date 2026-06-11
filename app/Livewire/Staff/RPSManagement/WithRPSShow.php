@@ -25,7 +25,7 @@ trait WithRPSShow
                 'cpmks.scpmks.refs',
                 'cpmks.refs',
                 'cpmks.cpls',
-                'cpls',
+                // 'cpls',
                 'refs',
             ])->findOrFail($id);
 
@@ -42,7 +42,9 @@ trait WithRPSShow
 
     public function printPDFRPS($id)
     {
-        $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
+        $rps = RPS::with(['mk_rel', 'dosens',
+                // 'cpls',
+                'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);
 
         $logoPath = public_path('images/logo-unsri.png');
@@ -126,14 +128,9 @@ trait WithRPSShow
             'bobot_uts' => $rps->bobot_uts ?? '-',
             'bobot_uas' => $rps->bobot_uas ?? '-',
 
-            // 'deskripsi' => $rps->deskripsi_rps ?? '-',
-            // 'cpl' => $rps->cpls->map(function ($c, $idx) {
-            //     $label = trim(($c->kode ?? '').': '.($c->deskripsi ?? ''));
-            //     return ($idx + 1).'. '.trim($label);
+            // 'cpl' => $rps->cpls->map(function ($c) {
+            //     return trim(($c->kode ?? '').': '.($c->deskripsi ?? ''));
             // })->implode("\n"),
-            'cpl' => $rps->cpls->map(function ($c) {
-                return trim(($c->kode ?? '').': '.($c->deskripsi ?? ''));
-            })->implode("\n"),
             'cpmk' => $rps->cpmks->map(function ($c) {
                 return trim(($c->kode ?? '').': '.($c->deskripsi_cpl ?? ''));
             })->implode("\n"),
@@ -223,7 +220,7 @@ trait WithRPSShow
                     'cpmk' => $cpmk->kode,
                     'sub_cpmk' => $scpmk->kode,
                     'materi' => $scpmk->materi,
-                    'referensi' => $this->formatScpmkReferensi($scpmk),
+                    'referensi' => $this->formatSCPMKReferensi($scpmk),
                     'metodologi' => $scpmk->metodologi,
                     'tugas' => $scpmk->tugas,
                     'indikator' => $scpmk->indikator,
@@ -282,31 +279,24 @@ trait WithRPSShow
             }
         }
 
-        // Jika RPS ini punya total bobot 80-200, normalisasi semua bobot ke 100% untuk tampilan dokumen.
         $finalRows = $this->normalizeProgramPembelajaranBobot($finalRows, $rps);
 
-        // Sekarang, sesuaikan dosen berdasarkan kriteria
         $rpsDosens = $rps->dosens->pluck('name')->filter()->values()->toArray();
         $allAssigned = collect($finalRows)->where('is_placeholder', false)->pluck('dosen')->flatten()->unique()->filter()->values()->toArray();
         $unassigned = collect($rpsDosens)->diff($allAssigned)->values()->toArray();
 
         foreach ($finalRows as &$row) {
             if ($row['is_placeholder']) {
-                // Placeholder selalu tampilkan semua dosen RPS
                 $row['dosen'] = $rpsDosens;
             } else {
-                // Tambahkan dosen yang tidak ditugaskan ke Sub-CPMK ke semua baris
                 $row['dosen'] = array_merge($row['dosen'], $unassigned);
-                // Remove duplicates
                 $row['dosen'] = array_unique($row['dosen']);
             }
 
-            // Jika dosen sama dengan semua dosen RPS, ganti menjadi Tim atau nama dosen jika hanya 1
             if ($row['dosen'] === $rpsDosens) {
                 $row['dosen'] = count($rpsDosens) === 1 ? $rpsDosens : ['Tim Pengajar'];
             }
 
-            // Format ke string atau list
             $row['dosen'] = $this->formatDosenNames($row['dosen']);
             $row['bobot'] = $this->formatBobot($row['bobot']);
         }
@@ -359,7 +349,7 @@ trait WithRPSShow
         return $rows;
     }
 
-    private function formatScpmkReferensi($scpmk): string
+    private function formatSCPMKReferensi($scpmk): string
     {
         return collect($scpmk->refs ?? [])->map(function ($ref) {
             return trim(($ref->penulis_tahun ?? '').' '.($ref->judul ?? '').' '.($ref->penerbit ?? ''));

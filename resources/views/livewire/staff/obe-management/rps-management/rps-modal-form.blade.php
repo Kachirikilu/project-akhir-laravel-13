@@ -10,7 +10,7 @@
 
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="clipboard-document-list" color="emerald" size="lg">
+                <flux:badge icon="clipboard-document-list" color="green" size="lg">
                     <span
                         x-text="$store.rps?.isEdit ? 'Edit OBE - Rencana Pembelajaran Semester' : 'Tambah OBE - Rencana Pembelajaran Semester'"></span>
                 </flux:badge>

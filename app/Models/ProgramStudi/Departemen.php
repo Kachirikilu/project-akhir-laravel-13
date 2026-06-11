@@ -117,6 +117,27 @@ class Departemen extends Model
         });
     }
 
+    public function scopeSearchDepartemen(Builder $query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+            // 1. Filter dasar Departemen
+            $q->where('departemens.nama_dp', 'like', $searchTerm)
+                ->orWhere('departemens.kode_dp', 'like', $searchTerm)
+                ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
+
+            if (is_numeric($search)) {
+                $q->orWhere('departemens.id', 'like', $search);
+            }
+        });
+    }
     // public function scopeSearchDepartemen(Builder $query, $search)
     // {
     //     if (empty(trim($search))) {

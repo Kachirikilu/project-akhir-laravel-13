@@ -3,7 +3,6 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\RPS;
-use App\Livewire\Global\LogicSearch;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -117,8 +116,8 @@ trait WithRPSSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->rps_name)) {
             $this->rpsSearchResults = $this->mapRPSSearch(
-                // $this->rpsQuery()->searchRPS($search)->limit(12)->get()
-                $this->searchOutputRPS($this->rpsQuery(), $search, null, 12)
+                $this->rpsQuery()->searchRPS($search)->limit(12)->get()
+                // $this->searchOutputRPS($this->rpsQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->rps_name) {
             $this->rpsSearchResults = $this->getRPSbyUser('search');
@@ -158,8 +157,8 @@ trait WithRPSSearchFilters
         $this->haveRPSParent($query);
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchRPS($value)->limit(12)->get();
-            $results = $this->searchOutputRPS($query, $value, null, 12);
+            $results = $query->searchRPS($value)->limit(12)->get();
+            // $results = $this->searchOutputRPS($query, $value, null, 12);
             $this->rpsResults = $this->mapRPS($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -181,6 +180,15 @@ trait WithRPSSearchFilters
                     $this->rpsNameSearch = '';
                     $this->rps_id_array[] = $exactMatch->id;
                     $this->rps_items_array[] = $this->itemsRPS($exactMatch);
+
+                    $this->rps_id_array = collect($this->rps_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->rps_items_array = collect($this->rps_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $this->rpsResults = $this->getRPSbyUser();
             }
@@ -393,7 +401,7 @@ trait WithRPSSearchFilters
                         $sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $sks. 'SKS',
+                        $sks.'SKS',
                         $searchLower
                     );
 
@@ -565,8 +573,6 @@ trait WithRPSSearchFilters
                         ['updated', 'diubah', 'update']
                     );
 
-
-
                     switch ($mode) {
                         case 'id':
                             return $matchID;
@@ -653,6 +659,7 @@ trait WithRPSSearchFilters
                 ['path' => Paginator::resolveCurrentPath()]
             );
         }
+
         return $queryRPS->paginate($perPage);
     }
 }

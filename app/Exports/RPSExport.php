@@ -65,7 +65,7 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
     {
         // Ambil CPL dari RPS dan dari CPMK (Unique)
         $cpls = collect()
-            ->concat($r->cpls)
+            // ->concat($r->cpls)
             ->concat($r->cpmks->flatMap->cpls)
             ->unique('id');
 

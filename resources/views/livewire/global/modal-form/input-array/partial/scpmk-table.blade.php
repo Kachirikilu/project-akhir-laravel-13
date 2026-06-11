@@ -85,7 +85,7 @@
                                                 $store.scpmk?.reset();
                                                 $store.scpmk?.setEdit(1);
                                                 $store.scpmk?.setFlyout(true);
-                                                $store.scpmk?.setColor('text-emerald-700 dark:text-emerald-400');
+                                                $store.scpmk?.setColor('text-fuchsia-700 dark:text-fuchsia-400');
                                                 $store.scpmk?.setValueSCPMK(
                                                     sub.kode,
                                                     sub.deskripsi,

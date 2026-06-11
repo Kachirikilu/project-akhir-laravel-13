@@ -16,6 +16,13 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
+                    'tabFilter' => $totalCPL,
+                    'tabString' => 'cpl',
+                    'tabNameString' => 'CPL',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
                     'tabFilter' => $totalCPMK,
                     'tabString' => 'cpmk',
                     'tabNameString' => 'CPMK',
@@ -26,13 +33,6 @@
                     'tabFilter' => $totalSCPMK,
                     'tabString' => 'sub-cpmk',
                     'tabNameString' => 'Sub-CPMK',
-                ])
-                @include('livewire.global.search-and-filters.partial.tab-filter', [
-                    'xString' => 'switchingTable',
-                    'xFilter' => $switchTable,
-                    'tabFilter' => $totalCPL,
-                    'tabString' => 'cpl',
-                    'tabNameString' => 'CPL',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',

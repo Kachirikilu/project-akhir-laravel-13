@@ -108,8 +108,8 @@ trait WithSubCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->scpmk_name)) {
             $this->scpmkSearchResults = $this->mapSCPMKSearch(
-                // $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
-                $this->searchOutputSCPMK($this->scpmkQuery(), $search, null, 12)
+                $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
+                // $this->searchOutputSCPMK($this->scpmkQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->scpmk_name) {
             $this->scpmkSearchResults = $this->getSCPMKbyUser('search');
@@ -147,16 +147,16 @@ trait WithSubCPMKSearchFilters
         $query = $this->scpmkQuery();
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchSCPMK($value)->limit(12)->get();
-            $results = $this->searchOutputSCPMK($query, $value, null, 12);
+            $results = $query->searchSCPMK($value)->limit(12)->get();
+            // $results = $this->searchOutputSCPMK($query, $value, null, 12);
             $this->scpmkResults = $this->mapSCPMK($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($sc) use ($value, $normalizedValue) {
-                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($sc->kode));
+                $normalizedSCPMKKode = str_replace(['-', ' '], '', strtolower($sc->kode));
 
                 return strtolower($sc->deskripsi) === strtolower($value)
-                    || $normalizedMkKode === $normalizedValue;
+                    || $normalizedSCPMKKode === $normalizedValue;
             });
 
             if ($exactMatch) {
@@ -176,6 +176,14 @@ trait WithSubCPMKSearchFilters
                     $this->scpmk_id_array[] = $exactMatch->id;
                     $this->scpmk_items_array[] = $this->itemsSCPMK($exactMatch);
                     $mappedResults = $this->mapSCPMK(collect([$exactMatch]));
+                    $this->scpmk_id_array = collect($this->scpmk_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->scpmk_items_array = collect($this->scpmk_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $mappedResults = $this->mapSCPMK(collect([$exactMatch]));
                 $this->pushToSCPMKItems($mappedResults);

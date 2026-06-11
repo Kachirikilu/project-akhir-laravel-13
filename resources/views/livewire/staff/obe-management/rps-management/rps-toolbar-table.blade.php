@@ -3,7 +3,7 @@
         <flux:menu.item
             @click="
                 $store.rps?.resetShow();
-                $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.rps?.setColor('text-green-700 dark:text-green-400');
 
                     $store.rps?.setShowRPS(
                         '{{ $x->id ?? '' }}',
@@ -48,7 +48,7 @@
 
                 $store.rps?.setEdit(1);
 
-                $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.rps?.setColor('text-green-700 dark:text-green-400');
 
                     $store.rps?.setValueRPS(
                         '{{ $x->kode_blok ?? '' }}',
@@ -104,7 +104,7 @@
     @else
         {{-- Tombol Restore --}}
         <flux:menu.item wire:click="{{ $restoreCall }}"
-            class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
             <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">

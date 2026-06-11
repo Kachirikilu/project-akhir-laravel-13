@@ -19,17 +19,17 @@
             @include('livewire.staff.obe-management.obe-table', [
                 'xResults' => match ($this->switchTable) {
                     'rps' => $rps,
+                    'cpl' => $cpl,
                     'cpmk' => $cpmk,
                     'sub-cpmk' => $scpmk,
-                    'cpl' => $cpl,
                     'referensi' => $ref,
                     default => collect([]),
                 },
                 'xNameString' => match ($this->switchTable) {
                     'rps' => 'RPS',
+                    'cpl' => 'CPL',
                     'cpmk' => 'CPMK',
                     'sub-cpmk' => 'Sub-CPMK',
-                    'cpl' => 'CPL',
                     'referensi' => 'Referensi',
                     default => 'Data',
                 },

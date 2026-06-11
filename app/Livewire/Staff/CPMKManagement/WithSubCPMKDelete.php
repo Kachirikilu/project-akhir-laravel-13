@@ -34,7 +34,7 @@ trait WithSubCPMKDelete
         }
 
         $this->scpmkIdToDelete = $id;
-        $this->scpmkNamaToDelete = $sub->kode;
+        $this->scpmkNamaToDelete = 'Sub-CPMK '.$sub->kode;
         $this->scpmkKodeToDelete = $sub->kode;
         $this->isPermanentDelete = $isTrashed;
         
@@ -59,9 +59,11 @@ trait WithSubCPMKDelete
 
             if ($this->isPermanentDelete) {
                 // Safety: RPS is_draf = 0 (SubCPMK -> CPMK -> RPS)
-                $isConnected = RPS::whereHas('cpmks.scpmks', function($q) use ($sub) {
-                    $q->where('scpmk_id', $sub->id);
-                })->where('is_draf', 0)->exists();
+                $isConnected = $sub->cpmks()
+                    ->whereHas('rps', function ($q) {
+                        $q->where('is_draf', 0);
+                    })
+                    ->exists();
 
                 if ($isConnected) {
                     throw new \Exception('Gagal hapus permanen: Sub-CPMK masih terhubung ke RPS yang sudah Aktif!');
@@ -101,7 +103,7 @@ trait WithSubCPMKDelete
             $sub = SubCPMK::withTrashed()->findOrFail($id);
             $sub->restore();
 
-            $this->toast(message: $sub->kode, type: 'recycle');
+            $this->toast(message: 'Sub-CPMK '.$sub->kode, type: 'recycle');
             $this->dispatch('refresh-data-scpmk');
 
         } catch (\Exception $e) {

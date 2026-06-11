@@ -267,7 +267,7 @@ class UserManagement extends Component
             // =========================
             return view('livewire.admin.user-management', [
                 'users' => $users,
-                
+
                 'totalUserProdi' => $stats['totalUserProdi'],
                 'totalAllOpsi' => $stats['totalAllOpsi'],
                 'totalAktif' => $stats['totalAktif'],

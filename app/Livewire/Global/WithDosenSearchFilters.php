@@ -3,8 +3,6 @@
 namespace App\Livewire\Global;
 
 use App\Models\Auth\Dosen;
-use App\Livewire\Global\LogicSearch;
-use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -16,22 +14,32 @@ trait WithDosenSearchFilters
     use WithPagination;
 
     public $dosenSearchQuery = '';
+
     public $dosenSearchResults = [];
+
     public $modeDosen = '';
+
     public $dosen_id;
+
     public $dosen_name = '';
+
     public $dosen_items;
+
     public $dosenNameSearch = '';
+
     public $dosenResults = [];
+
     public $selectedDosenId = null;
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $dosen_id_array = [];
+
     public $dosen_items_array = [];
 
     // Properti Dosen Pengajar
     // public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
     public $peran_dosen = [];
+
     public $pertemuan_dosen = [];
 
     private function mapDosen($collection)
@@ -44,7 +52,7 @@ trait WithDosenSearchFilters
             'name' => $d->name,
             'prodi' => $d->pr_rel?->prodi,
             'fakultas' => $d->pr_rel?->fakultasFk,
-            'status' => $d->status
+            'status' => $d->status,
         ])->toArray();
     }
 
@@ -59,7 +67,7 @@ trait WithDosenSearchFilters
             'departemen' => $d->pr_rel?->departemenDp,
             'fakultas' => $d->pr_rel?->fakultasFk,
             'kode_pr' => $d->pr_rel?->kode,
-            'status' => $d->status
+            'status' => $d->status,
         ])->toArray();
     }
 
@@ -73,6 +81,7 @@ trait WithDosenSearchFilters
         if (! $d) {
             return null;
         }
+
         return [
             'id' => $d->id,
             'kode' => $d->nip,
@@ -82,7 +91,7 @@ trait WithDosenSearchFilters
             'slot4' => $d->status,
             'slot5' => $d->prodi,
             'peran' => $d->pivot->peran ?? 'Pengajar',
-            'is_ketua' => (bool) ($d->pivot->is_ketua ?? false)
+            'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
         ];
     }
 
@@ -93,8 +102,8 @@ trait WithDosenSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->dosen_name)) {
             $this->dosenSearchResults = $this->mapDosenSearch(
-                // $this->dosenQuery()->searchDosen($search)->limit(12)->get()
-                $this->searchOutputDosen($this->dosenQuery(), $search, 12)
+                $this->dosenQuery()->searchDosen($search)->limit(12)->get()
+                // $this->searchOutputDosen($this->dosenQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->dosen_name) {
             $this->dosenSearchResults = $this->getDosenbyUser('search');
@@ -132,8 +141,8 @@ trait WithDosenSearchFilters
         $query = $this->dosenQuery();
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchDosen($value)->limit(12)->get();
-            $results = $this->searchOutputDosen($query, $value, 12);
+            $results = $query->searchDosen($value)->limit(12)->get();
+            // $results = $this->searchOutputDosen($query, $value, 12);
             $this->dosenResults = $this->mapDosen($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -142,9 +151,9 @@ trait WithDosenSearchFilters
                 $normalizedDosenNIDN = str_replace(['-', ' '], '', strtolower($d->nidn));
                 $normalizedDosenNIDK = str_replace(['-', ' '], '', strtolower($d->nidk));
                 $normalizedDosenNIK = str_replace(['-', ' '], '', strtolower($d->nik));
-                
-                return strtolower($d->name) === strtolower($value) 
-                    || strtolower($d->user->email) === strtolower($value) 
+
+                return strtolower($d->name) === strtolower($value)
+                    || strtolower($d->user->email) === strtolower($value)
                     || $normalizedDosenNIP === $normalizedValue
                     || $normalizedDosenNIDN === $normalizedValue
                     || $normalizedDosenNIDK === $normalizedValue
@@ -160,6 +169,15 @@ trait WithDosenSearchFilters
                     $this->dosenNameSearch = '';
                     $this->dosen_id_array[] = $exactMatch->id;
                     $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
+
+                    $this->dosen_id_array = collect($this->dosen_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->dosen_items_array = collect($this->dosen_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
 
                     $isKetua = collect($this->dosen_items_array)
                         ->contains(fn ($item) => $item['is_ketua'] === true);
@@ -188,8 +206,8 @@ trait WithDosenSearchFilters
         $prodiId = $user->pr_id ?? null;
 
         $query = $this->dosenQuery();
-        
-        if (!$prodiId) {
+
+        if (! $prodiId) {
             $defaultDosen = $query
                 ->latest()
                 ->limit(12)
@@ -201,7 +219,7 @@ trait WithDosenSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('pr_rel', function($q) use ($prodiId) {
+            ->whereHas('pr_rel', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -212,7 +230,7 @@ trait WithDosenSearchFilters
                 ->orderBy('name', 'asc')
                 ->limit(12 - $mainResults->count())
                 ->get();
-                
+
             $mainResults = $mainResults->concat($extra);
         }
 
@@ -228,9 +246,7 @@ trait WithDosenSearchFilters
             $this->dosenResults = $this->getDosenbyUser();
         }
 
-        return;
     }
-
 
     public function selectDosen($id, $dosenName)
     {
@@ -249,7 +265,7 @@ trait WithDosenSearchFilters
 
         $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);
     }
-    
+
     public function selectDosenArray($id)
     {
         $data = $this->dosenQuery()->find($id);
@@ -307,24 +323,35 @@ trait WithDosenSearchFilters
                         $dosen->status,
                         $searchLower
                     );
-                  
+
                     $matchNIP = $this->matchOnlyCount(
                         $dosen->nip ?? null,
                         $searchLower, ['nip', 'id1', 'identity1']
+                    ) || $this->containsStrict(
+                        $dosen->nip,
+                        $searchLower
                     );
                     $matchNIDN = $this->matchOnlyCount(
                         $dosen->nidn ?? null,
                         $searchLower, ['nidn', 'id2', 'identity2']
+                    ) || $this->containsStrict(
+                        $dosen->nidn,
+                        $searchLower
                     );
                     $matchNIDK = $this->matchOnlyCount(
                         $dosen->nidk ?? null,
                         $searchLower, ['nidk', 'id3', 'identity3']
+                    ) || $this->containsStrict(
+                        $dosen->nidk,
+                        $searchLower
                     );
                     $matchNIK = $this->matchOnlyCount(
                         $dosen->nik,
                         $searchLower, ['nik']
+                    ) || $this->containsStrict(
+                        $dosen->nik,
+                        $searchLower
                     );
-
 
                     $matchKodePr = $this->matchKode(
                         $dosen->pr_rel->kode_pr,

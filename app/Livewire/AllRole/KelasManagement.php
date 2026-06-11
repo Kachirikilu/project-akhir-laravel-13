@@ -45,6 +45,8 @@ class KelasManagement extends Component
 
     public $search = '';
 
+    public $searchMode = 'simple';
+
     protected $paginationTheme = 'tailwind';
 
     public $sortField = 'kode';
@@ -58,6 +60,7 @@ class KelasManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'filterKelas' => ['except' => ''],
         'filterKelasgg' => ['except' => ''],
@@ -255,8 +258,12 @@ class KelasManagement extends Component
             }
 
             $this->buttonKelasFilter($queryKelas);
-            $kelas = $this->searchOutputKelas($queryKelas, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-            
+
+            if ($this->searchMode == 'full') {
+                $kelas = $this->searchOutputKelas($queryKelas, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+            } else {
+                $kelas = $queryKelas->paginate($this->perPage);
+            }
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,

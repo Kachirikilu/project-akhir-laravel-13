@@ -75,24 +75,6 @@ trait WithKelasJadwalSearchFilters
         ];
     }
 
-    public function getJadwalIdArrayForKey(string $key = 'default'): array
-    {
-        if (is_array($this->jadwal_id_array) && array_key_exists($key, $this->jadwal_id_array) && is_array($this->jadwal_id_array[$key])) {
-            return $this->jadwal_id_array[$key];
-        }
-
-        return [];
-    }
-
-    public function getJadwalNameSearchForKey(string $key = 'default'): string
-    {
-        if (is_array($this->jadwalNameSearch) && array_key_exists($key, $this->jadwalNameSearch)) {
-            return is_string($this->jadwalNameSearch[$key]) ? $this->jadwalNameSearch[$key] : '';
-        }
-
-        return '';
-    }
-
     public function inputJadwalFilter()
     {
         $search = trim($this->jadwalSearchQuery);
@@ -100,8 +82,8 @@ trait WithKelasJadwalSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->jadwal_name)) {
             $this->jadwalSearchResults = $this->mapJadwalSearch(
-                // $this->jadwalQuery()->searchJadwal($search)->limit(12)->get()
-                $this->searchOutputJadwal($this->jadwalQuery(), $search, 12)
+                $this->jadwalQuery()->searchKelasJadwal($search)->limit(12)->get()
+                // $this->searchOutputJadwal($this->jadwalQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->jadwal_name) {
             $this->jadwalSearchResults = $this->getJadwalbyUser('search');
@@ -130,106 +112,66 @@ trait WithKelasJadwalSearchFilters
         }
     }
 
-    public function updatedJadwalNameSearch($value, $name = null)
+    public function updatedJadwalNameSearch($value)
     {
-        $key = 'default';
-
-        if (is_string($name) && str_contains($name, '.')) {
-            [, $key] = explode('.', $name, 2);
-        } elseif (is_string($name) && $name !== 'jadwalNameSearch') {
-            $key = $name;
-        }
-
-        if (is_array($value)) {
-            $value = $value[$key] ?? '';
-        }
-
-        $this->jadwal_id[$key] = null;
-        $this->jadwal_items[$key] = null;
-        $this->resetErrorBag(['jadwal_id.'.$key, 'jadwalNameSearch.'.$key]);
+        $this->jadwal_id = null;
+        $this->jadwal_items = null;
+        $this->resetErrorBag(['jadwal_id', 'jadwalNameSearch']);
 
         $query = $this->jadwalQuery();
 
-        if (trim(strlen((string) $value)) > 0) {
-            // $results = $query->searchJadwal($value)->limit(12)->get();
-            $results = $this->searchOutputJadwal($query, $value, 12);
-            $this->jadwalResults[$key] = $this->mapJadwal($results);
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchKelasJadwal($value)->limit(12)->get();
+            // $results = $this->searchOutputJadwal($query, $value, null, 12);
+            $this->jadwalResults = $this->mapJadwal($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($jadwal) use ($value, $normalizedValue) {
-                $normalizedJadwalKode = str_replace(['-', ' '], '', strtolower($jadwal->kode));
+            $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
+                $normalizedJadwalKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
                 return $normalizedJadwalKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $currentMode = $this->modeJadwal[$key] ?? 'array';
-                if ($currentMode == 'single') {
-                    $this->jadwalNameSearch[$key] = $exactMatch->kode;
-                    $this->jadwal_id[$key] = $exactMatch->id;
-                    $this->jadwal_items[$key] = $this->itemsJadwal($exactMatch);
-                    $this->jadwalResults[$key] = [];
+                $this->jadwal_id = $exactMatch->id;
+                $this->jadwal_items = $this->itemsJadwal($exactMatch);
+                $this->jadwalNameSearch = $exactMatch->deskripsi;
+                $this->jadwalResults = [];
+            }
+            if ($exactMatch) {
+                if ($this->modeJadwal == 'single') {
+                    $this->jadwalNameSearch = $exactMatch->deskripsi;
+                    $this->jadwal_id = $exactMatch->id;
+                    $this->jadwal_items = $this->itemsJadwal($exactMatch);
+                    $this->jadwalResults = [];
                 } else {
-                    $this->jadwalNameSearch[$key] = '';
-                    if (! isset($this->jadwal_id_array[$key])) {
-                        $this->jadwal_id_array[$key] = [];
-                    }
-                    if (! isset($this->jadwal_items_array[$key])) {
-                        $this->jadwal_items_array[$key] = [];
-                    }
-                    if (! in_array($exactMatch->id, $this->jadwal_id_array[$key])) {
-                        $this->jadwal_id_array[$key][] = $exactMatch->id;
-                        $this->jadwal_items_array[$key][] = $this->itemsJadwal($exactMatch);
-                    }
+                    $this->jadwalNameSearch = '';
+                    $this->jadwal_id_array[] = $exactMatch->id;
+                    $this->jadwal_items_array[] = $this->itemsJadwal($exactMatch);
+                    $this->jadwal_id_array = collect($this->jadwal_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->jadwal_items_array = collect($this->jadwal_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
-                $this->jadwalResults[$key] = $this->getJadwalbyUser();
+                $mappedResults = $this->mapJadwal(collect([$exactMatch]));
+                $this->pushToJadwalItems($mappedResults);
+                $this->jadwalResults = $this->getJadwalbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->jadwalResults[$key] = $this->getJadwalbyUser();
+                $this->jadwalResults = $this->getJadwalbyUser();
             } else {
-                $this->jadwalResults[$key] = $this->mapJadwal(
-                    $query->orderBy('jadwals.id', 'desc')->limit(12)->get()
+                $this->jadwalResults = $this->mapJadwal(
+                    $query->orderBy('kelas_jadwals.tanggal_mulai', 'desc')->limit(12)->get()
                 );
             }
         }
     }
 
-    // public function updatedJadwalNameSearch($value, $key = 'default')
-    // {
-    //     // Pastikan index tersedia
-    //     $this->jadwal_id[$key] = null;
-    //     $this->jadwal_items[$key] = null;
-    //     $this->resetErrorBag(['jadwal_id.' . $key, 'jadwalNameSearch.' . $key]);
-
-    //     $query = $this->jadwalQuery();
-
-    //     if (trim(strlen($value)) > 0) {
-    //         $results = $query->searchJadwal($value)->limit(12)->get();
-    //         $this->jadwalResults[$key] = $this->mapJadwal($results);
-
-    //         // Cek Exact Match (Opsional)
-    //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-    //         $exactMatch = $results->first(function ($jadwal) use ($value, $normalizedValue) {
-    //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($jadwal->kode));
-    //             return strtolower($jadwal->kode) === strtolower($value)
-    //                 || $normalizedMkKode === $normalizedValue;
-    //         });
-
-    //         if ($exactMatch) {
-    //             $currentMode = $this->modeJadwal[$key] ?? 'array';
-    //             if ($currentMode == 'single') {
-    //                 $this->selectJadwal($exactMatch->id, $exactMatch->kode, $key);
-    //             } else {
-    //                 $this->selectJadwalArray($exactMatch->id, $key);
-    //                 $this->jadwalNameSearch[$key] = ''; // Kosongkan search setelah add
-    //             }
-    //             $this->jadwalResults[$key] = $this->getJadwalbyUser();
-    //         }
-    //     } else {
-    //         $this->jadwalResults[$key] = $this->getJadwalbyUser();
-    //     }
-    // }
 
     public function getJadwalbyUser($mode = 'full')
     {
@@ -250,7 +192,7 @@ trait WithKelasJadwalSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('jadwal.rps.mk_rel.prodis', function ($q) use ($prodiId) {
+            ->whereHas('kelas_jadwals.kelas.rps.mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -270,85 +212,60 @@ trait WithKelasJadwalSearchFilters
             : $this->mapJadwal($mainResults);
     }
 
-    public function fetchJadwal($query = '', $mode = 'single', $key = 'default')
+    public function fetchJadwal($query = '', $mode = 'single')
     {
-        $this->modeJadwal[$key] = $mode;
-        if (empty($query) || (! empty($this->jadwal_id[$key]) || ! empty($this->jadwal_id_array[$key]))) {
-            $this->jadwalResults[$key] = $this->getJadwalbyUser();
+        $this->modeJadwal = $mode;
+        if (empty($query) || (! empty($this->jadwal_id) || ! empty($this->jadwal_id_array))) {
+            $this->jadwalResults = $this->getJadwalbyUser();
         }
 
     }
 
-    public function selectJadwal($id, $jadwalName, $key = 'default')
+    public function selectJadwal($id, $jadwalName)
     {
-        $this->jadwal_id[$key] = $id;
-        $this->jadwalNameSearch[$key] = $jadwalName;
-        $this->jadwalResults[$key] = $this->getJadwalbyUser();
+        $this->jadwal_id = $id;
+        $this->jadwalNameSearch = $jadwalName;
+        $this->jadwalResults = $this->getJadwalbyUser();
 
         $data = $this->jadwalQuery()->find($id);
         if ($data) {
-            $this->jadwal_items[$key] = $this->itemsJadwal($data);
-
-            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-            //     $this->kode_cpmk = $data->kode;
-            // }
+            $this->jadwal_items = $this->itemsJadwal($data);
+            $mappedResults = $this->mapJadwal(collect([$data]));
+            $this->pushToJadwalItems($mappedResults);
         }
 
         if (method_exists($this, 'fetchJadwal')) {
-            $this->fetchJadwal('', $this->modeJadwal[$key] ?? 'single', $key);
+            $this->fetchJadwal('');
         }
 
-        $this->resetErrorBag(['jadwal_id.'.$key, 'jadwalNameSearch.'.$key]);
+        $this->resetErrorBag(['jadwal_id', 'jadwalNameSearch']);
     }
 
-    public function selectJadwalArray($id, $key = 'default')
+    public function selectJadwalArray($id)
     {
         $data = $this->jadwalQuery()->find($id);
-        if ($data) {
-            if (! isset($this->jadwal_id_array[$key])) {
-                $this->jadwal_id_array[$key] = [];
-            }
+        if ($data && ! in_array($id, $this->jadwal_id_array)) {
+            $this->jadwal_id_array[] = $id;
+            $this->jadwal_items_array[] = $this->itemsJadwal($data);
 
-            if (! in_array($id, $this->jadwal_id_array[$key])) {
-                $this->jadwal_id_array[$key][] = $id;
-                $this->jadwal_items_array[$key][] = $this->itemsJadwal($data);
-            }
-
-            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-            //     $newDesc = trim($data->kode);
-            //     if (!str_ends_with($newDesc, '.')) {
-            //         $newDesc .= '.';
-            //     }
-
-            //     if (!empty($this->kode_cpmk)) {
-            //         $this->kode_cpmk = rtrim($this->kode_cpmk) . ' ' . $newDesc;
-            //     } else {
-            //         $this->kode_cpmk = $newDesc;
-            //     }
-            // }
+            $mappedResults = $this->mapJadwal(collect([$data]));
+            $this->pushToJadwalItems($mappedResults);
         }
     }
 
-    public function resetJadwalInput($key = 'default')
+    public function resetJadwalInput()
     {
         $this->reset(['jadwal_id', 'jadwal_items', 'jadwalNameSearch']);
-        $this->jadwalResults[$key] = $this->getJadwalbyUser();
-
-        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-        //     $this->kode_cpmk = '';
-        // }
+        $this->jadwalResults = $this->getJadwalbyUser();
     }
 
-    public function resetJadwalArray($key = 'default')
+    public function resetJadwalArray()
     {
-        $this->jadwal_id_array[$key] = [];
-        $this->jadwal_items_array[$key] = [];
-        $this->jadwalNameSearch[$key] = '';
-
-        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-        //     $this->kode_cpmk = '';
-        // }
+        $this->jadwal_id_array = [];
+        $this->jadwal_items_array = [];
+        $this->jadwalNameSearch = '';
     }
+
 
     public function searchOutputJadwal($queryJadwal, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
     {
@@ -381,15 +298,18 @@ trait WithKelasJadwalSearchFilters
                     $matchKode = $this->matchKode(
                         $j->kode,
                         $searchLower
+                    ) || $this->containsStrict(
+                        $j->kode,
+                        $searchLower
                     );
                     $matchKodeJadwal = $this->matchKode(
                         $j->kode_jadwal,
                         $searchLower
-                    );
-                    $matchKodeKelas = $this->matchKode(
-                        $j->kode_kelas,
+                    ) || $this->containsStrict(
+                        $j->kode_jadwal,
                         $searchLower
                     );
+                    
                     $matchKodeRPS = $this->matchKode(
                         $j->kode_rps,
                         $searchLower
@@ -628,7 +548,6 @@ trait WithKelasJadwalSearchFilters
                     return
                         $matchID
                         || $matchKode
-                        || $matchKodeKelas
                         || $matchKodeJadwal
                         || $matchKodeRPS
                         || $matchKodeMK

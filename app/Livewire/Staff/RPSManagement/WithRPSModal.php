@@ -57,18 +57,18 @@ trait WithRPSModal
 
         $this->showEditRPS = false;
 
-        $this->cplNameSearch['rps'] = '';
+        // $this->cplNameSearch['rps'] = '';
         $this->refNameSearch['rps'] = '';
 
-        $this->cpl_id_array[$key] = [];
-        $this->cpl_items_array[$key] = [];
+        // $this->cpl_id_array[$key] = [];
+        // $this->cpl_items_array[$key] = [];
 
         $this->ref_id_array[$key] = [];
         $this->ref_items_array[$key] = [];
 
         $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
-        $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+        // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
         $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
         $this->updatedDosenNameSearch($this->dosenNameSearch);
     }
@@ -97,7 +97,7 @@ trait WithRPSModal
                 'cpmks.scpmks.refs',
                 'cpmks.refs',
                 'cpmks.cpls',
-                'cpls',
+                // 'cpls',
                 'refs',
             ])->findOrFail($id);
 
@@ -128,16 +128,16 @@ trait WithRPSModal
             // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $rps->is_draf;
 
             // 2. Fill Data CPL & Referensi Tambahan (Manual)
-            $this->cpl_id_array = array_merge(
-                array_map(fn () => [], $this->cpl_id_array),
-                [$key => $rps->cpls->pluck('id')->toArray()]
-            );
-            $this->cpl_items_array = array_merge(
-                array_map(fn () => [], $this->cpl_items_array),
-                [$key => $rps->cpls->map(function ($c) {
-                    return $this->itemsCPL($c);
-                })->toArray()]
-            );
+            // $this->cpl_id_array = array_merge(
+            //     array_map(fn () => [], $this->cpl_id_array),
+            //     [$key => $rps->cpls->pluck('id')->toArray()]
+            // );
+            // $this->cpl_items_array = array_merge(
+            //     array_map(fn () => [], $this->cpl_items_array),
+            //     [$key => $rps->cpls->map(function ($c) {
+            //         return $this->itemsCPL($c);
+            //     })->toArray()]
+            // );
 
             $this->ref_id_array = array_merge(
                 array_map(fn () => [], $this->ref_id_array),
@@ -152,7 +152,7 @@ trait WithRPSModal
 
             $this->fetchMK($this->mkNameSearch);
             $this->updatedCPMKNameSearch($this->cpmkNameSearch);
-            $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+            // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
             $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
             $this->updatedDosenNameSearch($this->dosenNameSearch);
 
@@ -209,10 +209,10 @@ trait WithRPSModal
         }
 
         // --- PROSES PEMBERSIHAN ---
-        $cleanCpl = [];
-        if (isset($data['cpl_id_array']) && is_array($data['cpl_id_array'])) {
-            $cleanCpl = array_values(array_diff(array_unique($data['cpl_id_array']), $cplFromCpmk));
-        }
+        // $cleanCpl = [];
+        // if (isset($data['cpl_id_array']) && is_array($data['cpl_id_array'])) {
+        //     $cleanCpl = array_values(array_diff(array_unique($data['cpl_id_array']), $cplFromCpmk));
+        // }
 
         $cleanRef = [];
         if (isset($data['ref_id_array']) && is_array($data['ref_id_array'])) {
@@ -353,7 +353,7 @@ trait WithRPSModal
                     }
                 },
             ],
-            'cpl_id_array' => 'nullable|array',
+            // 'cpl_id_array' => 'nullable|array',
             'ref_id_array' => 'nullable|array',
             'pertemuan_dosen' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
@@ -418,7 +418,7 @@ trait WithRPSModal
         $validated['bobot_uts'] = $data['bobot_uts'] ?? null;
         $validated['bobot_uas'] = $data['bobot_uas'] ?? null;
 
-        $validated['cpl_id_array'] = $cleanCpl;
+        // $validated['cpl_id_array'] = $cleanCpl;
         $validated['ref_id_array'] = $cleanRef;
         $validated['cpmk_id_array'] = array_values(array_unique($data['cpmk_id_array'] ?? []));
         $validated['dosen_items_array'] = $data['dosen_items_array'] ?? [];
@@ -439,7 +439,7 @@ trait WithRPSModal
         $data['is_draf'] = ($data['is_draf'] !== '') ? (int) $data['is_draf'] : 1;
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
-        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
@@ -492,17 +492,17 @@ trait WithRPSModal
                 }
 
                 // 4. Mapping CPL (ID Baru/Manual)
-                if (! empty($validated['cpl_id_array'])) {
-                    $cplSync = [];
-                    foreach ($validated['cpl_id_array'] as $index => $id) {
-                        if (! empty($id)) {
-                            $cplSync[(int) $id] = [
-                                'sort_order' => $index,
-                            ];
-                        }
-                    }
-                    $rps->cpls()->sync($cplSync);
-                }
+                // if (! empty($validated['cpl_id_array'])) {
+                //     $cplSync = [];
+                //     foreach ($validated['cpl_id_array'] as $index => $id) {
+                //         if (! empty($id)) {
+                //             $cplSync[(int) $id] = [
+                //                 'sort_order' => $index,
+                //             ];
+                //         }
+                //     }
+                //     $rps->cpls()->sync($cplSync);
+                // }
 
                 // 5. Mapping Referensi (ID Baru/Manual)
                 if (! empty($validated['ref_id_array'])) {
@@ -560,7 +560,7 @@ trait WithRPSModal
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
-        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
         $data['pertemuan_dosen'] = array_filter($this->pertemuan_dosen) ?? [];
 
@@ -608,11 +608,11 @@ trait WithRPSModal
                 $rps->cpmks()->sync($syncCpmk);
 
                 // 4. Sync CPL (Manual/Tambahan)
-                $syncCpl = [];
-                foreach ($validated['cpl_id_array'] as $index => $id) {
-                    $syncCpl[(int) $id] = ['sort_order' => $index];
-                }
-                $rps->cpls()->sync($syncCpl);
+                // $syncCpl = [];
+                // foreach ($validated['cpl_id_array'] as $index => $id) {
+                //     $syncCpl[(int) $id] = ['sort_order' => $index];
+                // }
+                // $rps->cpls()->sync($syncCpl);
 
                 // 5. Sync Referensi (Manual/Tambahan)
                 $syncRef = [];
@@ -692,7 +692,7 @@ trait WithRPSModal
             'cpmk_id_array.array' => 'Format data CPMK tidak valid!',
             'cpmk_id_array.min' => 'Minimal harus ada satu CPMK yang dipilih!',
 
-            'cpl_id_array.array' => 'Format data CPL tidak valid!',
+            // 'cpl_id_array.array' => 'Format data CPL tidak valid!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
 
             // Dosen Pengampu
@@ -725,7 +725,7 @@ trait WithRPSModal
                 'bobot_uas',
             ]),
             3 => $this->getErrorCount([
-                'cpl_id_array',
+                // 'cpl_id_array',
             ]),
             4 => $this->getErrorCount([
                 'ref_id_array',
@@ -740,7 +740,7 @@ trait WithRPSModal
     private function resetInputRPS()
     {
         $this->cpmkNameSearch = '';
-        $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
+        // $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
         $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
 
         $this->mkNameSearch = '';
@@ -749,13 +749,12 @@ trait WithRPSModal
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
 
-        $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
-        $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
+        // $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
+        // $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
         $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
         $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
 
-        // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke rps_pivot_dosen
         $this->dosen_id_array = [];
         $this->dosen_items_array = [];
 

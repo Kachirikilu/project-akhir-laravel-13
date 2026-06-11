@@ -55,7 +55,6 @@ class MataKuliah extends Model
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
-            $prefix = 'UNI';
             $prefixDefault = $this->kode_mk ? strtoupper($this->kode_mk) : null;
             $prodi = $this->prodis->first();
 
@@ -261,6 +260,94 @@ class MataKuliah extends Model
             }
 
             return $this->updated_at->translatedFormat('D, d M Y');
+        });
+    }
+
+    public function scopeSearchMK($query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchTerm = '%'.$search.'%';
+        $searchLower = '%'.strtolower($search).'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm) {
+            // 1. Cari Nama & Kode Manual
+            $q->where('mata_kuliahs.nama_mk', 'like', $searchTerm);
+
+            if (is_numeric($search)) {
+                $q->orWhere('mata_kuliahs.id', 'like', $search);
+            }
+
+            // 4. Digit MK
+            if (preg_match('/^\d+$/', $search)) {
+                $q->orWhere('mata_kuliahs.digit_mk', $search);
+            } else {
+                $q->orWhere('mata_kuliahs.digit_mk', 'LIKE', $searchTerm);
+            }
+
+            // 7. Partial Code Search (Prefix & Digits)
+            $cleanSearchUpper = strtoupper($search);
+            if (preg_match('/[A-Z0-9]/', $cleanSearchUpper)) {
+                $q->orWhere(function ($sq) use ($cleanSearchUpper) {
+                    $prefixPart = preg_replace('/[^A-Z]/', '', $cleanSearchUpper);
+                    $digitPart = preg_replace('/[^0-9]/', '', $cleanSearchUpper);
+
+                    $sq->where(function ($sub) use ($prefixPart, $digitPart) {
+                        if (! empty($prefixPart)) {
+                            $sub->where(function ($low) use ($prefixPart) {
+                                // 1. Cari langsung di Kode MK
+                                $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
+
+                                // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke departemen, jika null ke fakultas, dst.
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.level_mk', 1)
+                                            ->whereHas('prodis', function ($pro) use ($prefixPart) {
+                                                $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+                                                    ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(prodis.kode_pr, departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
+                                            });
+                                    })
+
+                                // 3. Tingkatan MK = 2 (Departemen): Cari di departemen, jika null ke fakultas, dst.
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.level_mk', 2)
+                                            ->whereHas('prodis.dp_rel', function ($jur) use ($prefixPart) {
+                                                $jur->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
+                                            });
+                                    })
+
+                                // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.level_mk', 3)
+                                            ->whereHas('prodis.dp_rel.fk_rel', function ($fak) use ($prefixPart) {
+                                                $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
+                                            });
+                                    })
+
+                                // 5. Khusus tingkat Universitas (Tingkatan 4)
+                                    ->when($prefixPart === 'UNI', function ($query) {
+                                        $query->orWhere('mata_kuliahs.level_mk', 4);
+                                    });
+                            });
+                        }
+
+                        if (! empty($digitPart)) {
+                            if (strlen($digitPart) <= 2) {
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart.'%');
+                            } else {
+                                $dSem = substr($digitPart, 0, 2);
+                                $dMk = substr($digitPart, 2);
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $dSem.'%')
+                                    ->where('mata_kuliahs.digit_mk', 'like', $dMk.'%');
+                            }
+                        }
+                    });
+                });
+            }
         });
     }
 

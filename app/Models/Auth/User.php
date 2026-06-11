@@ -42,6 +42,8 @@ class User extends Authenticatable
         'nik',
         'status',
         'status_full',
+        'kode_wilayah',
+        'wilayah'
     ];
 
     /**
@@ -141,6 +143,23 @@ class User extends Authenticatable
         });
     }
 
+    protected function roleId(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->id;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->id;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->id;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
     protected function nik(): Attribute
     {
         return Attribute::get(function () {
@@ -196,6 +215,36 @@ class User extends Authenticatable
             $value = $this->dosen?->nidk;
 
             return $value ?: null;
+        });
+    }
+
+    protected function kodeWilayah(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->kode_wilayah;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->kode_wilayah;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
+    protected function wilayah(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->wilayah;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->wilayah;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
@@ -463,6 +512,47 @@ class User extends Authenticatable
             }
 
             return $this->updated_at->translatedFormat('D, d M Y');
+        });
+    }
+
+    public function scopeSearchUser($query, $search, $withTahun = false)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
+
+            if ($withTahun == false) {
+                $q->where('email', 'like', $searchTerm);
+
+                if (is_numeric($search)) {
+                    $q->orWhere('users.id', $search);
+                }
+
+                $roleConfigs = [
+                    'admin' => ['name', 'nip', 'nitk', 'nik', 'status', 'id'],
+                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'nik', 'status', 'id'],
+                    'mahasiswa' => ['name', 'nim', 'nik', 'angkatan', 'status', 'id'],
+                ];
+
+                foreach ($roleConfigs as $role => $fields) {
+                    $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
+                        $r->where(function ($sub) use ($searchTerm, $fields) {
+                            foreach ($fields as $field) {
+                                $sub->orWhere($field, 'like', $searchTerm);
+                            }
+                        });
+                    });
+                }
+
+            } else {
+                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm]));
+            }
         });
     }
 

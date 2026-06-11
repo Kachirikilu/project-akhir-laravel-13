@@ -9,9 +9,9 @@ use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -21,7 +21,6 @@ use Livewire\WithPagination;
 class ProgramStudiManagement extends Component
 {
     use HasToast;
-    use WithProdiSearchFilters;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;
@@ -31,6 +30,7 @@ class ProgramStudiManagement extends Component
     use WithProdiExcel;
     use WithProdiFilters;
     use WithProdiModal;
+    use WithProdiSearchFilters;
 
     public $showModal = false;
 
@@ -39,6 +39,8 @@ class ProgramStudiManagement extends Component
     public $switchTable = 'prodi';
 
     public $search = '';
+
+    public $searchMode = 'simple';
 
     protected $paginationTheme = 'tailwind';
 
@@ -53,6 +55,7 @@ class ProgramStudiManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'filterPr' => ['except' => ''],
         // 'switchTable' => ['except' => 'prodi'],
@@ -131,7 +134,7 @@ class ProgramStudiManagement extends Component
 
         $this->resetPage();
 
-        $targetPath = '/program-studi-management' . (in_array($table, ['prodi', '', null], true) ? '' : '/' . $table);
+        $targetPath = '/program-studi-management'.(in_array($table, ['prodi', '', null], true) ? '' : '/'.$table);
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
@@ -169,16 +172,25 @@ class ProgramStudiManagement extends Component
             // =========================
             // PAGINATION
             // =========================
-            if ($this->switchTable === 'prodi') {
-                $this->buttonStrataFilter($queryPr);
-                // $prodis = $queryPr->paginate($this->perPage);
-                $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-            } elseif ($this->switchTable === 'departemen') {
-                // $departemens = $queryDp->paginate($this->perPage);
-                $departemens = $this->searchOutputPr($queryDp, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-            } elseif ($this->switchTable === 'fakultas') {
-                // $fakultas = $queryFk->paginate($this->perPage);
-                $fakultas = $this->searchOutputPr($queryFk, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+
+            if ($this->searchMode == 'full') {
+                if ($this->switchTable === 'prodi') {
+                    $this->buttonStrataFilter($queryPr);
+                    $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                } elseif ($this->switchTable === 'departemen') {
+                    $departemens = $this->searchOutputPr($queryDp, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                } elseif ($this->switchTable === 'fakultas') {
+                    $fakultas = $this->searchOutputPr($queryFk, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                }
+            } else {
+                if ($this->switchTable === 'prodi') {
+                    $this->buttonStrataFilter($queryPr);
+                    $prodis = $queryPr->paginate($this->perPage);
+                } elseif ($this->switchTable === 'departemen') {
+                    $departemens = $queryDp->paginate($this->perPage);
+                } elseif ($this->switchTable === 'fakultas') {
+                    $fakultas = $queryFk->paginate($this->perPage);
+                }
             }
 
             // =========================

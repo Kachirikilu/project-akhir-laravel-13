@@ -568,18 +568,19 @@ trait LogicSearch
             return false;
         }
         [$full, $tahun1, $tahun2] = $m;
+        if (preg_match('/^\d{4}\/\d{4}$/', $search)) {
+            return $akademik === $search;
+        }
         if (! preg_match('/\d{4}/', $search, $sm)) {
             return false;
         }
-
         $queryYear = $sm[0];
         if (str_starts_with($search, '/')) {
             return $queryYear === $tahun2;
         }
         if (str_contains($search, '/')) {
-            return $queryYear === $tahun1 || $queryYear === $tahun2;
+            return $queryYear === $tahun1;
         }
-
         return $queryYear === $tahun1;
     }
 

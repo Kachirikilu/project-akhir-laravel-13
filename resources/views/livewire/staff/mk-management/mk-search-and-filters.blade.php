@@ -24,7 +24,7 @@
                 'tab1Name' => 'Semua MK',
                 'tab2Name' => 'Wajib',
                 'tab3Name' => 'Pilihan',
-                'tab4Name' => 'Universitas'
+                'tab4Name' => 'Universitas',
             ])
         </div>
         <div class="shrink-0">
@@ -50,6 +50,9 @@
             <div class="sm:col-span-7 relative">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mata Kuliah...',
+                    'searchMode' => $searchMode,
+                    'searchValues' => ['simple', 'full'],
+                    'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
@@ -65,6 +68,9 @@
                 <div class="sm:col-span-4 relative">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Mata Kuliah...',
+                        'searchMode' => $searchMode,
+                        'searchValues' => ['simple', 'full'],
+                        'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Kompleks'],
                     ])
                 </div>
 

@@ -135,7 +135,7 @@
                     'resetXFilter' => 'resetInputBobotCPMK()',
                     'maxLength' => 2,
                     'withSimbol' => 1,
-                    'wInput' => 15,
+                    'wInput' => 20,
                     'placeholder' => 'Bobot',
                     'rowSpan' => 2,
                     'pTop' => 5,
@@ -241,7 +241,7 @@
                     'resetXFilter' => 'resetInputBobotRPS()',
                     'maxLength' => 3,
                     'withSimbol' => 1,
-                    'wInput' => 15,
+                    'wInput' => 20,
                     'placeholder' => 'Bobot',
                     'pTop' => 5,
                 ])
@@ -279,7 +279,7 @@
                     'resetXFilter' => 'resetInputBobotSCPMK()',
                     'maxLength' => 2,
                     'withSimbol' => 1,
-                    'wInput' => 15,
+                    'wInput' => 20,
                     'placeholder' => 'Bobot',
                     'isMain' => 1,
                     'isCenter' => 1,
@@ -326,8 +326,13 @@
                                     ])
                                 @break
 
+                                @case('cpl')
+                                    <flux:badge icon="beaker" color="sky" size="sm">{{ $x->kode ?? '---' }}
+                                    </flux:badge>
+                                @break
+
                                 @case('cpmk')
-                                    <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '---' }}
+                                    <flux:badge icon="academic-cap" color="violet" size="sm">{{ $x->kode ?? '---' }}
                                     </flux:badge>
                                 @break
 
@@ -336,13 +341,8 @@
                                     </flux:badge>
                                 @break
 
-                                @case('cpl')
-                                    <flux:badge icon="beaker" color="lime" size="sm">{{ $x->kode ?? '---' }}
-                                    </flux:badge>
-                                @break
-
                                 @default
-                                    <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '---' }}
+                                    <flux:badge icon="book-open" color="orange" size="sm">{{ $x->kode ?? '---' }}
                                     </flux:badge>
                             @endswitch
                         </button>
@@ -582,9 +582,9 @@
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 17,
+                    'cpl' => 6,
                     'cpmk' => 9,
                     'sub-cpmk' => 14,
-                    'cpl' => 6,
                     'referensi' => 10,
                     default => 9,
                 } }}"

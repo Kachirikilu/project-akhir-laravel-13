@@ -15,7 +15,7 @@
                 <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
                     Pastikan <strong class="text-[var(--focus-color)] font-semibold">Kode CPL
                     </strong> terpenuhi (contoh: <strong class="text-[var(--contrast-main-text)] font-semibold"><span
-                            class="italic">CPL-121104</span></strong>).
+                            class="italic">TKE-CPL121104</span></strong>).
                 </p>
             </div>
 

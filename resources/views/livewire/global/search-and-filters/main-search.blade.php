@@ -1,70 +1,86 @@
 @php
     $isLive = $isLive ?? false;
+    $defaultLive = $defaultLive ?? true;
     $alpineStore = $alpine ?? false;
+    $isMode = $isMode ?? true;
+    $isBounce = $isBounce ?? '300ms';
+
+    // Pastikan searchValues ada isinya
+    $searchValues = $searchValues ?? [];
+
+    // Jika searchValues tidak kosong, otomatis isi label dan deskripsi default-nya
+    if (!empty($searchValues)) {
+        $searchOptions = $searchOptions ?? ['Pencarian Sederhana', 'Pencarian Kompleks'];
+        $searchDescs = $searchDescs ?? [
+            'Mencari data utama secara instan.',
+            'Mencari ke seluruh kolom dan relasi data secara detail.',
+        ];
+    } else {
+        $searchOptions = [];
+        $searchDescs = [];
+    }
 @endphp
 
-{{-- x-model="$store.sesi.search" --}}
-
 <div x-data="{
-    search: @entangle('search'){{ $isLive ? '.live' : '' }},
-    isRealtime: true,
-    clickTimer: null,
-    lastClick: 0,
+    search: @entangle('search'),
+    selectedMode: '{{ $searchMode ?? '' }}',
 
-    updatedSearch(val) {
-        if (this.isRealtime) {
-            $wire.$set('search', val);
+    isRealtime: {{ $isLive ? 'true' : ($defaultLive ? 'true' : 'false') }},
+    showSearchModePopup: false,
+
+    triggerRealtimeSearch(val) {
+        $wire.$set('search', val);
+        @if ($alpineStore) $store.{{ $alpineStore }}.search = val; @endif
+    },
+
+    triggerManualSearch() {
+        if (!this.isRealtime) {
+            $wire.$set('search', this.search);
+            $wire.search();
         }
     },
 
-    handleAction() {
-        let currentTime = new Date().getTime();
-        let gap = currentTime - this.lastClick;
-
-        if (gap < 250) {
-            if (this.clickTimer) {
-                clearTimeout(this.clickTimer);
-                this.clickTimer = null;
-            }
-            this.isRealtime = !this.isRealtime;
-
-            if (this.isRealtime) {
-                $wire.$set('search', this.search);
-            }
-        } else {
-            this.clickTimer = setTimeout(() => {
-                if (!this.isRealtime) {
-                    $wire.$set('search', this.search);
-                    {{-- $wire.search(); --}}
-                }
-                this.clickTimer = null;
-            }, 250);
-        }
-
-        this.lastClick = currentTime;
+    changeSearchMode(value) {
+        this.selectedMode = value;
+        $wire.$set('searchMode', value);
+        this.showSearchModePopup = false;
     }
 }" class="relative flex items-center">
 
     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-        <flux:icon.magnifying-glass variant="mini"
-            ::class="isRealtime ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)]'" />
+        <flux:icon.magnifying-glass variant="mini" ::class="isRealtime
+                ? 'text-[var(--focus-color)]'
+                : 'text-[var(--contrast-second-text)]'" />
     </div>
 
-    <input
-        @if ($alpineStore) x-model="$store.{{ $alpineStore }}.search" 
+    <input type="text" placeholder="{{ $placeholder ?? 'Cari data...' }}"
+        @if ($alpineStore) x-model="$store.{{ $alpineStore }}.search"
+            @input.debounce.{{ $isBounce }}="if(isRealtime) triggerRealtimeSearch($el.value)"
         @else
-        @if ($isLive) 
-            x-model.debounce.{{ $isBounce ?? '300ms' }}="search" 
-        @else 
             x-model="search"
-            @input.debounce.300ms="updatedSearch($el.value)"
-            @keydown.enter="$wire.$set('search', search); $wire.search()" @endif
-        @endif
-    type="text"
-    placeholder="{{ $placeholder ?? 'Cari data...' }}"
-    class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 {{ !$isLive ? 'pr-26' : 'pr-10' }} rounded-lg shadow-sm
-               bg-[var(--second-table-color)] border-{{ $isBorder ?? 0 ?: 0 }} border-[var(--border-table-color)] text-[var(--contrast-main-text)]"
-    />
+            @input.debounce.{{ $isBounce }}="if(isRealtime) triggerRealtimeSearch($el.value)" @endif
+        @dblclick="showSearchModePopup = true" @keydown.enter="triggerManualSearch()"
+        class="
+            focus:ring-2
+            focus:ring-[var(--focus-color)]
+            outline-none
+            w-full
+            h-10
+            pl-10
+            rounded-lg
+            shadow-sm
+            bg-[var(--second-table-color)]
+            border-{{ $isBorder ?? 0 ?: 0 }}
+            border-[var(--border-table-color)]
+            text-[var(--contrast-main-text)]
+        "
+        @if ($alpineStore) :class="$store.{{ $alpineStore }}.search?.length > 0
+            ? '{{ !$isLive && $isMode ? 'pr-26' : 'pr-10' }}'
+            : 'pr-[64px]'"
+    @else
+        :class="search?.length > 0
+            ? '{{ !$isLive && $isMode ? 'pr-26' : 'pr-10' }}'
+            : 'pr-[64px]'" @endif />
 
     <div class="absolute inset-y-0 right-0 flex items-center pr-1 gap-1">
         @if ($alpineStore)
@@ -83,20 +99,19 @@
             ])
         @endif
 
-        @if (!$isLive)
-            <button type="button" @click="handleAction" wire:loading.attr="disabled"
+        @if (!$isLive && $isMode)
+            <button type="button" @contextmenu.prevent="showSearchModePopup = true" @click="triggerManualSearch()"
+                @dblclick="showSearchModePopup = true" wire:loading.attr="disabled" class="bg-[var(--focus-color)]"
                 :class="{
                     'cursor-pointer h-8 px-5 rounded-md flex items-center shadow-sm transition-all duration-200 select-none': true,
-                    'bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] text-white': !isRealtime,
-                    'bg-[var(--hover-focus-color)] text-white ring-2 ring-white/10': isRealtime
+                    'hover:bg-[var(--hover-focus-color)] text-white': !isRealtime,
+                    'text-white ring-2 ring-white/10': isRealtime
                 }">
-
                 <div x-show="!isRealtime" class="flex items-center">
                     <flux:icon.magnifying-glass class="h-4 w-4" variant="mini" wire:loading.remove
                         wire:target="search" />
                     <flux:icon name="arrow-path" class="animate-spin h-4 w-4" wire:loading wire:target="search" />
                 </div>
-
                 <div x-show="isRealtime" class="flex items-center">
                     <span class="relative flex h-2 w-2 m-1">
                         <span
@@ -107,4 +122,80 @@
             </button>
         @endif
     </div>
+
+    @if (!$isLive)
+        <div wire:ignore x-show="showSearchModePopup" x-cloak @click.outside="showSearchModePopup = false" x-transition
+            class="absolute top-full right-0 mt-2 w-72 z-[100]
+                bg-[var(--main-pop-up-color)]
+                border border-[var(--focus-color)]
+                rounded-lg shadow-xl overflow-hidden">
+
+            {{-- REALTIME TOGGLE --}}
+            <div class="px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-medium text-[var(--contrast-main-text)]">
+                            Realtime Search
+                        </div>
+                        <div class="text-xs text-[var(--contrast-second-text)]">
+                            Cari otomatis saat mengetik
+                        </div>
+                    </div>
+
+                    <button type="button" @click="isRealtime = !isRealtime"
+                        class="cursor-pointer relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                        :class="isRealtime ? 'bg-[var(--focus-color)]' : 'bg-gray-500'">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition"
+                            :class="isRealtime ? 'translate-x-6' : 'translate-x-1'">
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- LOOPING YANG SUDAH DIPERBAIKI --}}
+            @if (!empty($searchValues))
+                <div class="px-4 py-2 border-y border-[var(--contrast-second-text)]">
+                    <div class="text-sm font-semibold text-[var(--contrast-main-text)]">
+                        Mode Pencarian
+                    </div>
+                </div>
+
+                @foreach ($searchValues as $index => $value)
+                    @php
+                        // Ambil label dari $searchOptions sesuai index, fallback ke value jika tidak diset
+                        $label = $searchOptions[$index] ?? $value;
+                        $desc = $searchDescs[$index] ?? null;
+                    @endphp
+
+                    <div @click="changeSearchMode('{{ $value }}')"
+                        class="px-4 py-3 cursor-pointer transition-colors hover:bg-[var(--hover-pop-up-color)]">
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-sm font-medium text-[var(--contrast-main-text)]">
+                                    {{ $label }}
+                                </span>
+
+                                @if ($desc)
+                                    <span
+                                        class="text-[10px] leading-normal text-[var(--contrast-second-text)] opacity-80 mt-0.5 break-words">
+                                        {{ $desc }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="flex-shrink-0">
+                                <template x-if="selectedMode == '{{ $value }}'">
+                                    <flux:icon.check class="w-4 h-4 text-[var(--focus-color)]" />
+                                </template>
+                            </div>
+
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+
+        </div>
+    @endif
+
 </div>

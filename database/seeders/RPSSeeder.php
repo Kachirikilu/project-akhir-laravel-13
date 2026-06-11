@@ -9,6 +9,7 @@ use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
 use App\Models\Auth\Dosen;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -97,12 +98,18 @@ class RPSSeeder extends Seeder
         $totalCPL = min(1024, count($kombinasi));
         $this->command->info("Generating $totalCPL CPL records...");
         for ($i = 1; $i <= $totalCPL; $i++) {
-            $cpls[] = CPL::updateOrCreate([
-                'kode_cpl' => sprintf('CPL%02d', $i),
-            ], [
-                'deskripsi' => $kombinasi[$i - 1],
-            ]);
+$cpls[] = CPL::updateOrCreate(
+    [
+        'kode_cpl' => sprintf('CPL%02d', $i),
+    ],
+    [
+        'deskripsi' => $kombinasi[$i - 1],
+        'level_cpl' => fake()->randomElement([1,1,1,2,2,3,4]),
+    ]
+);
         }
+
+        $this->attachCplsToProdi($cpls);
 
         // =========================
         // DATA AWAL
@@ -120,9 +127,23 @@ class RPSSeeder extends Seeder
         $rpsCreated = 0;
 
         // 🔥 pindahkan ke luar closure (INI PENTING)
-        $cplUsage = [];
 
         $this->command->info("Seeding $targetRps RPS records in batches of $batchSize...");
+
+        $mks = MataKuliah::with('prodis.cpls')
+            ->get()
+            ->filter(function ($mk) {
+                return $mk->prodis
+                    ->flatMap(fn ($prodi) => $prodi->cpls)
+                    ->isNotEmpty();
+            })
+            ->values();
+
+        if ($mks->isEmpty()) {
+            $this->command->warn('Tidak ada MataKuliah yang memiliki CPL pada prodi. Seeder RPS dilewati.');
+
+            return;
+        }
 
         while ($rpsCreated < $targetRps) {
 
@@ -131,17 +152,28 @@ class RPSSeeder extends Seeder
                 $batchSize,
                 $targetRps,
                 $mks,
-                $cpls,
                 $tahunAkademik,
-                &$cplUsage
             ) {
 
                 $limit = min($batchSize, $targetRps - $rpsCreated);
 
                 for ($i = 0; $i < $limit; $i++) {
 
+                    if ($mks->isEmpty()) {
+                        break;
+                    }
+
                     $mk = $mks->random();
                     $waktu = now()->subYears(rand(0, 3));
+
+                    $availableCpls = $mk->prodis
+                        ->flatMap(fn ($prodi) => $prodi->cpls)
+                        ->unique('id')
+                        ->values();
+
+                    if ($availableCpls->count() < 1) {
+                        continue;
+                    }
 
                     $rps = RPS::create([
                         'mk_id' => $mk->id,
@@ -150,21 +182,6 @@ class RPSSeeder extends Seeder
                         'is_draf' => rand(0, 1),
                         'revisi' => $waktu,
                     ]);
-
-                    // =========================
-                    // RPS ↔ CPL (1–5 MERATA)
-                    // =========================
-                    $selectedCpls = collect($cpls)
-                        ->sortBy(fn ($cpl) => $cplUsage[$cpl->id] ?? 0)
-                        ->take(rand(1, 5));
-
-                    foreach ($selectedCpls->values() as $idx => $cpl) {
-                        $rps->cpls()->attach($cpl->id, [
-                            'sort_order' => $idx,
-                        ]);
-
-                        $cplUsage[$cpl->id] = ($cplUsage[$cpl->id] ?? 0) + 1;
-                    }
 
                     // =========================
                     // REFERENSI (3–6)
@@ -200,7 +217,13 @@ class RPSSeeder extends Seeder
                     // =========================
                     // ISI RPS
                     // =========================
-                    $this->seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds);
+                    $this->seedRealisticRPS(
+                        $rps,
+                        $availableCpls,
+                        $mk,
+                        $waktu,
+                        $refIds
+                    );
 
                     $rpsCreated++;
                 }
@@ -214,6 +237,95 @@ class RPSSeeder extends Seeder
 
         $this->command->info('RPSSeeder finished successfully.');
     }
+
+public function attachCplsToProdi(array $cpls): void
+{
+    $prodis = Prodi::with('dp_rel.fk_rel')->get();
+
+    if ($prodis->isEmpty()) {
+        return;
+    }
+
+    foreach ($cpls as $cpl) {
+
+        switch ((int) $cpl->level_cpl) {
+
+            // ======================
+            // LEVEL 1
+            // 1 PRODI SAJA
+            // ======================
+            case 1:
+
+                $prodi = $prodis->random();
+
+                $cpl->prodis()->syncWithoutDetaching([
+                    $prodi->id => [
+                        'sort_order' => 0,
+                    ]
+                ]);
+
+                break;
+
+            // ======================
+            // LEVEL 2
+            // SATU DEPARTEMEN
+            // ======================
+            case 2:
+
+                $prodiAwal = $prodis->random();
+
+                $targetProdis = $prodis
+                    ->where(
+                        'dp_id',
+                        $prodiAwal->dp_id
+                    );
+
+                $attachIds = $targetProdis
+                    ->pluck('id')
+                    ->all();
+
+                $cpl->prodis()->syncWithoutDetaching($attachIds);
+
+                break;
+
+            // ======================
+            // LEVEL 3
+            // SATU FAKULTAS
+            // ======================
+            case 3:
+
+                $prodiAwal = $prodis->random();
+
+                $fakultasId =
+                    $prodiAwal->dp_rel->fk_id;
+
+                $attachIds = $prodis
+                    ->filter(function ($prodi) use ($fakultasId) {
+                        return
+                            $prodi->dp_rel->fk_id
+                            == $fakultasId;
+                    })
+                    ->pluck('id')
+                    ->all();
+
+                $cpl->prodis()->syncWithoutDetaching($attachIds);
+
+                break;
+
+            // ======================
+            // LEVEL 4
+            // SEMUA PRODI
+            // ======================
+            case 4:
+
+                $cpl->prodis()->syncWithoutDetaching(
+                    $prodis->pluck('id')->all()
+                );
+
+                break;
+        }
+    }
+}
 
     private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
     {
@@ -236,8 +348,13 @@ class RPSSeeder extends Seeder
         return $kode;
     }
 
-    private function seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds)
-    {
+    private function seedRealisticRPS(
+        $rps,
+        $availableCpls,
+        $mk,
+        $waktu,
+        $refIds
+    ) {
         // =========================
         // CPMK (2–4)
         // =========================
@@ -260,7 +377,15 @@ class RPSSeeder extends Seeder
             $rps->cpmks()->attach($cpmk->id, ['sort_order' => $i]);
 
             // CPL 1–2
-            $randomCpls = collect($cpls)->pluck('id')->random(rand(1, 2));
+            $randomCpls = $availableCpls
+                ->pluck('id')
+                ->shuffle()
+                ->take(
+                    min(
+                        rand(1, 2),
+                        $availableCpls->count()
+                    )
+                );
 
             foreach (collect($randomCpls)->values() as $idx => $cplId) {
                 $cpmk->cpls()->attach($cplId, ['sort_order' => $idx]);
@@ -397,7 +522,13 @@ class RPSSeeder extends Seeder
                 $cpmk->delete();
             }
 
-            return $this->seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds);
+            return $this->seedRealisticRPS(
+                $rps,
+                $availableCpls,
+                $mk,
+                $waktu,
+                $refIds
+            );
         }
 
         $rps->save();

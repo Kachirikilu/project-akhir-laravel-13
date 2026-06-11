@@ -99,11 +99,12 @@ class Mahasiswa extends Model
         return Attribute::get(function () {
 
             if ($this->kode_wilayah == 'IDL') {
-                return 'Kampus Indralaya';
+                return 'Indralaya';
+            } elseif ($this->kode_wilayah == 'PLG') {
+                return 'Bukit';
             } else {
-                return 'Kampus Bukit';
+                return null;
             }
-
         });
     }
 
@@ -118,8 +119,7 @@ class Mahasiswa extends Model
         $searchTerm = '%'.$search.'%';
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-            // 1. Pencarian Identitas Langsung di Tabel Dosens
-            $fields = ['name', 'nim', 'status', 'angkatan'];
+            $fields = ['name', 'nim', 'nik', 'status', 'angkatan', 'kode_wilayah'];
             foreach ($fields as $field) {
                 $q->orWhere("mahasiswas.$field", 'like', $searchTerm);
             }
@@ -127,23 +127,9 @@ class Mahasiswa extends Model
             if (is_numeric($search)) {
                 $q->orWhere('mahasiswas.id', $search);
             }
-
-            // 2. Pencarian ke Tabel User Terkait (Email & Timestamps)
             $q->orWhereHas('user', function ($u) use ($searchTerm, $searchLower) {
-                $u->where('email', 'like', $searchTerm)
-                    ->orWhere(function ($dq) use ($searchTerm, $searchLower) {
-                        $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                            ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                            ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
-                            ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", [$searchLower])
-                            ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                            ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                            ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
-                            ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", [$searchLower]);
-                    });
+                $u->where('email', 'like', $searchTerm);
             });
-
-            // 3. Pencarian Berdasarkan Lokasi (Prodi, Departemen, Fakultas)
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
                 $p->where('nama_pr', 'like', $searchTerm)
                     ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
@@ -157,4 +143,55 @@ class Mahasiswa extends Model
             });
         });
     }
+
+    // public function scopeSearchMahasiswa($query, $search)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
+
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
+
+    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+    //         // 1. Pencarian Identitas Langsung di Tabel Dosens
+    //         $fields = ['name', 'nim', 'status', 'angkatan'];
+    //         foreach ($fields as $field) {
+    //             $q->orWhere("mahasiswas.$field", 'like', $searchTerm);
+    //         }
+
+    //         if (is_numeric($search)) {
+    //             $q->orWhere('mahasiswas.id', $search);
+    //         }
+
+    //         // 2. Pencarian ke Tabel User Terkait (Email & Timestamps)
+    //         $q->orWhereHas('user', function ($u) use ($searchTerm, $searchLower) {
+    //             $u->where('email', 'like', $searchTerm)
+    //                 ->orWhere(function ($dq) use ($searchTerm, $searchLower) {
+    //                     $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", [$searchLower])
+    //                         ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", [$searchLower]);
+    //                 });
+    //         });
+
+    //         // 3. Pencarian Berdasarkan Lokasi (Prodi, Departemen, Fakultas)
+    //         $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
+    //             $p->where('nama_pr', 'like', $searchTerm)
+    //                 ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+    //                     $j->where('nama_dp', 'like', $searchTerm)
+    //                         ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
+    //                         ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+    //                             $f->where('nama_fk', 'like', $searchTerm)
+    //                                 ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+    //                         });
+    //                 });
+    //         });
+    //     });
+    // }
 }

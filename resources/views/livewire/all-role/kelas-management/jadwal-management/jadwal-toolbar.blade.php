@@ -87,7 +87,10 @@
         <div class="w-full md:w-72 lg:w-96">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Jadwal Kelas...',
-                'isLive' => 1,
+                'defaultLive' => 1,
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
                 'isBorder' => 2,
             ])
         </div>

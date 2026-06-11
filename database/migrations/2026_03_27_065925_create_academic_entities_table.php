@@ -69,7 +69,8 @@ return new class extends Migration
 
         Schema::create('cpls', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_cpl')->unique();
+            $table->enum('level_cpl', [1, 2, 3, 4])->default(1);
+            $table->string('kode_cpl');
             $table->string('deskripsi')->unique();
             $table->softDeletes();
             $table->timestamps();

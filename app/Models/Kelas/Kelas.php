@@ -126,6 +126,46 @@ class Kelas extends Model
         });
     }
 
+    public function scopeSearchKelas($query, $search)
+    {
+        $searchTerm = '%'.$search.'%';
+        $searchLower = strtolower($search);
+
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $searchClean) {
+
+            if (preg_match('/^([A-Za-z]+[0-9]+)(?:([A-Za-z])(?:([A-Za-z]*)(?:([0-9]{0,4}))?)?)?$/', $searchClean, $matches)) {
+
+                $matchKodeKelas = $matches[1] ?? null;
+                $matchLabelWilayah = $matches[2] ?? null;
+                $matchKodeWilayah = $matches[3] ?? null;
+                $matchTahun = $matches[4] ?? null;
+
+                $q->where(function ($subQ) use ($matchKodeKelas, $matchLabelWilayah, $matchKodeWilayah, $matchTahun) {
+                    $subQ->where('kelas.kode_kelas', 'like', '%'.$matchKodeKelas.'%');
+                });
+            }
+
+            $q->orWhere('kelas.kode_kelas', 'like', '%'.$searchClean.'%')
+                ->orWhere('kelas.nama_kelas', 'like', $searchTerm)
+                ->orWhereHas('jadwals', function ($jq) use ($searchTerm) {
+                    $table = $jq->getModel()->getTable();
+                    $jq->where($table.'.label_kelas', 'like', $searchTerm)
+                        ->orWhere($table.'.kode_wilayah', 'like', $searchTerm);
+                })
+
+                ->orWhereHas('rps_rel', function ($rq) use ($search) {
+                    $rq->searchRPS($search);
+                });
+
+            if (is_numeric($search)) {
+                $q->orWhere('kelas.id', '=', $search);
+            }
+        });
+    }
+
+
     // public function scopeSearchKelas($query, $search)
     // {
     //     $searchTerm = '%'.$search.'%';

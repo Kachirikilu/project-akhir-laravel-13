@@ -9,49 +9,49 @@
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
         class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
         <div class="min-w-0 flex-1 overflow-hidden">
-        @if (Auth::user()->dosen || Auth::user()->mahasiswa)
-            @include('livewire.global.search-and-filters.filter-mode', [
-                'filterByFunc' => 'filterByKelas',
-                'filterString' => 'filterKelas',
-                'totalTab' => $totalKelasSaya,
-                'totalTab1' => $totalKelasProdi,
-                'totalTab2' => $totalKelas,
-                'totalTab3' => $totalWajib,
-                'totalTab4' => $totalPilihan,
-                'totalTab5' => $totalUni,
-                'tab1String' => 'kelas-prodi',
-                'tab2String' => 'kelas-all',
-                'tab3String' => 'kelas-wajib',
-                'tab4String' => 'kelas-pilihan',
-                'tab5String' => 'kelas-universitas',
-                'tabName' => 'Kelas Saya',
-                'tab1Name' => Auth::user()->prodi,
-                'tab2Name' => 'Semua Kelas',
-                'tab3Name' => 'Wajib',
-                'tab4Name' => 'Pilihan',
-                'tab5Name' => 'Universitas',
-            ])
-        @else
-            @include('livewire.global.search-and-filters.filter-mode', [
-                'filterByFunc' => 'filterByKelas',
-                'filterString' => 'filterKelas',
-                'totalTab' => $totalKelasProdi,
-                'totalTab1' => $totalKelas,
-                'totalTab2' => $totalWajib,
-                'totalTab3' => $totalPilihan,
-                'totalTab4' => $totalUni,
-                'tabHiddenString' => 'kelas-prodi',
-                'tab1String' => 'kelas-all',
-                'tab2String' => 'kelas-wajib',
-                'tab3String' => 'kelas-pilihan',
-                'tab4String' => 'kelas-universitas',
-                'tabName' => Auth::user()->prodi,
-                'tab1Name' => 'Semua Kelas',
-                'tab2Name' => 'Wajib',
-                'tab3Name' => 'Pilihan',
-                'tab4Name' => 'Universitas',
-            ])
-        @endif
+            @if (Auth::user()->dosen || Auth::user()->mahasiswa)
+                @include('livewire.global.search-and-filters.filter-mode', [
+                    'filterByFunc' => 'filterByKelas',
+                    'filterString' => 'filterKelas',
+                    'totalTab' => $totalKelasSaya,
+                    'totalTab1' => $totalKelasProdi,
+                    'totalTab2' => $totalKelas,
+                    'totalTab3' => $totalWajib,
+                    'totalTab4' => $totalPilihan,
+                    'totalTab5' => $totalUni,
+                    'tab1String' => 'kelas-prodi',
+                    'tab2String' => 'kelas-all',
+                    'tab3String' => 'kelas-wajib',
+                    'tab4String' => 'kelas-pilihan',
+                    'tab5String' => 'kelas-universitas',
+                    'tabName' => 'Kelas Saya',
+                    'tab1Name' => Auth::user()->prodi,
+                    'tab2Name' => 'Semua Kelas',
+                    'tab3Name' => 'Wajib',
+                    'tab4Name' => 'Pilihan',
+                    'tab5Name' => 'Universitas',
+                ])
+            @else
+                @include('livewire.global.search-and-filters.filter-mode', [
+                    'filterByFunc' => 'filterByKelas',
+                    'filterString' => 'filterKelas',
+                    'totalTab' => $totalKelasProdi,
+                    'totalTab1' => $totalKelas,
+                    'totalTab2' => $totalWajib,
+                    'totalTab3' => $totalPilihan,
+                    'totalTab4' => $totalUni,
+                    'tabHiddenString' => 'kelas-prodi',
+                    'tab1String' => 'kelas-all',
+                    'tab2String' => 'kelas-wajib',
+                    'tab3String' => 'kelas-pilihan',
+                    'tab4String' => 'kelas-universitas',
+                    'tabName' => Auth::user()->prodi,
+                    'tab1Name' => 'Semua Kelas',
+                    'tab2Name' => 'Wajib',
+                    'tab3Name' => 'Pilihan',
+                    'tab4Name' => 'Universitas',
+                ])
+            @endif
         </div>
         <div class="shrink-0">
             @include('livewire.global.search-and-filters.page-control', [
@@ -73,6 +73,9 @@
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Kelas...',
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
             ])
         </div>
 
@@ -113,6 +116,10 @@
                 class="col-start-1 row-start-1">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Kelas...',
+                    'searchMode' => $searchMode,
+                    'defaultLive' => 1,
+                    'searchValues' => ['simple', 'full'],
+                    'searchOptions' => ['Cari Kode Jadwal Kelas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>

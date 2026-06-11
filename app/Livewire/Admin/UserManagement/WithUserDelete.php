@@ -53,6 +53,7 @@ trait WithUserDelete
 
             if ($this->isPermanentDelete) {
                 $this->checkUserSafety($user);
+
                 $type = 'permanent';
                 $user->forceDelete();
             } else {

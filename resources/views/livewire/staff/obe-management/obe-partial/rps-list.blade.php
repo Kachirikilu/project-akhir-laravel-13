@@ -16,8 +16,8 @@
 
             {{-- HEADER --}}
             <div class="flex items-center gap-3">
-                <div class="p-2 bg-emerald-600 rounded-lg shadow-sm shadow-emerald-200">
-                    <flux:icon.clipboard-document-list variant="solid" class="size-4 text-emerald-300" />
+                <div class="p-2 bg-green-600 rounded-lg shadow-sm shadow-green-200">
+                    <flux:icon.clipboard-document-list variant="solid" class="size-4 text-green-300" />
                 </div>
                 <div>
                     <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">RPS Terhubung</h3>
@@ -63,14 +63,14 @@
                             <div wire:key="rps-row-{{ $r['id'] }}-{{ $nameXString }}" x-data="{ expanded: false }"
                                 wire:loading.class="opacity-50 pointer-events-none"
                                 wire:target="{{ $wireLoading ?? 'edit' . $nameXString }}, loadingRPSList"
-                                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:border-emerald-300 dark:hover:border-emerald-800 transition-all">
+                                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:border-green-300 dark:hover:border-green-800 transition-all">
 
                                 {{-- HEADER ITEM (clickable) --}}
                                 <div x-on:click="expanded = !expanded"
-                                    class="p-3 cursor-pointer flex items-center gap-3 border-l-4 border-l-emerald-600 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10">
+                                    class="p-3 cursor-pointer flex items-center gap-3 border-l-4 border-l-green-600 hover:bg-green-50/30 dark:hover:bg-green-900/10">
 
                                     <span
-                                        class="text-xs font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 flex-shrink-0">
+                                        class="text-xs font-bold px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex-shrink-0">
                                         ID{{ $r['id'] }}
                                     </span>
 
@@ -79,7 +79,7 @@
                                             <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200">
                                                 {{ $r['mk'] }}</p>
                                             <span
-                                                class="shrink-0 text-xs font-mono px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
+                                                class="shrink-0 text-xs font-mono px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                                                 {{ $r['kode'] }}
                                             </span>
                                         </div>
@@ -108,7 +108,7 @@
 
                                             <div>
                                                 <span
-                                                    class="text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">Deskripsi
+                                                    class="text-xs font-bold uppercase text-green-600 dark:text-green-400">Deskripsi
                                                     RPS:</span>
                                                 <p
                                                     class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mt-1">
@@ -120,26 +120,26 @@
                                                 class="grid grid-cols-2 gap-x-6 gap-y-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-700/50">
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.credit-card variant="micro"
-                                                        class="opacity-50 text-emerald-600 dark:text-emerald-400" />
+                                                        class="opacity-50 text-green-600 dark:text-green-400" />
                                                     <span class="text-xs text-zinc-500">Bobot: <b
                                                             class="text-zinc-700 dark:text-zinc-200">{{ $r['sks'] }} SKS - {{ $r['sks_text'] }}</b></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.shield-check variant="micro"
-                                                        class="opacity-50 text-emerald-600 dark:text-emerald-400" />
+                                                        class="opacity-50 text-green-600 dark:text-green-400" />
                                                     <span class="text-xs text-zinc-500">Status: <b
                                                             class="text-zinc-700 dark:text-zinc-200">{{ $r['wajib_text'] }}</b></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.academic-cap variant="micro"
-                                                        class="opacity-50 text-emerald-600 dark:text-emerald-400" />
+                                                        class="opacity-50 text-green-600 dark:text-green-400" />
                                                     <span class="text-xs text-zinc-500">CPMK: <b
                                                             class="text-zinc-700 dark:text-zinc-200">{{ $r['count_cpmk'] }}
                                                             Pokok</b></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.list-bullet variant="micro"
-                                                        class="opacity-50 text-emerald-600 dark:text-emerald-400" />
+                                                        class="opacity-50 text-green-600 dark:text-green-400" />
                                                     <span class="text-xs text-zinc-500">Sub-CPMK: <b
                                                             class="text-zinc-700 dark:text-zinc-200">{{ $r['count_scpmk'] }}
                                                             Items</b></span>
@@ -148,7 +148,7 @@
                                                     <div
                                                         class="flex items-center gap-2 px-2.5 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 shadow-sm">
                                                         <flux:icon.chart-pie variant="micro"
-                                                            class="text-emerald-600 dark:text-emerald-400" />
+                                                            class="text-green-600 dark:text-green-400" />
                                                         <span class="text-xs text-zinc-500">Total Akumulasi: <b
                                                                 class="text-zinc-800 dark:text-zinc-100">{{ $r['total_bobot'] }}%</b></span>
                                                     </div>
@@ -163,7 +163,7 @@
                                                     class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
                                                     @click="
                                                     $store.rps?.resetShow();
-                                                    $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                                                    $store.rps?.setColor('text-green-700 dark:text-green-400');
 
                                                         $store.rps?.setShowRPS(
                                                             '{{ $r['id'] }}',
@@ -210,7 +210,7 @@
                                                         $store.rps?.reset();
                                                         $store.rps?.setEdit(1);
                                                         $store.rps?.setFlyout(true);
-                                                        $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                                                        $store.rps?.setColor('text-green-700 dark:text-green-400');
                                                         $store.rps?.setValueRPS(
                                                             '{{ $r['kode_blok'] ?? '' }}',
                                                             '{{ $r['deskripsi'] ?? '' }}',

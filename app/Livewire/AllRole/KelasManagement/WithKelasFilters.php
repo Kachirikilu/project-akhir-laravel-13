@@ -39,11 +39,6 @@ trait WithKelasFilters
         $queryKelas = Kelas::query()
             ->with(['jadwals', 'rps_rel.mk_rel.prodis', 'rps_rel.mk_rel.prodis.dp_rel', 'rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
 
-        // $search = $this->search;
-        // if (! empty($search)) {
-        //     $queryKelas->searchKelas($search);
-        // }
-
         if (! empty($this->selectedPrId)) {
             $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
@@ -68,7 +63,13 @@ trait WithKelasFilters
             });
         }
 
-        // $this->sortFieldOrderKelas($queryKelas);
+        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            $search = $this->search;
+            if (! empty($search)) {
+                $queryKelas->searchKelas($search);
+            }
+            $this->sortFieldOrderKelas($queryKelas);
+        }
 
         return $queryKelas;
     }
@@ -155,64 +156,66 @@ trait WithKelasFilters
         $this->resetPage();
     }
 
-    // public function sortFieldOrderKelas($queryKelas)
-    // {
-    //     $queryKelas->select('kelas.*');
+    public function sortFieldOrderKelas($queryKelas)
+    {
+        $queryKelas->select('kelas.*');
 
-    //     return match ($this->sortField) {
-    //         'kode' => $queryKelas->orderBy('kelas.kode_kelas', $this->sortDirection),
-    //         'kode_rps' => $this->applyRPSKodeSort(
-    //             $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id'),
-    //             'rps'
-    //         ),
-    //         'kelas' => $queryKelas->orderBy('kelas.nama_kelas', $this->sortDirection),
-    //         'prodi' => $this->applyProdiSort(
-    //             $queryKelas->leftJoin('prodis', 'prodis.id', '=', 'kelas.pr_id'),
-    //             'prodis.strata',
-    //             'prodis.nama_pr'
-    //         ),
-    //         'hari_pelaksanaan' => $queryKelas->orderBy(
-    //             KelasJadwal::select('hari_pelaksanaan')->whereColumn('kelas_id', 'kelas.id')->orderBy('hari_pelaksanaan', $this->sortDirection)->limit(1),
-    //             $this->sortDirection
-    //         ),
-    //         'jam_pelaksanaan' => $queryKelas->orderBy(
-    //             KelasJadwal::select('jam_mulai')->whereColumn('kelas_id', 'kelas.id')->orderBy('jam_mulai', $this->sortDirection)->limit(1),
-    //             $this->sortDirection
-    //         ),
-    //         'kapasitas' => $queryKelas->orderBy(
-    //             KelasJadwal::selectRaw('SUM(kapasitas)')->whereColumn('kelas_id', 'kelas.id')->limit(1),
-    //             $this->sortDirection
-    //         ),
-    //         'tanggal_pelaksanaan' => $queryKelas->orderBy(
-    //             KelasJadwal::select('tanggal_mulai')->whereColumn('kelas_id', 'kelas.id')->orderBy('tanggal_mulai', $this->sortDirection)->limit(1),
-    //             $this->sortDirection
-    //         ),
+        return match ($this->sortField) {
+            'kode' => $queryKelas->orderBy('kelas.kode_kelas', $this->sortDirection),
+            'kode_rps' => $this->applyRPSKodeSort(
+                $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id'),
+                'rps'
+            ),
+            'kelas' => $queryKelas->orderBy('kelas.nama_kelas', $this->sortDirection),
+            'prodi' => $this->applyProdiSort(
+                $queryKelas->leftJoin('prodis', 'prodis.id', '=', 'kelas.pr_id'),
+                'prodis.strata',
+                'prodis.nama_pr'
+            ),
+            'hari_pelaksanaan' => $queryKelas->orderBy(
+                KelasJadwal::select('hari_pelaksanaan')->whereColumn('kelas_id', 'kelas.id')->orderBy('hari_pelaksanaan', $this->sortDirection)->limit(1),
+                $this->sortDirection
+            ),
+            'jam_pelaksanaan' => $queryKelas->orderBy(
+                KelasJadwal::select('jam_mulai')->whereColumn('kelas_id', 'kelas.id')->orderBy('jam_mulai', $this->sortDirection)->limit(1),
+                $this->sortDirection
+            ),
+            'kapasitas' => $queryKelas->orderBy(
+                KelasJadwal::selectRaw('COUNT(mahasiswa_kelas.mahasiswa_id)')
+                    ->join('mahasiswa_kelas', 'mahasiswa_kelas.kj_id', '=', 'kelas_jadwals.id')
+                    ->whereColumn('kelas_jadwals.kelas_id', 'kelas.id'),
+                $this->sortDirection
+            ),
+            'tanggal_pelaksanaan' => $queryKelas->orderBy(
+                KelasJadwal::select('tanggal_mulai')->whereColumn('kelas_id', 'kelas.id')->orderBy('tanggal_mulai', $this->sortDirection)->limit(1),
+                $this->sortDirection
+            ),
 
-    //         'kode_mk' => $this->applyMKKodeSort(
-    //             $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //                 ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id'),
-    //             'mata_kuliahs.id'
-    //         ),
-    //         'mk' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //             ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-    //             ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
-    //         'semester' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //             ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-    //             ->orderBy('mata_kuliahs.semester', $this->sortDirection),
-    //         'sks' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //             ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-    //             ->orderBy('mata_kuliahs.sks_kuliah', $this->sortDirection),
-    //         'sks_text' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //             ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-    //             ->orderBy('mata_kuliahs.tipe_sks', $this->sortDirection),
-    //         'is_wajib' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
-    //             ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-    //             ->orderBy('mata_kuliahs.is_wajib', $this->sortDirection),
+            'kode_mk' => $this->applyMKKodeSort(
+                $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                    ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id'),
+                'mata_kuliahs.id'
+            ),
+            'mk' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
+            'semester' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->orderBy('mata_kuliahs.semester', $this->sortDirection),
+            'sks' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->orderBy('mata_kuliahs.sks_kuliah', $this->sortDirection),
+            'sks_text' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->orderBy('mata_kuliahs.tipe_sks', $this->sortDirection),
+            'is_wajib' => $queryKelas->leftJoin('rps', 'rps.id', '=', 'kelas.rps_id')
+                ->leftJoin('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->orderBy('mata_kuliahs.is_wajib', $this->sortDirection),
 
-    //         'created_at' => $queryKelas->orderBy('kelas.created_at', $this->sortDirection),
-    //         'updated_at' => $queryKelas->orderBy('kelas.updated_at', $this->sortDirection),
+            'created_at' => $queryKelas->orderBy('kelas.created_at', $this->sortDirection),
+            'updated_at' => $queryKelas->orderBy('kelas.updated_at', $this->sortDirection),
 
-    //         default => $queryKelas->orderBy('kelas.id', $this->sortDirection),
-    //     };
-    // }
+            default => $queryKelas->orderBy('kelas.id', $this->sortDirection),
+        };
+    }
 }

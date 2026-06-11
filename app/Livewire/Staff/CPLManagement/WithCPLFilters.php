@@ -13,19 +13,18 @@ trait WithCPLFilters
 
     public function inputCPLSearch()
     {
-        $queryCPL = CPL::query()->with(['rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis.dp_rel.fk_rel',
+        $queryCPL = CPL::query()->with([
+            // 'rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis.dp_rel.fk_rel',
+            'prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel',
             'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
         if ($this->switchTable === 'cpl') {
-            // $search = $this->search;
-            // if (! empty($search)) {
-            //     $queryCPL->searchCPL($search);
-            // }
-
             if (! empty($this->selectedPrId)) {
                 $queryCPL->where(function ($q) {
-                    $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
-                        ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
+                    $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
+                        ->orWhereRelation('prodis', 'prodis.id', $this->selectedPrId);
+                    // $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
+                    //     ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
                 });
             }
             // if (! empty($this->selectedDpId)) {
@@ -48,15 +47,22 @@ trait WithCPLFilters
             // }
             if (! empty($this->selectedRPSId)) {
                 $queryCPL->where(function ($q) {
-                    $q->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId))
-                        ->orWhereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+                    // $q->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId))
+                    //     ->orWhereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+                    $q->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
                 });
             }
             if (! empty($this->selectedCPMKId)) {
                 $queryCPL->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId);
             }
 
-            // $this->sortFieldOrderCPL($queryCPL);
+            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+                $search = $this->search;
+                if (! empty($search)) {
+                    $queryCPL->searchCPL($search);
+                }
+                $this->sortFieldOrderCPL($queryCPL);
+            }
         }
 
         return $queryCPL;
@@ -82,20 +88,21 @@ trait WithCPLFilters
         $this->resetPage();
     }
 
-    // public function sortFieldOrderCPL($queryCPL)
-    // {
-    //     $queryCPL->select('cpls.*');
+    public function sortFieldOrderCPL($queryCPL)
+    {
+        $queryCPL->select('cpls.*');
 
-    //     return match ($this->sortField) {
-    //         'kode' => $queryCPL->orderBy('kode_cpl', $this->sortDirection),
+        return match ($this->sortField) {
+            // 'kode' => $queryCPL->orderBy('kode_cpl', $this->sortDirection),
+            'kode' => $this->applyCPLKodeSort($queryCPL),
 
-    //         'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
-    //         'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
-    //         'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
+            'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
+            'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
 
-    //         default => $queryCPL->orderBy('id', $this->sortDirection),
-    //     };
+            default => $queryCPL->orderBy('id', $this->sortDirection),
+        };
 
-    //     return $queryCPL;
-    // }
+        return $queryCPL;
+    }
 }

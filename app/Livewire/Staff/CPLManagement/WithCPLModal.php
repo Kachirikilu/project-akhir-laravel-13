@@ -87,7 +87,7 @@ trait WithCPLModal
         try {
             // 1. Load data CPL dengan relasi yang sangat lengkap
             $cpl = CPL::with([
-                'rps',
+                // 'rps',
                 'cpmks.rps',
             ])->findOrFail($id);
 
@@ -120,10 +120,10 @@ trait WithCPLModal
         }
 
         $rpsQuery = RPS::query()
-            ->whereHas('cpls', function ($query) use ($cpl) {
-                $query->where('cpls.id', $cpl->id);
-            })
-            ->orWhereHas('cpmks', function ($query) use ($cpl) {
+            // ->whereHas('cpls', function ($query) use ($cpl) {
+            //     $query->where('cpls.id', $cpl->id);
+            // })
+            ->whereHas('cpmks', function ($query) use ($cpl) {
                 $query->whereHas('cpls', function ($inner) use ($cpl) {
                     $inner->where('cpls.id', $cpl->id);
                 });

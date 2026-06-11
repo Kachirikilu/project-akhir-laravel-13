@@ -75,8 +75,8 @@ trait WithDepartemenSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->dp_name)) {
             $this->dpSearchResults = $this->mapDpSearch(
-                // $this->dpQuery()->searchDepartemen($search)->limit(12)->get()
-                $this->searchOutputPr($this->dpQuery(), $search, 12)
+                $this->dpQuery()->searchDepartemen($search)->limit(12)->get()
+                // $this->searchOutputPr($this->dpQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->dp_name) {
             $this->dpSearchResults = $this->getDpbyUser('search');
@@ -138,8 +138,8 @@ trait WithDepartemenSearchFilters
         $query = $this->dpQuery()->select('departemens.*');
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchDepartemen($value)->limit(12)->get();
-            $results = $this->searchOutputPr($query, $value, 12);
+            $results = $query->searchDepartemen($value)->limit(12)->get();
+            // $results = $this->searchOutputPr($query, $value, 12);
 
             $this->dpResults = $this->mapDp($results);
 

@@ -27,7 +27,7 @@
 
             @include('livewire.staff.obe-management.obe-partial.cpl-list')
 
-            @if ($this->showRPSModal)
+            {{-- @if ($this->showRPSModal)
                 @include('livewire.global.modal-form.input-array.search-input-array-form', [
                     'alpine' => 'rps',
                     'xResults' => $cplResults['rps'] ?? [],
@@ -53,7 +53,7 @@
                 
                     'isRequired' => 0,
                 ])
-            @endif
+            @endif --}}
 
         </div>
 

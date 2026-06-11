@@ -36,13 +36,13 @@ return new class extends Migration
         });
 
         // RPS - CPL
-        Schema::create('rps_pivot_cpl', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
-            $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
+        // Schema::create('rps_pivot_cpl', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
+        //     $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
+        //     $table->integer('sort_order')->default(0);
+        //     $table->timestamps();
+        // });
 
         Schema::create('dosen_pivot_scpmk', function (Blueprint $table) {
             $table->id();
@@ -107,7 +107,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('rps_pivot_ref');
-        Schema::dropIfExists('rps_pivot_cpl');
+        // Schema::dropIfExists('rps_pivot_cpl');
         Schema::dropIfExists('rps_pivot_dosen');
         Schema::dropIfExists('rps_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_scpmk');

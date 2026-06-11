@@ -10,7 +10,7 @@
 
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="academic-cap" color="amber" size="lg">
+                <flux:badge icon="academic-cap" color="violet" size="lg">
                     <span
                         x-text="$store.cpmk?.isEdit ? 'Edit OBE - Capaian Pembelajaran Mata Kuliah' : 'Tambah OBE - Capaian Pembelajaran Mata Kuliah'"></span>
                 </flux:badge>

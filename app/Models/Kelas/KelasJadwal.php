@@ -305,97 +305,60 @@ class KelasJadwal extends Model
         });
     }
 
-    // public function scopeSearchKelasJadwal($query, $search)
-    // {
-    //     if (blank($search)) {
-    //         return $query;
-    //     }
-    //     $searchTerm = '%'.$search.'%';
-    //     $searchLower = strtolower($search);
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+    public function scopeSearchKelasJadwal($query, $search)
+    {
+        if (blank(trim($search))) {
+            return $query;
+        }
 
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+        $search = trim($search);
+        $searchTerm = '%'.$search.'%';
+        $searchLower = '%'.strtolower($search).'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-    //         // ID exact
-    //         if (is_numeric($search)) {
-    //             $q->orWhere('id', $search);
-    //         }
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+            $q->where(function ($jq) use ($searchClean) {
+                preg_match('/^([A-Za-z]+\-?\d+)(?:\-?([A-Za-z]))?(?:\-?([A-Za-z]{0,3}))?(?:\-?(\d{0,4}))?$/i', $searchClean, $matches);
+                $kodeKelas = $matches[1] ?? null;
+                $label = $matches[2] ?? null;
+                $wilayah = $matches[3] ?? null;
+                $tahun = $matches[4] ?? null;
 
-    //         // Password
-    //         $q->orWhere('password', 'LIKE', $searchTerm)
-    //             ->orWhere('label_kelas', 'LIKE', $searchTerm)
-    //             ->orWhere('kode_wilayah', 'LIKE', $searchTerm)
-    //             ->orWhereRaw(
-    //                 "CONCAT(label_kelas, ' ', kode_wilayah) LIKE ?",
-    //                 [$searchTerm]
-    //             )
-    //             ->orWhere('hari_pelaksanaan', 'LIKE', $searchTerm)
-    //             ->orWhereHas('kelas_rel', function ($rq) use ($search, $searchClean) {
-    //                 $rq->searchKelas($search);
-    //             })
+                if ($kodeKelas) {
+                    $kodeClean = preg_replace('/[^A-Za-z0-9]/', '', $kodeKelas);
+                    $jq->whereHas('kelas_rel', function ($rq) use ($kodeClean, $searchClean) {
+                        $rq->whereRaw("REPLACE(kode_kelas, '-', '') LIKE ?", ['%'.$kodeClean.'%'])
+                            ->orWhere('kode_kelas', 'LIKE', $searchClean);
+                    });
+                }
+                if ($label) {
+                    $jq->where('label_kelas', 'LIKE', "%{$label}%");
+                }
+                if ($wilayah) {
+                    $jq->where('kode_wilayah', 'LIKE', "%{$wilayah}%");
+                }
+                if ($tahun) {
+                    if (strlen($tahun) >= 4) {
+                        $tahun = substr($tahun, -2);
+                    }
+                    $jq->whereRaw('RIGHT(YEAR(tanggal_mulai), 2) LIKE ?', ["%{$tahun}%"]);
+                }
+                $jq->orWhereRaw("REPLACE(CONCAT(label_kelas, kode_wilayah, RIGHT(YEAR(tanggal_mulai), 2)), '-', '') LIKE ?", ['%'.$searchClean.'%']);
+            })
+                // ->orWhere('password', 'LIKE', $searchTerm)
+                ->orWhere('label_kelas', 'LIKE', $searchTerm)
+                ->orWhere('kode_wilayah', 'LIKE', $searchTerm)
+                ->orWhereRaw("CONCAT(label_kelas, ' ', kode_wilayah) LIKE ?", [$searchTerm])
+                ->orWhere('hari_pelaksanaan', 'LIKE', $searchTerm);
 
-    //         // Kapasitas
-    //             ->orWhereRaw(
-    //                 'CAST(kapasitas AS CHAR) LIKE ?',
-    //                 [$searchTerm]
-    //             )
-
-    //         // Jam mulai
-    //             ->orWhereRaw(
-    //                 "TIME_FORMAT(jam_mulai, '%H:%i') LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //         // Jam berakhir
-    //             ->orWhereRaw(
-    //                 "TIME_FORMAT(jam_berakhir, '%H:%i') LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //         // Gabungan jam: "08:00 - 10:30"
-    //             ->orWhereRaw(
-    //                 "CONCAT(
-    //             TIME_FORMAT(jam_mulai, '%H:%i'),
-    //             ' - ',
-    //             TIME_FORMAT(jam_berakhir, '%H:%i')
-    //         ) LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //         // Tanggal mulai
-    //             ->orWhereRaw(
-    //                 "DATE_FORMAT(tanggal_mulai, '%d/%m/%Y') LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //         // Tanggal berakhir
-    //             ->orWhereRaw(
-    //                 "DATE_FORMAT(tanggal_berakhir, '%d/%m/%Y') LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //         // Gabungan tanggal
-    //             ->orWhereRaw(
-    //                 "CONCAT(
-    //             DATE_FORMAT(tanggal_mulai, '%d/%m/%Y'),
-    //             ' - ',
-    //             DATE_FORMAT(tanggal_berakhir, '%d/%m/%Y')
-    //         ) LIKE ?",
-    //                 [$searchTerm]
-    //             )
-
-    //             ->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-    //                 $dq->whereRaw("DATE_FORMAT(kelas_jadwals.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("DATE_FORMAT(kelas_jadwals.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                     ->orWhereRaw("DATE_FORMAT(kelas_jadwals.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("DATE_FORMAT(kelas_jadwals.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-    //             });
-    //     });
-    // }
+            if (Auth::user()->admin || Auth::user()->dosen) {
+                $q->orWhere('kelas_jadwals.password', $search);
+            }
+            if (is_numeric($search)) {
+                $q->orWhere('kelas_jadwals.id', $search);
+            }
+        });
+    }
 
     // public function scopeWhereKode($query, string $kode)
     // {

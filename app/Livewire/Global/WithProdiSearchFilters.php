@@ -3,7 +3,6 @@
 namespace App\Livewire\Global;
 
 use App\Models\ProgramStudi\Prodi;
-use App\Livewire\Global\LogicSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -74,8 +73,8 @@ trait WithProdiSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->pr_name)) {
             $this->prSearchResults = $this->mapPr(
-                // $this->prQuery()->searchProdi($search)->limit(12)->get()
-                $this->searchOutputPr($this->prQuery(), $search, 12)
+                $this->prQuery()->searchProdi($search)->limit(12)->get()
+                // $this->searchOutputPr($this->prQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->pr_name) {
             $this->prSearchResults = $this->getPrbyUser();
@@ -136,8 +135,8 @@ trait WithProdiSearchFilters
         }
 
         // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
-        // $results = $query->searchProdi($value)->limit(12)->get();
-        $results = $this->searchOutputPr($query, $value, 12);
+        $results = $query->searchProdi($value)->limit(12)->get();
+        // $results = $this->searchOutputPr($query, $value, 12);
         $this->prResults = $this->mapPr($results);
 
         // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
@@ -183,13 +182,21 @@ trait WithProdiSearchFilters
                 $this->pr_id = $exactMatch->id;
                 $this->pr_items = $this->itemsPr($exactMatch);
             } else {
+                $this->prNameSearch = '';
                 foreach ($matches as $match) {
                     if (! in_array($match->id, $this->pr_id_array)) {
                         $this->pr_id_array[] = $match->id;
                         $this->pr_items_array[] = $this->itemsPr($match);
                     }
                 }
-                $this->prNameSearch = '';
+                $this->pr_id_array = collect($this->pr_id_array)
+                    ->unique()
+                    ->values()
+                    ->all();
+                $this->pr_items_array = collect($this->pr_items_array)
+                    ->unique('id')
+                    ->values()
+                    ->all();
             }
             $this->prResults = $this->getPrbyUser();
         }

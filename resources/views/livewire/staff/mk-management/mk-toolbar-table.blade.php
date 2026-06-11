@@ -34,7 +34,7 @@
                     '3': 'text-indigo-700 dark:text-indigo-400',
                     '4': 'text-red-700 dark:text-red-400'
                 };
-                $store.mk?.setColor(colors[type] ?? 'text-gray-700');
+                $store.mk?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
                     $store.mk?.setValueMK(
                         '{{ $mk->level_mk ?? '' }}',
@@ -93,7 +93,7 @@
         @else
             {{-- Tombol Restore --}}
             <flux:menu.item wire:click="{{ $restoreCall }}"
-                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">

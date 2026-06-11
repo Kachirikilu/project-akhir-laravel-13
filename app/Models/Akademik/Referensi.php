@@ -71,6 +71,33 @@ class Referensi extends Model
                     ->withPivot('sort_order');
     }
 
+    
+    public function scopeSearchRef($query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchTerm = '%'.$search.'%';
+        $searchLower = '%'.strtolower($search).'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+            $q->where('referensis.kode_ref', 'like', $searchTerm)
+                    ->orWhere('referensis.kode_ref', 'like', $searchClean)
+                    ->orWhere('referensis.judul', 'like', $searchTerm)
+                    ->orWhere('referensis.penulis', 'like', $searchTerm)
+                    ->orWhere('referensis.penerbit', 'like', $searchTerm)
+                    ->orWhere('referensis.tahun', 'like', $searchTerm)
+                    ->orWhere('referensis.link', 'like', $searchTerm);
+
+                if (is_numeric($searchTerm)) {
+                    $q->orWhere('referensis.id', 'like', $search);
+                }
+        });
+    }
+
     // public function scopeSearchRef($query, $search)
     // {
     //     if (empty(trim($search))) {
@@ -109,7 +136,6 @@ class Referensi extends Model
     //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
     //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
     //             });
-    //             ;
     //     });
     // }
 }

@@ -119,6 +119,46 @@ class CPMK extends Model
             ->withPivot('sort_order');
     }
 
+    public function scopeSearchCPMK($query, $search, $withBobot = false)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchTerm = '%'.$search.'%';
+        $searchLower = strtolower($search);
+        $searchLikeLower = '%'.$searchLower.'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLikeLower, $searchClean, $withBobot) {
+
+            if ($withBobot == false) {
+                // --- 1. PENCARIAN TEKS DASAR ---
+                $q->where('cpmks.kode_cpmk', 'like', $searchTerm)
+                    ->orWhere('cpmks.kode_cpmk', 'like', $searchClean)
+                    ->orWhere('cpmks.deskripsi', 'like', $searchTerm);
+
+                if (is_numeric($search)) {
+                    $q->orWhere('cpmks.id', 'like', $search);
+                }
+            } else {
+                // --- 4. PENCARIAN TOTAL BOBOT (Langsung dari CPMK) ---
+                if (preg_match('/(\d+)\s*(|%|pers|bob|tot)/i', $search, $matches)) {
+                    $weight = $matches[1];
+                    $q->orWhereExists(function ($sq) use ($weight) {
+                        $sq->select(DB::raw(1))
+                            ->from('cpmk_pivot_scpmk')
+                            ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
+                            ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id')
+                            ->groupBy('cpmk_pivot_scpmk.cpmk_id')
+                            ->havingRaw('SUM(sub_cpmks.bobot) = ?', [$weight]);
+                    });
+                }
+            }
+        });
+    }
+
     // public function scopeSearchCPMK($query, $search, $withBobot = false)
     // {
     //     if (empty(trim($search))) {

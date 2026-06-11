@@ -3,8 +3,6 @@
 namespace App\Livewire\Global;
 
 use App\Models\Auth\Mahasiswa;
-use App\Livewire\Global\LogicSearch;
-use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -98,8 +96,8 @@ trait WithMahasiswaSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->mahasiswa_name)) {
             $this->mahasiswaSearchResults = $this->mapMahasiswaSearch(
-                // $this->mahasiswaQuery()->searchMahasiswa($search)->limit(12)->get()
-                $this->searchOutputMahasiswa($this->mahasiswaQuery(), $search, 12)
+                $this->mahasiswaQuery()->searchMahasiswa($search)->limit(12)->get()
+                // $this->searchOutputMahasiswa($this->mahasiswaQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->mahasiswa_name) {
             $this->mahasiswaSearchResults = $this->getMahasiswabyUser('search');
@@ -186,7 +184,8 @@ trait WithMahasiswaSearchFilters
         }
 
         $query = $this->mahasiswaQuery();
-        $results = $this->searchOutputMahasiswa($query, $value, 12);
+        // $results = $this->searchOutputMahasiswa($query, $value, 12);
+        $results = $query->searchMahasiswa($value)->limit(12)->get();
         $this->mahasiswaResults = $this->mapMahasiswa($results);
 
         // 2. Deteksi Pola Multi / Parameter Acak
@@ -292,11 +291,19 @@ trait WithMahasiswaSearchFilters
                 $this->mahasiswa_id = $exactMatch->id;
                 $this->mahasiswa_items = $this->itemsMahasiswa($exactMatch);
             } else {
+                $this->mahasiswaNameSearch = '';
                 if (! in_array($exactMatch->id, $this->mahasiswa_id_array ?? [])) {
                     $this->mahasiswa_id_array[] = $exactMatch->id;
                     $this->mahasiswa_items_array[] = $this->itemsMahasiswa($exactMatch);
                 }
-                $this->mahasiswaNameSearch = '';
+                $this->mahasiswa_id_array = collect($this->mahasiswa_id_array)
+                    ->unique()
+                    ->values()
+                    ->all();
+                $this->mahasiswa_items_array = collect($this->mahasiswa_items_array)
+                    ->unique('id')
+                    ->values()
+                    ->all();
             }
             $this->mahasiswaResults = $this->getMahasiswabyUser();
         }
@@ -425,16 +432,29 @@ trait WithMahasiswaSearchFilters
                         $mahasiswa->status,
                         $searchLower
                     );
-                  
+
+                    $matchKampus = $this->containsStrict(
+                        'Kampus '.$mahasiswa->kode_wilayah,
+                        $searchLower
+                    ) || $this->containsStrict(
+                        'Kampus '.$mahasiswa->wilayah,
+                        $searchLower
+                    );
+
                     $matchNIM = $this->matchOnlyCount(
                         $mahasiswa->nim ?? null,
                         $searchLower, ['nim', 'id1', 'identity1']
+                    ) || $this->containsStrict(
+                        $mahasiswa->nim,
+                        $searchLower
                     );
                     $matchNIK = $this->matchOnlyCount(
                         $mahasiswa->nik,
                         $searchLower, ['nik']
+                    ) || $this->containsStrict(
+                        $mahasiswa->nik,
+                        $searchLower
                     );
-
 
                     $matchKodePr = $this->matchKode(
                         $mahasiswa->pr_rel->kode_pr,

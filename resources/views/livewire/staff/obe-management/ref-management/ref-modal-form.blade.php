@@ -9,7 +9,7 @@
 
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="clipboard-document-list" color="purple" size="lg">
+                <flux:badge icon="clipboard-document-list" color="orange" size="lg">
                     <span x-text="$store.ref?.isEdit ? 'Edit OBE - Referensi' : 'Tambah OBE - Referensi'"></span>
                 </flux:badge>
 

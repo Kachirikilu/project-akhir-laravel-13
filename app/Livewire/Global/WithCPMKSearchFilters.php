@@ -115,8 +115,8 @@ trait WithCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->cpmk_name)) {
             $this->cpmkSearchResults = $this->mapCPMKSearch(
-                // $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
-                $this->searchOutputCPMK($this->cpmkQuery(), $search, null, 12)
+                $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
+                // $this->searchOutputCPMK($this->cpmkQuery(), $search, null, 12)
             );
         } elseif (empty($search) || $this->cpmk_name) {
             $this->cpmkSearchResults = $this->getCPMKbyUser('search');
@@ -154,8 +154,8 @@ trait WithCPMKSearchFilters
         $query = $this->cpmkQuery();
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchCPMK($value)->limit(12)->get();
-            $results = $this->searchOutputCPMK($query, $value, null, 12);
+            $results = $query->searchCPMK($value)->limit(12)->get();
+            // $results = $this->searchOutputCPMK($query, $value, null, 12);
             $this->cpmkResults = $this->mapCPMK($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -186,6 +186,15 @@ trait WithCPMKSearchFilters
                     $this->cpmkNameSearch = '';
                     $this->cpmk_id_array[] = $exactMatch->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($exactMatch);
+
+                    $this->cpmk_id_array = collect($this->cpmk_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->cpmk_items_array = collect($this->cpmk_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $mappedResults = $this->mapCPMK(collect([$exactMatch]));
                 $this->pushToCPMKItems($mappedResults);

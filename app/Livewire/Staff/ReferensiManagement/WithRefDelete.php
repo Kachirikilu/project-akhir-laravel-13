@@ -34,8 +34,8 @@ trait WithRefDelete
         }
 
         $this->refIdToDelete = $id;
-        $this->refNamaToDelete = $ref->referensi;
-        $this->refKodeToDelete = $ref->id;
+        $this->refNamaToDelete = 'Referensi '.$ref->judul;
+        $this->refKodeToDelete = $ref->kode;
         $this->isPermanentDelete = $isTrashed;
         
         $this->showRefDelete = true;
@@ -62,6 +62,11 @@ trait WithRefDelete
                 $isConnected = RPS::whereHas('refs', function($q) use ($ref) {
                     $q->where('ref_id', $ref->id);
                 })->where('is_draf', 0)->exists();
+
+                $isConnected =
+                    $ref->rps()->where('is_draf', 0)->exists()
+                    || $ref->cpmks()->whereHas('rps', fn ($q) => $q->where('is_draf', 0))->exists()
+                    || $ref->scpmks()->whereHas('cpmks.rps', fn ($q) => $q->where('is_draf', 0))->exists();
 
                 if ($isConnected) {
                     throw new \Exception('Gagal hapus permanen: Referensi masih terhubung ke RPS yang sudah Aktif!');
@@ -101,7 +106,7 @@ trait WithRefDelete
             $ref = Referensi::withTrashed()->findOrFail($id);
             $ref->restore();
 
-            $this->toast(message: $ref->referensi, type: 'recycle');
+            $this->toast(message: 'Referensi '.$ref->judul, type: 'recycle');
             $this->dispatch('refresh-data-ref');
 
         } catch (\Exception $e) {

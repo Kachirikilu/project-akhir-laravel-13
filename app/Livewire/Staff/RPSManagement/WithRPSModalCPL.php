@@ -32,52 +32,14 @@ trait WithRPSModal
     public function updatedShowRPSModal($value)
     {
         if (! $value) {
-            if (!$this->isFlyoutRPS) {
-                $this->isFlyoutCPMK = false;
-                $this->isFlyoutSCPMK = false;
-                $this->isFlyoutCPL = false;
-                $this->isFlyoutRef = false;
-            }
-            if ($this->showCPMKModal == true && $this->isFlyoutRPS) {
-                $this->isFlyoutSCPMK = false;
-                $this->isFlyoutCPL = false;
-                $this->isFlyoutRef = false;
-            }
-            if ($this->showSCPMKModal == true && $this->isFlyoutRPS) {
-                $this->isFlyoutCPMK = false;
-                $this->isFlyoutCPL = false;
-                $this->isFlyoutRef = false;
-            }
-            if ($this->showCPLModal == true && $this->isFlyoutRPS) {
-                $this->isFlyoutSCPMK = false;
-                $this->isFlyoutCPL = false;
-                $this->isFlyoutRef = false;
-            }
-            if ($this->showRefModal == true && $this->isFlyoutRPS) {
-                $this->isFlyoutCPMK = false;
-                $this->isFlyoutSCPMK = false;
-                $this->isFlyoutCPL = false;
-            }
             $this->isFlyoutRPS = false;
             $this->isEditingRPS = false;
         } else {
             $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
-            if ($this->showCPMKModal == false) {
-                $this->isFlyoutCPMK = true;
-            }
-            if ($this->showSCPMKModal == false) {
-                $this->isFlyoutSCPMK = true;
-            }
-            if ($this->showCPLModal == false) {
-                $this->isFlyoutCPL = true;
-            }
-            if ($this->showRefModal == false) {
-                $this->isFlyoutRef = true;
-            }
         }
     }
 
-    public function addRPS($isFlyout = false, $key = 'rps')
+    public function addRPS($key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -90,8 +52,8 @@ trait WithRPSModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingRPS = false;
+        $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
         $this->showRPSModal = true;
-        $this->isFlyoutRPS = $isFlyout;
 
         $this->showEditRPS = false;
 
@@ -211,16 +173,11 @@ trait WithRPSModal
         $this->resetValidation();
 
         $mkId = $data['mk_id'] ?? null;
-
-        Validator::make(['mk_id' => $mkId], [
-            'mk_id' => 'required|exists:mata_kuliahs,id',
-        ], $this->validationMessagesRPS())->validate();
-
-        $mk = DB::table('mk')->where('id', $mkId ?? null)->first();
+        $mk = DB::table('mata_kuliahs')->where('id', $mkId ?? null)->first();
         $desMK = $mk?->deskripsi ?? '';
-        if (! str_ends_with($desMK, '.') && ! empty($desMK)) {
-            $desMK .= '.';
-        }
+
+        $desMK = $this->normalizeText($desMK);
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi']);
 
         if ($data['deskripsi'] == $desMK) {
             $data['deskripsi'] = '';
@@ -300,8 +257,9 @@ trait WithRPSModal
         }
 
         // --- RULES VALIDASI ---
+        // dd($data['akademik'], $data['akademik_1'], $data['akademik_2']);
         $rules = [
-            'deskripsi' => 'string|max:1000',
+            'deskripsi' => 'string|string|min:5|max:1000',
             'mk_id' => 'required|exists:mata_kuliahs,id',
             'akademik' => [
                 'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
@@ -429,7 +387,15 @@ trait WithRPSModal
 
             foreach ($validator->errors()->toArray() as $key => $messages) {
                 if (in_array($key, ['akademik', 'akademik_1', 'akademik_2'])) {
-                    if (! isset($formattedErrors['akademik'])) {
+                    $hasDuplicateError = false;
+                    foreach ($messages as $msg) {
+                        if (str_contains($msg, 'sudah ada')) {
+                            $formattedErrors['akademik'][] = $msg;
+                            $hasDuplicateError = true;
+                            break;
+                        }
+                    }
+                    if (! $hasDuplicateError && ! isset($formattedErrors['akademik'])) {
                         $formattedErrors['akademik'][] = $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama;
                     }
                 } else {
@@ -659,6 +625,10 @@ trait WithRPSModal
                 $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
 
+            $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
+            $kodeRPS = $data['digit_akademik'] ?? ($data['akademik_1'] ?? '');
+            $namaMK = data_get($this->mk_items, 'slot1', $this->mk_name);
+
             $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})", type: 'update');
             if (! empty($this->cpmk_rps_id)) {
                 $this->loadCPMKRPSPagination();
@@ -704,6 +674,8 @@ trait WithRPSModal
             'akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi RPS wajib diisi!',
+            'deskripsi.string' => 'Deskripsi RPS harus berupa text!',
+            'deskripsi.min' => 'Deskripsi RPS terlalu pendek (Minimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'is_draf.required' => 'Status RPS wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
@@ -771,6 +743,7 @@ trait WithRPSModal
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
         $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
 
+        $this->mkNameSearch = '';
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];

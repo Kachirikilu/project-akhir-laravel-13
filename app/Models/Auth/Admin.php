@@ -5,6 +5,7 @@ namespace App\Models\Auth;
 use App\Traits\ValidatesGlobalIdentity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\ProgramStudi\Prodi;
@@ -51,11 +52,12 @@ class Admin extends Model
         return Attribute::get(function () {
 
             if ($this->kode_wilayah == 'IDL') {
-                return 'Kampus Indralaya';
+                return 'Indralaya';
+            } elseif ($this->kode_wilayah == 'PLG') {
+                return 'Bukit';
             } else {
-                return 'Kampus Bukit';
+                return null;
             }
-
         });
     }
 

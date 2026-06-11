@@ -34,6 +34,8 @@ class JadwalManagement extends Component
 
     public $search = '';
 
+    public $searchMode = 'simple';
+
     public $isJadwalMhs = false;
 
     public $kode;
@@ -60,6 +62,7 @@ class JadwalManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 6],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
@@ -149,8 +152,11 @@ class JadwalManagement extends Component
             }
 
             // $jadwals = $queryJadwal->paginate($this->perPage);
-            $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-
+            if ($this->searchMode == 'full') {
+                $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+            } else {
+                $jadwals = $queryJadwal->paginate($this->perPage);
+            }
             if (Auth::user()->mahasiswa) {
                 $userId = Auth::id();
                 $jadwals->load('mahasiswas:id,user_id');

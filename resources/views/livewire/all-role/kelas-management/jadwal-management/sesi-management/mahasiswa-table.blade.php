@@ -51,7 +51,10 @@
             <div class="col-start-1 row-start-1 w-full">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mahasiswa Kelas...',
-                    'isLive' => 1,
+                    'defaultLive' => 1,
+                    'searchMode' => $searchMode,
+                    'searchValues' => ['simple', 'full'],
+                    'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Kompleks'],
                     'isBorder' => 2,
                 ])
             </div>
@@ -102,7 +105,7 @@
                     'sortFieldString' => 'angkatan',
                     'modelString' => 'searchAngkatan',
                     'resetXFilter' => 'resetInputAngkatan()',
-                    'wInput' => 15,
+                    'wInput' => 20,
                     'numberOnly' => 1,
                     'maxLength' => 4,
                     'placeholder' => 'Tahun',
@@ -111,6 +114,11 @@
                 ])
             @endif
 
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'kampus',
+                'rowSpan' => 2,
+                'isCenter' => 1,
+            ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'status',
                 'rowSpan' => 2,
@@ -339,6 +347,21 @@
 
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
+                    <button class="cursor-pointer focus:outline-none">
+                        @include('livewire.global.table.badge.kode-wilayah-badge', [
+                            'xValue' => $user->wilayah,
+                            'sortir' => $user->kode_wilayah,
+                        ])
+                    </button>
+
+                    @include('livewire.admin.user-management.user-toolbar-table', [
+                        'x' => $user,
+                        'nameXString' => 'Pengguna',
+                    ])
+                </flux:dropdown>
+            </td>
+            <td class="{{ $secondKolom }} text-center">
+                <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
@@ -370,7 +393,7 @@
 
     @empty
         <tr>
-            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '18' : '8' }}"
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '19' : '9' }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Mahasiswa Kelas ditemukan!
             </td>

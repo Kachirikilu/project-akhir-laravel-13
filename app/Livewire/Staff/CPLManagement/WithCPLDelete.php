@@ -34,7 +34,7 @@ trait WithCPLDelete
         }
 
         $this->cplIdToDelete = $id;
-        $this->cplNamaToDelete = $cpl->kode;
+        $this->cplNamaToDelete = 'CPL '.$cpl->kode;
         $this->cplKodeToDelete = $cpl->kode;
         $this->isPermanentDelete = $isTrashed;
         
@@ -59,9 +59,11 @@ trait WithCPLDelete
 
             if ($this->isPermanentDelete) {
                 // Safety Check: RPS is_draf = 0
-                $isConnected = RPS::whereHas('cpls', function($q) use ($cpl) {
-                    $q->where('cpl_id', $cpl->id);
-                })->where('is_draf', 0)->exists();
+                $isConnected = $cpl->cpmks()
+                    ->whereHas('rps', function ($q) {
+                        $q->where('is_draf', 0);
+                    })
+                    ->exists();
 
                 if ($isConnected) {
                     throw new \Exception('Gagal hapus permanen: CPL masih terhubung ke RPS yang sudah Aktif!');
@@ -102,7 +104,7 @@ trait WithCPLDelete
             $cpl = CPL::withTrashed()->findOrFail($id);
             $cpl->restore();
 
-            $this->toast(message: $cpl->kode, type: 'recycle');
+            $this->toast(message: 'CPL '.$cpl->kode, type: 'recycle');
             $this->dispatch('refresh-data-cpl');
 
         } catch (\Exception $e) {

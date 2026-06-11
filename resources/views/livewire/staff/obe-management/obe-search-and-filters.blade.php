@@ -79,6 +79,42 @@
             </div>
         </div>
 
+        <div x-show="activeTab == 'cpl'" x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
+            class="col-start-1 row-start-1 border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+            <div class="min-w-0 flex-1 overflow-hidden">
+                @include('livewire.global.search-and-filters.filter-mode', [
+                    'filterByFunc' => 'filterByCPL',
+                    'filterString' => 'filterCPL',
+                    'totalTab' => $totalCPL,
+                    'totalTab1' => $stats['cpl-month'],
+                    'totalTab2' => $stats['cpl-6-months'],
+                    'totalTab3' => $stats['cpl-year'],
+                    'totalTab4' => $stats['cpl-older-5'],
+                    'tab1String' => 'cpl-month',
+                    'tab2String' => 'cpl-6-months',
+                    'tab3String' => 'cpl-year',
+                    'tab4String' => 'cpl-older-5',
+                    'tabName' => 'Semua CPL',
+                    'tab1Name' => 'Terbaru',
+                    'tab2Name' => 'Semester Ini',
+                    'tab3Name' => 'Tahun Ini',
+                    'tab4Name' => '>5 Tahun Lalu',
+                ])
+            </div>
+            <div class="shrink-0">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
+                    'key' => 'page-control-cpl',
+                    'autoSmall' => 'lg',
+                ])
+            </div>
+        </div>
+
         <div x-show="activeTab == 'cpmk'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -151,43 +187,6 @@
             </div>
         </div>
 
-
-        <div x-show="activeTab == 'cpl'" x-transition:enter="transition ease-out duration-1000"
-            x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
-            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-            x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-            class="col-start-1 row-start-1 border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
-            <div class="min-w-0 flex-1 overflow-hidden">
-                @include('livewire.global.search-and-filters.filter-mode', [
-                    'filterByFunc' => 'filterByCPL',
-                    'filterString' => 'filterCPL',
-                    'totalTab' => $totalCPL,
-                    'totalTab1' => $stats['cpl-month'],
-                    'totalTab2' => $stats['cpl-6-months'],
-                    'totalTab3' => $stats['cpl-year'],
-                    'totalTab4' => $stats['cpl-older-5'],
-                    'tab1String' => 'cpl-month',
-                    'tab2String' => 'cpl-6-months',
-                    'tab3String' => 'cpl-year',
-                    'tab4String' => 'cpl-older-5',
-                    'tabName' => 'Semua CPL',
-                    'tab1Name' => 'Terbaru',
-                    'tab2Name' => 'Semester Ini',
-                    'tab3Name' => 'Tahun Ini',
-                    'tab4Name' => '>5 Tahun Lalu',
-                ])
-            </div>
-            <div class="shrink-0">
-                @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
-                    'key' => 'page-control-cpl',
-                    'autoSmall' => 'lg',
-                ])
-            </div>
-        </div>
-
         <div x-show="activeTab == 'referensi'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -247,7 +246,8 @@
                 items-end">
 
             {{-- filter-mode 1 --}}
-            <div class="col-span-2 lg:col-span-1 min-w-0 overflow-hidden border-[var(--border-table-color)] sm:border-b">
+            <div
+                class="col-span-2 lg:col-span-1 min-w-0 overflow-hidden border-[var(--border-table-color)] sm:border-b">
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByDosen',
                     'filterString' => 'filterDosen',
@@ -289,7 +289,7 @@
                     'autoSmall' => 'lg',
                     'withBValue' => 4,
                     'autoTSmall' => 3,
-                    'autoBSmall' => 3
+                    'autoBSmall' => 3,
                 ])
             </div>
 
@@ -306,12 +306,18 @@
 
         <div x-show="activeTab == 'dosen' && activeFilterDosen == ''" class="sm:col-span-7 w-full">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
+                'placeholder' => 'Cari Nama, atau ID Dosen...',
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Identitas Dosen', 'Pencarian Kompleks'],
             ])
         </div>
         <div x-show="activeTab !== 'dosen' || activeFilterDosen !== ''" class="sm:col-span-4 w-full">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
+                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, & Referensi,...',
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
             ])
         </div>
 

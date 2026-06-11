@@ -10,13 +10,13 @@ use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
-use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\CPLManagement\WithCPLDelete;
 use App\Livewire\Staff\CPLManagement\WithCPLFilters;
 use App\Livewire\Staff\CPLManagement\WithCPLModal;
@@ -59,7 +59,6 @@ class RpsManagement extends Component
     use WithDepartemenSearchFilters;
     use WithDosenFilters;
     use WithDosenSearchFilters;
-    use WithUserSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKSearchFilters;
     use WithOBEExcel;
@@ -80,12 +79,15 @@ class RpsManagement extends Component
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
+    use WithUserSearchFilters;
 
     public $switchTable = 'rps';
 
     public $perPage = 8;
 
     public $search = '';
+
+    public $searchMode = 'simple';
 
     public $showDeleted = false;
 
@@ -97,6 +99,7 @@ class RpsManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         // 'switchTable' => ['except' => 'rps'],
         'filterRPS' => ['except' => ''],
@@ -114,18 +117,18 @@ class RpsManagement extends Component
     public function mount($switchTable = 'rps')
     {
         $this->switchTable = $switchTable;
-        $this->cplNameSearch = [
-            'rps' => '',
-            'cpmk' => '',
-        ];
-        $this->cpl_id_array = [
-            'rps' => [],
-            'cpmk' => [],
-        ];
-        $this->cpl_items_array = [
-            'rps' => [],
-            'cpmk' => [],
-        ];
+        // $this->cplNameSearch = [
+        //     // 'rps' => '',
+        //     'cpmk' => '',
+        // ];
+        // $this->cpl_id_array = [
+        //     // 'rps' => [],
+        //     'cpmk' => [],
+        // ];
+        // $this->cpl_items_array = [
+        //     // 'rps' => [],
+        //     'cpmk' => [],
+        // ];
 
         $this->refNameSearch = [
             'rps' => '',
@@ -184,9 +187,9 @@ class RpsManagement extends Component
     {
         $columns = [
             'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'kode_mk', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
+            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
-            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
             'dosen' => [1 => 'id', 2 => 'kode', 3 => 'identity1', 4 => 'identity2', 5 => 'identity3', 6 => 'role', 7 => 'prodi', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
         ];
@@ -219,9 +222,9 @@ class RpsManagement extends Component
 
         $allFilters = [
             'rps' => 'filterRPS',
+            'cpl' => 'filterCPL',
             'cpmk' => 'filterCPMK',
             'sub-cpmk' => 'filterSCPMK',
-            'cpl' => 'filterCPL',
             'referensi' => 'filterRef',
             'dosen' => 'filterDosen',
             'status' => 'filterStatus',
@@ -252,8 +255,7 @@ class RpsManagement extends Component
         // } else {
         //     $targetPath = '/obe-management/'.$table;
         // }
-        $targetPath = '/obe-management' . ($table ? '/' . $table : '');
-
+        $targetPath = '/obe-management'.($table ? '/'.$table : '');
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -271,9 +273,9 @@ class RpsManagement extends Component
         $this->inputPrFilter();
         $this->inputMKFilter();
         $this->inputRPSFilter();
+        $this->inputCPLFilter();
         $this->inputCPMKFilter();
         $this->inputSCPMKFilter();
-        $this->inputCPLFilter();
         $this->inputDosenFilter();
         $this->inputFkFilter();
 
@@ -286,31 +288,31 @@ class RpsManagement extends Component
             // QUERY BASE
             // =========================
             $queryRPS = $this->inputRPSSearch();
+            $queryCPL = $this->inputCPLSearch();
             $queryCPMK = $this->inputCPMKSearch();
             $querySCPMK = $this->inputSCPMKSearch();
-            $queryCPL = $this->inputCPLSearch();
             $queryRef = $this->inputRefSearch();
             $queryUser = $this->inputUserSearch('dosen');
 
             $countRPS = RPS::query();
+            $countCPL = CPL::query();
             $countCPMK = CPMK::query();
             $countSCPMK = SubCPMK::query();
-            $countCPL = CPL::query();
             $countRef = Referensi::query();
             $countDosen = User::whereHas('dosen');
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryRPS->onlyTrashed();
+                $queryCPL->onlyTrashed();
                 $queryCPMK->onlyTrashed();
                 $querySCPMK->onlyTrashed();
-                $queryCPL->onlyTrashed();
                 $queryRef->onlyTrashed();
                 $queryUser->onlyTrashed();
 
                 $countRPS->onlyTrashed();
+                $countCPL->onlyTrashed();
                 $countCPMK->onlyTrashed();
                 $countSCPMK->onlyTrashed();
-                $countCPL->onlyTrashed();
                 $countRef->onlyTrashed();
                 $countDosen->onlyTrashed();
             }
@@ -330,9 +332,9 @@ class RpsManagement extends Component
             // =========================
             $data = [
                 'rps' => collect(),
+                'cpl' => collect(),
                 'cpmk' => collect(),
                 'scpmk' => collect(),
-                'cpl' => collect(),
                 'ref' => collect(),
             ];
 
@@ -341,34 +343,66 @@ class RpsManagement extends Component
             switch ($this->switchTable) {
                 case 'rps':
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
-                    $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);
-                    // $data['rps'] = $queryRPS->paginate($this->perPage);
-                    break;
-                case 'cpmk':
-                    $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['cpmk'] = $this->searchOutputCPMK($queryCPMK, $this->search, $this->searchBobotCPMK, $this->perPage, $this->sortField, $this->sortDirection);
-                    // $data['cpmk'] = $queryCPMK->paginate($this->perPage);
-                    break;
-                case 'sub-cpmk':
-                    $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['scpmk'] = $this->searchOutputSCPMK($querySCPMK, $this->search, $this->searchBobotSCPMK, $this->perPage, $this->sortField, $this->sortDirection);
-                    // $data['scpmk'] = $querySCPMK->paginate($this->perPage);
                     break;
                 case 'cpl':
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                    $data['cpl'] = $this->searchOutputCPL($queryCPL, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-                    // $data['cpl'] = $queryCPL->paginate($this->perPage);
+                    break;
+                case 'cpmk':
+                    $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
+                    break;
+                case 'sub-cpmk':
+                    $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'referensi':
                     $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
-                    $data['ref'] = $this->searchOutputRef($queryRef, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-                    // $data['ref'] = $queryRef->paginate($this->perPage);
                     break;
                 case 'dosen':
                     $this->buttonUserFilter($queryUser);
-                    $users = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection, null, 1);
-                    // $users = $queryUser->paginate($this->perPage);
                     break;
+            }
+
+            if ($this->searchMode == 'full') {
+                switch ($this->switchTable) {
+                    case 'rps':
+                        $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
+                    case 'cpl':
+                        $data['cpl'] = $this->searchOutputCPL($queryCPL, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
+                    case 'cpmk':
+                        $data['cpmk'] = $this->searchOutputCPMK($queryCPMK, $this->search, $this->searchBobotCPMK, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
+                    case 'sub-cpmk':
+                        $data['scpmk'] = $this->searchOutputSCPMK($querySCPMK, $this->search, $this->searchBobotSCPMK, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
+                    case 'referensi':
+                        $data['ref'] = $this->searchOutputRef($queryRef, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
+                    case 'dosen':
+                        $users = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection, null, 1);
+                        break;
+                }
+            } else {
+                switch ($this->switchTable) {
+                    case 'rps':
+                        $data['rps'] = $queryRPS->paginate($this->perPage);
+                        break;
+                    case 'cpl':
+                        $data['cpl'] = $queryCPL->paginate($this->perPage);
+                        break;
+                    case 'cpmk':
+                        $data['cpmk'] = $queryCPMK->paginate($this->perPage);
+                        break;
+                    case 'sub-cpmk':
+                        $data['scpmk'] = $querySCPMK->paginate($this->perPage);
+                        break;
+                    case 'referensi':
+                        $data['ref'] = $queryRef->paginate($this->perPage);
+                        break;
+                    case 'dosen':
+                        $users = $queryUser->paginate($this->perPage);
+                        break;
+                }
             }
 
             if (Auth::user()->dosen) {
@@ -385,6 +419,11 @@ class RpsManagement extends Component
                 'rps-draf' => '📝',
                 'rps-older-5' => '⏳',
 
+                                'cpl-month' => '🎯',
+                'cpl-6-months' => '⏱️',
+                'cpl-year' => '📆',
+                'cpl-older-5' => '⏳',
+
                 'cpmk-month' => '🧩',
                 'cpmk-6-months' => '⏱️',
                 'cpmk-year' => '📆',
@@ -394,11 +433,6 @@ class RpsManagement extends Component
                 'scpmk-6-months' => '⏱️',
                 'scpmk-year' => '📆',
                 'scpmk-older-5' => '⏳',
-
-                'cpl-month' => '🎯',
-                'cpl-6-months' => '⏱️',
-                'cpl-year' => '📆',
-                'cpl-older-5' => '⏳',
 
                 'ref-year' => '📚',
                 'ref-2-3-years' => '2️⃣',
@@ -446,6 +480,25 @@ class RpsManagement extends Component
                         ->count();
                     break;
 
+                case 'cpl':
+                    $stats['cpl-month'] = (clone $countCPL)
+                        ->whereMonth('created_at', $now->month)
+                        ->whereYear('created_at', $currentYear)
+                        ->count();
+
+                    $stats['cpl-6-months'] = (clone $countCPL)
+                        ->where('created_at', '>=', $sixMonthsAgo)
+                        ->count();
+
+                    $stats['cpl-year'] = (clone $countCPL)
+                        ->whereYear('created_at', $currentYear)
+                        ->count();
+
+                    $stats['cpl-older-5'] = (clone $countCPL)
+                        ->where('created_at', '<', $fiveYearsAgo)
+                        ->count();
+                    break;
+
                 case 'cpmk':
                     $stats['cpmk-month'] = (clone $countCPMK)
                         ->whereMonth('created_at', $now->month)
@@ -480,25 +533,6 @@ class RpsManagement extends Component
                         ->count();
 
                     $stats['scpmk-older-5'] = (clone $countSCPMK)
-                        ->where('created_at', '<', $fiveYearsAgo)
-                        ->count();
-                    break;
-
-                case 'cpl':
-                    $stats['cpl-month'] = (clone $countCPL)
-                        ->whereMonth('created_at', $now->month)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpl-6-months'] = (clone $countCPL)
-                        ->where('created_at', '>=', $sixMonthsAgo)
-                        ->count();
-
-                    $stats['cpl-year'] = (clone $countCPL)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpl-older-5'] = (clone $countCPL)
                         ->where('created_at', '<', $fiveYearsAgo)
                         ->count();
                     break;
@@ -565,15 +599,15 @@ class RpsManagement extends Component
                 'users' => $users,
                 'totalRPSSaya' => $totalRPSSaya ?? 0,
                 'totalRPS' => RPS::count(),
+                'totalCPL' => CPL::count(),
                 'totalCPMK' => CPMK::count(),
                 'totalSCPMK' => SubCPMK::count(),
-                'totalCPL' => CPL::count(),
                 'totalRef' => Referensi::count(),
                 'totalDosen' => Dosen::count(),
 
+                'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
                 'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
-                'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
                 'dosen_rps_modal_paginator' => $this->dosen_rps_modal_paginator,
 
@@ -586,24 +620,24 @@ class RpsManagement extends Component
 
             return view('livewire.staff.rps-management', [
                 'rps' => RPS::whereRaw('1=0')->paginate($this->perPage),
+                'cpl' => CPL::whereRaw('1=0')->paginate($this->perPage),
                 'cpmk' => CPMK::whereRaw('1=0')->paginate($this->perPage),
                 'scpmk' => SubCPMK::whereRaw('1=0')->paginate($this->perPage),
-                'cpl' => CPL::whereRaw('1=0')->paginate($this->perPage),
                 'ref' => Referensi::whereRaw('1=0')->paginate($this->perPage),
             ], [
                 'users' => User::whereRaw('1=0')->whereHas('dosen')->paginate($this->perPage),
                 'totalRPSSaya' => '-',
                 'totalRPS' => '-',
+                'totalCPL' => '-',
                 'totalCPMK' => '-',
                 'totalSCPMK' => '-',
-                'totalCPL' => '-',
                 'totalRef' => '-',
                 'totalDosenProdi' => '-',
                 'totalDosen' => '-',
 
+                'cpl_rps_modal_paginator' => collect(),
                 'cpmk_rps_modal_paginator' => collect(),
                 'scpmk_rps_modal_paginator' => collect(),
-                'cpl_rps_modal_paginator' => collect(),
                 'ref_rps_modal_paginator' => collect(),
                 'dosen_rps_modal_paginator' => collect(),
 
@@ -615,6 +649,11 @@ class RpsManagement extends Component
                     'rps-draf' => '-',
                     'rps-older-5' => '-',
 
+                    'cpl-month' => '-',
+                    'cpl-6-months' => '-',
+                    'cpl-year' => '-',
+                    'cpl-older-5' => '-',
+
                     'cpmk-month' => '-',
                     'cpmk-6-months' => '-',
                     'cpmk-year' => '-',
@@ -624,11 +663,6 @@ class RpsManagement extends Component
                     'scpmk-6-months' => '-',
                     'scpmk-year' => '-',
                     'scpmk-older-5' => '-',
-
-                    'cpl-month' => '-',
-                    'cpl-6-months' => '-',
-                    'cpl-year' => '-',
-                    'cpl-older-5' => '-',
 
                     'ref-year' => '-',
                     'ref-2-3-years' => '-',

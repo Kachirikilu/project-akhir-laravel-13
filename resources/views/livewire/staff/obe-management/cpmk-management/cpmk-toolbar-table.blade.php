@@ -7,11 +7,11 @@
 
                 $store.cpmk?.setEdit(1);
 
-                $store.cpmk?.setColor('text-amber-700 dark:text-amber-400');
+                $store.cpmk?.setColor('text-violet-700 dark:text-violet-400');
 
                 $store.cpmk?.setValueCPMK(
                     '{{ $x->kode_cpmk ?? '' }}',
-                    '{{ $x->deskripsi ?? '' }}',
+                    '{{ $x->deskripsi_cpl ?? '' }}',
                 );
 
                 $flux.modal('cpmk-modal').show();
@@ -33,7 +33,7 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
                         $store.cpmk?.setDeleteCPMK(
-                            '{{ $x->deskripsi ?? '' }}',
+                            '{{ $x->deskripsi_cpl ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             {{ $isTrashed ? 1 : 0 }}
                         );
@@ -52,7 +52,7 @@
     @else
         {{-- Tombol Restore --}}
         <flux:menu.item wire:click="{{ $restoreCall }}"
-            class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
             <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -68,7 +68,7 @@
         <flux:menu.item
             @click="
                         $store.cpmk?.setDeleteCPMK(
-                            '{{ $x->deskripsi ?? '' }}',
+                            '{{ $x->deskripsi_cpl ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             {{ $isTrashed ? 1 : 0 }}
                         );

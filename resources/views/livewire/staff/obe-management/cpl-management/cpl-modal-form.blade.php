@@ -11,7 +11,7 @@
 
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="clipboard-document-list" color="red" size="lg">
+                <flux:badge icon="clipboard-document-list" color="sky" size="lg">
                     <span
                         x-text="$store.cpl?.isEdit ? 'Edit OBE - Capaian Pembelajaran Lulusan' : 'Tambah OBE - Capaian Pembelajaran Lulusan'"></span>
                 </flux:badge>

@@ -3,7 +3,7 @@
 namespace App\Livewire\Staff\CPMKManagement;
 
 use App\Models\Akademik\CPMK;
-// use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithCPMKFilters
@@ -30,13 +30,6 @@ trait WithCPMKFilters
         $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
 
         if ($this->switchTable === 'cpmk') {
-            // $search = $this->search;
-            // if (! empty($search)) {
-            //     $queryCPMK->searchCPMK($search);
-            // }
-            // if (! empty($this->searchBobotCPMK)) {
-            //     $queryCPMK->searchCPMK($this->searchBobotCPMK, true);
-            // }
 
             if (! empty($this->selectedPrId)) {
                 $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
@@ -57,7 +50,16 @@ trait WithCPMKFilters
                 $queryCPMK->whereHas('cpls', fn ($q) => $q->where('cpls.id', $this->selectedCPLId));
             }
 
-            // $this->sortFieldOrderCPMK($queryCPMK);
+            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+                $search = $this->search;
+                if (! empty($search)) {
+                    $queryCPMK->searchCPMK($search);
+                }
+                if (! empty($this->searchBobotCPMK)) {
+                    $queryCPMK->searchCPMK($this->searchBobotCPMK, true);
+                }
+                $this->sortFieldOrderCPMK($queryCPMK);
+            }
 
         }
 
@@ -86,41 +88,41 @@ trait WithCPMKFilters
         $this->resetPage();
     }
 
-    // public function sortFieldOrderCPMK($queryCPMK)
-    // {
-    //     $queryCPMK->select('cpmks.*');
+    public function sortFieldOrderCPMK($queryCPMK)
+    {
+        $queryCPMK->select('cpmks.*');
 
-    //     return match ($this->sortField) {
-    //         'kode' => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
-    //         'deskripsi' => $queryCPMK->orderBy(
-    //             DB::table('cpls')
-    //                 ->selectRaw("COALESCE(cpmks.deskripsi, GROUP_CONCAT(cpls.deskripsi SEPARATOR ' '))")
-    //                 ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
-    //                 ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
-    //             $this->sortDirection
-    //         ),
+        return match ($this->sortField) {
+            'kode' => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
+            'deskripsi' => $queryCPMK->orderBy(
+                DB::table('cpls')
+                    ->selectRaw("COALESCE(cpmks.deskripsi, GROUP_CONCAT(cpls.deskripsi SEPARATOR ' '))")
+                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
+                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
 
-    //         'count_scpmk' => $queryCPMK->orderBy(
-    //             DB::table('cpmk_pivot_scpmk')
-    //                 ->selectRaw('count(*)')
-    //                 ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
-    //             $this->sortDirection
-    //         ),
+            'count_scpmk' => $queryCPMK->orderBy(
+                DB::table('cpmk_pivot_scpmk')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
 
-    //         'total_bobot' => $queryCPMK->orderBy(
-    //             DB::table('cpmk_pivot_scpmk')
-    //                 ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
-    //                 ->selectRaw('sum(sub_cpmks.bobot)')
-    //                 ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
-    //             $this->sortDirection
-    //         ),
+            'total_bobot' => $queryCPMK->orderBy(
+                DB::table('cpmk_pivot_scpmk')
+                    ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
+                    ->selectRaw('sum(sub_cpmks.bobot)')
+                    ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
 
-    //         'created_at' => $queryCPMK->orderBy('created_at', $this->sortDirection),
-    //         'updated_at' => $queryCPMK->orderBy('updated_at', $this->sortDirection),
+            'created_at' => $queryCPMK->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryCPMK->orderBy('updated_at', $this->sortDirection),
 
-    //         default => $queryCPMK->orderBy('id', $this->sortDirection),
-    //     };
+            default => $queryCPMK->orderBy('id', $this->sortDirection),
+        };
 
-    //     return $queryCPMK;
-    // }
+        return $queryCPMK;
+    }
 }

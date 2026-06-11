@@ -2,6 +2,7 @@
 
 namespace App\Models\ProgramStudi;
 
+use App\Models\Akademik\CPL;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -31,6 +32,16 @@ class Prodi extends Model
     public function dp_rel()
     {
         return $this->belongsTo(Departemen::class, 'dp_id')->withTrashed();
+    }
+
+    public function cpls()
+    {
+        return $this->belongsToMany(
+            CPL::class,
+            'prodi_pivot_cpl',
+            'pr_id',
+            'cpl_id'
+        )->withPivot('sort_order');
     }
 
     public function mata_kuliahs()
@@ -218,6 +229,49 @@ class Prodi extends Model
         });
     }
 
+    public function scopeSearchProdi(Builder $query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm) {
+            // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
+            $q->where('prodis.nama_pr', 'like', $searchTerm)
+                ->orWhere('prodis.kode_pr', 'like', $searchTerm);
+
+            if (is_numeric($search)) {
+                $q->orWhere('prodis.id', 'like', $search);
+            }
+
+            // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
+            $q->orWhereRaw("
+                CONCAT(
+                    CASE 
+                        WHEN strata = 'Sarjana' THEN 'S1' 
+                        WHEN strata = 'Magister' THEN 'S2' 
+                        WHEN strata = 'Doktor' THEN 'S3' 
+                        ELSE strata 
+                    END, 
+                    ' ', 
+                    nama_pr
+                ) LIKE ?", [$searchTerm])
+                ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+
+            // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
+            $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+                $j->withTrashed()->where(function ($sq) use ($searchTerm) {
+                    $sq->where('nama_dp', 'like', $searchTerm)
+                        ->orWhere('kode_dp', 'like', $searchTerm);
+                });
+            });
+        });
+    }
+
     // public function scopeSearchProdi(Builder $query, $search)
     // {
     //     if (empty(trim($search))) {
@@ -240,13 +294,13 @@ class Prodi extends Model
     //         // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
     //         $q->orWhereRaw("
     //             CONCAT(
-    //                 CASE 
-    //                     WHEN strata = 'Sarjana' THEN 'S1' 
-    //                     WHEN strata = 'Magister' THEN 'S2' 
-    //                     WHEN strata = 'Doktor' THEN 'S3' 
-    //                     ELSE strata 
-    //                 END, 
-    //                 ' ', 
+    //                 CASE
+    //                     WHEN strata = 'Sarjana' THEN 'S1'
+    //                     WHEN strata = 'Magister' THEN 'S2'
+    //                     WHEN strata = 'Doktor' THEN 'S3'
+    //                     ELSE strata
+    //                 END,
+    //                 ' ',
     //                 nama_pr
     //             ) LIKE ?", [$searchTerm])
     //             ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);

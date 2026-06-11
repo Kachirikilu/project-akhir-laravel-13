@@ -59,17 +59,17 @@ trait WithCPMKModal
         $this->showCPMKModal = true;
         $this->showEditCPMK = false;
 
-        $this->cplNameSearch['cpmk'] = '';
+        // $this->cplNameSearch['cpmk'] = '';
         $this->refNameSearch['cpmk'] = '';
 
-        $this->cpl_id_array[$key] = [];
-        $this->cpl_items_array[$key] = [];
+        // $this->cpl_id_array[$key] = [];
+        // $this->cpl_items_array[$key] = [];
 
         $this->ref_id_array[$key] = [];
         $this->ref_items_array[$key] = [];
 
         $this->updatedSCPMKNameSearch($this->scpmkNameSearch);
-        $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+        $this->updatedCPLNameSearch($this->cplNameSearch);
         $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
     }
 
@@ -108,16 +108,13 @@ trait WithCPMKModal
                 return ['scpmk' => [collect($this->mapSCPMK(collect([$s])))->first()]];
             })->toArray();
 
-            $this->cpl_id_array = array_merge(
-                array_map(fn () => [], $this->cpl_id_array),
-                [$key => $cpmk->cpls->pluck('id')->toArray()]
-            );
-            $this->cpl_items_array = array_merge(
-                array_map(fn () => [], $this->cpl_items_array),
-                [$key => $cpmk->cpls->map(function ($c) {
-                    return $this->itemsCPL($c);
-                })->toArray()]
-            );
+            $this->cpl_id_array = collect($this->cpl_id_array)
+                ->merge($cpmk->cpls->pluck('id'))->unique()->values()->all();
+
+            $this->cpl_items_array = collect($this->cpl_items_array)
+                ->merge(
+                    $cpmk->cpls->map(fn ($c) => $this->itemsCPL($c))
+                )->unique('id')->values()->all();
 
             $this->ref_id_array = array_merge(
                 array_map(fn () => [], $this->ref_id_array),
@@ -130,8 +127,8 @@ trait WithCPMKModal
                 })->toArray()]
             );
 
-            $this->updatedSCPMKNameSearch($this->cpmkNameSearch);
-            $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+            $this->updatedSCPMKNameSearch($this->scpmkNameSearch);
+            $this->updatedCPLNameSearch($this->cplNameSearch);
             $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
 
             $this->cpmk_rps_id = $cpmk->id;
@@ -191,7 +188,7 @@ trait WithCPMKModal
         }
 
         $combinedCPLText = '';
-        $cplIds = $data['cpl_id_array']['cpmk'] ?? ($data['cpl_id_array'] ?? []);
+        $cplIds = $data['cpl_id_array'] ?? ($data['cpl_id_array'] ?? []);
 
         if (! empty($cplIds)) {
             $cplDescriptions = DB::table('cpls')
@@ -279,7 +276,8 @@ trait WithCPMKModal
         }
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
-        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
+        // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
 
         try {
@@ -349,7 +347,8 @@ trait WithCPMKModal
         }
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
-        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
+        // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
 
         try {
@@ -550,15 +549,19 @@ trait WithCPMKModal
     private function resetInputCPMK()
     {
         $this->scpmkNameSearch = '';
-        $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
+        $this->cplNameSearch = '';
+        // $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
         $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
 
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
         $this->scpmk_sub_items_array = [];
 
-        $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
-        $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
+        $this->cpl_id_array = [];
+        $this->cpl_items_array = [];
+
+        // $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
+        // $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
         $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
         $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);

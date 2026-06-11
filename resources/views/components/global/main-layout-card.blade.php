@@ -5,7 +5,7 @@
                 filterByStatus, filterByStrata, filterByMK,
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
                 filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
-                showDeleted,
+                showDeleted, searchMode,
                 saveUserExcel, procesImportUserExcel,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
@@ -28,6 +28,7 @@
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
                 searchBobotRPS, resetInputBobotRPS,
                 searchBobotCPMK, resetInputBobotCPMK,
+                searchBobotSCPMK, resetInputBobotSCPMK,
                 perPage, loadingTable, sortBy
                 {{-- gotoPage, previousPage, nextPage, page --}}
             ",

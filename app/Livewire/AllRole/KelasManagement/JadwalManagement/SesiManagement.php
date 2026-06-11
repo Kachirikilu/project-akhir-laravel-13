@@ -7,9 +7,9 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithAbs
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
-use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
@@ -24,7 +24,6 @@ class SesiManagement extends Component
 {
     use WithAbsenModal;
     use WithJadwalModal;
-    use WithUserSearchFilters;
     use WithKelasSesiSearchFilters;
     use WithMahasiswaSearchFilters;
     use WithNilaiExcel;
@@ -33,8 +32,11 @@ class SesiManagement extends Component
     use WithSesiFilters;
     use WithSesiModal;
     use WithUserFilters;
+    use WithUserSearchFilters;
 
     public $search = '';
+
+    public $searchMode = 'simple';
 
     public $isJadwalMhs = false;
 
@@ -70,6 +72,7 @@ class SesiManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'sortField' => ['except' => 'pertemuan_ke'],
         // 'switchTable' => ['except' => 'sesi-card'],
@@ -301,7 +304,7 @@ class SesiManagement extends Component
 
                 return Carbon::parse($sesi->tanggal.' '.$jamAkhir)
                     ->lt(now());
-                })->pluck('id')->all();
+            })->pluck('id')->all();
 
             $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)->select('users.*');
 
@@ -504,13 +507,18 @@ class SesiManagement extends Component
                     $sesis = $querySesi->get();
                     break;
                 case 'sesi-table':
-                    // $sesis = $this->searchOutputSesi($querySesi, $idJadwal);
+                    // if ($this->searchMode == 'full') {
                     $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
+                    // } else {
+                    //     $sesis = $querySesi->paginate($this->perPage);
+                    // }
                     break;
                 case 'mahasiswa':
-                    // $users = $queryUser->paginate($this->perPage);
-                    // $users = $this->searchOutputUser($queryUser, $idJadwal);
-                    $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
+                    if ($this->searchMode == 'full') {
+                        $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
+                    } else {
+                        $users = $queryUser->paginate($this->perPage);
+                    }
                     break;
             }
 

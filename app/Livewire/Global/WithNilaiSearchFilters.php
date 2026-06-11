@@ -189,42 +189,6 @@ trait WithNilaiSearchFilters
         }
     }
 
-    // public function updatedNilaiNameSearch($value, $key = 'default')
-    // {
-    //     // Pastikan index tersedia
-    //     $this->nilai_id[$key] = null;
-    //     $this->nilai_items[$key] = null;
-    //     $this->resetErrorBag(['nilai_id.' . $key, 'nilaiNameSearch.' . $key]);
-
-    //     $query = $this->nilaiQuery();
-
-    //     if (trim(strlen($value)) > 0) {
-    //         $results = $query->searchNilai($value)->limit(12)->get();
-    //         $this->nilaiResults[$key] = $this->mapNilai($results);
-
-    //         // Cek Exact Match (Opsional)
-    //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-    //         $exactMatch = $results->first(function ($nilai) use ($value, $normalizedValue) {
-    //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($nilai->kode));
-    //             return strtolower($nilai->deskripsi) === strtolower($value)
-    //                 || $normalizedMkKode === $normalizedValue;
-    //         });
-
-    //         if ($exactMatch) {
-    //             $currentMode = $this->modeNilai[$key] ?? 'array';
-    //             if ($currentMode == 'single') {
-    //                 $this->selectNilai($exactMatch->id, $exactMatch->deskripsi, $key);
-    //             } else {
-    //                 $this->selectNilaiArray($exactMatch->id, $key);
-    //                 $this->nilaiNameSearch[$key] = ''; // Kosongkan search setelah add
-    //             }
-    //             $this->nilaiResults[$key] = $this->getNilaibyUser();
-    //         }
-    //     } else {
-    //         $this->nilaiResults[$key] = $this->getNilaibyUser();
-    //     }
-    // }
-
     public function getNilaibyUser($mode = 'full')
     {
         $user = Auth::user();

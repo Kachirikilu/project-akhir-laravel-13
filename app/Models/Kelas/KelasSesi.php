@@ -461,6 +461,62 @@ class KelasSesi extends Model
         });
     }
 
+    public function scopeSearchKelasSesi($query, $search)
+    {
+        if (blank(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchTerm = "%{$search}%";
+        $searchLower = '%'.strtolower($search).'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+            // 1. Pertemuan & ID Sesi
+            if (preg_match('/(?:p|per|pertemuan)\s*(\d+)/i', $searchClean, $match)) {
+                $q->orWhere('kelas_sesi.pertemuan_ke', $match[1]);
+            } elseif (is_numeric($search)) {
+                $q->orWhere('kelas_sesi.pertemuan_ke', $search)
+                    ->orWhere('kelas_sesi.id', $search);
+            }
+
+            // // 2. Tanggal & Hari Pelaksanaan
+            // $q->orWhereRaw("CASE WEEKDAY(kelas_sesi.tanggal)
+            //     WHEN 0 THEN 'senin' WHEN 1 THEN 'selasa' WHEN 2 THEN 'rabu'
+            //     WHEN 3 THEN 'kamis' WHEN 4 THEN 'jumat' WHEN 5 THEN 'sabtu'
+            //     WHEN 6 THEN 'minggu' END LIKE ?", [$searchLower])
+            //     ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%d/%m/%Y') LIKE ?", [$searchTerm])
+            //     ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%Y-%m-%d') LIKE ?", [$searchTerm]);
+
+            // // 3. Jam Pelaksanaan (Override vs Jadwal Induk)
+            // $q->orWhere(function ($jq) use ($searchTerm) {
+            //     $timeQuery = function ($oq) use ($searchTerm) {
+            //         $oq->whereRaw("TIME_FORMAT(jam_mulai, '%H:%i') LIKE ?", [$searchTerm])
+            //             ->orWhereRaw("TIME_FORMAT(jam_berakhir, '%H:%i') LIKE ?", [$searchTerm])
+            //             ->orWhereRaw("CONCAT(TIME_FORMAT(jam_mulai, '%H:%i'), ' - ', TIME_FORMAT(jam_berakhir, '%H:%i')) LIKE ?", [$searchTerm]);
+            //     };
+            //     $jq->whereHas('override', $timeQuery)->orWhereHas('jadwal_rel', $timeQuery);
+            // });
+
+            // 4. Struktur Kelas (Jadwal, Relasi Kelas, Kode Wilayah, Label)
+            $q->orWhereHas('jadwal_rel', function ($jq) use ($searchClean, $searchTerm) {
+                $jq->where(function ($inner) use ($searchClean) {
+                    $inner->whereHas('kelas_rel', function ($rq) use ($searchClean) {
+                        $rq->whereRaw("REPLACE(kode_kelas, '-', '') LIKE ?", ["%{$searchClean}%"])
+                            ->orWhere('kode_kelas', 'LIKE', $searchClean);
+                    })
+                        ->orWhere('label_kelas', 'LIKE', "%{$searchClean}%")
+                        ->orWhere('kode_wilayah', 'LIKE', "%{$searchClean}%")
+                        ->orWhereRaw("REPLACE(CONCAT(label_kelas, kode_wilayah, RIGHT(YEAR(tanggal_mulai), 2)), '-', '') LIKE ?", ["%{$searchClean}%"]);
+                })
+                    ->orWhere('password', 'LIKE', $searchTerm)
+                    ->orWhere('label_kelas', 'LIKE', $searchTerm)
+                    ->orWhere('kode_wilayah', 'LIKE', $searchTerm)
+                    ->orWhereRaw("CONCAT(label_kelas, ' ', kode_wilayah) LIKE ?", [$searchTerm]);
+            });
+        });
+    }
     // public function scopeSearchKelasSesi($query, $search)
     // {
     //     if (blank(trim($search))) {

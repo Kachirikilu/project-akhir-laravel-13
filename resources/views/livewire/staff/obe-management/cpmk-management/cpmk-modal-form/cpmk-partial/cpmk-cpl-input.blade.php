@@ -28,19 +28,18 @@
 
             @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'cpmk',
-                'xResults' => $cplResults['cpmk'] ?? [],
+                'xResults' => $cplResults,
                 'selectX' => 'selectCPLArray',
-                'modelString' => 'nama_cpl_search_cpmk',
-                'key' => 'cpmk',
+                'modelString' => 'nama_cpl_search',
             
-                'idString' => 'cpl_id_array.cpmk',
+                'idString' => 'cpl_id_array',
                 'id2String' => 'cpl_id_array',
-                'itemsAllString' => 'cpl_items_array.cpmk',
+                'itemsAllString' => 'cpl_items_array',
             
                 'typeXString' => 'deskripsi',
             
                 'nameXString' => 'Capaian Pembelajaran Lulusan',
-                'nameSearchString' => 'cplNameSearch.cpmk',
+                'nameSearchString' => 'cplNameSearch',
                 'fetchString' => 'fetchCPL',
                 'iconString' => 'document-text',
             
@@ -65,7 +64,7 @@
                 'modelString' => 'deskripsi',
                 'iconString' => 'academic-cap',
                 'placeholder' => 'Kosongkan jika ingin sama persis dengan CPL...',
-                'parentIdString' => 'cpl_id_array.cpmk',
+                'parentIdString' => 'cpl_id_array',
                 'nameXParent' => 'CPL',
                 'isRequired' => 0,
                 'message' => $errors->first('deskripsi'),

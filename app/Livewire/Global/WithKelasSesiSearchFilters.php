@@ -75,24 +75,6 @@ trait WithKelasSesiSearchFilters
         ];
     }
 
-    public function getSesiIdArrayForKey(string $key = 'default'): array
-    {
-        if (is_array($this->sesi_id_array) && array_key_exists($key, $this->sesi_id_array) && is_array($this->sesi_id_array[$key])) {
-            return $this->sesi_id_array[$key];
-        }
-
-        return [];
-    }
-
-    public function getSesiNameSearchForKey(string $key = 'default'): string
-    {
-        if (is_array($this->sesiNameSearch) && array_key_exists($key, $this->sesiNameSearch)) {
-            return is_string($this->sesiNameSearch[$key]) ? $this->sesiNameSearch[$key] : '';
-        }
-
-        return '';
-    }
-
     public function inputSesiFilter()
     {
         $search = trim($this->sesiSearchQuery);
@@ -100,8 +82,8 @@ trait WithKelasSesiSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->sesi_name)) {
             $this->sesiSearchResults = $this->mapSesiSearch(
-                // $this->sesiQuery()->searchSesi($search)->limit(12)->get()
-                $this->searchOutputSesi($this->sesiQuery(), $search, 12)
+                $this->sesiQuery()->searchKelasSesi($search)->limit(12)->get()
+                // $this->searchOutputSesi($this->sesiQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->sesi_name) {
             $this->sesiSearchResults = $this->getSesibyUser('search');
@@ -130,106 +112,66 @@ trait WithKelasSesiSearchFilters
         }
     }
 
-    public function updatedSesiNameSearch($value, $name = null)
+    public function updatedSesiNameSearch($value)
     {
-        $key = 'default';
-
-        if (is_string($name) && str_contains($name, '.')) {
-            [, $key] = explode('.', $name, 2);
-        } elseif (is_string($name) && $name !== 'sesiNameSearch') {
-            $key = $name;
-        }
-
-        if (is_array($value)) {
-            $value = $value[$key] ?? '';
-        }
-
-        $this->sesi_id[$key] = null;
-        $this->sesi_items[$key] = null;
-        $this->resetErrorBag(['sesi_id.'.$key, 'sesiNameSearch.'.$key]);
+        $this->sesi_id = null;
+        $this->sesi_items = null;
+        $this->resetErrorBag(['sesi_id', 'sesiNameSearch']);
 
         $query = $this->sesiQuery();
 
-        if (trim(strlen((string) $value)) > 0) {
-            // $results = $query->searchSesi($value)->limit(12)->get();
-            $results = $this->searchOutputSesi($query, $value, 12);
-            $this->sesiResults[$key] = $this->mapSesi($results);
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchKelasSesi($value)->limit(12)->get();
+            // $results = $this->searchOutputSesi($query, $value, null, 12);
+            $this->sesiResults = $this->mapSesi($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($sesi) use ($value, $normalizedValue) {
-                $normalizedSesiKode = str_replace(['-', ' '], '', strtolower($sesi->kode));
+            $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
+                $normalizedSesiKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
                 return $normalizedSesiKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $currentMode = $this->modeSesi[$key] ?? 'array';
-                if ($currentMode == 'single') {
-                    $this->sesiNameSearch[$key] = $exactMatch->kode;
-                    $this->sesi_id[$key] = $exactMatch->id;
-                    $this->sesi_items[$key] = $this->itemsSesi($exactMatch);
-                    $this->sesiResults[$key] = [];
+                $this->sesi_id = $exactMatch->id;
+                $this->sesi_items = $this->itemsSesi($exactMatch);
+                $this->sesiNameSearch = $exactMatch->deskripsi;
+                $this->sesiResults = [];
+            }
+            if ($exactMatch) {
+                if ($this->modeSesi == 'single') {
+                    $this->sesiNameSearch = $exactMatch->deskripsi;
+                    $this->sesi_id = $exactMatch->id;
+                    $this->sesi_items = $this->itemsSesi($exactMatch);
+                    $this->sesiResults = [];
                 } else {
-                    $this->sesiNameSearch[$key] = '';
-                    if (! isset($this->sesi_id_array[$key])) {
-                        $this->sesi_id_array[$key] = [];
-                    }
-                    if (! isset($this->sesi_items_array[$key])) {
-                        $this->sesi_items_array[$key] = [];
-                    }
-                    if (! in_array($exactMatch->id, $this->sesi_id_array[$key])) {
-                        $this->sesi_id_array[$key][] = $exactMatch->id;
-                        $this->sesi_items_array[$key][] = $this->itemsSesi($exactMatch);
-                    }
+                    $this->sesiNameSearch = '';
+                    $this->sesi_id_array[] = $exactMatch->id;
+                    $this->sesi_items_array[] = $this->itemsSesi($exactMatch);
+                    $this->sesi_id_array = collect($this->sesi_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->sesi_items_array = collect($this->sesi_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
-                $this->sesiResults[$key] = $this->getSesibyUser();
+                $mappedResults = $this->mapSesi(collect([$exactMatch]));
+                $this->pushToSesiItems($mappedResults);
+                $this->sesiResults = $this->getSesibyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->sesiResults[$key] = $this->getSesibyUser();
+                $this->sesiResults = $this->getSesibyUser();
             } else {
-                $this->sesiResults[$key] = $this->mapSesi(
-                    $query->orderBy('sesis.id', 'desc')->limit(12)->get()
+                $this->sesiResults = $this->mapSesi(
+                    $query->orderBy('kelas_sesi.pertemuan_ke', 'desc')->limit(12)->get()
                 );
             }
         }
     }
 
-    // public function updatedSesiNameSearch($value, $key = 'default')
-    // {
-    //     // Pastikan index tersedia
-    //     $this->sesi_id[$key] = null;
-    //     $this->sesi_items[$key] = null;
-    //     $this->resetErrorBag(['sesi_id.' . $key, 'sesiNameSearch.' . $key]);
-
-    //     $query = $this->sesiQuery();
-
-    //     if (trim(strlen($value)) > 0) {
-    //         $results = $query->searchSesi($value)->limit(12)->get();
-    //         $this->sesiResults[$key] = $this->mapSesi($results);
-
-    //         // Cek Exact Match (Opsional)
-    //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-    //         $exactMatch = $results->first(function ($sesi) use ($value, $normalizedValue) {
-    //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($sesi->kode));
-    //             return strtolower($sesi->kode) === strtolower($value)
-    //                 || $normalizedMkKode === $normalizedValue;
-    //         });
-
-    //         if ($exactMatch) {
-    //             $currentMode = $this->modeSesi[$key] ?? 'array';
-    //             if ($currentMode == 'single') {
-    //                 $this->selectSesi($exactMatch->id, $exactMatch->kode, $key);
-    //             } else {
-    //                 $this->selectSesiArray($exactMatch->id, $key);
-    //                 $this->sesiNameSearch[$key] = ''; // Kosongkan search setelah add
-    //             }
-    //             $this->sesiResults[$key] = $this->getSesibyUser();
-    //         }
-    //     } else {
-    //         $this->sesiResults[$key] = $this->getSesibyUser();
-    //     }
-    // }
 
     public function getSesibyUser($mode = 'full')
     {
@@ -250,7 +192,7 @@ trait WithKelasSesiSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('sesi.rps.mk_rel.prodis', function ($q) use ($prodiId) {
+            ->whereHas('sesi.kelas_jadwals.kelas.rps.mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -270,84 +212,58 @@ trait WithKelasSesiSearchFilters
             : $this->mapSesi($mainResults);
     }
 
-    public function fetchSesi($query = '', $mode = 'single', $key = 'default')
+    public function fetchSesi($query = '', $mode = 'single')
     {
-        $this->modeSesi[$key] = $mode;
-        if (empty($query) || (! empty($this->sesi_id[$key]) || ! empty($this->sesi_id_array[$key]))) {
-            $this->sesiResults[$key] = $this->getSesibyUser();
+        $this->modeSesi = $mode;
+        if (empty($query) || (! empty($this->sesi_id) || ! empty($this->sesi_id_array))) {
+            $this->sesiResults = $this->getSesibyUser();
         }
 
     }
 
-    public function selectSesi($id, $sesiName, $key = 'default')
+    public function selectSesi($id, $sesiName)
     {
-        $this->sesi_id[$key] = $id;
-        $this->sesiNameSearch[$key] = $sesiName;
-        $this->sesiResults[$key] = $this->getSesibyUser();
+        $this->sesi_id = $id;
+        $this->sesiNameSearch = $sesiName;
+        $this->sesiResults = $this->getSesibyUser();
 
         $data = $this->sesiQuery()->find($id);
         if ($data) {
-            $this->sesi_items[$key] = $this->itemsSesi($data);
-
-            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-            //     $this->kode_cpmk = $data->kode;
-            // }
+            $this->sesi_items = $this->itemsSesi($data);
+            $mappedResults = $this->mapSesi(collect([$data]));
+            $this->pushToSesiItems($mappedResults);
         }
 
         if (method_exists($this, 'fetchSesi')) {
-            $this->fetchSesi('', $this->modeSesi[$key] ?? 'single', $key);
+            $this->fetchSesi('');
         }
 
-        $this->resetErrorBag(['sesi_id.'.$key, 'sesiNameSearch.'.$key]);
+        $this->resetErrorBag(['sesi_id', 'sesiNameSearch']);
     }
 
-    public function selectSesiArray($id, $key = 'default')
+    public function selectSesiArray($id)
     {
         $data = $this->sesiQuery()->find($id);
-        if ($data) {
-            if (! isset($this->sesi_id_array[$key])) {
-                $this->sesi_id_array[$key] = [];
-            }
+        if ($data && ! in_array($id, $this->sesi_id_array)) {
+            $this->sesi_id_array[] = $id;
+            $this->sesi_items_array[] = $this->itemsSesi($data);
 
-            if (! in_array($id, $this->sesi_id_array[$key])) {
-                $this->sesi_id_array[$key][] = $id;
-                $this->sesi_items_array[$key][] = $this->itemsSesi($data);
-            }
-
-            // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-            //     $newDesc = trim($data->kode);
-            //     if (!str_ends_with($newDesc, '.')) {
-            //         $newDesc .= '.';
-            //     }
-
-            //     if (!empty($this->kode_cpmk)) {
-            //         $this->kode_cpmk = rtrim($this->kode_cpmk) . ' ' . $newDesc;
-            //     } else {
-            //         $this->kode_cpmk = $newDesc;
-            //     }
-            // }
+            $mappedResults = $this->mapSesi(collect([$data]));
+            $this->pushToSesiItems($mappedResults);
         }
     }
 
-    public function resetSesiInput($key = 'default')
+    public function resetSesiInput()
     {
         $this->reset(['sesi_id', 'sesi_items', 'sesiNameSearch']);
-        $this->sesiResults[$key] = $this->getSesibyUser();
-
-        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-        //     $this->kode_cpmk = '';
-        // }
+        $this->sesiResults = $this->getSesibyUser();
     }
 
-    public function resetSesiArray($key = 'default')
+    public function resetSesiArray()
     {
-        $this->sesi_id_array[$key] = [];
-        $this->sesi_items_array[$key] = [];
-        $this->sesiNameSearch[$key] = '';
-
-        // if (property_exists($this, 'kode_cpmk') && $key == 'cpmk') {
-        //     $this->kode_cpmk = '';
-        // }
+        $this->sesi_id_array = [];
+        $this->sesi_items_array = [];
+        $this->sesiNameSearch = '';
     }
 
     public function searchOutputSesi($querySesi, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

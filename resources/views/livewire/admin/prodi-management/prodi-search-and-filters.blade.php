@@ -38,6 +38,7 @@
             x-transition:leave-end="opacity-0 -translate-y-4" class="col-start-1 row-start-1 relative w-full">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Program Studi, Departemen, atau Fakultas...',
+                'searchValues' => ['simple', 'full'],
             ])
         </div>
 
@@ -56,6 +57,7 @@
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Departemen atau relasinya...',
+                        'searchValues' => ['simple', 'full'],
                     ])
                 </div>
                 <div class="col-start-2 row-start-1 sm:col-span-1">
@@ -63,7 +65,7 @@
                         'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
                         'key' => 'page-control-departemen',
                         'isSmall' => 1,
-                        'withB' => 0
+                        'withB' => 0,
                     ])
                 </div>
             </div>
@@ -77,6 +79,7 @@
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Fakultas atau relasinya...',
+                        'searchValues' => ['simple', 'full'],
                     ])
                 </div>
                 <div class="col-start-1 row-start-1 sm:col-span-1">
@@ -84,7 +87,7 @@
                         'perPageOptions' => [3, 5, 8, 10],
                         'key' => 'page-control-fakultas',
                         'isSmall' => 1,
-                        'withB' => 0
+                        'withB' => 0,
                     ])
                 </div>
             </div>

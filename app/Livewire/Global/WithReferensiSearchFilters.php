@@ -98,8 +98,8 @@ trait WithReferensiSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->ref_name)) {
             $this->refSearchResults = $this->mapRef(
-                // $this->refQuery()->searchRef($search)->limit(12)->get()
-                $this->searchOutputRef($this->refQuery(), $search, 12)
+                $this->refQuery()->searchRef($search)->limit(12)->get()
+                // $this->searchOutputRef($this->refQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->ref_name) {
             $this->refSearchResults = $this->getRefbyUser();
@@ -149,8 +149,8 @@ trait WithReferensiSearchFilters
         $query = $this->refQuery();
 
         if (trim(strlen((string) $value)) > 0) {
-            // $results = $query->searchRef($value)->limit(12)->get();
-            $results = $this->searchOutputRef($query, $value, 12);
+            $results = $query->searchRef($value)->limit(12)->get();
+            // $results = $this->searchOutputRef($query, $value, 12);
             $this->refResults[$key] = $this->mapRef($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -180,6 +180,15 @@ trait WithReferensiSearchFilters
                         $this->ref_id_array[$key][] = $exactMatch->id;
                         $this->ref_items_array[$key][] = $this->itemsRef($exactMatch);
                     }
+                    $this->ref_id_array[$key] = collect($this->ref_id_array[$key])
+                        ->unique()
+                        ->values()
+                        ->all();
+
+                    $this->ref_items_array[$key] = collect($this->ref_items_array[$key])
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $this->refResults[$key] = $this->getRefbyUser();
             }

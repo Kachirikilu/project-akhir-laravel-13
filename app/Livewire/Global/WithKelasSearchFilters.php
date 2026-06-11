@@ -85,24 +85,6 @@ trait WithKelasSearchFilters
         ];
     }
 
-    public function getKelasIdArrayForKey(string $key = 'default'): array
-    {
-        if (is_array($this->kelas_id_array) && array_key_exists($key, $this->kelas_id_array) && is_array($this->kelas_id_array[$key])) {
-            return $this->kelas_id_array[$key];
-        }
-
-        return [];
-    }
-
-    public function getKelasNameSearchForKey(string $key = 'default'): string
-    {
-        if (is_array($this->kelasNameSearch) && array_key_exists($key, $this->kelasNameSearch)) {
-            return is_string($this->kelasNameSearch[$key]) ? $this->kelasNameSearch[$key] : '';
-        }
-
-        return '';
-    }
-
     public function inputKelasFilter()
     {
         $search = trim($this->kelasSearchQuery);
@@ -110,8 +92,8 @@ trait WithKelasSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->kelas_name)) {
             $this->kelasSearchResults = $this->mapKelasSearch(
-                // $this->kelasQuery()->searchKelas($search)->limit(12)->get()
-                $this->searchOutputKelas($this->kelasQuery(), $search, 12)
+                $this->kelasQuery()->searchKelas($search)->limit(12)->get()
+                // $this->searchOutputKelas($this->kelasQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->kelas_name) {
             $this->kelasSearchResults = $this->getKelasbyUser('search');
@@ -140,107 +122,66 @@ trait WithKelasSearchFilters
         }
     }
 
-    public function updatedKelasNameSearch($value, $name = null)
+    public function updatedKelasNameSearch($value)
     {
-        $key = 'default';
-
-        if (is_string($name) && str_contains($name, '.')) {
-            [, $key] = explode('.', $name, 2);
-        } elseif (is_string($name) && $name !== 'kelasNameSearch') {
-            $key = $name;
-        }
-
-        if (is_array($value)) {
-            $value = $value[$key] ?? '';
-        }
-
-        $this->kelas_id[$key] = null;
-        $this->kelas_items[$key] = null;
-        $this->resetErrorBag(['kelas_id.'.$key, 'kelasNameSearch.'.$key]);
+        $this->kelas_id = null;
+        $this->kelas_items = null;
+        $this->resetErrorBag(['kelas_id', 'kelasNameSearch']);
 
         $query = $this->kelasQuery();
 
-        if (trim(strlen((string) $value)) > 0) {
-            // $results = $query->searchKelas($value)->limit(12)->get();
-            $results = $this->searchOutputKelas($query, $value, 12);
-            $this->kelasResults[$key] = $this->mapKelas($results);
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchKelas($value)->limit(12)->get();
+            // $results = $this->searchOutputKelas($query, $value, null, 12);
+            $this->kelasResults = $this->mapKelas($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($kelas) use ($value, $normalizedValue) {
-                $normalizedKelasKode = str_replace(['-', ' '], '', strtolower($kelas->kode));
+            $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
+                $normalizedKelasKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
-                return strtolower($kelas->deskripsi) === strtolower($value)
+                return strtolower($c->nama_kelas) === strtolower($value)
                     || $normalizedKelasKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $currentMode = $this->modeKelas[$key] ?? 'array';
-                if ($currentMode == 'single') {
-                    $this->kelasNameSearch[$key] = $exactMatch->deskripsi;
-                    $this->kelas_id[$key] = $exactMatch->id;
-                    $this->kelas_items[$key] = $this->itemsKelas($exactMatch);
-                    $this->kelasResults[$key] = [];
+                $this->kelas_id = $exactMatch->id;
+                $this->kelas_items = $this->itemsKelas($exactMatch);
+                $this->kelasNameSearch = $exactMatch->deskripsi;
+                $this->kelasResults = [];
+            }
+            if ($exactMatch) {
+                if ($this->modeKelas == 'single') {
+                    $this->kelasNameSearch = $exactMatch->deskripsi;
+                    $this->kelas_id = $exactMatch->id;
+                    $this->kelas_items = $this->itemsKelas($exactMatch);
+                    $this->kelasResults = [];
                 } else {
-                    $this->kelasNameSearch[$key] = '';
-                    if (! isset($this->kelas_id_array[$key])) {
-                        $this->kelas_id_array[$key] = [];
-                    }
-                    if (! isset($this->kelas_items_array[$key])) {
-                        $this->kelas_items_array[$key] = [];
-                    }
-                    if (! in_array($exactMatch->id, $this->kelas_id_array[$key])) {
-                        $this->kelas_id_array[$key][] = $exactMatch->id;
-                        $this->kelas_items_array[$key][] = $this->itemsKelas($exactMatch);
-                    }
+                    $this->kelasNameSearch = '';
+                    $this->kelas_id_array[] = $exactMatch->id;
+                    $this->kelas_items_array[] = $this->itemsKelas($exactMatch);
+                    $this->kelas_id_array = collect($this->kelas_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->kelas_items_array = collect($this->kelas_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
-                $this->kelasResults[$key] = $this->getKelasbyUser();
+                $mappedResults = $this->mapKelas(collect([$exactMatch]));
+                $this->pushToKelasItems($mappedResults);
+                $this->kelasResults = $this->getKelasbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->kelasResults[$key] = $this->getKelasbyUser();
+                $this->kelasResults = $this->getKelasbyUser();
             } else {
-                $this->kelasResults[$key] = $this->mapKelas(
-                    $query->orderBy('kelass.id', 'desc')->limit(12)->get()
+                $this->kelasResults = $this->mapKelas(
+                    $query->orderBy('kelas.nama_kelas', 'desc')->limit(12)->get()
                 );
             }
         }
     }
-
-    // public function updatedKelasNameSearch($value, $key = 'default')
-    // {
-    //     // Pastikan index tersedia
-    //     $this->kelas_id[$key] = null;
-    //     $this->kelas_items[$key] = null;
-    //     $this->resetErrorBag(['kelas_id.' . $key, 'kelasNameSearch.' . $key]);
-
-    //     $query = $this->kelasQuery();
-
-    //     if (trim(strlen($value)) > 0) {
-    //         $results = $query->searchKelas($value)->limit(12)->get();
-    //         $this->kelasResults[$key] = $this->mapKelas($results);
-
-    //         // Cek Exact Match (Opsional)
-    //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-    //         $exactMatch = $results->first(function ($kelas) use ($value, $normalizedValue) {
-    //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($kelas->kode));
-    //             return strtolower($kelas->deskripsi) === strtolower($value)
-    //                 || $normalizedMkKode === $normalizedValue;
-    //         });
-
-    //         if ($exactMatch) {
-    //             $currentMode = $this->modeKelas[$key] ?? 'array';
-    //             if ($currentMode == 'single') {
-    //                 $this->selectKelas($exactMatch->id, $exactMatch->deskripsi, $key);
-    //             } else {
-    //                 $this->selectKelasArray($exactMatch->id, $key);
-    //                 $this->kelasNameSearch[$key] = ''; // Kosongkan search setelah add
-    //             }
-    //             $this->kelasResults[$key] = $this->getKelasbyUser();
-    //         }
-    //     } else {
-    //         $this->kelasResults[$key] = $this->getKelasbyUser();
-    //     }
-    // }
 
     public function getKelasbyUser($mode = 'full')
     {
@@ -281,84 +222,58 @@ trait WithKelasSearchFilters
             : $this->mapKelas($mainResults);
     }
 
-    public function fetchKelas($query = '', $mode = 'single', $key = 'default')
+    public function fetchKelas($query = '', $mode = 'single')
     {
-        $this->modeKelas[$key] = $mode;
-        if (empty($query) || (! empty($this->kelas_id[$key]) || ! empty($this->kelas_id_array[$key]))) {
-            $this->kelasResults[$key] = $this->getKelasbyUser();
+        $this->modeKelas = $mode;
+        if (empty($query) || (! empty($this->kelas_id) || ! empty($this->kelas_id_array))) {
+            $this->kelasResults = $this->getKelasbyUser();
         }
 
     }
 
-    public function selectKelas($id, $kelasName, $key = 'default')
+    public function selectKelas($id, $kelasName)
     {
-        $this->kelas_id[$key] = $id;
-        $this->kelasNameSearch[$key] = $kelasName;
-        $this->kelasResults[$key] = $this->getKelasbyUser();
+        $this->kelas_id = $id;
+        $this->kelasNameSearch = $kelasName;
+        $this->kelasResults = $this->getKelasbyUser();
 
         $data = $this->kelasQuery()->find($id);
         if ($data) {
-            $this->kelas_items[$key] = $this->itemsKelas($data);
-
-            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-            //     $this->deskripsi_cpmk = $data->deskripsi;
-            // }
+            $this->kelas_items = $this->itemsKelas($data);
+            $mappedResults = $this->mapKelas(collect([$data]));
+            $this->pushToKelasItems($mappedResults);
         }
 
         if (method_exists($this, 'fetchKelas')) {
-            $this->fetchKelas('', $this->modeKelas[$key] ?? 'single', $key);
+            $this->fetchKelas('');
         }
 
-        $this->resetErrorBag(['kelas_id.'.$key, 'kelasNameSearch.'.$key]);
+        $this->resetErrorBag(['kelas_id', 'kelasNameSearch']);
     }
 
-    public function selectKelasArray($id, $key = 'default')
+    public function selectKelasArray($id)
     {
         $data = $this->kelasQuery()->find($id);
-        if ($data) {
-            if (! isset($this->kelas_id_array[$key])) {
-                $this->kelas_id_array[$key] = [];
-            }
+        if ($data && ! in_array($id, $this->kelas_id_array)) {
+            $this->kelas_id_array[] = $id;
+            $this->kelas_items_array[] = $this->itemsKelas($data);
 
-            if (! in_array($id, $this->kelas_id_array[$key])) {
-                $this->kelas_id_array[$key][] = $id;
-                $this->kelas_items_array[$key][] = $this->itemsKelas($data);
-            }
-
-            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-            //     $newDesc = trim($data->deskripsi);
-            //     if (!str_ends_with($newDesc, '.')) {
-            //         $newDesc .= '.';
-            //     }
-
-            //     if (!empty($this->deskripsi_cpmk)) {
-            //         $this->deskripsi_cpmk = rtrim($this->deskripsi_cpmk) . ' ' . $newDesc;
-            //     } else {
-            //         $this->deskripsi_cpmk = $newDesc;
-            //     }
-            // }
+            $mappedResults = $this->mapKelas(collect([$data]));
+            $this->pushToKelasItems($mappedResults);
         }
     }
 
-    public function resetKelasInput($key = 'default')
+    public function resetKelasInput()
     {
         $this->reset(['kelas_id', 'kelas_items', 'kelasNameSearch']);
-        $this->kelasResults[$key] = $this->getKelasbyUser();
-
-        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-        //     $this->deskripsi_cpmk = '';
-        // }
+        $this->kelasResults = $this->getKelasbyUser();
     }
 
-    public function resetKelasArray($key = 'default')
+    public function resetKelasArray()
     {
-        $this->kelas_id_array[$key] = [];
-        $this->kelas_items_array[$key] = [];
-        $this->kelasNameSearch[$key] = '';
-
-        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
-        //     $this->deskripsi_cpmk = '';
-        // }
+        $this->kelas_id_array = [];
+        $this->kelas_items_array = [];
+        $this->kelasNameSearch = '';
     }
 
     public function searchOutputKelas($queryKelas, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

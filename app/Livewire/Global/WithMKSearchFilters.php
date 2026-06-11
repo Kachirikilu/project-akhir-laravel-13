@@ -90,8 +90,8 @@ trait WithMKSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ($search !== $this->mk_name)) {
             $this->mkSearchResults = $this->mapMKSearch(
-                // $this->mkQuery()->searchMK($search)->limit(12)->get()
-                $this->searchOutputMK($this->mkQuery(), $search, 12)
+                $this->mkQuery()->searchMK($search)->limit(12)->get()
+                // $this->searchOutputMK($this->mkQuery(), $search, 12)
             );
         } elseif (empty($search) || $this->mk_name) {
             $this->mkSearchResults = $this->getMKbyUser('search');
@@ -133,8 +133,8 @@ trait WithMKSearchFilters
         $query = $this->mkQuery();
 
         if (trim(strlen($value)) > 0) {
-            // $results = $query->searchMK($value)->limit(12)->get();
-            $results = $this->searchOutputMK($this->mkQuery(), $value, 12);
+            $results = $query->searchMK($value)->limit(12)->get();
+            // $results = $this->searchOutputMK($this->mkQuery(), $value, 12);
             $this->mkResults = $this->mapMK($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
@@ -155,6 +155,15 @@ trait WithMKSearchFilters
                     $this->mkNameSearch = '';
                     $this->mk_id_array[] = $exactMatch->id;
                     $this->mk_items_array[] = $this->itemsMK($exactMatch);
+
+                    $this->mk_id_array = collect($this->mk_id_array)
+                        ->unique()
+                        ->values()
+                        ->all();
+                    $this->mk_items_array = collect($this->mk_items_array)
+                        ->unique('id')
+                        ->values()
+                        ->all();
                 }
                 $this->mkResults = $this->getMKbyUser();
             }
@@ -343,7 +352,6 @@ trait WithMKSearchFilters
                         $searchLower
                     );
 
-
                     /*
                     |--------------------------------------------------------------------------
                     | SKS
@@ -362,7 +370,7 @@ trait WithMKSearchFilters
                         $sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $sks. 'SKS',
+                        $sks.'SKS',
                         $searchLower
                     );
 
