@@ -12,7 +12,7 @@
     @if (!$isJadwalMhs)
         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
             'alpine' => 'jadwal',
-            'mainKode' => $kelas->kode ?? '-',
+            'mainKode' => $kode_kelas_url ?? '-',
             'mainHead' => 'Kelas',
             'subHead' => 'Jadwal Kelas',
         ])

@@ -7,6 +7,8 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithAbs
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
+use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
@@ -22,6 +24,8 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
+    use HasSortir;
+    use HasToast;
     use WithAbsenModal;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
@@ -40,21 +44,21 @@ class SesiManagement extends Component
 
     public $isJadwalMhs = false;
 
-    public $kode;
+    public $kode_kelas_url;
 
-    public $kode_jadwal_url;
+    public $kode_jadwal_short_url;
 
     public $kelas;
 
-    public $jadwal;
+    public KelasJadwal $jadwal;
 
-    public $jadwal_id;
+    public $jadwal_id_url;
 
-    public $kode_jadwal;
+    public $kode_jadwal_url;
 
-    public $rps_id;
+    public $rps_id_url;
 
-    public $kode_rps;
+    public $kode_rps_url;
 
     public $perPage = 8;
 
@@ -79,40 +83,40 @@ class SesiManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    // public function mount($kode, $kode_jadwal_url, $jadwal_id, $switchTable = 'sesi-card')
+    // public function mount($kode_kelas, $kode_jadwal_short_url, $jadwal_id, $switchTable = 'sesi-card')
     // {
-    //     $this->kode = $kode;
-    //     $this->kelas = Kelas::where('kode_kelas', $kode)
-    //         ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
+    //     $this->kode_kelas = $kode_kelas;
+    //     $this->kelas = Kelas::where('kode_kelas', $kode_kelas)
+    //         ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
     //         ->firstOrFail();
 
     //     $this->jadwal_id = $jadwal_id;
     //     $this->jadwal = KelasJadwal::where('id', $jadwal_id)->firstOrFail();
-    //     $this->kode_jadwal_url = $this->jadwal->kode_jadwal_url;
+    //     $this->kode_jadwal_short_url = $this->jadwal->kode_jadwal_short_url;
 
     //     $this->switchTable = $switchTable;
     // }
 
     public function mount(
         $isJadwalMhs = false,
-        $kode = null,
-        $kode_jadwal_url = null,
+        $kode_kelas = null,
+        $kode_jadwal_short = null,
         $switchTable = 'sesi-card'
     ) {
-        $this->kode = $kode;
+        $this->kode_kelas_url = $kode_kelas;
         $this->isJadwalMhs = $isJadwalMhs;
 
         $this->kelas = Kelas::query()
-            ->where('kode_kelas', $kode)
+            ->where('kode_kelas', $kode_kelas)
             ->orWhereRaw(
                 "REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')",
-                [$kode]
+                [$kode_kelas]
             )
             ->firstOrFail();
 
-        $this->kode_jadwal_url = $kode_jadwal_url;
+        $this->kode_jadwal_short_url = $kode_jadwal_short;
 
-        $parts = explode('-', $kode_jadwal_url);
+        $parts = explode('-', $kode_jadwal_short);
 
         if (count($parts) < 3) {
             abort(404, 'Format Kode Jadwal Kelas tidak valid!');
@@ -146,10 +150,10 @@ class SesiManagement extends Component
             )
             ->firstOrFail();
 
-        $this->jadwal_id = $this->jadwal->id;
-        $this->kode_jadwal = $this->jadwal->kode;
-        $this->rps_id = $this->jadwal->rps_id;
-        $this->kode_rps = $this->jadwal->kode_rps;
+        $this->jadwal_id_url = $this->jadwal->id;
+        $this->kode_jadwal_url = $this->jadwal->kode;
+        $this->rps_id_url = $this->jadwal->rps_id;
+        $this->kode_rps_url = $this->jadwal->kode_rps;
         $this->switchTable = $switchTable;
     }
 
@@ -239,7 +243,7 @@ class SesiManagement extends Component
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
 
-        $targetPath = "/{$base}/{$this->kode}/jadwal/{$this->kode_jadwal_url}{$suffix}";
+        $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -247,7 +251,7 @@ class SesiManagement extends Component
     public function render()
     {
         try {
-            $idJadwal = $this->jadwal_id;
+            $idJadwal = $this->jadwal_id_url;
             $querySesi = $this->inputSesiSearch($idJadwal);
 
             if (Auth::user()->mahasiswa) {
@@ -263,10 +267,10 @@ class SesiManagement extends Component
                     $this->toast(text: $message, variant: 'danger');
 
                     $history = session('jadwal.history', []);
-                    $compositeKey = $this->kode.'_'.$this->kode_jadwal_url;
+                    $compositeKey = $this->kode_kelas.'_'.$this->kode_jadwal_short_url;
                     unset($history[$compositeKey]);
                     session(['jadwal.history' => $history]);
-                    $this->redirect(route('jadwal-management', $this->kode));
+                    $this->redirect(route('jadwal-management', $this->kode_kelas));
                 }
             }
 
@@ -310,117 +314,37 @@ class SesiManagement extends Component
 
             $expiredCount = (int) count($expiredSesiIds ?: []);
 
-            $statuses = [
-                'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
-                'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
-                'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
-                'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
-                'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
-                'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
-                'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
-                'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
-                'mhs_poin_absensi' => "CASE 
-                        WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2
-                        WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1
-                        ELSE 0
-                    END",
-            ];
-
             if (Auth::user()->admin || Auth::user()->dosen) {
-                $queryUser->selectSub(function ($query) use ($idJadwal) {
-                    $query->from('nilai_mahasiswa')->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                        ->whereColumn('mahasiswas.user_id', 'users.id')
-                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                        ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')
-                        ->limit(1);
 
-                }, 'mhs_nilai_akhir');
-
-                $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-                    $query->from('nilai_mahasiswa')
-                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                        ->whereColumn('mahasiswas.user_id', 'users.id')
-                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                        ->selectRaw('
-                            CASE
-                                WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
-                                WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
-                                WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
-                                WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
-                                WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
-                                WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
-                                WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
-                                WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
-                                ELSE 0
-                            END
-                        ')
-                        ->limit(1);
-
-                }, 'mhs_nilai_index');
-
-                $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-                    $query->from('nilai_mahasiswa')
-                        ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
-                        ->whereColumn('mahasiswas.user_id', 'users.id')
-                        ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                        ->selectRaw("
-                            CASE
-                                WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
-                                WHEN nilai_mahasiswa.nilai >= 80 THEN 'A-'
-                                WHEN nilai_mahasiswa.nilai >= 75 THEN 'B+'
-                                WHEN nilai_mahasiswa.nilai >= 70 THEN 'B'
-                                WHEN nilai_mahasiswa.nilai >= 65 THEN 'B-'
-                                WHEN nilai_mahasiswa.nilai >= 60 THEN 'C+'
-                                WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
-                                WHEN nilai_mahasiswa.nilai >= 40 THEN 'D'
-                                ELSE 'E'
-                            END
-                        ")
-                        ->limit(1);
-                }, 'mhs_nilai_huruf');
-
-                foreach ($statuses as $alias => $condition) {
-                    $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
-                        if ($alias === 'mhs_poin_absensi') {
-                            $rawSql = "COALESCE(SUM($condition), 0)";
-                        } else {
-                            $rawSql = "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END), 0)";
-                        }
-
-                        $query->selectRaw($rawSql)
-                            ->from('mahasiswa_kehadiran')
-                            ->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')
-                            ->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')
-                            ->whereColumn('mahasiswas.user_id', 'users.id')
-                            ->where('kelas_sesi.kj_id', $idJadwal);
-                    }, $alias);
-                }
-
-                // $queryUser->selectRaw("
-                //     GREATEST(0, ? - (
-                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Hadir' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Terlambat' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Izin' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Sakit' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?) +
-                //         (SELECT COALESCE(SUM(CASE WHEN mahasiswa_kehadiran.status = 'Dispensasi' THEN 1 ELSE 0 END), 0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id WHERE mahasiswas.user_id = users.id AND kelas_sesi.kj_id = ?)
-                //     )) as mhs_tidak_masuk
-                // ", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
-                $queryUser->selectRaw("
-                        GREATEST(0, ? - (
-                            SELECT COUNT(*)
-                            FROM mahasiswa_kehadiran
-                            JOIN kelas_sesi ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id
-                            JOIN mahasiswas ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id
-                            WHERE mahasiswas.user_id = users.id
-                            AND kelas_sesi.kj_id = ?
-                            AND mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')
-                        )) as mhs_tidak_masuk
-                    ", [
-                    $expiredCount,
+                $this->addMahasiswaNilaiAkhir(
+                    $queryUser,
                     $idJadwal,
-                ]);
+                    'mhs_nilai_akhir'
+                );
+
+                $this->addMahasiswaNilaiIndex(
+                    $queryUser,
+                    $idJadwal,
+                    'mhs_nilai_index'
+                );
+
+                $this->addMahasiswaNilaiHuruf(
+                    $queryUser,
+                    $idJadwal,
+                    'mhs_nilai_huruf'
+                );
+
+                $this->addMahasiswaAttendanceStats(
+                    $queryUser,
+                    $idJadwal
+                );
+
+                $this->addMahasiswaTidakMasuk(
+                    $queryUser,
+                    $idJadwal,
+                    $expiredCount,
+                    'mhs_tidak_masuk'
+                );
             }
 
             /**
@@ -538,6 +462,22 @@ class SesiManagement extends Component
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $summaryQuery->onlyTrashed();
             }
+
+            $statuses = [
+                'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
+                'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
+                'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
+                'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
+                'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
+                'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
+                'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
+                'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
+                'mhs_poin_absensi' => "CASE 
+                        WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2
+                        WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1
+                        ELSE 0
+                    END",
+            ];
 
             if (Auth::user()->admin || Auth::user()->dosen || Auth::user()->mahasiswa) {
                 foreach ($statuses as $alias => $condition) {

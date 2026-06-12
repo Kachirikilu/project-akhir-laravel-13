@@ -40,6 +40,87 @@ trait WithProdiFilters
         return $queryPr;
     }
 
+    protected function addRekapProdi(
+        $queryPr,
+        string $alias = 'rekap_pr'
+    ) {
+        $queryPr->selectSub(function ($query) {
+            $query->from('rekap_cpl_prodi')
+                ->whereColumn(
+                    'rekap_cpl_prodi.pr_id',
+                    'prodis.id'
+                )
+                ->selectRaw('
+                ROUND(
+                    COALESCE(
+                        AVG(rekap_cpl_prodi.nilai),
+                        0
+                    ),
+                    2
+                )
+            ');
+        }, $alias);
+        return $queryPr;
+    }
+
+    protected function addIndexProdi(
+        $queryPr,
+        string $alias = 'index_pr'
+    ) {
+        $queryPr->selectSub(function ($query) {
+            $query->from('rekap_cpl_prodi')
+                ->whereColumn(
+                    'rekap_cpl_prodi.pr_id',
+                    'prodis.id'
+                )
+                ->selectRaw('
+                CASE
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 4.00
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 3.70
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 3.30
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 3.00
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 2.70
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 2.30
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 2.00
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 1.00
+                    ELSE 0
+                END
+            ');
+        }, $alias);
+        return $queryPr;
+    }
+
+    protected function addAkreditasProdi(
+        $queryPr,
+        string $alias = 'akreditas_pr'
+    ) {
+        $queryPr->selectSub(function ($query) {
+            $query->from('rekap_cpl_prodi')
+                ->whereColumn(
+                    'rekap_cpl_prodi.pr_id',
+                    'prodis.id'
+                )
+                ->selectRaw("
+                CASE
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 'A'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 'A-'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 'B+'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 'B'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 'B-'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 'C+'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 'C'
+                    WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 'D'
+                    ELSE 'E'
+                END
+
+            ");
+
+        }, $alias);
+
+        return $queryPr;
+
+    }
+
     public function filterByStrata($strata)
     {
         $this->filterPr = $strata;
@@ -48,27 +129,30 @@ trait WithProdiFilters
 
     public function sortFieldOrderProdi($queryPr)
     {
-        $primaryTable = 'prodis';
-        if ($this->filterPr === 'departemen') {
-            $queryPr->whereHas('dp_rel');
-            $primaryTable = 'departemens';
-        } elseif ($this->filterPr === 'fakultas') {
-            $queryPr->whereHas('dp_rel.fakultas');
-            $primaryTable = 'fakultas';
-        }
+        // $primaryTable = 'prodis';
+        // if ($this->switchTable === 'departemen') {
+        //     $queryPr->whereHas('dp_rel');
+        //     $primaryTable = 'departemens';
+        // } elseif ($this->switchTable === 'fakultas') {
+        //     $queryPr->whereHas('dp_rel.fakultas');
+        //     $primaryTable = 'fakultas';
+        // }
 
         $queryPr->select('prodis.*');
 
         return match ($this->sortField) {
-            'prodi' => $this->applyProdiSort($queryPr),
+            'program_studi' => $this->applyProdiSort($queryPr),
             'departemen' => $queryPr->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                 ->orderBy('departemens.nama_dp', $this->sortDirection),
             'fakultas' => $queryPr->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                 ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
                 ->orderBy('fakultas.nama_fk', $this->sortDirection),
             'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
+            'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('rekap_pr', $this->sortDirection),
             'kode' => $this->applyProdiKodeSort($queryPr),
-            default => $queryPr->orderBy("$primaryTable.id", $this->sortDirection),
+            'created_at' => $queryPr->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryPr->orderBy('updated_at', $this->sortDirection),
+            default => $queryPr->orderBy("prodis.id", $this->sortDirection),
         };
     }
 
@@ -82,11 +166,6 @@ trait WithProdiFilters
             'kode' => $queryPr->orderBy('kode_pr', $this->sortDirection)
                 ->orderBy('departemens.kode_dp', $this->sortDirection)
                 ->orderBy('fakultas.kode_fk', $this->sortDirection),
-            'prodis' => $queryPr->orderBy('nama_pr', $this->sortDirection),
-            'departemen' => $queryPr->orderBy('departemens.nama_dp', $this->sortDirection),
-            'fakultas' => $queryPr->orderBy('fakultas.nama_fk', $this->sortDirection),
-            'created_at' => $queryPr->orderBy('created_at', $this->sortDirection),
-            'updated_at' => $queryPr->orderBy('updated_at', $this->sortDirection),
             default => $queryPr->orderBy('id', 'desc'),
         };
     }

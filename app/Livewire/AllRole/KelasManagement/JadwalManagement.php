@@ -2,6 +2,7 @@
 
 namespace App\Livewire\AllRole\KelasManagement;
 
+use App\Livewire\Global\HasSortir;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
@@ -20,6 +21,7 @@ use Livewire\WithPagination;
 
 class JadwalManagement extends Component
 {
+    use HasSortir;
     use HasToast;
     use WithJadwalFilters;
     use WithJadwalModal;
@@ -38,13 +40,13 @@ class JadwalManagement extends Component
 
     public $isJadwalMhs = false;
 
-    public $kode;
+    public $kode_kelas_url;
 
     public Kelas $kelas;
 
-    public $rps_id;
+    public $rps_id_url;
 
-    public $kode_rps;
+    public $kode_rps_url;
 
     public $perPage = 8;
 
@@ -63,7 +65,7 @@ class JadwalManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
-        'perPage' => ['except' => 6],
+        'perPage' => ['except' => 8],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
     ];
@@ -71,7 +73,7 @@ class JadwalManagement extends Component
     // public function mount($isJadwalMhs = false, $kode = null, $switchTable = 'jadwal-card')
     // {
     //     if ($kode !== null || ! $isJadwalMhs) {
-    //         $this->kode = $kode;
+    //         $this->kode_kelas_url = $kode;
     //         $this->kelas = Kelas::where('kode_kelas', $kode)
     //             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
     //             ->firstOrFail();
@@ -81,19 +83,19 @@ class JadwalManagement extends Component
     //     $this->switchTable = $switchTable;
     // }
 
-    public function mount($isJadwalMhs = false, $kode = null, $switchTable = 'jadwal-card')
+    public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
     {
         $this->isJadwalMhs = $isJadwalMhs;
         $this->switchTable = $switchTable;
 
-        if (! $this->isJadwalMhs && $kode !== null) {
-            $this->kode = $kode;
-            $this->kelas = Kelas::where('kode_kelas', $kode)
-                ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
+        if (! $this->isJadwalMhs && $kode_kelas !== null) {
+            $this->kode_kelas_url = $kode_kelas;
+            $this->kelas = Kelas::where('kode_kelas', $kode_kelas)
+                ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
                 ->firstOrFail();
 
-            $this->rps_id = $this->kelas->rps_id;
-            $this->kode_rps = $this->kelas->kode_rps;
+            $this->rps_id_url = $this->kelas->rps_id;
+            $this->kode_rps_url = $this->kelas->kode_rps;
         }
     }
 
@@ -128,7 +130,7 @@ class JadwalManagement extends Component
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'jadwal-card') ? "/{$table}" : '';
 
-        $targetPath = "/{$base}/{$this->kode}{$suffix}";
+        $targetPath = "/{$base}/{$this->kode_kelas_url}{$suffix}";
         $targetPath = preg_replace('#(?<!:)/+#', '/', $targetPath);
         $targetPath = '/'.ltrim(rtrim($targetPath, '/'), '/');
 

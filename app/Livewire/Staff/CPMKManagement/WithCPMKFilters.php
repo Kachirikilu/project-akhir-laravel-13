@@ -102,6 +102,13 @@ trait WithCPMKFilters
                 $this->sortDirection
             ),
 
+            'count_cpl' => $queryCPMK->orderBy(
+                DB::table('cpmk_pivot_cpl')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
+
             'count_scpmk' => $queryCPMK->orderBy(
                 DB::table('cpmk_pivot_scpmk')
                     ->selectRaw('count(*)')

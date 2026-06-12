@@ -21,6 +21,7 @@
     @endphp
 
     @php
+        $borderX = 'border-[var(--border-table-color)] border-x';
         $borderR = 'border-[var(--border-table-color)] border-r';
         $borderL = 'border-[var(--border-table-color)] border-l';
     @endphp
@@ -109,18 +110,33 @@
                 ])
             @endif
 
-            @if ($switchTable === 'cpmk' || $switchTable === 'sub-cpmk' || $switchTable === 'cpl')
+            @if ($switchTable === 'cpl' || $switchTable === 'cpmk' || $switchTable === 'sub-cpmk')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'deskripsi',
                     'rowSpan' => 2,
                 ])
             @endif
 
+            @if ($withCapaian ?? null && $switchTable === 'cpl')
+                <th colspan="3" class="{{ $headSubKolom }}">
+                    Nilai Capaian
+                </th>
+                <th colspan="3" class="{{ $headSubKolom }}">
+                    RPS
+                </th>
+            @elseif ($switchTable === 'cpl')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps',
+                    'headString' => 'Total RPS',
+                    'isBorderL' => 1,
+                    'isCenter' => 1,
+                ])
+            @endif
             @if ($switchTable === 'cpmk')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_cpl',
-                    'headString' => 'CPL',
-                    'isBorderR' => 1,
+                    'headString' => 'Total CPL',
+                    'isMain' => 1,
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -244,6 +260,37 @@
                     'wInput' => 20,
                     'placeholder' => 'Bobot',
                     'pTop' => 5,
+                ])
+            @endif
+
+            @if ($withCapaian ?? null && $switchTable === 'cpl')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'rekap_cpl_pr',
+                    'headString' => 'Nilai',
+                    'isCenter' => 1,
+                    'isBorderL' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'index_cpl_pr',
+                    'headString' => 'Index',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'akreditas_cpl_pr',
+                    'headString' => 'Akreditas',
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
+                <th class="{{ $headKolom }} text-center border-x">Show</th>
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps_pr',
+                    'headString' => 'RPS ' . ($strata_pr_url ?? 'S1') . ' ' . ($kode_pr_url ?? 'UNI'),
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps',
+                    'headString' => 'Total RPS',
+                    'isCenter' => 1,
                 ])
             @endif
 
@@ -495,13 +542,54 @@
                     {{ $x->deskripsi_cpl ?? '-' }}</td>
             @endif
 
-            @if ($switchTable === 'sub-cpmk' || $switchTable === 'cpl')
+            @if ($switchTable === 'cpl' || $switchTable === 'sub-cpmk')
                 <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
                     {{ $x->deskripsi ?? '-' }}</td>
             @endif
 
+            @if ($withCapaian ?? null && $switchTable === 'cpl')
+                <td class="{{ $secondKolom }} {{ $borderL }} whitespace-nowrap text-center">
+                    {{ $x->rekap_cpl_pr ?? '0.00' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">
+                    {{ $x->index_cpl_pr ?? '0.00' }}</td>
+                <td class="{{ $subKolom }} {{ $borderL }} whitespace-nowrap text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                'xValue' => $x->akreditas_cpl_pr ?? 'E',
+                            ])
+                        </button>
+                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+                </td>
+
+                <td class="{{ $secondKolom }} {{ $borderX }}">
+                    <x-button-action color="emerald"
+                        href="{{ route('rps-capaian-management', [
+                            'kode_cpl' => $x->kode,
+                            'strata' => $strata_pr_url,
+                            'kode_pr' => $kode_pr_url,
+                        ]) }}"
+                        wire:navigate>
+                        <flux:icon name="document-text" class="w-3.5 h-3.5" />
+                        RPS
+                    </x-button-action>
+                </td>
+                <td class="{{ $subKolom }} whitespace-nowrap text-center">
+                    {{ $x->count_rps_pr ?? '-' }} RPS</td>
+                <td class="{{ $subKolom }} whitespace-nowrap text-center">
+                    {{ $x->count_rps ?? '-' }} RPS</td>
+            @elseif ($switchTable === 'cpl')
+                <td class="{{ $secondKolom }} {{ $borderL }} whitespace-nowrap text-center">
+                    {{ $x->count_rps ?? '-' }} RPS</td>
+            @endif
+
             @if ($switchTable === 'cpmk')
-                <td class="{{ $secondKolom }} {{ $borderR }} whitespace-nowrap text-center">
+                <td class="{{ $secondKolom }} {{ $borderX }} whitespace-nowrap text-center">
                     {{ $x->count_cpl ?? '-' }} CPL</td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">
                     {{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
@@ -539,7 +627,7 @@
             @endif
 
             @if ($switchTable === 'referensi')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->judul ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-84">{{ $x->judul ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->penulis ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->penerbit ?? '-' }}</td>
                 <td class="{{ $mainKolom }} text-center">{{ $x->tahun ?? '-' }}</td>
@@ -560,8 +648,8 @@
             @if ($switchTable !== 'dosen')
                 <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
-                        <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                            inset="top bottom">
+                        <flux:button class="cursor-pointer" variant="ghost" size="sm"
+                            icon="ellipsis-horizontal" inset="top bottom">
                         </flux:button>
 
                         @include('livewire.staff.obe-management.obe-toolbar-table', [
@@ -582,7 +670,7 @@
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 17,
-                    'cpl' => 6,
+                    'cpl' => $withCapaian ?? null ? 11 : 7,
                     'cpmk' => 9,
                     'sub-cpmk' => 14,
                     'referensi' => 10,

@@ -195,6 +195,7 @@
                                                         name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                 </button>
 
+                                                @if (!($noModalRPS ?? null))
                                                 @unless (
                                                     $this->showRPSModal &&
                                                         !(
@@ -238,7 +239,7 @@
                                                             name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                     </button>
                                                 @endunless
-
+                                                @endif
                                             </div>
 
                                         </div>

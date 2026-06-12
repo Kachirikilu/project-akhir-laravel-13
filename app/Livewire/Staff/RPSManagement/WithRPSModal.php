@@ -35,7 +35,11 @@ trait WithRPSModal
             $this->isFlyoutRPS = false;
             $this->isEditingRPS = false;
         } else {
-            $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
+            $this->isFlyoutRPS =
+                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
     }
 
@@ -52,7 +56,6 @@ trait WithRPSModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingRPS = false;
-        $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
         $this->showRPSModal = true;
 
         $this->showEditRPS = false;
@@ -86,7 +89,6 @@ trait WithRPSModal
         $this->selected_id_rps = $id;
         $this->isEditingRPS = true;
         $this->showEditRPS = true;
-        $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         try {
             // 1. Load data RPS dengan relasi yang sangat lengkap

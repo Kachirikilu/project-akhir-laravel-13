@@ -71,32 +71,32 @@ class Dosen extends Model
         return $this->belongsTo(Prodi::class, 'pr_id');
     }
 
-    // protected function nidnNidk(): Attribute
-    // {
-    //     return Attribute::get(function () {
-    //         $nidn = $this->nidn ?? '---';
-    //         $nidk = $this->nidk ?? '---';
-    //         return "NIDN: {$nidn} / NIDK: {$nidk}";
-    //     });
-    // }
-
-    protected function countRps(): Attribute
+    protected function nidnNidk(): Attribute
     {
         return Attribute::get(function () {
-            return $this->rps->count();
+            $nidn = $this->nidn ?? '---';
+            $nidk = $this->nidk ?? '---';
+            return "NIDN: {$nidn} / NIDK: {$nidk}";
         });
     }
 
-    protected function countSks(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                return (float) $this->rps->sum(function ($rps) {
-                    return $rps->mk_rel() ? $rps->mk_rel()->sum('sks_kuliah') : 0;
-                });
-            }
-        );
-    }
+    // protected function countRps(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->rps->count();
+    //     });
+    // }
+
+    // protected function totalSks(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: function () {
+    //             return (float) $this->rps->sum(function ($rps) {
+    //                 return $rps->mk_rel() ? $rps->mk_rel()->sum('sks_kuliah') : 0;
+    //             });
+    //         }
+    //     );
+    // }
 
     protected static function booted()
     {

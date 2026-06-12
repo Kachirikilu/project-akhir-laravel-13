@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\CPLManagement;
 
 use App\Models\Akademik\CPL;
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithCPLFilters
@@ -11,44 +12,28 @@ trait WithCPLFilters
 
     public $filterCPL = '';
 
-    public function inputCPLSearch()
+    public function inputCPLSearch($prId = null)
     {
         $queryCPL = CPL::query()->with([
-            // 'rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis.dp_rel.fk_rel',
             'prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel',
             'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
         if ($this->switchTable === 'cpl') {
+
+            if (! empty($prId)) {
+                $queryCPL->where(function ($q) use ($prId) {
+                    $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $prId)
+                        ->orWhereRelation('prodis', 'prodis.id', $prId);
+                });
+            }
             if (! empty($this->selectedPrId)) {
                 $queryCPL->where(function ($q) {
                     $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
                         ->orWhereRelation('prodis', 'prodis.id', $this->selectedPrId);
-                    // $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
-                    //     ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
                 });
             }
-            // if (! empty($this->selectedDpId)) {
-            //     $queryCPL->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis', 'dp_id', $this->selectedDpId)
-            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'dp_id', $this->selectedDpId);
-            //     });
-            // }
-            // if (! empty($this->selectedFkId)) {
-            //     $queryCPL->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId)
-            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId);
-            //     });
-            // }
-            // if (! empty($this->selectedMKId)) {
-            //     $queryCPL->where(function ($q) {
-            //         $q->whereRelation('rps', 'mk_id', $this->selectedMKId)
-            //             ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMKId);
-            //     });
-            // }
             if (! empty($this->selectedRPSId)) {
                 $queryCPL->where(function ($q) {
-                    // $q->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId))
-                    //     ->orWhereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
                     $q->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
                 });
             }
@@ -66,6 +51,152 @@ trait WithCPLFilters
         }
 
         return $queryCPL;
+    }
+
+    protected function addRekapCplProdi(
+        $queryCPL,
+        ?int $prId = null,
+        string $alias = 'rekap_cpl_pr'
+    ) {
+        $queryCPL->selectSub(
+            DB::table('rekap_cpl_prodi')
+                ->selectRaw('COALESCE(MAX(nilai), 0)')
+                ->whereColumn('rekap_cpl_prodi.cpl_id', 'cpls.id')
+                ->when(
+                    $prId !== null,
+                    fn ($q) => $q->where('rekap_cpl_prodi.pr_id', $prId)
+                ),
+            $alias
+        );
+
+        return $queryCPL;
+    }
+
+    protected function addIndexCplProdi(
+        $queryCPL,
+        ?int $prId = null,
+        string $alias = 'index_cpl_pr'
+    ) {
+        $queryCPL->selectSub(function ($query) use ($prId) {
+
+            $query->from('rekap_cpl_prodi')
+                ->whereColumn(
+                    'rekap_cpl_prodi.cpl_id',
+                    'cpls.id'
+                );
+
+            if ($prId !== null) {
+                $query->where(
+                    'rekap_cpl_prodi.pr_id',
+                    $prId
+                );
+            }
+
+            $query->selectRaw('
+            CASE
+                WHEN nilai >= 86 THEN 4.00
+                WHEN nilai >= 80 THEN 3.70
+                WHEN nilai >= 75 THEN 3.30
+                WHEN nilai >= 70 THEN 3.00
+                WHEN nilai >= 65 THEN 2.70
+                WHEN nilai >= 60 THEN 2.30
+                WHEN nilai >= 56 THEN 2.00
+                WHEN nilai >= 40 THEN 1.00
+                ELSE 0.00
+            END
+        ');
+
+            $query->limit(1);
+
+        }, $alias);
+
+        return $queryCPL;
+    }
+
+    protected function addAkreditasCplProdi(
+        $queryCPL,
+        ?int $prId = null,
+        string $alias = 'akreditas_cpl_pr'
+    ) {
+        $queryCPL->selectSub(function ($query) use ($prId) {
+
+            $query->from('rekap_cpl_prodi')
+                ->whereColumn(
+                    'rekap_cpl_prodi.cpl_id',
+                    'cpls.id'
+                );
+
+            if ($prId !== null) {
+                $query->where(
+                    'rekap_cpl_prodi.pr_id',
+                    $prId
+                );
+            }
+
+            $query->selectRaw("
+            CASE
+                WHEN nilai >= 86 THEN 'A'
+                WHEN nilai >= 80 THEN 'A-'
+                WHEN nilai >= 75 THEN 'B+'
+                WHEN nilai >= 70 THEN 'B'
+                WHEN nilai >= 65 THEN 'B-'
+                WHEN nilai >= 60 THEN 'C+'
+                WHEN nilai >= 56 THEN 'C'
+                WHEN nilai >= 40 THEN 'D'
+                ELSE 'E'
+            END
+        ");
+
+            $query->limit(1);
+
+        }, $alias);
+
+        return $queryCPL;
+    }
+
+    protected function addCountRpsCpl($queryCPL, ?int $prId = null, string $alias = 'count_rps')
+    {
+        return $queryCPL->selectSub(function ($query) use ($prId) {
+            $query->from('rps')
+                ->join(
+                    'rps_pivot_cpmk',
+                    'rps.id',
+                    '=',
+                    'rps_pivot_cpmk.rps_id'
+                )
+                ->join(
+                    'cpmk_pivot_cpl',
+                    'rps_pivot_cpmk.cpmk_id',
+                    '=',
+                    'cpmk_pivot_cpl.cpmk_id'
+                )
+                ->whereColumn(
+                    'cpmk_pivot_cpl.cpl_id',
+                    'cpls.id'
+                );
+
+            if ($prId) {
+                $query
+                    ->join(
+                        'mata_kuliahs',
+                        'rps.mk_id',
+                        '=',
+                        'mata_kuliahs.id'
+                    )
+                    ->join(
+                        'prodi_pivot_mk',
+                        'mata_kuliahs.id',
+                        '=',
+                        'prodi_pivot_mk.mk_id'
+                    )
+                    ->where(
+                        'prodi_pivot_mk.pr_id',
+                        $prId
+                    );
+            }
+
+            $query->selectRaw('COUNT(DISTINCT rps.id)');
+        }, $alias);
     }
 
     public function buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
@@ -97,6 +228,11 @@ trait WithCPLFilters
             'kode' => $this->applyCPLKodeSort($queryCPL),
 
             'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
+            'count_rps' => $queryCPL->orderBy('count_rps', $this->sortDirection),
+            'count_rps_pr' => $queryCPL->orderBy('count_rps_pr', $this->sortDirection),
+            'rekap_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
+            'index_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
+            'akreditas_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
             'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
 

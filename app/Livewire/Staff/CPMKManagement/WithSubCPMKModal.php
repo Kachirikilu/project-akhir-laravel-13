@@ -42,7 +42,11 @@ trait WithSubCPMKModal
             $this->isFlyoutSCPMK = false;
             $this->isEditingSCPMK = false;
         } else {
-            $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
+            $this->isFlyoutSCPMK =
+                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
     }
 
@@ -59,7 +63,6 @@ trait WithSubCPMKModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingSCPMK = false;
-        $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         $this->showSCPMKModal = true;
 
@@ -86,7 +89,6 @@ trait WithSubCPMKModal
         $this->selected_id_scpmk = $id;
         $this->isEditingSCPMK = true;
         $this->showEditSCPMK = true;
-        $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         try {
             $scpmk = SubCPMK::with([
@@ -249,7 +251,7 @@ trait WithSubCPMKModal
                     'bobot' => $validated['bobot'],
                 ]);
 
-                if ($this->showRPSModal && $scpmk) {
+                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $scpmk) {
                     $this->scpmk_id_array[] = $scpmk->id;
                     $this->scpmk_items_array[] = $this->itemsSCPMK($scpmk);
                     $mapped = $this->mapSCPMK(collect([$scpmk]));

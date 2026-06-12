@@ -62,7 +62,7 @@
                 @include('livewire.staff.mk-management.mk-modal-form.mk-input')
 
                 {{-- 3. Footer / Button Action --}}
-                <div <div
+                <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
                     p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 

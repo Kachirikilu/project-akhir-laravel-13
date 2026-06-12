@@ -54,20 +54,30 @@ class Prodi extends Model
         )->withTimestamps();
     }
 
-    protected function prodi(): Attribute
+    protected function strataS(): Attribute
     {
         return Attribute::get(function () {
             if ($this->strata == 'Sarjana') {
-                return 'S1 '.$this->nama_pr;
+                return 'S1';
             }
             if ($this->strata == 'Magister') {
-                return 'S2 '.$this->nama_pr;
+                return 'S2';
             }
             if ($this->strata == 'Doktor') {
-                return 'S3 '.$this->nama_pr;
+                return 'S3';
             }
 
-            return $this->nama_pr;
+            return null;
+        });
+    }
+
+    protected function prodi(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->strata_s) {
+                return $this->nama_pr;
+            }
+            return $this->strata_s . ' ' .$this->nama_pr;
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Global\HasSortir;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
@@ -21,6 +22,7 @@ use Livewire\WithPagination;
 class UserManagement extends Component
 {
     use HasToast;
+    use HasSortir;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;
@@ -141,15 +143,15 @@ class UserManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
+            '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
             'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'kampus', 9 => 'status', 10 => 'created_at', 11 => 'updated_at'],
-            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
-            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'kampus', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
+            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'kampus', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
         ];
         $aliases = [
             'name' => ['name'],
             'email' => ['email'],
-            'prodi' => ['prodi'],
+            'program_studi' => ['program_studi'],
             'kampus' => ['kampus'],
             'status' => ['status'],
             'admin_id' => ['admin_id', 'dosen_id', 'mahasiswa_id'],

@@ -2,14 +2,12 @@
 
 namespace App\Livewire\Staff\MKManagement;
 
-use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithMKFilters
 {
-    use HasSortir;
     use WithPagination;
 
     public $filterMK = '';

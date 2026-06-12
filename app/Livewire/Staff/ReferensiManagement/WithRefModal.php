@@ -41,7 +41,11 @@ trait WithRefModal
             $this->isFlyoutRef = false;
             $this->isEditingRef = false;
         } else {
-            $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
+            $this->isFlyoutRef =
+                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+                (property_exists($this, 'showCPLModal') && $this->showCPLModal);
         }
     }
 
@@ -59,7 +63,6 @@ trait WithRefModal
         $this->resetErrorBag();
         $this->isEditingRef = false;
 
-        $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
         $this->showRefModal = true;
         $this->showEditRef = false;
 
@@ -78,8 +81,6 @@ trait WithRefModal
         $this->selected_id_ref = $id;
         $this->isEditingRef = true;
         $this->showEditRef = true;
-
-        $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
 
         // $this->showRefModal = true;
         // $this->dispatch('refresh-component');
@@ -248,7 +249,7 @@ trait WithRefModal
                     'link' => $validated['link'],
                 ]);
 
-                if ($this->showRPSModal && $ref) {
+                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $ref) {
                     if (! isset($this->ref_id_array['rps']) || ! is_array($this->ref_id_array['rps'])) {
                         $this->ref_id_array['rps'] = [];
                     }
@@ -260,7 +261,7 @@ trait WithRefModal
                         $this->ref_items_array['rps'][] = $this->itemsRef($ref);
                     }
                 }
-                if ($this->showCPMKModal && $ref) {
+                if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $ref) {
                     if (! isset($this->ref_id_array['cpmk']) || ! is_array($this->ref_id_array['cpmk'])) {
                         $this->ref_id_array['cpmk'] = [];
                     }
@@ -272,7 +273,7 @@ trait WithRefModal
                         $this->ref_items_array['cpmk'][] = $this->itemsRef($ref);
                     }
                 }
-                if ($this->showSCPMKModal && $ref) {
+                if (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal && $ref) {
                     if (! isset($this->ref_id_array['scpmk']) || ! is_array($this->ref_id_array['scpmk'])) {
                         $this->ref_id_array['scpmk'] = [];
                     }

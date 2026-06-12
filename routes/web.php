@@ -22,6 +22,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('user-management/{switchTable?}', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
         Route::view('program-studi-management/{switchTable?}', 'program-studi-management')->name('program-studi-management');
+        Route::view('program-studi-management/{strata}/{kode_pr}', 'program-studi-management')->name('capaian-management');
+        Route::view('program-studi-management/{strata}/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {
@@ -33,15 +35,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware(['is_mahasiswa'])->group(function () {
         Route::view('jadwal-kelas/{switchTable?}', 'jadwal-mahasiswa')->name('jadwal-mahasiswa');
-        Route::view('jadwal-kelas/{kode}/jadwal/{kode_jadwal_url}/{switchTable?}', 'jadwal-mahasiswa')->name('sesi-mahasiswa');
+        Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/{switchTable?}', 'jadwal-mahasiswa')->name('sesi-mahasiswa');
         Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
         Route::view('nilai-mahasiswa/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('nilai-rps-mahasiswa');
         
     });
 
     Route::view('kelas-management/{switchTable?}', 'kelas-management')->name('kelas-management');
-    Route::view('kelas-management/kelas/{kode}/{switchTable?}', 'kelas-management')->name('jadwal-management');
-    Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal_url}/{switchTable?}', 'kelas-management')->name('sesi-management');
+    Route::view('kelas-management/kelas/{kode_kelas}/{switchTable?}', 'kelas-management')->name('jadwal-management');
+    Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/{switchTable?}', 'kelas-management')->name('sesi-management');
 
     // Route::middleware('kelas.access')->group(function () {
     // });

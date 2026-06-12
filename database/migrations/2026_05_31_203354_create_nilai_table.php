@@ -38,12 +38,11 @@ return new class extends Migration
             );
         });
 
-        Schema::create('rekap_cpl_mahasiswa', function (Blueprint $table) {
+        Schema::create('rekap_cpl_prodi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cpl_id')->constrained('cpls')->cascadeOnDelete();
+            $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
             $table->decimal('nilai', 5, 2)->nullable();
-            $table->decimal('persentase', 8, 2);
-            $table->integer('jumlah_pertemuan')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -52,6 +51,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('nilai_mahasiswa');
-        Schema::dropIfExists('rekap_cpl_mahasiswa');
+        Schema::dropIfExists('rekap_cpl_prodi');
     }
 };

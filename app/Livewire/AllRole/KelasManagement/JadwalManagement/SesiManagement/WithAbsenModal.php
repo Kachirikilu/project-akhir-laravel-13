@@ -56,7 +56,7 @@ trait WithAbsenModal
         ])->where('kj_id', $jadwal_id)->orderBy('pertemuan_ke', 'asc')->get();
 
         $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
-            ->where('rps_id', $this->rps_id)
+            ->where('rps_id', $this->rps_id_url)
             ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
             ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
             ->first();
@@ -146,7 +146,7 @@ trait WithAbsenModal
 
         // --- PERBAIKAN: Langsung gunakan $this->jadwal untuk kondisi Unique Key ---
         $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)
-            ->where('rps_id', $this->rps_id)
+            ->where('rps_id', $this->rps_id_url)
             ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
             ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
             ->first();
@@ -154,7 +154,7 @@ trait WithAbsenModal
         if (! $nilaiMahasiswa) {
             $nilaiMahasiswa = new NilaiMahasiswa([
                 'mahasiswa_id' => $this->selected_id_mahasiswa,
-                'rps_id' => $this->rps_id,
+                'rps_id' => $this->rps_id_url,
                 'ganjil_genap' => (string) $this->jadwal->ganjil_genap,
                 'tahun_akademik' => (string) $this->jadwal->tahun_akademik,
             ]);

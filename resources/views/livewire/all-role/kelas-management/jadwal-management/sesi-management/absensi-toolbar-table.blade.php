@@ -3,7 +3,7 @@
 
         @php
             $mahasiswaId = $x->mahasiswa?->id ?? 0;
-            $editCall = "editAbsensi({$mahasiswaId}, {$jadwal_id})";
+            $editCall = "editAbsensi({$mahasiswaId}, {$jadwal_id_url})";
         @endphp
 
         @include('livewire.global.table.text-copy', [

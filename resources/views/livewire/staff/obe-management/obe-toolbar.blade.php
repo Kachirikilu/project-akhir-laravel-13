@@ -80,7 +80,7 @@
                             $store.cpl?.setColor('text-emerald-700 dark:text-emerald-400');
                             $store.cpl?.reset(1);
                             $flux.modal('cpl-modal').show();
-                            $wire.addCPL();
+                            $wire.addCPL(1);
                         "
                         class="ml-8 cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
                         <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
@@ -99,7 +99,7 @@
                             $store.cpl?.setColor('text-amber-700 dark:text-amber-400');
                             $store.cpl?.reset(1);
                             $flux.modal('cpl-modal').show();
-                            $wire.addCPL();
+                            $wire.addCPL(2);
                         "
                         class="ml-8 cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                         <flux:icon name="book-open" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
@@ -118,7 +118,7 @@
                             $store.cpl?.setColor('text-indigo-700 dark:text-indigo-400');
                             $store.cpl?.reset(1);
                             $flux.modal('cpl-modal').show();
-                            $wire.addCPL();
+                            $wire.addCPL(3);
                         "
                         class="ml-8 cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30">
                         <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
@@ -137,7 +137,7 @@
                             $store.cpl?.setColor('text-red-700 dark:text-red-400');
                             $store.cpl?.reset(1);
                             $flux.modal('cpl-modal').show();
-                            $wire.addCPL();
+                            $wire.addCPL(4);
                         "
                         class="ml-8 cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                         <flux:icon name="globe-alt" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />

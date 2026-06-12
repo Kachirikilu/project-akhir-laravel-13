@@ -11,8 +11,8 @@
 
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
         'alpine' => 'sesi',
-        'backUrl' => $isJadwalMhs ?? null ? route('jadwal-mahasiswa') : route('jadwal-management', ['kode' => $kelas->kode]),
-        'mainKode' => $jadwal->kode ?? '-',
+        'backUrl' => $isJadwalMhs ?? null ? route('jadwal-mahasiswa') : route('jadwal-management', ['kode_kelas' => $kode_kelas_url]),
+        'mainKode' => $kode_jadwal_url ?? '-',
         'subLabel' => 'Kelas ' . ($jadwal->label_extra ?? '- ---'),
         'mainHead' => 'Jadwal Kelas',
         'subHead' => 'Sesi Kelas',

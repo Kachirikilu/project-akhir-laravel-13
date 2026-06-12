@@ -34,7 +34,6 @@ class RememberKelasNavigation
 
             $kelasHistory[$currentKode] = [
                 'kode_kelas' => $currentKode,
-                'kode_kelas_url' => $currentKode,
                 'url' => route($routeName, ['kode_kelas' => $currentKode]),
             ];
 
@@ -47,7 +46,7 @@ class RememberKelasNavigation
         // 2. HANDLER SESI (LEVEL 2 MANAGEMENT / LEVEL 1 MAHASISWA)
         if ($routeName === 'sesi-management' || $routeName === 'sesi-mahasiswa') {
             $currentKode = $request->route('kode_kelas');
-            $currentKodeJadwal = $request->route('kode_jadwal_short');
+            $currentKodeJadwal = $request->route('kode_jadwal_url');
             $currentIdJadwal = $request->route('jadwal_id');
             $currentKodeDb = str_replace('-', '', $currentKode);
 
@@ -80,14 +79,12 @@ class RememberKelasNavigation
 
             $sesiHistory[$compositeKey] = [
                 'kode_kelas' => $currentKode,
-                'kode_kelas_url' => $currentKode,
-                'kode_jadwal_short' => $currentKodeJadwal,
-                'kode_jadwal_short_url' => $currentKodeJadwal,
+                'kode_jadwal_url' => $currentKodeJadwal,
                 'jadwal_id' => $currentIdJadwal,
                 'switchTable' => $request->route('switchTable'),
                 'url' => route($routeName, array_filter([
                     'kode_kelas' => $currentKode,
-                    'kode_jadwal_short' => $currentKodeJadwal,
+                    'kode_jadwal_url' => $currentKodeJadwal,
                     'jadwal_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
                 ])),
@@ -97,7 +94,7 @@ class RememberKelasNavigation
             
             uasort($sesiHistory, function ($a, $b) {
                 $kodeCompare = strcmp($a['kode_kelas'], $b['kode_kelas']);
-                return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal_short'], $b['kode_jadwal_short']);
+                return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal_url'], $b['kode_jadwal_url']);
             });
 
             session([$sessionKey => $sesiHistory]);

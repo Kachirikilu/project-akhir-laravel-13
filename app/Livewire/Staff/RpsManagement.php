@@ -5,14 +5,15 @@ namespace App\Livewire\Staff;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithDosenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithDosenSearchFilters;
+use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
@@ -47,6 +48,7 @@ use Livewire\WithPagination;
 
 class RpsManagement extends Component
 {
+    use HasSortir;
     use HasToast;
     use WithCPLDelete;
     use WithCPLFilters;
@@ -187,8 +189,8 @@ class RpsManagement extends Component
     {
         $columns = [
             'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'kode_mk', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
-            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
-            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
+            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count_rps', 5 => 'created_at', 6 => 'updated_at'],
+            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count_cpl', 5 => 'count-scpmk', 6 => 'total_bobot', 7 => 'created_at', 8 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
             'dosen' => [1 => 'id', 2 => 'kode', 3 => 'identity1', 4 => 'identity2', 5 => 'identity3', 6 => 'role', 7 => 'prodi', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
@@ -201,6 +203,8 @@ class RpsManagement extends Component
             'judul' => ['judul', 'deskripsi', 'mk'],
             'materi' => ['materi', 'penulis'],
             'penulis' => ['penulis', 'materi'],
+            'count_rps' => ['count_rps', 'count_cpl'],
+            'count_cpl' => ['count_cpl', 'count_rps'],
             'akademik' => ['akademik', 'bobot', 'total_bobot'],
             'bobot' => ['bobot', 'akademik', 'total_bobot'],
             'total_bobot' => ['total_bobot', 'akademik', 'bobot'],
@@ -345,6 +349,11 @@ class RpsManagement extends Component
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
                     break;
                 case 'cpl':
+                    $this->addCountRpsCpl(
+                        $queryCPL,
+                        null,
+                        'count_rps'
+                    );
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'cpmk':
@@ -357,6 +366,14 @@ class RpsManagement extends Component
                     $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
                     break;
                 case 'dosen':
+                    $this->addCountRpsDosen(
+                        $queryUser,
+                        'count_rps'
+                    );
+                    $this->addTotalSKs(
+                        $queryUser,
+                        'total_sks'
+                    );
                     $this->buttonUserFilter($queryUser);
                     break;
             }
@@ -419,7 +436,7 @@ class RpsManagement extends Component
                 'rps-draf' => '📝',
                 'rps-older-5' => '⏳',
 
-                                'cpl-month' => '🎯',
+                'cpl-month' => '🎯',
                 'cpl-6-months' => '⏱️',
                 'cpl-year' => '📆',
                 'cpl-older-5' => '⏳',

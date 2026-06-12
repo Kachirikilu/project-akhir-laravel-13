@@ -26,7 +26,7 @@
                     Input Capaian Pembelajaran Lulusan</h4>
 
 
-                <div>
+                {{-- <div>
                     <div class="grid sm:grid-cols-4 gap-1 sm:gap-3 items-end" x-data="{}"
                         x-effect="$store.cpl.kode_cpl = ($store.cpl.kode_cpl_1 || '') + ($store.cpl.kode_cpl_2 || '')">
 
@@ -57,6 +57,27 @@
                     @error('kode_cpl')
                         <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_cpl') }}</span>
                     @enderror
+                </div> --}}
+
+                <div class="relative" x-data="{}" x-effect="$store.cpl.kode_cpl = ($store.cpl.kode_cpl_1 || '') + ($store.cpl.kode_cpl_2 || '')">
+                    @include('livewire.global.modal-form.loading-animation', [
+                        'wireLoading' => 'addCPL, editCPL',
+                    ])
+                    <template x-if="$store.cpl?.typeModal == 1" x-cloak>
+                        @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-prodi-input')
+                    </template>
+
+                    <template x-if="$store.cpl?.typeModal == 2" x-cloak>
+                        @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-departemen-input')
+                    </template>
+
+                    <template x-if="$store.cpl?.typeModal == 3" x-cloak>
+                        @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-fakultas-input')
+                    </template>
+
+                    <template x-if="$store.cpl?.typeModal == 4" x-cloak>
+                        @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-universitas-input')
+                    </template>
                 </div>
 
 

@@ -6,6 +6,7 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\RPS;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -35,17 +36,22 @@ trait WithCPLModal
 
     public $isFlyoutCPL = false;
 
+    public $cplType = '';
+
     public function updatedShowCPLModal($value)
     {
         if (! $value) {
             $this->isFlyoutCPL = false;
             $this->isEditingCPL = false;
         } else {
-            $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
+            $this->isFlyoutCPL =
+                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
     }
 
-    public function addCPL()
+    public function addCPL($tingkatan)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -58,15 +64,21 @@ trait WithCPLModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingCPL = false;
-        $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
+        $this->cplType = $tingkatan;
 
         $this->showCPLModal = true;
-
         $this->showEditCPL = false;
 
+        if ($tingkatan == 1 || $tingkatan == 4) {
+            $this->updatedPrNameSearch($this->prNameSearch);
+        } elseif ($tingkatan == 2) {
+            $this->updatedDpNameSearch($this->dpNameSearch);
+        } elseif ($tingkatan == 3) {
+            $this->updatedFkNameSearch($this->fkNameSearch);
+        }
     }
 
-    public function editCPL($id)
+    public function editCPL($id, $tingkatan)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -78,8 +90,8 @@ trait WithCPLModal
 
         $this->selected_id_cpl = $id;
         $this->isEditingCPL = true;
+        $this->cplType = $tingkatan;
         $this->showEditCPL = true;
-        $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
 
         // $this->showCPLModal = true;
         // $this->dispatch('refresh-component');
@@ -89,7 +101,55 @@ trait WithCPLModal
             $cpl = CPL::with([
                 // 'rps',
                 'cpmks.rps',
+                'prodis',
+                'prodis.dp_rel',
+                'prodis.dp_rel.fk_rel',
             ])->findOrFail($id);
+
+            $this->pr_id_array = $cpl->prodis->pluck('id')->toArray();
+            foreach ($cpl->prodis as $pr) {
+                $this->pr_items_array[] = $this->itemsPr($pr);
+            }
+
+            // $this->dispatch('refresh-component');
+
+            $firstProdi = $cpl->prodis->first();
+
+            // dd($firstProdi);
+
+            if ($firstProdi) {
+                if ($tingkatan == 2) {
+                    $this->dp_id = $firstProdi->dp_id;
+                    if ($firstProdi->dp_rel) {
+                        $this->dp_items = $this->itemsDp($firstProdi->dp_rel);
+                        $this->dpNameSearch = $firstProdi->departemen_dp;
+                    }
+                }
+                if ($tingkatan == 3) {
+                    $this->fk_id = $firstProdi->fk_id;
+                    if ($firstProdi->dp_rel?->fk_rel) {
+                        $this->fk_items = $this->itemsFk($firstProdi->dp_rel->fk_rel);
+                        $this->fkNameSearch = $firstProdi->fakultas_fk;
+                    }
+                }
+                if (in_array($tingkatan, [1, 4])) {
+                    $this->pr_id = $firstProdi->id;
+                }
+                if ($tingkatan == 1) {
+                    $this->prNameSearch = $firstProdi->prodi;
+                    $this->fetchPr($this->prNameSearch);
+                }
+            }
+
+            if ($tingkatan == 4) {
+                $this->updatedPrNameSearch($this->prNameSearch);
+            } elseif ($tingkatan == 2) {
+                $this->updatedDpNameSearch($this->dpNameSearch);
+                $this->fetchDp();
+            } elseif ($tingkatan == 3) {
+                $this->updatedFkNameSearch($this->fkNameSearch);
+                $this->fetchFk();
+            }
 
             $this->cpl_rps_id = $cpl->id;
             $this->cpl_rps_items_list = [];
@@ -153,22 +213,54 @@ trait WithCPLModal
 
         $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
+        $tingkatan = $this->cplType ?? 1;
+        $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+
         $rules = [
             'kode_cpl_1' => 'required|alpha|max:10',
             'kode_cpl_2' => 'required|numeric|min:1',
-            'kode_cpl' => [
-                'required',
-                'alpha_num',
-                'max:20',
-                function ($attribute, $value, $fail) use ($isEditingCPL) {
-                    $query = DB::table('cpls')->where('kode_cpl', $value);
+            // 'kode_cpl' => [
+            //     'required',
+            //     'alpha_num',
+            //     'max:20',
+            //     function ($attribute, $value, $fail) use ($isEditingCPL) {
+            //         $query = DB::table('cpls')->whereZ('kode_cpl', $value);
 
-                    if ($isEditingCPL) {
-                        $query->where('id', '!=', $this->selected_id_cpl);
+            //         if ($isEditingCPL) {
+            //             $query->where('id', '!=', $this->selected_id_cpl);
+            //         }
+
+            //         if ($query->exists()) {
+            //             $fail("Kode CPL '$value' sudah digunakan!");
+            //         }
+            //     },
+            // ],
+            'kode_cpl' => [
+                'required', 'alpha_num',
+                function ($attribute, $value, $fail) use ($targetProdiIds, $isEditingCPL) {
+                    if (empty($value) || empty($targetProdiIds)) {
+                        return;
                     }
 
-                    if ($query->exists()) {
-                        $fail("Kode CPL '$value' sudah digunakan!");
+                    foreach ($targetProdiIds as $index => $pId) {
+                        if (empty($pId)) {
+                            continue;
+                        }
+
+                        $query = DB::table('cpls')
+                            ->join('prodi_pivot_cpl', 'cpls.id', '=', 'prodi_pivot_cpl.cpl_id')
+                            ->where('prodi_pivot_cpl.pr_id', $pId)
+                            ->where('cpls.kode_cpl', $value);
+
+                        if ($isEditingCPL) {
+                            $query->where('cpls.id', '!=', $this->selected_id_cpl);
+                        }
+
+                        if ($query->exists()) {
+                            $namaProdi = DB::table('prodis')->where('id', $pId)->value('nama_pr') ?? "Prodi ID: $pId";
+                            $fail("Kode CPL '$value' sudah terpakai di Program Studi: ***$namaProdi***.");
+                            break;
+                        }
                     }
                 },
             ],
@@ -211,6 +303,55 @@ trait WithCPLModal
                     $this->addError('kode_cpl', $messages[0]);
                 }
             }
+
+            if ($tingkatan === 1) {
+                $rules['pr_id'] = 'required|integer|exists:prodis,id';
+            } else {
+                if ($tingkatan == 2) {
+                    $dpId = $data['dp_id'] ?? null;
+                    $rules['dp_id'] = [
+                        'required', 'integer',
+                        'exists:departemens,id',
+                        function ($attribute, $value, $fail) use ($data) {
+                            $validProdiIds = Prodi::where('dp_id', $value)->pluck('id')->toArray();
+                            $selectedProdiIds = $data['pr_id_array'] ?? [];
+
+                            $invalidSelected = array_diff($selectedProdiIds, $validProdiIds);
+
+                            if (! empty($invalidSelected)) {
+                                $fail('Beberapa Program Studi yang dipilih tidak terdaftar di Departemen ini!');
+                            }
+
+                            if (empty($validProdiIds)) {
+                                $fail('Departemen ini belum memiliki Program Studi!');
+                            }
+                        },
+                    ];
+                } elseif ($tingkatan == 3) {
+                    $fkId = $data['fk_id'] ?? null;
+                    $rules['fk_id'] = [
+                        'required', 'integer',
+                        'exists:fakultas,id',
+                        function ($attribute, $value, $fail) use ($data) {
+                            $validProdiIds = Prodi::whereHas('dp_rel', fn ($q) => $q->where('fk_id', $value))
+                                ->pluck('id')->toArray();
+                            $selectedProdiIds = $data['pr_id_array'] ?? [];
+
+                            $invalidSelected = array_diff($selectedProdiIds, $validProdiIds);
+
+                            if (! empty($invalidSelected)) {
+                                $fail('Beberapa Program Studi yang dipilih tidak terdaftar di Fakultas ini!');
+                            }
+
+                            if (empty($validProdiIds)) {
+                                $fail('Fakultas ini belum memiliki Program Studi!');
+                            }
+                        },
+                    ];
+                }
+                $rules['pr_id_array'] = 'required|array|min:1';
+            }
+
             throw ValidationException::withMessages($this->getErrorBag()->messages());
         }
 
@@ -227,18 +368,30 @@ trait WithCPLModal
             return;
         }
 
+        $data['pr_id'] = $this->pr_id;
+        $data['pr_id_array'] = $this->pr_id_array;
+
+        $data['dp_id'] = $this->dp_id;
+        $data['fk_id'] = $this->fk_id;
+
         try {
-            // 1. Jalankan validasi & pembersihan
+            $tingkatan = $this->cplType;
             $validated = $this->inputModalCPL(false, $data);
 
             // 2. Eksekusi Database
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $tingkatan) {
                 $cpl = CPL::create([
                     'kode_cpl' => strtoupper($validated['kode_cpl']),
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
-                if ($this->showRPSModal && $cpl) {
+                $targetIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+                $targetIds = array_filter($targetIds);
+                if (! empty($targetIds)) {
+                    $cpl->prodis()->attach($targetIds);
+                }
+
+                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpl) {
                     if (! isset($this->cpl_id_array['rps']) || ! is_array($this->cpl_id_array['rps'])) {
                         $this->cpl_id_array['rps'] = [];
                     }
@@ -250,7 +403,7 @@ trait WithCPLModal
                         $this->cpl_items_array['rps'][] = $this->itemsCPL($cpl);
                     }
                 }
-                if ($this->showCPMKModal && $cpl) {
+                if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $cpl) {
                     if (! isset($this->cpl_id_array['cpmk']) || ! is_array($this->cpl_id_array['cpmk'])) {
                         $this->cpl_id_array['cpmk'] = [];
                     }
@@ -284,10 +437,17 @@ trait WithCPLModal
             return;
         }
 
+        $data['pr_id'] = $this->pr_id;
+        $data['pr_id_array'] = $this->pr_id_array;
+
+        $data['dp_id'] = $this->dp_id;
+        $data['fk_id'] = $this->fk_id;
+
         try {
+            $tingkatan = $this->cplType;
             $validated = $this->inputModalCPL(true, $data);
 
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $tingkatan) {
                 $cpl = CPL::findOrFail($this->selected_id_cpl);
 
                 // 1. Update Data Utama CPL
@@ -296,23 +456,29 @@ trait WithCPLModal
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
+                $targetIds = ($tingkatan === 1)
+                            ? [$this->pr_id]
+                            : ($this->pr_id_array ?: []);
+                $cleanIds = array_values(array_filter($targetIds));
+                $syncData = [];
+                foreach ($cleanIds as $index => $id) {
+                    $syncData[$id] = ['sort_order' => $index];
+                }
+                $cpl->prodis()->sync($syncData);
+
                 // 2. Update Tanggal Revisi pada RPS Terkait
-                $rpsIds = collect();
-
-                $directRpsIds = $cpl->rps()->pluck('rps.id');
-                $rpsIds = $rpsIds->merge($directRpsIds);
-
-                $cpmkRpsIds = DB::table('rps_pivot_cpmk')
-                    ->join('cpmk_pivot_cpl', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_cpl.cpmk_id')
-                    ->where('cpmk_pivot_cpl.cpl_id', $cpl->id)
-                    ->pluck('rps_pivot_cpmk.rps_id');
-
-                $rpsIds = $rpsIds->merge($cpmkRpsIds)->unique();
+                $rpsIds = $cpl->cpmks()
+                    ->with('rps:id')
+                    ->get()
+                    ->flatMap(fn ($cpmk) => $cpmk->rps->pluck('id'))
+                    ->unique();
 
                 if ($rpsIds->isNotEmpty()) {
                     RPS::whereIn('id', $rpsIds)
                         ->where('is_draf', 0)
-                        ->update(['revisi' => now()]);
+                        ->update([
+                            'revisi' => now(),
+                        ]);
                 }
 
             });
@@ -337,6 +503,20 @@ trait WithCPLModal
     private function validationMessagesCPL()
     {
         return [
+            'fk_id.required' => 'Fakultas wajib diisi!',
+            'fk_id.integer' => 'ID Fakultas harus berupa angka!',
+            'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
+            'dp_id.required' => 'Departemen wajib diisi!',
+            'dp_id.integer' => 'ID Departemen harus berupa angka!',
+            'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
+            'pr_id.required' => 'Program Studi wajib diisi!',
+            'pr_id.integer' => 'ID Program Studi harus berupa angka!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+
+            'pr_id_array.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.array' => 'Program Studi dalam bentuk Array!',
+            'pr_id_array.min' => 'Program Studi minimal berisi satu data!',
+
             'kode_cpl_1.required' => 'Kode awalan (input kiri) wajib diisi!',
             'kode_cpl_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_cpl_1.max' => 'Kode awalan terlalu panjang!',
@@ -367,6 +547,10 @@ trait WithCPLModal
         return [
             1 => $this->getErrorCount([
                 'kode_cpl',
+                'fk_id',
+                'dp_id',
+                'pr_id',
+                'pr_id_array',
                 'deskripsi',
             ]),
             2 => $this->getErrorCount([
@@ -376,6 +560,14 @@ trait WithCPLModal
 
     private function resetInputCPL()
     {
+        $fields = [
+            'selected_id_cpl',
+            'pr_id', 'dp_id', 'fk_id',
+            'pr_items', 'dp_items', 'fk_items',
+            'pr_id_array', 'pr_items_array',
+            'prNameSearch', 'dpNameSearch', 'fkNameSearch',
+        ];
+        $this->reset($fields);
         $this->resetErrorBag();
     }
 }

@@ -2,14 +2,12 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
-use App\Livewire\Global\HasSortir;
 use App\Models\Kelas\KelasJadwal;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
 trait WithJadwalFilters
 {
-    use HasSortir;
     use WithPagination;
 
     public $search = '';

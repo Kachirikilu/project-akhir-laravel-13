@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Staff\RPSManagement;
 
-use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +17,9 @@ trait WithRPSFilters
 
     public $filterRPSgg = '';
 
-    public $totalGanjil = '';
+    public $totalGanjil = 0;
 
-    public $totalGenap = '';
+    public $totalGenap = 0;
 
     public $searchBobotRPS = '';
 
@@ -35,7 +34,7 @@ trait WithRPSFilters
         $this->resetPage();
     }
 
-    public function inputRPSSearch()
+    public function inputRPSSearch($prId = null,$cplId = null)
     {
         $queryRPS = RPS::query()
             ->with([
@@ -48,6 +47,15 @@ trait WithRPSFilters
             ]);
 
         if ($this->switchTable === 'rps') {
+
+            if (! empty($cplId)) {
+                $queryRPS->whereHas('cpmks.cpls', function ($q) use ($cplId) {
+                    $q->where('cpls.id', $cplId);
+                });
+            }
+            if (! empty($prId)) {
+                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));
+            }
 
             if (! empty($this->selectedPrId)) {
                 $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));

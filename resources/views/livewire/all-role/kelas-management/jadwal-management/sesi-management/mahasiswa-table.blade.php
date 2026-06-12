@@ -21,6 +21,7 @@
     @endphp
 
     @php
+        $borderX = 'border-[var(--border-table-color)] border-x';
         $borderR = 'border-[var(--border-table-color)] border-r';
     @endphp
 
@@ -92,10 +93,10 @@
 
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <th colspan="7" class="{{ $headSubKolom }}">
-                    Kehadiran
+                    Kehadiran Mahasiswa
                 </th>
                 <th colspan="3" class="{{ $headSubKolom }}">
-                    Nilai
+                    Nilai Mahasiswa
                 </th>
             @endif
 
@@ -186,7 +187,7 @@
                     'sortFieldString' => 'mhs_nilai_huruf',
                     'headString' => 'Huruf',
                     'isCenter' => 1,
-                    'isBorderR' => 1,
+                    'isMain' => 1,
                 ])
                 {{-- @elseif (Auth::user()->mahasiswa)
                 <th rowspan="1" class="{{ $headKolom }} border-x">Poin</th>
@@ -310,21 +311,21 @@
                     @endif
                 </td>
 
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="{{ $secondKolom }} text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_akhir ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="{{ $secondKolom }} text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_index ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                <td class="{{ $subKolom }} {{ $borderX }} text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         <flux:dropdown>
                             <button class="cursor-pointer">

@@ -11,10 +11,38 @@
 
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="clipboard-document-list" color="sky" size="lg">
+                {{-- <flux:badge icon="clipboard-document-list" color="sky" size="lg">
                     <span
                         x-text="$store.cpl?.isEdit ? 'Edit OBE - Capaian Pembelajaran Lulusan' : 'Tambah OBE - Capaian Pembelajaran Lulusan'"></span>
-                </flux:badge>
+                </flux:badge> --}}
+
+                <template x-if="$store.cpl?.typeModal == '1'" x-cloak>
+                    <flux:badge icon="academic-cap" color="sky" size="lg">
+                        <span
+                            x-text="$store.cpl?.isEdit ? 'Edit OBE - CPL Program Studi' : 'Tambah OBE - CPL Program Studi'"></span>
+                    </flux:badge>
+                </template>
+
+                <template x-if="$store.cpl?.typeModal == 2" x-cloak>
+                    <flux:badge icon="book-open" color="sky" size="lg">
+                        <span
+                            x-text="$store.cpl?.isEdit ? 'Edit OBE - CPL Departemen' : 'Tambah OBE - CPL Departemen'"></span>
+                    </flux:badge>
+                </template>
+
+                <template x-if="$store.cpl?.typeModal == 3" x-cloak>
+                    <flux:badge icon="building-library" color="sky" size="lg">
+                        <span
+                            x-text="$store.cpl?.isEdit ? 'Edit OBE - CPL Fakultas' : 'Tambah OBE - CPL Fakultas'"></span>
+                    </flux:badge>
+                </template>
+
+                <template x-if="$store.cpl?.typeModal == 4" x-cloak>
+                    <flux:badge icon="globe-alt" color="sky" size="lg">
+                        <span
+                            x-text="$store.cpl?.isEdit ? 'Edit OBE - CPL Universitas' : 'Tambah OBE - CPL Universitas'"></span>
+                    </flux:badge>
+                </template>
 
             </h3>
         </div>

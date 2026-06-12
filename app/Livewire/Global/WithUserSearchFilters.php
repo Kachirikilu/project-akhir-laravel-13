@@ -525,7 +525,7 @@ trait WithUserSearchFilters
                     $matchSKS = false;
 
                     if ($withRPS) {
-                        $rps = (int) ($user->dosen->count_rps ?? 0);
+                        $rps = (int) ($user->count_rps ?? 0);
                         $matchRPS = false;
                         if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
                             $targetSKS = (int) max(
@@ -542,7 +542,7 @@ trait WithUserSearchFilters
                             $searchLower
                         );
 
-                        $sks = (int) ($user->dosen->count_sks ?? 0);
+                        $sks = (int) ($user->total_sks ?? 0);
                         $matchSKS = false;
                         if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
                             $targetSKS = (int) max(
@@ -654,8 +654,8 @@ trait WithUserSearchFilters
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
                 'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? null,
 
-                'total_rps' => fn ($user) => $user->dosen->count_rps ?? null,
-                'total_sks' => fn ($user) => $user->dosen->count_sks ?? null,
+                'count_rps' => fn ($user) => $user->count_rps ?? null,
+                'total_sks' => fn ($user) => $user->total_sks ?? null,
 
                 'created_at' => fn ($user) => $user->created_at,
                 'updated_at' => fn ($user) => $user->updated_at,

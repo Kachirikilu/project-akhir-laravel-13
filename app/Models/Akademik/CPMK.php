@@ -100,6 +100,11 @@ class CPMK extends Model
             ->withTimestamps();
     }
 
+    public function cpls(): BelongsToMany
+    {
+        return $this->belongsToMany(CPL::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
+            ->withPivot('sort_order');
+    }
     public function scpmks(): BelongsToMany
     {
         return $this->belongsToMany(SubCPMK::class, 'cpmk_pivot_scpmk', 'cpmk_id', 'scpmk_id')
@@ -113,11 +118,6 @@ class CPMK extends Model
             ->withPivot('sort_order');
     }
 
-    public function cpls(): BelongsToMany
-    {
-        return $this->belongsToMany(CPL::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
-            ->withPivot('sort_order');
-    }
 
     public function scopeSearchCPMK($query, $search, $withBobot = false)
     {

@@ -85,20 +85,21 @@ trait WithMKModal
             if ($firstProdi) {
                 if ($tingkatan == 2) {
                     $this->dp_id = $firstProdi->dp_id;
-                    $dataDp = Departemen::where('id', $this->dp_id)->first();
-                    $this->dp_items[] = $this->itemsDp($dataDp);
-                    $this->dpNameSearch = $firstProdi->departemen_dp;
+
+                    if ($firstProdi->dp_rel) {
+                        $this->dp_items = $this->itemsDp($firstProdi->dp_rel);
+                        $this->dpNameSearch = $firstProdi->departemen_dp;
+                    }
                 }
                 if ($tingkatan == 3) {
                     $this->fk_id = $firstProdi->fk_id;
-                    $dataFk = Fakultas::where('id', $this->fk_id)->first();
-                    if ($dataFk) {
-                        $this->fk_items = $this->itemsFk($dataFk);
+
+                    if ($firstProdi->dp_rel?->fk_rel) {
+                        $this->fk_items = $this->itemsFk($firstProdi->dp_rel->fk_rel);
                         $this->fkNameSearch = $firstProdi->fakultas_fk;
                     }
                 }
-
-                if ($tingkatan == 1 || $tingkatan == 4) {
+                if (in_array($tingkatan, [1, 4])) {
                     $this->pr_id = $firstProdi->id;
                 }
                 if ($tingkatan == 1) {
@@ -351,19 +352,14 @@ trait WithMKModal
                     'bahan_kajian' => $validated['bahan_kajian'],
                 ]);
 
-                // 4. LOGIKA TARGET IDs
                 $targetIds = ($tingkatan === 1)
                             ? [$this->pr_id]
                             : ($this->pr_id_array ?: []);
-
                 $cleanIds = array_values(array_filter($targetIds));
-
-                // 5. SINKRONISASI RELASI PIVOT DENGAN SORT ORDER
                 $syncData = [];
                 foreach ($cleanIds as $index => $id) {
                     $syncData[$id] = ['sort_order' => $index];
                 }
-
                 $mk->prodis()->sync($syncData);
             });
 
@@ -450,6 +446,10 @@ trait WithMKModal
                 'semester',
                 'tipe_sks',
                 'sks_kuliah',
+                'fk_id',
+                'dp_id',
+                'pr_id',
+                'pr_id_array',
                 'is_wajib',
             ]),
             2 => $this->getErrorCount([

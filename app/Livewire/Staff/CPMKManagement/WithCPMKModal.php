@@ -42,7 +42,11 @@ trait WithCPMKModal
             $this->isFlyoutCPMK = false;
             $this->isEditingCPMK = false;
         } else {
-            $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
+            $this->isFlyoutCPMK =
+                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
     }
 
@@ -55,7 +59,6 @@ trait WithCPMKModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingCPMK = false;
-        $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
         $this->showCPMKModal = true;
         $this->showEditCPMK = false;
 
@@ -86,7 +89,6 @@ trait WithCPMKModal
         $this->selected_id_cpmk = $id;
         $this->isEditingCPMK = true;
         $this->showEditCPMK = true;
-        $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         try {
             // 1. Load data CPMK dengan relasi yang sangat lengkap
@@ -291,7 +293,7 @@ trait WithCPMKModal
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
-                if ($this->showRPSModal && $cpmk) {
+                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpmk) {
                     $this->cpmk_id_array[] = $cpmk->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($cpmk);
                     $mapped = $this->mapCPMK(collect([$cpmk]));

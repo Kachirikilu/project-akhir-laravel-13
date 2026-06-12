@@ -17,8 +17,6 @@
     ])
 
     <div class="relative">
-
-
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addMK, editMK'])
 
         <template x-if="$store.mk?.typeModal == 1" x-cloak>

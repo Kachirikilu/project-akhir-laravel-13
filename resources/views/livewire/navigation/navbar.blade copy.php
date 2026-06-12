@@ -228,8 +228,8 @@
                     ];
 
                     foreach ($sesiHistory as $sesi) {
-                        $kodeKelas = $sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null;
-                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null;
+                        $kodeKelas = $sesi['kode_kelas'];
+                        $kodeJadwal = $sesi['kode_jadwal_url'];
                         $jadwalId = $sesi['jadwal_id'] ?? null;
                         $switchTable = $sesi['switchTable'] ?? null;
 
@@ -239,7 +239,7 @@
                                 'sesi-mahasiswa',
                                 array_filter([
                                     'kode_kelas' => $kodeKelas,
-                                    'kode_jadwal_short' => $kodeJadwal,
+                                    'kode_jadwal_url' => $kodeJadwal,
                                     'jadwal_id' => $jadwalId,
                                     'switchTable' => $switchTable,
                                 ]),
@@ -251,7 +251,7 @@
                             'active' =>
                                 request()->routeIs('sesi-mahasiswa') &&
                                 request()->route('kode_kelas') === $kodeKelas &&
-                                request()->route('kode_jadwal_short') === $kodeJadwal,
+                                request()->route('kode_jadwal_url') === $kodeJadwal,
                         ];
                     }
 
@@ -273,13 +273,8 @@
 
                     $groupedJadwal = [];
                     foreach ($sesiHistory as $sesi) {
-                        $kodeKelas = $sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null;
-                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null;
-
-                        if ($kodeKelas === null || $kodeJadwal === null) {
-                            continue;
-                        }
-
+                        $kodeKelas = $sesi['kode_kelas'];
+                        $kodeJadwal = $sesi['kode_jadwal_url'];
                         $groupedJadwal[$kodeKelas][$kodeJadwal] = $sesi;
                     }
 
@@ -300,11 +295,7 @@
                     ];
 
                     foreach ($kelasHistory as $kelas) {
-                        $kodeKelas = $kelas['kode_kelas_url'] ?? $kelas['kode_kelas'] ?? null;
-
-                        if ($kodeKelas === null) {
-                            continue;
-                        }
+                        $kodeKelas = $kelas['kode_kelas'];
 
                         $subMenus[] = [
                             'label' => 'Kelas ' . $kodeKelas,
@@ -322,7 +313,7 @@
                         if (isset($groupedJadwal[$kodeKelas])) {
                             foreach ($groupedJadwal[$kodeKelas] as $sesi) {
                                 $subMenus[] = [
-                                    'label' => $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? 'Jadwal',
+                                    'label' => $sesi['kode_jadwal_url'],
                                     'url' => $sesi['url'],
                                     'param' => 'sesi-management',
                                     'icon' => 'academic-cap',
@@ -330,8 +321,8 @@
                                     'level' => 2,
                                     'active' =>
                                         request()->routeIs('sesi-management') &&
-                                        request()->route('kode_kelas') === ($sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null) &&
-                                        request()->route('kode_jadwal_short') === ($sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null),
+                                        request()->route('kode_kelas') === $sesi['kode_kelas'] &&
+                                        request()->route('kode_jadwal_url') === $sesi['kode_jadwal_url'],
                                 ];
                             }
                         }

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
-use App\Livewire\Global\HasSortir;
 // use App\Models\Akademik\SubCPMK;
 use App\Models\Kelas\KelasSesi;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -11,7 +10,6 @@ use Livewire\WithPagination;
 
 trait WithSesiFilters
 {
-    use HasSortir;
     use WithPagination;
 
     public $search = '';

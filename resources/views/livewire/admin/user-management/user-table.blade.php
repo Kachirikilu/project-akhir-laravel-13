@@ -145,7 +145,8 @@
             @if (($withRPS ?? false) && $switchTable == 'dosen')
                 <th class="{{ $headKolom }} border-x">Show</th>
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'total_rps',
+                    'sortFieldString' => 'count_rps',
+                    'headString' => 'Total RPS',
                     'isCenter' => 1,
                     'isBorderL' => 1,
                 ])
@@ -264,8 +265,8 @@
                         <span>RPS</span>
                     </x-button-action>
                 </td>
-                <td class="{{ $subKolom }} text-center">{{ $user->dosen->count_rps }} RPS</td>
-                <td class="{{ $subKolom }} text-center">{{ $user->dosen->count_sks }} SKS</td>
+                <td class="{{ $subKolom }} text-center">{{ $user->count_rps }} RPS</td>
+                <td class="{{ $subKolom }} text-center">{{ $user->total_sks }} SKS</td>
             @endif
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
             @if ($switchTable != 'mahasiswa')

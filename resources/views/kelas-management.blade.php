@@ -14,10 +14,10 @@
             @if(request()->routeIs('kelas-management'))
                 <livewire:all-role.kelas-management :switchTable="request()->route('switchTable') ?? ''" />
             @elseif (request()->routeIs('jadwal-management'))
-                <livewire:all-role.kelas-management.jadwal-management :kode="request()->route('kode')" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
+                <livewire:all-role.kelas-management.jadwal-management :kode_kelas="request()->route('kode_kelas')" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-management'))
-                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode="request()->route('kode')"
-                    :kode_jadwal_url="request()->route('kode_jadwal_url')" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
+                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
+                    :kode_jadwal_short="request()->route('kode_jadwal_short')" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
             @endif
         </div>
     </div>

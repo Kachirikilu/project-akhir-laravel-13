@@ -12,7 +12,7 @@
             @if (request()->routeIs('jadwal-mahasiswa'))
                 <livewire:all-role.kelas-management.jadwal-management :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-mahasiswa'))
-                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode="request()->route('kode')"
+                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
                     :kode_jadwal="request()->route('kode_jadwal')" :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
             @endif
         </div>

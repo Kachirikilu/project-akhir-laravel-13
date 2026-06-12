@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
-use App\Models\Penilaian\RekapCPLMahasiswa;
+use App\Models\Penilaian\RekapCPLProdi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -186,32 +186,32 @@ class NilaiSeeder extends Seeder
                             // =====================================
                             // SIMPAN REKAP CPL
                             // =====================================
-                            foreach (
-                                $rekapCpl as $cplId => $data
-                            ) {
+                            // foreach (
+                            //     $rekapCpl as $cplId => $data
+                            // ) {
 
-                                $persentase =
-                                    $data['jumlah'] > 0
-                                        ? round(
-                                            $data['total']
-                                            / $data['jumlah'],
-                                            2
-                                        )
-                                        : 0;
+                            //     $persentase =
+                            //         $data['jumlah'] > 0
+                            //             ? round(
+                            //                 $data['total']
+                            //                 / $data['jumlah'],
+                            //                 2
+                            //             )
+                            //             : 0;
 
-                                RekapCPLMahasiswa::create([
-                                    'cpl_id' => $cplId,
+                            //     RekapCPLProdi::create([
+                            //         'cpl_id' => $cplId,
 
-                                    'nilai' => round(
-                                        $persentase,
-                                        2
-                                    ),
+                            //         'nilai' => round(
+                            //             $persentase,
+                            //             2
+                            //         ),
 
-                                    'persentase' => $persentase,
+                            //         'persentase' => $persentase,
 
-                                    'jumlah_pertemuan' => $data['jumlah'],
-                                ]);
-                            }
+                            //         'jumlah_pertemuan' => $data['jumlah'],
+                            //     ]);
+                            // }
                         }
                     });
 

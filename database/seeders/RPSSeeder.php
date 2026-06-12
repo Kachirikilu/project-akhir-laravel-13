@@ -98,15 +98,15 @@ class RPSSeeder extends Seeder
         $totalCPL = min(1024, count($kombinasi));
         $this->command->info("Generating $totalCPL CPL records...");
         for ($i = 1; $i <= $totalCPL; $i++) {
-$cpls[] = CPL::updateOrCreate(
-    [
-        'kode_cpl' => sprintf('CPL%02d', $i),
-    ],
-    [
-        'deskripsi' => $kombinasi[$i - 1],
-        'level_cpl' => fake()->randomElement([1,1,1,2,2,3,4]),
-    ]
-);
+            $cpls[] = CPL::updateOrCreate(
+                [
+                    'kode_cpl' => sprintf('CPL%02d', $i),
+                ],
+                [
+                    'deskripsi' => $kombinasi[$i - 1],
+                    'level_cpl' => fake()->randomElement([1, 1, 1, 2, 2, 3, 4]),
+                ]
+            );
         }
 
         $this->attachCplsToProdi($cpls);
@@ -166,9 +166,25 @@ $cpls[] = CPL::updateOrCreate(
                     $mk = $mks->random();
                     $waktu = now()->subYears(rand(0, 3));
 
-                    $availableCpls = $mk->prodis
-                        ->flatMap(fn ($prodi) => $prodi->cpls)
-                        ->unique('id')
+                    $mkProdiIds = $mk->prodis
+                        ->pluck('id')
+                        ->unique();
+
+                    $availableCpls = CPL::with('prodis')
+                        ->whereHas('prodis', function ($q) use ($mkProdiIds) {
+                            $q->whereIn('prodis.id', $mkProdiIds);
+                        })
+                        ->get()
+                        ->filter(function ($cpl) use ($mkProdiIds) {
+
+                            $cplProdiIds = $cpl->prodis
+                                ->pluck('id')
+                                ->unique();
+
+                            return $cplProdiIds
+                                ->intersect($mkProdiIds)
+                                ->isNotEmpty();
+                        })
                         ->values();
 
                     if ($availableCpls->count() < 1) {
@@ -238,94 +254,105 @@ $cpls[] = CPL::updateOrCreate(
         $this->command->info('RPSSeeder finished successfully.');
     }
 
-public function attachCplsToProdi(array $cpls): void
-{
-    $prodis = Prodi::with('dp_rel.fk_rel')->get();
-
-    if ($prodis->isEmpty()) {
-        return;
+    private function getMkProdiIds(MataKuliah $mk): array
+    {
+        return $mk->prodis
+            ->pluck('id')
+            ->unique()
+            ->values()
+            ->all();
     }
 
-    foreach ($cpls as $cpl) {
+    public function attachCplsToProdi(array $cpls): void
+    {
+        $prodis = Prodi::with('dp_rel.fk_rel')->get();
 
-        switch ((int) $cpl->level_cpl) {
+        if ($prodis->isEmpty()) {
+            return;
+        }
 
-            // ======================
-            // LEVEL 1
-            // 1 PRODI SAJA
-            // ======================
-            case 1:
+        foreach ($cpls as $cpl) {
 
-                $prodi = $prodis->random();
+            switch ((int) $cpl->level_cpl) {
 
-                $cpl->prodis()->syncWithoutDetaching([
-                    $prodi->id => [
-                        'sort_order' => 0,
-                    ]
-                ]);
+                // ======================
+                // LEVEL 1
+                // 1 PRODI SAJA
+                // ======================
+                case 1:
 
-                break;
+                    $prodi = $prodis->random();
 
-            // ======================
-            // LEVEL 2
-            // SATU DEPARTEMEN
-            // ======================
-            case 2:
+                    $cpl->prodis()->syncWithoutDetaching([
+                        $prodi->id => [
+                            'sort_order' => 0,
+                        ],
+                    ]);
 
-                $prodiAwal = $prodis->random();
+                    break;
 
-                $targetProdis = $prodis
-                    ->where(
-                        'dp_id',
-                        $prodiAwal->dp_id
+                    // ======================
+                    // LEVEL 2
+                    // SATU DEPARTEMEN
+                    // ======================
+                case 2:
+
+                    $prodiAwal = $prodis->random();
+
+                    $targetProdis = $prodis
+                        ->where(
+                            'dp_id',
+                            $prodiAwal->dp_id
+                        );
+
+                    $attachIds = $targetProdis
+                        ->pluck('id')
+                        ->all();
+
+                    // $cpl->prodis()->syncWithoutDetaching($attachIds);
+                    $cpl->prodis()->detach();
+                    $cpl->prodis()->attach($attachIds);
+
+                    break;
+
+                    // ======================
+                    // LEVEL 3
+                    // SATU FAKULTAS
+                    // ======================
+                case 3:
+
+                    $prodiAwal = $prodis->random();
+
+                    $fakultasId =
+                        $prodiAwal->dp_rel->fk_id;
+
+                    $attachIds = $prodis
+                        ->filter(function ($prodi) use ($fakultasId) {
+                            return
+                                $prodi->dp_rel->fk_id
+                                == $fakultasId;
+                        })
+                        ->pluck('id')
+                        ->all();
+
+                    $cpl->prodis()->syncWithoutDetaching($attachIds);
+
+                    break;
+
+                    // ======================
+                    // LEVEL 4
+                    // SEMUA PRODI
+                    // ======================
+                case 4:
+
+                    $cpl->prodis()->syncWithoutDetaching(
+                        $prodis->pluck('id')->all()
                     );
 
-                $attachIds = $targetProdis
-                    ->pluck('id')
-                    ->all();
-
-                $cpl->prodis()->syncWithoutDetaching($attachIds);
-
-                break;
-
-            // ======================
-            // LEVEL 3
-            // SATU FAKULTAS
-            // ======================
-            case 3:
-
-                $prodiAwal = $prodis->random();
-
-                $fakultasId =
-                    $prodiAwal->dp_rel->fk_id;
-
-                $attachIds = $prodis
-                    ->filter(function ($prodi) use ($fakultasId) {
-                        return
-                            $prodi->dp_rel->fk_id
-                            == $fakultasId;
-                    })
-                    ->pluck('id')
-                    ->all();
-
-                $cpl->prodis()->syncWithoutDetaching($attachIds);
-
-                break;
-
-            // ======================
-            // LEVEL 4
-            // SEMUA PRODI
-            // ======================
-            case 4:
-
-                $cpl->prodis()->syncWithoutDetaching(
-                    $prodis->pluck('id')->all()
-                );
-
-                break;
+                    break;
+            }
         }
     }
-}
 
     private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
     {

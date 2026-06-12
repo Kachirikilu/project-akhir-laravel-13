@@ -2,9 +2,10 @@
 
 namespace App\Livewire\AllRole;
 
+use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasToast;
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasModal;
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
@@ -22,6 +23,7 @@ use Livewire\WithPagination;
 
 class KelasManagement extends Component
 {
+    use HasSortir;
     use HasToast;
     use WithDepartemenSearchFilters;
     use WithDosenSearchFilters;

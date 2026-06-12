@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
@@ -19,6 +20,7 @@ use Livewire\WithPagination;
 
 class MataKuliahManagement extends Component
 {
+    use HasSortir;
     use HasToast;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;

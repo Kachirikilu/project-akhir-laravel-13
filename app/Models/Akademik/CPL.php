@@ -49,7 +49,6 @@ class CPL extends Model
             ->withPivot('sort_order');
     }
 
-
     // protected function kode(): Attribute
     // {
     //     return Attribute::get(function () {
@@ -159,24 +158,50 @@ class CPL extends Model
                         $sub->orWhere('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
                     }
                     $sub->where(function ($low) use ($prefixPart) {
+
                         $low->orWhere(function ($q) use ($prefixPart) {
                             $q->where('cpls.level_cpl', 1)
                                 ->whereHas('prodis', function ($pro) use ($prefixPart) {
-                                    $pro->where('kode_pr', 'like', $prefixPart.'%');
-                                });
-                        })
-                            ->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('cpls.level_cpl', 2)
-                                    ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
-                                        $dp->where('kode_dp', 'like', $prefixPart.'%');
+
+                                    $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+                                        ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                        ->whereRaw("
+                                                    COALESCE(
+                                                        NULLIF(prodis.kode_pr, ''),
+                                                        NULLIF(departemens.kode_dp, ''),
+                                                        NULLIF(fakultas.kode_fk, ''),
+                                                        'UNI'
+                                                    ) LIKE ?
+                                                ", [$prefixPart.'%']);
+                                                            });
+                                                    })
+                                        ->orWhere(function ($q) use ($prefixPart) {
+                                            $q->where('cpls.level_cpl', 2)
+                                                ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
+
+                                                    $dp->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                                        ->whereRaw("
+                                                                    COALESCE(
+                                                                        NULLIF(departemens.kode_dp, ''),
+                                                                        NULLIF(fakultas.kode_fk, ''),
+                                                                        'UNI'
+                                                                    ) LIKE ?
+                                                                ", [$prefixPart.'%']);
                                     });
                             })
                             ->orWhere(function ($q) use ($prefixPart) {
                                 $q->where('cpls.level_cpl', 3)
                                     ->whereHas('prodis.dp_rel.fk_rel', function ($fk) use ($prefixPart) {
-                                        $fk->where('kode_fk', 'like', $prefixPart.'%');
+
+                                        $fk->whereRaw("
+                                                        COALESCE(
+                                                            NULLIF(fakultas.kode_fk, ''),
+                                                            'UNI'
+                                                        ) LIKE ?
+                                                    ", [$prefixPart.'%']);
                                     });
                             });
+
                         if ($prefixPart === 'UNI') {
                             $low->orWhere('cpls.level_cpl', 4);
                         }

@@ -8,6 +8,7 @@ use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
+use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
@@ -20,6 +21,7 @@ use Livewire\WithPagination;
 
 class ProgramStudiManagement extends Component
 {
+    use HasSortir;
     use HasToast;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
@@ -104,16 +106,33 @@ class ProgramStudiManagement extends Component
 
     private function syncSortField($table, $sortField)
     {
-        if ($sortField != 'id' && $sortField != 'kode') {
-            if ($table === 'prodi') {
-                $this->sortField = 'prodi';
-            } elseif ($table === 'departemen') {
-                $this->sortField = 'departemen';
-                $this->filterPr = '';
-            } elseif ($table === 'fakultas') {
-                $this->sortField = 'fakultas';
-                $this->filterPr = '';
-            }
+        $columns = [
+            'prodi' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'akreditas_pr', 7 => 'departemen', 8 => 'fakultas', 9 => 'strata', 10 => 'created_at', 11 => 'updated_at'],
+            'departemen' => [1 => 'id', 2 => 'kode', 3 => 'departemen', 4 => 'rekap_dp', 5 => 'index_dp', 6 => 'akreditas_dp', 7 => 'fakultas', 8 => 'created_at', 9 => 'updated_at'],
+            'fakultas' => [1 => 'id', 2 => 'kode', 3 => 'fakultas', 4 => 'rekap_fk', 5 => 'index_fk', 6 => 'akreditas_fk', 7 => 'created_at', 8 => 'updated_at'],
+        ];
+        $aliases = [
+            'kode' => ['kode'],
+            'program_studi' => ['departemen', 'fakultas'],
+
+            'rekap_pr' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
+            'rekap_dp' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
+            'rekap_fk' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
+            'index_pr' => ['index_pr', 'index_dp', 'index_fk'],
+            'index_dp' => ['index_pr', 'index_dp', 'index_fk'],
+            'index_fk' => ['index_pr', 'index_dp', 'index_fk'],
+            'akreditas_pr' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+            'akreditas_dp' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+            'akreditas_fk' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+
+            'created_at' => ['created_at'],
+            'updated_at' => ['updated_at'],
+        ];
+
+        $this->sortField($table, $sortField, $columns, $aliases);
+
+        if ($table === 'program_studi' && ($sortField === 'departemen' || $sortField === 'fakultas')) {
+            $this->sortField = 'program_studi';
         }
     }
 
@@ -169,6 +188,19 @@ class ProgramStudiManagement extends Component
                 $queryFk = $queryFk->onlyTrashed();
             }
 
+            if ($this->switchTable === 'prodi') {
+                $this->addRekapProdi($queryPr, 'rekap_pr');
+                $this->addIndexProdi($queryPr, 'index_pr');
+                $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+            } elseif ($this->switchTable === 'departemen') {
+                $this->addRekapDepartemen($queryDp, 'rekap_dp');
+                $this->addIndexDepartemen($queryDp, 'index_dp');
+                $this->addAkreditasDepartemen($queryDp, 'akreditas_dp');
+            } elseif ($this->switchTable === 'fakultas') {
+                $this->addRekapFakultas($queryFk, 'rekap_fk');
+                $this->addIndexFakultas($queryFk, 'index_fk');
+                $this->addAkreditasFakultas($queryFk, 'akreditas_fk');
+            }
             // =========================
             // PAGINATION
             // =========================

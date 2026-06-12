@@ -135,7 +135,7 @@
         <tr>
             @if ($withRPS && $switchTable == 'dosen')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'total_rps',
+                    'sortFieldString' => 'count_rps',
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -243,7 +243,7 @@
             <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
             @if ($withRPS && $switchTable == 'dosen')
-                <td class="{{ $secondKolom }}">{{ $user->dosen->count_rps }} RPS</td>
+                <td class="{{ $secondKolom }}">{{ $user->count_rps }} RPS</td>
                 <td class="{{ $secondKolom }}">{{ $user->dosen->count_sks }} SKS</td>
             @endif
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
