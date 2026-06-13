@@ -32,6 +32,15 @@
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
+                'nameXString' => 'Rekap Capaian',
+                'xString' => "generateRekapCapaian()",
+                'color' => 'blue',
+                'icon' => 'academic-cap',
+            ])
+        </div>
+
+        <div class="shrink-0">
+            @include('livewire.global.table.export-button', [
                 'xString' => 'exportProdiExcel()',
                 'autoSmall' => 'sm',
             ])

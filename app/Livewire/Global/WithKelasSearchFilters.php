@@ -430,7 +430,7 @@ trait WithKelasSearchFilters
                         $k->sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $k->sks. 'SKS',
+                        $k->sks.'SKS',
                         $searchLower
                     );
 
@@ -630,6 +630,9 @@ trait WithKelasSearchFilters
                 ? $allKelas->sortBy($sortValue)
                 : $allKelas->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allKelas->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -639,6 +642,11 @@ trait WithKelasSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryKelas;
+
         }
 
         return $queryKelas->paginate($perPage);

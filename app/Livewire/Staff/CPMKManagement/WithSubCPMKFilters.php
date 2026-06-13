@@ -24,12 +24,15 @@ trait WithSubCPMKFilters
         $this->resetPage();
     }
 
-    public function inputSCPMKSearch()
+    public function inputSCPMKSearch($prId = null)
     {
         $querySCPMK = SubCPMK::query()->with(['cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
         if ($this->switchTable === 'sub-cpmk') {
 
+            if (! empty($prId)) {
+                $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));
+            }
             if (! empty($this->selectedPrId)) {
                 $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
@@ -100,6 +103,10 @@ trait WithSubCPMKFilters
             'tugas' => $querySCPMK->orderBy('waktu_tugas', $this->sortDirection),
             'mandiri' => $querySCPMK->orderBy('waktu_mandiri', $this->sortDirection),
 
+            'rekap_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
+            'index_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
+            'akreditas_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
+            
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),
 

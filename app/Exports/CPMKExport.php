@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -31,6 +32,14 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
 
     public function collection()
     {
+        if ($this->queryCPMK instanceof LengthAwarePaginator) {
+            return collect($this->queryCPMK->items());
+        }
+
+        if ($this->queryCPMK instanceof Collection) {
+            return $this->queryCPMK;
+        }
+
         return $this->queryCPMK->cursor();
     }
 
@@ -75,16 +84,18 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
             $c->deskripsi ?? '', // 2 (C)
             ($c->total_bobot ?? 0).'%', // 3 (D)
 
-            $cpls->pluck('kode')->implode(' / ') ?: '-', // 4 (E)
-            $cpls->count(), // 5 (F)
+            $cpls->pluck('kode')->implode(' / '), // 4 (E)
+            $cpls->count() ?? 0, // 5 (F)
+            $cpls->count() > 0 ? $cpls->count() : '0', 
 
-            $c->scpmks->pluck('kode')->implode(' / ') ?: '-', // 6 (G)
-            $c->scpmks->count(), // 7 (H)
-            $c->scpmks->pluck('metode')->unique()->filter()->implode(' / ') ?: '-', // 8 (I)
+            $c->scpmks->pluck('kode')->implode(' / '), // 6 (G)
+            $c->scpmks->count() ?? 0, // 7 (H)
+            $c->scpmks->count() > 0 ? $c->scpmks->count() : '0', 
+            $c->scpmks->pluck('metode')->unique()->filter()->implode(' / '), // 8 (I)
             ($c->scpmks->sum('bobot')).'%', // 9 (J)
 
-            $refs->pluck('kode')->implode(' / ') ?: '-', // 10 (K)
-            $refs->count(), // 11 (L)
+            $refs->pluck('kode')->implode(' / '), // 10 (K)
+            $refs->count() > 0 ? $refs->count() : '0', 
         ];
     }
 

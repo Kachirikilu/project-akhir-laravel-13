@@ -197,7 +197,6 @@
                 <td class="{{ $secondKolom }} {{ $borderR }}">
                     <x-button-action color="blue"
                         href="{{ route('capaian-management', [
-                            'strata' => $x->strata_s,
                             'kode_pr' => $x->kode,
                         ]) }}"
                         wire:navigate>
@@ -305,11 +304,11 @@
         </tr>
         @empty
             <tr>
-                <td colspan="{{ match ($filterPr) {
-                    'prodi' => 10,
+                <td colspan="{{ match ($switchTable) {
+                    'prodi' => 13,
                     'departemen' => 10,
                     'fakultas' => 9,
-                    default => 9,
+                    default => 13,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data {{ $xNameString }} ditemukan!

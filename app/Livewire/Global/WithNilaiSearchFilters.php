@@ -403,9 +403,8 @@ trait WithNilaiSearchFilters
                         || $matchSemesterJenis
                         || $matchSKS;
 
-
-                        // || $matchCreatedAt
-                        // || $matchUpdatedAt;
+                    // || $matchCreatedAt
+                    // || $matchUpdatedAt;
                 });
             }
 
@@ -423,6 +422,9 @@ trait WithNilaiSearchFilters
                 ? $allNilai->sortBy($sortValue)
                 : $allNilai->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allNilai->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -434,147 +436,153 @@ trait WithNilaiSearchFilters
             );
         }
 
+        if (empty($perPage)) {
+            return $queryNilai;
+        }
+
         return $queryNilai->paginate($perPage);
     }
 
-public function searchOutputNilai($calculatedPeriode, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
-{
-    $search = trim($searchRaw);
-    $searchLower = strtolower($search);
+    public function searchOutputNilai($calculatedPeriode, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
+    {
+        $search = trim($searchRaw);
+        $searchLower = strtolower($search);
 
-    // Salin data collection utama agar aman dari efek referensi objek
-    $allNilai = collect($calculatedPeriode);
+        // Salin data collection utama agar aman dari efek referensi objek
+        $allNilai = collect($calculatedPeriode);
 
-    if (! empty($search)) {
-        $mode = method_exists($this, 'detectSearchMode') ? $this->detectSearchMode($searchLower) : 'all';
+        if (! empty($search)) {
+            $mode = method_exists($this, 'detectSearchMode') ? $this->detectSearchMode($searchLower) : 'all';
 
-        $allNilai = $allNilai->filter(function ($n) use ($searchLower, $mode) {
-            $number = preg_replace('/[^0-9.]/', '', $searchLower);
-            $isNumericSearch = is_numeric($number) && $number !== '';
+            $allNilai = $allNilai->filter(function ($n) use ($searchLower, $mode) {
+                $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                $isNumericSearch = is_numeric($number) && $number !== '';
 
-                       $matchIndex = false;
-                    if ($isNumericSearch) {
-                        $matchIndex = $this->compareNumber(
-                            (float) $n->ips,
-                            $searchLower
-                        ) || $this->containsStrict(
-                            $n->ips,
-                            $searchLower
-                        );
-                    }
-                    $matchIndex = $this->matchNilaiIndex(
+                $matchIndex = false;
+                if ($isNumericSearch) {
+                    $matchIndex = $this->compareNumber(
+                        (float) $n->ips,
+                        $searchLower
+                    ) || $this->containsStrict(
                         $n->ips,
                         $searchLower
                     );
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SEMESTER
-                    |--------------------------------------------------------------------------
-                    */
-                    $matchSemester = $this->matchCount(
-                        $n->semester,
-                        $searchLower,
-                        [
-                            'sem',
-                            'semester',
-                            'semes',
-                            'sms',
-                        ]
-                    ) ||  $this->containsStrict(
-                            'Semester'.$n->semester,
-                            $searchLower
-                        );
+                }
+                $matchIndex = $this->matchNilaiIndex(
+                    $n->ips,
+                    $searchLower
+                );
+                /*
+                |--------------------------------------------------------------------------
+                | SEMESTER
+                |--------------------------------------------------------------------------
+                */
+                $matchSemester = $this->matchCount(
+                    $n->semester,
+                    $searchLower,
+                    [
+                        'sem',
+                        'semester',
+                        'semes',
+                        'sms',
+                    ]
+                ) || $this->containsStrict(
+                    'Semester'.$n->semester,
+                    $searchLower
+                );
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SKS
-                    |--------------------------------------------------------------------------
-                    */
-                    $sks = (int) ($n->total_sks ?? 0);
-                    $matchSKS = false;
-                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
-                        $targetSKS = (int) max(
-                            $matches[1] ?? 0,
-                            $matches[2] ?? 0
-                        );
-                        $matchSKS = $sks === $targetSKS;
-                    }
-                    $matchSKS = $this->matchCount(
-                        $sks,
-                        $searchLower, ['sks']
-                    ) || $this->containsStrict(
-                        $sks. 'SKS',
-                        $searchLower
+                /*
+                |--------------------------------------------------------------------------
+                | SKS
+                |--------------------------------------------------------------------------
+                */
+                $sks = (int) ($n->total_sks ?? 0);
+                $matchSKS = false;
+                if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                    $targetSKS = (int) max(
+                        $matches[1] ?? 0,
+                        $matches[2] ?? 0
                     );
+                    $matchSKS = $sks === $targetSKS;
+                }
+                $matchSKS = $this->matchCount(
+                    $sks,
+                    $searchLower, ['sks']
+                ) || $this->containsStrict(
+                    $sks.'SKS',
+                    $searchLower
+                );
 
-                    $matchSemesterJenis = $this->matchSemesterJenis(
-                        $n->semester,
-                        $searchLower
-                    );
+                $matchSemesterJenis = $this->matchSemesterJenis(
+                    $n->semester,
+                    $searchLower
+                );
 
-                    $matchAkademik = $this->matchAkademik(
-                        $n->akademik,
-                        $searchLower
-                    );
+                $matchAkademik = $this->matchAkademik(
+                    $n->akademik,
+                    $searchLower
+                );
 
-                    // $matchCreatedAt = $this->matchDateField(
-                    //     $n->created_at,
-                    //     $searchLower,
-                    //     ['created', 'dibuat', 'create']
-                    // );
+                // $matchCreatedAt = $this->matchDateField(
+                //     $n->created_at,
+                //     $searchLower,
+                //     ['created', 'dibuat', 'create']
+                // );
 
-                    // $matchUpdatedAt = $this->matchDateField(
-                    //     $n->updated_at,
-                    //     $searchLower,
-                    //     ['updated', 'diubah', 'update']
-                    // );
+                // $matchUpdatedAt = $this->matchDateField(
+                //     $n->updated_at,
+                //     $searchLower,
+                //     ['updated', 'diubah', 'update']
+                // );
 
-                    switch ($mode) {
-                        case 'index':
-                            return $matchNilaiIndex;
-                        case 'semester':
-                            return $matchSemester || $matchSemesterJenis;
-                        case 'sks':
-                            return $matchSKS;
-                    }
+                switch ($mode) {
+                    case 'index':
+                        return $matchNilaiIndex;
+                    case 'semester':
+                        return $matchSemester || $matchSemesterJenis;
+                    case 'sks':
+                        return $matchSKS;
+                }
 
-                    return
-                        $matchIndex
-                        || $matchSemester
-                        || $matchSemesterJenis
-                        || $matchSKS
-                        || $matchAkademik;
+                return
+                    $matchIndex
+                    || $matchSemester
+                    || $matchSemesterJenis
+                    || $matchSKS
+                    || $matchAkademik;
 
-        });
+            });
+        }
+
+        // --- LOGIKA SORTIR DATA COLLECTION ---
+        if ($sortField) {
+            $sortValue = match ($sortField) {
+                'nilai_index' => fn ($n) => $n->ips,
+                'semester' => fn ($n) => $n->semester,
+                'sks', 'total_sks' => fn ($n) => $n->total_sks,
+                'akademik', 'tahun_akademik' => fn ($n) => $n->akademik,
+                default => fn ($n) => $n->akademik.$n->ganjil_genap,
+            };
+
+            $allNilai = $sortDirection === 'asc'
+                ? $allNilai->sortBy($sortValue)
+                : $allNilai->sortByDesc($sortValue);
+        }
+
+        if (empty($perPage)) {
+            return $allNilai->values();
+        }
+        $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
+        return new LengthAwarePaginator(
+            $allNilai->forPage($currentPage, $perPage)->values(),
+            $allNilai->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => Paginator::resolveCurrentPath(),
+                'pageName' => method_exists($this, 'paginatorPageName') ? $this->paginatorPageName() : 'page',
+            ]
+        );
     }
-
-    // --- LOGIKA SORTIR DATA COLLECTION ---
-    if ($sortField) {
-        $sortValue = match ($sortField) {
-            'nilai_index' => fn ($n) => $n->ips,
-            'semester'    => fn ($n) => $n->semester,
-            'sks', 'total_sks'         => fn ($n) => $n->total_sks,
-            'akademik', 'tahun_akademik' => fn ($n) => $n->akademik,
-            default => fn ($n) => $n->akademik . $n->ganjil_genap,
-        };
-
-        $allNilai = $sortDirection === 'asc'
-            ? $allNilai->sortBy($sortValue)
-            : $allNilai->sortByDesc($sortValue);
-    }
-
-    // --- PEMBUATAN PAGINATOR MANUAL ---
-    $currentPage = Paginator::resolveCurrentPage() ?: 1;
-
-    return new LengthAwarePaginator(
-        $allNilai->forPage($currentPage, $perPage)->values(),
-        $allNilai->count(),
-        $perPage,
-        $currentPage,
-        [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => method_exists($this, 'paginatorPageName') ? $this->paginatorPageName() : 'page',
-        ]
-    );
-}
 }

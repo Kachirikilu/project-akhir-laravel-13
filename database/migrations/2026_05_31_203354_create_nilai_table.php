@@ -38,6 +38,16 @@ return new class extends Migration
             );
         });
 
+        Schema::create('rekap_rps_prodi', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('rps_id')->constrained('rps')->cascadeOnDelete();
+            $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['rps_id', 'pr_id']);
+        });
+
         Schema::create('rekap_cpl_prodi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cpl_id')->constrained('cpls')->cascadeOnDelete();
@@ -45,12 +55,74 @@ return new class extends Migration
             $table->decimal('nilai', 5, 2)->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['cpl_id', 'pr_id']);
+        });
+
+        Schema::create('rekap_cpmk_prodi', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cpmk_id')->constrained('cpmks')->cascadeOnDelete();
+            $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['cpmk_id', 'pr_id']);
+        });
+
+        Schema::create('rekap_scpmk_prodi', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('scpmk_id')->constrained('sub_cpmks')->cascadeOnDelete();
+            // $table->foreignId('cpl_id')->nullable()->constrained('cpls')->nullOnDelete();
+            $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['scpmk_id', 'pr_id']);
+        });
+
+        Schema::create('rekap_cpl_mahasiswa', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cpl_id')->constrained('cpls')->cascadeOnDelete();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->cascadeOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['cpl_id', 'mahasiswa_id']);
+        });
+
+        Schema::create('rekap_cpmk_mahasiswa', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cpmk_id')->constrained('cpmks')->cascadeOnDelete();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->cascadeOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['cpmk_id', 'mahasiswa_id']);
+        });
+
+        Schema::create('rekap_scpmk_mahasiswa', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('scpmk_id')->constrained('sub_cpmks')->cascadeOnDelete();
+            // $table->foreignId('cpl_id')->nullable()->constrained('cpls')->nullOnDelete();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->cascadeOnDelete();
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+            $table->unique(['scpmk_id', 'mahasiswa_id']);
         });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('nilai_mahasiswa');
+
+        Schema::dropIfExists('rekap_rps_prodi');
+
         Schema::dropIfExists('rekap_cpl_prodi');
+        Schema::dropIfExists('rekap_cpmk_prodi');
+        Schema::dropIfExists('rekap_scpmk_prodi');
+
+        Schema::dropIfExists('rekap_cpl_mahasiswa');
+        Schema::dropIfExists('rekap_cpmk_mahasiswa');
+        Schema::dropIfExists('rekap_scpmk_mahasiswa');
     }
 };

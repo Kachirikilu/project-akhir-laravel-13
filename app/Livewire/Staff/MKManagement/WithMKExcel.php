@@ -58,7 +58,7 @@ trait WithMKExcel
             } elseif ($this->selectedDpId) {
                 $dp = Departemen::find($this->selectedDpId);
                 $sInput = $dp->departemen_dp.' ';
-                $sINPUT = strtoupper($dp->departemen_dp.' ');   
+                $sINPUT = strtoupper($dp->departemen_dp.' ');
             } elseif ($this->selectedPrId && $this->filterMK !== '') {
                 $pr = Prodi::find($this->selectedPrId);
                 $sInput = $pr->prodi.'_';
@@ -75,6 +75,12 @@ trait WithMKExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new MKExport($queryMK, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileNameSafe);
+        if ($this->searchMode == 'full') {
+            $mks = $this->searchOutputMK($queryMK, $this->search, null, $this->sortField, $this->sortDirection);
+        } else {
+            $mks = $queryMK->paginate($this->perPage);
+        }
+
+        return Excel::download(new MKExport($mks, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileNameSafe);
     }
 }

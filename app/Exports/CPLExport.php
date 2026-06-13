@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -31,6 +32,14 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
 
     public function collection()
     {
+        if ($this->queryCPL instanceof LengthAwarePaginator) {
+            return collect($this->queryCPL->items());
+        }
+
+        if ($this->queryCPL instanceof Collection) {
+            return $this->queryCPL;
+        }
+
         return $this->queryCPL->cursor();
     }
 
@@ -43,17 +52,36 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
     {
         return [
             [
-                'ID', 'Kode CPL', 'Deskripsi CPL',
+                'ID', 'Kode CPL', 'Deskripsi CPL', 'Rencana Pembelajaran Semester (RPS)', '', 'Program Studi', '',
+            ],
+            [
+                '', '', '', 'Kode RPS', 'Jumlah RPS', 'Kode PR', 'Jumlah Program Studi',
             ],
         ];
     }
 
     public function map($c): array
     {
+
+$rps = $c->cpmks
+    ->pluck('rps')
+    ->flatten()
+    ->unique('id')
+    ->values();
+
+        $prodis = collect()
+            ->concat($c->prodis)
+            ->unique('id');
+
         return [
             $c->id ?? '', // 0 (A)
             $c->kode ?? '', // 1 (B)
             $c->deskripsi ?? '', // 2 (C)
+            // /
+            $rps->pluck('kode')->implode(' / '),
+            $rps->count() > 0 ? $rps->count() : '0',                       
+            $prodis->pluck('kode')->implode(' / '),
+            $prodis->count() > 0 ? $prodis->count() : '0', 
         ];
     }
 
@@ -75,9 +103,17 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
         $highestColumn = $sheet->getHighestColumn();
 
         // Style untuk Header
-        $sheet->getStyle("A4:{$highestColumn}4")->applyFromArray($styleArray);
+        $sheet->getStyle("A4:{$highestColumn}5")->applyFromArray($styleArray);
 
-        $alignmentMerges = ['A', 'B'];
+        $verticalMerges = ['A', 'B', 'C'];
+        foreach ($verticalMerges as $col) {
+            $sheet->mergeCells("{$col}4:{$col}5");
+        }
+
+        $sheet->mergeCells('D4:E4'); // RPS
+        $sheet->mergeCells('F4:G4'); // Prodi
+
+        $alignmentMerges = ['A', 'B', 'E', 'G'];
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

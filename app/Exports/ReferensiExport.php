@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -31,6 +32,14 @@ class ReferensiExport extends DefaultValueBinder implements FromCollection, Shou
 
     public function collection()
     {
+        if ($this->queryRef instanceof LengthAwarePaginator) {
+            return collect($this->queryRef->items());
+        }
+
+        if ($this->queryRef instanceof Collection) {
+            return $this->queryRef;
+        }
+
         return $this->queryRef->cursor();
     }
 
@@ -43,7 +52,7 @@ class ReferensiExport extends DefaultValueBinder implements FromCollection, Shou
     {
         return [
             [
-                'ID', 'Kode Referensi', 'Judul', 'Penulis', 'Penebit', 'Tahun', 'Link'
+                'ID', 'Kode Referensi', 'Judul', 'Penulis', 'Penebit', 'Tahun', 'Link',
             ],
         ];
     }

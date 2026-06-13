@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\Models\Akademik\RPS;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -36,6 +38,14 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
 
     public function collection()
     {
+        if ($this->queryDosen instanceof LengthAwarePaginator) {
+            return collect($this->queryDosen->items());
+        }
+
+        if ($this->queryDosen instanceof Collection) {
+            return $this->queryDosen;
+        }
+
         return $this->queryDosen->cursor();
     }
 
@@ -51,14 +61,14 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 'ID', 'Role', 'Nama', 'Email',
                 'Identitas (ID)', '', '', '',
                 'Status', 'Program Studi',
-                'Rencana Pembelajaran Semester', '', '', '',
+                'Rencana Pembelajaran Semester (RPS)', '', '', '', '', '',
                 'Kelas', '',
             ],
             [
                 '', '', '', '',
                 'NIP', 'NIDN', 'NIDK', 'NIK',
                 '', '',
-                'Kode RPS Aktif', 'Jumlah RPS Aktif', 'Kode RPS Non-Aktif', 'Jumlah RPS Non-Aktif',
+                'Kode RPS Aktif', 'SKS Aktif', 'Jumlah RPS Aktif', 'Kode RPS Non-Aktif', 'SKS Non-Aktif', 'Jumlah RPS Non-Aktif',
                 'Kode Kelas', 'Jumlah Kelas',
             ],
         ];
@@ -111,15 +121,17 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
             $u->status ?? '', // I
             $u->prodi ?? '', // J
 
-            // Rencana Pembelajaran Semester (RPS)
-            $rpsAktif->pluck('kode')->implode(' / ') ?: '', // K: Kode RPS Aktif
-            $rpsAktif->count(), // L: Jumlah RPS Aktif
-            $rpsNonAktif->pluck('kode')->implode(' / ') ?: '', // M: Kode RPS Non-Aktif
-            $rpsNonAktif->count(), // N: Jumlah RPS Non-Aktif
+            $rpsAktif->pluck('kode')->implode(' / '), // K
+            $rpsAktif->sum('sks'), // L
+            $rpsAktif->count() > 0 ? $rpsAktif->count() : '0', // M
+
+            $rpsNonAktif->pluck('kode')->implode(' / '), // N
+            $rpsNonAktif->sum('sks'), // O
+            $rpsNonAktif->count() > 0 ? $rpsNonAktif->count() : '0', // P
 
             // Kelas
-            $kelas->pluck('kode_kelas')->implode(' / ') ?: '', // O: Kode Kelas
-            $kelas->count(), // P: Jumlah Kelas
+            $kelas->pluck('kode_kelas')->implode(' / '), // Q: Kode Kelas
+            $kelas->count() > 0 ? $kelas->count() : '0',
         ];
     }
 
@@ -176,7 +188,7 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
         $sheet->mergeCells('O4:P4'); // Kelas
 
         // Alignment untuk seluruh kolom ID, Role, Status, Prodi (Center)
-        $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'L', 'N', 'P'];
+        $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'O', 'P', 'R'];
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

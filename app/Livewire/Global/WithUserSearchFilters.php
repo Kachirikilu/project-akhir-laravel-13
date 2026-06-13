@@ -470,13 +470,13 @@ trait WithUserSearchFilters
                         );
 
                         $mhsMsk = $user->mhs_masuk;
-                        $matchMasuk =$this->matchOnlyCount(
+                        $matchMasuk = $this->matchOnlyCount(
                             $mhsMsk ?? null,
                             $searchLower, ['hadir', 'hdr', 'hadi', 'masuk', 'msk', 'mas']
                         );
 
                         $mhsDis = $user->mhs_dispensasi;
-                        $matchDispensi =  $this->matchOnlyCount(
+                        $matchDispensi = $this->matchOnlyCount(
                             $mhsDis ?? null,
                             $searchLower, ['dispen', 'dispensi', 'dispensasi', 'dspn']
                         );
@@ -506,17 +506,17 @@ trait WithUserSearchFilters
                         );
 
                         $matchNilaiAkhir = $this->matchNilaiAkhir(
-                            $user->mhs_nilai_akhir,
+                            $user->mhs_nilai_akhir ?? 0,
                             $searchLower
                         );
 
                         $matchNilaiIndex = $this->matchNilaiIndex(
-                            $user->mhs_nilai_index,
+                            $user->mhs_nilai_index ?? 0,
                             $searchLower
                         );
 
                         $matchNilaiHuruf = $this->matchNilaiHuruf(
-                            $user->mhs_nilai_huruf,
+                            $user->mhs_nilai_huruf ?? 'E',
                             $searchLower
                         );
                     }
@@ -538,7 +538,7 @@ trait WithUserSearchFilters
                             $rps,
                             $searchLower, ['rps']
                         ) || $this->containsStrict(
-                            $rps. 'RPS',
+                            $rps.'RPS',
                             $searchLower
                         );
 
@@ -555,7 +555,7 @@ trait WithUserSearchFilters
                             $sks,
                             $searchLower, ['sks']
                         ) || $this->containsStrict(
-                            $sks. 'SKS',
+                            $sks.'SKS',
                             $searchLower
                         );
                     }
@@ -613,6 +613,7 @@ trait WithUserSearchFilters
                         || $matchIzin
                         || $matchSakit
                         || $matchTidakMasuk
+
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
                         || $matchNilaiHuruf
@@ -642,7 +643,7 @@ trait WithUserSearchFilters
 
                 'angkatan' => fn ($user) => $user->mahasiswa->angkatan ?? null,
                 'status' => fn ($user) => $user->status ?? null,
-                'kampus' =>  fn ($user) => $user->kode_wilayah ?? null,
+                'kampus' => fn ($user) => $user->kode_wilayah ?? null,
                 'prodi', 'program_studi' => fn ($user) => $user->prodi ?? null,
 
                 'mhs_poin_absensi' => fn ($user) => $user->mhs_poin_absensi ?? null,
@@ -652,7 +653,7 @@ trait WithUserSearchFilters
                 'mhs_izin' => fn ($user) => $user->mhs_izin ?? null,
                 'mhs_sakit' => fn ($user) => $user->mhs_sakit ?? null,
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
-                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? null,
+                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? 0,
 
                 'count_rps' => fn ($user) => $user->count_rps ?? null,
                 'total_sks' => fn ($user) => $user->total_sks ?? null,
@@ -667,8 +668,10 @@ trait WithUserSearchFilters
                 ? $allUser->sortBy($sortValue)
                 : $allUser->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allUser->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
-
             return new LengthAwarePaginator(
                 $allUser->forPage($currentPage, $perPage)->values(),
                 $allUser->count(),
@@ -678,6 +681,9 @@ trait WithUserSearchFilters
             );
         }
 
-        return $queryUser->paginate($perPage);
+        if (empty($perPage)) {
+            return $queryUser;
+        }
+        return $queryUser->paginate($perPage);;
     }
 }

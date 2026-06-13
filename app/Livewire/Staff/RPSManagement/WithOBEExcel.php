@@ -149,6 +149,17 @@ trait WithOBEExcel
                 $TAG = 'RENCANA PEMBELAJARAN SEMESTER';
                 $this->buttonRPSFilter($queryOBE, $currentYear, $fiveYearsAgo->year);
                 break;
+            case 'cpl':
+                $queryOBE = $this->inputCPLSearch();
+                $tag = 'CPL';
+                $TAG = 'CAPAIAN PEMBELAJARAN LULUSAN';
+                $this->addCountRpsCpl(
+                    $queryOBE,
+                    null,
+                    'count_rps'
+                );
+                $this->buttonCPLFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
+                break;
             case 'cpmk':
                 $queryOBE = $this->inputCPMKSearch();
                 $tag = 'CPMK';
@@ -161,12 +172,6 @@ trait WithOBEExcel
                 $TAG = 'SUB CAPAIAN PEMBELAJARAN MATA KULIAH';
                 $this->buttonSCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
-            case 'cpl':
-                $queryOBE = $this->inputCPLSearch();
-                $tag = 'CPL';
-                $TAG = 'CAPAIAN PEMBELAJARAN LULUSAN';
-                $this->buttonCPLFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-                break;
             case 'referensi':
                 $queryOBE = $this->inputRefSearch();
                 $tag = 'Referensi';
@@ -174,9 +179,17 @@ trait WithOBEExcel
                 $this->buttonRefFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
                 break;
             case 'dosen':
-                $queryOBE = $this->inputUserSearch();
+                $queryOBE = $this->inputUserSearch('dosen');
                 $tag = 'Dosen';
                 $TAG = strtoupper($tag);
+                $this->addCountRpsDosen(
+                    $queryOBE,
+                    'count_rps'
+                );
+                $this->addTotalSKs(
+                    $queryOBE,
+                    'total_sks'
+                );
                 $this->buttonUserFilter($queryOBE);
                 break;
         }
@@ -185,24 +198,49 @@ trait WithOBEExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.$sINPUT.' '.$UNIV;
 
+        if ($this->searchMode == 'full') {
+            switch ($this->switchTable) {
+                case 'rps':
+                    $obes = $this->searchOutputRPS($queryOBE, $this->search, $this->searchBobotRPS, null, $this->sortField, $this->sortDirection);
+                    break;
+                case 'cpl':
+                    $obes = $this->searchOutputCPL($queryOBE, $this->search, null, $this->sortField, $this->sortDirection);
+                    break;
+                case 'cpmk':
+                    $obes = $this->searchOutputCPMK($queryOBE, $this->search, $this->searchBobotCPMK, null, $this->sortField, $this->sortDirection);
+                    break;
+                case 'sub-cpmk':
+                    $obes = $this->searchOutputSCPMK($queryOBE, $this->search, $this->searchBobotSCPMK, null, $this->sortField, $this->sortDirection);
+                    break;
+                case 'referensi':
+                    $obes = $this->searchOutputRef($queryOBE, $this->search, null, $this->sortField, $this->sortDirection);
+                    break;
+                case 'dosen':
+                    $obes = $this->searchOutputUser($queryOBE, $this->search, null, null, $this->sortField, $this->sortDirection, null, 1);
+                    break;
+            }
+        } else {
+            $obes = $queryOBE;
+        }
+
         switch ($this->switchTable) {
             case 'rps':
-                return Excel::download(new RPSExport($queryOBE, $title), $fileNameSafe);
-                break;
-            case 'cpmk':
-                return Excel::download(new CPMKExport($queryOBE, $title), $fileNameSafe);
-                break;
-            case 'sub-cpmk':
-                return Excel::download(new SubCPMKExport($queryOBE, $title), $fileNameSafe);
+                return Excel::download(new RPSExport($obes, $title), $fileNameSafe);
                 break;
             case 'cpl':
-                return Excel::download(new CPLExport($queryOBE, $title), $fileName);
+                return Excel::download(new CPLExport($obes, $title), $fileName);
+                break;
+            case 'cpmk':
+                return Excel::download(new CPMKExport($obes, $title), $fileNameSafe);
+                break;
+            case 'sub-cpmk':
+                return Excel::download(new SubCPMKExport($obes, $title), $fileNameSafe);
                 break;
             case 'referensi':
-                return Excel::download(new ReferensiExport($queryOBE, $title), $fileName);
+                return Excel::download(new ReferensiExport($obes, $title), $fileName);
                 break;
             case 'dosen':
-                return Excel::download(new DosenExport($queryOBE, $title), $fileName);
+                return Excel::download(new DosenExport($obes, $title), $fileName);
                 break;
         }
     }

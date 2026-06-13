@@ -9,16 +9,16 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['rps'],
-                    'tabString' => 'rps',
-                    'tabNameString' => 'RPS',
+                    'tabFilter' => $stats['cpl'],
+                    'tabString' => 'cpl',
+                    'tabNameString' => 'Capaian '.$kode_pr_url,
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['cpl'],
-                    'tabString' => 'cpl',
-                    'tabNameString' => 'CPL',
+                    'tabFilter' => $stats['rps'],
+                    'tabString' => 'rps',
+                    'tabNameString' => 'RPS',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
@@ -34,29 +34,15 @@
                     'tabString' => 'sub-cpmk',
                     'tabNameString' => 'Sub-CPMK',
                 ])
-                @include('livewire.global.search-and-filters.partial.tab-filter', [
-                    'xString' => 'switchingTable',
-                    'xFilter' => $switchTable,
-                    'tabFilter' => $stats['ref'],
-                    'tabString' => 'referensi',
-                    'tabNameString' => 'Referensi',
-                ])
-                @include('livewire.global.search-and-filters.partial.tab-filter', [
-                    'xString' => 'switchingTable',
-                    'xFilter' => $switchTable,
-                    'tabFilter' => $stats['dosen'],
-                    'tabString' => 'dosen',
-                    'tabNameString' => 'Dosen',
-                ])
             </div>
         </div>
 
-        <div class="shrink-0">
+        {{-- <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'xString' => 'exportOBEExcel()',
                 'autoSmall' => 'lg',
             ])
-        </div>
+        </div> --}}
 
     </div>
 

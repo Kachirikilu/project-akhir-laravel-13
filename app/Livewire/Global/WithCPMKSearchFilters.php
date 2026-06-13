@@ -466,6 +466,9 @@ trait WithCPMKSearchFilters
                 ? $allCPMK->sortBy($sortValue)
                 : $allCPMK->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allCPMK->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -475,6 +478,10 @@ trait WithCPMKSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryCPMK;
         }
 
         return $queryCPMK->paginate($perPage);

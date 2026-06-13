@@ -138,6 +138,7 @@
                     'headString' => 'Total CPL',
                     'isMain' => 1,
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_scpmk',
@@ -284,7 +285,7 @@
                 <th class="{{ $headKolom }} text-center border-x">Show</th>
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps_pr',
-                    'headString' => 'RPS ' . ($strata_pr_url ?? 'S1') . ' ' . ($kode_pr_url ?? 'UNI'),
+                    'headString' => 'RPS '. ($kode_pr_url ?? 'UNI'),
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -571,7 +572,6 @@
                     <x-button-action color="emerald"
                         href="{{ route('rps-capaian-management', [
                             'kode_cpl' => $x->kode,
-                            'strata' => $strata_pr_url,
                             'kode_pr' => $kode_pr_url,
                         ]) }}"
                         wire:navigate>
@@ -670,7 +670,7 @@
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 17,
-                    'cpl' => $withCapaian ?? null ? 11 : 7,
+                    'cpl' => $withCapaian ?? null ? 12 : 7,
                     'cpmk' => 9,
                     'sub-cpmk' => 14,
                     'referensi' => 10,

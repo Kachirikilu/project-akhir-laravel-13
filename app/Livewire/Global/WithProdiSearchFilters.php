@@ -436,6 +436,21 @@ trait WithProdiSearchFilters
                         }
                     }
 
+                    $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $pr->rekap_pr ?? $pr->rekap_dp ?? $pr->rekap_fk ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiIndex = $this->matchNilaiIndex(
+                        $pr->index_pr ?? $pr->index_dp ?? $pr->index_fk ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $pr->huruf_pr ?? $pr->huruf_dp ?? $pr->huruf_fk ?? 'E',
+                        $searchLower
+                    );
+
                     $matchCreatedAt = $this->matchDateField(
                         $pr->created_at,
                         $searchLower,
@@ -463,18 +478,34 @@ trait WithProdiSearchFilters
                         || $matchDp
                         || $matchFk
 
+                        || $matchNilaiAkhir
+                        || $matchNilaiIndex
+                        || $matchNilaiHuruf
+
                         || $matchCreatedAt
                         || $matchUpdatedAt;
                 });
             }
 
             $sortValue = match ($sortField) {
-                'kode' => fn ($pr) => $pr->kode,
-
+                'kode' => fn ($pr) => [
+                    $pr->kode_short ?? $pr->kode,
+                    $pr->strata_s ?? null,
+                ],
                 'prodi', 'program_studi' => fn ($pr) => $pr->prodi,
                 'departemen' => fn ($pr) => $pr->departemen,
                 'fakultas' => fn ($pr) => $pr->fakultas,
                 'strata' => fn ($pr) => $pr->strata,
+
+                'rekap_pr',
+                'rekap_dp',
+                'rekap_fk',
+                'index_pr',
+                'index_dp',
+                'index_fk',
+                'akreditas_pr',
+                'akreditas_dp',
+                'akreditas_fk' => fn ($pr) => (float) ($pr->rekap_pr ?? $pr->rekap_dp ?? $pr->rekap_fk ?? 0),
 
                 'created_at' => fn ($pr) => $pr->created_at,
                 'updated_at' => fn ($pr) => $pr->updated_at,
@@ -486,6 +517,9 @@ trait WithProdiSearchFilters
                 ? $allPr->sortBy($sortValue)
                 : $allPr->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allPr->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -495,6 +529,10 @@ trait WithProdiSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryPr;
         }
 
         return $queryPr->paginate($perPage);

@@ -1,9 +1,6 @@
 <div x-data="{ activeTab: @entangle('switchTable'), activeFilterDosen: @entangle('filterStatus') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-
-
-
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
         <div x-show="activeTab == 'rps'" x-transition:enter="transition ease-out duration-1000"
@@ -20,7 +17,7 @@
                         'filterString' => 'filterRPS',
                         'totalTab' => $totalRPSSaya,
                         'totalTab1' => $stats['rps-prodi'],
-                        'totalTab2' => $totalRPS,
+                        'totalTab2' => $stats['rps'],
                         'totalTab3' => $stats['rps-akademik'],
                         'totalTab4' => $stats['rps-rev-new'],
                         'totalTab5' => $stats['rps-aktif'],
@@ -47,7 +44,7 @@
                         'filterByFunc' => 'filterByRPS',
                         'filterString' => 'filterRPS',
                         'totalTab' => $stats['rps-prodi'],
-                        'totalTab1' => $totalRPS,
+                        'totalTab1' => $stats['rps'],
                         'totalTab2' => $stats['rps-akademik'],
                         'totalTab3' => $stats['rps-rev-new'],
                         'totalTab4' => $stats['rps-aktif'],
@@ -90,7 +87,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByCPL',
                     'filterString' => 'filterCPL',
-                    'totalTab' => $totalCPL,
+                    'totalTab' => $stats['cpl'],
                     'totalTab1' => $stats['cpl-month'],
                     'totalTab2' => $stats['cpl-6-months'],
                     'totalTab3' => $stats['cpl-year'],
@@ -126,7 +123,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByCPMK',
                     'filterString' => 'filterCPMK',
-                    'totalTab' => $totalCPMK,
+                    'totalTab' => $stats['cpmk'],
                     'totalTab1' => $stats['cpmk-month'],
                     'totalTab2' => $stats['cpmk-6-months'],
                     'totalTab3' => $stats['cpmk-year'],
@@ -162,7 +159,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterBySCPMK',
                     'filterString' => 'filterSCPMK',
-                    'totalTab' => $totalSCPMK,
+                    'totalTab' => $stats['scpmk'],
                     'totalTab1' => $stats['scpmk-month'],
                     'totalTab2' => $stats['scpmk-6-months'],
                     'totalTab3' => $stats['scpmk-year'],
@@ -198,7 +195,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByRef',
                     'filterString' => 'filterRef',
-                    'totalTab' => $totalRef,
+                    'totalTab' => $stats['ref'],
                     'totalTab1' => $stats['ref-year'],
                     'totalTab2' => $stats['ref-2-3-years'],
                     'totalTab3' => $stats['ref-4-5-years'],
@@ -251,7 +248,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByDosen',
                     'filterString' => 'filterDosen',
-                    'totalTab' => $totalDosen,
+                    'totalTab' => $stats['dosen'],
                     'totalTab1' => $stats['dosen-rps'],
                     'totalTab2' => $stats['dosen-non-rps'],
                     'tab1String' => 'dosen-rps',

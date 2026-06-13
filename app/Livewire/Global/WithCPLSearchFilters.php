@@ -36,8 +36,6 @@ trait WithCPLSearchFilters
 
     public $cpl_items_array = [];
 
-
-
     private function mapCPL($collection)
     {
         return $collection->map(fn ($c) => [
@@ -322,6 +320,24 @@ trait WithCPLSearchFilters
                         $searchLower
                     );
 
+                    $rps = (int) ($cpl->count_rps ?? 0);
+                    $matchRPS = $this->matchCount(
+                        $rps,
+                        $searchLower, ['rps']
+                    ) || $this->containsStrict(
+                        $rps.'RPS',
+                        $searchLower
+                    );
+
+                    $rps_pr = (int) ($cpl->count_rps_pr ?? 0);
+                    $matchRPSPr = $this->matchCount(
+                        $rps_pr,
+                        $searchLower, ['rps_pr', 'rps']
+                    ) || $this->containsStrict(
+                        $rps_pr.'RPS',
+                        $searchLower
+                    );
+
                     $matchCreatedAt = $this->matchDateField(
                         $cpl->created_at,
                         $searchLower,
@@ -345,6 +361,8 @@ trait WithCPLSearchFilters
                         $matchID
                         || $matchKode
                         || $matchDes
+                        || $matchRPS
+                        || $matchRPSPr
 
                         || $matchCreatedAt
                         || $matchUpdatedAt;
@@ -354,6 +372,9 @@ trait WithCPLSearchFilters
             $sortValue = match ($sortField) {
                 'kode' => fn ($cpl) => $cpl->kode,
                 'deskripsi' => fn ($cpl) => $cpl->deskripsi,
+
+                'count_rps_pr' => fn ($cpl) => $cpl->count_rps_pr ?? 0,
+                'count_rps' => fn ($cpl) => $cpl->count_rps ?? 0,
 
                 'created_at' => fn ($cpl) => $cpl->created_at,
                 'updated_at' => fn ($cpl) => $cpl->updated_at,
@@ -365,6 +386,9 @@ trait WithCPLSearchFilters
                 ? $allCPL->sortBy($sortValue)
                 : $allCPL->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allCPL->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -374,6 +398,11 @@ trait WithCPLSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryCPL;
+
         }
 
         return $queryCPL->paginate($perPage);

@@ -461,6 +461,9 @@ trait WithMKSearchFilters
                 ? $allMK->sortBy($sortValue)
                 : $allMK->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allMK->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -470,6 +473,10 @@ trait WithMKSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryMK;
         }
 
         return $queryMK->paginate($perPage);

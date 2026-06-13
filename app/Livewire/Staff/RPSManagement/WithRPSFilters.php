@@ -34,7 +34,7 @@ trait WithRPSFilters
         $this->resetPage();
     }
 
-    public function inputRPSSearch($prId = null,$cplId = null)
+    public function inputRPSSearch($prId = null, $cplId = null)
     {
         $queryRPS = RPS::query()
             ->with([
@@ -248,6 +248,10 @@ trait WithRPSFilters
                 )'),
                 $this->sortDirection
             ),
+
+            'rekap_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
+            'index_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
+            'akreditas_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
 
             'is_draf' => $queryRPS->orderBy('is_draf', $this->sortDirection),
             'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),

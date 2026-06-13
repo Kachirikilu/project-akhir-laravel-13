@@ -23,14 +23,14 @@ trait WithProdiExcel
         $TAG = strtoupper($tag);
 
         if ($this->switchTable == 'fakultas') {
-            $queryProdi = $this->inputFkSearch();
+            $queryPr = $this->inputFkSearch();
             $tag = 'Fakultas';
         } elseif ($this->switchTable == 'departemen') {
-            $queryProdi = $this->inputDpSearch();
+            $queryPr = $this->inputDpSearch();
             $tag = 'Departemen';
         } else {
-            $queryProdi = $this->inputPrSearch();
-            $this->buttonStrataFilter($queryProdi);
+            $queryPr = $this->inputPrSearch();
+            $this->buttonStrataFilter($queryPr);
         }
 
         $sInput = '';
@@ -52,6 +52,27 @@ trait WithProdiExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new ProdiExport($queryProdi, $this->switchTable, $title), $fileNameSafe);
+        if ($this->switchTable === 'prodi') {
+            $this->addRekapProdi($queryPr, 'rekap_pr');
+            $this->addIndexProdi($queryPr, 'index_pr');
+            $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+            $this->buttonStrataFilter($queryPr);
+        } elseif ($this->switchTable === 'departemen') {
+            $this->addRekapDepartemen($queryPr, 'rekap_dp');
+            $this->addIndexDepartemen($queryPr, 'index_dp');
+            $this->addAkreditasDepartemen($queryPr, 'akreditas_dp');
+        } elseif ($this->switchTable === 'fakultas') {
+            $this->addRekapFakultas($queryPr, 'rekap_fk');
+            $this->addIndexFakultas($queryPr, 'index_fk');
+            $this->addAkreditasFakultas($queryPr, 'akreditas_fk');
+        }
+
+        if ($this->searchMode == 'full') {
+            $prodis = $this->searchOutputPr($queryPr, $this->search, null, $this->sortField, $this->sortDirection);
+        } else {
+            $prodis = $queryPr;
+        }
+
+        return Excel::download(new ProdiExport($prodis, $this->switchTable, $title), $fileNameSafe);
     }
 }

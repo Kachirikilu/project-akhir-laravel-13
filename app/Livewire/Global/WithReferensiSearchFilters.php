@@ -401,6 +401,9 @@ trait WithReferensiSearchFilters
                 ? $allRef->sortBy($sortValue)
                 : $allRef->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allRef->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -410,6 +413,10 @@ trait WithReferensiSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryRef;
         }
 
         return $queryRef->paginate($perPage);

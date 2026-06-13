@@ -2,13 +2,9 @@
 
 namespace App\Exports;
 
-use App\Models\ProgramStudi\Prodi;
-use App\Models\ProgramStudi\Departemen;
-use App\Models\ProgramStudi\Fakultas;
-use Auth;
-
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -53,6 +49,14 @@ class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoS
 
     public function collection()
     {
+        if ($this->queryMK instanceof LengthAwarePaginator) {
+            return collect($this->queryMK->items());
+        }
+
+        if ($this->queryMK instanceof Collection) {
+            return $this->queryMK;
+        }
+
         return $this->queryMK->cursor();
     }
 

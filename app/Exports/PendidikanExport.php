@@ -2,23 +2,25 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
+class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $query;
+
     protected $userName;
 
     public function __construct($query, $userName = 'User')
@@ -29,6 +31,14 @@ class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, Wit
 
     public function collection()
     {
+        if ($this->query instanceof LengthAwarePaginator) {
+            return collect($this->query->items());
+        }
+
+        if ($this->query instanceof Collection) {
+            return $this->query;
+        }
+
         return $this->query->cursor();
     }
 
@@ -41,11 +51,11 @@ class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, Wit
     {
         return [
             [
-                'Pendidikan SMA/SMK/MAN', '', '', '', '', '', ''
+                'Pendidikan SMA/SMK/MAN', '', '', '', '', '', '',
             ],
             [
-                'Institusi', 'Negara', 'Tahun Lulus', 'Pendidikan', 'Bidang Ilmu', 'Gelar', 'BLU'
-            ]
+                'Institusi', 'Negara', 'Tahun Lulus', 'Pendidikan', 'Bidang Ilmu', 'Gelar', 'BLU',
+            ],
         ];
     }
 
@@ -84,7 +94,7 @@ class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, Wit
 
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
-        
+
         // Border untuk seluruh tabel yang ada isinya
         if ($highestRow >= 4) {
             $sheet->getStyle("A4:G$highestRow")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
@@ -99,7 +109,7 @@ class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                $title = 'DATA PENDIDIKAN ' . strtoupper($this->userName);
+                $title = 'DATA PENDIDIKAN '.strtoupper($this->userName);
 
                 $sheet->mergeCells('A2:G2');
                 $sheet->setCellValue('A2', $title);

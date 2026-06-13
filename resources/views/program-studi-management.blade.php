@@ -14,9 +14,9 @@
             @if(request()->routeIs('program-studi-management'))
                 <livewire:admin.program-studi-management :switch-table="request()->route('switchTable') ?? 'prodi'" />
             @elseif (request()->routeIs('capaian-management'))
-                <livewire:admin.prodi-management.capaian-management :strata="request()->route('strata')" :kode_pr="request()->route('kode_pr')" />
+                <livewire:admin.prodi-management.capaian-management :kode_pr="request()->route('kode_pr')" />
             @elseif (request()->routeIs('rps-capaian-management'))
-                <livewire:admin.prodi-management.capaian-management.rps-capaian-management :kode_cpl="request()->route('kode_cpl')" :strata="request()->route('strata')" :kode_pr="request()->route('kode_pr')" />
+                <livewire:admin.prodi-management.capaian-management.rps-capaian-management :kode_cpl="request()->route('kode_cpl')" :kode_pr="request()->route('kode_pr')" />
             @endif
         </div>
     </div>

@@ -1,4 +1,4 @@
-@props(['subMenus', 'openMenuVar' => false, 'isActive' => false, 'isSubMenu' => []])
+@props(['subMenus', 'openMenuVar' => 'openKelasMenu'])
 
 <div x-data="{ 
         // Mengambil switchTable dari query string URL, jika tidak ada cari di route param, default ke 'rps'
@@ -14,11 +14,11 @@
     x-transition:leave-end="opacity-0 -translate-y-4 max-h-0 origin-top"
     class="mt-1 space-y-1 pl-4 w-full ml-1 overflow-hidden">
     
-    @foreach ($subMenus as $sub )
+    @foreach ($subMenus as $sub)
         @php
             $param = $sub['param'] ?? '';
-            $isMenu = in_array($param, $isSubMenu);
-            $isRoute = $isActive;
+            $isOBEMenu = in_array($param, ['rps', 'cpmk', 'sub-cpmk', 'cpl', 'referensi', 'dosen']);
+            $isRouteOBE = request()->routeIs('rps-management');
             $isBtnActive = $sub['active'] ?? false;
             $isBtnActiveSub = isset($sub['active-sub']) && $sub['active-sub'];
         @endphp
@@ -26,8 +26,8 @@
         <a href="{{ $sub['url'] }}" wire:navigate
             style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px"
             :class="(
-                    ({{ $isMenu ? 'true' : 'false' }} && {{ $isRoute ? 'true' : 'false' }} && currentTable === '{{ $param }}') ||
-                    (!{{ $isMenu ? 'true' : 'false' }} && {{ $isBtnActive ? 'true' : 'false' }})
+                    ({{ $isOBEMenu ? 'true' : 'false' }} && {{ $isRouteOBE ? 'true' : 'false' }} && currentTable === '{{ $param }}') ||
+                    (!{{ $isOBEMenu ? 'true' : 'false' }} && {{ $isBtnActive ? 'true' : 'false' }})
                 )
                 ? 'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' 
                 : (

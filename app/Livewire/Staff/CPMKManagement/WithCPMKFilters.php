@@ -25,12 +25,15 @@ trait WithCPMKFilters
         $this->resetPage();
     }
 
-    public function inputCPMKSearch()
+    public function inputCPMKSearch($prId = null)
     {
         $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
 
         if ($this->switchTable === 'cpmk') {
 
+            if (! empty($prId)) {
+                $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));
+            }
             if (! empty($this->selectedPrId)) {
                 $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
@@ -115,6 +118,10 @@ trait WithCPMKFilters
                     ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
                 $this->sortDirection
             ),
+
+            'rekap_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
+            'index_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
+            'akreditas_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
 
             'total_bobot' => $queryCPMK->orderBy(
                 DB::table('cpmk_pivot_scpmk')

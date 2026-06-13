@@ -8,6 +8,7 @@ use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
+use App\Http\Services\RekapCapaian;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
@@ -33,6 +34,7 @@ class ProgramStudiManagement extends Component
     use WithProdiFilters;
     use WithProdiModal;
     use WithProdiSearchFilters;
+    use RekapCapaian;
 
     public $showModal = false;
 
@@ -183,15 +185,16 @@ class ProgramStudiManagement extends Component
             // SOFT DELETE
             // =========================
             if ($this->showDeleted && $this->AuthCheck('admin')) {
-                $queryPr = $queryPr->onlyTrashed();
-                $queryDp = $queryDp->onlyTrashed();
-                $queryFk = $queryFk->onlyTrashed();
+                $queryPr->onlyTrashed();
+                $queryDp->onlyTrashed();
+                $queryFk->onlyTrashed();
             }
 
             if ($this->switchTable === 'prodi') {
                 $this->addRekapProdi($queryPr, 'rekap_pr');
                 $this->addIndexProdi($queryPr, 'index_pr');
                 $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+                $this->buttonStrataFilter($queryPr);
             } elseif ($this->switchTable === 'departemen') {
                 $this->addRekapDepartemen($queryDp, 'rekap_dp');
                 $this->addIndexDepartemen($queryDp, 'index_dp');
@@ -201,13 +204,12 @@ class ProgramStudiManagement extends Component
                 $this->addIndexFakultas($queryFk, 'index_fk');
                 $this->addAkreditasFakultas($queryFk, 'akreditas_fk');
             }
+
             // =========================
             // PAGINATION
             // =========================
-
             if ($this->searchMode == 'full') {
                 if ($this->switchTable === 'prodi') {
-                    $this->buttonStrataFilter($queryPr);
                     $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
                 } elseif ($this->switchTable === 'departemen') {
                     $departemens = $this->searchOutputPr($queryDp, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
@@ -216,7 +218,6 @@ class ProgramStudiManagement extends Component
                 }
             } else {
                 if ($this->switchTable === 'prodi') {
-                    $this->buttonStrataFilter($queryPr);
                     $prodis = $queryPr->paginate($this->perPage);
                 } elseif ($this->switchTable === 'departemen') {
                     $departemens = $queryDp->paginate($this->perPage);
@@ -243,7 +244,6 @@ class ProgramStudiManagement extends Component
                 'departemens' => $departemens,
                 'fakultas' => $fakultas,
 
-                // 🔥 FIX DI SINI
                 'totalProdis' => $countPr->count(),
                 'totalSarjanas' => (clone $countPr)->where('strata', 'Sarjana')->count(),
                 'totalMagisters' => (clone $countPr)->where('strata', 'Magister')->count(),

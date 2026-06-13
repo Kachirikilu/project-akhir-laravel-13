@@ -583,6 +583,9 @@ trait WithMahasiswaSearchFilters
                 ? $allMahasiswa->sortBy($sortValue)
                 : $allMahasiswa->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allMahasiswa->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -592,6 +595,10 @@ trait WithMahasiswaSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryMahasiswa;
         }
 
         return $queryMahasiswa->paginate($perPage);

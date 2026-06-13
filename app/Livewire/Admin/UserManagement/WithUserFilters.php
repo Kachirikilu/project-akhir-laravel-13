@@ -390,6 +390,7 @@ trait WithUserFilters
 
     protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
     {
+        $queryUser->addSelect('users.*');
         return $queryUser->selectSub(function ($query) {
 
             $query->from('rps_pivot_dosen')
@@ -410,6 +411,7 @@ trait WithUserFilters
 
     protected function addTotalSKs($queryUser, string $alias = 'total_sks')
     {
+        $queryUser->addSelect('users.*');
         return $queryUser->selectSub(function ($query) {
 
             $query->fromSub(function ($sub) {

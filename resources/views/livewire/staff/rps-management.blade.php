@@ -14,7 +14,6 @@
     @include('livewire.staff.obe-management.obe-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-
         @if ($this->switchTable !== 'dosen')
             @include('livewire.staff.obe-management.obe-table', [
                 'xResults' => match ($this->switchTable) {

@@ -12,7 +12,6 @@
 
 
     <nav x-data="{
-        openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
         openOBEMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
         openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
@@ -56,16 +55,10 @@
                     'label' => 'User Management',
                     'roles' => ['admin'],
                 ],
-                // [
-                //     'type' => 'link',
-                //     'icon' => 'academic-cap',
-                //     'route' => 'program-studi-management',
-                //     'label' => 'Study Program',
-                //     'roles' => ['admin'],
-                // ],
                 [
-                    'type' => 'dropdown-prodi',
+                    'type' => 'link',
                     'icon' => 'academic-cap',
+                    'route' => 'program-studi-management',
                     'label' => 'Study Program',
                     'roles' => ['admin'],
                 ],
@@ -149,124 +142,6 @@
                         x-transition:leave-end="opacity-0 translate-x-4"
                         class="ml-3 whitespace-nowrap overflow-hidden text-ellipsis block">{{ $item['label'] }}</span>
                 </a>
-            @elseif ($item['type'] === 'dropdown-prodi')
-                @php
-                    $currentTable = null;
-                    $isProdiActive = request()->routeIs('program-studi-management')
-                                || request()->routeIs('capaian-management')
-                                || request()->routeIs('rps-capaian-management');
-
-                    $prodiHistory = session('capaian.history', []);
-                    $cplHistory = session('cpl.history', []);
-
-                    $groupedCpl = [];
-
-                    foreach ($cplHistory as $cpl) {
-                        $kodePr = $cpl['kode_pr'] ?? null;
-                        $kodeCpl = $cpl['kode_cpl'] ?? null;
-
-                        if (!$kodePr || !$kodeCpl) {
-                            continue;
-                        }
-
-                        $groupedCpl[$kodePr][$kodeCpl] = $cpl;
-                    }
-
-                    foreach ($groupedCpl as $kodePr => $list) {
-                        ksort($groupedCpl[$kodePr]);
-                    }
-
-                    $subMenus = [
-                        [
-                            'label' => 'Program Studi',
-                            'url' => route('program-studi-management', [
-                                'switchTable' => 'prodi',
-                            ]),
-                            'param' => 'prodi',
-                            'icon' => 'clipboard-document-list',
-                            'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'active' => $isProdiActive && $currentTable === 'prodi',
-                            'active-sub' => request()->routeIs('capaian-management', 'rps-capaian-management'),
-                        ],
-                    ];
-
-                    foreach ($prodiHistory as $prodi) {
-                        $kodePr = $prodi['kode_pr'] ?? null;
-
-                        if (!$kodePr) {
-                            continue;
-                        }
-
-                        $subMenus[] = [
-                            'label' => $kodePr,
-                            'url' => $prodi['url'],
-                            'param' => 'capaian-management',
-                            'icon' => 'document-text',
-                            'color' => 'text-cyan-600 dark:text-cyan-400',
-                            'level' => 1,
-
-                            'active' =>
-                                request()->routeIs('capaian-management') && request()->route('kode_pr') === $kodePr,
-
-                            'active-sub' =>
-                                request()->routeIs('rps-capaian-management') && request()->route('kode_pr') === $kodePr,
-                        ];
-
-                        if (isset($groupedCpl[$kodePr])) {
-                            foreach ($groupedCpl[$kodePr] as $cpl) {
-                                $subMenus[] = [
-                                    'label' => $cpl['kode_cpl'],
-                                    'url' => $cpl['url'],
-                                    'param' => 'rps-capaian-management',
-                                    'icon' => 'academic-cap',
-                                    'color' => 'text-indigo-600 dark:text-indigo-400',
-                                    'level' => 2,
-
-                                    'active' =>
-                                        request()->routeIs('rps-capaian-management') &&
-                                        request()->route('kode_pr') === $kodePr &&
-                                        request()->route('kode_cpl') === $cpl['kode_cpl'],
-                                ];
-                            }
-                        }
-                    }
-
-                    $subMenus[] = [
-                        'label' => 'Departemen',
-                        'url' => route('program-studi-management', [
-                            'switchTable' => 'departemen',
-                        ]),
-                        'param' => 'departemen',
-                        'icon' => 'book-open',
-                        'color' => 'text-amber-600 dark:text-amber-400',
-                        'active' => $isProdiActive && $currentTable === 'departemen',
-                    ];
-
-                    $subMenus[] = [
-                        'label' => 'Fakultas',
-                        'url' => route('program-studi-management', [
-                            'switchTable' => 'fakultas',
-                        ]),
-                        'param' => 'fakultas',
-                        'icon' => 'building-library',
-                        'color' => 'text-indigo-600 dark:text-indigo-400',
-                        'active' => $isProdiActive && $currentTable === 'fakultas',
-                    ];
-
-                    $isSubMenu = ['prodi', 'departemen', 'fakultas'];
-                    $openMenuVar = 'openProdiMenu';
-                    $isMenuIndukActive = $isProdiActive;
-                @endphp
-
-                <div class="relative mr-2">
-                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus"
-                        title="Program Studi Management" :isActive="$isProdiActive" :isSubMenu="$isSubMenu"
-                        triggerRef="prodiDropdownTrigger" />
-                    <x-livewire::navigation.partial.main-button :item="$item" menu="openProdiMenu"
-                        trigger="prodiDropdownTrigger" :active="$isProdiActive" />
-                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar"
-                        :isActive="$isProdiActive" :isSubMenu="$isSubMenu" />
-                </div>
             @elseif ($item['type'] === 'dropdown-obe')
                 @php
                     $currentTable = null;
@@ -325,18 +200,16 @@
                         ],
                     ];
 
-                    $isSubMenu = ['rps', 'cpmk', 'sub-cpmk', 'cpl', 'referensi', 'dosen'];
                     $openMenuVar = 'openOBEMenu';
                     $isMenuIndukActive = $isOBEActive;
                 @endphp
 
                 <div class="relative mr-2">
                     <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="OBE Management"
-                        :isActive="$isOBEActive" :isSubMenu="$isSubMenu" triggerRef="obeDropdownTrigger" />
+                        triggerRef="obeDropdownTrigger" />
                     <x-livewire::navigation.partial.main-button :item="$item" menu="openOBEMenu"
                         trigger="obeDropdownTrigger" :active="$isOBEActive" />
-                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar"
-                        :isActive="$isOBEActive" :isSubMenu="$isSubMenu" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
             @elseif($item['type'] === 'dropdown-jadwal')
                 @php
@@ -355,8 +228,8 @@
                     ];
 
                     foreach ($sesiHistory as $sesi) {
-                        $kodeKelas = $sesi['kode_kelas_url'] ?? ($sesi['kode_kelas'] ?? null);
-                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? ($sesi['kode_jadwal_short'] ?? null);
+                        $kodeKelas = $sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null;
+                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null;
                         $jadwalId = $sesi['jadwal_id'] ?? null;
                         $switchTable = $sesi['switchTable'] ?? null;
 
@@ -400,8 +273,8 @@
 
                     $groupedJadwal = [];
                     foreach ($sesiHistory as $sesi) {
-                        $kodeKelas = $sesi['kode_kelas_url'] ?? ($sesi['kode_kelas'] ?? null);
-                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? ($sesi['kode_jadwal_short'] ?? null);
+                        $kodeKelas = $sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null;
+                        $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null;
 
                         if ($kodeKelas === null || $kodeJadwal === null) {
                             continue;
@@ -427,7 +300,7 @@
                     ];
 
                     foreach ($kelasHistory as $kelas) {
-                        $kodeKelas = $kelas['kode_kelas_url'] ?? ($kelas['kode_kelas'] ?? null);
+                        $kodeKelas = $kelas['kode_kelas_url'] ?? $kelas['kode_kelas'] ?? null;
 
                         if ($kodeKelas === null) {
                             continue;
@@ -441,8 +314,7 @@
                             'color' => 'text-amber-600 dark:text-amber-400',
                             'level' => 1,
                             'active' =>
-                                request()->routeIs('jadwal-management') &&
-                                request()->route('kode_kelas') === $kodeKelas,
+                                request()->routeIs('jadwal-management') && request()->route('kode_kelas') === $kodeKelas,
                             'active-sub' =>
                                 request()->routeIs('sesi-management') && request()->route('kode_kelas') === $kodeKelas,
                         ];
@@ -450,8 +322,7 @@
                         if (isset($groupedJadwal[$kodeKelas])) {
                             foreach ($groupedJadwal[$kodeKelas] as $sesi) {
                                 $subMenus[] = [
-                                    'label' =>
-                                        $sesi['kode_jadwal_short_url'] ?? ($sesi['kode_jadwal_short'] ?? 'Jadwal'),
+                                    'label' => $sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? 'Jadwal',
                                     'url' => $sesi['url'],
                                     'param' => 'sesi-management',
                                     'icon' => 'academic-cap',
@@ -459,10 +330,8 @@
                                     'level' => 2,
                                     'active' =>
                                         request()->routeIs('sesi-management') &&
-                                        request()->route('kode_kelas') ===
-                                            ($sesi['kode_kelas_url'] ?? ($sesi['kode_kelas'] ?? null)) &&
-                                        request()->route('kode_jadwal_short') ===
-                                            ($sesi['kode_jadwal_short_url'] ?? ($sesi['kode_jadwal_short'] ?? null)),
+                                        request()->route('kode_kelas') === ($sesi['kode_kelas_url'] ?? $sesi['kode_kelas'] ?? null) &&
+                                        request()->route('kode_jadwal_short') === ($sesi['kode_jadwal_short_url'] ?? $sesi['kode_jadwal_short'] ?? null),
                                 ];
                             }
                         }

@@ -38,6 +38,8 @@ trait WithFakultasFilters
         $queryFk,
         string $alias = 'rekap_fk'
     ) {
+        $queryFk->addSelect('fakultas.*');
+
         $queryFk->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -76,6 +78,8 @@ trait WithFakultasFilters
         $queryFk,
         string $alias = 'index_fk'
     ) {
+        $queryFk->addSelect('fakultas.*');
+
         $queryFk->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -118,6 +122,8 @@ trait WithFakultasFilters
         $queryFk,
         string $alias = 'akreditas_fk'
     ) {
+        $queryFk->addSelect('fakultas.*');
+
         $queryFk->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -158,7 +164,7 @@ trait WithFakultasFilters
 
     public function sortFieldOrderFakultas($queryFk)
     {
-        $queryFk->select('fakultas.*');
+        $queryFk->addSelect('fakultas.*');
 
         return match ($this->sortField) {
             'kode' => $queryFk->orderBy('kode_fk', $this->sortDirection),

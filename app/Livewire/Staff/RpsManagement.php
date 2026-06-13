@@ -6,14 +6,15 @@ use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
@@ -40,7 +41,6 @@ use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
-use App\Models\Auth\Dosen;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -49,6 +49,7 @@ use Livewire\WithPagination;
 class RpsManagement extends Component
 {
     use HasSortir;
+    use HasStats;
     use HasToast;
     use WithCPLDelete;
     use WithCPLFilters;
@@ -241,7 +242,6 @@ class RpsManagement extends Component
         }
 
         $limits = [
-            'rps' => 200,
             'cpl' => 100,
             'referensi' => 150,
             'rps' => 200,
@@ -349,11 +349,7 @@ class RpsManagement extends Component
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
                     break;
                 case 'cpl':
-                    $this->addCountRpsCpl(
-                        $queryCPL,
-                        null,
-                        'count_rps'
-                    );
+                    $this->addCountRpsCpl($queryCPL, null, 'count_rps');
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'cpmk':
@@ -366,14 +362,8 @@ class RpsManagement extends Component
                     $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
                     break;
                 case 'dosen':
-                    $this->addCountRpsDosen(
-                        $queryUser,
-                        'count_rps'
-                    );
-                    $this->addTotalSKs(
-                        $queryUser,
-                        'total_sks'
-                    );
+                    $this->addCountRpsDosen($queryUser, 'count_rps');
+                    $this->addTotalSKs($queryUser, 'total_sks');
                     $this->buttonUserFilter($queryUser);
                     break;
             }
@@ -466,146 +456,34 @@ class RpsManagement extends Component
                 'dosen-non-aktif' => '🔴',
             ];
 
+            $stats['rps'] = (clone $countRPS)->count();
+            $stats['cpl'] = (clone $countCPL)->count();
+            $stats['cpmk'] = (clone $countCPMK)->count();
+            $stats['scpmk'] = (clone $countSCPMK)->count();
+            $stats['ref'] = (clone $countRef)->count();
+            $stats['dosen'] = (clone $countDosen)->count();
+
             // =========================
             // SWITCH STATS (TIDAK OVERWRITE)
             // =========================
             switch ($this->switchTable) {
                 case 'rps':
-                    $stats['rps-prodi'] = (clone $countRPS)
-                        ->whereHas('mk_rel.prodis', function ($q) {
-                            $q->where('prodis.id', Auth::user()->pr_id);
-                        })->count();
-
-                    $stats['rps-akademik'] = (clone $countRPS)
-                        ->where('akademik', 'like', "%$currentYear%")
-                        ->count();
-
-                    $stats['rps-rev-new'] = (clone $countRPS)
-                        ->whereYear('revisi', $currentYear)
-                        ->count();
-
-                    $stats['rps-aktif'] = (clone $countRPS)
-                        ->where('is_draf', false)
-                        ->count();
-
-                    $stats['rps-draf'] = (clone $countRPS)
-                        ->where('is_draf', true)
-                        ->count();
-
-                    $stats['rps-older-5'] = (clone $countRPS)
-                        ->whereRaw('CAST(SUBSTRING(akademik,1,4) AS UNSIGNED) < ?', [$fiveYearsAgo->year])
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsRps($countRPS, $currentYear, $fiveYearsAgo));
                     break;
-
                 case 'cpl':
-                    $stats['cpl-month'] = (clone $countCPL)
-                        ->whereMonth('created_at', $now->month)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpl-6-months'] = (clone $countCPL)
-                        ->where('created_at', '>=', $sixMonthsAgo)
-                        ->count();
-
-                    $stats['cpl-year'] = (clone $countCPL)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpl-older-5'] = (clone $countCPL)
-                        ->where('created_at', '<', $fiveYearsAgo)
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsKurikulum($countCPL, 'cpl', $currentYear, $now, $sixMonthsAgo, $fiveYearsAgo));
                     break;
-
                 case 'cpmk':
-                    $stats['cpmk-month'] = (clone $countCPMK)
-                        ->whereMonth('created_at', $now->month)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpmk-6-months'] = (clone $countCPMK)
-                        ->where('created_at', '>=', $sixMonthsAgo)
-                        ->count();
-
-                    $stats['cpmk-year'] = (clone $countCPMK)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['cpmk-older-5'] = (clone $countCPMK)
-                        ->where('created_at', '<', $fiveYearsAgo)
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsKurikulum($countCPMK, 'cpmk', $currentYear, $now, $sixMonthsAgo, $fiveYearsAgo));
                     break;
-
                 case 'sub-cpmk':
-                    $stats['scpmk-month'] = (clone $countSCPMK)
-                        ->whereMonth('created_at', $now->month)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['scpmk-6-months'] = (clone $countSCPMK)
-                        ->where('created_at', '>=', $sixMonthsAgo)
-                        ->count();
-
-                    $stats['scpmk-year'] = (clone $countSCPMK)
-                        ->whereYear('created_at', $currentYear)
-                        ->count();
-
-                    $stats['scpmk-older-5'] = (clone $countSCPMK)
-                        ->where('created_at', '<', $fiveYearsAgo)
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsKurikulum($countSCPMK, 'scpmk', $currentYear, $now, $sixMonthsAgo, $fiveYearsAgo));
                     break;
-
                 case 'referensi':
-                    $stats['ref-year'] = (clone $countRef)
-                        ->where('tahun', $currentYear)
-                        ->count();
-
-                    $stats['ref-2-3-years'] = (clone $countRef)
-                        ->whereBetween('tahun', [$currentYear - 3, $currentYear - 2])
-                        ->count();
-
-                    $stats['ref-4-5-years'] = (clone $countRef)
-                        ->whereBetween('tahun', [$currentYear - 5, $currentYear - 4])
-                        ->count();
-
-                    $stats['ref-6-10-years'] = (clone $countRef)
-                        ->whereBetween('tahun', [$currentYear - 10, $currentYear - 6])
-                        ->count();
-
-                    $stats['ref-older-10'] = (clone $countRef)
-                        ->where('tahun', '<', $currentYear - 10)
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsReferensi($countRef, $currentYear));
                     break;
-
                 case 'dosen':
-                    $stats['dosen-rps'] = (clone $countDosen)
-                        ->whereHas('dosen.rps')
-                        ->count();
-
-                    $stats['dosen-non-rps'] = (clone $countDosen)
-                        ->whereDoesntHave('dosen.rps')
-                        ->count();
-
-                    $stats['dosen-prodi'] = (clone $countDosen)
-                        ->whereHas('dosen.pr_rel', function ($q) {
-                            $q->where('prodis.id', Auth::user()->pr_id);
-                        })
-                        ->count();
-
-                    $stats['dosen-all'] = (clone $countDosen)
-                        ->whereHas('dosen')
-                        ->count();
-
-                    $stats['dosen-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function ($q) {
-                            $q->where('status', 'aktif');
-                        })
-                        ->count();
-
-                    $stats['dosen-non-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function ($q) {
-                            $q->where('status', '!=', 'aktif');
-                        })
-                        ->count();
+                    $stats = array_merge($stats, $this->getStatsDosen($countDosen));
                     break;
             }
 
@@ -615,12 +493,6 @@ class RpsManagement extends Component
             return view('livewire.staff.rps-management', array_merge($data, [
                 'users' => $users,
                 'totalRPSSaya' => $totalRPSSaya ?? 0,
-                'totalRPS' => RPS::count(),
-                'totalCPL' => CPL::count(),
-                'totalCPMK' => CPMK::count(),
-                'totalSCPMK' => SubCPMK::count(),
-                'totalRef' => Referensi::count(),
-                'totalDosen' => Dosen::count(),
 
                 'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
@@ -659,6 +531,7 @@ class RpsManagement extends Component
                 'dosen_rps_modal_paginator' => collect(),
 
                 'stats' => [
+                    'rps' => '-',
                     'rps-prodi' => '-',
                     'rps-akademik' => '-',
                     'rps-rev-new' => '-',
@@ -666,27 +539,32 @@ class RpsManagement extends Component
                     'rps-draf' => '-',
                     'rps-older-5' => '-',
 
+                    'cpl' => '-',
                     'cpl-month' => '-',
                     'cpl-6-months' => '-',
                     'cpl-year' => '-',
                     'cpl-older-5' => '-',
 
+                    'cpmk' => '-',
                     'cpmk-month' => '-',
                     'cpmk-6-months' => '-',
                     'cpmk-year' => '-',
                     'cpmk-older-5' => '-',
 
+                    'scpmk' => '-',
                     'scpmk-month' => '-',
                     'scpmk-6-months' => '-',
                     'scpmk-year' => '-',
                     'scpmk-older-5' => '-',
 
+                    'ref' => '-',
                     'ref-year' => '-',
                     'ref-2-3-years' => '-',
                     'ref-4-5-years' => '-',
                     'ref-6-10-years' => '-',
                     'ref-older-10' => '-',
 
+                    'dosen' => '-',
                     'dosen-rps' => '-',
                     'dosen-non-rps' => '-',
                     'dosen-prodi' => '-',

@@ -37,6 +37,8 @@ trait WithDepartemenFilters
         $queryDp,
         string $alias = 'rekap_dp'
     ) {
+        $queryDp->addSelect('departemens.*');
+
         $queryDp->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -69,6 +71,8 @@ trait WithDepartemenFilters
         $queryDp,
         string $alias = 'index_dp'
     ) {
+        $queryDp->addSelect('departemens.*');
+
         $queryDp->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -105,6 +109,8 @@ trait WithDepartemenFilters
         $queryDp,
         string $alias = 'akreditas_dp'
     ) {
+        $queryDp->addSelect('departemens.*');
+
         $queryDp->selectSub(function ($query) {
 
             $query->from('rekap_cpl_prodi')
@@ -139,7 +145,7 @@ trait WithDepartemenFilters
 
     public function sortFieldOrderDepartemen($queryDp)
     {
-        $queryDp->select('departemens.*')->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
+        $queryDp->addSelect('departemens.*')->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
 
         return match ($this->sortField) {
             'kode' => $queryDp->orderBy('kode_dp', $this->sortDirection)

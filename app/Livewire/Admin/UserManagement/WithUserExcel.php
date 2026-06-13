@@ -86,7 +86,13 @@ trait WithUserExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileNameSafe);
+        if ($this->searchMode == 'full') {
+            $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, null, $this->sortField, $this->sortDirection);
+        } else {
+            $users = $queryUser;
+        }
+
+        return Excel::download(new UserExport($users, $this->switchTable, $title), $fileNameSafe);
     }
 
     public function getPaginatedUserRowsProperty()

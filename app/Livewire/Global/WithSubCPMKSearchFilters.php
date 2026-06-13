@@ -379,7 +379,7 @@ trait WithSubCPMKSearchFilters
                         $scpmk->tugas,
                         $searchLower
                     );
-              
+
                     $matchWTugas = $this->matchCount(
                         $scpmk->w_tugas,
                         $searchLower,
@@ -467,8 +467,10 @@ trait WithSubCPMKSearchFilters
                 ? $allSCPMK->sortBy($sortValue)
                 : $allSCPMK->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allSCPMK->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
-
             return new LengthAwarePaginator(
                 $allSCPMK->forPage($currentPage, $perPage)->values(),
                 $allSCPMK->count(),
@@ -478,6 +480,9 @@ trait WithSubCPMKSearchFilters
             );
         }
 
+        if (empty($perPage)) {
+            return $querySCPMK;
+        }
         return $querySCPMK->paginate($perPage);
     }
 }

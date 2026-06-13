@@ -2,6 +2,8 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -38,6 +40,14 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
 
     public function collection()
     {
+        if ($this->queryUser instanceof LengthAwarePaginator) {
+            return collect($this->queryUser->items());
+        }
+
+        if ($this->queryUser instanceof Collection) {
+            return $this->queryUser;
+        }
+
         return $this->queryUser->cursor();
     }
 
@@ -456,22 +466,22 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         if ($this->switchTable == 'admin') {
             $verticalMerges = ['A', 'B', 'C', 'D', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
             $horizontalMerges = ['E4:G4', 'P4:T4', 'U4:V4', 'W4:Z4', 'AA4:AD4', 'AE4:AH4'];
-            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH'];
+            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'J', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'Y', 'Z', 'AC', 'AD', 'AG', 'AH'];
             $headerRange = 'A4:AH5';
         } elseif ($this->switchTable == 'dosen') {
             $verticalMerges = ['A', 'B', 'C', 'D', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
             $horizontalMerges = ['E4:H4', 'Q4:U4', 'V4:W4', 'X4:AA4', 'AB4:AE4', 'AF4:AI4'];
-            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI'];
+            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'W', 'Z', 'AA', 'AD', 'AE', 'AH', 'AI'];
             $headerRange = 'A4:AI5';
         } elseif ($this->switchTable == 'mahasiswa') {
             $verticalMerges = ['A', 'B', 'C', 'D', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
             $horizontalMerges = ['E4:F4', 'P4:Q4', 'R4:U4', 'V4:Y4', 'Z4:AC4'];
-            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC'];
+            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'J', 'L', 'M', 'N', 'Q', 'T', 'U', 'X', 'Y', 'AB', 'AC'];
             $headerRange = 'A4:AC5';
         } else {
             $verticalMerges = ['A', 'B', 'C', 'D', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
             $horizontalMerges = ['E4:J4', 'U4:Y4', 'Z4:AD4', 'AE4:AF4', 'AG4:AJ4', 'AK4:AN4', 'AO4:AR4'];
-            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR'];
+            $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'P', 'Q', 'R', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AF', 'AI', 'AJ', 'AM', 'AN', 'AQ', 'AR'];
             $headerRange = 'A4:AR5';
         }
 

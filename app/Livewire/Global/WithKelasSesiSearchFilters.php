@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Global;
 
-use App\Models\Kelas\KelasSesi;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +125,7 @@ trait WithKelasSesiSearchFilters
             $this->sesiResults = $this->mapSesi($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
+            $exactMatch = $results->first(function ($c) use ($normalizedValue) {
                 $normalizedSesiKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
                 return $normalizedSesiKode === $normalizedValue;
@@ -171,7 +170,6 @@ trait WithKelasSesiSearchFilters
             }
         }
     }
-
 
     public function getSesibyUser($mode = 'full')
     {
@@ -330,7 +328,7 @@ trait WithKelasSesiSearchFilters
                         $searchLower
                     );
 
-                    $absensi = ($s->mhs_absensi ?? 0) . ' / ' . ($s->count_mahasiswa ?? 0);
+                    $absensi = ($s->mhs_absensi ?? 0).' / '.($s->count_mahasiswa ?? 0);
                     $matchAbsensi = $this->containsStrict(
                         $absensi,
                         $searchLower
@@ -338,7 +336,6 @@ trait WithKelasSesiSearchFilters
                         $s->mhs_absensi ?? null,
                         $searchLower, ['mahasiswa', 'mhs', 'maha', 'absen', 'abs', 'absensi']
                     );
-
 
                     $matchBobot = false;
                     if ($isNumericSearch) {
@@ -375,7 +372,6 @@ trait WithKelasSesiSearchFilters
                             'm/SKS',
                         ]
                     );
-
 
                     $matchCreatedAt = $this->matchDateField(
                         $s->created_at,
@@ -449,6 +445,9 @@ trait WithKelasSesiSearchFilters
                 ? $allSesi->sortBy($sortValue)
                 : $allSesi->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allSesi->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -458,6 +457,10 @@ trait WithKelasSesiSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $querySesi;
         }
 
         return $querySesi->paginate($perPage);

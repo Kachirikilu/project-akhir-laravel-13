@@ -44,8 +44,6 @@ class RpsCapaianManagement extends Component
 
     public $kode_pr_url;
 
-    public $strata_pr_url;
-
     public CPL $cpl;
 
     public $cpl_id_url;
@@ -69,44 +67,52 @@ class RpsCapaianManagement extends Component
     // {
     //     $this->switchTable = $switchTable;
     // }
+
     public function mount(
         $kode_cpl = null,
-        $strata = null,
         $kode_pr = null,
     ) {
-        $this->strata_pr_url = $strata;
         $this->kode_pr_url = $kode_pr;
+
+        [$strata, $kode] = array_pad(
+            explode('-', $kode_pr, 2),
+            2,
+            null
+        );
 
         $strataDb = match (strtoupper($strata ?? '')) {
             'S1' => 'Sarjana',
             'S2' => 'Magister',
             'S3' => 'Doktor',
-            default => $strata,
+            default => null,
         };
 
         $this->prodi = Prodi::query()
             ->with(['dp_rel.fk_rel'])
-            ->where(function ($query) use ($kode_pr) {
+            ->where(function ($query) use ($kode) {
 
-                $query->where('kode_pr', $kode_pr)
+                $query->where('kode_pr', $kode)
 
-                    ->orWhereHas('dp_rel', function ($q) use ($kode_pr) {
-                        $q->where('kode_dp', $kode_pr);
+                    ->orWhereHas('dp_rel', function ($q) use ($kode) {
+                        $q->where('kode_dp', $kode);
                     })
 
-                    ->orWhereHas('dp_rel.fk_rel', function ($q) use ($kode_pr) {
-                        $q->where('kode_fk', $kode_pr);
+                    ->orWhereHas('dp_rel.fk_rel', function ($q) use ($kode) {
+                        $q->where('kode_fk', $kode);
                     });
 
+                if ($kode === 'UNI') {
+                    $query->orWhereHas('dp_rel.fk_rel', function ($q) {
+                        $q->whereNotNull('id');
+                    });
+                }
             })
             ->where('strata', $strataDb)
             ->firstOrFail();
 
+
         $this->pr_id_url = $this->prodi->id;
 
-        // ==========================
-        // CPL
-        // ==========================
 
         if ($kode_cpl) {
 

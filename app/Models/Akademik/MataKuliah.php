@@ -60,7 +60,7 @@ class MataKuliah extends Model
 
             if ($prodi) {
                 if ($this->level_mk == 1) { // Tingkat Prodi
-                    $prefix = $prodi->kode_pr ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->kode_pr_short ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->level_mk == 2) { // Tingkat Departemen
                     $prefix = $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->level_mk == 3) { // Tingkat Fakultas

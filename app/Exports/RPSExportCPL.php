@@ -91,17 +91,17 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
             $r->revisi_day ?? '', // 10 (K)
             ($r->total_bobot ?? 0).'%', // 11 (L)
 
-            $cpls->pluck('kode')->implode(' / ') ?: '-', // 12 (M)
-            $cpls->count(), // 13 (N)
-            $r->cpmks->pluck('kode')->implode(' / ') ?: '-', // 14 (O)
-            $r->cpmks->count(), // 15 (P)
+            $cpls->pluck('kode')->implode(' / '), // 12 (M)
+            $cpls->count() ?? 0, // 13 (N)
+            $r->cpmks->pluck('kode')->implode(' / '), // 14 (O)
+            $r->cpmks->count() ?? 0, // 15 (P)
             ($r->cpmks->sum('total_bobot')).'%', // 16 (Q)
-            $r->cpmks->flatMap->scpmks->pluck('kode')->unique()->implode(' / ') ?: '-', // 17 (R)
-            $r->count_scpmk, // 18 (S)
-            $r->cpmks->flatMap->scpmks->pluck('metode')->unique()->filter()->implode(' / ') ?: '-', // 19 (T)
-            ($r->cpmks->flatMap->scpmks->sum('bobot')).'%', // 20 (U)
-            $refs->pluck('kode')->implode(' / ') ?: '-', // 21 (V)
-            $refs->count(), // 22 (W)
+            $r->cpmks->flatMap->scpmks->pluck('kode')->unique()->implode(' / '), // 17 (R)
+            $r->count_scpmk ?? 0, // 18 (S)
+            $r->cpmks->flatMap->scpmks->pluck('metode')->unique()->filter()->implode(' / '), // 19 (T)
+            (($r->cpmks->flatMap->scpmks->sum('bobot')) ?? 0).'%', // 20 (U)
+            $refs->pluck('kode')->implode(' / '), // 21 (V)
+            $refs->count() ?? 0, // 22 (W)
         ];
     }
 

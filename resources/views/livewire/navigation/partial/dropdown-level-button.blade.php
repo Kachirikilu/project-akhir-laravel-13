@@ -1,4 +1,4 @@
-@props(['subMenus', 'title' => 'Management', 'triggerRef' => 'dropdownTrigger'])
+@props(['subMenus', 'title' => 'Management', 'triggerRef' => 'dropdownTrigger', 'isActive' => false, 'isSubMenu' => []])
 
 <flux:dropdown position="right" align="start">
     <button x-ref="{{ $triggerRef }}" type="button" tabindex="-1"
@@ -19,8 +19,8 @@
         @foreach ($subMenus as $sub)
             @php
                 $param = $sub['param'] ?? '';
-                $isOBEMenu = in_array($param, ['rps', 'cpmk', 'sub-cpmk', 'cpl', 'referensi', 'dosen']);
-                $isRouteOBE = request()->routeIs('rps-management');
+                $isOBEMenu = in_array($param, $isSubMenu);
+                $isRouteOBE = $isActive;
                 $isBtnActive = $sub['active'] ?? false;
                 $isBtnActiveSub = isset($sub['active-sub']) && $sub['active-sub'];
             @endphp

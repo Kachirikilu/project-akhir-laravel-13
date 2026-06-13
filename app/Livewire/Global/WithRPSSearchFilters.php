@@ -649,6 +649,9 @@ trait WithRPSSearchFilters
                 ? $allRPS->sortBy($sortValue)
                 : $allRPS->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allRPS->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -658,6 +661,10 @@ trait WithRPSSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryRPS;
         }
 
         return $queryRPS->paginate($perPage);

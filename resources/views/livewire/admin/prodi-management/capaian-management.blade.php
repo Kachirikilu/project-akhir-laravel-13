@@ -33,17 +33,22 @@
 
     {{-- @include('livewire.admin.prodi-management.capaian-management.capaian-table') --}}
 
+    @include('livewire.admin.prodi-management.capaian-management.capian-switch-table')
+    @include('livewire.admin.prodi-management.capaian-management.capaian-search-and-filters')
+
     <div class="shrink-0">
         @include('livewire.global.table.export-button', [
-            'nameXString' => 'Export Nilai',
-            'xString' => "generateRekapCPLProdi($pr_id_url)",
+            'nameXString' => 'Rekap Capaian',
+            'xString' => "generateRekapCapaian($pr_id_url)",
+            'color' => 'blue',
+            'icon' => 'academic-cap',
             'valuePx' => 6,
             'isTextMd' => 1,
             'isNoPb' => 1,
         ])
     </div>
 
-    @include('livewire.staff.obe-management.obe-table', [
+    {{-- @include('livewire.staff.obe-management.obe-table', [
         'xResults' => match ($this->switchTable) {
             'cpl' => $cpls,
             default => collect([]),
@@ -53,7 +58,27 @@
             default => 'Data',
         },
         'withCapaian' => 1,
-    ])
+    ]) --}}
+
+    <div wire:loading.class="opacity-50" wire:target="switchingTable">
+        @include('livewire.staff.obe-management.obe-table', [
+            'xResults' => match ($this->switchTable) {
+                'rps' => $rps,
+                'cpl' => $cpl,
+                'cpmk' => $cpmk,
+                'sub-cpmk' => $scpmk,
+                default => collect([]),
+            },
+            'xNameString' => match ($this->switchTable) {
+                'rps' => 'RPS',
+                'cpl' => 'CPL',
+                'cpmk' => 'CPMK',
+                'sub-cpmk' => 'Sub-CPMK',
+                default => 'Data',
+            },
+            'withCapaian' => 1,
+        ])
+    </div>
 
     @include('livewire.staff.obe-management.rps-management.rps-show-modal')
     @include('livewire.staff.obe-management.cpl-management.cpl-modal-form', ['noModalRPS' => 1])

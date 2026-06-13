@@ -581,6 +581,7 @@ trait LogicSearch
         if (str_contains($search, '/')) {
             return $queryYear === $tahun1;
         }
+
         return $queryYear === $tahun1;
     }
 
@@ -689,43 +690,62 @@ trait LogicSearch
         mixed $nilai,
         string $search
     ): bool {
+
+        $search = trim($search);
+
+        // angka polos
+        if (preg_match('/^\d+(\.\d+)?$/', $search)) {
+            return abs(
+                (float) $nilai - (float) $search
+            ) < 0.0001;
+        }
+
         if (
-            ! preg_match(
-                '/nilai\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
+            preg_match(
+                '/(?:nilai\s*)?(>=|<=|>|<|=)?\s*([\d.]+)/i',
                 $search,
                 $matches
             )
         ) {
-            return false;
+
+            return $this->compareNumber(
+                (float) $nilai,
+                ($matches[1] ?? '=').$matches[2]
+            );
         }
 
-        return $this->compareNumber(
-            (float) $nilai,
-            ($matches[1] ?? '=').($matches[2] ?? '')
-        );
-
+        return false;
     }
 
     protected function matchNilaiIndex(
         mixed $index,
         string $search
     ): bool {
+
+        $search = trim($search);
+
+        // angka langsung
+        if (preg_match('/^\d+(\.\d+)?$/', $search)) {
+            return abs(
+                (float) $index - (float) $search
+            ) < 0.0001;
+        }
+
         if (
-            ! preg_match(
-                '/(index|indeks|ip)\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
+            preg_match(
+                '/(?:index|indeks|ip)?\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
                 $search,
                 $matches
             )
         ) {
-            return false;
+
+            return $this->compareNumber(
+                (float) $index,
+                ($matches[1] ?? '=').$matches[2]
+            );
         }
 
-        return $this->compareNumber(
-            (float) $index,
-            ($matches[2] ?? '=').($matches[3] ?? '')
-
-        );
-
+        return false;
     }
 
     protected function matchNilaiHuruf(
@@ -734,17 +754,17 @@ trait LogicSearch
     ): bool {
 
         $huruf = strtoupper(trim($huruf ?? ''));
-        $search = strtolower(trim($search));
+        $search = strtoupper(trim($search));
 
-        if (! str_starts_with($search, 'nilai ')) {
-            return false;
+        if (preg_match('/^(A|A\-|B\+|B|B\-|C\+|C|D|E)$/', $search)) {
+            return $huruf === $search;
         }
 
-        $targetHuruf = strtoupper(
-            trim(substr($search, 6))
-        );
+        if (str_starts_with(strtolower($search), 'nilai ')) {
+            return $huruf === strtoupper(trim(substr($search, 6)));
+        }
 
-        return $huruf === $targetHuruf;
+        return false;
     }
 
     protected function detectSearchMode(string $search): ?string

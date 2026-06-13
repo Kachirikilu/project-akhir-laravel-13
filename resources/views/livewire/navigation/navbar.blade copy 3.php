@@ -152,9 +152,7 @@
             @elseif ($item['type'] === 'dropdown-prodi')
                 @php
                     $currentTable = null;
-                    $isProdiActive = request()->routeIs('program-studi-management')
-                                || request()->routeIs('capaian-management')
-                                || request()->routeIs('rps-capaian-management');
+                    $isProdiActive = request()->routeIs('program-studi-management');
 
                     $prodiHistory = session('capaian.history', []);
                     $cplHistory = session('cpl.history', []);

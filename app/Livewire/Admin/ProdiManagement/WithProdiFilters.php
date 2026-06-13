@@ -44,6 +44,8 @@ trait WithProdiFilters
         $queryPr,
         string $alias = 'rekap_pr'
     ) {
+        $queryPr->addSelect('prodis.*');
+
         $queryPr->selectSub(function ($query) {
             $query->from('rekap_cpl_prodi')
                 ->whereColumn(
@@ -60,6 +62,7 @@ trait WithProdiFilters
                 )
             ');
         }, $alias);
+
         return $queryPr;
     }
 
@@ -67,6 +70,8 @@ trait WithProdiFilters
         $queryPr,
         string $alias = 'index_pr'
     ) {
+        $queryPr->addSelect('prodis.*');
+
         $queryPr->selectSub(function ($query) {
             $query->from('rekap_cpl_prodi')
                 ->whereColumn(
@@ -87,6 +92,7 @@ trait WithProdiFilters
                 END
             ');
         }, $alias);
+
         return $queryPr;
     }
 
@@ -94,6 +100,8 @@ trait WithProdiFilters
         $queryPr,
         string $alias = 'akreditas_pr'
     ) {
+        $queryPr->addSelect('prodis.*');
+
         $queryPr->selectSub(function ($query) {
             $query->from('rekap_cpl_prodi')
                 ->whereColumn(
@@ -138,7 +146,7 @@ trait WithProdiFilters
         //     $primaryTable = 'fakultas';
         // }
 
-        $queryPr->select('prodis.*');
+        $queryPr->addSelect('prodis.*');
 
         return match ($this->sortField) {
             'program_studi' => $this->applyProdiSort($queryPr),
@@ -152,21 +160,35 @@ trait WithProdiFilters
             'kode' => $this->applyProdiKodeSort($queryPr),
             'created_at' => $queryPr->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryPr->orderBy('updated_at', $this->sortDirection),
-            default => $queryPr->orderBy("prodis.id", $this->sortDirection),
+            default => $queryPr->orderBy('prodis.id', $this->sortDirection),
         };
     }
 
     private function applyProdiKodeSort($queryPr)
     {
-        $queryPr->select('prodis.*')
+        $queryPr->addSelect('prodis.*')
             ->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
             ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
 
         return match ($this->sortField) {
-            'kode' => $queryPr->orderBy('kode_pr', $this->sortDirection)
-                ->orderBy('departemens.kode_dp', $this->sortDirection)
-                ->orderBy('fakultas.kode_fk', $this->sortDirection),
-            default => $queryPr->orderBy('id', 'desc'),
+            'kode' => $queryPr
+                ->orderByRaw("
+                COALESCE(
+                    NULLIF(prodis.kode_pr, ''),
+                    NULLIF(departemens.kode_dp, ''),
+                    NULLIF(fakultas.kode_fk, ''),
+                    'UNI'
+                ) {$this->sortDirection}
+            ")
+                ->orderByRaw("
+                CASE prodis.strata
+                    WHEN 'Sarjana' THEN 1
+                    WHEN 'Magister' THEN 2
+                    WHEN 'Doktor' THEN 3
+                    ELSE 99
+                END {$this->sortDirection}
+            "),
+            default => $queryPr->orderBy('prodis.id', 'desc'),
         };
     }
 }

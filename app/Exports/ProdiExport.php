@@ -2,41 +2,49 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
+class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
 {
-    protected $queryProdi;
+    protected $queryPr;
 
     protected $switchTable;
 
     protected $title;
 
-    public function __construct($queryProdi, $switchTable, $title)
+    public function __construct($queryPr, $switchTable, $title)
     {
-        $this->queryProdi = $queryProdi;
+        $this->queryPr = $queryPr;
         $this->switchTable = $switchTable;
         $this->title = $title;
     }
 
     public function collection()
     {
-        return $this->queryProdi->cursor();
+        if ($this->queryPr instanceof LengthAwarePaginator) {
+            return collect($this->queryPr->items());
+        }
+
+        if ($this->queryPr instanceof Collection) {
+            return $this->queryPr;
+        }
+
+        return $this->queryPr->cursor();
     }
 
     public function startCell(): string
@@ -50,11 +58,13 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode FK', 'Fakultas',
+                    'Nilai Capaian Fakultas', '', '',
                     'Program Studi', '',
                     'Departemen', '',
                 ],
                 [
                     '', '', '',
+                    'Nilai', 'Index', 'Akreditas',
                     'Kode PR', 'Jumlah Program Studi',
                     'Kode DP', 'Jumlah Departemen',
                 ],
@@ -63,11 +73,13 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode DP', 'Departemen',
+                    'Nilai Capaian Departemen', '', '',
                     'Program Studi', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
+                    'Nilai', 'Index', 'Akreditas',
                     'Kode PR', 'Jumlah Program Studi',
                     'Kode FK', 'Nama Fakultas',
                 ],
@@ -76,11 +88,13 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode PR', 'Program Studi',
+                    'Nilai Capaian Program Studi', '', '',
                     'Departemen', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
+                    'Nilai', 'Index', 'Akreditas',
                     'Kode DP', 'Nama Departemen',
                     'Kode FK', 'Nama Fakultas',
                 ],
@@ -95,30 +109,47 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 $pr->id ?? '', // A
                 $pr->kode ?? '', // B
                 $pr->fakultas_fk ?? '', // C
-                $pr->prodis->pluck('kode')->unique()->implode(' / ') ?: '-', // D: Kode PR
-                $pr->prodis->count(), // E: Jumlah PR
-                $pr->departemens->pluck('kode')->unique()->implode(' / ') ?: '-', // F: Kode DP
-                $pr->departemens->count(), // G: Jumlah DP
+                $pr->rekap_fk ?? 0,
+                $pr->index_fk ?? 0,
+                $pr->akreditas_fk ?? 0,
+                $pr->prodis
+                    ->map(fn ($prodi) => $prodi->kode)
+                    ->unique()
+                    ->implode(' / '),
+                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0',
+
+                $pr->departemens->pluck('kode')->unique()->implode(' / '),
+                $pr->departemens->count() > 0 ? $pr->departemens->count() : '0',
             ];
         } elseif ($this->switchTable == 'departemen') {
             return [
                 $pr->id ?? '', // A
                 $pr->kode ?? '', // B
                 $pr->departemen ?? '', // C
-                $pr->prodis->pluck('kode')->unique()->implode(' / ') ?: '-', // D: Kode PR
-                $pr->prodis->count(), // E: Jumlah PR
-                $pr->kode_fk ?? '', // F: Kode FK
-                $pr->fakultas_fk ?? '', // G: Nama Fakultas
+                $pr->rekap_dp ?? 0,
+                $pr->index_dp ?? 0,
+                $pr->akreditas_dp ?? 0,
+                $pr->prodis
+                    ->map(fn ($prodi) => $prodi->kode)
+                    ->unique()
+                    ->implode(' / '),
+                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0',
+
+                $pr->kode_fk ?? '', // I: Kode FK
+                $pr->fakultas_fk ?? '', // J: Nama Fakultas
             ];
         } else {
             return [
                 $pr->id ?? '', // A
                 $pr->kode ?? '', // B
                 $pr->prodi ?? '', // C
-                $pr->kode_dp ?? '', // D
-                $pr->departemen_dp ?? '', // E
-                $pr->kode_fk ?? '', // F
-                $pr->fakultas_fk ?? '', // G
+                $pr->rekap_pr ?? 0,
+                $pr->index_pr ?? 0,
+                $pr->akreditas_pr ?? 0,
+                $pr->kode_dp ?? '', // G
+                $pr->departemen_dp ?? '', // H
+                $pr->kode_fk ?? '', // I
+                $pr->fakultas_fk ?? '', // J
             ];
         }
     }
@@ -142,19 +173,26 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             $sheet->mergeCells("{$col}4:{$col}5");
         }
 
-        $sheet->mergeCells('D4:E4');
-        $sheet->mergeCells('F4:G4');
+        $sheet->mergeCells('D4:F4');
+        $sheet->mergeCells('G4:H4');
+        $sheet->mergeCells('I4:J4');
 
         if ($this->switchTable == 'fakultas') {
-            $alignmentMerges = ['A', 'B', 'E'];
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'J'];
         } elseif ($this->switchTable == 'departemen') {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F'];
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'I'];
         } else {
-            $alignmentMerges = ['A', 'B', 'D', 'F'];
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'I'];
         }
 
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
+
+        foreach (['D', 'E'] as $col) {
+            $sheet->getStyle("{$col}6:{$col}{$highestRow}")
+                ->getNumberFormat()
+                ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+        }
 
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle("{$c}4:{$c}{$highestRow}")->getAlignment()->applyFromArray([

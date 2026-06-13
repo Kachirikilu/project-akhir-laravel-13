@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -31,6 +32,14 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
 
     public function collection()
     {
+        if ($this->querySCPMK instanceof LengthAwarePaginator) {
+            return collect($this->querySCPMK->items());
+        }
+
+        if ($this->querySCPMK instanceof Collection) {
+            return $this->querySCPMK;
+        }
+
         return $this->querySCPMK->cursor();
     }
 
@@ -51,7 +60,7 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
                 '', '', '',
                 'Materi', 'Metodologi', 'Indikator', 'Metode',
                 'Bobot Sub-CPMK', 'Deskripsi Tugas', 'Waktu Tugas', 'Waktu Mandiri',
-                'Kode Referensi', 'Jumlah Referensi'
+                'Kode Referensi', 'Jumlah Referensi',
             ],
         ];
     }
@@ -78,8 +87,8 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
             $s->w_tugas ?? '', // 9 (J)
             $s->w_mandiri ?? '', // 10 (K)
 
-            $refs->pluck('kode')->implode(' / ') ?: '-', // 11 (L)
-            $refs->count(), // 12 (M)
+            $refs->pluck('kode')->implode(' / '), // 11 (L)
+            $refs->count() > 0 ? $refs->count() : '0', 
         ];
     }
 

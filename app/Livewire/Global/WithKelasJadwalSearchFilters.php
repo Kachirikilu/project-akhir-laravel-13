@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Global;
 
-use App\Models\Kelas\KelasJadwal;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +125,7 @@ trait WithKelasJadwalSearchFilters
             $this->jadwalResults = $this->mapJadwal($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
+            $exactMatch = $results->first(function ($c) use ($normalizedValue) {
                 $normalizedJadwalKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
                 return $normalizedJadwalKode === $normalizedValue;
@@ -171,7 +170,6 @@ trait WithKelasJadwalSearchFilters
             }
         }
     }
-
 
     public function getJadwalbyUser($mode = 'full')
     {
@@ -266,7 +264,6 @@ trait WithKelasJadwalSearchFilters
         $this->jadwalNameSearch = '';
     }
 
-
     public function searchOutputJadwal($queryJadwal, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
     {
         $search = trim($searchRaw);
@@ -309,7 +306,7 @@ trait WithKelasJadwalSearchFilters
                         $j->kode_jadwal,
                         $searchLower
                     );
-                    
+
                     $matchKodeRPS = $this->matchKode(
                         $j->kode_rps,
                         $searchLower
@@ -423,7 +420,7 @@ trait WithKelasJadwalSearchFilters
                         $sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $sks. 'SKS',
+                        $sks.'SKS',
                         $searchLower
                     );
 
@@ -644,6 +641,9 @@ trait WithKelasJadwalSearchFilters
                 ? $allJadwal->sortBy($sortValue)
                 : $allJadwal->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allJadwal->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -653,6 +653,10 @@ trait WithKelasJadwalSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryJadwal;
         }
 
         return $queryJadwal->paginate($perPage);

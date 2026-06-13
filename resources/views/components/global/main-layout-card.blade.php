@@ -16,6 +16,7 @@
                 saveCPL, updateCPL, destroyCPL, restoreCPL,
                 saveRef, updateRef, destroyRef, restoreRef,
                 search,
+                generateRekapCPL, generateRekapCPLProdi, generateRekapMahasiswa,
                 selectPrForFilter, resetPrFilter,
                 selectDpForFilter, resetDpFilter,
                 selectFkForFilter, resetFkFilter,

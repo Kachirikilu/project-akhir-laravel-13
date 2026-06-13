@@ -22,8 +22,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('user-management/{switchTable?}', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
         Route::view('program-studi-management/{switchTable?}', 'program-studi-management')->name('program-studi-management');
-        Route::view('program-studi-management/{strata}/{kode_pr}', 'program-studi-management')->name('capaian-management');
-        Route::view('program-studi-management/{strata}/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
+        Route::view('program-studi-management/kode/{kode_pr}', 'program-studi-management')->name('capaian-management');
+        Route::view('program-studi-management/kode/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {

@@ -484,6 +484,9 @@ trait WithDosenSearchFilters
                 ? $allDosen->sortBy($sortValue)
                 : $allDosen->sortByDesc($sortValue);
 
+            if (empty($perPage)) {
+                return $allDosen->values();
+            }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
 
             return new LengthAwarePaginator(
@@ -493,6 +496,10 @@ trait WithDosenSearchFilters
                 $currentPage,
                 ['path' => Paginator::resolveCurrentPath()]
             );
+        }
+
+        if (empty($perPage)) {
+            return $queryDosen;
         }
 
         return $queryDosen->paginate($perPage);

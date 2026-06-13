@@ -74,10 +74,11 @@ class Prodi extends Model
     protected function prodi(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->strata_s) {
+            if (! $this->strata_s) {
                 return $this->nama_pr;
             }
-            return $this->strata_s . ' ' .$this->nama_pr;
+
+            return $this->strata_s.' '.$this->nama_pr;
         });
     }
 
@@ -96,6 +97,26 @@ class Prodi extends Model
     }
 
     protected function kode(): Attribute
+    {
+        return Attribute::get(function () {
+            $s = $this->strata_s.'-';
+            if (! empty($this->attributes['kode_pr'])) {
+                return $s.$this->attributes['kode_pr'];
+            }
+            $kodeDepartemen = $this->dp_rel?->kode_dp;
+            if (! empty($kodeDepartemen)) {
+                return $s.$kodeDepartemen;
+            }
+            $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
+            if (! empty($kodeFakultas)) {
+                return $s.$kodeFakultas;
+            }
+
+            return $s.'UNI';
+        });
+    }
+
+    protected function kodeShort(): Attribute
     {
         return Attribute::get(function () {
             if (! empty($this->attributes['kode_pr'])) {
@@ -246,38 +267,76 @@ class Prodi extends Model
         }
 
         $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
+
+        $searchNormalized = strtoupper(
+            preg_replace('/[^A-Za-z0-9]/', '', $search)
+        );
+
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm) {
-            // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
+        return $query->where(function ($q) use (
+            $search,
+            $searchTerm,
+            $searchNormalized
+        ) {
+
             $q->where('prodis.nama_pr', 'like', $searchTerm)
                 ->orWhere('prodis.kode_pr', 'like', $searchTerm);
 
             if (is_numeric($search)) {
-                $q->orWhere('prodis.id', 'like', $search);
+                $q->orWhere('prodis.id', $search);
             }
 
-            // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
-            $q->orWhereRaw("
-                CONCAT(
-                    CASE 
-                        WHEN strata = 'Sarjana' THEN 'S1' 
-                        WHEN strata = 'Magister' THEN 'S2' 
-                        WHEN strata = 'Doktor' THEN 'S3' 
-                        ELSE strata 
-                    END, 
-                    ' ', 
-                    nama_pr
-                ) LIKE ?", [$searchTerm])
-                ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+            /*
+            |--------------------------------------------------------------------------
+            | S1TKE / S1-TKE / S1 TKE
+            |--------------------------------------------------------------------------
+            */
 
-            // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
+            $q->orWhereRaw("
+                REPLACE(
+                    REPLACE(
+                        UPPER(
+                            CONCAT(
+                                CASE
+                                    WHEN prodis.strata = 'Sarjana' THEN 'S1'
+                                    WHEN prodis.strata = 'Magister' THEN 'S2'
+                                    WHEN prodis.strata = 'Doktor' THEN 'S3'
+                                    ELSE prodis.strata
+                                END,
+                                COALESCE(
+                                    NULLIF(prodis.kode_pr,''),
+                                    (
+                                        SELECT d.kode_dp
+                                        FROM departemens d
+                                        WHERE d.id = prodis.dp_id
+                                        LIMIT 1
+                                    ),
+                                    (
+                                        SELECT f.kode_fk
+                                        FROM fakultas f
+                                        JOIN departemens d
+                                            ON d.fk_id = f.id
+                                        WHERE d.id = prodis.dp_id
+                                        LIMIT 1
+                                    ),
+                                    'UNI'
+                                )
+                            )
+                        ),
+                        '-', ''
+                    ),
+                    ' ',
+                    ''
+                ) LIKE ?
+            ", ['%'.$searchNormalized.'%']);
+
             $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
-                $j->withTrashed()->where(function ($sq) use ($searchTerm) {
-                    $sq->where('nama_dp', 'like', $searchTerm)
-                        ->orWhere('kode_dp', 'like', $searchTerm);
-                });
+                $j->withTrashed()
+                    ->where(function ($sq) use ($searchTerm) {
+                        $sq->where('nama_dp', 'like', $searchTerm)
+                            ->orWhere('kode_dp', 'like', $searchTerm);
+                    });
             });
         });
     }

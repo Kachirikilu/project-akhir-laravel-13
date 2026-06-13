@@ -2,6 +2,8 @@
 
 namespace App\Exports;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -30,6 +32,14 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
 
     public function collection()
     {
+        if ($this->queryRPS instanceof LengthAwarePaginator) {
+            return collect($this->queryRPS->items());
+        }
+
+        if ($this->queryRPS instanceof Collection) {
+            return $this->queryRPS;
+        }
+
         return $this->queryRPS->cursor();
     }
 
@@ -91,17 +101,20 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
             $r->revisi_day ?? '', // 10 (K)
             ($r->total_bobot ?? 0).'%', // 11 (L)
 
-            $cpls->pluck('kode')->implode(' / ') ?: '-', // 12 (M)
-            $cpls->count(), // 13 (N)
-            $r->cpmks->pluck('kode')->implode(' / ') ?: '-', // 14 (O)
-            $r->cpmks->count(), // 15 (P)
+            $cpls->pluck('kode')->implode(' / '), // 12 (M)
+            $cpls->count() > 0 ? $cpls->count() : '0', 
+
+            $r->cpmks->pluck('kode')->implode(' / '), // 14 (O)
+            $r->cpmks->count() > 0 ? $r->cpmks->count() : '0', 
+
             ($r->cpmks->sum('total_bobot')).'%', // 16 (Q)
-            $r->cpmks->flatMap->scpmks->pluck('kode')->unique()->implode(' / ') ?: '-', // 17 (R)
-            $r->count_scpmk, // 18 (S)
-            $r->cpmks->flatMap->scpmks->pluck('metode')->unique()->filter()->implode(' / ') ?: '-', // 19 (T)
-            ($r->cpmks->flatMap->scpmks->sum('bobot')).'%', // 20 (U)
-            $refs->pluck('kode')->implode(' / ') ?: '-', // 21 (V)
-            $refs->count(), // 22 (W)
+            $r->cpmks->flatMap->scpmks->pluck('kode')->unique()->implode(' / '), // 17 (R)
+            $r->count_scpmk > 0 ? $r->count_scpmk : '0', 
+
+            $r->cpmks->flatMap->scpmks->pluck('metode')->unique()->filter()->implode(' / '), // 19 (T)
+            (($r->cpmks->flatMap->scpmks->sum('bobot')) ?? 0).'%', // 20 (U)
+            $refs->pluck('kode')->implode(' / '), // 21 (V)
+            $refs->count() > 0 ? $refs->count() : '0', 
         ];
     }
 
