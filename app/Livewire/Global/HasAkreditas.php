@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Global;
+
 use Illuminate\Support\Facades\DB;
 
 trait HasAkreditas
@@ -115,5 +116,180 @@ trait HasAkreditas
         }, $alias);
 
         return $query;
+    }
+
+    protected function addRekapMahasiswa(
+        $query,
+        string $alias = 'rekap_mahasiswa'
+    ) {
+        $query->selectSub(
+            DB::table('nilai_mahasiswa')
+                ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                ->selectRaw('COALESCE(ROUND(AVG(nilai_mahasiswa.nilai), 2), 0)')
+                ->whereColumn('mahasiswas.user_id', 'users.id'),
+            $alias
+        );
+
+        return $query;
+    }
+
+    protected function addIndexMahasiswa(
+        $query,
+        string $alias = 'index_mahasiswa'
+    ) {
+        $query->selectSub(function ($sub) {
+
+            $sub->from('nilai_mahasiswa')
+                ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                ->whereColumn('mahasiswas.user_id', 'users.id')
+                ->selectRaw('
+                CASE
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 86 THEN 4.00
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 80 THEN 3.70
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 75 THEN 3.30
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 70 THEN 3.00
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 65 THEN 2.70
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 60 THEN 2.30
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 56 THEN 2.00
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 40 THEN 1.00
+                    ELSE 0.00
+                END
+            ');
+        }, $alias);
+
+        return $query;
+    }
+
+    protected function addAkreditasMahasiswa(
+        $query,
+        string $alias = 'akreditas_mahasiswa'
+    ) {
+        $query->selectSub(function ($sub) {
+
+            $sub->from('nilai_mahasiswa')
+                ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                ->whereColumn('mahasiswas.user_id', 'users.id')
+                ->selectRaw("
+                CASE
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 86 THEN 'A'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 80 THEN 'A-'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 75 THEN 'B+'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 70 THEN 'B'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 65 THEN 'B-'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 60 THEN 'C+'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 56 THEN 'C'
+                    WHEN AVG(nilai_mahasiswa.nilai) >= 40 THEN 'D'
+                    ELSE 'E'
+                END
+            ");
+        }, $alias);
+
+        return $query;
+    }
+
+    protected function addCountRpsMahasiswa(
+        $queryUser,
+        string $alias = 'count_rps'
+    ) {
+        $queryUser->addSelect('users.*');
+
+        $queryUser->selectSub(
+            DB::table('nilai_mahasiswa')
+                ->join(
+                    'mahasiswas',
+                    'nilai_mahasiswa.mahasiswa_id',
+                    '=',
+                    'mahasiswas.id'
+                )
+                ->whereColumn(
+                    'mahasiswas.user_id',
+                    'users.id'
+                )
+                ->selectRaw('COUNT(DISTINCT nilai_mahasiswa.rps_id)'),
+            $alias
+        );
+
+        return $queryUser;
+    }
+
+    protected function addTotalSksMahasiswa(
+        $queryUser,
+        string $alias = 'total_sks'
+    ) {
+        $queryUser->addSelect('users.*');
+
+        $queryUser->selectSub(
+            DB::table(function ($sub) {
+                $sub->from('nilai_mahasiswa')
+                    ->join('rps', 'nilai_mahasiswa.rps_id', '=', 'rps.id')
+                    ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                    ->selectRaw('
+                    nilai_mahasiswa.mahasiswa_id,
+                    nilai_mahasiswa.rps_id,
+                    MAX(mata_kuliahs.sks_kuliah) as sks
+                ')
+                    ->groupBy(
+                        'nilai_mahasiswa.mahasiswa_id',
+                        'nilai_mahasiswa.rps_id'
+                    );
+            }, 'rps_unik')
+                ->join(
+                    'mahasiswas',
+                    'rps_unik.mahasiswa_id',
+                    '=',
+                    'mahasiswas.id'
+                )
+                ->whereColumn(
+                    'mahasiswas.user_id',
+                    'users.id'
+                )
+                ->selectRaw('COALESCE(SUM(rps_unik.sks),0)'),
+            $alias
+        );
+
+        return $queryUser;
+    }
+
+    protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
+    {
+        $queryUser->addSelect('users.*');
+
+        return $queryUser->selectSub(function ($query) {
+
+            $query->from('rps_pivot_dosen')
+                ->join(
+                    'dosens',
+                    'rps_pivot_dosen.dosen_id',
+                    '=',
+                    'dosens.id'
+                )
+                ->whereColumn(
+                    'dosens.user_id',
+                    'users.id'
+                )
+                ->selectRaw('COUNT(DISTINCT rps_pivot_dosen.rps_id)');
+
+        }, $alias);
+    }
+
+    protected function addTotalSksDosen($queryUser, string $alias = 'total_sks')
+    {
+        $queryUser->addSelect('users.*');
+
+        return $queryUser->selectSub(function ($query) {
+
+            $query->fromSub(function ($sub) {
+
+                $sub->from('rps_pivot_dosen')
+                    ->join('dosens', 'rps_pivot_dosen.dosen_id', '=', 'dosens.id')
+                    ->join('rps', 'rps_pivot_dosen.rps_id', '=', 'rps.id')
+                    ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                    ->whereColumn('dosens.user_id', 'users.id')
+                    ->selectRaw('DISTINCT rps.id, mata_kuliahs.sks_kuliah');
+
+            }, 'rps_sks')
+                ->selectRaw('COALESCE(SUM(sks_kuliah), 0)');
+
+        }, $alias);
     }
 }

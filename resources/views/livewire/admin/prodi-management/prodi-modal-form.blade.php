@@ -1,5 +1,5 @@
 <flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveProdi, updateProdi">
@@ -63,7 +63,7 @@
 
                 {{-- 3. Footer / Button Action --}}
                 <div <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
+                    class="bg-[var(--sub-table-color)] table-border
                     p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">

@@ -61,10 +61,10 @@
     {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
     @forelse($kelas as $k)
         <div wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
-            class="relative flex flex-col justify-between p-4 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
+            class="relative flex flex-col justify-between p-4 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
 
             {{-- HEADER CARD (Kode Kelas, Kode RPS, & Tombol Aksi) --}}
-            <div class="flex items-start justify-between gap-2 pb-3 border-b border-[var(--border-table-color)]/60">
+            <div class="flex items-start justify-between gap-2 pb-3 border-b table-border/60">
                 <div class="flex flex-wrap items-center gap-2">
                     {{-- 1. KODE KELAS --}}
                     <flux:dropdown>
@@ -141,14 +141,14 @@
             </div>
             {{-- FOOTER CARD (Semester, SKS, Program Studi) --}}
             <div
-                class="grid grid-cols-3 gap-2 pt-3 border-t border-[var(--border-table-color)]/40 bg-[var(--second-table-trans)] -mx-4 -mb-4 p-3 rounded-b-xl text-center text-xs">
-                <div class="border-r border-[var(--border-table-color)]/60 space-y-0.5">
+                class="grid grid-cols-3 gap-2 pt-3 border-t table-border/40 bg-[var(--second-table-trans)] -mx-4 -mb-4 p-3 rounded-b-xl text-center text-xs">
+                <div class="border-r table-border/60 space-y-0.5">
                     <span
                         class="block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">Semester</span>
                     <span class="font-bold text-[var(--contrast-main-text)]">{{ $k->semester ?? '-' }}</span>
                 </div>
 
-                <div class="border-r border-[var(--border-table-color)]/60 space-y-0.5">
+                <div class="border-r table-border/60 space-y-0.5">
                     <span
                         class="block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">Bobot</span>
                     <span class="font-bold text-[var(--contrast-main-text)]">{{ $k->sks ?? '-' }} SKS</span>
@@ -167,7 +167,7 @@
     @empty
         {{-- KEADAAN KOSONG --}}
         <div
-            class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+            class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
             <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Kelas ditemukan!</p>
         </div>

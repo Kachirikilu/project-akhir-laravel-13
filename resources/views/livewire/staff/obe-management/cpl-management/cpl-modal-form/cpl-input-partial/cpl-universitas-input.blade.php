@@ -20,7 +20,7 @@
                     'placeholder' => 'Kode CPL...',
                     'isKode' => 4,
                     'isFocusSelect' => 1,
-                    'noLabel' => 1
+                    'noLabel' => 1,
                 ])
             </div>
             <div class="sm:col-span-2">
@@ -41,23 +41,25 @@
         @enderror
     </div>
 
-    @include('livewire.global.modal-form.input-array.search-input-array-form', [
-        'alpine' => 'cpl',
-        'xResults' => $prResults,
-        'selectX' => 'selectPrArray',
-        'modelString' => 'nama_pr_search',
-    
-        'idString' => 'pr_id_array',
-        'itemsAllString' => 'pr_items_array',
-    
-        'typeXString' => 'prodi',
-        'typeX2String' => 'departemen',
-        'typeX3String' => 'fakultas',
-    
-        'nameXString' => 'Program Studi',
-        'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchPr',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr',
-    ])
+    @if ($cplType == 4)
+        @include('livewire.global.modal-form.input-array.search-input-array-form', [
+            'alpine' => 'cpl',
+            'xResults' => $prResults,
+            'selectX' => 'selectPrArray',
+            'modelString' => 'nama_pr_search',
+        
+            'idString' => 'pr_id_array',
+            'itemsAllString' => 'pr_items_array',
+        
+            'typeXString' => 'prodi',
+            'typeX2String' => 'departemen',
+            'typeX3String' => 'fakultas',
+        
+            'nameXString' => 'Program Studi',
+            'nameSearchString' => 'prNameSearch',
+            'fetchString' => 'fetchPr',
+            'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchPr',
+        ])
+    @endif
 </div>

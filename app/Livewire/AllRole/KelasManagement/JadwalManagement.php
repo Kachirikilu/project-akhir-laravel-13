@@ -11,7 +11,7 @@ use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Database\QueryException;

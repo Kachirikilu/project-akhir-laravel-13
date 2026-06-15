@@ -1,7 +1,7 @@
 <div
     class="px-4 py-6 mt-4 
     {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
-    bg-[var(--main-table-color)] border-[var(--border-table-color)]
+    bg-[var(--main-table-color)] table-border
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
@@ -23,7 +23,7 @@
 
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addCPMK, editCPMK'])
 
-        <div class="space-y-6">
+        <div class="space-y-4">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 

@@ -1,6 +1,6 @@
 <flux:modal :flyout="$isFlyoutUser" name="user-modal" wire:model.live="showUserModal"
     @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser">
@@ -47,7 +47,7 @@
 
                 {{-- 3. Footer/Tombol --}}
                 <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)] p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="bg-[var(--sub-table-color)] table-border p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')

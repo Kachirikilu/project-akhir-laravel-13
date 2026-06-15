@@ -126,7 +126,7 @@
                 <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}-{{ $alpine }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
 
-                    @include('livewire.global.modal-form.partial.dropdown-items')
+                    @include('livewire.global.modal-form.input-array.partial.dropdown-items')
 
                     <button type="button"
                         x-on:click="
@@ -188,7 +188,7 @@
 
     {{-- 3. AREA OPSI TERPILIH --}}
     <div
-        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+        class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
         @include('livewire.global.modal-form.input-array.partial.scpmk-bobot-akumulasi', [
             'nilai1' => 5,
@@ -198,9 +198,10 @@
 
         {{-- Daftar Item Berjejer ke Bawah (flex-col) --}}
         <div class="space-y-2 max-h-[625px] overflow-y-auto pr-1 scrollbar-medium">
-            <template x-for="(id, index) in items" :key="id">
+            {{-- <template x-for="(id, index) in items" :key="id"> --}}
+            <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
+                    class="flex flex-col bg-[var(--second-table-color)] border table-border rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
                     @include('livewire.global.modal-form.input-array.partial.scpmk-header')
                     @include('livewire.global.modal-form.input-array.partial.scpmk-table')
                 </div>

@@ -23,7 +23,7 @@ trait WithSubCPMKSearchFilters
 
     public $scpmk_name = '';
 
-    public $scpmk_items;
+    public $scpmk_items = [];
 
     public $scpmkNameSearch = '';
 
@@ -333,6 +333,21 @@ trait WithSubCPMKSearchFilters
                         $searchLower
                     );
 
+                    $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $scpmk->rekap_scpmk_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiIndex = $this->matchNilaiIndex(
+                        $scpmk->index_scpmk_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $scpmk->akreditas_scpmk_pr ?? 'E',
+                        $searchLower
+                    );
+
                     $matchMetode = $this->matchMetode(
                         $scpmk->metode,
                         $searchLower
@@ -427,6 +442,11 @@ trait WithSubCPMKSearchFilters
                         || $matchKode
 
                         || $matchDes
+
+                                                || $matchNilaiAkhir
+                        || $matchNilaiIndex
+                        || $matchNilaiHuruf
+
                         || $matchMetode
                         || $matchMateri
                         || $matchMetodologi
@@ -446,6 +466,10 @@ trait WithSubCPMKSearchFilters
             $sortValue = match ($sortField) {
                 'kode' => fn ($scpmk) => $scpmk->kode,
                 'deskripsi' => fn ($scpmk) => $scpmk->deskripsi,
+
+                'rekap_scpmk_pr',
+                'index_scpmk_pr',
+                'akreditas_scpmk_pr' => fn ($scpmk) => (float) ($scpmk->rekap_scpmk_pr ?? 0),
 
                 'metode' => fn ($scpmk) => $scpmk->metode,
                 'materi' => fn ($scpmk) => $scpmk->materi,
@@ -471,6 +495,7 @@ trait WithSubCPMKSearchFilters
                 return $allSCPMK->values();
             }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
             return new LengthAwarePaginator(
                 $allSCPMK->forPage($currentPage, $perPage)->values(),
                 $allSCPMK->count(),
@@ -483,6 +508,7 @@ trait WithSubCPMKSearchFilters
         if (empty($perPage)) {
             return $querySCPMK;
         }
+
         return $querySCPMK->paginate($perPage);
     }
 }

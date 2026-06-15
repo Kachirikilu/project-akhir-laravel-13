@@ -43,7 +43,7 @@ wire:key="select-form-{{ $modelString }}">
         <input autocomplete="off" x-model="value" {{-- Gunakan x-model agar Alpine tahu isinya --}} type="text" readonly @click="open = true"
             @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $modelString }}"
             placeholder="{{ $placeholder ?? 'Pilih Opsi' }}"
-            class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+            class="bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                 placeholder-[var(--contrast-third-text)]
             w-full border rounded-lg pl-10 px-3 py-2 pr-10 cursor-pointer">
 

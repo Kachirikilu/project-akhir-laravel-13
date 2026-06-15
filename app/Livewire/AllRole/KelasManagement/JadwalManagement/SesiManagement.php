@@ -9,10 +9,11 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSes
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasAbsensi;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -24,6 +25,7 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
+    use HasAbsensi;
     use HasSortir;
     use HasToast;
     use WithAbsenModal;
@@ -197,8 +199,8 @@ class SesiManagement extends Component
             'mahasiswa_id' => ['mahasiswa_id', 'id'],
             'pertemuan_ke' => ['pertemuan_ke', 'name'],
             'jumlah_absensi' => ['jumlah_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
-            'mhs_poin_absensi' => ['jumlah_absensi'],
-            'name' => ['pertemuan_ke'],
+            // 'mhs_poin_absensi' => ['jumlah_absensi'],
+            // 'name' => ['pertemuan_ke'],
         ];
 
         $this->sortField($table, $sortField, $columns, $aliases);
@@ -310,7 +312,7 @@ class SesiManagement extends Component
                     ->lt(now());
             })->pluck('id')->all();
 
-            $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal)->select('users.*');
+            $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal, null, 1)->select('users.*');
 
             $expiredCount = (int) count($expiredSesiIds ?: []);
 

@@ -38,6 +38,25 @@ return new class extends Migration
             );
         });
 
+        Schema::create('rekap_nilai_mahasiswa', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('mahasiswa_id')
+                ->constrained('mahasiswas')
+                ->cascadeOnDelete();
+
+            $table->decimal('nilai', 5, 2)->nullable();
+            $table->decimal('index', 3, 2)->nullable();
+            $table->string('huruf', 2)->nullable();
+            $table->unsignedInteger('count_rps')->default(0);
+            $table->unsignedInteger('total_sks')->default(0);
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique(['mahasiswa_id']);
+        });
+
         Schema::create('rekap_rps_prodi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->cascadeOnDelete();

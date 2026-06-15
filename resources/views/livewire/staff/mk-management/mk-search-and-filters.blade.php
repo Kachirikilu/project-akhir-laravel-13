@@ -1,12 +1,12 @@
 <div x-data="{ activeFilter: @entangle('filterMK') }"
-    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     <div x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-        class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+        class="table-border flex items-end justify-between border-b mb-4 gap-4">
         <div class="min-w-0 flex-1 overflow-hidden">
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByMK',

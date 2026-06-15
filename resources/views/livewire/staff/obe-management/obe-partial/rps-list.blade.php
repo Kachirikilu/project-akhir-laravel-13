@@ -1,10 +1,10 @@
 <div
     class="px-4 py-6 mt-4 
-    bg-[var(--main-table-color)] border-[var(--border-table-color)]
+    bg-[var(--main-table-color)] table-border
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        RPS yang Terhubung di {{ $nameXString }} ini</h4>
+        Rencana Pembelajaran Semester</h4>
 
     <div class="relative">
 
@@ -29,7 +29,7 @@
 
             {{-- LIST AREA --}}
             <div
-                class="border-2 border-dashed border-[var(--border-table-color)] rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
+                class="border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
 
                 {{-- SUBHEADER --}}
                 <div class="flex items-center justify-between mb-3">

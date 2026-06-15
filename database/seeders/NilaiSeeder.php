@@ -14,7 +14,7 @@ class NilaiSeeder extends Seeder
     {
         $this->command->info('Starting NilaiSeeder...');
 
-        $chunkSize = 25;
+        $chunkSize = 512;
 
         $totalJadwal = KelasJadwal::count();
         $processedJadwal = 0;

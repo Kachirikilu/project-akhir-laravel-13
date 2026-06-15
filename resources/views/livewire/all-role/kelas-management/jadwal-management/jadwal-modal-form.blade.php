@@ -1,5 +1,5 @@
 <flux:modal name="jadwal-modal" wire:model="showJadwalModal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
-    class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveJadwal, updateJadwal">
@@ -34,7 +34,7 @@
 
                 {{-- 3. Footer / Button Action --}}
                 <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
+                    class="bg-[var(--sub-table-color)] table-border
                     p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">

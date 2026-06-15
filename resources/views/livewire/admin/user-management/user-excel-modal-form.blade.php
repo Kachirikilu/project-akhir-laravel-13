@@ -1,6 +1,6 @@
 <flux:modal name="user-excel-modal" wire:model="showUserExcelModal" flyout
     @refresh-data-user.window="if (!$wire.showUserExcelModal) $store.user.reset()"
-    class="md:w-[98vw] lg:max-w-[95vw] xl:max-w-[90vw] h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="md:w-[98vw] lg:max-w-[95vw] xl:max-w-[90vw] h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUserExcel">
@@ -30,7 +30,7 @@
 
                 {{-- 3. Footer/Tombol --}}
                 <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)] p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="bg-[var(--sub-table-color)] table-border p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')

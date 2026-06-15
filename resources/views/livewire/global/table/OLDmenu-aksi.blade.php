@@ -1,4 +1,4 @@
-<td class="{{ $secondKolom }}">
+<td class="table-second">
     <flux:dropdown>
         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
         </flux:button>

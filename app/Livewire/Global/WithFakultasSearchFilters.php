@@ -18,7 +18,7 @@ trait WithFakultasSearchFilters
 
     public $fk_name = '';
 
-    public $fk_items;
+    public $fk_items = [];
 
     public $fkNameSearch = '';
 

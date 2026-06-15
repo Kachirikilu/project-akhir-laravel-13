@@ -1,84 +1,67 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
-    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
+        @include('livewire.staff.obe-management.obe-partial.obe-filters')
 
-        <div x-show="activeTab == 'cpl'" x-transition:enter="transition ease-out duration-1000"
+        <div x-show="activeTab == 'mahasiswa'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-            class="col-start-1 row-start-1 border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+            class="col-start-1 row-start-1 table-border flex items-end justify-between border-b mb-4 gap-4">
             <div class="min-w-0 flex-1 overflow-hidden">
                 @include('livewire.global.search-and-filters.filter-mode', [
-                    'filterByFunc' => 'filterByCPL',
-                    'filterString' => 'filterCPL',
-                    'totalTab' => $stats['cpl'],
-                    'totalTab1' => $stats['cpl-month'],
-                    'totalTab2' => $stats['cpl-6-months'],
-                    'totalTab3' => $stats['cpl-year'],
-                    'totalTab4' => $stats['cpl-older-5'],
-                    'tab1String' => 'cpl-month',
-                    'tab2String' => 'cpl-6-months',
-                    'tab3String' => 'cpl-year',
-                    'tab4String' => 'cpl-older-5',
-                    'tabName' => 'Semua CPL',
-                    'tab1Name' => 'Terbaru',
-                    'tab2Name' => 'Semester Ini',
-                    'tab3Name' => 'Tahun Ini',
-                    'tab4Name' => '>5 Tahun Lalu',
+                    'filterByFunc' => 'filterByStatus',
+                    'filterString' => 'filterStatus',
+                    'totalTab' => $stats['mahasiswa'],
+                    'totalTab1' => $stats['mahasiswa-aktif'],
+                    'totalTab2' => $stats['mahasiswa-non-aktif'],
+                    'tab1String' => 'user-aktif',
+                    'tab2String' => 'user-non-aktif',
+                    'tabName' => 'Semua Status',
+                    'tab1Name' => 'Aktif',
+                    'tab2Name' => 'Tidak Aktif',
                 ])
             </div>
             <div class="shrink-0">
                 @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
-                    'key' => 'page-control-cpl',
-                    'autoSmall' => 'lg',
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                    'key' => 'page-control-user',
+                    'autoSmall' => 'md',
                 ])
             </div>
         </div>
-
     </div>
+
+
+
 
 
 
     {{-- BAGIAN SEARCH UTAMA --}}
     <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 z-20">
 
-        <div x-show="activeTab !== 'dosen'" class="sm:col-span-4 w-full">
+        <div x-show="activeTab == 'mahasiswa'" class="sm:col-span-7 w-full">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, & Referensi,...',
+                'placeholder' => 'Cari Nama, atau ID Mahasiswa...',
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
+            ])
+        </div>
+        <div x-show="activeTab !== 'mahasiswa'" class="sm:col-span-4 w-full">
+            @include('livewire.global.search-and-filters.main-search', [
+                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL,...',
                 'searchMode' => $searchMode,
                 'searchValues' => ['simple', 'full'],
                 'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
             ])
         </div>
 
-        {{-- 🔹 PRODI --}}
-        <div x-show="activeTab !== 'referensi' && (activeTab !== 'dosen')"
-            class="sm:col-span-3 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputPrFilter',
-                'xSearchResultsString' => 'prSearchResults',
-                'iconString' => 'academic-cap',
-                'placeholderString' => 'Filter berdasarkan Program Studi...',
-                'xSearchQueryString' => 'prSearchQuery',
-                'selectedXId' => $selectedPrId,
-                'selectedXName' => $pr_name,
-                'resetXFilter' => 'resetPrFilter()',
-                'xSearchQuery' => $prSearchQuery,
-                'xSearchResults' => $prSearchResults,
-                'selectXForFilterString' => 'selectPrForFilter',
-                'typeXString' => 'prodi',
-                'typeX2String' => 'departemen',
-                'typeX3String' => 'fakultas',
-                'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-            ])
-        </div>
-
         {{-- 🔹 RPS --}}
-        <div x-show="activeTab !== 'rps'" class="sm:col-span-3 relative">
+        <div x-show="activeTab !== 'rps' && activeTab !== 'mahasiswa'" class="sm:col-span-3 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputRPSFilter',
                 'xSearchResultsString' => 'rpsSearchResults',
@@ -100,7 +83,7 @@
         </div>
 
         <div x-show="activeTab == 'sub-cpmk' || activeTab == 'cpl'"
-            x-bind:class="activeTab == 'referensi' ? 'sm:col-span-3' : 'sm:col-span-4'" class="relative">
+            class="sm:col-span-7 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputCPMKFilter',
                 'xSearchResultsString' => 'cpmkSearchResults',
@@ -120,6 +103,27 @@
                 'unfoundString' => 'Tidak ada CPMK ditemukan!',
             ])
         </div>
+
+        <div x-show="activeTab == 'rps' || activeTab == 'cpmk'"
+             x-bind:class="activeTab == 'rps' ? 'sm:col-span-3' : 'sm:col-span-7'" class="relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputCPLFilter',
+                'xSearchResultsString' => 'cplSearchResults',
+                'iconString' => 'document-text',
+                'placeholderString' => 'Filter berdasarkan CPL...',
+                'xSearchQueryString' => 'cplSearchQuery',
+                'selectedXId' => $selectedCPLId,
+                'selectedXName' => $cpl_name,
+                'resetXFilter' => 'resetCPLFilter()',
+                'xSearchQuery' => $cplSearchQuery,
+                'xSearchResults' => $cplSearchResults,
+                'selectXForFilterString' => 'selectCPLForFilter',
+                'typeXString' => 'deskripsi',
+                'typeX2String' => 'kode',
+                'unfoundString' => 'Tidak ada CPL ditemukan!',
+            ])
+        </div>
+
 
     </div>
 </div>

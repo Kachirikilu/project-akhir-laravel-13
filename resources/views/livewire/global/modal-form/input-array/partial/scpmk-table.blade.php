@@ -1,10 +1,10 @@
 <div x-show="expanded.includes(index)" x-collapse>
     <div class="px-4 pb-4 bg-white/20 dark:bg-black/5">
-        <div class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-medium">
+        <div class="border-t table-border pt-3 overflow-x-auto scrollbar-medium">
 
             <table class="w-full text-xs text-left border-collapse min-w-[800px]">
                 <thead>
-                    <tr class="text-gray-400 uppercase tracking-tighter border-b border-[var(--border-table-color)]">
+                    <tr class="text-gray-400 uppercase tracking-tighter border-b table-border">
                         <th class="pb-3 px-4 text-center">Kode</th>
                         <th class="pb-3 px-4 text-center font-bold min-w-16">Kode</th>
                         <th class="pb-3 px-4 min-w-32">Deskripsi</th>

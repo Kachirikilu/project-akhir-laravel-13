@@ -72,7 +72,7 @@
         {{-- Tombol utama --}}
         <button type="button" @click="open = !open"
             class="cursor-pointer flex items-center justify-between border rounded-md shadow-sm
-                   bg-[var(--second-table-color)] border-[var(--border-table-color)]
+                   bg-[var(--second-table-color)] table-border
                    text-[var(--contrast-second-text)]
                    py-1 px-2 text-sm w-full
                    hover:border-[var(--hover-focus-color)]

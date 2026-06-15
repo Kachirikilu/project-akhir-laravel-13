@@ -21,7 +21,7 @@ trait WithDepartemenSearchFilters
 
     public $dp_name = '';
 
-    public $dp_items;
+    public $dp_items = [];
 
     public $dpNameSearch = '';
 

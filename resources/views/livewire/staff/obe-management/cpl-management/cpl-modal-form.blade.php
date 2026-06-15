@@ -1,6 +1,6 @@
 <flux:modal {{-- :flyout="$isFlyoutCPL" wire:key="cpl-modal-{{ $isFlyoutCPL }}" --}} name="cpl-modal" wire:model.live="showCPLModal" x-data
     @refresh-data-cpl.window="$store.cpl.reset()"
-    class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
 
     <div class="flex flex-col h-full relative">
@@ -55,7 +55,7 @@
                 @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input')
 
                 <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
+                    class="bg-[var(--sub-table-color)] table-border
                     p-4 mt-4
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 

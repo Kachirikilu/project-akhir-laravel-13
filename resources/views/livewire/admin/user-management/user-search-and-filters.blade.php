@@ -1,7 +1,7 @@
 <div x-data="{ activeFilter: @entangle('filterStatus') }"
-    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    <div class="border-[var(--border-table-color)] flex items-end justify-between border-b mb-4 gap-4">
+    <div class="table-border flex items-end justify-between border-b mb-4 gap-4">
         <div class="min-w-0 flex-1 overflow-hidden">
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByStatus',

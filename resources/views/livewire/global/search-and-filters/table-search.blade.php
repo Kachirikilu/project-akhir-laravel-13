@@ -4,7 +4,7 @@
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
         {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-6' : 'py-6' }}
-        bg-[var(--main-table-color)] border-[var(--border-table-color)] relative
+        bg-[var(--main-table-color)] table-border relative
         ">
     <div class="flex flex-col gap-1 items-center">
 

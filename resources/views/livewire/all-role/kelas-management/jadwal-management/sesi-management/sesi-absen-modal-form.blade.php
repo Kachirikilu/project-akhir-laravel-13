@@ -1,5 +1,5 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
         <div class="py-4 space-y-4">
@@ -38,7 +38,7 @@
                             class="group relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 text-left cursor-pointer"
                             :class="$store.sesi.absen === item.label ?
                                 item.bg_active + ' ring-2 shadow-md scale-[1.02]' :
-                                'border-[var(--border-table-color)] bg-[var(--second-pop-up-color)] hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm hover:-translate-y-[1px]'">
+                                'table-border bg-[var(--second-pop-up-color)] hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm hover:-translate-y-[1px]'">
 
                             <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"

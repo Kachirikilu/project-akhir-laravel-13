@@ -10,7 +10,7 @@
                     wire:key="{{ $wireKeyString }}"
                     {{  $multiFile ?? false ? 'multiple' : '' }}
                     class="
-                        bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+                        bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                         placeholder-[var(--contrast-third-text)]
                         
                         w-full border rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium

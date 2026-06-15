@@ -239,7 +239,7 @@
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div
-        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+        class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
@@ -253,7 +253,7 @@
         <div class="space-y-3">
             <template x-for="(id, index) in items" :key="id + '-' + (itemsAll[index]?.is_ketua ? 'ketua' : 'anggota')">
                 <div :class="itemsAll[index]?.is_ketua ? 'border-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' :
-                    'border-[var(--border-table-color)]'"
+                    'table-border'"
                     class="relative bg-[var(--second-table-color)] border px-4 py-3 rounded-lg shadow-sm gap-4 transition-all">
 
                     <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -326,7 +326,7 @@
                         {{-- PEMILIH PERAN --}}
                         <div class="flex items-center gap-2">
                             <select x-model="itemsAll[index].peran"
-                                class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
+                                class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">
                                 <option value="Koordinator">Koordinator</option>
                                 <option value="Pengajar">Pengajar</option>
                                 <option value="Asisten">Asisten</option>
@@ -365,7 +365,7 @@
                                     class="absolute left-2.5 size-4 text-gray-400" />
                                 <input type="text" x-model="pertemuan[id]"
                                     placeholder="Kosongkan jika mengajar di semua pertemuan..."
-                                    class="w-full pl-9 pr-3 py-1.5 text-xs border rounded-lg bg-white dark:bg-neutral-900 border-[var(--border-table-color)] focus:ring-1 focus:ring-[var(--focus-color)] focus:border-[var(--focus-color)] transition-all">
+                                    class="w-full pl-9 pr-3 py-1.5 text-xs border rounded-lg bg-white dark:bg-neutral-900 table-border focus:ring-1 focus:ring-[var(--focus-color)] focus:border-[var(--focus-color)] transition-all">
                             </div>
 
                             {{-- Real-time Feedback Helper (Opsional) --}}

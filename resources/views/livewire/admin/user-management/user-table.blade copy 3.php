@@ -3,33 +3,33 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
+            'bg-[var(--main-table-trans)] table-border text-[var(--contrast-main-text)]' .
             ' border-x ' .
             $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
             $padingKolom;
         $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
+            'bg-[var(--sub-table-trans)] table-border text-[var(--contrast-second-text)] ' .
             $padingKolom;
     @endphp
 
     @php
-        $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderX = 'border-[var(--border-table-color)] border-x';
+        $borderR = 'table-border border-r';
+        $borderX = 'table-border border-x';
     @endphp
 
     <x-slot:header>
         <tr>
-                <th rowspan="2" class="{{ $headKolom }}'">ID</th>
-                <th rowspan="2" class="{{ $headKolom }}'">Email</th>
-                <th rowspan="2" class="{{ $headKolom }}'">Name</th>
+                <th rowspan="2" class="table-head'">ID</th>
+                <th rowspan="2" class="table-head'">Email</th>
+                <th rowspan="2" class="table-head'">Name</th>
 
         </tr>
 
@@ -42,10 +42,10 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
-            <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
-            <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
-            <td class="{{ $secondKolom }}">{{ $user->email }}</td>
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            <td class="table-main text-center">{{ $user->id }}</td>
+            <td class="table-main whitespace-nowrap">{{ $user->name ?? '-' }}</td>
+            <td class="table-second">{{ $user->email }}</td>
         </tr>
 
         @empty

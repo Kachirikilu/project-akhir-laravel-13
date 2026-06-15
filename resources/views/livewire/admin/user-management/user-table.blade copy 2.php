@@ -3,26 +3,26 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
+            'bg-[var(--main-table-trans)] table-border text-[var(--contrast-main-text)]' .
             ' border-x ' .
             $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
             $padingKolom;
         $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
+            'bg-[var(--sub-table-trans)] table-border text-[var(--contrast-second-text)] ' .
             $padingKolom;
     @endphp
 
     @php
-        $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderX = 'border-[var(--border-table-color)] border-x';
+        $borderR = 'table-border border-r';
+        $borderX = 'table-border border-x';
     @endphp
 
     <x-slot:header>
@@ -68,7 +68,7 @@
                     'isCenter' => 1,
                 ])
             @else
-                <th rowspan="2" class="{{ $headKolom }}'">Role</th>
+                <th rowspan="2" class="table-head'">Role</th>
             @endif
 
             @include('livewire.global.table.head-table', [
@@ -83,13 +83,13 @@
             ])
 
             @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th colspan="3" class="{{ $headSubKolom }}">
+                <th colspan="3" class="table-head-sub">
                     RPS
                 </th>
             @endif
 
             <th colspan="{{ $switchTable == 'mahasiswa' ? 2 : ($switchTable == 'admin' ? 3 : 4) }}"
-                class="{{ $headSubKolom }}">
+                class="table-head-sub">
                 Identitas (ID)
             </th>
 
@@ -126,7 +126,7 @@
                 'sortFieldString' => 'program_studi',
                 'rowSpan' => 2,
             ])
-            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            <th rowspan="2" class="table-head border-x">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
@@ -143,7 +143,7 @@
 
         <tr>
             @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th class="{{ $headKolom }} border-x">Show</th>
+                <th class="table-head border-x">Show</th>
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
                     'isCenter' => 1,
@@ -195,12 +195,12 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
+            <td class="table-main text-center">{{ $user->id }}</td>
 
             @if ($switchTable !== '')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->role_id }}</td>
+                <td class="table-second table-border-r text-center">{{ $user->role_id }}</td>
             @endif
             {{-- @php
                     
@@ -216,9 +216,9 @@
 
     
                 @endphp
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
+                <td class="table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
             {{-- Role --}}
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
@@ -247,10 +247,10 @@
 
                 </flux:dropdown>
             </td>
-            <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
-            <td class="{{ $secondKolom }}">{{ $user->email }}</td>
+            <td class="table-main whitespace-nowrap">{{ $user->name ?? '-' }}</td>
+            <td class="table-second">{{ $user->email }}</td>
             @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <td class="{{ $secondKolom }} {{ $borderX }} text-center">
+                <td class="table-second table-border-x text-center">
                     <x-button-action
                         @click="
                             $store.user?.reset();
@@ -264,30 +264,30 @@
                         <span>RPS</span>
                     </x-button-action>
                 </td>
-                <td class="{{ $subKolom }} text-center">{{ $user->count_rps }} RPS</td>
-                <td class="{{ $subKolom }} text-center">{{ $user->dosen->count_sks }} SKS</td>
+                <td class="table-sub text-center">{{ $user->count_rps }} RPS</td>
+                <td class="table-sub text-center">{{ $user->dosen->count_sks }} SKS</td>
             @endif
-            <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
+            <td class="table-main text-center">{{ $user->identity1 ?? '-' }}</td>
             @if ($switchTable != 'mahasiswa')
-                <td class="{{ $subKolom }} {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
+                <td class="table-sub {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
 
             @if ($switchTable == 'dosen' || $switchTable == '')
                 <td
-                    class="{{ $subKolom }} {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
+                    class="table-sub {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
-            <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $user->nik ?? '-' }}</td>
+            <td class="table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
 
             @if ($switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} text-center">
+                <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer focus:outline-none">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -304,7 +304,7 @@
                 </td>
             @endif
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -320,10 +320,10 @@
             </td>
 
 
-            <td class="{{ $secondKolom }} min-w-48">
+            <td class="table-second min-w-48">
                 {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -337,8 +337,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
         </tr>
 
         @empty

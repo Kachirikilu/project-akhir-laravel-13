@@ -1,29 +1,5 @@
 <x-global.main-layout-table :paginator="$sesis">
 
-    @php
-        $padingKolom = 'px-6 py-4 text-sm';
-        $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
-            $padingKolom;
-
-        $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
-            ' border-x ' .
-            $padingKolom;
-        $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
-
-        $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
-            $padingKolom;
-        $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
-            $padingKolom;
-    @endphp
-
-    @php
-        $borderR = 'border-[var(--border-table-color)] border-r';
-    @endphp
-
     <x-slot:sortir>
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'pertemuan_ke',
@@ -64,7 +40,7 @@
                 'isMain' => 1,
                 'rowSpan' => 2,
             ])
-            {{-- <th rowspan="2" class="{{ $headKolom }} border-x">Metode</th> --}}
+            {{-- <th rowspan="2" class="table-head border-x">Metode</th> --}}
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'pertemuan_ke',
@@ -73,16 +49,16 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="4" class="{{ $headSubKolom }}">
+            <th colspan="4" class="table-head-sub">
                 Informasi Sesi Kelas
             </th>
 
-            <th colspan="6" class="{{ $headSubKolom }}">
+            <th colspan="6" class="table-head-sub">
                 Informasi Sub-CPMK
             </th>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+                <th rowspan="2" class="table-head border-x">Aksi</th>
             @endif
 
             {{-- @include('livewire.global.table.head-table', [
@@ -177,11 +153,11 @@
 
     @forelse($sesis as $s)
         <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $secondKolom }} text-center">{{ $s->id }}</td>
+            <td class="table-second text-center">{{ $s->id }}</td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.metode-badge', [
@@ -204,15 +180,15 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $s->pertemuan_ke }}</td>
+            <td class="table-second text-center whitespace-nowrap">{{ $s->pertemuan_ke }}</td>
 
-            <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">
+            <td class="table-main text-center whitespace-nowrap">{{ $s->hari }}</td>
+            <td class="table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
+            <td class="table-sub text-center whitespace-nowrap">
                 {{ ($s->mhs_absensi ?? 0) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
+            <td class="table-sub text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
-            <td class="{{ $mainKolom }} text-center whitespace-nowrap">
+            <td class="table-main text-center whitespace-nowrap">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $s->kode_scpmk ?? '---' }}
@@ -232,20 +208,20 @@
                     )
                 </flux:dropdown>
             </td>
-            <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+            <td class="table-sub table-border-r text-center whitespace-nowrap">
                 {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}</td>
-            {{-- <td class="{{ $subKolom }} min-w-84">{{ $s->deskripsi ?? '-' }}</td>
-            <td class="{{ $subKolom }} min-w-48">{{ $s->materi ?? '-' }}</td>
-            <td class="{{ $subKolom }} min-w-48">{{ $s->metodologi ?? '-' }}</td>
-            <td class="{{ $subKolom }} min-w-48">{{ $s->indikator ?? '-' }}</td> --}}
+            {{-- <td class="table-sub min-w-84">{{ $s->deskripsi ?? '-' }}</td>
+            <td class="table-sub min-w-48">{{ $s->materi ?? '-' }}</td>
+            <td class="table-sub min-w-48">{{ $s->metodologi ?? '-' }}</td>
+            <td class="table-sub min-w-48">{{ $s->indikator ?? '-' }}</td> --}}
 
-            <td class="{{ $subKolom }} min-w-48">{{ $s->tugas ?? '-' }}</td>
-            <td class="{{ $subKolom }} whitespace-nowrap text-center">
+            <td class="table-sub min-w-48">{{ $s->tugas ?? '-' }}</td>
+            <td class="table-sub whitespace-nowrap text-center">
                 {{ $s->w_tugas ?? 0 }} menit</td>
-            <td class="{{ $subKolom }} {{ $borderR }} whitespace-nowrap text-center">
+            <td class="table-sub table-border-r whitespace-nowrap text-center">
                 {{ $s->w_mandiri ?? 0 }} menit</td>
 
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">
+            <td class="table-second text-center whitespace-nowrap">
 
                 <flux:dropdown>
                     <button class="cursor-pointer">
@@ -265,7 +241,7 @@
             </td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="{{ $mainKolom }} text-center">
+                <td class="table-main text-center">
                     <flux:dropdown>
                         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                             inset="top bottom">
@@ -285,8 +261,8 @@
             @endif
 
 
-            {{-- <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
+            {{-- <td class="table-second whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
     @empty
         <tr>

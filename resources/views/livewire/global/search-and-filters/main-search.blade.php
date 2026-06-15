@@ -71,7 +71,7 @@
             shadow-sm
             bg-[var(--second-table-color)]
             border-{{ $isBorder ?? 0 ?: 0 }}
-            border-[var(--border-table-color)]
+            table-border
             text-[var(--contrast-main-text)]
         "
         @if ($alpineStore) :class="$store.{{ $alpineStore }}.search?.length > 0

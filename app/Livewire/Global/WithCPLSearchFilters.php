@@ -23,7 +23,7 @@ trait WithCPLSearchFilters
 
     public $cpl_name = '';
 
-    public $cpl_items;
+    public $cpl_items = [];
 
     public $cplNameSearch = '';
 
@@ -320,6 +320,21 @@ trait WithCPLSearchFilters
                         $searchLower
                     );
 
+                    $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $cpl->rekap_cpl_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiIndex = $this->matchNilaiIndex(
+                        $cpl->index_cpl_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $cpl->akreditas_cpl_pr ?? 'E',
+                        $searchLower
+                    );
+
                     $rps = (int) ($cpl->count_rps ?? 0);
                     $matchRPS = $this->matchCount(
                         $rps,
@@ -361,6 +376,11 @@ trait WithCPLSearchFilters
                         $matchID
                         || $matchKode
                         || $matchDes
+                        
+                        || $matchNilaiAkhir
+                        || $matchNilaiIndex
+                        || $matchNilaiHuruf
+
                         || $matchRPS
                         || $matchRPSPr
 
@@ -372,6 +392,10 @@ trait WithCPLSearchFilters
             $sortValue = match ($sortField) {
                 'kode' => fn ($cpl) => $cpl->kode,
                 'deskripsi' => fn ($cpl) => $cpl->deskripsi,
+
+                'rekap_cpl_pr',
+                'index_cpl_pr',
+                'akreditas_cpl_pr' => fn ($cpl) => (float) ($cpl->rekap_cpl_pr ?? 0),
 
                 'count_rps_pr' => fn ($cpl) => $cpl->count_rps_pr ?? 0,
                 'count_rps' => fn ($cpl) => $cpl->count_rps ?? 0,

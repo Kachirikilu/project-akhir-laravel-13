@@ -23,7 +23,7 @@ trait WithMahasiswaSearchFilters
 
     public $mahasiswa_name = '';
 
-    public $mahasiswa_items;
+    public $mahasiswa_items = [];
 
     public $mahasiswaNameSearch = '';
 

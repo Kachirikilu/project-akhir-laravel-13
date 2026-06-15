@@ -9,81 +9,60 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
-    {{-- @include('livewire.admin.prodi-management.prodi-toolbar')
-    @include('livewire.admin.prodi-management.prodi-switch-table')
-
-    @include('livewire.admin.prodi-management.prodi-search-and-filters') --}}
-    {{-- 
-    <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.admin.prodi-management.prodi-table', [
-            'xResults' => match ($this->switchTable) {
-                'prodi' => $prodis,
-                'departemen' => $departemens,
-                'fakultas' => $fakultas,
-                default => collect([]),
-            },
-            'xNameString' => match ($this->switchTable) {
-                'prodi' => 'Program Studi',
-                'departemen' => 'Departemen',
-                'fakultas' => 'Fakultas',
-                default => 'Data',
-            },
-        ])
-    </div> --}}
-
-    {{-- @include('livewire.admin.prodi-management.capaian-management.capaian-table') --}}
-
+    @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'all'])
     @include('livewire.admin.prodi-management.capaian-management.capian-switch-table')
     @include('livewire.admin.prodi-management.capaian-management.capaian-search-and-filters')
 
-    <div class="shrink-0">
-        @include('livewire.global.table.export-button', [
-            'nameXString' => 'Rekap Capaian',
-            'xString' => "generateRekapCapaian($pr_id_url)",
-            'color' => 'blue',
-            'icon' => 'academic-cap',
-            'valuePx' => 6,
-            'isTextMd' => 1,
-            'isNoPb' => 1,
-        ])
-    </div>
-
-    {{-- @include('livewire.staff.obe-management.obe-table', [
-        'xResults' => match ($this->switchTable) {
-            'cpl' => $cpls,
-            default => collect([]),
-        },
-        'xNameString' => match ($this->switchTable) {
-            'cpl' => 'CPL',
-            default => 'Data',
-        },
-        'withCapaian' => 1,
-    ]) --}}
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.staff.obe-management.obe-table', [
-            'xResults' => match ($this->switchTable) {
-                'rps' => $rps,
-                'cpl' => $cpl,
-                'cpmk' => $cpmk,
-                'sub-cpmk' => $scpmk,
-                default => collect([]),
-            },
-            'xNameString' => match ($this->switchTable) {
-                'rps' => 'RPS',
-                'cpl' => 'CPL',
-                'cpmk' => 'CPMK',
-                'sub-cpmk' => 'Sub-CPMK',
-                default => 'Data',
-            },
-            'withCapaian' => 1,
-        ])
+        @switch($switchTable)
+            @case('rps')
+                @include('livewire.staff.obe-management.rps-management.rps-table', ['withCapaian' => 1])
+            @break
+
+            @case('cpl')
+                @include('livewire.staff.obe-management.cpl-management.cpl-table', ['withCapaian' => 1])
+                @include('livewire.staff.obe-management.cpl-management.cpl-rps-list', ['withCapaian' => 1])
+            @break
+
+            @case('cpmk')
+                @include('livewire.staff.obe-management.cpmk-management.cpmk-table', ['withCapaian' => 1])
+            @break
+
+            @case('sub-cpmk')
+                @include('livewire.staff.obe-management.scpmk-management.scpmk-table', [
+                    'withCapaian' => 1,
+                ])
+            @break
+
+            @case('mahasiswa')
+                @include('livewire.admin.user-management.user-table', [
+                    'withRPS' => true,
+                    'withCapaian' => 1,
+                ])
+                @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
+            @break
+        @endswitch
     </div>
 
     @include('livewire.staff.obe-management.rps-management.rps-show-modal')
-    @include('livewire.staff.obe-management.cpl-management.cpl-modal-form', ['noModalRPS' => 1])
-    @include('livewire.staff.obe-management.cpl-management.cpl-modal-delete')
+    @include('livewire.staff.obe-management.rps-management.rps-modal-form')
 
-    {{-- @include('livewire.admin.prodi-management.prodi-modal-form')
-    @include('livewire.admin.prodi-management.prodi-modal-delete') --}}
+    {{-- @include('livewire.staff.obe-management.cpl-management.cpl-modal-form', ['noModalRPS' => 1])
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form', ['noModalRPS' => 1])
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form', ['noModalRPS' => 1])
+    @include('livewire.staff.obe-management.ref-management.ref-modal-form', ['noModalRPS' => 1]) --}}
+
+    @include('livewire.staff.obe-management.cpl-management.cpl-modal-form')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form')
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form')
+    @include('livewire.staff.obe-management.ref-management.ref-modal-form')
+    @include('livewire.admin.user-management.user-modal-form', ['withRPS' => 1])
+
+    @include('livewire.staff.obe-management.rps-management.rps-modal-delete')
+    @include('livewire.staff.obe-management.cpl-management.cpl-modal-delete')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-delete')
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-delete')
+    @include('livewire.admin.user-management.user-modal-delete')
+
 </div>

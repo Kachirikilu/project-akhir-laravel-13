@@ -1,9 +1,9 @@
 <div
     class="bg-[var(--main-table-color)]
-           border border-[var(--border-table-color)]
+           border table-border
            text-[var(--contrast-main-text)]
            mb-2 p-4 rounded-lg shadow-md">
-    <div class="border-b border-[var(--border-table-color)] flex flex-col-reverse">
+    <div class="border-b table-border flex flex-col-reverse">
 
         <div class="flex space-x-4 overflow-x-auto pb-1 scrollbar-thin">
 

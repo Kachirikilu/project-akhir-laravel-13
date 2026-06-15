@@ -5,10 +5,12 @@ namespace App\Models\Auth;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
+use App\Models\Penilaian\RekapNilaiMahasiswa;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -76,6 +78,16 @@ class Mahasiswa extends Model
         );
     }
 
+
+    public function rekap_nilai(): HasOne
+    {
+        return $this->hasOne(
+            RekapNilaiMahasiswa::class,
+            'mahasiswa_id',
+            'id'
+        )->withTrashed();
+    }
+
     public function rekap_cpl()
     {
         return $this->hasMany(
@@ -83,6 +95,28 @@ class Mahasiswa extends Model
             'mahasiswa_id'
         );
     }
+
+    protected function rekapMhs(): Attribute
+    {
+        return Attribute::get(fn () => $this->rekap_nilai?->nilai ?? 0.00);
+    }
+    protected function indexMhs(): Attribute
+    {
+        return Attribute::get(fn () => $this->rekap_nilai?->index ?? 0.00);
+    }
+    protected function akreditasMhs(): Attribute
+    {
+        return Attribute::get(fn () => $this->rekap_nilai?->huruf ?? 'E');
+    }
+    protected function countRps(): Attribute
+    {
+        return Attribute::get(fn () => $this->rekap_nilai?->count_rps ?? 0);
+    }
+    protected function totalSks(): Attribute
+    {
+        return Attribute::get(fn () => $this->rekap_nilai?->total_sks ?? 0);
+    }
+
 
     protected function angkatanFull(): Attribute
     {

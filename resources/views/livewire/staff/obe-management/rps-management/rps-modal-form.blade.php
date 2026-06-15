@@ -1,6 +1,6 @@
 <flux:modal {{-- :flyout="$isFlyoutRPS" wire:key="rps-modal-{{ $isFlyoutRPS }}" --}} name="rps-modal" wire:model.live="showRPSModal" x-data
     @refresh-data-rps.window="$store.rps.reset()"
-    class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
 
     <div class="flex flex-col h-full relative">
@@ -26,7 +26,7 @@
                 @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-input')
 
                 <div
-                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
+                    class="bg-[var(--sub-table-color)] table-border
                     p-4 mt-4
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 

@@ -3,7 +3,7 @@
     {{-- 1. UPLOAD EXCEL FILE --}}
     {{-- ***********************F******************************* --}}
     <div
-        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)]
+        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border
             shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
@@ -28,7 +28,7 @@
     {{-- ****************************************************** --}}
 
     <div
-        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)] shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         @include('livewire.global.modal-form.input-array.search-input-form', [
             'alpine' => 'user',
@@ -96,7 +96,7 @@
 
                         @php
                             $kolomExcel =
-                                'border bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] placeholder-[var(--contrast-third-text)] px-2 py-1 border';
+                                'border bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] placeholder-[var(--contrast-third-text)] px-2 py-1 border';
                         @endphp
 
                         <tbody class="bg-white dark:bg-neutral-600" wire:loading.class="opacity-50 pointer-events-none"

@@ -129,7 +129,7 @@
             :class="isDisabled
                 ?
                 'bg-gray-100 dark:bg-zinc-800 cursor-not-allowed opacity-70 text-gray-500 border-gray-200' :
-                'bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] cursor-pointer'"
+                'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
             class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
 
         <template x-if="!isDisabled">

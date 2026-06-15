@@ -51,7 +51,7 @@
             "
             @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $modelString }}"
             placeholder="Cari nama {{ $nameXString ?? ucfirst($modelString) }}..."
-            class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+            class="bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                 {{-- placeholder-[var(--contrast-third-text)] --}}
             w-full border rounded-lg pl-10 px-3 py-2 pr-10">
 
@@ -126,7 +126,7 @@
                 text-sm">
 
                 <div class="flex justify-between items-center">
-                    @include('livewire.global.modal-form.partial.dropdown-items')
+                    @include('livewire.global.modal-form.input-array.partial.dropdown-items')
                     <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
                         {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
                     </span>

@@ -2,7 +2,7 @@
     'paginator' => null,
     'onlyAdmin' => false,
     'targetLoading' => "
-        filterByStatus, filterByStrata, filterByMK,
+        filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
         filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
         filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
         showDeleted, searchMode,
@@ -16,7 +16,7 @@
         saveCPL, updateCPL, destroyCPL, restoreCPL,
         saveRef, updateRef, destroyRef, restoreRef,
         search,
-        generateRekapCapaian,
+        generateRekapCapaian, generateRekapRPSProdi,
         generateRekapCPLProdi, generateRekapCPMKProdi, generateRekapSCPMKProdi,
         generateRekapCPLMahasiswa, generateRekapCPMKMahasiswa, generateRekapSCPMKMahasiswa,
         selectPrForFilter, resetPrFilter,
@@ -36,9 +36,35 @@
         {{-- gotoPage, previousPage, nextPage, page --}}
     ",
 ])
+
+{{-- @php
+    $padingKolom = 'px-6 py-4 text-sm';
+
+    $border = 'table-border';
+
+    $headKolom =
+        "bg-[var(--main-table-color)] text-[var(--contrast-main-text)] uppercase text-xs $border $padingKolom";
+
+    $mainKolom =
+        "bg-[var(--main-table-trans)] text-[var(--contrast-main-text)] border-x $border $padingKolom";
+
+    $secondKolom =
+        "bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] $padingKolom";
+
+    $headSubKolom =
+        "bg-[var(--main-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase $border $padingKolom";
+
+    $subKolom =
+        "bg-[var(--sub-table-trans)] text-[var(--contrast-second-text)] $border $padingKolom";
+
+    $borderX = "$border border-x";
+    $borderR = "$border border-r";
+    $borderL = "$border border-l";
+@endphp --}}
+
 @if (isset($leftHead) || isset($rightHead))
     <div
-        class="pb-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b border-[var(--border-table-color)] pb-1 mb-4">
+        class="pb-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-1 mb-4">
         <div class="flex flex-row items-center gap-2">
             @if (isset($leftHead))
                 {{ $leftHead }}
@@ -54,7 +80,7 @@
 
 @if (isset($sortir) || isset($search))
     <div
-        class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b border-[var(--border-table-color)] pb-2">
+        class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
         <div class="scrollbar-thin overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
             @if (isset($sortir))
                 {{ $sortir }}
@@ -69,19 +95,19 @@
     </div>
 @endif
 
-<div class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
+<div class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
     id="table-results-container">
     <div class="scrollbar-medium overflow-x-auto">
         <table class="min-w-full divide-y">
             {{-- Head Table --}}
-            <thead class="bg-[var(--main-table-color)] border-[var(--border-table-color)]">
+            <thead class="bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
 
             {{-- Body Table --}}
             <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="{{ $targetLoading }}"
-                class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">
+                class="bg-[var(--second-table-color)] table-border divide-y">
                 {{ $slot }}
             </tbody>
         </table>

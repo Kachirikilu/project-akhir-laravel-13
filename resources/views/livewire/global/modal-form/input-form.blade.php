@@ -110,7 +110,7 @@ store.{{ $modelString }} = valueInput ?? '';
         name="{{ $modelString }}"
         x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
         :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
-        class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+        class="bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $readonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
         {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}
         @if (($isDate ?? false) === 'year') inputmode="numeric"

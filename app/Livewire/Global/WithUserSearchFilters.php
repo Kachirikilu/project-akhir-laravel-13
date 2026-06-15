@@ -24,7 +24,7 @@ trait WithUserSearchFilters
 
     public $user_name = '';
 
-    public $user_items;
+    public $user_items = [];
 
     public $userNameSearch = '';
 
@@ -449,9 +449,9 @@ trait WithUserSearchFilters
                     $matchSakit = false;
                     $matchTidakMasuk = false;
 
-                    $matchNilaiAkhir = false;
-                    $matchNilaiIndex = false;
-                    $matchNilaiHuruf = false;
+                    $matchNilaiAkhirKelas = false;
+                    $matchNilaiIndexKelas = false;
+                    $matchNilaiHurufKelas = false;
 
                     if ($idJadwal) {
 
@@ -505,17 +505,17 @@ trait WithUserSearchFilters
                             $searchLower, ['tidak masuk', 'tidak msk', 'kabur', 'tdk msk', 'kbr']
                         );
 
-                        $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $matchNilaiAkhirKelas = $this->matchNilaiAkhir(
                             $user->mhs_nilai_akhir ?? 0,
                             $searchLower
                         );
 
-                        $matchNilaiIndex = $this->matchNilaiIndex(
+                        $matchNilaiIndexKelas = $this->matchNilaiIndex(
                             $user->mhs_nilai_index ?? 0,
                             $searchLower
                         );
 
-                        $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $matchNilaiHurufKelas = $this->matchNilaiHuruf(
                             $user->mhs_nilai_huruf ?? 'E',
                             $searchLower
                         );
@@ -523,9 +523,12 @@ trait WithUserSearchFilters
 
                     $matchRPS = false;
                     $matchSKS = false;
+                    $matchNilaiAkhir = false;
+                    $matchNilaiIndex = false;
+                    $matchNilaiHuruf = false;
 
                     if ($withRPS) {
-                        $rps = (int) ($user->count_rps ?? 0);
+                        $rps = (int) ($user->count_rps ?? $user->mahasiswa->count_rps ?? 0);
                         $matchRPS = false;
                         if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
                             $targetSKS = (int) max(
@@ -542,7 +545,7 @@ trait WithUserSearchFilters
                             $searchLower
                         );
 
-                        $sks = (int) ($user->total_sks ?? 0);
+                        $sks = (int) ($user->total_sks ?? $user->mahasiswa->total_sks ?? 0);
                         $matchSKS = false;
                         if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
                             $targetSKS = (int) max(
@@ -558,7 +561,23 @@ trait WithUserSearchFilters
                             $sks.'SKS',
                             $searchLower
                         );
+
+                        $matchNilaiAkhir = $this->matchNilaiAkhir(
+                            $user->mahasiswa->rekap_mhs ?? 0,
+                            $searchLower
+                        );
+
+                        $matchNilaiIndex = $this->matchNilaiIndex(
+                            $user->mahasiswa->index_mhs ?? 0,
+                            $searchLower
+                        );
+
+                        $matchNilaiHuruf = $this->matchNilaiHuruf(
+                            $user->mahasiswa->akreditas_mhs ?? 'E',
+                            $searchLower
+                        );
                     }
+                    
 
                     $matchCreatedAt = $this->matchDateField(
                         $user->created_at,
@@ -576,7 +595,7 @@ trait WithUserSearchFilters
                         case 'id':
                             return $matchID;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiHuruf;
+                            return $matchNilaiAkhir || $matchNilaiHuruf || $matchNilaiAkhirKelas || $matchNilaiHurufKelas;
                         case 'index':
                             return $matchNilaiIndex;
                         case 'huruf':
@@ -613,6 +632,10 @@ trait WithUserSearchFilters
                         || $matchIzin
                         || $matchSakit
                         || $matchTidakMasuk
+
+                        || $matchNilaiAkhirKelas
+                        || $matchNilaiIndexKelas
+                        || $matchNilaiHurufKelas
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
@@ -653,10 +676,10 @@ trait WithUserSearchFilters
                 'mhs_izin' => fn ($user) => $user->mhs_izin ?? null,
                 'mhs_sakit' => fn ($user) => $user->mhs_sakit ?? null,
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
-                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? 0,
+                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mahasiswa->mhs_nilai_akhir ?? 0,
 
-                'count_rps' => fn ($user) => $user->count_rps ?? null,
-                'total_sks' => fn ($user) => $user->total_sks ?? null,
+                'count_rps' => fn ($user) => $user->count_rps ?? $user->mahasiswa->count_rps ?? null,
+                'total_sks' => fn ($user) => $user->total_sks ?? $user->mahasiswa->total_sks ?? null,
 
                 'created_at' => fn ($user) => $user->created_at,
                 'updated_at' => fn ($user) => $user->updated_at,

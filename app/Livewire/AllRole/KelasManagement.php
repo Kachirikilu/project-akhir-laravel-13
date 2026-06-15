@@ -14,7 +14,7 @@ use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;

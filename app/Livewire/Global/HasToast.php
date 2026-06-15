@@ -54,6 +54,7 @@ trait HasToast
 
         return match ($type) {
             'save' => 'Simpan Berhasil!',
+            'info' => 'Informasi!',
             'join' => 'Bergabung Berhasil!',
             'update' => 'Update Berhasil!',
             'recycle' => 'Recycle Berhasil!',

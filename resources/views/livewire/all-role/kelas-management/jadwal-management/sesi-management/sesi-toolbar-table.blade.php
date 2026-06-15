@@ -1,6 +1,6 @@
 @if (Auth::user())
     <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
         @php
             $isTrashed = $x->trashed();

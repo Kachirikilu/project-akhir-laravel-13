@@ -23,7 +23,7 @@ trait WithDosenSearchFilters
 
     public $dosen_name = '';
 
-    public $dosen_items;
+    public $dosen_items = [];
 
     public $dosenNameSearch = '';
 

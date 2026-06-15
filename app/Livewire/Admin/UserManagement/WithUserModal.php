@@ -39,13 +39,13 @@ trait WithUserModal
 
     public $pr_id_2;
 
-    public $dosen_rps_items_list = [];
+    public $user_rps_items_list = [];
 
-    public $dosen_rps_modal_page = 3;
+    public $user_rps_modal_page = 3;
 
-    public $dosen_rps_id;
+    public $user_rps_id;
 
-    protected $dosen_rps_modal_paginator;
+    protected $user_rps_modal_paginator;
 
     public $isFlyoutUser = false;
 
@@ -116,15 +116,24 @@ trait WithUserModal
         try {
             $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
             $this->selected_id_user = $user->id;
-            $this->pr_id = $user->pr_id;
-            $this->pr_id_2 = $user->pr_id;
-            $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
-            $this->prNameSearch = $user->prodi;
+
+            if (! $isRPS) {
+                $this->pr_id = $user->pr_id;
+                $this->pr_id_2 = $user->pr_id;
+                $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
+                $this->prNameSearch = $user->prodi;
+            }
 
             if ($user->dosen && $withRPS) {
-                $this->dosen_rps_id = $user->dosen->id;
-                $this->resetPage('dosen_rps_modal_page');
+                $this->user_rps_id = $user->dosen->id;
+                $this->resetPage('user_rps_modal_page');
                 $this->loadDosenRPSPagination();
+            }
+
+            if ($user->mahasiswa && $withRPS) {
+                $this->user_rps_id = $user->mahasiswa->id;
+                $this->resetPage('user_rps_modal_page');
+                $this->loadMahasiswaRPSPagination();
             }
 
             $this->roleType = strtolower($user->role);
@@ -135,11 +144,11 @@ trait WithUserModal
 
     private function loadDosenRPSPagination()
     {
-        if (empty($this->dosen_rps_id)) {
+        if (empty($this->user_rps_id)) {
             return;
         }
 
-        $dosen = Dosen::find($this->dosen_rps_id);
+        $dosen = Dosen::find($this->user_rps_id);
 
         if (! $dosen) {
             return;
@@ -147,15 +156,50 @@ trait WithUserModal
 
         $rps = RPS::whereHas('dosens', function ($query) use ($dosen) {
             $query->where('dosens.id', $dosen->id);
-        })->paginate($this->dosen_rps_modal_page, ['*'], 'dosen_rps_modal_page');
+        })->paginate($this->user_rps_modal_page, ['*'], 'user_rps_modal_page');
 
-        $this->dosen_rps_items_list = $this->mapRPS($rps);
-        $this->dosen_rps_modal_paginator = $rps;
+        $this->user_rps_items_list = $this->mapRPS($rps);
+        $this->user_rps_modal_paginator = $rps;
+    }
+
+    private function loadMahasiswaRPSPagination()
+    {
+        if (empty($this->user_rps_id)) {
+            return;
+        }
+
+        $mahasiswa = Mahasiswa::find($this->user_rps_id);
+
+        if (! $mahasiswa) {
+            return;
+        }
+
+        $rps = RPS::query()
+            ->whereIn('id', function ($query) use ($mahasiswa) {
+                $query->select('rps_id')
+                    ->from('nilai_mahasiswa')
+                    ->where('mahasiswa_id', $mahasiswa->id)
+                    ->whereNotNull('rps_id')
+                    ->distinct();
+            })
+            ->paginate(
+                $this->user_rps_modal_page,
+                ['*'],
+                'user_rps_modal_page'
+            );
+
+        $this->user_rps_items_list = $this->mapRPS($rps);
+        $this->user_rps_modal_paginator = $rps;
     }
 
     public function updatedDosenRPSModalPage($page)
     {
         $this->loadDosenRPSPagination();
+    }
+
+    public function updatedMahasiswaRPSModalPage($page)
+    {
+        $this->loadMahasiswaRPSPagination();
     }
 
     private function inputModalUser($isEditingUser, $data)
@@ -696,10 +740,10 @@ trait WithUserModal
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
             'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
             'excel_user_file.required' => 'File Excel Data Pengguna wajib diunggah!',
-            'excel_user_file.array'    => 'Format unggahan tidak valid!',
-            'excel_user_file.*.file'   => 'Salah satu file Excel Data Pengguna harus berupa file yang valid!',
-            'excel_user_file.*.mimes'  => 'Setiap file Excel Data Pengguna harus berformat .xlsx atau .xls!',
-            'excel_user_file.*.max'    => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
+            'excel_user_file.array' => 'Format unggahan tidak valid!',
+            'excel_user_file.*.file' => 'Salah satu file Excel Data Pengguna harus berupa file yang valid!',
+            'excel_user_file.*.mimes' => 'Setiap file Excel Data Pengguna harus berformat .xlsx atau .xls!',
+            'excel_user_file.*.max' => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
             'kode_wilayah.required' => 'Kode Wilayah untuk Admin & Mahasiswa wajib dipilih!',
             'kode_wilayah.in' => "Kode Wilayah hanya boleh 'IDL' & 'PLG'!",
             'status.required' => 'Status pengguna wajib dipilih!',

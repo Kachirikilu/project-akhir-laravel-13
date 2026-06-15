@@ -63,7 +63,7 @@
     type="text"
     placeholder="{{ $placeholder ?? 'Cari data...' }}"
     class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 {{ !$isLive ? 'pr-26' : 'pr-10' }} rounded-lg shadow-sm
-               bg-[var(--second-table-color)] border-{{ $isBorder ?? 0 ?: 0 }} border-[var(--border-table-color)] text-[var(--contrast-main-text)]"
+               bg-[var(--second-table-color)] border-{{ $isBorder ?? 0 ?: 0 }} table-border text-[var(--contrast-main-text)]"
     />
 
     <div class="absolute inset-y-0 right-0 flex items-center pr-1 gap-1">

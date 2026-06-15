@@ -22,14 +22,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('user-management/{switchTable?}', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
         Route::view('program-studi-management/{switchTable?}', 'program-studi-management')->name('program-studi-management');
-        Route::view('program-studi-management/kode/{kode_pr}', 'program-studi-management')->name('capaian-management');
+        Route::view('program-studi-management/kode/{kode_pr}/{switchTable?}', 'program-studi-management')->name('capaian-management');
         Route::view('program-studi-management/kode/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {
         Route::view('mata-kuliah-management/{switchTable?}', 'mata-kuliah-management')->name('mata-kuliah-management');
-        Route::view('obe-management/{switchTable?}', 'rps-management')->name('rps-management');
-        Route::view('rps-management/{switchTable?}', 'rps-management')->name('rps-management');
+        Route::view('obe-management/{switchTable?}', 'obe-management')->name('obe-management');
+        Route::view('rps-management/{switchTable?}', 'obe-management')->name('obe-management');
         // Route::get('/download-nilai/{jadwal}', DownloadNilaiController::class)->name('download.nilai');
     });
 

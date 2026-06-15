@@ -32,6 +32,77 @@
     --breakpoint-5xl: 240rem; /* 3840px / 16 */
 }
 
+@layer components {
+    /* Border */
+    .table-border {
+        @apply border-[var(--border-table-color)];
+    }
+
+    .table-border-x {
+        @apply border-x border-[var(--border-table-color)];
+    }
+
+    .table-border-r {
+        @apply border-r border-[var(--border-table-color)];
+    }
+
+    .table-border-l {
+        @apply border-l border-[var(--border-table-color)];
+    }
+
+    /* Header Utama */
+    .table-head {
+        @apply px-6 py-4 text-sm uppercase text-xs;
+        @apply border-[var(--border-table-color)];
+        @apply bg-[var(--main-table-color)];
+        @apply text-[var(--contrast-main-text)];
+    }
+
+    /* Isi Utama */
+    .table-main {
+        @apply px-6 py-4 text-sm;
+        @apply border-x border-[var(--border-table-color)];
+        @apply bg-[var(--main-table-trans)];
+        @apply text-[var(--contrast-main-text)];
+    }
+
+    /* Isi Sekunder */
+    .table-second {
+        @apply px-6 py-4 text-sm;
+        @apply bg-[var(--second-table-trans)];
+        @apply text-[var(--contrast-second-text)];
+    }
+
+    /* Header Sub Kolom */
+    .table-head-sub {
+        @apply px-6 py-4 text-sm;
+        @apply text-center font-bold uppercase whitespace-nowrap;
+        @apply border-x border-b border-[var(--border-table-color)];
+        @apply bg-[var(--main-table-color)];
+        @apply text-[var(--focus-color)];
+    }
+
+    /* Isi Sub Kolom */
+    .table-sub {
+        @apply px-6 py-4 text-sm;
+        @apply border-[var(--border-table-color)];
+        @apply bg-[var(--sub-table-trans)];
+        @apply text-[var(--contrast-second-text)];
+    }
+
+    .table-number {
+        @apply text-center whitespace-nowrap;
+    }
+
+    .table-code {
+        @apply font-mono whitespace-nowrap;
+    }
+
+    .table-text {
+        @apply text-left;
+    }
+}
+
 @layer utilities {
     .no-scrollbar::-webkit-scrollbar {
         display: none;

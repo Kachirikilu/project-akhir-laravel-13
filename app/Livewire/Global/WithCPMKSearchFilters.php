@@ -23,7 +23,7 @@ trait WithCPMKSearchFilters
 
     public $cpmk_name = '';
 
-    public $cpmk_items;
+    public $cpmk_items = [];
 
     public $cpmkNameSearch = '';
 
@@ -349,6 +349,20 @@ trait WithCPMKSearchFilters
                         $searchLower
                     );
 
+                    $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $cpmk->rekap_cpmk_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiIndex = $this->matchNilaiIndex(
+                        $cpmk->index_cpmk_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $cpmk->akreditas_cpmk_pr ?? 'E',
+                        $searchLower
+                    );
                     /*
                     |--------------------------------------------------------------------------
                     | Sub-CPMK COUNT
@@ -439,6 +453,10 @@ trait WithCPMKSearchFilters
 
                         || $matchDes
 
+                        || $matchNilaiAkhir
+                        || $matchNilaiIndex
+                        || $matchNilaiHuruf
+
                         || $matchSCPMK
                         || $matchBobot
 
@@ -451,6 +469,10 @@ trait WithCPMKSearchFilters
                 'kode' => fn ($cpmk) => $cpmk->kode,
 
                 'deskripsi' => fn ($cpmk) => $cpmk->deskripsi_cpl,
+
+                'rekap_cpmk_pr',
+                'index_cpmk_pr',
+                'akreditas_cpmk_pr' => fn ($cpmk) => (float) ($cpmk->rekap_cpmk_pr ?? 0),
 
                 'count_cpl' => fn ($cpmk) => (int) $cpmk->count_cpl,
                 'count_scpmk' => fn ($cpmk) => (int) $cpmk->count_scpmk,

@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Models\Auth\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
@@ -16,6 +17,14 @@ trait WithUserFilters
 
     public $searchAngkatan = '';
 
+    public $filterAngkatan = '';
+
+    public $totalSeluruhAngkatan = '';
+
+    public $totalAngkatan = [];
+
+    public $angkatanFilter = [];
+
     public function updatingSearchAngkatan()
     {
         $this->resetPage();
@@ -27,7 +36,7 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function inputUserSearch($role = null, $jadwal_id = null)
+    public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false)
     {
         if (! $role) {
             $queryUser = User::query()->with([
@@ -38,19 +47,26 @@ trait WithUserFilters
             ]);
         } elseif ($role == 'admin') {
             $queryUser = User::query()->with(['admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel']);
+            $queryUser = User::whereHas('admin');
         } elseif ($role == 'dosen') {
             $queryUser = User::query()->with([
                 'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
                 'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
             ]);
+            $queryUser = User::whereHas('dosen');
         } elseif ($role == 'mahasiswa') {
             $queryUser = User::query()->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
+            $queryUser = User::whereHas('mahasiswa');
 
-            if ($jadwal_id) {
-                $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($jadwal_id) {
-                    $q->where('kj_id', $jadwal_id);
+            if ($jadwalId) {
+                $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {
+                    $q->where('kj_id', $jadwalId);
                 });
             }
+        }
+
+        if (! empty($prId)) {
+            $queryUser->inLocationUser('prodi', $prId);
         }
 
         if ($this->filterStatus !== '') {
@@ -65,13 +81,21 @@ trait WithUserFilters
             }
         }
 
-        if (! empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
+        if (! empty($this->selectedRPSId) && $role === 'dosen') {
             $queryUser->whereHas('dosen.rps', function ($q) {
                 $q->where('rps.id', $this->selectedRPSId);
             });
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if (!$noFilter) {
+            if (! empty($prId)) {
+                $this->buttonUserFilter($queryUser, 1);
+            } else {
+                $this->buttonUserFilter($queryUser);
+            }
+        }
+
+        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple' && $this->filterAngkatan == '') {
             $search = trim($this->search);
             if (! empty($search)) {
                 if (! str_contains($search, '%')) {
@@ -80,37 +104,64 @@ trait WithUserFilters
                     });
                 }
             }
-            if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
+            if (! empty($this->searchAngkatan) && $role == 'mahasiswa') {
                 $queryUser->searchUser($this->searchAngkatan, true);
             }
             $this->sortFieldOrderUser($queryUser);
         }
 
+        // filterAngkatan
+
+        if (! empty($this->filterAngkatan) && $role === 'mahasiswa') {
+            $queryUser->whereHas('mahasiswa', function ($q) {
+                $q->where('mahasiswas.angkatan', $this->filterAngkatan);
+            });
+        }
+
         return $queryUser;
     }
 
-    private function applySubqueriesToUsers($queryUser, $idJadwal, $expiredCount)
+    protected function generateAngkatanFilter(int $jumlah = 5): array
     {
-        $statuses = [
-            'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
-            'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
-            'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
-            'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
-            'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
-            'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
-            'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
-            'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
-            'mhs_poin_absensi' => "CASE WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2 WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1 ELSE 0 END",
-        ];
+        $now = Carbon::now();
 
-        $queryUser->selectRaw("GREATEST(0, ? - ((SELECT COALESCE(SUM(CASE WHEN status='Hadir' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Terlambat' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Izin' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Sakit' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Dispensasi' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?))) as mhs_tidak_masuk", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
+        $tahunTerbaru =
+            $now->month >= 6
+                ? $now->year
+                : $now->year - 1;
+
+        return collect(range(0, $jumlah - 1))
+            ->map(fn ($i) => $tahunTerbaru - $i)
+            ->values()
+            ->toArray();
     }
 
-    public function buttonUserFilter($queryUser)
+    protected function loadTotalAngkatan($query): void
     {
-        $queryUser->when(in_array($this->switchTable, ['admin', 'dosen', 'mahasiswa']), function ($q) {
-            $q->whereHas($this->switchTable);
-        });
+        $this->angkatanFilter =
+            $this->generateAngkatanFilter();
+
+        $this->totalSeluruhAngkatan =
+            (clone $query)->count();
+
+        $this->totalAngkatan = [];
+
+        foreach ($this->angkatanFilter as $angkatan) {
+
+            $this->totalAngkatan[$angkatan] =
+                (clone $query)
+                    ->whereHas('mahasiswa', function ($q) use ($angkatan) {
+                        $q->where('angkatan', $angkatan);
+                    })
+                    ->count();
+        }
+    }
+
+    public function buttonUserFilter($queryUser, $havePr = null)
+    {
+        // $queryUser->when(in_array($this->switchTable, ['admin', 'dosen', 'mahasiswa']), function ($q) {
+        //     $q->whereHas($this->switchTable);
+        // });
 
         if ($this->switchTable === 'dosen') {
             if (! empty($this->filterDosen)) {
@@ -145,12 +196,16 @@ trait WithUserFilters
                     ->orWhereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
                     ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
             });
-        } elseif ($this->filterStatus === '') {
+        } elseif ($this->filterStatus === '' && ! $havePr) {
             $queryUser->where(function ($q) {
                 $q->whereHas('admin.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
                     ->orWhereHas('dosen.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
                     ->orWhereHas('mahasiswa.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id));
             });
+        }
+        if ($this->switchTable === 'mahasiswa') {
+            $queryForAngkatanCount = clone $queryUser;
+            $this->loadTotalAngkatan($queryForAngkatanCount);
         }
 
         return $queryUser;
@@ -168,265 +223,28 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    protected function addMahasiswaNilaiAkhir(
-        $queryUser,
-        int $idJadwal,
-        string $alias = 'mhs_nilai_akhir'
-    ) {
-        $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-            $query->from('nilai_mahasiswa')
-                ->join(
-                    'mahasiswas',
-                    'nilai_mahasiswa.mahasiswa_id',
-                    '=',
-                    'mahasiswas.id'
-                )
-                ->whereColumn(
-                    'mahasiswas.user_id',
-                    'users.id'
-                )
-                ->where(
-                    'nilai_mahasiswa.kj_id',
-                    $idJadwal
-                )
-                ->selectRaw(
-                    'COALESCE(nilai_mahasiswa.nilai, 0)'
-                )
-                ->limit(1);
-
-        }, $alias);
-
-        return $queryUser;
+    public function filterByAngkatan($angkatan)
+    {
+        $this->filterAngkatan = $angkatan;
+        $this->reset(['search', 'searchAngkatan']);
+        $this->resetPage();
     }
 
-    protected function addMahasiswaNilaiIndex(
-        $queryUser,
-        int $idJadwal,
-        string $alias = 'mhs_nilai_index'
-    ) {
-        $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-            $query->from('nilai_mahasiswa')
-                ->join(
-                    'mahasiswas',
-                    'nilai_mahasiswa.mahasiswa_id',
-                    '=',
-                    'mahasiswas.id'
-                )
-                ->whereColumn(
-                    'mahasiswas.user_id',
-                    'users.id'
-                )
-                ->where(
-                    'nilai_mahasiswa.kj_id',
-                    $idJadwal
-                )
-                ->selectRaw('
-                CASE
-                    WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
-                    WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
-                    WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
-                    WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
-                    WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
-                    WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
-                    WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
-                    WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
-                    ELSE 0
-                END
-            ')
-                ->limit(1);
-
-        }, $alias);
-
-        return $queryUser;
-    }
-
-    protected function addMahasiswaNilaiHuruf(
-        $queryUser,
-        int $idJadwal,
-        string $alias = 'mhs_nilai_huruf'
-    ) {
-        $queryUser->selectSub(function ($query) use ($idJadwal) {
-
-            $query->from('nilai_mahasiswa')
-                ->join(
-                    'mahasiswas',
-                    'nilai_mahasiswa.mahasiswa_id',
-                    '=',
-                    'mahasiswas.id'
-                )
-                ->whereColumn(
-                    'mahasiswas.user_id',
-                    'users.id'
-                )
-                ->where(
-                    'nilai_mahasiswa.kj_id',
-                    $idJadwal
-                )
-                ->selectRaw("
-                CASE
-                    WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
-                    WHEN nilai_mahasiswa.nilai >= 80 THEN 'A-'
-                    WHEN nilai_mahasiswa.nilai >= 75 THEN 'B+'
-                    WHEN nilai_mahasiswa.nilai >= 70 THEN 'B'
-                    WHEN nilai_mahasiswa.nilai >= 65 THEN 'B-'
-                    WHEN nilai_mahasiswa.nilai >= 60 THEN 'C+'
-                    WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
-                    WHEN nilai_mahasiswa.nilai >= 40 THEN 'D'
-                    ELSE 'E'
-                END
-            ")
-                ->limit(1);
-
-        }, $alias);
-
-        return $queryUser;
-    }
-
-    protected function addMahasiswaAttendanceStats(
-        $queryUser,
-        int $idJadwal
-    ) {
+    private function applySubqueriesToUsers($queryUser, $idJadwal, $expiredCount)
+    {
         $statuses = [
             'mhs_absensi' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Izin','Sakit','Dispensasi')",
-
             'mhs_masuk' => "mahasiswa_kehadiran.status IN ('Hadir','Terlambat','Dispensasi')",
-
             'mhs_hadir' => "mahasiswa_kehadiran.status = 'Hadir'",
-
             'mhs_terlambat' => "mahasiswa_kehadiran.status = 'Terlambat'",
-
             'mhs_izin' => "mahasiswa_kehadiran.status = 'Izin'",
-
             'mhs_sakit' => "mahasiswa_kehadiran.status = 'Sakit'",
-
             'mhs_dispensasi' => "mahasiswa_kehadiran.status = 'Dispensasi'",
-
             'mhs_absen' => "(mahasiswa_kehadiran.status = 'Absen' OR mahasiswa_kehadiran.status IS NULL)",
-
-            'mhs_poin_absensi' => "
-            CASE
-                WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2
-                WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1
-                ELSE 0
-            END
-        ",
+            'mhs_poin_absensi' => "CASE WHEN mahasiswa_kehadiran.status IN ('Hadir','Dispensasi') THEN 2 WHEN mahasiswa_kehadiran.status IN ('Terlambat','Izin','Sakit') THEN 1 ELSE 0 END",
         ];
 
-        foreach ($statuses as $alias => $condition) {
-
-            $queryUser->selectSub(function ($query) use (
-                $idJadwal,
-                $alias,
-                $condition
-            ) {
-
-                $rawSql = $alias === 'mhs_poin_absensi'
-                    ? "COALESCE(SUM($condition),0)"
-                    : "COALESCE(SUM(CASE WHEN $condition THEN 1 ELSE 0 END),0)";
-
-                $query->selectRaw($rawSql)
-                    ->from('mahasiswa_kehadiran')
-                    ->join(
-                        'kelas_sesi',
-                        'mahasiswa_kehadiran.sesi_id',
-                        '=',
-                        'kelas_sesi.id'
-                    )
-                    ->join(
-                        'mahasiswas',
-                        'mahasiswa_kehadiran.mahasiswa_id',
-                        '=',
-                        'mahasiswas.id'
-                    )
-                    ->whereColumn(
-                        'mahasiswas.user_id',
-                        'users.id'
-                    )
-                    ->where(
-                        'kelas_sesi.kj_id',
-                        $idJadwal
-                    );
-
-            }, $alias);
-        }
-
-        return $queryUser;
-    }
-
-    protected function addMahasiswaTidakMasuk(
-        $queryUser,
-        int $idJadwal,
-        int $expiredCount,
-        string $alias = 'mhs_tidak_masuk'
-    ) {
-        $queryUser->selectRaw("
-        GREATEST(
-            0,
-            ? - (
-                SELECT COUNT(*)
-                FROM mahasiswa_kehadiran
-                JOIN kelas_sesi
-                    ON mahasiswa_kehadiran.sesi_id = kelas_sesi.id
-                JOIN mahasiswas
-                    ON mahasiswa_kehadiran.mahasiswa_id = mahasiswas.id
-                WHERE mahasiswas.user_id = users.id
-                AND kelas_sesi.kj_id = ?
-                AND mahasiswa_kehadiran.status IN (
-                    'Hadir',
-                    'Terlambat',
-                    'Dispensasi'
-                )
-            )
-        ) AS {$alias}
-    ", [
-            $expiredCount,
-            $idJadwal,
-        ]);
-
-        return $queryUser;
-    }
-
-    protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
-    {
-        $queryUser->addSelect('users.*');
-        return $queryUser->selectSub(function ($query) {
-
-            $query->from('rps_pivot_dosen')
-                ->join(
-                    'dosens',
-                    'rps_pivot_dosen.dosen_id',
-                    '=',
-                    'dosens.id'
-                )
-                ->whereColumn(
-                    'dosens.user_id',
-                    'users.id'
-                )
-                ->selectRaw('COUNT(DISTINCT rps_pivot_dosen.rps_id)');
-
-        }, $alias);
-    }
-
-    protected function addTotalSKs($queryUser, string $alias = 'total_sks')
-    {
-        $queryUser->addSelect('users.*');
-        return $queryUser->selectSub(function ($query) {
-
-            $query->fromSub(function ($sub) {
-
-                $sub->from('rps_pivot_dosen')
-                    ->join('dosens', 'rps_pivot_dosen.dosen_id', '=', 'dosens.id')
-                    ->join('rps', 'rps_pivot_dosen.rps_id', '=', 'rps.id')
-                    ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-                    ->whereColumn('dosens.user_id', 'users.id')
-                    ->selectRaw('DISTINCT rps.id, mata_kuliahs.sks_kuliah');
-
-            }, 'rps_sks')
-                ->selectRaw('COALESCE(SUM(sks_kuliah), 0)');
-
-        }, $alias);
+        $queryUser->selectRaw("GREATEST(0, ? - ((SELECT COALESCE(SUM(CASE WHEN status='Hadir' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Terlambat' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Izin' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Sakit' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?) + (SELECT COALESCE(SUM(CASE WHEN status='Dispensasi' THEN 1 ELSE 0 END),0) FROM mahasiswa_kehadiran JOIN kelas_sesi ON sesi_id=kelas_sesi.id JOIN mahasiswas ON mahasiswa_id=mahasiswas.id WHERE user_id=users.id AND kj_id=?))) as mhs_tidak_masuk", [$expiredCount, $idJadwal, $idJadwal, $idJadwal, $idJadwal, $idJadwal]);
     }
 
     public function sortFieldOrderUser($queryUser)
@@ -436,6 +254,7 @@ trait WithUserFilters
             'name', 'identity1', 'identity2', 'identity3', 'nik', 'kampus',
             'count_rps', 'total_sks',
             'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf',
+            'rekap_mhs', 'index_mhs', 'akreditas_mhs',
             'program_studi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
             'nip', 'nitk', 'nidn', 'nidk', 'nim',
         ];
@@ -465,11 +284,53 @@ trait WithUserFilters
                 'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
             );
         }
+        if ($this->sortField === 'program_studi') {
+            return $this->applyProdiSort(
+                $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+                    ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
+                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
+                'COALESCE(ap.strata, dp.strata, mp.strata)',
+                'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
+            );
+        }
+
+        if (
+            $this->sortField === 'rekap_mhs' ||
+            $this->sortField === 'index_mhs' ||
+            $this->sortField === 'akreditas_mhs' ||
+            $this->sortField === 'count_rps' ||
+            $this->sortField === 'total_sks'
+        ) {
+            $queryUser
+                ->leftJoin(
+                    'rekap_nilai_mahasiswa as rnm',
+                    'mahasiswas.id',
+                    '=',
+                    'rnm.mahasiswa_id'
+                );
+            return match ($this->sortField) {
+                'rekap_mhs', 'index_mhs', 'akreditas_mhs'  => $queryUser->orderBy(
+                    'rnm.nilai',
+                    $this->sortDirection
+                ),
+                'count_rps'  => $queryUser->orderBy(
+                    'rnm.count_rps',
+                    $this->sortDirection
+                ),
+                'total_sks'  => $queryUser->orderBy(
+                    'rnm.total_sks',
+                    $this->sortDirection
+                ),
+                default => $queryUser,
+            };
+        }
 
         $aliasSort = match ($this->sortField) {
             'mhs_nilai_akhir',
             'mhs_nilai_index',
             'mhs_nilai_huruf' => 'mhs_nilai_akhir',
+
+            // 'rekap_mhs', 'index_mhs', 'akreditas_mhs' => 'rekap_mhs',
 
             'count_rps',
             'total_sks' => $this->sortField,
@@ -497,7 +358,7 @@ trait WithUserFilters
                     END',
 
             'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
-            'kode' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+            'kode' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
 
             'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
             'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',

@@ -1,6 +1,5 @@
 @if (Auth::user()?->admin)
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
         @php
             $isTrashed = $x->trashed();
@@ -29,9 +28,9 @@
 
         @if (!$isTrashed)
             {{-- Tombol RPS --}}
-                @if ($x->role == 'Dosen' && ($withRPS ?? false))
-                    <flux:menu.item
-                        @click="
+            @if ($x->role == 'Dosen' && ($withRPS ?? false))
+                <flux:menu.item
+                    @click="
                             $store.user?.reset();
 
                             const type = '{{ strtolower($x->role) }}';
@@ -91,6 +90,12 @@
                         '{{ $detail->pr_rel?->departemen_dp ?? '' }}',
                         '{{ $detail->pr_rel?->fakultas_fk ?? '' }}',
                         '{{ $detail->kode_wilayah ?? '' }}',
+
+                        '{{ $x->mahasiswa->count_rps ?? 0 }}',
+                        '{{ $x->mahasiswa->total_sks ?? 0 }}',
+                        '{{ $user->mahasiswa->rekap_mhs ?? 0.0 }}',
+                        '{{ $user->mahasiswa->index_mhs ?? 0.0 }}',
+                        '{{ $user->mahasiswa->akreditas_mhs ?? 'E' }}',
                     );
                     $flux.modal('user-modal').show();
             "
@@ -112,9 +117,9 @@
                 <flux:menu.item
                     @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
-
                         $store.user?.setDeleteUser(
-                            '{{ $x->email ?? '' }}'
+                            '{{ $x->email ?? '' }}',
+                            '{{ $x->role }}'
                         );
                         $flux.modal('user-delete').show();
                 "
@@ -149,6 +154,7 @@
                 @click="
                         $store.user?.setDeleteUser(
                             '{{ $x->email ?? '' }}',
+                            '{{ $x->role }}',
                             '{{ $isTrashed }}'
                         );
                         $flux.modal('user-delete').show();

@@ -41,11 +41,12 @@
         </div>
         @if ($withRPS ?? false)
             <div x-show="step === 4">
-                <template x-if="$store.user.isEdit && $store.user?.typeModal == 'dosen'" x-cloak>
+                @include('livewire.admin.user-management.user-modal-form.user-rps')
+                <template x-if="$store.user.isEdit && ($store.user?.typeModal == 'dosen' || $store.user?.typeModal == 'mahasiswa')" x-cloak>
                     @include('livewire.staff.obe-management.obe-partial.rps-list', [
-                        'alpine' => 'dosen',
-                        'rps_items_list' => $dosen_rps_items_list,
-                        'rps_modal_paginator' => $dosen_rps_modal_paginator,
+                        'alpine' => 'user',
+                        'rps_items_list' => $user_rps_items_list,
+                        'rps_modal_paginator' => $user_rps_modal_paginator,
                         'nameXString' => 'Dosen',
                         'wireLoading' => 'editUser',
                     ])

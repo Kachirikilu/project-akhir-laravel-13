@@ -121,7 +121,7 @@
                     hover:bg-[var(--hover-pop-up-color)] text-sm">
 
                     <div class="flex justify-between items-center">
-                        @include('livewire.global.modal-form.partial.dropdown-items')
+                        @include('livewire.global.modal-form.input-array.partial.dropdown-items')
                         <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
                             {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
                         </span>

@@ -1,7 +1,7 @@
 @if (Auth::user()->admin || Auth::user()->dosen)
     @if (!($onlyAdmin ?? false))
         <div class="flex flex-col w-full">
-            <div class="m-3 flex items-center justify-end gap-3 p-2 bg-[var(--second-pop-up-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm"
+            <div class="m-3 flex items-center justify-end gap-3 p-2 bg-[var(--second-pop-up-color)] border table-border rounded-xl shadow-sm"
                 x-data="{ localShowDeleted: @entangle('showDeleted').live }">
                 <span class="text-sm font-medium text-[var(--contrast-main-text)]">
                     <span x-text="localShowDeleted ? 'Mode Sampah' : 'Data Aktif'"></span>

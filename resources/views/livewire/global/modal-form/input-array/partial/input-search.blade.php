@@ -36,7 +36,7 @@
             'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
         :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
             'bg-[var(--second-table-color)]'"
-        class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 transition-all">
+        class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none table-border text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 transition-all">
 
     {{-- @include('livewire.global.search-and-filters.partial.reset-button', [
         'xShow' => 'search',

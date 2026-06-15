@@ -165,30 +165,43 @@ class CPL extends Model
 
                                     $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                                         ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
-                                        ->whereRaw("
-                                                    COALESCE(
-                                                        NULLIF(prodis.kode_pr, ''),
-                                                        NULLIF(departemens.kode_dp, ''),
-                                                        NULLIF(fakultas.kode_fk, ''),
-                                                        'UNI'
+                                        ->where(function ($x) use ($prefixPart) {
+                                            $normalizedPrefix = str_replace('-', '', $prefixPart);
+                                                $x->whereRaw("
+                                                    REPLACE(
+                                                        COALESCE(
+                                                            NULLIF(prodis.kode_pr, ''),
+                                                            NULLIF(departemens.kode_dp, ''),
+                                                            NULLIF(fakultas.kode_fk, ''),
+                                                            'UNI'
+                                                        ),
+                                                        '-',
+                                                        ''
                                                     ) LIKE ?
-                                                ", [$prefixPart.'%']);
-                                                            });
-                                                    })
-                                        ->orWhere(function ($q) use ($prefixPart) {
-                                            $q->where('cpls.level_cpl', 2)
-                                                ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
-
-                                                    $dp->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
-                                                        ->whereRaw("
-                                                                    COALESCE(
-                                                                        NULLIF(departemens.kode_dp, ''),
-                                                                        NULLIF(fakultas.kode_fk, ''),
-                                                                        'UNI'
-                                                                    ) LIKE ?
-                                                                ", [$prefixPart.'%']);
-                                    });
-                            })
+                                                ", [$normalizedPrefix.'%'])
+                                                ->orWhereRaw("
+                                                    REPLACE(
+                                                        CONCAT(
+                                                            CASE
+                                                                WHEN prodis.strata = 'Sarjana' THEN 'S1'
+                                                                WHEN prodis.strata = 'Magister' THEN 'S2'
+                                                                WHEN prodis.strata = 'Doktor' THEN 'S3'
+                                                                ELSE ''
+                                                            END,
+                                                            COALESCE(
+                                                                NULLIF(prodis.kode_pr, ''),
+                                                                NULLIF(departemens.kode_dp, ''),
+                                                                NULLIF(fakultas.kode_fk, ''),
+                                                                'UNI'
+                                                            )
+                                                        ),
+                                                        '-',
+                                                        ''
+                                                    ) LIKE ?
+                                                ", [$normalizedPrefix.'%']);
+                                        });
+                                });
+                        })
                             ->orWhere(function ($q) use ($prefixPart) {
                                 $q->where('cpls.level_cpl', 3)
                                     ->whereHas('prodis.dp_rel.fk_rel', function ($fk) use ($prefixPart) {

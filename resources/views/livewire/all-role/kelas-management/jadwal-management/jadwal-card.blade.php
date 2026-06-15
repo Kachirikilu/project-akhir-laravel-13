@@ -35,10 +35,10 @@
     {{-- 2. Isi Utama (Looping Card) --}}
     @forelse($jadwals as $j)
         <div wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-            class="relative flex flex-col justify-between p-4 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
+            class="relative flex flex-col justify-between p-4 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
 
             {{-- HEADER CARD (Kode Jadwal Wilayah & Tombol Aksi) --}}
-            <div class="flex items-start justify-between gap-2 pb-3 border-b border-[var(--border-table-color)]/60">
+            <div class="flex items-start justify-between gap-2 pb-3 border-b table-border/60">
                 <div class="flex flex-wrap items-center gap-2">
                     {{-- BADGE KODE BERDASARKAN WILAYAH --}}
                     <flux:dropdown>
@@ -84,7 +84,7 @@
             <div class="flex-1 py-2 flex flex-col justify-between gap-3">
                 {{-- INFORMASI UTAMA JADWAL --}}
                 <div
-                    class="text-xs bg-[var(--second-table-color)]/30 p-2 rounded-lg border border-[var(--border-table-color)]/40">
+                    class="text-xs bg-[var(--second-table-color)]/30 p-2 rounded-lg border table-border/40">
                     @if ($kelas == null)
                         <div class="space-y-1 mb-2">
                             <p
@@ -120,7 +120,7 @@
 
                             @if ($j->is_my_class)
                                 <code
-                                    class="italic font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border border-[var(--border-table-color)] text-[var(--contrast-main-text)]">
+                                    class="italic font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
                                     Saya Terdaftar
                                 </code>
                             @else
@@ -129,7 +129,7 @@
                                     @if (!empty($j->password))
                                         <div class="mt-1">
                                             <code
-                                                class="font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border border-[var(--border-table-color)] text-[var(--contrast-main-text)]">
+                                                class="font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
                                                 {{ $j->password }}
                                             </code>
                                         </div>
@@ -205,8 +205,8 @@
 
             {{-- FOOTER CARD (Kapasitas & Sinkronisasi Waktu Grid 3 Kolom) --}}
             <div
-                class="grid grid-cols-5 gap-2 border-t border-[var(--border-table-color)]/40 bg-[var(--second-table-trans)] -mx-4 -mb-4 p-3 rounded-b-xl text-center text-xs">
-                <div class="col-span-2 border-r pl-2 border-[var(--border-table-color)]/60 space-y-0.5">
+                class="grid grid-cols-5 gap-2 border-t table-border/40 bg-[var(--second-table-trans)] -mx-4 -mb-4 p-3 rounded-b-xl text-center text-xs">
+                <div class="col-span-2 border-r pl-2 table-border/60 space-y-0.5">
                     <span
                         class="text-left block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">
                         Kapasitas</span>
@@ -229,7 +229,7 @@
     @empty
         {{-- KEADAAN KOSONG --}}
         <div
-            class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+            class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
             <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Jadwal Kelas ditemukan!</p>
         </div>

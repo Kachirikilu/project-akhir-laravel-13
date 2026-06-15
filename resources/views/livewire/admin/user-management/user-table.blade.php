@@ -1,29 +1,31 @@
 <x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
 
-    @php
-        $padingKolom = 'px-6 py-4 text-sm';
-        $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
-            $padingKolom;
+    @if ($switchTable == 'mahasiswa')
+        <x-slot:sortir>
+            <div x-data="{ activeTab: @entangle('filterAngkatan') }"
+                class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
 
-        $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
-            ' border-x ' .
-            $padingKolom;
-        $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
-
-        $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
-            $padingKolom;
-        $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
-            $padingKolom;
-    @endphp
-
-    @php
-        $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderX = 'border-[var(--border-table-color)] border-x';
-    @endphp
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByAngkatan',
+                    'xFilter' => 'filterAngkatan',
+                    'tabFilter' => $totalSeluruhAngkatan ?? null,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua',
+                    'icon' => 'users',
+                ])
+                @foreach ($angkatanFilter as $angkatan)
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'filterByAngkatan',
+                        'xFilter' => 'filterAngkatan',
+                        'tabFilter' => $totalAngkatan[$angkatan] ?? 0,
+                        'tabString' => $angkatan,
+                        'tabNameString' => $angkatan,
+                        'icon' => 'calendar-days',
+                    ])
+                @endforeach
+            </div>
+        </x-slot:sortir>
+    @endif
 
     <x-slot:header>
         <tr>
@@ -61,51 +63,82 @@
                 ])
             @endif
 
-            @if ($switchTable == '')
+
+
+            @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'role',
+                    'sortFieldString' => 'kode',
+                    'headString' => $switchTable == 'dosen' ? 'NIP / NIDN' : 'NIM',
                     'rowSpan' => 2,
+                    'isMain' => 1,
                     'isCenter' => 1,
                 ])
             @else
-                <th rowspan="2" class="{{ $headKolom }}'">Role</th>
+                @if ($switchTable == '')
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'role',
+                        'rowSpan' => 2,
+                        'isCenter' => 1,
+                    ])
+                @else
+                    <th rowspan="2" class="table-head border-x">Role</th>
+                @endif
             @endif
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => $withRPS ?? null ? 'kode' : 'name',
+                'sortFieldString' => 'name',
                 'headString' => 'Nama',
                 'rowSpan' => 2,
                 'isMain' => 1,
             ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'email',
-                'rowSpan' => 2,
-            ])
+            @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
+                <th colspan="3" class="table-head-sub">
+                    Nilai Capaian
+                </th>
+            @endif
 
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th colspan="3" class="{{ $headSubKolom }}">
+            @if (!($withRPS ?? false))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'email',
+                    'rowSpan' => 2,
+                ])
+            @endif
+
+            @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
+                <th colspan="3" class="table-head-sub">
                     RPS
                 </th>
             @endif
 
-            <th colspan="{{ $switchTable == 'mahasiswa' ? 2 : ($switchTable == 'admin' ? 3 : 4) }}"
-                class="{{ $headSubKolom }}">
-                Identitas (ID)
-            </th>
+            @if (!($withRPS ?? false))
+                <th colspan="{{ $switchTable == 'mahasiswa' ? 2 : ($switchTable == 'admin' ? 3 : 4) }}"
+                    class="table-head-sub">
+                    Identitas (ID)
+                </th>
+            @endif
 
             {{-- Angkatan - Autocomplete Input --}}
             @if ($switchTable == 'mahasiswa')
-                @include('livewire.global.search-and-filters.table-search', [
-                    'sortFieldString' => 'angkatan',
-                    'modelString' => 'searchAngkatan',
-                    'resetXFilter' => 'resetInputAngkatan()',
-                    'wInput' => 20,
-                    'numberOnly' => 1,
-                    'maxLength' => 4,
-                    'placeholder' => 'Tahun',
-                    'rowSpan' => 2,
-                    'isBorderR' => 1,
-                ])
+                @if ($filterAngkatan == '')
+                    @include('livewire.global.search-and-filters.table-search', [
+                        'sortFieldString' => 'angkatan',
+                        'modelString' => 'searchAngkatan',
+                        'resetXFilter' => 'resetInputAngkatan()',
+                        'wInput' => 20,
+                        'numberOnly' => 1,
+                        'maxLength' => 4,
+                        'placeholder' => 'Tahun',
+                        'rowSpan' => 2,
+                        'isBorderX' => 1,
+                    ])
+                @else
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'angkatan',
+                        'rowSpan' => 2,
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                @endif
             @endif
 
 
@@ -122,11 +155,13 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'program_studi',
-                'rowSpan' => 2,
-            ])
-            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            @if (!($withCapaian ?? false))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'program_studi',
+                    'rowSpan' => 2,
+                ])
+            @endif
+            <th rowspan="2" class="table-head border-x">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
@@ -142,8 +177,27 @@
         </tr>
 
         <tr>
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <th class="{{ $headKolom }} border-x">Show</th>
+            @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'rekap_mhs',
+                    'headString' => 'Nilai',
+                    'isCenter' => 1,
+                    'isBorderL' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'index_mhs',
+                    'headString' => 'Index',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'akreditas_mhs',
+                    'headString' => 'Akreditas',
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
+            @endif
+            @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
+                <th class="table-head border-x">Show</th>
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
                     'headString' => 'Total RPS',
@@ -153,39 +207,44 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'total_sks',
                     'isCenter' => 1,
+                    'isBorderR' => 1,
                 ])
             @endif
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' =>
-                    $switchTable == '' ? 'identity1' : ($switchTable == 'mahasiswa' ? 'nim' : 'nip'),
-                'headString' => $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
-                'isCenter' => 1,
-                'isMain' => 1,
-            ])
-            @if ($switchTable !== 'mahasiswa')
+
+            @if (!($withRPS ?? false))
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' =>
-                        $switchTable == '' ? 'identity2' : ($switchTable == 'dosen' ? 'nidn' : 'nitk'),
+                        $switchTable == '' ? 'identity1' : ($switchTable == 'mahasiswa' ? 'nim' : 'nip'),
                     'headString' =>
-                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
+                        $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
                     'isCenter' => 1,
-                    'isBorderR' => $switchTable == 'admin' ? 1 : 0,
+                    'isMain' => 1,
                 ])
-                @if ($switchTable !== 'admin')
+                @if ($switchTable !== 'mahasiswa')
                     @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'nidk',
-                        'headString' => 'NIDK',
+                        'sortFieldString' =>
+                            $switchTable == '' ? 'identity2' : ($switchTable == 'dosen' ? 'nidn' : 'nitk'),
+                        'headString' =>
+                            $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
                         'isCenter' => 1,
+                        'isBorderR' => $switchTable == 'admin' ? 1 : 0,
                     ])
+                    @if ($switchTable !== 'admin')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'nidk',
+                            'headString' => 'NIDK',
+                            'isCenter' => 1,
+                        ])
+                    @endif
                 @endif
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'nik',
+                    'headString' => 'NIK',
+                    // 'isSubHeader' => 1,
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
             @endif
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'nik',
-                'headString' => 'NIK',
-                // 'isSubHeader' => 1,
-                'isCenter' => 1,
-                'isMain' => 1,
-            ])
         </tr>
     </x-slot:header>
 
@@ -196,12 +255,12 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
+            <td class="table-main text-center">{{ $user->id }}</td>
 
             @if ($switchTable !== '')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->role_id }}</td>
+                <td class="table-second table-border-r text-center">{{ $user->role_id }}</td>
             @endif
             {{-- @php
                     
@@ -217,78 +276,145 @@
 
     
                 @endphp
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
+                <td class="table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
             {{-- Role --}}
-            <td class="{{ $secondKolom }} text-center">
-                <flux:dropdown>
+            @if ($withRPS ?? false)
+                @if ($switchTable == 'dosen')
+                    <td class="table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
+                        {{ $user->identity2 ?? '-' }}</td>
+                @elseif ($switchTable == 'mahasiswa')
+                    <td class="table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
+                @endif
+            @else
+                <td class="table-second text-center">
+                    <flux:dropdown>
 
-                    <button class="cursor-pointer">
-                        @switch($user->role)
-                            @case('Admin')
-                                <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
-                            @break
+                        <button class="cursor-pointer">
+                            @switch($user->role)
+                                @case('Admin')
+                                    <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
+                                @break
 
-                            @case('Dosen')
-                                <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
-                            @break
+                                @case('Dosen')
+                                    <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
+                                @break
 
-                            @case('Mahasiswa')
-                                <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
-                            @break
+                                @case('Mahasiswa')
+                                    <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
+                                @break
 
-                            @default
-                                <flux:badge icon="user-circle" size="sm">{{ $user->role }}</flux:badge>
-                        @endswitch
-                    </button>
+                                @default
+                                    <flux:badge icon="user-circle" size="sm">{{ $user->role }}</flux:badge>
+                            @endswitch
+                        </button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table', [
-                        'x' => $user,
-                        'nameXString' => 'Pengguna',
-                    ])
+                        @include('livewire.admin.user-management.user-toolbar-table', [
+                            'x' => $user,
+                            'nameXString' => $user->role,
+                        ])
 
-                </flux:dropdown>
-            </td>
-            <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
-            <td class="{{ $secondKolom }}">{{ $user->email }}</td>
-            @if (($withRPS ?? false) && $switchTable == 'dosen')
-                <td class="{{ $secondKolom }} {{ $borderX }} text-center">
+                    </flux:dropdown>
+                </td>
+            @endif
+
+
+            <td class="{{ $withRPS ?? false ? 'table-second' : 'table-main' }} whitespace-nowrap">
+                {{ $user->name ?? '-' }}</td>
+
+            @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
+                <td class="table-second table-border-l whitespace-nowrap text-center">
+                    {{ $user->mahasiswa->rekap_mhs ?? '0.00' }}</td>
+                <td class="table-second whitespace-nowrap text-center">
+                    {{ $user->mahasiswa->index_mhs ?? '0.00' }}</td>
+                <td class="table-sub table-border-l whitespace-nowrap text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                'xValue' => $user->mahasiswa->akreditas_mhs ?? 'E',
+                            ])
+                        </button>
+                        @include('livewire.admin.user-management.user-toolbar-table', [
+                            'x' => $user,
+                            'nameXString' => $user->role,
+                        ])
+                    </flux:dropdown>
+                </td>
+            @endif
+            @if (!($withRPS ?? false))
+                <td class="table-second">{{ $user->email }}</td>
+            @endif
+            @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
+                <td class="table-second table-border-x text-center">
                     <x-button-action
                         @click="
                             $store.user?.reset();
+
                             const type = '{{ strtolower($user->role) }}';
-                            $store.user?.setColor('text-lime-700 dark:text-lime-400');
+
+                            $store.user?.setType(type);
+                            $store.user?.setEdit(1);
+
+                            const colors = {
+                                admin: 'text-red-700 dark:text-red-400',
+                                dosen: 'text-lime-700 dark:text-lime-400',
+                                mahasiswa: 'text-cyan-700 dark:text-cyan-400',
+                            };
+                            const colors2 = {
+                                admin: 'bg-red-50 dark:bg-red-950/40',
+                                dosen: 'bg-lime-50 dark:bg-lime-950/40',
+                                mahasiswa: 'bg-cyan-50 dark:bg-cyan-950/40',
+                            };
+                            $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400', colors2[type] ?? 'bg-gray-50 dark:bg-gray-950/40');
+
+                                $store.user?.setValueUserRPS (
+                                    '{{ $user->name ?? '' }}',
+                                    '{{ $user->dosen->nip ?? '' }}',
+                                    '{{ $user->mahasiswa->nim ?? '' }}',
+                                    '{{ $user->mahasiswa->angkatan ?? '' }}',
+                                    '{{ $user->mahasiswa->count_rps ?? ($user->count_rps ?? 0) }}',
+                                    '{{ $user->mahasiswa->total_sks ?? ($user->total_sks ?? 0) }}',
+
+                                    '{{ $user->mahasiswa->rekap_mhs ?? 0.00 }}',
+                                    '{{ $user->mahasiswa->index_mhs ?? 0.00 }}',
+                                    '{{ $user->mahasiswa->akreditas_mhs ?? 'E' }}',
+                                );
+                    
                             $flux.modal('user-rps-modal').show();
                         "
-                        wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="blue"
+                        wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="emerald"
                         wire:navigate>
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
                     </x-button-action>
                 </td>
-                <td class="{{ $subKolom }} text-center">{{ $user->count_rps }} RPS</td>
-                <td class="{{ $subKolom }} text-center">{{ $user->total_sks }} SKS</td>
-            @endif
-            <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
-            @if ($switchTable != 'mahasiswa')
-                <td class="{{ $subKolom }} {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
-                    {{ $user->identity2 ?? '-' }}
-                </td>
+                <td class="table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
+                <td class="table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
+                    SKS</td>
             @endif
 
-            @if ($switchTable == 'dosen' || $switchTable == '')
-                <td
-                    class="{{ $subKolom }} {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
-                    {{ $user->identity3 ?? '-' }}
-                </td>
+            @if (!($withRPS ?? false))
+                <td class="table-main text-center">{{ $user->identity1 ?? '-' }}</td>
+                @if ($switchTable != 'mahasiswa')
+                    <td class="table-sub {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
+                        {{ $user->identity2 ?? '-' }}
+                    </td>
+                @endif
+
+                @if ($switchTable == 'dosen' || $switchTable == '')
+                    <td
+                        class="table-sub {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
+                        {{ $user->identity3 ?? '-' }}
+                    </td>
+                @endif
+                <td class="table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
             @endif
-            <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $user->nik ?? '-' }}</td>
 
             @if ($switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="table-second table-border-x text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} text-center">
+                <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer focus:outline-none">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -299,13 +425,13 @@
 
                         @include('livewire.admin.user-management.user-toolbar-table', [
                             'x' => $user,
-                            'nameXString' => 'Pengguna',
+                            'nameXString' => $user->role,
                         ])
                     </flux:dropdown>
                 </td>
             @endif
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -314,17 +440,18 @@
                     </button>
                     @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna',
+                        'nameXString' => $user->role,
                     ])
 
                 </flux:dropdown>
             </td>
 
+            @if (!($withCapaian ?? false))
+                <td class="table-second min-w-48">
+                    {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
+            @endif
 
-            <td class="{{ $secondKolom }} min-w-48">
-                {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
-
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -332,26 +459,27 @@
 
                     @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna',
+                        'nameXString' => $user->role,
                     ])
 
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
         </tr>
 
         @empty
             <tr>
-                {{-- <td colspan="{{ match ($switchTable) {
+                <td colspan="{{ match ($switchTable) {
                     'admin' => 14,
-                    'dosen' => 14,
-                    'mahasiswa' => 14,
+                    'dosen' => $withRPS ?? null ? 12 : 14,
+                    'mahasiswa' => $withRPS ?? null ? 16 : 14,
                     default => 14,
                 } }}"
+                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                {{-- <td colspan="{{ $withRPS ?? null ? 12 : 14 }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center"> --}}
-                <td colspan="{{ $withRPS ?? null ? 17 : 14 }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data {{ !empty($switchTable) ? ucfirst($switchTable) : 'Pengguna' }} ditemukan!
                 </td>
             </tr>

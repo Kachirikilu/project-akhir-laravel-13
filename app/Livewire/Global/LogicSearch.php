@@ -756,12 +756,54 @@ trait LogicSearch
         $huruf = strtoupper(trim($huruf ?? ''));
         $search = strtoupper(trim($search));
 
-        if (preg_match('/^(A|A\-|B\+|B|B\-|C\+|C|D|E)$/', $search)) {
-            return $huruf === $search;
+        preg_match('/\b(A\-|B\+|B\-|C\+|A|B|C|D|E)\b/', $search, $matches);
+
+        $targetHuruf = $matches[1] ?? null;
+
+        if (! $targetHuruf) {
+            return false;
         }
 
-        if (str_starts_with(strtolower($search), 'nilai ')) {
-            return $huruf === strtoupper(trim(substr($search, 6)));
+        if ($huruf !== $targetHuruf) {
+            return false;
+        }
+
+        if ($search === $targetHuruf) {
+            return true;
+        }
+
+        $keywords = [
+            'N',
+            'NI',
+            'NIL',
+            'NILA',
+            'NILAI',
+
+            'AK',
+            'AKR',
+            'AKRE',
+            'AKRED',
+            'AKREDI',
+            'AKREDIT',
+            'AKREDITA',
+            'AKREDITAS',
+            'AKREDITASI',
+
+            'GR',
+            'GRA',
+            'GRAD',
+            'GRADE',
+
+            'HU',
+            'HUR',
+            'HURU',
+            'HURUF',
+        ];
+
+        foreach ($keywords as $keyword) {
+            if (str_contains($search, $keyword)) {
+                return true;
+            }
         }
 
         return false;

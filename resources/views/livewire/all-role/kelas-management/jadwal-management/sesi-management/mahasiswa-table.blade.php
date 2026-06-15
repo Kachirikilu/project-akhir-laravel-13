@@ -3,26 +3,26 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
+            'bg-[var(--main-table-trans)] table-border text-[var(--contrast-main-text)]' .
             ' border-x ' .
             $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
+            'bg-[var(--main-table-color)] table-border text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
             $padingKolom;
         $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
+            'bg-[var(--sub-table-trans)] table-border text-[var(--contrast-second-text)] ' .
             $padingKolom;
     @endphp
 
     @php
-        $borderX = 'border-[var(--border-table-color)] border-x';
-        $borderR = 'border-[var(--border-table-color)] border-r';
+        $borderX = 'table-border border-x';
+        $borderR = 'table-border border-r';
     @endphp
 
     <x-slot:sortir>
@@ -73,7 +73,7 @@
                 'isCenter' => 1,
             ])
 
-            <th rowspan="2" class="{{ $headKolom }}'">Role</th>
+            <th rowspan="2" class="table-head border-x">Role</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'pertemuan_ke',
@@ -92,10 +92,10 @@
             ])
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <th colspan="7" class="{{ $headSubKolom }}">
+                <th colspan="7" class="table-head-sub">
                     Kehadiran Mahasiswa
                 </th>
-                <th colspan="3" class="{{ $headSubKolom }}">
+                <th colspan="3" class="table-head-sub">
                     Nilai Mahasiswa
                 </th>
             @endif
@@ -129,7 +129,7 @@
                 'sortFieldString' => 'program_studi',
                 'rowSpan' => 2,
             ])
-            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            <th rowspan="2" class="table-head border-x">Aksi</th>
 
         </tr>
 
@@ -190,13 +190,13 @@
                     'isMain' => 1,
                 ])
                 {{-- @elseif (Auth::user()->mahasiswa)
-                <th rowspan="1" class="{{ $headKolom }} border-x">Poin</th>
-                <th rowspan="1" class="{{ $headKolom }}">Hadir</th>
-                <th rowspan="1" class="{{ $headKolom }}">Dispensi</th>
-                <th rowspan="1" class="{{ $headKolom }} border-r">Terlambat</th>
-                <th rowspan="1" class="{{ $headKolom }}">Izin</th>
-                <th rowspan="1" class="{{ $headKolom }}">Sakit</th>
-                <th rowspan="1" class="{{ $headKolom }} border-r whitespace-nowrap">Tidak Hadir</th> --}}
+                <th rowspan="1" class="table-head border-x">Poin</th>
+                <th rowspan="1" class="table-head">Hadir</th>
+                <th rowspan="1" class="table-head">Dispensi</th>
+                <th rowspan="1" class="table-head border-r">Terlambat</th>
+                <th rowspan="1" class="table-head">Izin</th>
+                <th rowspan="1" class="table-head">Sakit</th>
+                <th rowspan="1" class="table-head border-r whitespace-nowrap">Tidak Hadir</th> --}}
             @endif
         </tr>
 
@@ -210,12 +210,12 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $mainKolom }} text-center">{{ $user->mahasiswa->id }}</td>
+            <td class="table-main text-center">{{ $user->mahasiswa->id }}</td>
 
             {{-- Role --}}
-            <td class="{{ $secondKolom }} {{ $borderR }} text-center">
+            <td class="table-second table-border-r text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
@@ -227,7 +227,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $mainKolom }} {{ $borderR }} text-center">{{ $user->mahasiswa->nim }}</td>
+            <td class="table-main table-border-r text-center">{{ $user->mahasiswa->nim }}</td>
 
 
             @php
@@ -239,10 +239,10 @@
                 }
             @endphp
 
-            <td class="{{ $secondKolom }} {{ $borderR }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
+            <td class="table-second table-border-r whitespace-nowrap">{{ $user->name ?? '-' }}</td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                <td class="table-second table-border-r text-center whitespace-nowrap">
                     <flux:dropdown>
 
                         <button class="cursor-pointer">
@@ -268,42 +268,42 @@
                         )
                     </flux:dropdown>
                 </td>
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_dispensasi ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                <td class="table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_terlambat ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_izin ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_sakit ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                <td class="table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
                     @else
@@ -311,21 +311,21 @@
                     @endif
                 </td>
 
-                <td class="{{ $secondKolom }} text-center whitespace-nowrap">
+                <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_akhir ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $secondKolom }} text-center whitespace-nowrap">
+                <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_index ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="{{ $subKolom }} {{ $borderX }} text-center whitespace-nowrap">
+                <td class="table-sub table-border-x text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         <flux:dropdown>
                             <button class="cursor-pointer">
@@ -344,9 +344,9 @@
                 </td>
             @endif
 
-            <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
+            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer focus:outline-none">
                         @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -361,7 +361,7 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -375,10 +375,10 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48">
+            <td class="table-second min-w-48">
                 {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">

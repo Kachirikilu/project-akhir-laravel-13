@@ -23,7 +23,7 @@ trait WithProdiSearchFilters
 
     public $pr_name;
 
-    public $pr_items;
+    public $pr_items = [];
 
     public $prNameSearch = '';
 
@@ -447,7 +447,7 @@ trait WithProdiSearchFilters
                     );
 
                     $matchNilaiHuruf = $this->matchNilaiHuruf(
-                        $pr->huruf_pr ?? $pr->huruf_dp ?? $pr->huruf_fk ?? 'E',
+                        $pr->akreditas_pr ?? $pr->akreditas_dp ?? $pr->akreditas_fk ?? 'E',
                         $searchLower
                     );
 

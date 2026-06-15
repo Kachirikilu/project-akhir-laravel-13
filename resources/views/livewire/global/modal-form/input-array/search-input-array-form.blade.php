@@ -97,7 +97,7 @@
                     <div wire:key="res-{{ $typeXString }}-{{ $itemId }}-{{ $alpine }}"
                         class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
 
-                        @include('livewire.global.modal-form.partial.dropdown-items')
+                        @include('livewire.global.modal-form.input-array.partial.dropdown-items')
 
                         @php
                             $param2 = isset($typeX2String) ? "'" . addslashes($itemLabel2) . "'" : 'null';
@@ -165,7 +165,7 @@
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div
-        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+        class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
@@ -180,9 +180,10 @@
         </div>
 
         <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-medium">
-            <template x-for="(id, index) in items" :key="id">
+            {{-- <template x-for="(id, index) in items" :key="id"> --}}
+            <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border border-[var(--border-table-color)] px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
                     <div class="flex items-start gap-3 flex-1">
 
                         <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"

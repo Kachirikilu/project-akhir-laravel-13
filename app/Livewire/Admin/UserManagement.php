@@ -63,6 +63,7 @@ class UserManagement extends Component
         'sortDirection' => ['except' => 'asc'],
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],
+        'filterAngkatan' => ['except' => ''],
 
         // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
@@ -97,7 +98,7 @@ class UserManagement extends Component
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'switchTable']);
+        $this->reset(['search', 'searchAngkatan']);
         $this->resetPage();
     }
 
@@ -155,17 +156,17 @@ class UserManagement extends Component
             'kampus' => ['kampus'],
             'status' => ['status'],
             'admin_id' => ['admin_id', 'dosen_id', 'mahasiswa_id'],
-            'dosen_id' => ['dosen_id', 'admin_id', 'mahasiswa_id'],
-            'mahasiswa_id' => ['mahasiswa_id', 'admin_id', 'dosen_id'],
+            // 'dosen_id' => ['dosen_id', 'admin_id', 'mahasiswa_id'],
+            // 'mahasiswa_id' => ['mahasiswa_id', 'admin_id', 'dosen_id'],
             'nik' => ['nik'],
             'identity1' => ['identity1', 'nip', 'nim'],
-            'nip' => ['nip', 'nim', 'identity1'],
-            'nim' => ['nim', 'nip', 'identity1'],
+            // 'nip' => ['nip', 'nim', 'identity1'],
+            // 'nim' => ['nim', 'nip', 'identity1'],
             'identity2' => ['identity2', 'nitk', 'nidn', 'nik'],
-            'nitk' => ['nitk', 'nidn', 'identity2', 'nik'],
-            'nidn' => ['nidn', 'nitk', 'identity2', 'nik'],
+            // 'nitk' => ['nitk', 'nidn', 'identity2', 'nik'],
+            // 'nidn' => ['nidn', 'nitk', 'identity2', 'nik'],
             'identity3' => ['identity3', 'nidk', 'nik'],
-            'nidk' => ['nidk', 'identity3', 'nik'],
+            // 'nidk' => ['nidk', 'identity3', 'nik'],
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at'],
         ];
@@ -190,14 +191,12 @@ class UserManagement extends Component
         $this->inputFkFilter();
 
         try {
-            $queryUser = $this->inputUserSearch();
+            $queryUser = $this->inputUserSearch($this->switchTable);
 
             // =========================
             // 1. BASE MURNI (JANGAN DIUBAH)
             // =========================
             $baseUser = User::query();
-
-            $this->buttonUserFilter($queryUser);
 
             if (! empty($this->switchTable)) {
                 $queryUser->whereHas($this->switchTable);

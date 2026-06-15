@@ -7,6 +7,7 @@ document.addEventListener("alpine:init", () => {
         colorIcon: "",
 
         email_delete: "",
+        role_delete: "",
 
         setType(val) {
             this.typeModal = val;
@@ -42,6 +43,13 @@ document.addEventListener("alpine:init", () => {
         nama_pr_search: "",
         pr_items: "",
 
+        count_rps: "",
+        total_sks: "",
+
+        rekap_mhs: "",
+        index_mhs: "",
+        akreditas_mhs: "",
+
         kode_wilayah: "",
 
         setValueUser(
@@ -62,6 +70,11 @@ document.addEventListener("alpine:init", () => {
             departemen,
             fakultas,
             wilayah,
+            rps,
+            sks,
+            rekap,
+            index,
+            huruf,
         ) {
             this.email = email;
             this.password = password;
@@ -86,9 +99,40 @@ document.addEventListener("alpine:init", () => {
                 slot3: fakultas,
             };
             this.kode_wilayah = wilayah;
+            this.count_rps = rps;
+            this.total_sks = sks;
+
+            this.rekap_mhs = rekap;
+            this.index_mhs = index;
+            this.akreditas_mhs = huruf;
         },
-        setDeleteUser(email, forceDelete) {
+        setValueUserRPS(
+            name,
+            nip,
+            nim,
+            angkatan,
+            rps,
+            sks,
+
+            rekap,
+            index,
+            huruf,
+        ) {
+            this.name = name;
+            this.nip = nip;
+            this.nim = nim;
+            this.angkatan = angkatan;
+
+            this.count_rps = rps;
+            this.total_sks = sks;
+
+            this.rekap_mhs = rekap;
+            this.index_mhs = index;
+            this.akreditas_mhs = huruf;
+        },
+        setDeleteUser(email, role, forceDelete) {
             this.email_delete = email;
+            this.role_delete = role;
             this.isForceDelete = forceDelete;
         },
 
@@ -120,7 +164,15 @@ document.addEventListener("alpine:init", () => {
 
                 // Delete
                 this.email_delete = "";
+                this.role_delete = "";
                 this.showEdit = 0;
+
+                this.count_rps = "";
+                this.total_sks = "";
+
+                this.rekap_mhs = "";
+                this.index_mhs = "";
+                this.akreditas_mhs = "";
             }
             if (isAdd == 0) {
                 this.typeModal = "";

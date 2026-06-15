@@ -24,9 +24,9 @@
 
     @forelse($periodeNilai as $p)
         <div wire:key="periode-{{ $p->akademik }}-{{ $p->ganjil_genap }}"
-            class="relative flex flex-col justify-between p-5 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
+            class="relative flex flex-col justify-between p-5 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
 
-            <div class="flex items-start justify-between gap-2 pb-3 border-b border-[var(--border-table-color)]/60">
+            <div class="flex items-start justify-between gap-2 pb-3 border-b table-border/60">
                 <div class="flex flex-col gap-0.5">
                     <span class="text-xs font-bold text-[var(--focus-color)] uppercase tracking-wider">
                         Semester {{ $p->semester }}
@@ -55,7 +55,7 @@
                 </p>
             </div>
             <div
-                class="pt-3 border-t border-[var(--border-table-color)]/40 -mx-5 -mb-5 p-4 bg-[var(--second-table-trans)] rounded-b-xl flex justify-end">
+                class="pt-3 border-t table-border/40 -mx-5 -mb-5 p-4 bg-[var(--second-table-trans)] rounded-b-xl flex justify-end">
                 <flux:button variant="filled" size="sm" icon-after="chevron-right" class="cursor-pointer"
                     href="{{ route('nilai-rps-mahasiswa', [
                         'ganjil_genap' => $p->ganjil_genap,
@@ -70,7 +70,7 @@
     @empty
         {{-- Tampilan saat data kosong --}}
         <div
-            class="col-span-full text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+            class="col-span-full text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
             <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada riwayat indeks prestasi semester ditemukan!
             </p>

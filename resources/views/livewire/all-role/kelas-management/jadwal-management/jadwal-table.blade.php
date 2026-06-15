@@ -1,30 +1,5 @@
 <x-global.main-layout-table :paginator="$jadwals">
 
-    @php
-        $padingKolom = 'px-6 py-4 text-sm';
-        $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
-            $padingKolom;
-
-        $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
-            ' border-x ' .
-            $padingKolom;
-        $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
-
-        $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
-            $padingKolom;
-        $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
-            $padingKolom;
-    @endphp
-
-    @php
-        $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderL = 'border-[var(--border-table-color)] border-l';
-    @endphp
-
     <x-slot:header>
         {{-- BARIS PERTAMA --}}
         <tr>
@@ -42,7 +17,7 @@
                 'rowSpan' => 2,
             ])
 
-            <th rowspan="2" class="{{ $headKolom }} border-x">Show</th>
+            <th rowspan="2" class="table-head border-x">Show</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'label_kelas',
@@ -58,7 +33,7 @@
                     'rowSpan' => 2,
                 ])
             @else
-                <th rowspan="2" class="{{ $headKolom }}">Password</th>
+                <th rowspan="2" class="table-head">Password</th>
             @endif
 
             @if ($kelas == null)
@@ -69,12 +44,12 @@
                 ])
             @endif
 
-            <th colspan="4" class="{{ $headSubKolom }}">
+            <th colspan="4" class="table-head-sub">
                 Informasi Jadwal Kelas
             </th>
 
             @if ($kelas == null)
-                <th colspan="5" class="{{ $headSubKolom }}">
+                <th colspan="5" class="table-head-sub">
                     Informasi Mata Kuliah
                 </th>
 
@@ -85,7 +60,7 @@
             @endif
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+                <th rowspan="2" class="table-head border-x">Aksi</th>
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'created_at',
@@ -159,11 +134,11 @@
 
     @forelse($jadwals as $j)
         <tr wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $secondKolom }} text-center">{{ $j->id }}</td>
+            <td class="table-second text-center">{{ $j->id }}</td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -182,7 +157,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} {{ $borderR }} text-center whitespace-nowrap">
+            <td class="table-second table-border-r text-center whitespace-nowrap">
 
                 @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
                     <x-button-action color="amber"
@@ -230,19 +205,19 @@
 
             </td>
 
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $j->label_full }}</td>
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">
+            <td class="table-second text-center whitespace-nowrap">{{ $j->label_full }}</td>
+            <td class="table-second text-center whitespace-nowrap">
 
                 @if ($j->is_my_class)
                     <code
-                        class="italic font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border border-[var(--border-table-color)] text-[var(--contrast-main-text)]">
+                        class="italic font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
                         Terdaftar
                     </code>
                 @else
                     @if (Auth::user()->admin || Auth::user()->dosen)
                         @if (!empty($j->password))
                             <code
-                                class="font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border border-[var(--border-table-color)] text-[var(--contrast-main-text)]">
+                                class="font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
                                 {{ $j->password }}
                             </code>
                         @else
@@ -262,19 +237,19 @@
                 @endif
 
                 @if ($kelas == null)
-            <td class="{{ $secondKolom }} min-w-42">{{ $j->mk ?? '-' }}</td>
+            <td class="table-second min-w-42">{{ $j->mk ?? '-' }}</td>
     @endif
 
 
-    <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $j->hari }}</td>
-    <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
-    <td class="{{ $subKolom }} text-center whitespace-nowrap">
+    <td class="table-main text-center whitespace-nowrap">{{ $j->hari }}</td>
+    <td class="table-sub text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
+    <td class="table-sub text-center whitespace-nowrap">
         {{ $j->count_mhs_jadwal }}</td>
-    <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
+    <td class="table-sub text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
 
 
     @if ($kelas == null)
-        <td class="{{ $mainKolom }} text-center">
+        <td class="table-main text-center">
             <flux:dropdown>
                 <button class="cursor-pointer">
                     @include('livewire.global.table.badge.level-mk-badge', [
@@ -294,11 +269,11 @@
 
             </flux:dropdown>
         </td>
-        <td class="{{ $subKolom }} text-center">{{ $j->semester ?? '-' }}</td>
-        <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->sks ?? '-' }} SKS</td>
-        <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->sks_text ?? '-' }}</td>
+        <td class="table-sub text-center">{{ $j->semester ?? '-' }}</td>
+        <td class="table-sub text-center whitespace-nowrap">{{ $j->sks ?? '-' }} SKS</td>
+        <td class="table-sub text-center whitespace-nowrap">{{ $j->sks_text ?? '-' }}</td>
 
-        <td class="{{ $secondKolom }} {{ $borderR }} {{ $borderL }} text-center">
+        <td class="table-second table-border-r table-border-l text-center">
             <flux:dropdown>
                 <button class="cursor-pointer">
                     @include('livewire.global.table.badge.wajib-badge', [
@@ -318,10 +293,10 @@
 
             </flux:dropdown>
         </td>
-        <td class="{{ $secondKolom }} min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }} ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
+        <td class="table-second min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }} ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
     @endif
     @if (Auth::user()->admin || Auth::user()->dosen)
-        <td class="{{ $mainKolom }} text-center">
+        <td class="table-main text-center">
             <flux:dropdown>
                 <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                     inset="top bottom">
@@ -337,8 +312,8 @@
             </flux:dropdown>
         </td>
 
-        <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
-        <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
+        <td class="table-second whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
+        <td class="table-second whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
     @endif
     </tr>
 @empty

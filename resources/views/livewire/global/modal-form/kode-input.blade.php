@@ -52,7 +52,7 @@
         class="
                 focus:ring-2 focus:ring-[var(--hover-table-color)] outline-none
                 bg-[var(--second-table-color)]
-                border-[var(--border-table-color)]
+                table-border
                 text-[var(--contrast-main-text)]
                 w-full
                 border

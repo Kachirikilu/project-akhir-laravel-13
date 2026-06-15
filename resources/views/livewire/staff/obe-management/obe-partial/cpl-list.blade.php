@@ -13,7 +13,7 @@
     </div>
 
     {{-- LIST AREA --}}
-    <div class="border-2 border-dashed border-[var(--border-table-color)] rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
+    <div class="border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
 
         {{-- SUBHEADER --}}
         <div class="flex items-center justify-between mb-3">

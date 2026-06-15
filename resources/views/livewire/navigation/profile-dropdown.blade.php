@@ -55,7 +55,7 @@
 
 
     <flux:menu
-        class="w-[224px] !bg-[var(--main-table-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+        class="w-[224px] !bg-[var(--main-table-color)] !table-border !text-[var(--contrast-main-text)]">
         <flux:menu.radio.group>
             <div class="p-0 text-sm font-normal">
                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">

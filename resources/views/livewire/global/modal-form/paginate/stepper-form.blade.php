@@ -1,9 +1,9 @@
 <div
     class="mt-4 pt-4 bg-[var(--main-table-color)]
-           border border-[var(--border-table-color)]
+           border table-border
            text-[var(--contrast-main-text)]
            mb-2 p-4 rounded-lg shadow-md">
-    <div class="border-b border-[var(--border-table-color)]
+    <div class="border-b table-border
                 flex items-center justify-between">
 
         {{-- 🔹 BACK --}}

@@ -76,4 +76,16 @@ trait HasStats
 
         return $stats;
     }
+
+    private function getStatsMahasiswa($query): array
+    {
+        $stats['mahasiswa-aktif'] = (clone $query)->whereHas('mahasiswa', function ($q) {
+            $q->where('status', 'aktif');
+        })->count();
+        $stats['mahasiswa-non-aktif'] = (clone $query)->whereHas('mahasiswa', function ($q) {
+            $q->where('status', '!=', 'aktif');
+        })->count();
+
+        return $stats;
+    }
 }

@@ -10,7 +10,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSes
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;

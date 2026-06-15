@@ -5,7 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 use App\Exports\NilaiExport;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Staff\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Kelas\Kelas;

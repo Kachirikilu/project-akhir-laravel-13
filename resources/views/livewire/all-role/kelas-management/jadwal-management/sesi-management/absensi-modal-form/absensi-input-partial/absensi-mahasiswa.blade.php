@@ -1,5 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)] shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
         <div class="flex items-center gap-3">
@@ -122,7 +122,7 @@
                     sakit,
                     tidakMasuk,
                     poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : null,
-                    nilai_akhir: Number(nilaiAkhir.toFixed(2)),
+                    nilai_akhir: nilaiAkhir.toFixed(2),
                     nilai_index: this.getIndex(nilaiAkhir),
                     nilai_huruf: this.getHuruf(nilaiAkhir)
                 };

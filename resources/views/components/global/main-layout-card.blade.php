@@ -2,7 +2,7 @@
     'paginator' => null,
     'onlyAdmin' => false,
     'targetLoading' => "
-                filterByStatus, filterByStrata, filterByMK,
+                filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
                 filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
                 showDeleted, searchMode,
@@ -16,7 +16,9 @@
                 saveCPL, updateCPL, destroyCPL, restoreCPL,
                 saveRef, updateRef, destroyRef, restoreRef,
                 search,
-                generateRekapCPL, generateRekapCPLProdi, generateRekapMahasiswa,
+                generateRekapCapaian, generateRekapRPSProdi,
+                generateRekapCPLProdi, generateRekapCPMKProdi, generateRekapSCPMKProdi,
+                generateRekapCPLMahasiswa, generateRekapCPMKMahasiswa, generateRekapSCPMKMahasiswa,
                 selectPrForFilter, resetPrFilter,
                 selectDpForFilter, resetDpFilter,
                 selectFkForFilter, resetFkFilter,
@@ -40,7 +42,7 @@
 
     @if (isset($leftHead) || isset($rightHead))
         <div
-            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b border-[var(--border-table-color)] pb-2">
+            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
             <div class="flex flex-row items-center gap-2">
                 @if (isset($leftHead))
                     {{ $leftHead }}
@@ -56,7 +58,7 @@
 
     @if (isset($sortir) || isset($search))
         <div
-            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b border-[var(--border-table-color)] pb-2">
+            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
             <div class="scrollbar-thin overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
                 @if (isset($sortir))
                     {{ $sortir }}
@@ -85,11 +87,11 @@
     </div>
 
     @if (isset($footer))
-        <div class="mt-4 pt-4 border-t border-[var(--border-table-color)]">
+        <div class="mt-4 pt-4 border-t table-border">
             {{ $footer }}
         </div>
     @elseif($paginator)
-        <div class="mt-4 pt-4 border-t border-[var(--border-table-color)]">
+        <div class="mt-4 pt-4 border-t table-border">
             @include('livewire.global.table.footer-table', [
                 'typeXString' => $paginator,
                 'onlyAdmin' => $onlyAdmin,

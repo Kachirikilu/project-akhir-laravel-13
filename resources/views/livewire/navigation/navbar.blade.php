@@ -13,7 +13,7 @@
 
     <nav x-data="{
         openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
-        openOBEMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
+        openOBEMenu: {{ request()->routeIs('obe-management') ? 'true' : 'false' }},
         openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
     
@@ -272,12 +272,12 @@
                     $currentTable = null;
                     // $currentTable = request()->route('switchTable');
                     // $currentTable = $this->switchTable ?? 'rps';
-                    $isOBEActive = request()->routeIs('rps-management');
+                    $isOBEActive = request()->routeIs('obe-management');
 
                     $subMenus = [
                         [
                             'label' => 'RPS',
-                            'url' => route('rps-management', ['switchTable' => 'rps']),
+                            'url' => route('obe-management', ['switchTable' => 'rps']),
                             'param' => 'rps',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-green-600 dark:text-green-400',
@@ -285,7 +285,7 @@
                         ],
                         [
                             'label' => 'CPL',
-                            'url' => route('rps-management', ['switchTable' => 'cpl']),
+                            'url' => route('obe-management', ['switchTable' => 'cpl']),
                             'param' => 'cpl',
                             'icon' => 'document-text',
                             'color' => 'text-sky-600 dark:text-sky-400',
@@ -293,7 +293,7 @@
                         ],
                         [
                             'label' => 'CPMK',
-                            'url' => route('rps-management', ['switchTable' => 'cpmk']),
+                            'url' => route('obe-management', ['switchTable' => 'cpmk']),
                             'param' => 'cpmk',
                             'icon' => 'academic-cap',
                             'color' => 'text-violet-600 dark:text-violet-400',
@@ -301,7 +301,7 @@
                         ],
                         [
                             'label' => 'Sub-CPMK',
-                            'url' => route('rps-management', ['switchTable' => 'sub-cpmk']),
+                            'url' => route('obe-management', ['switchTable' => 'sub-cpmk']),
                             'param' => 'sub-cpmk',
                             'icon' => 'academic-cap',
                             'color' => 'text-fuchsia-600 dark:text-fuchsia-400',
@@ -309,7 +309,7 @@
                         ],
                         [
                             'label' => 'Referensi',
-                            'url' => route('rps-management', ['switchTable' => 'referensi']),
+                            'url' => route('obe-management', ['switchTable' => 'referensi']),
                             'param' => 'referensi',
                             'icon' => 'book-open',
                             'color' => 'text-orange-600 dark:text-orange-400',
@@ -317,7 +317,7 @@
                         ],
                         [
                             'label' => 'Dosen',
-                            'url' => route('rps-management', ['switchTable' => 'dosen']),
+                            'url' => route('obe-management', ['switchTable' => 'dosen']),
                             'param' => 'dosen',
                             'icon' => 'briefcase',
                             'color' => 'text-lime-600 dark:text-lime-400',

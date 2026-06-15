@@ -54,7 +54,7 @@
             <span
                 class="inline-flex items-center justify-center min-w-10 px-3 py-2 -ml-px
                                 text-center text-sm font-medium
-                                border border-[var(--border-table-color)]
+                                border table-border
                                 bg-[var(--main-table-trans)]
                                 text-[var(--contrast-main-text)]
                                 leading-5">

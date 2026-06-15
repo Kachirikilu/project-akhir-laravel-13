@@ -15,7 +15,7 @@ trait WithCPLSearchFilters
     public $modeCPL = '';
     public $cpl_id;
     public $cpl_name = '';
-    public $cpl_items;
+    public $cpl_items = [];
     public $cplNameSearch = '';
     public $cplResults = [];
     public $selectedCPLId = null;

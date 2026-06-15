@@ -15,7 +15,7 @@ trait WithReferensiSearchFilters
     public $modeRef = '';
     public $ref_id;
     public $ref_name = '';
-    public $ref_items;
+    public $ref_items = [];
     public $refNameSearch = '';
     public $refResults = [];
     public $selectedRefId = null;

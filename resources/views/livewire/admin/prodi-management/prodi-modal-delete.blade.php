@@ -1,4 +1,4 @@
-<flux:modal name="prodi-delete" wire:model="showProdiDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="prodi-delete" wire:model="showProdiDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>

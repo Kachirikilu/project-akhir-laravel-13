@@ -1,35 +1,5 @@
 <x-global.main-layout-table :paginator="$mks">
 
-    @php
-        $padingKolom = 'px-6 py-4 text-sm';
-        $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
-            $padingKolom;
-
-        $mainKolom =
-            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
-            ' border-x ' .
-            $padingKolom;
-        $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
-
-        $headSubKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
-            $padingKolom;
-        $subKolom =
-            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
-            $padingKolom;
-    @endphp
-
-    @php
-        if ($switchTable !== '') {
-            $borderR = 'border-[var(--border-table-color)] border-r';
-            $isBorderRight = 1;
-        } else {
-            $borderR = '';
-            $isBorderRight = 0;
-        }
-    @endphp
-
     <x-slot:sortir>
 
         <div x-data="{ activeTab: @entangle('filterMKgg') }"
@@ -97,7 +67,7 @@
             ])
 
             {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
-            <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="{{ $headSubKolom }}">
+            <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub">
                 Bobot Mata Kuliah (SKS)
             </th>
 
@@ -105,9 +75,10 @@
                 'sortFieldString' => 'wajib',
                 'rowSpan' => 2,
                 'isCenter' => 1,
+                'isBorderL' => 1
             ])
 
-            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+            <th rowspan="2" class="table-head border-x">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
@@ -136,7 +107,6 @@
                     'headString' => 'Tatap Muka',
                     'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => $isBorderRight,
                 ])
             @endif
             @if ($switchTable == 'praktikum' || $switchTable == '')
@@ -145,7 +115,6 @@
                     'headString' => 'Praktikum',
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => $isBorderRight,
                 ])
             @endif
             @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
@@ -154,7 +123,6 @@
                     'headString' => 'Praktek Lapangan',
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => $isBorderRight,
                 ])
             @endif
             @if ($switchTable == 'simulasi' || $switchTable == '')
@@ -163,7 +131,6 @@
                     'headString' => 'Simulasi',
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => 1,
                 ])
             @endif
         </tr>
@@ -172,10 +139,10 @@
 
     @forelse($mks as $mk)
         <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $secondKolom }} text-center">{{ $mk->id }}</td>
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second text-center">{{ $mk->id }}</td>
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -195,7 +162,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
@@ -215,32 +182,31 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-84">{{ $mk->mk ?? '-' }}</td>
-            <td class="{{ $secondKolom }} text-center">{{ $mk->semester ?? '-' }}</td>
+            <td class="table-second min-w-84">{{ $mk->mk ?? '-' }}</td>
+            <td class="table-second text-center">{{ $mk->semester ?? '-' }}</td>
 
-            {{-- <td class="px-6 py-4 text-sm text-[var(--contrast-second-text)]">{{ $mk->sks ?? '-' }}</td> --}}
-            <td class="{{ $mainKolom }} text-center">{{ $mk->sks ?? '-' }}</td>
+            <td class="table-main text-center">{{ $mk->sks ?? '-' }}</td>
 
-            @if ($switchTable == 'tatap_muka' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $mk->sks_tm ?? '-' }}</td>
+            @if ($switchTable == 'tatap-muka' || $switchTable == '')
+                <td class="table-sub text-center">{{ $mk->sks_tm ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktikum' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderR }} text-center">
+                <td class="table-sub text-center">
                     {{ $mk->sks_pr ?? '-' }}</td>
             @endif
 
-            @if ($switchTable == 'praktek_lapangan' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderR }} text-center">
+            @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
+                <td class="table-sub text-center">
                     {{ $mk->sks_pl ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'simulasi' || $switchTable == '')
-                <td class="{{ $subKolom }} border-r text-center">
+                <td class="table-sub text-center">
                     {{ $mk->sks_sm ?? '-' }}</td>
             @endif
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="table-second table-border-l text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -260,7 +226,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -277,8 +243,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
     @empty
         <tr>

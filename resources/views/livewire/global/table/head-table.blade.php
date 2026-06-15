@@ -1,6 +1,6 @@
 @if ($withTh ?? true)
     <th wire:key="head-table-{{ $sortFieldString }}" rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
-        class="bg-[var(--main-table-color)] border-[var(--border-table-color)] p-6 relative 
+        class="bg-[var(--main-table-color)] table-border p-6 relative 
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}

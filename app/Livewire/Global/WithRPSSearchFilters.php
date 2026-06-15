@@ -24,7 +24,7 @@ trait WithRPSSearchFilters
 
     public $rps_name = '';
 
-    public $rps_items;
+    public $rps_items = [];
 
     public $rpsNameSearch = '';
 
@@ -415,6 +415,21 @@ trait WithRPSSearchFilters
                         $searchLower
                     );
 
+                    $matchNilaiAkhir = $this->matchNilaiAkhir(
+                        $rps->rekap_rps_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiIndex = $this->matchNilaiIndex(
+                        $rps->index_rps_pr ?? 0,
+                        $searchLower
+                    );
+
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $rps->akreditas_rps_pr ?? 'E',
+                        $searchLower
+                    );
+
                     /*
                     |--------------------------------------------------------------------------
                     | GANJIL / GENAP
@@ -602,6 +617,11 @@ trait WithRPSSearchFilters
                         || $matchKodeMK
                         || $matchMK
                         || $matchRPS
+
+                                                || $matchNilaiAkhir
+                        || $matchNilaiIndex
+                        || $matchNilaiHuruf
+
                         || $matchSemester
                         || $matchSemesterJenis
                         || $matchSKS
@@ -631,6 +651,10 @@ trait WithRPSSearchFilters
                 'sks' => fn ($rps) => (int) $rps->sks,
                 'sks_text', 'pembelajaran' => fn ($rps) => $rps->sks_text,
                 'is_wajib', 'wajib' => fn ($rps) => $rps->wajib_text,
+
+                'rekap_rps_pr',
+                'index_rps_pr',
+                'akreditas_rps_pr' => fn ($rps) => (float) ($rps->rekap_rps_pr ?? 0),
 
                 'count_cpmk' => fn ($rps) => (int) $rps->count_cpmk,
                 'count_scpmk' => fn ($rps) => (int) $rps->count_scpmk,

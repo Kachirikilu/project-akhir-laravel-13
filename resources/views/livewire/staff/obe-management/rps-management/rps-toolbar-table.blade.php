@@ -83,7 +83,6 @@
         <flux:menu.item
             @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
-
                         $store.rps?.setDeleteRPS(
                             '{{ $x->mk ?? '' }}',
                             '{{ $x->kode ?? '' }}',

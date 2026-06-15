@@ -184,10 +184,10 @@
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? 999)"
                     @click="expanded = !expanded"
-                    class="card-sesi-item relative flex flex-col self-start p-3 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : '' }}">
+                    class="card-sesi-item relative flex flex-col self-start p-3 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : '' }}">
 
                     {{-- CARD HEADER --}}
-                    <div class="flex items-start justify-between gap-4 pb-3 border-b border-[var(--border-table-color)]"
+                    <div class="flex items-start justify-between gap-4 pb-3 border-b table-border"
                         @click.stop>
                         <div class="flex items-center gap-3">
                             {{-- Badge Pertemuan --}}
@@ -254,7 +254,7 @@
 
                         {{-- 1. INFORMASI SESI --}}
                         <div
-                            class="p-3 rounded-lg bg-[var(--second-table-trans)] border border-[var(--border-table-color)]/30 space-y-3">
+                            class="p-3 rounded-lg bg-[var(--second-table-trans)] border table-border/30 space-y-3">
                             <span
                                 class="text-xs font-bold uppercase tracking-wide text-[var(--focus-color)] block">Informasi
                                 Sesi</span>
@@ -286,13 +286,13 @@
 
                                 {{-- SUB-CPMK --}}
                                 <div @click.stop
-                                    class="{{ $isUjian ? 'sm:col-span-2' : 'sm:col-span-1' }} p-3 rounded-xl bg-[var(--sub-table-trans)] border border-[var(--border-table-color)]/30 space-y-3">
+                                    class="{{ $isUjian ? 'sm:col-span-2' : 'sm:col-span-1' }} p-3 rounded-xl bg-[var(--sub-table-trans)] border table-border/30 space-y-3">
                                     <div class="flex items-center justify-between gap-2">
                                         <span
                                             class="text-xs font-bold uppercase tracking-wide text-[var(--focus-color)]">Sub-CPMK
                                             & Bobot</span>
                                         <span
-                                            class="text-xs px-2 py-1 rounded-lg font-semibold bg-[var(--main-table-color)] border border-[var(--border-table-color)]">
+                                            class="text-xs px-2 py-1 rounded-lg font-semibold bg-[var(--main-table-color)] border table-border">
                                             Bobot: {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}
                                         </span>
                                     </div>
@@ -404,7 +404,7 @@
                                     </div>
 
                                     <div
-                                        class="pt-2 border-t border-[var(--border-table-color)]/30 text-xs flex flex-wrap items-center gap-2 text-[var(--contrast-second-text)]">
+                                        class="pt-2 border-t table-border/30 text-xs flex flex-wrap items-center gap-2 text-[var(--contrast-second-text)]">
                                         <span>Waktu Tugas:</span>
                                         <span
                                             class="font-semibold text-[var(--contrast-main-text)]">{{ $s->w_tugas ?? 0 }}
@@ -419,7 +419,7 @@
 
                                 {{-- DESKRIPSI --}}
                                 <div
-                                    class="p-3 rounded-xl bg-[var(--second-table-trans)] border border-[var(--border-table-color)]/30">
+                                    class="p-3 rounded-xl bg-[var(--second-table-trans)] border table-border/30">
                                     <span
                                         class="text-xs font-bold uppercase tracking-wide text-[var(--contrast-second-text)] block mb-2">Deskripsi
                                         Tugas / Evaluasi</span>
@@ -434,7 +434,7 @@
                         {{-- TOGGLE INDIKATOR FOOTER --}}
                         @if (!$isUjian)
                             <div
-                                class="flex justify-center mt-2 pt-1.5 border-t border-dashed border-[var(--border-table-color)]/20">
+                                class="flex justify-center mt-2 pt-1.5 border-t border-dashed table-border/20">
                                 <div
                                     class="flex items-center gap-1 text-[10px] font-medium text-[var(--contrast-second-text)] transition-colors duration-150">
                                     <span
@@ -452,7 +452,7 @@
 
         {{-- EMPTY STATE ANCHOR --}}
         <div x-show="totalFilteredItems === 0"
-            class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+            class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!</p>
         </div>
 

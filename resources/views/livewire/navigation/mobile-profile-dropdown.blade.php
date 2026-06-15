@@ -26,7 +26,7 @@
             <flux:profile initials="{{ $userInitials }}" icon-trailing="chevron-down" />
         @endif
 
-        <flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+        <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
             <flux:menu.radio.group>
                 <div class="p-0 text-sm font-normal">

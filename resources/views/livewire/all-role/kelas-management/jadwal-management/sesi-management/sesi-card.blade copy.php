@@ -112,10 +112,10 @@
                     x-show="matchSearchPassed && (localVisibleIndex >= (currentPage - 1) * perPage && localVisibleIndex < currentPage * perPage)"
                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
                     x-transition:enter-end="opacity-100 scale-100" @click="expanded = !expanded"
-                    class="card-sesi-item {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }} relative flex flex-col self-start p-3 rounded-xl border border-[var(--border-table-color)] bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300">
+                    class="card-sesi-item {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }} relative flex flex-col self-start p-3 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300">
 
                     {{-- CARD HEADER --}}
-                    <div class="flex items-start justify-between gap-4 pb-3 border-b border-[var(--border-table-color)]"
+                    <div class="flex items-start justify-between gap-4 pb-3 border-b table-border"
                         @click.stop>
                         <div class="flex items-center gap-3">
                             <x-label-card type="sm">P-{{ $s->pertemuan_ke }}</x-label-card>
@@ -173,7 +173,7 @@
                     {{-- CARD BODY --}}
                     <div class="flex flex-col flex-1 justify-between mt-3 text-sm">
                         <div
-                            class="p-3 rounded-lg bg-[var(--second-table-trans)] border border-[var(--border-table-color)]/30 space-y-3">
+                            class="p-3 rounded-lg bg-[var(--second-table-trans)] border table-border/30 space-y-3">
                             <span
                                 class="text-xs font-bold uppercase tracking-wide text-[var(--focus-color)] block">Informasi
                                 Sesi</span>
@@ -203,13 +203,13 @@
                         <div x-show="expanded" x-collapse class="mt-2 transition-all duration-300">
                             <div class="grid grid-cols-1 {{ $isUjian ? 'sm:grid-cols-3' : '' }} gap-2">
                                 <div @click.stop
-                                    class="{{ $isUjian ? 'sm:col-span-2' : 'sm:col-span-1' }} p-3 rounded-xl bg-[var(--sub-table-trans)] border border-[var(--border-table-color)]/30 space-y-3">
+                                    class="{{ $isUjian ? 'sm:col-span-2' : 'sm:col-span-1' }} p-3 rounded-xl bg-[var(--sub-table-trans)] border table-border/30 space-y-3">
                                     <div class="flex items-center justify-between gap-2">
                                         <span
                                             class="text-xs font-bold uppercase tracking-wide text-[var(--focus-color)]">Sub-CPMK
                                             & Bobot</span>
                                         <span
-                                            class="text-xs px-2 py-1 rounded-lg font-semibold bg-[var(--main-table-color)] border border-[var(--border-table-color)]">Bobot:
+                                            class="text-xs px-2 py-1 rounded-lg font-semibold bg-[var(--main-table-color)] border table-border">Bobot:
                                             {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}</span>
                                     </div>
                                     <div class="space-y-3">
@@ -288,7 +288,7 @@
                                     </div>
                                 </div>
                                 <div
-                                    class="sm:col-span-1 p-3 rounded-xl bg-[var(--second-table-trans)] border border-[var(--border-table-color)]/30">
+                                    class="sm:col-span-1 p-3 rounded-xl bg-[var(--second-table-trans)] border table-border/30">
                                     <span
                                         class="text-xs font-bold uppercase tracking-wide text-[var(--contrast-second-text)] block mb-2">Deskripsi
                                         Tugas</span>
@@ -300,7 +300,7 @@
 
                         @if (!$isUjian)
                             <div
-                                class="flex justify-center mt-2 pt-1.5 border-t border-dashed border-[var(--border-table-color)]/20">
+                                class="flex justify-center mt-2 pt-1.5 border-t border-dashed table-border/20">
                                 <div
                                     class="flex items-center gap-1 text-[10px] font-medium text-[var(--contrast-second-text)]">
                                     <span
@@ -314,7 +314,7 @@
                 </div>
             @empty
                 <div
-                    class="col-span-6 text-center p-12 rounded-xl border border-dashed border-[var(--border-table-color)] bg-[var(--main-table-trans)]">
+                    class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
                     <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!
                     </p>
                 </div>
@@ -323,7 +323,7 @@
 
         {{-- NAVIGASI PAGINASI --}}
         <div x-show="totalFilteredItems > perPage"
-            class="flex items-center justify-between pt-4 border-t border-[var(--border-table-color)]">
+            class="flex items-center justify-between pt-4 border-t table-border">
             <div class="text-xs text-[var(--contrast-second-text)]">
                 Menampilkan <span class="font-semibold text-[var(--contrast-main-text)]"
                     x-text="Math.min((currentPage - 1) * perPage + 1, totalFilteredItems)"></span>
@@ -337,7 +337,7 @@
                 <button type="button"
                     @click="if(currentPage > 1) { currentPage--; window.scrollTo({top: 0, behavior: 'smooth'}); }"
                     :disabled="currentPage === 1"
-                    class="px-3 py-1 text-xs font-medium rounded-lg border border-[var(--border-table-color)] bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed">
+                    class="px-3 py-1 text-xs font-medium rounded-lg border table-border bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed">
                     Sebelumnya
                 </button>
                 <div class="flex items-center gap-1 mx-2 text-xs text-[var(--contrast-second-text)]">
@@ -347,7 +347,7 @@
                 <button type="button"
                     @click="if(currentPage < totalPages) { currentPage++; window.scrollTo({top: 0, behavior: 'smooth'}); }"
                     :disabled="currentPage === totalPages"
-                    class="px-3 py-1 text-xs font-medium rounded-lg border border-[var(--border-table-color)] bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed">
+                    class="px-3 py-1 text-xs font-medium rounded-lg border table-border bg-[var(--main-table-trans)] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed">
                     Selanjutnya
                 </button>
             </div>

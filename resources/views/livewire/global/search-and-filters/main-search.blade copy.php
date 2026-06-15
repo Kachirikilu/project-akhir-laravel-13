@@ -7,7 +7,7 @@
     {{-- Input Search --}}
     <input x-model.debounce.300ms="search" type="text" name="search" placeholder="{{ $placeholder ?? 'Cari data...' }}"
         class="w-full h-10 pl-10 px-4 rounded-lg shadow-sm
-               bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+               bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                 {{-- placeholder-[var(--contrast-third-text)]  --}}
                 "/>
 

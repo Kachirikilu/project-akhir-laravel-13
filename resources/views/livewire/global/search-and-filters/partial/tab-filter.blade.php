@@ -6,7 +6,7 @@
 </button> --}}
 <button @click="activeTab = '{{ $tabString }}'; $wire.{{ $xString }}('{{ $tabString }}')"
     class="relative cursor-pointer tab-mode px-2 py-2 text-sm font-medium rounded-t-lg transition duration-200 whitespace-nowrap group focus:outline-none"
-    :class="activeTab === '{{ $tabString }}' || activeTab === '{{ $tabHiddenString ?? $tabString }}' 
+    :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
         ? 'text-[var(--focus-color)]' 
         : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)]'">
 
@@ -22,6 +22,6 @@
     <span 
         x-cloak
         class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-0.5 transition-all duration-300 ease-in-out transform origin-left"
-        :class="activeTab === '{{ $tabString }}' || activeTab === '{{ $tabHiddenString ?? $tabString }}'  ? 'w-full scale-x-100' : 'w-full scale-x-0 group-hover:scale-x-100'"
+        :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}'  ? 'w-full scale-x-100' : 'w-full scale-x-0 group-hover:scale-x-100'"
     ></span>
 </button>
