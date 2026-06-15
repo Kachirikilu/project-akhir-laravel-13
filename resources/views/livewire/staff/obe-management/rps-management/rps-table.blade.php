@@ -87,16 +87,18 @@
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+            @if (!($withCapaian ?? false))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
 
         </tr>
 
@@ -377,12 +379,14 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
+            @if (!($withCapaian ?? false))
+                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
+            @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 15 : 17 }}"
+            <td colspan="{{ $withCapaian ?? null ? 13 : 17 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Rencana Pembelajaran Semester (RPS) ditemukan!
             </td>

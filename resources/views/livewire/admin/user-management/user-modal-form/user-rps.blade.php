@@ -36,29 +36,8 @@
 
         <div class="space-y-3">
 
-            <!-- Baris Atas -->
-            <div class="grid grid-cols-2 gap-3">
-
-                <div
-                    class="p-3 rounded-lg border border-lime-200 dark:border-lime-900/60 bg-lime-50/50 dark:bg-lime-950/20 text-center">
-                    <span class="block text-xs font-medium text-lime-700 dark:text-lime-400">Jumlah RPS</span>
-                    <span class="block text-xl font-bold text-lime-800 dark:text-lime-300 mt-0.5">
-                        <span x-text="$store.user?.count_rps"></span>
-                    </span>
-                </div>
-
-                <div
-                    class="p-3 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
-                    <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Total SKS</span>
-                    <span class="block text-xl font-bold text-purple-800 dark:text-purple-300 mt-0.5">
-                        <span x-text="$store.user?.total_sks"></span>
-                    </span>
-                </div>
-
-            </div>
-
             <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                <!-- Baris Bawah -->
+
                 <div class="grid grid-cols-3 gap-3">
                     <div
                         class="p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
@@ -87,6 +66,26 @@
 
                 </div>
             </template>
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <div
+                    class="p-3 rounded-lg border border-lime-200 dark:border-lime-900/60 bg-lime-50/50 dark:bg-lime-950/20 text-center">
+                    <span class="block text-xs font-medium text-lime-700 dark:text-lime-400">Jumlah RPS</span>
+                    <span class="block text-xl font-bold text-lime-800 dark:text-lime-300 mt-0.5">
+                        <span x-text="$store.user?.count_rps"></span>
+                    </span>
+                </div>
+
+                <div
+                    class="p-3 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
+                    <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Total SKS</span>
+                    <span class="block text-xl font-bold text-purple-800 dark:text-purple-300 mt-0.5">
+                        <span x-text="$store.user?.total_sks"></span>
+                    </span>
+                </div>
+
+            </div>
 
         </div>
     </div>

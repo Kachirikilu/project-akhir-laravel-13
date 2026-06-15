@@ -120,7 +120,7 @@ trait WithProdiSearchFilters
 
         $this->havePrParent($query);
 
-        if ($this->modePr !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
+        if ($this->modePr !== 'single' && $input->toString() === 'uni' && ($this->mkType == 4 || $this->cplType == 4)) {
             $allProdis = $query->get();
             foreach ($allProdis as $p) {
                 if (! in_array($p->id, $this->pr_id_array)) {
@@ -147,11 +147,11 @@ trait WithProdiSearchFilters
             $kodeDepartemen = $kodeProdi;
             $kodeFakultas = $kodeProdi;
 
-            if (property_exists($this, 'mkType')) {
-                if ($this->mkType >= 2) {
+            if (property_exists($this, 'mkType') || property_exists($this, 'cplType')) {
+                if ($this->mkType >= 2 || $this->cplType >= 2) {
                     $kodeDepartemen = str($prodi->dp_rel?->kode ?? '')->lower()->trim();
                 }
-                if ($this->mkType >= 3) {
+                if ($this->mkType >= 3 || $this->cplType >= 3) {
                     $kodeFakultas = str($prodi->dp_rel?->fk_rel?->kode ?? '')->lower()->trim();
                 }
             }
@@ -332,9 +332,14 @@ trait WithProdiSearchFilters
             } elseif ($this->showMKModal == true && $this->mkType == 3 && filled($this->fk_id)) {
                 $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
             }
-            // else {
-            //     $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $fakultasId));
-            // }
+        }
+
+        if (property_exists($this, 'showCPLModal') && property_exists($this, 'cplType')) {
+            if ($this->showCPLModal == true && $this->cplType == 2 && filled($this->dp_id)) {
+                $query->where('dp_id', $this->dp_id);
+            } elseif ($this->showCPLModal == true && $this->cplType == 3 && filled($this->fk_id)) {
+                $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+            }
         }
 
         return $query;

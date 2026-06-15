@@ -251,14 +251,12 @@ trait WithSubCPMKModal
                     'bobot' => $validated['bobot'],
                 ]);
 
-                if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $scpmk) {
+                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $scpmk) {
                     $this->scpmk_id_array[] = $scpmk->id;
                     $this->scpmk_items_array[] = $this->itemsSCPMK($scpmk);
                     $mapped = $this->mapSCPMK(collect([$scpmk]));
-                    // $this->scpmk_sub_items_array = array_merge($this->scpmk_sub_items_array, $mapped);
-                    $this->pushToSCPMKItems($mapped);
+                    $this->scpmk_sub_items_array = array_merge($this->scpmk_sub_items_array, $mapped);
                 }
-
 
                 // Sync Referensi (yang sudah difilter/clean)
                 if (! empty($validated['ref_id_array'])) {

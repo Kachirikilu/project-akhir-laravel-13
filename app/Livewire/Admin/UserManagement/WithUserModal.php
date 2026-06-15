@@ -93,8 +93,14 @@ trait WithUserModal
 
     public function editUser($id, $withRPS = false, $isRPS = false)
     {
-        if (! $this->AuthCheck()) {
-            return;
+        if ($isRPS) {
+            if (! $this->AuthCheck('staff')) {
+                return;
+            }
+        } else {
+            if (! $this->AuthCheck()) {
+                return;
+            }
         }
 
         $this->resetInputUser();

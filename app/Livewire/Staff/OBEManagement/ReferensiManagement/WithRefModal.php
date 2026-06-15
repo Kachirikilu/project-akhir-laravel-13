@@ -249,6 +249,8 @@ trait WithRefModal
                     'link' => $validated['link'],
                 ]);
 
+                dd($ref);
+
                 if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $ref) {
                     if (! isset($this->ref_id_array['rps']) || ! is_array($this->ref_id_array['rps'])) {
                         $this->ref_id_array['rps'] = [];

@@ -285,20 +285,20 @@ trait WithCPMKModal
         try {
             // 1. Jalankan validasi & pembersihan
             $validated = $this->inputModalCPMK(false, $data);
-
+            $cpmk = collect();
             // 2. Eksekusi Database
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, &$cpmk) {
                 $cpmk = CPMK::create([
                     'kode_cpmk' => strtoupper($validated['kode_cpmk']),
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
-                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpmk) {
-                    $this->cpmk_id_array[] = $cpmk->id;
-                    $this->cpmk_items_array[] = $this->itemsCPMK($cpmk);
-                    $mapped = $this->mapCPMK(collect([$cpmk]));
-                    $this->cpmk_sub_items_array = array_merge($this->cpmk_sub_items_array, $mapped);
-                }
+                // if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $scpmk) {
+                //     $this->scpmk_id_array[] = $scpmk->id;
+                //     $this->scpmk_items_array[] = $this->itemsSCPMK($scpmk);
+                //     $mapped = $this->mapSCPMK(collect([$scpmk]));
+                //     // $this->scpmk_sub_items_array = array_merge($this->scpmk_sub_items_array, $mapped);
+                // }
 
                 // Sync Sub-CPMK (SCPMK)
                 if (! empty($validated['scpmk_id_array'])) {
@@ -327,6 +327,17 @@ trait WithCPMKModal
                     $cpmk->refs()->sync($syncData);
                 }
             });
+
+            if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpmk) {
+                $newCpmk = CPMK::with(['scpmks', 'refs'])
+                    ->find($cpmk->id);
+                $this->cpmk_id_array[] = $newCpmk->id;
+                $this->cpmk_items_array[] = $this->itemsCPMK($newCpmk);
+                $mapped = $this->mapCPMK(collect([$newCpmk]));
+                // $this->cpmk_sub_items_array = array_merge($this->cpmk_sub_items_array, $mapped);
+                $this->pushToCPMKItems($mapped);
+                // dd($this->cpmk_items_array, $this->cpmk_sub_items_array);
+            }
 
             $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']}");
             $this->resetInputCPMK();

@@ -57,7 +57,7 @@ class MataKuliah extends Model
         return Attribute::get(function () {
             $prefixDefault = $this->kode_mk ? strtoupper($this->kode_mk) : null;
             $prodi = $this->prodis->first();
-
+            $prefix = 'UNI';
             if ($prodi) {
                 if ($this->level_mk == 1) { // Tingkat Prodi
                     $prefix = $prodi->kode_pr_short ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';

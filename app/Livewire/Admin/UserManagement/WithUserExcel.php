@@ -61,6 +61,18 @@ trait WithUserExcel
         $tag = ucwords(empty($this->switchTable) ? 'Pengguna' : $this->switchTable).$filter;
         $TAG = strtoupper($tag);
 
+        if ($this->switchTable == 'mahasiswa') {
+            if (empty($this->filterAngkatan)) {
+                if (! empty($this->searchAngkatan)) {
+                    $tag .= '_Angkatan '.$this->searchAngkatan;
+                    $TAG .= ' ANGKATAN '.$this->searchAngkatan;
+                }
+            } else {
+                $tag .= '_Angkatan '.$this->filterAngkatan;
+                $TAG .= ' ANGKATAN '.$this->filterAngkatan;
+            }
+        }
+
         $sInput = '';
         $sINPUT = '';
         if ($this->filterStatus !== '') {

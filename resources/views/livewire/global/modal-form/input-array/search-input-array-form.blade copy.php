@@ -81,39 +81,16 @@
         {{-- KONTEN LIST (Akan transparan saat loading) --}}
         <div
             @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}, {{ $wireLoading }}" wire:loading.class="opacity-60 pointer-events-none" @endif">
-            @forelse ($xResults as $x)
-                @php
-                    $itemId = data_get($x, 'id');
-                    $itemKode = data_get($x, 'kode', '');
-                    $itemLabel = data_get($x, $typeXString, '');
-                    $itemLabel2 = isset($typeX2String) ? data_get($x, $typeX2String, '') : null;
-                    $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
-                    $itemLabel4 = isset($typeX4String) ? data_get($x, $typeX4String, '') : null;
-                    $itemLabel5 = isset($typeX5String) ? data_get($x, $typeX5String, '') : null;
-                    $itemLink = isset($typeLinkString) ? data_get($x, $typeLinkString, '') : null;
-                @endphp
+@forelse ($xResults as $x)
 
-                @if ($itemId !== null)
-                        @include('livewire.global.modal-form.input-array.partial.search-array-dropdown')
+  {{ $x }}
+  <span></span>
 
-                   
-                @endif
-            @empty
-                <div class="p-4 text-center">
-                    <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-sm text-[var(--focus-color)] font-medium animate-pulse">
-                            Sedang mencari data {{ $nameXString ?? null }}...
-                        </p>
-                    </div>
+@empty
 
-                    <div wire:loading.remove
-                        @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
-                            Data {{ $nameXString ?? null }} tidak ditemukan!
-                        </p>
-                    </div>
-                </div>
-            @endforelse
+    ...
+
+@endforelse
         </div>
     </div>
 
@@ -122,8 +99,7 @@
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
-    <div
-        class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+    <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
@@ -190,20 +166,10 @@
 
                                 @if ($typeLinkString ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
-                                    <template x-if="itemsAll[index]?.link && itemsAll[index]?.link.trim() !== ''">
-                                        <a :href="itemsAll[index]?.link" target="_blank"
-                                            class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
-                                            <flux:icon.link variant="micro" /> 
-                                            <span x-text="itemsAll[index]?.link"></span>
-                                        </a>
-                                    </template>
-
-                                    <template x-if="!itemsAll[index]?.link || itemsAll[index]?.link.trim() === ''">
-                                        <div class="flex items-center gap-1 text-gray-400 dark:text-gray-600 text-xs font-medium cursor-not-allowed select-none">
-                                            <flux:icon.link variant="micro" class="opacity-50" /> 
-                                            <span>Tidak ada tautan</span>
-                                        </div>
-                                    </template>
+                                    <a :href="itemsAll[index]?.link" target="_blank"
+                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
+                                        <flux:icon.link variant="micro" /> <span x-text="itemsAll[index]?.link"></span>
+                                    </a>
                                 @endif
                             </div>
                         </div>

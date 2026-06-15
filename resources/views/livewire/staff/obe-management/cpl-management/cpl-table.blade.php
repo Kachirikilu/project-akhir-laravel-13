@@ -40,16 +40,18 @@
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+            @if (!($withCapaian ?? false))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
 
         </tr>
 
@@ -152,7 +154,6 @@
                 <x-button-action
                     @click="
                             $store.cpl?.reset();
-
                             const type = '{{ $c->level_cpl }}';
                             $store.cpl?.setEdit(1);
                             const colors = {
@@ -164,8 +165,8 @@
                             $store.cpl?.setColor(colors[type] ?? 'text-sky-700 dark:text-sky-400');
                                 $store.cpl?.setValueCPLRPS (
                                     '{{ $c->kode ?? '' }}',
-                                    '{{ $c->rekap_cpl_pr ?? 0.0 }}',
-                                    '{{ $c->index_cpl_pr ?? 0.0 }}',
+                                    '{{ $c->rekap_cpl_pr ?? 0 }}',
+                                    '{{ $c->index_cpl_pr ?? 0 }}',
                                     '{{ $c->akreditas_cpl_pr ?? 'E' }}',
                                 );
                             $flux.modal('cpl-rps-modal').show();
@@ -196,13 +197,14 @@
                 </flux:dropdown>
             </td>
 
-
-            <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
+            @if (!($withCapaian ?? false))
+                <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
+            @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 12 : 8 }}"
+            <td colspan="{{ $withCapaian ?? null ? 10 : 8 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Capaian Pembelajaran Lulusan (CPL) ditemukan!
             </td>

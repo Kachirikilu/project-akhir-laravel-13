@@ -60,7 +60,7 @@ trait WithCPLSearchFilters
         return CPL::query()->with('cpmks.rps', 'cpmks', 'prodis');
     }
 
-    private function itemsCPL($c)
+    private function itemsCPL($c, ?string $customKode = null)
     {
         if (! $c) {
             return null;
@@ -68,7 +68,7 @@ trait WithCPLSearchFilters
 
         return [
             'id' => $c->id,
-            'kode' => $c->kode,
+            'kode' => $customKode ?: $c->kode,
             'slot1' => $c->deskripsi,
         ];
     }
@@ -376,7 +376,7 @@ trait WithCPLSearchFilters
                         $matchID
                         || $matchKode
                         || $matchDes
-                        
+
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
                         || $matchNilaiHuruf

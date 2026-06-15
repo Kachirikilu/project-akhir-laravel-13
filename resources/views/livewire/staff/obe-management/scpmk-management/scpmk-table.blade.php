@@ -42,16 +42,19 @@
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+
+            @if (!($withCapaian ?? false))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
 
         </tr>
 
@@ -224,13 +227,14 @@
                 </flux:dropdown>
             </td>
 
-
-            <td class="table-second whitespace-nowrap text-center">{{ $sc->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $sc->updated_day ?? '-' }}</td>
+            @if (!($withCapaian ?? false))
+                <td class="table-second whitespace-nowrap text-center">{{ $sc->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $sc->updated_day ?? '-' }}</td>
+            @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 13 : 14 }}"
+            <td colspan="{{ $withCapaian ?? null ? 11 : 14 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Sub-CPMK ditemukan!
             </td>

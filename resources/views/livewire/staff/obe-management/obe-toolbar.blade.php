@@ -1,7 +1,7 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
     @if ($typeXString == 'all')
-        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Rencana Pembelajaran
-            Semester
+        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">
+            {{ $textString ?? null ? $textString : 'Manajemen Rencana Pembelajaran Semester' }}
         </h2>
     @endif
     <div class="ml-auto">
@@ -27,8 +27,7 @@
                 @endif
             </flux:button>
 
-            <flux:menu
-                class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+            <flux:menu class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
                 @if ($typeXString == 'all')
                     <flux:menu.heading>Pilih OBE</flux:menu.heading>
@@ -62,8 +61,7 @@
 
 
 
-                    <flux:menu.item
-                        class="cursor-pointer !text-sky-600 dark:!text-sky-400">
+                    <flux:menu.item class="cursor-pointer !text-sky-600 dark:!text-sky-400">
                         <flux:icon name="document-text" class="!text-sky-600 dark:!text-sky-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span class="mr-7">Capaian Pembelajaran Lulusan</span>
@@ -121,7 +119,8 @@
                             $wire.addCPL(3);
                         "
                         class="ml-8 cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30">
-                        <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
+                        <flux:icon name="building-library"
+                            class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span class="mr-7">CPL Fakultas</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
@@ -245,49 +244,50 @@
                     </flux:menu.item>
                 @endif
 
-                @if ($typeXString == 'ref' || $typeXString == 'all')
-                    {{-- Referensi --}}
-                    <flux:menu.item
-                        @click="
-                            $store.ref?.setEdit(0);
-                            $store.ref?.setFlyout({{ $isFlyout ?? false }});
-                            $store.ref?.setColor('text-orange-700 dark:text-orange-400');
-                            $store.ref?.reset(1);
-                            $flux.modal('ref-modal').show();
-                            $wire.addRef();
+                @if (!($withCapaian ?? false))
+                    @if ($typeXString == 'ref' || $typeXString == 'all')
+                        {{-- Referensi --}}
+                        <flux:menu.item
+                            @click="
+                                $store.ref?.setEdit(0);
+                                $store.ref?.setFlyout({{ $isFlyout ?? false }});
+                                $store.ref?.setColor('text-orange-700 dark:text-orange-400');
+                                $store.ref?.reset(1);
+                                $flux.modal('ref-modal').show();
+                                $wire.addRef();
+                            "
+                            class="cursor-pointer !text-orange-600 dark:!text-orange-400 hover:!bg-orange-100 dark:hover:!bg-orange-900/30">
+                            <flux:icon name="book-open" class="!text-orange-600 dark:!text-orange-400 mr-2 h-4 w-4" />
+                            <div class="flex justify-between items-center w-full">
+                                <span class="mr-7">Referensi</span>
+                                <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
+                                    class="animate-spin h-4 w-4 ml-2" />
+                            </div>
+                        </flux:menu.item>
+                    @endif
+
+                    @if (Auth::user()->admin && ($typeXString == 'dosen' || $typeXString == 'all'))
+                        {{-- Dosen --}}
+                        <flux:menu.item
+                            @click="
+                            $store.user?.setType('dosen');
+                            $store.user?.setEdit(0);
+                            {{-- $store.user?.resetSelect(); --}}
+                            $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                            $store.user?.reset(1);
+                            $flux.modal('user-modal').show();
+                            $wire.addUser('dosen');
                         "
-                        class="cursor-pointer !text-orange-600 dark:!text-orange-400 hover:!bg-orange-100 dark:hover:!bg-orange-900/30">
-                        <flux:icon name="book-open" class="!text-orange-600 dark:!text-orange-400 mr-2 h-4 w-4" />
-                        <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Referensi</span>
-                            <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
-                                class="animate-spin h-4 w-4 ml-2" />
-                        </div>
-                    </flux:menu.item>
+                            class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-100 dark:hover:!bg-lime-900/30">
+                            <flux:icon name="briefcase" class="!text-lime-600 dark:!text-lime-400 mr-2 h-4 w-4" />
+                            <div class="flex justify-between items-center w-full">
+                                <span class="mr-7">Dosen</span>
+                                <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
+                                    class="animate-spin h-4 w-4 ml-2" />
+                            </div>
+                        </flux:menu.item>
+                    @endif
                 @endif
-
-                @if (Auth::user()->admin && ($typeXString == 'dosen' || $typeXString == 'all'))
-                    {{-- Dosen --}}
-                    <flux:menu.item
-                        @click="
-                        $store.user?.setType('dosen');
-                        $store.user?.setEdit(0);
-                        {{-- $store.user?.resetSelect(); --}}
-                        $store.user?.setColor('text-lime-700 dark:text-lime-400');
-                        $store.user?.reset(1);
-                        $flux.modal('user-modal').show();
-                        $wire.addUser('dosen');
-                    "
-                        class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-100 dark:hover:!bg-lime-900/30">
-                        <flux:icon name="briefcase" class="!text-lime-600 dark:!text-lime-400 mr-2 h-4 w-4" />
-                        <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Dosen</span>
-                            <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
-                                class="animate-spin h-4 w-4 ml-2" />
-                        </div>
-                    </flux:menu.item>
-                @endif
-
 
             </flux:menu>
         </flux:dropdown>

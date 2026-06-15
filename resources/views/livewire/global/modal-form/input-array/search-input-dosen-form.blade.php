@@ -143,8 +143,6 @@
         },
     }">
 
-
-
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
     @include('livewire.global.modal-form.input-array.partial.input-search', ['typeInput' => 'array'])
@@ -158,59 +156,12 @@
         <div
             @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}, {{ $wireLoading }}" wire:loading.class="opacity-60 pointer-events-none" @endif">
             @forelse ($xResults as $x)
-                <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
-                    class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-
-                    <div class="flex flex-col mr-4">
-                        <span class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
-                        <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                                    {{ $x['id'] }}</span></span>
-                            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>NIP: {{ $x['kode'] }}</span>
-                            @if (filled($x[$typeX2String] ?? null))
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>NIDN: {{ $x[$typeX2String] }}</span>
-                            @endif
-
-                            @if (filled($x[$typeX3String] ?? null))
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>NIDK: {{ $x[$typeX3String] }}</span>
-                            @endif
-
-                            @if (filled($x[$typeX4String] ?? null))
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>Status: {{ $x[$typeX4String] }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <button type="button"
-                        @click="
-                        if (items.includes({{ $x['id'] }})) {
-                            let index = items.indexOf({{ $x['id'] }});
-                            if (index !== -1) {
-                                items.splice(index, 1);
-                                itemsAll.splice(index, 1);
-                            }
-                        } else {
-                           addItem(
-                                {{ $x['id'] }}, 
-                                '{{ $x['kode'] }}', 
-                                '{{ $x[$typeXString] }}', 
-                                @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
-                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
-                                @isset($typeX4String) '{{ $x[$typeX4String] ?? '' }}' @else null @endisset,
-                                @isset($typeX5String) '{{ $x[$typeX5String] ?? '' }}' @else null @endisset
-                            );
-                        }
-                        "
-                        :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' :
-                            'bg-[var(--focus-color)] text-white'"
-                        class="p-1.5 rounded-md transition-all group">
-
-                        @include('livewire.global.modal-form.partial.dropdown-select')
-                    </button>
-                </div>
+                @php
+                    $itemId = data_get($x, 'id');
+                @endphp
+                @if ($itemId !== null)
+                    @include('livewire.global.modal-form.input-array.partial.search-dosen-dropdown')
+                @endif
             @empty
                 <div class="p-4 text-center">
                     <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
@@ -219,8 +170,7 @@
                         </p>
                     </div>
 
-                    <div wire:loading.remove
-                        @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
+                    <div wire:loading.remove @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
                         <p class="text-sm text-gray-500 dark:text-gray-400 italic">
                             Data {{ $nameXString ?? null }} tidak ditemukan!
                         </p>
@@ -238,8 +188,7 @@
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
-    <div
-        class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+    <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">

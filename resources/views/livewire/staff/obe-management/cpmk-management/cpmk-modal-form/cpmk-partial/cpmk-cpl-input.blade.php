@@ -34,7 +34,6 @@
                     'modelString' => 'nama_cpl_search',
                 
                     'idString' => 'cpl_id_array',
-                    'id2String' => 'cpl_id_array',
                     'itemsAllString' => 'cpl_items_array',
                 
                     'typeXString' => 'deskripsi',

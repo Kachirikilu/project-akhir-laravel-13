@@ -166,8 +166,9 @@ trait WithMKModal
                         }
 
                         if ($query->exists()) {
-                            $namaProdi = DB::table('prodis')->where('id', $pId)->value('nama_pr') ?? "Prodi ID: $pId";
-                            $fail("Digit MK '$value' sudah terpakai di Program Studi: ***$namaProdi***.");
+                            $prodiModel = Prodi::find($pId);
+                            $namaProdi = $prodiModel ? $prodiModel->prodi : "Prodi ID: $pId";
+                            $fail("Digit MK '$value' sudah terpakai di Program Studi: ***$namaProdi***!");
                             break;
                         }
                     }
@@ -180,7 +181,7 @@ trait WithMKModal
             'bahan_kajian' => 'required|string|min:5|max:1000',
         ];
 
-        if ($tingkatan === 1) {
+        if ($tingkatan == 1) {
             $rules['pr_id'] = 'required|integer|exists:prodis,id';
         } else {
             if ($tingkatan == 2) {

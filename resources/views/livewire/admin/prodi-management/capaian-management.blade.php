@@ -9,7 +9,11 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
-    @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'all'])
+    @include('livewire.staff.obe-management.obe-toolbar', [
+        'typeXString' => 'all',
+        'withCapaian' => 1,
+        'textString' => "Manajemen Capaian $prodi->prodi"
+    ])
     @include('livewire.admin.prodi-management.capaian-management.capian-switch-table')
     @include('livewire.admin.prodi-management.capaian-management.capaian-search-and-filters')
 
@@ -40,7 +44,7 @@
                     'withRPS' => true,
                     'withCapaian' => 1,
                 ])
-                @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
+                @include('livewire.admin.user-management.user-rps-list')
             @break
         @endswitch
     </div>

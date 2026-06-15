@@ -1,4 +1,4 @@
-@if (Auth::user()?->admin)
+@if (Auth::user()?->admin || Auth::user()?->dosen)
     <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
         @php
@@ -55,9 +55,10 @@
                 <flux:menu.separator />
             @endif
 
-            {{-- Tombol Edit --}}
-            <flux:menu.item
-                @click="
+            @if (Auth::user()?->admin)
+                {{-- Tombol Edit --}}
+                <flux:menu.item
+                    @click="
                 $store.user?.reset();
 
                 const type = '{{ strtolower($x->role) }}';
@@ -99,27 +100,65 @@
                     );
                     $flux.modal('user-modal').show();
             "
-                wire:click="{{ $editCall }}"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                    wire:click="{{ $editCall }}"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Edit {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Edit {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
 
-            {{-- Logika Tombol Hapus --}}
-            @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
-                <flux:menu.separator />
+                {{-- Logika Tombol Hapus --}}
+                @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
+                    <flux:menu.separator />
 
-                <flux:menu.item
-                    @click="
+                    <flux:menu.item
+                        @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
                         $store.user?.setDeleteUser(
                             '{{ $x->email ?? '' }}',
                             '{{ $x->role }}'
+                        );
+                        $flux.modal('user-delete').show();
+                "
+                        wire:click="{{ $deleteCall }}"
+                        class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                        <flux:icon name="trash" class="mr-2 h-4 w-4" />
+
+                        <div class="flex justify-between items-center w-full">
+                            <span>Hapus {{ $nameXString ?? 'Data' }}</span>
+                            <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
+                                class="animate-spin h-4 w-4 ml-2" />
+                        </div>
+                    </flux:menu.item>
+                @endif
+            @endif
+        @else
+            @if (Auth::user()?->admin)
+                {{-- Tombol Restore --}}
+                <flux:menu.item wire:click="{{ $restoreCall }}"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Restore {{ $nameXString ?? 'Data' }}</span>
+                        <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+
+                <flux:menu.separator />
+
+                {{-- Tombol Delete Permanent --}}
+                <flux:menu.item
+                    @click="
+                        $store.user?.setDeleteUser(
+                            '{{ $x->email ?? '' }}',
+                            '{{ $x->role }}',
+                            '{{ $isTrashed }}'
                         );
                         $flux.modal('user-delete').show();
                 "
@@ -128,47 +167,12 @@
                     <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
-                        <span>Hapus {{ $nameXString ?? 'Data' }}</span>
+                        <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
                         <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
                             class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
-            @endif {{-- Ini penutup @if logika hapus --}}
-        @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="{{ $restoreCall }}"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
-
-            <flux:menu.separator />
-
-            {{-- Tombol Delete Permanent --}}
-            <flux:menu.item
-                @click="
-                        $store.user?.setDeleteUser(
-                            '{{ $x->email ?? '' }}',
-                            '{{ $x->role }}',
-                            '{{ $isTrashed }}'
-                        );
-                        $flux.modal('user-delete').show();
-                "
-                wire:click="{{ $deleteCall }}"
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
-                    <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
+            @endif
         @endif
 
 

@@ -28,8 +28,7 @@
             </div>
 
             {{-- LIST AREA --}}
-            <div
-                class="border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
+            <div class="border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
 
                 {{-- SUBHEADER --}}
                 <div class="flex items-center justify-between mb-3">
@@ -122,7 +121,8 @@
                                                     <flux:icon.credit-card variant="micro"
                                                         class="opacity-50 text-green-600 dark:text-green-400" />
                                                     <span class="text-xs text-zinc-500">Bobot: <b
-                                                            class="text-zinc-700 dark:text-zinc-200">{{ $r['sks'] }} SKS - {{ $r['sks_text'] }}</b></span>
+                                                            class="text-zinc-700 dark:text-zinc-200">{{ $r['sks'] }}
+                                                            SKS - {{ $r['sks_text'] }}</b></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <flux:icon.shield-check variant="micro"
@@ -196,18 +196,18 @@
                                                 </button>
 
                                                 @if (!($noModalRPS ?? null))
-                                                @unless (
-                                                    $this->showRPSModal &&
-                                                        !(
-                                                            ($this->isEditingCPMK && !$this->isFlyoutCPMK) ||
-                                                            ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) ||
-                                                            ($this->isEditingCPL && !$this->isFlyoutCPL) ||
-                                                            ($this->isEditingRef && !$this->isFlyoutRef)
-                                                        ))
-                                                    {{-- Action Link: Edit --}}
-                                                    <button type="button"
-                                                        class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
-                                                        @click="
+                                                    @unless (
+                                                        $this->showRPSModal &&
+                                                            !(
+                                                                ($this->isEditingCPMK && !$this->isFlyoutCPMK) ||
+                                                                ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) ||
+                                                                ($this->isEditingCPL && !$this->isFlyoutCPL) ||
+                                                                ($this->isEditingRef && !$this->isFlyoutRef)
+                                                            ))
+                                                        {{-- Action Link: Edit --}}
+                                                        <button type="button"
+                                                            class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
+                                                            @click="
                                                         $store.rps?.reset();
                                                         $store.rps?.setEdit(1);
                                                         $store.rps?.setFlyout(true);
@@ -228,17 +228,18 @@
                                                         );
                                                         $flux.modal('rps-modal').show();
                                                     "
-                                                        wire:click="editRPS('{{ $r['id'] }}')">
-                                                        <div
-                                                            class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
-                                                            <flux:icon name="pencil-square" variant="micro"
-                                                                class="w-3.5 h-3.5" />
-                                                        </div>
-                                                        <span>Edit RPS</span>
-                                                        <flux:icon wire:loading wire:target="editRPS({{ $r['id'] }})"
-                                                            name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
-                                                    </button>
-                                                @endunless
+                                                            wire:click="editRPS('{{ $r['id'] }}')">
+                                                            <div
+                                                                class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
+                                                                <flux:icon name="pencil-square" variant="micro"
+                                                                    class="w-3.5 h-3.5" />
+                                                            </div>
+                                                            <span>Edit RPS</span>
+                                                            <flux:icon wire:loading
+                                                                wire:target="editRPS({{ $r['id'] }})"
+                                                                name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
+                                                        </button>
+                                                    @endunless
                                                 @endif
                                             </div>
 
@@ -258,6 +259,14 @@
                                 {{-- </div> --}}
                             </div>
                         @endif
+                        {{-- <div class="py-4" id="pagination-links-container" wire:ignore
+                            wire:key="secure-pagination-zone">
+                            @if (!empty($rps_modal_paginator) && $rps_modal_paginator->hasPages())
+                                {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
+                                    'typeXLoading' => 'loadingRPSList',
+                                ]) }}
+                            @endif
+                        </div> --}}
                     @endif
 
                 </div>

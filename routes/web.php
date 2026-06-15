@@ -31,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('obe-management/{switchTable?}', 'obe-management')->name('obe-management');
         Route::view('rps-management/{switchTable?}', 'obe-management')->name('obe-management');
         // Route::get('/download-nilai/{jadwal}', DownloadNilaiController::class)->name('download.nilai');
+
+        Route::view('nilai-management', 'nilai-management')->name('nilai-management');
+        Route::view('nilai-management/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
     });
 
     Route::middleware(['is_mahasiswa'])->group(function () {

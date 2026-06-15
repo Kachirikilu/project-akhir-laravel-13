@@ -1,0 +1,30 @@
+<div x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
+    @table-switched.window="
+        activeTable = $event.detail.switchTable;
+        window.history.pushState({}, '', $event.detail.targetUrl);
+     "
+    @navigate.window="
+        let segment = window.location.pathname.split('/').pop();
+        activeTable = (segment === 'nilai-management' || segment === '') ? '' : segment;
+     "
+    class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
+    {{-- @include('livewire.staff.mk-management.mk-toolbar')
+    @include('livewire.staff.mk-management.mk-switch-table')
+
+    @include('livewire.staff.mk-management.mk-search-and-filters')
+
+    <div wire:loading.class="opacity-50" wire:target="switchingTable">
+        @include('livewire.staff.mk-management.mk-table')
+    </div>
+
+    @include('livewire.staff.mk-management.mk-modal-form')
+    @include('livewire.staff.mk-management.mk-modal-delete') --}}
+
+    @include('livewire.admin.user-management.user-table', [
+        'withRPS' => true,
+        'withNilai' => true,
+        'withCapaian' => 1,
+    ])
+    @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
+    @include('livewire.staff.obe-management.rps-management.rps-show-modal')
+</div>

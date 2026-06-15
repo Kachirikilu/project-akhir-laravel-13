@@ -71,6 +71,13 @@
                 ],
                 [
                     'type' => 'link',
+                    'icon' => 'chart-pie',
+                    'route' => 'nilai-management',
+                    'label' => 'Nilai Mahasiswa',
+                    'roles' => ['admin', 'dosen'],
+                ],
+                [
+                    'type' => 'link',
                     'icon' => 'rectangle-stack',
                     'route' => 'mata-kuliah-management',
                     'label' => 'Mata Kuliah',

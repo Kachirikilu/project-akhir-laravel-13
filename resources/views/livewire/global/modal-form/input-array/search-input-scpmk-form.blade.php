@@ -123,57 +123,7 @@
 
         <div>
             @forelse ($xResults as $x)
-                <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}-{{ $alpine }}"
-                    class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-
-                    @include('livewire.global.modal-form.input-array.partial.dropdown-items')
-
-                    <button type="button"
-                        x-on:click="
-                            if (items.includes({{ $x['id'] }})) {
-                                let index = items.indexOf({{ $x['id'] }});
-                                if (index !== -1) {
-                                    items.splice(index, 1);
-                                    itemsAll.splice(index, 1);
-                                    subItems.splice(index, 1);
-                                }
-                            } else {
-                                addItem(
-                                    {{ $x['id'] }}, 
-                                    '{{ $x['kode'] }}', 
-                                    '{{ $x[$typeXString] }}', 
-                                    @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
-                                    @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
-                                    { 
-                                        scpmk: [
-                                            {
-                                                id: {{ $x['id'] }},
-                                                kode: '{{ $x['kode'] }}',
-                                                deskripsi: '{{ $x['deskripsi'] }}',
-                                                materi: '{{ $x['materi'] }}',
-                                                metodologi: '{{ $x['metodologi'] }}',
-                                                indikator: '{{ $x['indikator'] }}',
-                                                metode: '{{ $x['metode'] }}',
-                                                bobot: {{ $x['bobot'] }},
-                                                w_tugas: '{{ $x['w_tugas'] }}',
-                                                w_mandiri: '{{ $x['w_mandiri'] }}',
-                                                tugas: '{{ $x['deskripsi'] }}',
-                                                ref: {{ json_encode($x['ref']) }},
-                                            }
-                                        ]
-                                        {{-- ref: {{ json_encode($x['ref']) }} --}}
-                                    }
-                                );
-                            }
-                        "
-                        x-bind:class="items.includes({{ $x['id'] }}) ? 'bg-green-500 hover:bg-red-500' :
-                            'bg-[var(--focus-color)]'"
-                        class="p-1.5 rounded-md text-white transition-all shadow-sm group">
-
-                        @include('livewire.global.modal-form.partial.dropdown-select')
-
-                    </button>
-                </div>
+                @include('livewire.global.modal-form.input-array.partial.search-scpmk-dropdown')
             @empty
                 <div class="p-8 text-center">
                     <p class="text-sm text-gray-500 italic">Data tidak ditemukan!</p>

@@ -101,9 +101,9 @@ trait WithCPMKSearchFilters
 
         if ($mappedData) {
             $this->cpmk_sub_items_array[] = [
+                'cpl' => $mappedData['cpl'] ?? [],
                 'scpmk' => $mappedData['scpmk'] ?? [],
                 'ref' => $mappedData['ref'] ?? [],
-                'cpl' => $mappedData['cpl'] ?? [],
             ];
         }
     }

@@ -238,11 +238,16 @@ class CapaianManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'akreditas_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi', 15 => 'created_at', 16 => 'updated_at'],
-            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'akreditas_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps', 8 => 'created_at', 9 => 'updated_at'],
-            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'akreditas_cpmk_pr', 7 => 'count_cpl', 8 => 'created_at', 9 => 'updated_at'],
-            'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'akreditas_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator', 9 => 'created_at', 10 => 'updated_at'],
-            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'akreditas_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status', 12 => 'created_at', 13 => 'updated_at'],
+            // 'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'akreditas_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi', 15 => 'created_at', 16 => 'updated_at'],
+            // 'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'akreditas_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps', 8 => 'created_at', 9 => 'updated_at'],
+            // 'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'akreditas_cpmk_pr', 7 => 'count_cpl', 8 => 'created_at', 9 => 'updated_at'],
+            // 'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'akreditas_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator', 9 => 'created_at', 10 => 'updated_at'],
+            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'akreditas_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status', 12 => 'created_at', 13 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'akreditas_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
+            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'akreditas_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps'],
+            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'akreditas_cpmk_pr', 7 => 'count_cpl'],
+            'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'akreditas_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'akreditas_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
         ];
 
         $aliases = [
@@ -261,8 +266,8 @@ class CapaianManagement extends Component
             // 'total_bobot' => ['total_bobot', 'akademik'],
             'is_draf' => ['is_draf', 'indikator'],
             // 'indikator' => ['indikator', 'is_draf'],
-            'created_at' => ['created_at'],
-            'updated_at' => ['updated_at'],
+            // 'created_at' => ['created_at'],
+            // 'updated_at' => ['updated_at'],
         ];
 
         $this->sortField($table, $sortField, $columns, $aliases);
@@ -561,13 +566,8 @@ class CapaianManagement extends Component
                     'scpmk-year' => '-',
                     'scpmk-older-5' => '-',
 
-                    // 'dosen' => '-',
-                    // 'dosen-rps' => '-',
-                    // 'dosen-non-rps' => '-',
-                    // 'dosen-prodi' => '-',
-                    // 'dosen-all' => '-',
-                    // 'dosen-aktif' => '-',
-                    // 'dosen-non-aktif' => '-',
+                    'mahasiswa-aktif' => '-',
+                    'mahasiswa-non-aktif' => '-',
                 ],
             ]);
         }

@@ -94,9 +94,51 @@
                 @endphp
 
                 @if ($itemId !== null)
-                        @include('livewire.global.modal-form.input-array.partial.search-array-dropdown')
+                    <div wire:key="res-{{ $typeXString }}-{{ $itemId }}-{{ $alpine }}"
+                        class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
 
-                   
+                        @include('livewire.global.modal-form.input-array.partial.dropdown-items')
+
+                        @php
+                            $param2 = isset($typeX2String) ? "'" . addslashes($itemLabel2) . "'" : 'null';
+                            $param3 = isset($typeX3String) ? "'" . addslashes($itemLabel3) . "'" : 'null';
+                            $param4 = isset($typeX4String) ? "'" . addslashes($itemLabel4) . "'" : 'null';
+                            $param5 = isset($typeX5String) ? "'" . addslashes($itemLabel5) . "'" : 'null';
+                            $paramLink = isset($typeLinkString) ? "'" . addslashes($itemLink) . "'" : 'null';
+                        @endphp
+                        <button type="button"
+                            @click="
+                            if (items.includes({{ $itemId }})) {
+                                let index = items.indexOf({{ $itemId }});
+                                if (index !== -1) {
+                                    items.splice(index, 1);
+                                    itemsAll.splice(index, 1);
+                                }
+                            } else {
+                               addItem(
+                                    {{ $itemId }}, 
+                                    '{{ addslashes($itemKode) }}', 
+                                    '{{ addslashes($itemLabel) }}', 
+                                    {{ $param2 }}, 
+                                    {{ $param3 }},
+                                    {{ $param4 }},
+                                    {{ $param5 }},
+                                    {{ $paramLink }}
+                                );
+                                @isset($selectX)
+                                    $wire.{{ $selectX }}({{ $itemId }}@isset($key), '{{ addslashes($key) }}'@endisset);
+                                @endisset
+                            }
+                            "
+                            :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500' :
+                                'bg-[var(--focus-color)] text-white'"
+                            class="p-1.5 rounded-md transition-all group">
+
+
+                            @include('livewire.global.modal-form.partial.dropdown-select')
+
+                        </button>
+                    </div>
                 @endif
             @empty
                 <div class="p-4 text-center">
@@ -190,20 +232,10 @@
 
                                 @if ($typeLinkString ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
-                                    <template x-if="itemsAll[index]?.link && itemsAll[index]?.link.trim() !== ''">
-                                        <a :href="itemsAll[index]?.link" target="_blank"
-                                            class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
-                                            <flux:icon.link variant="micro" /> 
-                                            <span x-text="itemsAll[index]?.link"></span>
-                                        </a>
-                                    </template>
-
-                                    <template x-if="!itemsAll[index]?.link || itemsAll[index]?.link.trim() === ''">
-                                        <div class="flex items-center gap-1 text-gray-400 dark:text-gray-600 text-xs font-medium cursor-not-allowed select-none">
-                                            <flux:icon.link variant="micro" class="opacity-50" /> 
-                                            <span>Tidak ada tautan</span>
-                                        </div>
-                                    </template>
+                                    <a :href="itemsAll[index]?.link" target="_blank"
+                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
+                                        <flux:icon.link variant="micro" /> <span x-text="itemsAll[index]?.link"></span>
+                                    </a>
                                 @endif
                             </div>
                         </div>

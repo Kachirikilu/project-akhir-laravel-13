@@ -41,10 +41,11 @@
     {{-- @include('livewire.global.search-and-filters.partial.reset-button', [
         'xShow' => 'search',
         'xClick' => "search = ''",
+        'xClick' => "search = ''; items = null; itemsAll = null",
     ]) --}}
     @include('livewire.global.search-and-filters.partial.reset-button', [
         'xShow' => 'search',
-        'xClick' => "search = ''; items = null; itemsAll = null",
+        'xClick' => "search = ''",
         'xWire' => $resetXInput ?? null,
         'xWire2' => $typeInput === 'single' && $fetchString ? $fetchString . '(null, "single")' : null,
         'xAlpine1' => $idString ?? null,

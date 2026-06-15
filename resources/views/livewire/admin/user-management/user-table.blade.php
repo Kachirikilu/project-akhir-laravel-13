@@ -163,16 +163,18 @@
             @endif
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
+            @if (!(($withRPS ?? false) || ($withNilai ?? false) || Auth::user()?->dosen))
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+            @endif
 
         </tr>
 
@@ -465,16 +467,18 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+            @if (!(($withRPS ?? false) || ($withNilai ?? false) || Auth::user()?->dosen))
+                <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+            @endif
         </tr>
 
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'admin' => 14,
-                    'dosen' => $withRPS ?? null ? 12 : 14,
-                    'mahasiswa' => $withRPS ?? null ? 16 : 14,
+                    'dosen' => $withRPS ?? null ? 10 : 14,
+                    'mahasiswa' => $withRPS ?? null ? 14 : 14,
                     default => 14,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
