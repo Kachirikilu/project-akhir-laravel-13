@@ -81,7 +81,7 @@
 @if (isset($sortir) || isset($search))
     <div
         class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
-        <div class="scrollbar-thin overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
+        <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
             @if (isset($sortir))
                 {{ $sortir }}
             @endif

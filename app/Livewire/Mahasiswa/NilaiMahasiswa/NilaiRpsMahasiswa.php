@@ -5,6 +5,7 @@ namespace App\Livewire\Mahasiswa\NilaiMahasiswa;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithNilaiSearchFilters;
 use App\Livewire\Mahasiswa\NilaiMahasiswa\NilaiRPSMahasiswa\WithNilaiRPSFilters;
+use App\Livewire\Mahasiswa\NilaiMahasiswa\WithNilaiFilters;
 // use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
 // use App\Models\Kelas\NilaiMahasiswa;
 use Illuminate\Database\QueryException;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class NilaiRPSMahasiswa extends Component
+class NilaiRpsMahasiswa extends Component
 {
     use HasToast;
 
@@ -159,7 +160,7 @@ class NilaiRPSMahasiswa extends Component
             $paginatedRps = $queryNilai->paginate($perPage);
 
             return view('livewire.mahasiswa.nilai-mahasiswa.nilai-rps-mahasiswa', [
-                'detailNilaiRps' => $paginatedRps,
+                'nilais' => $paginatedRps,
             ]);
 
         } catch (QueryException $e) {
@@ -170,7 +171,7 @@ class NilaiRPSMahasiswa extends Component
             }
 
             return view('livewire.mahasiswa.nilai-mahasiswa.nilai-rps-mahasiswa', [
-                'detailNilaiRps' => new LengthAwarePaginator([], 0, $this->perPage ?? 10),
+                'nilais' => new LengthAwarePaginator([], 0, $this->perPage ?? 10),
             ]);
         }
     }

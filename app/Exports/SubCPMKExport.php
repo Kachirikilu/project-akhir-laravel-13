@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SubCPMKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -24,10 +25,13 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
 
     protected $title;
 
-    public function __construct($querySCPMK, $title)
+    protected $withCapaian;
+
+    public function __construct($querySCPMK, $title, $withCapaian = false)
     {
         $this->querySCPMK = $querySCPMK;
         $this->title = $title;
+        $this->withCapaian = $withCapaian;
     }
 
     public function collection()
@@ -50,19 +54,37 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
 
     public function headings(): array
     {
-        return [
-            [
-                'ID', 'Kode Sub-CPMK', 'Deskripsi Sub-CPMK',
-                'Pembelajaran', '', '', '',
-                'Tugas', '', '', '',
-                'Referensi', '',
-            ], [
-                '', '', '',
-                'Materi', 'Metodologi', 'Indikator', 'Metode',
-                'Bobot Sub-CPMK', 'Deskripsi Tugas', 'Waktu Tugas', 'Waktu Mandiri',
-                'Kode Referensi', 'Jumlah Referensi',
-            ],
-        ];
+        if ($this->withCapaian) {
+            return [
+                [
+                    'ID', 'Kode Sub-CPMK', 'Deskripsi Sub-CPMK',
+                    'Nilai Capaian', '', '',
+                    'Pembelajaran', '', '', '',
+                    'Tugas', '', '', '',
+                    'Referensi', '',
+                ], [
+                    '', '', '',
+                    'Nilai', 'Index', 'Mutu',
+                    'Materi', 'Metodologi', 'Indikator', 'Metode',
+                    'Bobot Sub-CPMK', 'Deskripsi Tugas', 'Waktu Tugas', 'Waktu Mandiri',
+                    'Kode Referensi', 'Jumlah Referensi',
+                ],
+            ];
+        } else {
+            return [
+                [
+                    'ID', 'Kode Sub-CPMK', 'Deskripsi Sub-CPMK',
+                    'Pembelajaran', '', '', '',
+                    'Tugas', '', '', '',
+                    'Referensi', '',
+                ], [
+                    '', '', '',
+                    'Materi', 'Metodologi', 'Indikator', 'Metode',
+                    'Bobot Sub-CPMK', 'Deskripsi Tugas', 'Waktu Tugas', 'Waktu Mandiri',
+                    'Kode Referensi', 'Jumlah Referensi',
+                ],
+            ];
+        }
     }
 
     public function map($s): array
@@ -72,7 +94,7 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
             ->concat($s->refs)
             ->unique('id');
 
-        return [
+        $data = [
             $s->id ?? '', // 0 (A)
             $s->kode ?? '', // 1 (B)
             $s->deskripsi ?? '', // 2 (C)
@@ -88,8 +110,18 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
             $s->w_mandiri ?? '', // 10 (K)
 
             $refs->pluck('kode')->implode(' / '), // 11 (L)
-            $refs->count() > 0 ? $refs->count() : '0', 
+            $refs->count() > 0 ? $refs->count() : '0',
         ];
+
+        if ($this->withCapaian) {
+            array_splice($data, 3, 0, [
+                $s->rekap_cpmk_pr ?: '0',
+                $s->index_cpmk_pr ?: '0',
+                $s->mutu_cpmk_pr ?? 'E',
+            ]);
+        }
+
+        return $data;
     }
 
     public function styles(Worksheet $sheet)
@@ -118,12 +150,26 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
             $sheet->mergeCells("{$col}4:{$col}5");
         }
 
-        // Horizontal Merges untuk Judul Grup (Row 4)
-        $sheet->mergeCells('D4:G4'); // Pembelajaran
-        $sheet->mergeCells('H4:K4'); // Tugas
-        $sheet->mergeCells('L4:M4'); // Referensi
-
-        $alignmentMerges = ['A', 'B', 'G', 'H', 'J', 'K', 'M'];
+        if ($this->withCapaian) {
+            $sheet->mergeCells('D4:F4'); // Capaian
+            $sheet->mergeCells('G4:J4'); // Pembelajaran
+            $sheet->mergeCells('K4:N4'); // Tugas
+            $sheet->mergeCells('O4:P4'); // Referensi
+        } else {
+            $sheet->mergeCells('D4:G4'); // Pembelajaran
+            $sheet->mergeCells('H4:K4'); // Tugas
+            $sheet->mergeCells('L4:M4'); // Referensi
+        }
+        if ($this->withCapaian) {
+            foreach (['D', 'E'] as $col) {
+                $sheet->getStyle("{$col}6:{$col}{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+            }
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'J', 'K', 'M', 'N', 'P'];
+        } else {
+            $alignmentMerges = ['A', 'B', 'G', 'H', 'J', 'K', 'M'];
+        }
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

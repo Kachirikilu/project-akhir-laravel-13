@@ -55,8 +55,8 @@ document.addEventListener("alpine:init", () => {
             this.deskripsi = deskripsi;
 
             if (kode) {
-                const huruf = kode.match(/[a-zA-Z]+/g);
-                this.kode_cpmk_1 = huruf ? huruf[0] : "";
+                const mutu = kode.match(/[a-zA-Z]+/g);
+                this.kode_cpmk_1 = mutu ? mutu[0] : "";
                 const angka = kode.match(/\d+/g);
                 this.kode_cpmk_2 = angka ? angka[0] : "";
             } else {

@@ -377,6 +377,7 @@ trait WithRPSSearchFilters
                             'semester',
                             'semes',
                             'sms',
+                            's'
                         ]
                     ) || $this->containsStrict(
                         'Semester'.$rps->semester,
@@ -425,8 +426,8 @@ trait WithRPSSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiHuruf = $this->matchNilaiHuruf(
-                        $rps->akreditas_rps_pr ?? 'E',
+                    $matchNilaiMutu = $this->matchNilaiMutu(
+                        $rps->mutu_rps_pr ?? 'E',
                         $searchLower
                     );
 
@@ -607,6 +608,12 @@ trait WithRPSSearchFilters
                             return $matchWajib;
                         case 'status':
                             return $matchDraf;
+                        case 'nilai':
+                            return $matchNilaiAkhir || $matchNilaiMutu;
+                        case 'index':
+                            return $matchNilaiIndex;
+                        case 'mutu':
+                            return $matchNilaiMutu;
                     }
 
                     return
@@ -618,9 +625,9 @@ trait WithRPSSearchFilters
                         || $matchMK
                         || $matchRPS
 
-                                                || $matchNilaiAkhir
+                        || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiHuruf
+                        || $matchNilaiMutu
 
                         || $matchSemester
                         || $matchSemesterJenis
@@ -654,7 +661,7 @@ trait WithRPSSearchFilters
 
                 'rekap_rps_pr',
                 'index_rps_pr',
-                'akreditas_rps_pr' => fn ($rps) => (float) ($rps->rekap_rps_pr ?? 0),
+                'mutu_rps_pr' => fn ($rps) => (float) ($rps->rekap_rps_pr ?? 0),
 
                 'count_cpmk' => fn ($rps) => (int) $rps->count_cpmk,
                 'count_scpmk' => fn ($rps) => (int) $rps->count_scpmk,

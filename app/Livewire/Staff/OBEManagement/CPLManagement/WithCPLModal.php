@@ -771,7 +771,7 @@ trait WithCPLModal
             'pr_id_array.min' => 'Program Studi minimal berisi satu data!',
 
             'kode_cpl_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_cpl_1.alpha' => 'Kode awalan harus berupa huruf!',
+            'kode_cpl_1.alpha' => 'Kode awalan harus berupa mutu!',
             'kode_cpl_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPL Bagian 2 (Angka - Kanan)
@@ -783,7 +783,7 @@ trait WithCPLModal
             'kode_cpl.required' => 'Kode CPL lengkap wajib terbentuk!',
             'kode_cpl.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_cpl.required' => 'Kode CPL wajib diisi!',
-            'kode_cpl.alpha_num' => 'Kode CPL hanya boleh berisi huruf dan angka!',
+            'kode_cpl.alpha_num' => 'Kode CPL hanya boleh berisi mutu dan angka!',
             'kode_cpl.max' => 'Kode CPL maksimal 20 karakter!',
 
             // Deskripsi & Status

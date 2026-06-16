@@ -171,6 +171,7 @@ trait WithJadwalModal
 
             $this->resetInputJadwal();
             $this->dispatch('refresh-data-jadwal');
+            $this->dispatch('refresh-data-sesi');
             $this->showJadwalLeft = false;
 
         } catch (\Exception $e) {

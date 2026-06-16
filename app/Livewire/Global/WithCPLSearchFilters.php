@@ -330,8 +330,8 @@ trait WithCPLSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiHuruf = $this->matchNilaiHuruf(
-                        $cpl->akreditas_cpl_pr ?? 'E',
+                    $matchNilaiMutu = $this->matchNilaiMutu(
+                        $cpl->mutu_cpl_pr ?? 'E',
                         $searchLower
                     );
 
@@ -370,6 +370,12 @@ trait WithCPLSearchFilters
                             return $matchID;
                         case 'bobot':
                             return $matchBobot;
+                        case 'nilai':
+                            return $matchNilaiAkhir || $matchNilaiMutu;
+                        case 'index':
+                            return $matchNilaiIndex;
+                        case 'mutu':
+                            return $matchNilaiMutu;
                     }
 
                     return
@@ -379,7 +385,7 @@ trait WithCPLSearchFilters
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiHuruf
+                        || $matchNilaiMutu
 
                         || $matchRPS
                         || $matchRPSPr
@@ -395,7 +401,7 @@ trait WithCPLSearchFilters
 
                 'rekap_cpl_pr',
                 'index_cpl_pr',
-                'akreditas_cpl_pr' => fn ($cpl) => (float) ($cpl->rekap_cpl_pr ?? 0),
+                'mutu_cpl_pr' => fn ($cpl) => (float) ($cpl->rekap_cpl_pr ?? 0),
 
                 'count_rps_pr' => fn ($cpl) => $cpl->count_rps_pr ?? 0,
                 'count_rps' => fn ($cpl) => $cpl->count_rps ?? 0,

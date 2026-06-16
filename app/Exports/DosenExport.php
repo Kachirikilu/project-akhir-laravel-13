@@ -177,15 +177,15 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
         $sheet->getStyle("A4:{$highestColumn}5")->applyFromArray($styleArray);
 
         // Merge cells untuk header yang tidak punya sub-kolom
-        $merges = ['A4:A5', 'B4:B5', 'C4:C5', 'D4:D5', 'I4:I5', 'J4:J5'];
-        foreach ($merges as $m) {
-            $sheet->mergeCells($m);
+        $verticalMerges = ['A', 'B', 'C', 'D', 'I', 'J'];
+        foreach ($verticalMerges as $col) {
+            $sheet->mergeCells("{$col}4:{$col}5");
         }
 
         // Merge untuk Header Utama
         $sheet->mergeCells('E4:H4'); // Identitas (ID)
-        $sheet->mergeCells('K4:N4'); // Rencana Pembelajaran Semester
-        $sheet->mergeCells('O4:P4'); // Kelas
+        $sheet->mergeCells('K4:P4'); // Rencana Pembelajaran Semester
+        $sheet->mergeCells('Q4:R4'); // Kelas
 
         // Alignment untuk seluruh kolom ID, Role, Status, Prodi (Center)
         $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'O', 'P', 'R'];

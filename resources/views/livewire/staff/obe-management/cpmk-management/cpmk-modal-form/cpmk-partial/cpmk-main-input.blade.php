@@ -17,7 +17,7 @@
                     'nameXString' => 'Kode CPMK',
                     'modelString' => 'kode_cpmk_1',
                     'iconString' => 'academic-cap',
-                    'placeholder' => 'Masukkan huruf Kode CPMK...',
+                    'placeholder' => 'Masukkan mutu Kode CPMK...',
                     'isKode' => 4,
                     'isFocusSelect' => 1,
                 ])

@@ -62,7 +62,7 @@
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
-                <div class="w-full overflow-x-auto max-h-[90vh] overflow-y-auto border rounded-lg">
+                <div class="scrollbar-x-large w-full overflow-x-auto max-h-[90vh] overflow-y-auto border rounded-lg">
 
                     @php
                         $headColumn =

@@ -25,7 +25,7 @@
         </div>
 
         {{-- LIST --}}
-        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
+        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-tiny">
 
             <template x-if="$store.rps.cpl_cpmk.length === 0">
                 <div class="flex flex-col items-center justify-center py-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">

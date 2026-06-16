@@ -193,7 +193,7 @@ class ProgramStudiManagement extends Component
             if ($this->switchTable === 'prodi') {
                 $this->addRekapProdi($queryPr, 'rekap_pr');
                 $this->addIndexProdi($queryPr, 'index_pr');
-                $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+                $this->addMutuProdi($queryPr, 'akreditas_pr');
                 $this->buttonStrataFilter($queryPr);
             } elseif ($this->switchTable === 'departemen') {
                 $this->addRekapDepartemen($queryDp, 'rekap_dp');

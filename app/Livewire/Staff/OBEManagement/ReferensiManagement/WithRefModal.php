@@ -368,7 +368,7 @@ trait WithRefModal
     {
         return [
             'kode_ref_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_ref_1.alpha' => 'Kode awalan harus berupa huruf!',
+            'kode_ref_1.alpha' => 'Kode awalan harus berupa mutu!',
             'kode_ref_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)
@@ -380,7 +380,7 @@ trait WithRefModal
             'kode_ref.required' => 'Kode Referensi lengkap wajib terbentuk!',
             'kode_ref.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_ref.required' => 'Kode Referensi wajib diisi!',
-            'kode_ref.alpha_num' => 'Kode Referensi hanya boleh berisi huruf dan angka!',
+            'kode_ref.alpha_num' => 'Kode Referensi hanya boleh berisi mutu dan angka!',
             'kode_ref.max' => 'Kode Referensi maksimal 20 karakter!',
 
             // Deskripsi & Status

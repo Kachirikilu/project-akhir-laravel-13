@@ -16,7 +16,7 @@
                     'nameXString' => 'Kode Kelas',
                     'modelString' => 'kode_kelas_1',
                     'iconString' => 'document-text',
-                    'placeholder' => 'Masukkan huruf Kode Kelas...',
+                    'placeholder' => 'Masukkan mutu Kode Kelas...',
                     'isKode' => 4,
                     'isFocusSelect' => 1,
                 ])

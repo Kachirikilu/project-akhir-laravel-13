@@ -78,10 +78,10 @@ trait HasAbsensi
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiHuruf(
+    protected function addMahasiswaNilaiMutu(
         $queryUser,
         int $idJadwal,
-        string $alias = 'mhs_nilai_huruf'
+        string $alias = 'mhs_nilai_mutu'
     ) {
         $queryUser->selectSub(function ($query) use ($idJadwal) {
 

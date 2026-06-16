@@ -32,23 +32,36 @@
         ])
     </x-slot:sortir>
 
+    <x-slot:search>
+        <div class="w-full md:w-96 xl:w-108">
+            @include('livewire.global.search-and-filters.main-search', [
+                'placeholder' => 'Cari Jadwal Kelas...',
+                'defaultLive' => 1,
+                'searchMode' => $searchMode,
+                'searchValues' => ['simple', 'full'],
+                'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
+                'isBorder' => 2,
+            ])
+        </div>
+    </x-slot:search>
+
     {{-- 2. Isi Utama (Looping Card) --}}
     @forelse($jadwals as $j)
         <div wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-            class="relative flex flex-col justify-between p-4 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
+            class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg">
 
-            {{-- HEADER CARD (Kode Jadwal Wilayah & Tombol Aksi) --}}
-            <div class="flex items-start justify-between gap-2 pb-3 border-b table-border/60">
-                <div class="flex flex-wrap items-center gap-2">
-                    {{-- BADGE KODE BERDASARKAN WILAYAH --}}
+            {{-- ═══ HERO ═══ --}}
+            <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
+
+                {{-- Baris atas: kode jadwal + tombol menu --}}
+                <div class="flex items-start justify-between gap-2">
+
                     <flux:dropdown>
-                        <button class="cursor-pointer focus:outline-none">
-                            @include('livewire.global.table.badge.kode-wilayah-badge', [
-                                'xValue' => $j->kode,
-                                'sortir' => $j->kode_wilayah,
-                            ])
+                        <button
+                            class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 focus:outline-none cursor-pointer">
+                            <flux:icon name="academic-cap" class="w-3 h-3" />
+                            {{ $j->kode }}
                         </button>
-
                         @include(
                             'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
                             [
@@ -60,169 +73,155 @@
                         )
                     </flux:dropdown>
 
-                    {{-- BADGE ID JADWAL --}}
-                    <x-label-card type="sm">
-                        {{ $j->label_Extra ?? '-' }}
-                    </x-label-card>
+                    {{-- Tombol Menu --}}
+                    <flux:dropdown>
+                        <button
+                            class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/22 focus:outline-none cursor-pointer">
+                            <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
+                        </button>
+                        @include(
+                            'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
+                            [
+                                'x' => $j,
+                                'editString' => 'editJadwal',
+                                'nameXString' => 'Jadwal',
+                                'confirmDeleteString' => 'deleteJadwal',
+                            ]
+                        )
+                    </flux:dropdown>
                 </div>
 
-                {{-- TOMBOL AKSI ELLIPSIS (KANAN ATAS) --}}
-                <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom" />
+                {{-- Label Extra / ID Jadwal --}}
+                <p class="text-[15px] font-bold leading-[1.35] tracking-[0.24em] text-[var(--main-text)]">
+                    {{ $j->label_Extra ?? '-' }}
+                </p>
 
-                    @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
-                        'x' => $j,
-                        'editString' => 'editJadwal',
-                        'nameXString' => 'Jadwal',
-                        'confirmDeleteString' => 'deleteJadwal',
-                    ])
-                </flux:dropdown>
+                {{-- Sub info: hari + jam --}}
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <flux:icon name="calendar-days" class="w-3 h-3" />
+                        {{ $j->hari ?? '-' }}
+                    </span>
+                    <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
+                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <flux:icon name="clock" class="w-3 h-3" />
+                        {{ $j->jam_pelaksanaan ?? '-' }}
+                    </span>
+                </div>
             </div>
 
-            {{-- BODY CARD (Detail Label, Password, dan Waktu) --}}
-            <div class="flex-1 py-2 flex flex-col justify-between gap-3">
-                {{-- INFORMASI UTAMA JADWAL --}}
+            {{-- ═══ BODY ═══ --}}
+            <div class="flex flex-1 flex-col gap-2.5 p-4">
+
+                {{-- Info Mata Kuliah (hanya jika $kelas == null) --}}
+                @if ($kelas == null)
+                    <div
+                        class="flex w-full items-start gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2">
+                        <flux:icon name="book-open"
+                            class="w-3.5 h-3.5 mt-0.5 text-[var(--contrast-third-text)] flex-shrink-0" />
+                        <div class="flex flex-col gap-0.5 min-w-0">
+                            <span
+                                class="text-xs font-semibold text-[var(--contrast-main-text)] leading-snug truncate">{{ $j->mk ?? '---' }}</span>
+                            <span class="text-[10px] text-[var(--contrast-third-text)]">{{ $j->kode_mk ?? '-' }} ·
+                                {{ $j->semester ?? '-' }} Sem · {{ $j->sks ?? '-' }} SKS</span>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Tanggal Pelaksanaan --}}
                 <div
-                    class="text-xs bg-[var(--second-table-color)]/30 p-2 rounded-lg border table-border/40">
-                    @if ($kelas == null)
-                        <div class="space-y-1 mb-2">
-                            <p
-                                class="font-semibold text-sm text-[var(--contrast-main-text)] leading-snug tracking-tight">
-                                {{ $j->mk ?? '---' }}
-                            </p>
-                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
-                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                {{ $j->kode_mk ?? '-' }}
-                            </p>
-                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
-                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                {{ $j->semester ?? '-' }} Semester
-                            </p>
-                            <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
-                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                {{ $j->sks ?? '-' }} SKS {{ $j->sks_text }}
-                            </p>
-                        </div>
-                    @endif
-                    <div class="space-y-1">
-                        <p class="font-semibold text-sm text-[var(--contrast-main-text)] leading-snug tracking-tight">
-                            Tanggal Kelas
-                        </p>
-                        <p class="text-xs font-medium text-[var(--focus-color)] flex items-center gap-1.5">
-                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            {{ $j->tanggal_pelaksanaan ?? '-' }}
-                        </p>
-                    </div>
-                    {{-- TOMBOL NAVIGASI JADWAL (KANAN BAWAH BODY) --}}
-                    <div class="mt-2 pt-1 flex items-center justify-between gap-2">
-                        <div class="text-xs">
-
-                            @if ($j->is_my_class)
-                                <code
-                                    class="italic font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
-                                    Saya Terdaftar
-                                </code>
-                            @else
-                                <span class="text-[10px] text-[var(--contrast-second-text)] block">Password:</span>
-                                @if (Auth::user()->admin || Auth::user()->dosen)
-                                    @if (!empty($j->password))
-                                        <div class="mt-1">
-                                            <code
-                                                class="font-mono bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
-                                                {{ $j->password }}
-                                            </code>
-                                        </div>
-                                    @else
-                                        <span class="text-[10px] italic text-[var(--contrast-second-text)]">
-                                            Tanpa Password
-                                        </span>
-                                    @endif
-                                @else
-                                    <span class="text-[10px] italic text-[var(--contrast-second-text)]">
-                                        @if (!empty($j->with_pw))
-                                            Memiliki Password
-                                        @else
-                                            Tanpa Password
-                                        @endif
-                                    </span>
-                                @endif
-                            @endif
-
-
-                        </div>
-
-                        @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
-                            <x-button-action color="amber"
-                                href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}"
-                                wire:navigate>
-                                <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
-                                <span>Lihat Kelas</span>
-                            </x-button-action>
-                        @else
-                            @php
-                                $buttonClass =
-                                    'inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/35 transition-all duration-200 text-sm font-medium shadow-sm cursor-pointer';
-                            @endphp
-                            @if (!empty($j->with_pw))
-                                <x-button-action color="blue"
-                                    @click="
-                                    $store.jadwal?.setEdit(0);
-                                    $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                                    $flux.modal('jadwal-join').show();
-                                    $store.jadwal?.setValueJoinJadwal(
-                                        '{{ $j->id ?? '' }}',
-                                        '{{ $j->kode ?? '' }}',
-                                        '{{ $j->kode_kelas ?? '' }}',
-                                        '{{ $j->label_extra ?? '' }}',
-                                    );
-                                ">
-                                    <flux:icon name="user-plus" class="w-3.5 h-3.5" />
-                                    <span>Join</span>
-                                </x-button-action>
-                            @else
-                                <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
-                                    <x-button-action color="blue"
-                                        @click="
-                                        $store.jadwal?.setEdit(0);
-                                        $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                                        $store.jadwal?.setValueJoinJadwal(
-                                            '{{ $j->id ?? '' }}',
-                                        );
-                                    ">
-                                        <flux:icon name="user-plus" class="w-3.5 h-3.5" />
-                                        <span>Join</span>
-                                    </x-button-action>
-                                </form>
-                            @endif
-                        @endif
-
-                    </div>
-                </div>
-
-
-            </div>
-
-            {{-- FOOTER CARD (Kapasitas & Sinkronisasi Waktu Grid 3 Kolom) --}}
-            <div
-                class="grid grid-cols-5 gap-2 border-t table-border/40 bg-[var(--second-table-trans)] -mx-4 -mb-4 p-3 rounded-b-xl text-center text-xs">
-                <div class="col-span-2 border-r pl-2 table-border/60 space-y-0.5">
+                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2">
+                    <flux:icon name="calendar" class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
                     <span
-                        class="text-left block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">
-                        Kapasitas</span>
-                    <span class="text-left font-bold text-[var(--focus-color)] block truncate">
-                        {{ $j->count_mhs_jadwal }}
+                        class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Tanggal</span>
+                    <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
+                        {{ $j->tanggal_pelaksanaan ?? '-' }}
                     </span>
                 </div>
 
-                <div class="col-span-3 truncate pl-0.5 pr-2 space-y-0.5">
-                    <span
-                        class="text-right block text-[10px] uppercase font-semibold text-[var(--contrast-second-text)] tracking-wider">Waktu
-                        Pelaksanaan</span>
-                    <span
-                        class="text-right font-medium text-[var(--contrast-main-text)] block truncate">{{ $j->hari ?? '-' }},
-                        {{ $j->jam_pelaksanaan ?? '-' }}</span>
+                {{-- Stat boxes: Kapasitas + Password/Status --}}
+                <div class="grid grid-cols-2 gap-1.5">
+
+                    {{-- Kapasitas --}}
+                    <div
+                        class="flex flex-col items-center gap-0.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-1.5 py-2 text-center">
+                        <span
+                            class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Kapasitas</span>
+                        <span
+                            class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $j->count_mhs_jadwal }}</span>
+                        <span class="text-[9px] font-semibold text-[var(--contrast-second-text)]">Mahasiswa</span>
+                    </div>
+
+                    {{-- Password / Status --}}
+                    <div
+                        class="flex flex-col items-center justify-center gap-1 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-1.5 py-2 text-center">
+                        @if ($j->is_my_class)
+                            <span
+                                class="bg-[var(--focus-color)] rounded px-1.5 py-[2px] text-[9px] font-extrabold uppercase tracking-[0.08em] text-[var(--main-text)]">Terdaftar</span>
+                            <span class="text-[10px] font-semibold text-[var(--contrast-main-text)]">Kelas Saya</span>
+                        @elseif (Auth::user()->admin || Auth::user()->dosen)
+                            <span
+                                class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Password</span>
+                            @if (!empty($j->password))
+                                <code
+                                    class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)]">
+                                    {{ $j->password }}
+                                </code>
+                            @else
+                                <span class="text-[10px] italic text-[var(--contrast-second-text)]">Tanpa PW</span>
+                            @endif
+                        @else
+                            <span
+                                class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Password</span>
+                            <span class="text-[10px] italic text-[var(--contrast-second-text)]">
+                                {{ !empty($j->with_pw) ? 'Memiliki PW' : 'Tanpa PW' }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
+            </div>
+
+            {{-- ═══ FOOTER ═══ --}}
+            <div class="px-4 pb-4">
+                @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
+                    <button
+                        class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                        href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}"
+                        wire:navigate>
+                        <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
+                        <span>Lihat Jadwal Kelas</span>
+                    </button>
+                @elseif (!empty($j->with_pw))
+                    <button
+                        class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                        @click="
+                    $store.jadwal?.setEdit(0);
+                    $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
+                    $flux.modal('jadwal-join').show();
+                    $store.jadwal?.setValueJoinJadwal(
+                        '{{ $j->id ?? '' }}',
+                        '{{ $j->kode ?? '' }}',
+                        '{{ $j->kode_kelas ?? '' }}',
+                        '{{ $j->label_extra ?? '' }}',
+                    );
+                ">
+                        <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                        <span>Join Kelas</span>
+                    </button>
+                @else
+                    <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
+                        <button
+                            class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                            @click="
+                        $store.jadwal?.setEdit(0);
+                        $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
+                        $store.jadwal?.setValueJoinJadwal('{{ $j->id ?? '' }}');
+                    ">
+                            <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                            <span>Join Kelas</span>
+                        </button>
+                    </form>
+                @endif
             </div>
 
         </div>

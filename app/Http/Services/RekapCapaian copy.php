@@ -193,7 +193,7 @@ trait RekapCapaian
                         [
                             'nilai' => null,
                             'index' => null,
-                            'huruf' => null,
+                            'mutu' => null,
                             'count_rps' => 0,
                             'total_sks' => 0,
                         ]
@@ -233,7 +233,7 @@ trait RekapCapaian
                     default => 0.00,
                 };
 
-                $huruf = match (true) {
+                $mutu = match (true) {
                     $nilaiRata >= 86 => 'A',
                     $nilaiRata >= 80 => 'A-',
                     $nilaiRata >= 75 => 'B+',
@@ -252,7 +252,7 @@ trait RekapCapaian
                     [
                         'nilai' => $nilaiRata,
                         'index' => $index,
-                        'huruf' => $huruf,
+                        'mutu' => $mutu,
                         'count_rps' => $jumlahRps,
                         'total_sks' => $totalSks,
                     ]

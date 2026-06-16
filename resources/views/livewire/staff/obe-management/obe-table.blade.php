@@ -29,7 +29,7 @@
     @if ($this->switchTable == 'rps')
         <x-slot:sortir>
             <div x-data="{ activeTab: @entangle('filterRPSgg') }"
-                class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+                class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByRPSgg',
                     'xFilter' => 'filterRPSgg',
@@ -277,8 +277,8 @@
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'akreditas_cpl_pr',
-                    'headString' => 'Akreditas',
+                    'sortFieldString' => 'mutu_cpl_pr',
+                    'headString' => 'Mutu',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -555,8 +555,8 @@
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                'xValue' => $x->akreditas_cpl_pr ?? 'E',
+                            @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                'xValue' => $x->mutu_cpl_pr ?? 'E',
                             ])
                         </button>
                         @include('livewire.staff.obe-management.obe-toolbar-table', [

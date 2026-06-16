@@ -1,7 +1,7 @@
 <x-global.main-layout-table :paginator="$rps">
     <x-slot:sortir>
         <div x-data="{ activeTab: @entangle('filterRPSgg') }"
-            class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByRPSgg',
                 'xFilter' => 'filterRPSgg',
@@ -116,8 +116,8 @@
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'akreditas_rps_pr',
-                    'headString' => 'Akreditas',
+                    'sortFieldString' => 'mutu_rps_pr',
+                    'headString' => 'Mutu',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -217,8 +217,8 @@
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                'xValue' => $r->akreditas_rps_pr ?? 'E',
+                            @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                'xValue' => $r->mutu_rps_pr ?? 'E',
                             ])
                         </button>
                         @include('livewire.staff.obe-management.obe-toolbar-table', [

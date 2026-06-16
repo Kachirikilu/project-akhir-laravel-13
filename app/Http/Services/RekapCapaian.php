@@ -286,8 +286,8 @@ trait RekapCapaian
                         ],
                         [
                             'nilai' => null,
-                            'index' => null,
-                            'huruf' => null,
+                            // 'index' => null,
+                            // 'mutu' => null,
                             'count_rps' => 0,
                             'total_sks' => 0,
                         ]
@@ -315,29 +315,29 @@ trait RekapCapaian
                         return $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
                     });
 
-                $index = match (true) {
-                    $nilaiRata >= 86 => 4.00,
-                    $nilaiRata >= 80 => 3.70,
-                    $nilaiRata >= 75 => 3.30,
-                    $nilaiRata >= 70 => 3.00,
-                    $nilaiRata >= 65 => 2.70,
-                    $nilaiRata >= 60 => 2.30,
-                    $nilaiRata >= 56 => 2.00,
-                    $nilaiRata >= 40 => 1.00,
-                    default => 0.00,
-                };
+                // $index = match (true) {
+                //     $nilaiRata >= 86 => 4.00,
+                //     $nilaiRata >= 80 => 3.70,
+                //     $nilaiRata >= 75 => 3.30,
+                //     $nilaiRata >= 70 => 3.00,
+                //     $nilaiRata >= 65 => 2.70,
+                //     $nilaiRata >= 60 => 2.30,
+                //     $nilaiRata >= 56 => 2.00,
+                //     $nilaiRata >= 40 => 1.00,
+                //     default => 0.00,
+                // };
 
-                $huruf = match (true) {
-                    $nilaiRata >= 86 => 'A',
-                    $nilaiRata >= 80 => 'A-',
-                    $nilaiRata >= 75 => 'B+',
-                    $nilaiRata >= 70 => 'B',
-                    $nilaiRata >= 65 => 'B-',
-                    $nilaiRata >= 60 => 'C+',
-                    $nilaiRata >= 56 => 'C',
-                    $nilaiRata >= 40 => 'D',
-                    default => 'E',
-                };
+                // $mutu = match (true) {
+                //     $nilaiRata >= 86 => 'A',
+                //     $nilaiRata >= 80 => 'A-',
+                //     $nilaiRata >= 75 => 'B+',
+                //     $nilaiRata >= 70 => 'B',
+                //     $nilaiRata >= 65 => 'B-',
+                //     $nilaiRata >= 60 => 'C+',
+                //     $nilaiRata >= 56 => 'C',
+                //     $nilaiRata >= 40 => 'D',
+                //     default => 'E',
+                // };
 
                 RekapNilaiMahasiswa::updateOrCreate(
                     [
@@ -345,8 +345,8 @@ trait RekapCapaian
                     ],
                     [
                         'nilai' => $nilaiRata,
-                        'index' => $index,
-                        'huruf' => $huruf,
+                        // 'index' => $index,
+                        // 'mutu' => $mutu,
                         'count_rps' => $jumlahRps,
                         'total_sks' => $totalSks,
                     ]

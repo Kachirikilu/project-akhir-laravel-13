@@ -255,7 +255,7 @@ trait WithRPSFilters
 
             'rekap_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
             'index_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
-            'akreditas_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
+            'mutu_rps_pr' => $queryRPS->orderBy('rekap_rps_pr', $this->sortDirection),
 
             'is_draf' => $queryRPS->orderBy('is_draf', $this->sortDirection),
             'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),

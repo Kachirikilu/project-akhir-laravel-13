@@ -58,9 +58,9 @@
 
                     <div
                         class="p-3 rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-center">
-                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Huruf</span>
+                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Mutu</span>
                         <span class="block text-xl font-bold text-amber-800 dark:text-amber-300 mt-0.5">
-                            <span x-text="$store.user?.akreditas_mhs"></span>
+                            <span x-text="$store.user?.mutu_mhs"></span>
                         </span>
                     </div>
 

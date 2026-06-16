@@ -72,8 +72,8 @@
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'akreditas_scpmk_pr',
-                    'headString' => 'Akreditas',
+                    'sortFieldString' => 'mutu_scpmk_pr',
+                    'headString' => 'Mutu',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -171,8 +171,8 @@
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                'xValue' => $sc->akreditas_scpmk_pr ?? 'E',
+                            @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                'xValue' => $sc->mutu_scpmk_pr ?? 'E',
                             ])
                         </button>
                         @include('livewire.staff.obe-management.obe-toolbar-table', [

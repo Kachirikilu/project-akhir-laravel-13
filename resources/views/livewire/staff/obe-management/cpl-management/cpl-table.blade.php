@@ -69,8 +69,8 @@
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'akreditas_cpl_pr',
-                    'headString' => 'Akreditas',
+                    'sortFieldString' => 'mutu_cpl_pr',
+                    'headString' => 'Mutu',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -126,8 +126,8 @@
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                'xValue' => $c->akreditas_cpl_pr ?? 'E',
+                            @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                'xValue' => $c->mutu_cpl_pr ?? 'E',
                             ])
                         </button>
                         @include('livewire.staff.obe-management.obe-toolbar-table', [
@@ -167,7 +167,7 @@
                                     '{{ $c->kode ?? '' }}',
                                     '{{ $c->rekap_cpl_pr ?? 0 }}',
                                     '{{ $c->index_cpl_pr ?? 0 }}',
-                                    '{{ $c->akreditas_cpl_pr ?? 'E' }}',
+                                    '{{ $c->mutu_cpl_pr ?? 'E' }}',
                                 );
                             $flux.modal('cpl-rps-modal').show();
                         "

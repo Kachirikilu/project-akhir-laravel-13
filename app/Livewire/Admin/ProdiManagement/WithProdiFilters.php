@@ -96,7 +96,7 @@ trait WithProdiFilters
         return $queryPr;
     }
 
-    protected function addAkreditasProdi(
+    protected function addMutuProdi(
         $queryPr,
         string $alias = 'akreditas_pr'
     ) {

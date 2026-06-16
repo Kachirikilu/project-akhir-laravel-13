@@ -392,15 +392,20 @@ trait WithKelasJadwalSearchFilters
                     |--------------------------------------------------------------------------
                     */
                     $semester = (int) ($j->semester ?? 0);
-                    $matchSemester = false;
-                    if ($isNumericSearch
-                        && (
-                            str_contains($searchLower, 'sem')
-                            || str_contains($searchLower, 'semester')
-                        )
-                    ) {
-                        $matchSemester = $semester === (int) $number;
-                    }
+                    $matchSemester = $this->matchCount(
+                        $semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                            's'
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$semester,
+                        $searchLower
+                    );
 
                     /*
                     |--------------------------------------------------------------------------

@@ -329,15 +329,15 @@ trait WithNilaiSearchFilters
                     $matchIndex = false;
                     if ($isNumericSearch) {
                         $matchIndex = $this->compareNumber(
-                            (float) $n->ips,
+                            (float) $n->ip_semester,
                             $searchLower
                         ) || $this->containsStrict(
-                            $n->ips,
+                            $n->ip_semester,
                             $searchLower
                         );
                     }
                     $matchIndex = $this->matchNilaiIndex(
-                        $n->ips,
+                        $n->ip_semester,
                         $searchLower
                     );
                     /*
@@ -346,15 +346,24 @@ trait WithNilaiSearchFilters
                     |--------------------------------------------------------------------------
                     */
                     $semester = (int) ($n->semester ?? 0);
-                    $matchSemester = false;
-                    if ($isNumericSearch
-                        && (
-                            str_contains($searchLower, 'sem')
-                            || str_contains($searchLower, 'semester')
-                        )
-                    ) {
-                        $matchSemester = $semester === (int) $number;
-                    }
+                    $matchSemester = $this->matchCount(
+                        $n->semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                            's'
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$n->semester,
+                        $searchLower
+                    );
+                    $matchSemesterJenis = $this->matchSemesterJenis(
+                        $semester,
+                        $searchLower
+                    );
 
                     /*
                     |--------------------------------------------------------------------------
@@ -371,10 +380,7 @@ trait WithNilaiSearchFilters
                         $matchSKS = $sks === $targetSKS;
                     }
 
-                    $matchSemesterJenis = $this->matchSemesterJenis(
-                        $n->semester,
-                        $searchLower
-                    );
+
 
                     // $matchCreatedAt = $this->matchDateField(
                     //     $n->created_at,
@@ -409,7 +415,7 @@ trait WithNilaiSearchFilters
             }
 
             $sortValue = match ($sortField) {
-                'nilai_index' => fn ($n) => $n->ips,
+                'nilai_semester', 'ip_semester', 'mutu_semester' => fn ($n) => $n->nilai_semester,
                 'semester' => fn ($n) => $n->semester,
                 'sks' => fn ($n) => $n->total_sks,
                 // 'created_at' => fn ($n) => $n->created_at,
@@ -458,38 +464,21 @@ trait WithNilaiSearchFilters
                 $number = preg_replace('/[^0-9.]/', '', $searchLower);
                 $isNumericSearch = is_numeric($number) && $number !== '';
 
-                $matchIndex = false;
-                if ($isNumericSearch) {
-                    $matchIndex = $this->compareNumber(
-                        (float) $n->ips,
-                        $searchLower
-                    ) || $this->containsStrict(
-                        $n->ips,
-                        $searchLower
-                    );
-                }
-                $matchIndex = $this->matchNilaiIndex(
-                    $n->ips,
+                $matchNilaiAkhir = $this->matchNilaiAkhir(
+                    $n->nilai_semester ?? 0,
                     $searchLower
                 );
-                /*
-                |--------------------------------------------------------------------------
-                | SEMESTER
-                |--------------------------------------------------------------------------
-                */
-                $matchSemester = $this->matchCount(
-                    $n->semester,
-                    $searchLower,
-                    [
-                        'sem',
-                        'semester',
-                        'semes',
-                        'sms',
-                    ]
-                ) || $this->containsStrict(
-                    'Semester'.$n->semester,
+
+                $matchNilaiIndex = $this->matchNilaiIndex(
+                    $n->ip_semester ?? 0,
                     $searchLower
                 );
+
+                $matchNilaiMutu = $this->matchNilaiMutu(
+                    $n->mutu_semester ?? 'E',
+                    $searchLower
+                );
+
 
                 /*
                 |--------------------------------------------------------------------------
@@ -513,10 +502,26 @@ trait WithNilaiSearchFilters
                     $searchLower
                 );
 
-                $matchSemesterJenis = $this->matchSemesterJenis(
-                    $n->semester,
-                    $searchLower
-                );
+                    $semester = (int) ($n->semester ?? 0);
+                    $matchSemester = $this->matchCount(
+                        $n->semester,
+                        $searchLower,
+                        [
+                            'sem',
+                            'semester',
+                            'semes',
+                            'sms',
+                            's'
+                        ]
+                    ) || $this->containsStrict(
+                        'Semester'.$n->semester,
+                        $searchLower
+                    );
+                    $matchSemesterJenis = $this->matchSemesterJenis(
+                        $semester,
+                        $searchLower
+                    );
+
 
                 $matchAkademik = $this->matchAkademik(
                     $n->akademik,
@@ -536,8 +541,12 @@ trait WithNilaiSearchFilters
                 // );
 
                 switch ($mode) {
+                    case 'nilai':
+                        return $matchNilaiAkhir || $matchNilaiMutu;
                     case 'index':
                         return $matchNilaiIndex;
+                    case 'mutu':
+                        return $matchNilaiMutu;
                     case 'semester':
                         return $matchSemester || $matchSemesterJenis;
                     case 'sks':
@@ -545,7 +554,9 @@ trait WithNilaiSearchFilters
                 }
 
                 return
-                    $matchIndex
+                    $matchNilaiAkhir
+                    || $matchNilaiIndex
+                    || $matchNilaiMutu
                     || $matchSemester
                     || $matchSemesterJenis
                     || $matchSKS
@@ -557,8 +568,9 @@ trait WithNilaiSearchFilters
         // --- LOGIKA SORTIR DATA COLLECTION ---
         if ($sortField) {
             $sortValue = match ($sortField) {
-                'nilai_index' => fn ($n) => $n->ips,
+                'nilai_semester', 'ip_semester', 'nilai_index', 'mutu_semester' => fn ($n) => $n->nilai_semester,
                 'semester' => fn ($n) => $n->semester,
+                'sks' => fn ($n) => $n->total_sks,
                 'sks', 'total_sks' => fn ($n) => $n->total_sks,
                 'akademik', 'tahun_akademik' => fn ($n) => $n->akademik,
                 default => fn ($n) => $n->akademik.$n->ganjil_genap,

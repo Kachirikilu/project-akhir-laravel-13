@@ -28,12 +28,14 @@
         {{-- BARIS PERTAMA --}}
         <tr>
 
-            {{-- Kolom yang ditarik ke bawah (Tinggi 2 baris) --}}
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'id',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
+
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'metode',
                 'isCenter' => 1,
@@ -155,7 +157,9 @@
         <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $s->id }}</td>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="table-second text-center">{{ $s->id }}</td>
+            @endif
 
             <td class="table-main text-center">
                 <flux:dropdown>
@@ -229,14 +233,17 @@
                         </flux:badge>
                     </button>
 
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', [
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                        [
                             'x' => $s,
                             'editString' => 'editSesi',
                             'nameXString' => 'Sesi',
                             'confirmDeleteString' => 'deleteSesi',
                             'copyName' => 'Kode CPMK',
                             'copyText' => $s->kode_cpmk ?? '',
-                        ])
+                        ]
+                    )
                 </flux:dropdown>
             </td>
 
@@ -247,14 +254,17 @@
                             inset="top bottom">
                         </flux:button>
 
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', [
-                            'x' => $s,
-                            'editString' => 'editSesi',
-                            'nameXString' => 'Sesi',
-                            'confirmDeleteString' => 'deleteSesi',
-                            'copyName' => 'Kode Sub-CPMK',
-                            'copyText' => $s->kode_scpmk ?? '',
-                        ])
+                        @include(
+                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                            [
+                                'x' => $s,
+                                'editString' => 'editSesi',
+                                'nameXString' => 'Sesi',
+                                'confirmDeleteString' => 'deleteSesi',
+                                'copyName' => 'Kode Sub-CPMK',
+                                'copyText' => $s->kode_scpmk ?? '',
+                            ]
+                        )
 
                     </flux:dropdown>
                 </td>

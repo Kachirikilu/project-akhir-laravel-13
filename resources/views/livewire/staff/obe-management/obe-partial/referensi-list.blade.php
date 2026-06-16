@@ -80,7 +80,7 @@
         </div>
 
         {{-- LIST --}}
-        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
+        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-tiny">
 
             <template x-if="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length === 0">
                 <div

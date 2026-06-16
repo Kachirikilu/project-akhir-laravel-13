@@ -27,7 +27,7 @@
         'nameXString' => 'Kode Fakultas',
         'modelString' => 'kode_fk',
         'iconString' => 'hashtag',
-        'placeholder' => 'Masukkan 3 huruf Kode Fakultas',
+        'placeholder' => 'Masukkan 3 mutu Kode Fakultas',
         'message' => $errors->first('kode_fk'),
         'isKode' => 3,
         'isFocusSelect' => 1,

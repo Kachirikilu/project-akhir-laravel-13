@@ -105,7 +105,7 @@ trait WithSubCPMKFilters
 
             'rekap_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
             'index_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
-            'akreditas_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
+            'mutu_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
             
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),

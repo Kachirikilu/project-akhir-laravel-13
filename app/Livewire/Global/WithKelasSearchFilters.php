@@ -406,6 +406,7 @@ trait WithKelasSearchFilters
                             'semester',
                             'semes',
                             'sms',
+                            's'
                         ]
                     ) || $this->containsStrict(
                         'Semester'.$k->semester,

@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -24,10 +25,13 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
 
     protected $title;
 
-    public function __construct($queryCPMK, $title)
+    protected $withCapaian;
+
+    public function __construct($queryCPMK, $title, $withCapaian = false)
     {
         $this->queryCPMK = $queryCPMK;
         $this->title = $title;
+        $this->withCapaian = $withCapaian;
     }
 
     public function collection()
@@ -50,19 +54,37 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
 
     public function headings(): array
     {
-        return [
-            [
-                'ID', 'Kode CPMK', 'Deskripsi CPMK', 'Bobot CPMK',
-                'Capaian Pembelajaran Lulusan', '',
-                'Sub-CPMK', '', '', '',
-                'Referensi', '',
-            ], [
-                '', '', '', '',
-                'Kode CPL', 'Jumlah CPL',
-                'Kode Sub-CPMK', 'Jumlah Pertemuan', 'Metode', 'Bobot Sub-CPMK',
-                'Kode Referensi', 'Jumlah Referensi',
-            ],
-        ];
+        if ($this->withCapaian) {
+            return [
+                [
+                    'ID', 'Kode CPMK', 'Deskripsi CPMK', 'Bobot CPMK',
+                    'Nilai Capaian', '', '',
+                    'Capaian Pembelajaran Lulusan (CPL)', '',
+                    'Sub Capaian Pembelajaran Semester (Sub-CPMK)', '', '', '',
+                    'Referensi', '',
+                ], [
+                    '', '', '', '',
+                    'Nilai', 'Index', 'Mutu',
+                    'Kode CPL', 'Jumlah CPL',
+                    'Kode Sub-CPMK', 'Jumlah Pertemuan', 'Metode', 'Bobot Sub-CPMK',
+                    'Kode Referensi', 'Jumlah Referensi',
+                ],
+            ];
+        } else {
+            return [
+                [
+                    'ID', 'Kode CPMK', 'Deskripsi CPMK', 'Bobot CPMK',
+                    'Capaian Pembelajaran Lulusan (CPL)', '',
+                    'Sub Capaian Pembelajaran Semester (Sub-CPMK)', '', '', '',
+                    'Referensi', '',
+                ], [
+                    '', '', '', '',
+                    'Kode CPL', 'Jumlah CPL',
+                    'Kode Sub-CPMK', 'Jumlah Pertemuan', 'Metode', 'Bobot Sub-CPMK',
+                    'Kode Referensi', 'Jumlah Referensi',
+                ],
+            ];
+        }
     }
 
     public function map($c): array
@@ -78,25 +100,33 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
             ->concat($c->scpmks->flatMap->refs)
             ->unique('id');
 
-        return [
+        $data = [
             $c->id ?? '', // 0 (A)
             $c->kode ?? '', // 1 (B)
-            $c->deskripsi ?? '', // 2 (C)
+            $c->deskripsi_cpl ?? '', // 2 (C)
             ($c->total_bobot ?? 0).'%', // 3 (D)
 
             $cpls->pluck('kode')->implode(' / '), // 4 (E)
-            $cpls->count() ?? 0, // 5 (F)
-            $cpls->count() > 0 ? $cpls->count() : '0', 
+            $cpls->count() > 0 ? $cpls->count() : '0',
 
             $c->scpmks->pluck('kode')->implode(' / '), // 6 (G)
-            $c->scpmks->count() ?? 0, // 7 (H)
-            $c->scpmks->count() > 0 ? $c->scpmks->count() : '0', 
+            $c->scpmks->count() > 0 ? $c->scpmks->count() : '0',
             $c->scpmks->pluck('metode')->unique()->filter()->implode(' / '), // 8 (I)
             ($c->scpmks->sum('bobot')).'%', // 9 (J)
 
             $refs->pluck('kode')->implode(' / '), // 10 (K)
-            $refs->count() > 0 ? $refs->count() : '0', 
+            $refs->count() > 0 ? $refs->count() : '0',
         ];
+
+        if ($this->withCapaian) {
+            array_splice($data, 4, 0, [
+                $c->rekap_cpmk_pr ?: '0',
+                $c->index_cpmk_pr ?: '0',
+                $c->mutu_cpmk_pr ?? 'E',
+            ]);
+        }
+
+        return $data;
     }
 
     public function styles(Worksheet $sheet)
@@ -126,11 +156,27 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
         }
 
         // Horizontal Merges untuk Judul Grup (Row 4)
-        $sheet->mergeCells('E4:F4'); // CPl
-        $sheet->mergeCells('G4:J4'); // Sub-CPMK
-        $sheet->mergeCells('K4:L4'); // Referensi
+        if ($this->withCapaian) {
+            foreach (['E', 'F'] as $col) {
+                $sheet->getStyle("{$col}6:{$col}{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+            }
+            $sheet->mergeCells('E4:G4'); // Capaian
+            $sheet->mergeCells('H4:I4'); // CPl
+            $sheet->mergeCells('J4:M4'); // Sub-CPMK
+            $sheet->mergeCells('N4:O4'); // Referensi
+        } else {
+            $sheet->mergeCells('E4:F4'); // CPl
+            $sheet->mergeCells('G4:J4'); // Sub-CPMK
+            $sheet->mergeCells('K4:L4'); // Referensi
+        }
 
-        $alignmentMerges = ['A', 'B', 'D', 'F', 'H', 'J', 'L'];
+        if ($this->withCapaian) {
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'I', 'K', 'M', 'O'];
+        } else {
+            $alignmentMerges = ['A', 'B', 'D', 'F', 'H', 'J', 'L'];
+        }
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

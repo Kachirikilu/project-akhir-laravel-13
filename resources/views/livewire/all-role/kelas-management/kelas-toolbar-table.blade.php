@@ -24,7 +24,7 @@
             <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
-                <span>Show Kelas</span>
+                <span>Lihat Kelas</span>
                 <flux:icon wire:loading wire:target="showKelas" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>
@@ -36,7 +36,6 @@
         <flux:menu.item
             @click="
                 $store.kelas?.resetShow();
-                $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
 
                     $store.kelas?.setShowRPS(
                         '{{ $x->rps_id ?? '' }}',

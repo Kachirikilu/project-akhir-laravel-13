@@ -3,7 +3,6 @@
         <flux:menu.item
             @click="
                 $store.rps?.resetShow();
-                $store.rps?.setColor('text-green-700 dark:text-green-400');
 
                     $store.rps?.setShowRPS(
                         '{{ $x->id ?? '' }}',

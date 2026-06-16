@@ -130,7 +130,7 @@ class JadwalManagement extends Component
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'jadwal-card') ? "/{$table}" : '';
 
-        $targetPath = "/{$base}/{$this->kode_kelas_url}{$suffix}";
+        $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal{$suffix}";
         $targetPath = preg_replace('#(?<!:)/+#', '/', $targetPath);
         $targetPath = '/'.ltrim(rtrim($targetPath, '/'), '/');
 

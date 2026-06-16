@@ -733,7 +733,7 @@ trait LogicSearch
 
         if (
             preg_match(
-                '/(?:index|indeks|ip)?\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
+                '/(?:index|indeks|ip|ipk|ips)?\s*(>=|<=|>|<|=)?\s*([\d.]+)/i',
                 $search,
                 $matches
             )
@@ -748,65 +748,50 @@ trait LogicSearch
         return false;
     }
 
-    protected function matchNilaiHuruf(
-        ?string $huruf,
+    protected function matchNilaiMutu(
+        ?string $mutu,
         string $search
     ): bool {
-
-        $huruf = strtoupper(trim($huruf ?? ''));
+        $mutu = strtoupper(trim($mutu ?? ''));
         $search = strtoupper(trim($search));
 
-        preg_match('/\b(A\-|B\+|B\-|C\+|A|B|C|D|E)\b/', $search, $matches);
-
-        $targetHuruf = $matches[1] ?? null;
-
-        if (! $targetHuruf) {
+        if ($mutu === '') {
             return false;
         }
 
-        if ($huruf !== $targetHuruf) {
+        // PERBAIKAN REGEX: Menghilangkan \b dan menyusun urutan dari 2 karakter terlebih dahulu (A-, B+, dll)
+        // Menggunakan regex penjerat yang aman dari gangguan text sekitarnya
+        $pattern = '/(A\-|B\+|B\-|C\+|A|B|C|D|E)/';
+        if (! preg_match($pattern, $search, $matches)) {
             return false;
         }
 
-        if ($search === $targetHuruf) {
+        $targetMutu = $matches[1] ?? null;
+
+        // Jika nilai huruf yang dicari tidak sama dengan data mutu saat ini, langsung reject
+        if ($mutu !== $targetMutu) {
+            return false;
+        }
+
+        // Jika user hanya mengetik hurufnya saja (misal: "A-", "B", "A"), langsung cocokkan
+        if ($search === $targetMutu) {
             return true;
         }
 
-        $keywords = [
-            'N',
-            'NI',
-            'NIL',
-            'NILA',
-            'NILAI',
-
-            'AK',
-            'AKR',
-            'AKRE',
-            'AKRED',
-            'AKREDI',
-            'AKREDIT',
-            'AKREDITA',
-            'AKREDITAS',
-            'AKREDITASI',
-
-            'GR',
-            'GRA',
-            'GRAD',
-            'GRADE',
-
-            'HU',
-            'HUR',
-            'HURU',
-            'HURUF',
+        // Jika ada teks tambahan (misal: "nilai A" atau "mutu B+"), bersihkan kata kunci pengganggu
+        $cleanSearch = $search;
+        $stopWords = [
+            'NILAI', 'HURUF', 'MUTU', 'GRADE', 'AKREDITASI', 'SEMESTER',
+            'INDEX', 'INDEKS', 'IP', 'IPK', 'IPS',
         ];
 
-        foreach ($keywords as $keyword) {
-            if (str_contains($search, $keyword)) {
-                return true;
-            }
+        foreach ($stopWords as $word) {
+            $cleanSearch = str_replace($word, '', $cleanSearch);
         }
 
-        return false;
+        $cleanSearch = trim($cleanSearch);
+
+        return $cleanSearch === $targetMutu;
     }
 
     protected function detectSearchMode(string $search): ?string
@@ -846,10 +831,10 @@ trait LogicSearch
         }
 
         if (
-            str_contains($search, 'huruf ')
+            str_contains($search, 'mutu ')
             || str_contains($search, 'grade ')
         ) {
-            return 'huruf';
+            return 'mutu';
         }
 
         if (
@@ -860,6 +845,7 @@ trait LogicSearch
         }
 
         if (
+            str_contains($search, 's') ||
             str_contains($search, 'sem') ||
             str_contains($search, 'semester') ||
             str_contains($search, 'ganjil') ||

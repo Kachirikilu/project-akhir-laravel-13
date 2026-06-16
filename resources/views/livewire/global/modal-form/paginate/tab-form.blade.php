@@ -5,7 +5,7 @@
            mb-2 p-4 rounded-lg shadow-md">
     <div class="border-b table-border flex flex-col-reverse">
 
-        <div class="flex space-x-4 overflow-x-auto pb-1 scrollbar-thin">
+        <div class="flex space-x-4 overflow-x-auto pb-1 scrollbar-tiny">
 
 
             @foreach ($tabs as $i => $label)

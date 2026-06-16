@@ -2,7 +2,7 @@
 
     <x-slot:sortir>
         <div x-data="{ activeTab: @entangle('filterKelasgg') }"
-            class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
@@ -31,17 +31,39 @@
             ])
         </div>
     </x-slot:sortir>
+    <x-slot:search>
+        <div x-data="{ activeTab: @entangle('switchTable2') }" class="scrollbar-tiny flex space-x-4 overflow-x-auto">
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'switchingTable2',
+                'xFilter' => 'switchTable2',
+                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabString' => 'kelas-card',
+                'tabNameString' => 'Daftar Kelas',
+                'icon' => 'rectangle-group',
+            ])
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'switchingTable2',
+                'xFilter' => 'switchTable2',
+                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabString' => 'kelas-table',
+                'tabNameString' => 'Tabel Kelas',
+                'icon' => 'table-cells',
+            ])
+        </div>
+    </x-slot:search>
 
     <x-slot:header>
         {{-- BARIS PERTAMA --}}
         <tr>
 
-            {{-- Kolom yang ditarik ke bawah (Tinggi 2 baris) --}}
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'id',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+            @endif
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'rowSpan' => 2,
@@ -76,16 +98,18 @@
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+            @endif
         </tr>
 
         {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
@@ -149,7 +173,9 @@
         <tr wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $k->id }}</td>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="table-second text-center">{{ $k->id }}</td>
+            @endif
             <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
@@ -312,8 +338,10 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
+            @endif
         </tr>
     @empty
         <tr>

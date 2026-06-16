@@ -43,8 +43,8 @@ document.addEventListener("alpine:init", () => {
             this.link = link;
 
             if (kode) {
-                const huruf = kode.match(/[a-zA-Z]+/g);
-                this.kode_ref_1 = huruf ? huruf[0] : "";
+                const mutu = kode.match(/[a-zA-Z]+/g);
+                this.kode_ref_1 = mutu ? mutu[0] : "";
                 const angka = kode.match(/\d+/g);
                 this.kode_ref_2 = angka ? angka[0] : "";
             } else {

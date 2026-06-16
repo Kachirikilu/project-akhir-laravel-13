@@ -39,7 +39,7 @@ class NilaiRecalculationTest extends TestCase
                 ],
                 'nilai_angka' => 0,
                 'nilai_index' => null,
-                'nilai_huruf' => null,
+                'nilai_mutu' => null,
             ],
         ];
 
@@ -49,7 +49,7 @@ class NilaiRecalculationTest extends TestCase
         // Assert average = 88.0
         $this->assertEquals(88.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
         $this->assertEquals(4, $dummy->parsedNilaiRows[0]['nilai_index']);
-        $this->assertEquals('A', $dummy->parsedNilaiRows[0]['nilai_huruf']);
+        $this->assertEquals('A', $dummy->parsedNilaiRows[0]['nilai_mutu']);
 
         // Test B threshold (71)
         $dummy->parsedNilaiRows[0]['sub_cpmk'] = [
@@ -59,7 +59,7 @@ class NilaiRecalculationTest extends TestCase
         $dummy->recalculateRowNilai(0);
         $this->assertEquals(71.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
         $this->assertEquals(3, $dummy->parsedNilaiRows[0]['nilai_index']);
-        $this->assertEquals('B', $dummy->parsedNilaiRows[0]['nilai_huruf']);
+        $this->assertEquals('B', $dummy->parsedNilaiRows[0]['nilai_mutu']);
 
         // Test C threshold (56)
         $dummy->parsedNilaiRows[0]['sub_cpmk'] = [
@@ -69,7 +69,7 @@ class NilaiRecalculationTest extends TestCase
         $dummy->recalculateRowNilai(0);
         $this->assertEquals(56.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
         $this->assertEquals(2, $dummy->parsedNilaiRows[0]['nilai_index']);
-        $this->assertEquals('C', $dummy->parsedNilaiRows[0]['nilai_huruf']);
+        $this->assertEquals('C', $dummy->parsedNilaiRows[0]['nilai_mutu']);
 
         // Test D threshold (41)
         $dummy->parsedNilaiRows[0]['sub_cpmk'] = [
@@ -79,7 +79,7 @@ class NilaiRecalculationTest extends TestCase
         $dummy->recalculateRowNilai(0);
         $this->assertEquals(41.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
         $this->assertEquals(1, $dummy->parsedNilaiRows[0]['nilai_index']);
-        $this->assertEquals('D', $dummy->parsedNilaiRows[0]['nilai_huruf']);
+        $this->assertEquals('D', $dummy->parsedNilaiRows[0]['nilai_mutu']);
 
         // Test E threshold (0)
         $dummy->parsedNilaiRows[0]['sub_cpmk'] = [
@@ -89,7 +89,7 @@ class NilaiRecalculationTest extends TestCase
         $dummy->recalculateRowNilai(0);
         $this->assertEquals(40.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
         $this->assertEquals(0, $dummy->parsedNilaiRows[0]['nilai_index']);
-        $this->assertEquals('E', $dummy->parsedNilaiRows[0]['nilai_huruf']);
+        $this->assertEquals('E', $dummy->parsedNilaiRows[0]['nilai_mutu']);
     }
 
     public function test_key_normalization_matching()

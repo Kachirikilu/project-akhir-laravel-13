@@ -36,7 +36,7 @@
                                 'nameXString' => 'Kode CPL',
                                 'modelString' => 'kode_cpl_1',
                                 'iconString' => 'document-text',
-                                'placeholder' => 'Masukkan huruf Kode CPL...',
+                                'placeholder' => 'Masukkan mutu Kode CPL...',
                                 'isKode' => 4,
                                 'isFocusSelect' => 1,
                             ])

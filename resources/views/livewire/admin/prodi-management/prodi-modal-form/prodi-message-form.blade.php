@@ -51,7 +51,7 @@
                             $store.prodi?.typeModal === 'fakultas' ? 'Fakultas' :
                             'Data'
                         "></span>
-                    </strong> minimal 3 huruf.
+                    </strong> minimal 3 mutu.
                 </p>
             </div>
 

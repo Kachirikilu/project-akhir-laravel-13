@@ -41,7 +41,7 @@
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
-                <div class="w-full overflow-x-auto max-h-[90vh] overflow-y-auto border rounded-lg">
+                <div class="scrollbar-x-large w-full overflow-x-auto max-h-[90vh] overflow-y-auto border rounded-lg">
                     @php
                         $subCpmks = collect($this->parsedNilaiHeaders ?? []);
 
@@ -96,7 +96,7 @@
 
                                 <th rowspan="3" class="{{ $headColumn }}">Nilai Angka</th>
                                 <th rowspan="3" class="{{ $headColumn }}">Nilai Index</th>
-                                <th rowspan="3" class="{{ $headColumn }}">Nilai Huruf</th>
+                                <th rowspan="3" class="{{ $headColumn }}">Nilai Mutu</th>
                                 <th rowspan="3" class="{{ $headColumn }}">Aksi</th>
                             </tr>
 
@@ -165,7 +165,7 @@
                                     },
                                 
                                     // 3. GETTER NILAI HURUF
-                                    get nilaiHuruf() {
+                                    get nilaiMutu() {
                                         let na = this.nilaiAngka;
                                         if (na >= 86) return 'A';
                                         if (na >= 80) return 'A-';
@@ -259,10 +259,10 @@
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => $this->parsedNilaiRows[$i]['nilai_huruf'] ?? '',
-                                        'modelAlpine' => 'nilaiHuruf',
-                                        'wireModel' => "parsedNilaiRows.$i.nilai_huruf",
-                                        'message' => $rowNilaiErrors[$i]['nilai_huruf'] ?? null,
+                                        'model' => $this->parsedNilaiRows[$i]['nilai_mutu'] ?? '',
+                                        'modelAlpine' => 'nilaiMutu',
+                                        'wireModel' => "parsedNilaiRows.$i.nilai_mutu",
+                                        'message' => $rowNilaiErrors[$i]['nilai_mutu'] ?? null,
                                         'isReadonly' => 1,
                                     ])
 

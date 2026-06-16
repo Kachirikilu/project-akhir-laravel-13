@@ -494,7 +494,7 @@ trait WithSubCPMKModal
     {
         return [
             'kode_scpmk_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_scpmk_1.alpha' => 'Kode awalan harus berupa huruf!',
+            'kode_scpmk_1.alpha' => 'Kode awalan harus berupa mutu!',
             'kode_scpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode SCPMK Bagian 2 (Angka - Kanan)
@@ -506,7 +506,7 @@ trait WithSubCPMKModal
             'kode_scpmk.required' => 'Kode Sub-CPMK lengkap wajib terbentuk!',
             'kode_scpmk.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_scpmk.required' => 'Kode Sub-CPMK wajib diisi!',
-            'kode_scpmk.alpha_num' => 'Kode Sub-CPMK hanya boleh berisi huruf dan angka!',
+            'kode_scpmk.alpha_num' => 'Kode Sub-CPMK hanya boleh berisi mutu dan angka!',
             'kode_scpmk.max' => 'Kode Sub-CPMK maksimal 20 karakter!',
 
             // Deskripsi & Status

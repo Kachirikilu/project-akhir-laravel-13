@@ -1,4 +1,4 @@
-<x-global.main-layout-card :paginator="$detailNilaiRps">
+<x-global.main-layout-card :paginator="$nilais">
 
     {{-- 1. Bagian Judul Sesi & Pencarian --}}
     <x-slot:sortir>
@@ -8,37 +8,37 @@
     </x-slot:sortir>
 
     {{-- 2. Looping Data Nilai Mata Kuliah (Per RPS) --}}
-    @forelse($detailNilaiRps as $n)
+    @forelse($nilais as $n)
         <div wire:key="nilai-rps-{{ $n->id }}"
             class="relative flex flex-col justify-between p-5 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
 
-            {{-- HEADER CARD: Kode RPS & Nilai Huruf --}}
+            {{-- HEADER CARD: Kode RPS & Nilai Mutu --}}
             <div class="flex items-start justify-between gap-2 pb-3 border-b table-border/60">
                 <div class="flex flex-col gap-0.5">
                     {{-- Kode RPS Tampil Di Sini --}}
                     <span class="text-xs font-mono font-bold text-[var(--focus-color)] uppercase tracking-wider">
-                        {{ $n->rps_rel?->kode_mata_kuliah ?? 'KODE-RPS' }}
+                        {{ $n->kode_rps ?? 'KODE-RPS' }}
                     </span>
                     <h3 class="font-bold text-sm text-[var(--contrast-main-text)] leading-snug line-clamp-2 min-h-[40px]">
                         {{ $n->rps_rel?->nama_mata_kuliah ?? 'Nama Mata Kuliah Belum Diatur' }}
                     </h3>
                 </div>
 
-                {{-- Badge Nilai Huruf (Otomatis Menyesuaikan Skor Angka) --}}
+                {{-- Badge Nilai Mutu (Otomatis Menyesuaikan Skor Angka) --}}
                 @php
                     $nilaiAngka = $n->nilai ?? 0;
-                    if ($nilaiAngka >= 86) { $huruf = 'A'; $badgeClass = 'bg-emerald-500/10 text-emerald-500'; }
-                    elseif ($nilaiAngka >= 80) { $huruf = 'A-'; $badgeClass = 'bg-teal-500/10 text-teal-500'; }
-                    elseif ($nilaiAngka >= 75) { $huruf = 'B+'; $badgeClass = 'bg-cyan-500/10 text-cyan-500'; }
-                    elseif ($nilaiAngka >= 70) { $huruf = 'B'; $badgeClass = 'bg-sky-500/10 text-sky-500'; }
-                    elseif ($nilaiAngka >= 65) { $huruf = 'B-'; $badgeClass = 'bg-indigo-500/10 text-indigo-500'; }
-                    elseif ($nilaiAngka >= 60) { $huruf = 'C+'; $badgeClass = 'bg-amber-500/10 text-amber-500'; }
-                    elseif ($nilaiAngka >= 56) { $huruf = 'C'; $badgeClass = 'bg-orange-500/10 text-orange-500'; }
-                    elseif ($nilaiAngka >= 40) { $huruf = 'D'; $badgeClass = 'bg-rose-500/10 text-rose-500'; }
-                    else { $huruf = 'E'; $badgeClass = 'bg-red-500/10 text-red-500'; }
+                    if ($nilaiAngka >= 86) { $mutu = 'A'; $badgeClass = 'bg-emerald-500/10 text-emerald-500'; }
+                    elseif ($nilaiAngka >= 80) { $mutu = 'A-'; $badgeClass = 'bg-teal-500/10 text-teal-500'; }
+                    elseif ($nilaiAngka >= 75) { $mutu = 'B+'; $badgeClass = 'bg-cyan-500/10 text-cyan-500'; }
+                    elseif ($nilaiAngka >= 70) { $mutu = 'B'; $badgeClass = 'bg-sky-500/10 text-sky-500'; }
+                    elseif ($nilaiAngka >= 65) { $mutu = 'B-'; $badgeClass = 'bg-indigo-500/10 text-indigo-500'; }
+                    elseif ($nilaiAngka >= 60) { $mutu = 'C+'; $badgeClass = 'bg-amber-500/10 text-amber-500'; }
+                    elseif ($nilaiAngka >= 56) { $mutu = 'C'; $badgeClass = 'bg-orange-500/10 text-orange-500'; }
+                    elseif ($nilaiAngka >= 40) { $mutu = 'D'; $badgeClass = 'bg-rose-500/10 text-rose-500'; }
+                    else { $mutu = 'E'; $badgeClass = 'bg-red-500/10 text-red-500'; }
                 @endphp
                 <span class="px-2.5 py-1 text-sm font-black rounded-lg {{ $badgeClass }}">
-                    {{ $huruf }}
+                    {{ $mutu }}
                 </span>
             </div>
 

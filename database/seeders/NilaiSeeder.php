@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
-use App\Models\Penilaian\RekapCPLProdi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -88,7 +87,6 @@ class NilaiSeeder extends Seeder
 
                             $nilaiArray = [];
                             $nilaiAkhir = 0;
-
                             $rekapCpl = [];
 
                             foreach ($sesis as $index => $sesi) {
@@ -123,7 +121,8 @@ class NilaiSeeder extends Seeder
 
                                 $nilai = round($nilai, 2);
 
-                                $nilaiArray[] = $nilai;
+                                // PERBAIKAN 1: Gunakan $index sebagai KEY agar sinkron dengan $normalizedBobots
+                                $nilaiArray[$index] = $nilai;
 
                                 // =====================================
                                 // HITUNG NILAI AKHIR
@@ -140,21 +139,17 @@ class NilaiSeeder extends Seeder
                                     isset($scpmk->cpmks) &&
                                     filled($scpmk->cpmks)
                                 ) {
-
                                     $cpls = collect($scpmk->cpmks)
                                         ->flatMap(fn ($cpmk) => $cpmk->cpls ?? [])
                                         ->unique('id');
 
                                     foreach ($cpls as $cpl) {
-
                                         $rekapCpl[$cpl->id] ??= [
                                             'total' => 0,
                                             'jumlah' => 0,
                                         ];
 
-                                        $rekapCpl[$cpl->id]['total']
-                                            += $nilai;
-
+                                        $rekapCpl[$cpl->id]['total'] += $nilai;
                                         $rekapCpl[$cpl->id]['jumlah']++;
                                     }
                                 }
@@ -173,45 +168,16 @@ class NilaiSeeder extends Seeder
                                 ],
                                 [
                                     'kj_id' => $jadwal->id,
-
                                     'nilai' => round($nilaiAkhir, 2),
 
+                                    // PERBAIKAN 2: Jika database mengharuskan array berurutan tanpa gap,
+                                    // pastikan $normalizedBobots juga di-serialize dengan struktur yang sama.
                                     'nilai_array' => $nilaiArray,
                                     'bobot_array' => $normalizedBobots,
 
                                     'is_loocked' => false,
                                 ]
                             );
-
-                            // =====================================
-                            // SIMPAN REKAP CPL
-                            // =====================================
-                            // foreach (
-                            //     $rekapCpl as $cplId => $data
-                            // ) {
-
-                            //     $persentase =
-                            //         $data['jumlah'] > 0
-                            //             ? round(
-                            //                 $data['total']
-                            //                 / $data['jumlah'],
-                            //                 2
-                            //             )
-                            //             : 0;
-
-                            //     RekapCPLProdi::create([
-                            //         'cpl_id' => $cplId,
-
-                            //         'nilai' => round(
-                            //             $persentase,
-                            //             2
-                            //         ),
-
-                            //         'persentase' => $persentase,
-
-                            //         'jumlah_pertemuan' => $data['jumlah'],
-                            //     ]);
-                            // }
                         }
                     });
 

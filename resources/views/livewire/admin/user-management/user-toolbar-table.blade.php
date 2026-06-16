@@ -94,9 +94,9 @@
 
                         '{{ $x->mahasiswa->count_rps ?? 0 }}',
                         '{{ $x->mahasiswa->total_sks ?? 0 }}',
-                        '{{ $user->mahasiswa->rekap_mhs ?? 0.0 }}',
-                        '{{ $user->mahasiswa->index_mhs ?? 0.0 }}',
-                        '{{ $user->mahasiswa->akreditas_mhs ?? 'E' }}',
+                        '{{ $user->mahasiswa->rekap_mhs ?? 0.00 }}',
+                        '{{ $user->mahasiswa->index_mhs ?? 0.00 }}',
+                        '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
                     );
                     $flux.modal('user-modal').show();
             "
@@ -112,7 +112,7 @@
                 </flux:menu.item>
 
                 {{-- Logika Tombol Hapus --}}
-                @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
+                @if (Auth::id() != $x->id)
                     <flux:menu.separator />
 
                     <flux:menu.item

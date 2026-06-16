@@ -765,13 +765,13 @@ trait WithSesiModal
     public function getAbsenErrorSections()
     {
         return [
-            1 => $this->getErrorCountByIndexes(0, 7),
-            2 => $this->getErrorCountByIndexes(8, 100),
+            1 => $this->getAbsenErrorCountByIndexes(0, 7),
+            2 => $this->getAbsenErrorCountByIndexes(8, 100),
             3 => 0,
         ];
     }
 
-    private function getErrorCountByIndexes($start, $end)
+    private function getAbsenErrorCountByIndexes($start, $end)
     {
         $errors = $this->getErrorBag()->messages();
         $count = 0;

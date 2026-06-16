@@ -253,7 +253,7 @@ trait WithKelasModal
     {
         return [
             'kode_kelas_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_kelas_1.alpha' => 'Kode awalan harus berupa huruf!',
+            'kode_kelas_1.alpha' => 'Kode awalan harus berupa mutu!',
             'kode_kelas_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)
@@ -265,7 +265,7 @@ trait WithKelasModal
             'kode_kelas.required' => 'Kode Kelas lengkap wajib terbentuk!',
             'kode_kelas.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_kelas.required' => 'Kode Kelas wajib diisi!',
-            'kode_kelas.alpha_num' => 'Kode Kelas hanya boleh berisi huruf dan angka!',
+            'kode_kelas.alpha_num' => 'Kode Kelas hanya boleh berisi mutu dan angka!',
             'kode_kelas.max' => 'Kode Kelas maksimal 20 karakter!',
 
             'pr_id.required' => 'Program Studi wajib diisi!',

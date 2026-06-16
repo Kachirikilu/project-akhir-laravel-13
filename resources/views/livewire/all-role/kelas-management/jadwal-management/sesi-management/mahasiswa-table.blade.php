@@ -7,17 +7,13 @@
             $padingKolom;
 
         $mainKolom =
-            'bg-[var(--main-table-trans)] table-border text-[var(--contrast-main-text)]' .
-            ' border-x ' .
-            $padingKolom;
+            'bg-[var(--main-table-trans)] table-border text-[var(--contrast-main-text)]' . ' border-x ' . $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
             'bg-[var(--main-table-color)] table-border text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
             $padingKolom;
-        $subKolom =
-            'bg-[var(--sub-table-trans)] table-border text-[var(--contrast-second-text)] ' .
-            $padingKolom;
+        $subKolom = 'bg-[var(--sub-table-trans)] table-border text-[var(--contrast-second-text)] ' . $padingKolom;
     @endphp
 
     @php
@@ -184,8 +180,8 @@
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_nilai_huruf',
-                    'headString' => 'Huruf',
+                    'sortFieldString' => 'mhs_nilai_mutu',
+                    'headString' => 'Mutu',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -329,8 +325,8 @@
                     @if ($isMahasiswa)
                         <flux:dropdown>
                             <button class="cursor-pointer">
-                                @include('livewire.global.table.badge.nilai-huruf-badge', [
-                                    'xValue' => $user->mhs_nilai_huruf ?? 'E',
+                                @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                    'xValue' => $user->mhs_nilai_mutu ?? 'E',
                                 ])
                             </button>
                             @include(
@@ -355,10 +351,10 @@
                         ])
                     </button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table', [
-                        'x' => $user,
-                        'nameXString' => 'Pengguna',
-                    ])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-toolbar-table',
+                        ['x' => $user]
+                    )
                 </flux:dropdown>
             </td>
             <td class="table-second text-center">

@@ -9,11 +9,11 @@
 
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 w-full">
 
-                <div class="scrollbar-thin -mb-px flex items-center space-x-3 overflow-x-auto w-full pb-1">
+                <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full pb-1">
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
-                        'xFilter' => $switchTable ?? null,
-                        'tabFilter' => $totalJadwalKelas ?? null,
+                        'xFilter' => $switchTable,
+                        'tabFilter' => $totalJadwalKelas,
                         'tabString' => 'jadwal-card',
                         'tabNameString' => 'Jadwal Kelas',
                         'icon' => 'academic-cap',
@@ -21,8 +21,8 @@
 
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
-                        'xFilter' => $switchTable ?? null,
-                        'tabFilter' => $totalJadwalKelas ?? null,
+                        'xFilter' => $switchTable,
+                        'tabFilter' => $totalJadwalKelas,
                         'tabString' => 'jadwal-table',
                         'tabNameString' => 'Tabel Jadwal',
                         'icon' => 'table-cells',
@@ -84,7 +84,8 @@
 
         </div>
 
-        <div class="w-full md:w-72 lg:w-96">
+        @if ($switchTable == 'jadwal-table')
+        <div class="w-full md:w-96 xl:w-108">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Jadwal Kelas...',
                 'defaultLive' => 1,
@@ -94,6 +95,7 @@
                 'isBorder' => 2,
             ])
         </div>
+        @endif
 
     </div>
 </div>

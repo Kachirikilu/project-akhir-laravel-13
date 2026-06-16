@@ -59,7 +59,7 @@
     @if (isset($sortir) || isset($search))
         <div
             class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
-            <div class="scrollbar-thin overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
+            <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
                 @if (isset($sortir))
                     {{ $sortir }}
                 @endif
@@ -75,16 +75,22 @@
 
     @php
         if ($layoutGrid) {
-            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
+            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
         } else {
             $layout_grid = 'space-y-4';
         }
     @endphp
-
     <div class="max-w-[4500px] {{ $layout_grid ?? null }}"
         wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
         {{ $slot }}
     </div>
+
+    @if (isset($emptys))
+    <div class="max-w-[4500px]"
+        wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
+        {{ $emptys }}
+    </div>
+    @endif
 
     @if (isset($footer))
         <div class="mt-4 pt-4 border-t table-border">

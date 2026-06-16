@@ -346,6 +346,7 @@ trait WithMKSearchFilters
                             'semester',
                             'semes',
                             'sms',
+                            's'
                         ]
                     ) || $this->containsStrict(
                         'Semester'.$mk->semester,

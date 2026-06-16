@@ -48,7 +48,7 @@ document.addEventListener("alpine:init", () => {
 
         rekap_mhs: "",
         index_mhs: "",
-        akreditas_mhs: "",
+        mutu_mhs: "",
 
         kode_wilayah: "",
 
@@ -74,7 +74,7 @@ document.addEventListener("alpine:init", () => {
             sks,
             rekap,
             index,
-            huruf,
+            mutu,
         ) {
             this.email = email;
             this.password = password;
@@ -104,7 +104,7 @@ document.addEventListener("alpine:init", () => {
 
             this.rekap_mhs = rekap;
             this.index_mhs = index;
-            this.akreditas_mhs = huruf;
+            this.mutu_mhs = mutu;
         },
         setValueUserRPS(
             name,
@@ -116,7 +116,7 @@ document.addEventListener("alpine:init", () => {
 
             rekap,
             index,
-            huruf,
+            mutu,
         ) {
             this.name = name;
             this.nip = nip;
@@ -128,7 +128,7 @@ document.addEventListener("alpine:init", () => {
 
             this.rekap_mhs = rekap;
             this.index_mhs = index;
-            this.akreditas_mhs = huruf;
+            this.mutu_mhs = mutu;
         },
         setDeleteUser(email, role, forceDelete) {
             this.email_delete = email;
@@ -172,7 +172,7 @@ document.addEventListener("alpine:init", () => {
 
                 this.rekap_mhs = "";
                 this.index_mhs = "";
-                this.akreditas_mhs = "";
+                this.mutu_mhs = "";
             }
             if (isAdd == 0) {
                 this.typeModal = "";

@@ -2,14 +2,14 @@
 
 namespace App\Livewire\AllRole;
 
-use App\Livewire\Global\HasSortir;
-use App\Livewire\Global\HasToast;
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasModal;
-use App\Livewire\Global\WithKelasSearchFilters;
+use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithKelasSearchFilters;
 // use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
@@ -45,6 +45,8 @@ class KelasManagement extends Component
 
     public $switchTable = '';
 
+    public $switchTable2 = 'kelas-card';
+
     public $search = '';
 
     public $searchMode = 'simple';
@@ -71,9 +73,10 @@ class KelasManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    public function mount($switchTable = '')
+    public function mount($switchTable = '', $switchTable2 = 'kelas-card')
     {
         $this->switchTable = $switchTable;
+        $this->switchTable2 = $switchTable2;
     }
 
     public function updatingSearch()
@@ -112,33 +115,66 @@ class KelasManagement extends Component
 
     private function syncSortField($table, $sortField)
     {
-        $map = [
-            'tatap_muka' => 'sks_tm',
-            'praktikum' => 'sks_pr',
-            'praktek_lapangan' => 'sks_pl',
-            'simulasi' => 'sks_sm',
+        $columns = [
+            'kelas-card' => [1 => 'kode', 2 => 'kode_rps', 3 => 'kelas', 4 => 'mk', 5 => 'semester'],
+            'kelas-table' => [1 => 'id', 2 => 'kode', 3 => 'kode_rps', 4 => 'kelas', 5 => 'program_studi', 6 => 'hari_pelaksanaan', 7 => 'jam_pelaksanaan', 8 => 'kapasitas', 9 => 'tanggal_pelaksanaan', 10 => 'kode_mk', 11 => 'mk', 12 => 'semester', 13 => 'sks', 14 => 'pembelajaran', 15 => 'wajib', 16 => 'created_at', 17 => 'updated_at'],
+        ];
+        $aliases = [
+            'kode' => ['kode'],
+            'kode_rps' => ['kode_rps', 'kode_rps'],
+            'kelas' => ['kelas', 'hari_pelaksanaan', 'jam_pelaksanaan', 'kapasitas', 'tanggal_pelaksanaan'],
+            'mk' => ['mk', 'semester', 'sks', 'pembelajaran', 'wajib'],
+            'semester' => ['semester'],
+            'created_at' => ['created_at'],
+            'updated_at' => ['updated_at'],
         ];
 
-        if (isset($map[$table]) && str_starts_with($sortField, 'sks_')) {
-            $this->sortField = $map[$table];
+        $this->sortField($table, $sortField, $columns, $aliases);
+    }
+
+    public function switchingTable2($table)
+    {
+        $this->switchTable2 = $table;
+        $this->syncSortField($table, $this->sortField);
+        $this->resetPage();
+
+        if ($table == 'kelas-card') {
+            $table = '';
         }
+
+        $targetPath = $this->buildTargetPath($this->switchTable, $table);
+
+        $this->dispatch('table-switched', switchTable2: $this->switchTable2, switchTable: $this->switchTable, targetUrl: $targetPath);
     }
 
     public function switchingTable($table)
     {
         $this->switchTable = $table;
-        $this->syncSortField($table, $this->sortField);
 
+        $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        // if ($table == '' || $table == null) {
-        //     $targetPath = '/kelas-management';
-        // } else {
-        //     $targetPath = '/kelas-management/'.$table;
-        // }
-        $targetPath = '/kelas-management'.($table ? '/'.$table : '');
+        $targetPath = $this->buildTargetPath($table, $this->switchTable2);
 
-        $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+        $this->dispatch('table-switched', switchTable2: $this->switchTable2, switchTable: $this->switchTable, targetUrl: $targetPath);
+    }
+
+
+    private function buildTargetPath($table, $table2)
+    {
+        $path = '/kelas-management';
+
+        if ($table2) {
+            $path .= '/'.$table2;
+
+            if ($table) {
+                $path .= '/'.$table;
+            }
+        } elseif ($table) {
+            $path .= '/all/'.$table;
+        }
+
+        return $path;
     }
 
     public function render()

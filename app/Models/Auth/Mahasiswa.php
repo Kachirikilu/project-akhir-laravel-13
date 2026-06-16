@@ -102,11 +102,11 @@ class Mahasiswa extends Model
     }
     protected function indexMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->index ?? 0.00);
+        return Attribute::get(fn () => $this->rekap_nilai?->nilai_index ?? 0.00);
     }
-    protected function akreditasMhs(): Attribute
+    protected function mutuMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->huruf ?? 'E');
+        return Attribute::get(fn () => $this->rekap_nilai?->nilai_mutu ?? 'E');
     }
     protected function countRps(): Attribute
     {

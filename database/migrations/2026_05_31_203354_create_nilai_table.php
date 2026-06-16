@@ -46,8 +46,8 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->decimal('nilai', 5, 2)->nullable();
-            $table->decimal('index', 3, 2)->nullable();
-            $table->string('huruf', 2)->nullable();
+            // $table->decimal('index', 3, 2)->nullable();
+            // $table->string('mutu', 2)->nullable();
             $table->unsignedInteger('count_rps')->default(0);
             $table->unsignedInteger('total_sks')->default(0);
 

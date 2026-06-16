@@ -47,7 +47,7 @@
                                         'isLivewire' => 1,
                                         'nameXString' => 'Nilai',
                                         'modelString' => 'list_absensi_array',
-                                        'numberOnly' => 1,
+                                        'floatOnly' => 1,
                                         'maxValue' => 100,
                                         'itemsString' => "$index.nilai",
                                         'iconString' => 'chart-bar',
@@ -115,7 +115,7 @@
             @empty
                 <div
                     class="h-48 flex justify-center items-center p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 flex flex-col gap-2">
-                    Tidak ada sesi perkuliahan pada jadwal ini!
+                    Tidak ada Sesi Perkuliahan pada Jadwal Kelas ini!
                 </div>
             @endforelse
         </div>

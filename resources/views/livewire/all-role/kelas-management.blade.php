@@ -13,12 +13,18 @@
 
     @include('livewire.all-role.kelas-management.kelas-search-and-filters')
 
-    <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @if (Auth::user()->mahasiswa)
+    <div wire:loading.class="opacity-50" wire:target="switchingTable, switchingTable2">
+        {{-- @if (Auth::user()->mahasiswa)
             @include('livewire.all-role.kelas-management.kelas-card')
         @else
             @include('livewire.all-role.kelas-management.kelas-table')
+        @endif --}}
+        @if ($switchTable2 == 'kelas-card')
+            @include('livewire.all-role.kelas-management.kelas-card')
+        @elseif ($switchTable2 == 'kelas-table')
+            @include('livewire.all-role.kelas-management.kelas-table')
         @endif
+
     </div>
 
     @if (Auth::user()->admin || Auth::user()->dosen)

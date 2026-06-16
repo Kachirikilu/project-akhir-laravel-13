@@ -107,7 +107,6 @@ trait WithAbsenModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-
         /*
         |--------------------------------------------------------------------------
         | 1. Merge data dari frontend dengan aman (Satu kali loop)
@@ -281,6 +280,7 @@ trait WithAbsenModal
             $this->resetInputAbsen();
             $this->dispatch('refresh-data-sesi');
             $this->showMahasiswaAbsen = false;
+            $this->showEditSesi = false;
 
             $this->toast(
                 message: 'Absensi berhasil diperbarui!',
@@ -301,14 +301,14 @@ trait WithAbsenModal
     public function getAbsenErrorSections()
     {
         return [
-            1 => $this->getErrorCountByIndexes(0, 3),
-            2 => $this->getErrorCountByIndexes(4, 7),
-            3 => $this->getErrorCountByIndexes(8, 11),
-            4 => $this->getErrorCountByIndexes(12, 99),
+            1 => $this->getAbsenErrorCountByIndexes(0, 3),
+            2 => $this->getAbsenErrorCountByIndexes(4, 7),
+            3 => $this->getAbsenErrorCountByIndexes(8, 11),
+            4 => $this->getAbsenErrorCountByIndexes(12, 99),
         ];
     }
 
-    private function getErrorCountByIndexes($start, $end)
+    private function getAbsenErrorCountByIndexes($start, $end)
     {
         $errors = $this->getErrorBag()->messages();
         $count = 0;

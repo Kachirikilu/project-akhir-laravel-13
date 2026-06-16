@@ -4,7 +4,7 @@
     <div class="table-border border-b gap-4 flex items-end">
 
         <div class="min-w-0 flex-1">
-            <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1 w-full">
+            <div class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1 w-full">
                 {{-- Mata Kuliah --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',

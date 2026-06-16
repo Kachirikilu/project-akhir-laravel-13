@@ -50,7 +50,7 @@ class SesiManagement extends Component
 
     public $kode_jadwal_short_url;
 
-    public $kelas;
+    public Kelas $kelas;
 
     public KelasJadwal $jadwal;
 
@@ -245,7 +245,7 @@ class SesiManagement extends Component
         $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
 
-        $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}{$suffix}";
+        $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}/sesi{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
@@ -330,10 +330,10 @@ class SesiManagement extends Component
                     'mhs_nilai_index'
                 );
 
-                $this->addMahasiswaNilaiHuruf(
+                $this->addMahasiswaNilaiMutu(
                     $queryUser,
                     $idJadwal,
-                    'mhs_nilai_huruf'
+                    'mhs_nilai_mutu'
                 );
 
                 $this->addMahasiswaAttendanceStats(

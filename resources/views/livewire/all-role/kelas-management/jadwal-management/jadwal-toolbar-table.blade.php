@@ -1,6 +1,5 @@
 @if (Auth::user())
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
         @php
             $isTrashed = $x->trashed();
@@ -15,20 +14,22 @@
             'typeXString' => $copyName ?? 'Kode Jadwal',
         ])
 
-        <flux:menu.separator />
+        @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
+            <flux:menu.separator />
 
-        <flux:menu.item
-            href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$x->kode_kelas, $x->kode_jadwal]) : route('sesi-management', [$x->kode_kelas, $x->kode_jadwal]) }}"
-            wire:navigate
-            class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
+            <flux:menu.item
+                href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$x->kode_kelas, $x->kode_jadwal]) : route('sesi-management', [$x->kode_kelas, $x->kode_jadwal]) }}"
+                wire:navigate
+                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
 
-            <flux:icon name="calendar-days" class="mr-2 h-4 w-4" />
+                <flux:icon name="calendar-days" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Show Jadwal</span>
-                <flux:icon wire:loading wire:target="showJadwal" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
+                <div class="flex justify-between items-center w-full">
+                    <span>Lihat Jadwal Kelas</span>
+                    <flux:icon wire:loading wire:target="showJadwal" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+        @endif
 
         @if (Auth::user()?->admin || Auth::user()?->dosen)
 

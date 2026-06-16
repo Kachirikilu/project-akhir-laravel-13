@@ -4,12 +4,13 @@
         {{-- BARIS PERTAMA --}}
         <tr>
 
-            {{-- Kolom yang ditarik ke bawah (Tinggi 2 baris) --}}
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'id',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isCenter' => 1,
@@ -53,10 +54,10 @@
                     Informasi Mata Kuliah
                 </th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'program_studi',
-                'rowSpan' => 2,
-            ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'program_studi',
+                    'rowSpan' => 2,
+                ])
             @endif
 
             @if (Auth::user()->admin || Auth::user()->dosen)
@@ -136,7 +137,9 @@
         <tr wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $j->id }}</td>
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <td class="table-second text-center">{{ $j->id }}</td>
+            @endif
 
             <td class="table-main text-center">
                 <flux:dropdown>
@@ -293,7 +296,8 @@
 
             </flux:dropdown>
         </td>
-        <td class="table-second min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }} ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
+        <td class="table-second min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }}
+            ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
     @endif
     @if (Auth::user()->admin || Auth::user()->dosen)
         <td class="table-main text-center">

@@ -62,7 +62,6 @@
         <flux:button
             @click="
                 $store.{{ $alpine ?? 'jadwal' }}?.resetShow();
-                $store.{{ $alpine ?? 'jadwal' }}?.setColor('text-emerald-700 dark:text-emerald-400');
 
                     $store.{{ $alpine ?? 'jadwal' }}?.setShowRPS(
                         '{{ $kelas->rps_id ?? '' }}',

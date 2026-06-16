@@ -376,7 +376,7 @@ class SesiManagement extends Component
                             END
                         ")
                         ->limit(1);
-                }, 'mhs_nilai_huruf');
+                }, 'mhs_nilai_mutu');
 
                 foreach ($statuses as $alias => $condition) {
                     $queryUser->selectSub(function ($query) use ($idJadwal, $alias, $condition) {

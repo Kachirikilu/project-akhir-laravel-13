@@ -121,7 +121,7 @@ trait WithCPMKFilters
 
             'rekap_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
             'index_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
-            'akreditas_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
+            'mutu_cpmk_pr' => $queryCPMK->orderBy('rekap_cpmk_pr', $this->sortDirection),
 
             'total_bobot' => $queryCPMK->orderBy(
                 DB::table('cpmk_pivot_scpmk')

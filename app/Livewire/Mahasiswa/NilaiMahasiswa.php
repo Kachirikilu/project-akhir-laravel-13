@@ -184,7 +184,7 @@ class NilaiMahasiswa extends Component
     //         );
 
     //         return view('livewire.mahasiswa.nilai-mahasiswa', [
-    //             'periodeNilai' => $paginatedPeriode,
+    //             'periodes' => $paginatedPeriode,
     //         ]);
 
     //     } catch (QueryException $e) {
@@ -195,7 +195,7 @@ class NilaiMahasiswa extends Component
     //         }
 
     //         return view('livewire.mahasiswa.nilai-mahasiswa', [
-    //             'periodeNilai' => new LengthAwarePaginator([], 0, $this->perPage ?? 10),
+    //             'periodes' => new LengthAwarePaginator([], 0, $this->perPage ?? 10),
     //         ]);
     //     }
     // }
@@ -225,7 +225,7 @@ class NilaiMahasiswa extends Component
             );
 
             return view('livewire.mahasiswa.nilai-mahasiswa', [
-                'periodeNilai' => $paginatedPeriode,
+                'periodes' => $paginatedPeriode,
             ]);
 
         } catch (QueryException $e) {
@@ -236,7 +236,7 @@ class NilaiMahasiswa extends Component
             }
 
             return view('livewire.mahasiswa.nilai-mahasiswa', [
-                'periodeNilai' => new LengthAwarePaginator([], 0, $this->perPage ?? 8),
+                'periodes' => new LengthAwarePaginator([], 0, $this->perPage ?? 8),
             ]);
         }
     }

@@ -54,8 +54,8 @@ document.addEventListener("alpine:init", () => {
         waktu_tugas: "",
         waktu_mandiri: "",
 
-        nama_mahasiswa: "",
-        nim_mahasiswa: "",
+        nama: "",
+        nim: "",
 
         mhs_poin_absensi: 0,
         mhs_masuk: 0,
@@ -66,7 +66,7 @@ document.addEventListener("alpine:init", () => {
         mhs_tidak_masuk: 0,
         mhs_nilai_akhir: 0,
         mhs_nilai_index: 0,
-        mhs_nilai_huruf: "E",
+        mhs_nilai_mutu: "E",
 
 
         w_pelaksaan: "",
@@ -243,10 +243,10 @@ document.addEventListener("alpine:init", () => {
 
             nilaiAkhir,
             nilaiIndex,
-            nilaiHuruf,
+            nilaiMutu,
         ) {
-            this.nama_mahasiswa = name;
-            this.nim_mahasiswa = nim;
+            this.nama = name;
+            this.nim = nim;
 
             this.mhs_poin_absensi = poin;
             this.mhs_masuk = masuk;
@@ -258,7 +258,7 @@ document.addEventListener("alpine:init", () => {
             this.mhs_tidak_masuk = tidakMasuk;
             this.mhs_nilai_akhir = nilaiAkhir;
             this.mhs_nilai_index = nilaiIndex;
-            this.mhs_nilai_huruf = nilaiHuruf;
+            this.mhs_nilai_mutu = nilaiMutu;
         },
         setShowRPS(idRPS) {
             this.resetShow();
@@ -282,8 +282,8 @@ document.addEventListener("alpine:init", () => {
                 this.w_telat = "";
                 this.w_dispensasi = "";
 
-                this.nama_mahasiswa = "";
-                this.nim_mahasiswa = "";
+                this.nama = "";
+                this.nim = "";
 
                 this.mhs_poin_absensi = 0;
                 this.mhs_masuk = 0;
@@ -294,7 +294,7 @@ document.addEventListener("alpine:init", () => {
                 this.mhs_tidak_masuk = 0;
                 this.mhs_nilai_akhir = 0;
                 this.mhs_nilai_index = 0;
-                this.mhs_nilai_huruf = "E";
+                this.mhs_nilai_mutu = "E";
 
                 this.sesi_id = "";
                 this.pertemuan_ke = "";

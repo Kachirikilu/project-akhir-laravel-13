@@ -229,7 +229,7 @@ trait WithNilaiExcel
         // KOLOM FINAL
         // ==================================================
         $nilaiIndexIndex = $nilaiAngkaIndex + 1;
-        $nilaiHurufIndex = $nilaiAngkaIndex + 2;
+        $nilaiMutuIndex = $nilaiAngkaIndex + 2;
 
         // ==================================================
         // DATA MAHASISWA
@@ -308,10 +308,10 @@ trait WithNilaiExcel
                         $row[$nilaiIndexIndex]
                     : null,
 
-                'nilai_huruf' => strtoupper(
+                'nilai_mutu' => strtoupper(
                     trim(
                         (string)
-                        ($row[$nilaiHurufIndex]
+                        ($row[$nilaiMutuIndex]
                         ?? '')
                     )
                 ),
@@ -372,19 +372,19 @@ trait WithNilaiExcel
 
         if ($average >= 86) {
             $row['nilai_index'] = 4;
-            $row['nilai_huruf'] = 'A';
+            $row['nilai_mutu'] = 'A';
         } elseif ($average >= 71) {
             $row['nilai_index'] = 3;
-            $row['nilai_huruf'] = 'B';
+            $row['nilai_mutu'] = 'B';
         } elseif ($average >= 56) {
             $row['nilai_index'] = 2;
-            $row['nilai_huruf'] = 'C';
+            $row['nilai_mutu'] = 'C';
         } elseif ($average >= 41) {
             $row['nilai_index'] = 1;
-            $row['nilai_huruf'] = 'D';
+            $row['nilai_mutu'] = 'D';
         } else {
             $row['nilai_index'] = 0;
-            $row['nilai_huruf'] = 'E';
+            $row['nilai_mutu'] = 'E';
         }
     }
 
@@ -592,7 +592,7 @@ trait WithNilaiExcel
             'nama' => 'required|string|max:255',
             'nilai_angka' => 'required|numeric|min:0|max:100',
             'nilai_index' => 'nullable|numeric',
-            'nilai_huruf' => 'nullable|string|max:2',
+            'nilai_mutu' => 'nullable|string|max:2',
 
             // ==========================
             // SUB CPMK

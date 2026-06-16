@@ -42,7 +42,7 @@
                 </div>
 
                 {{-- LIST --}}
-                <div class="space-y-2 max-h-[450px] overflow-y-auto pr-1 scrollbar-thin">
+                <div class="space-y-2 max-h-[450px] overflow-y-auto pr-1 scrollbar-tiny">
 
                     @php $rps_items_list = is_iterable($rps_items_list) ? $rps_items_list : []; @endphp
 
@@ -163,7 +163,6 @@
                                                     class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
                                                     @click="
                                                     $store.rps?.resetShow();
-                                                    $store.rps?.setColor('text-green-700 dark:text-green-400');
 
                                                         $store.rps?.setShowRPS(
                                                             '{{ $r['id'] }}',

@@ -36,7 +36,7 @@
                                 'nameXString' => 'Kode Referensi',
                                 'modelString' => 'kode_ref_1',
                                 'iconString' => 'book-open',
-                                'placeholder' => 'Masukkan huruf Kode Referensi...',
+                                'placeholder' => 'Masukkan mutu Kode Referensi...',
                                 'isKode' => 4,
                                 'isFocusSelect' => 1,
                             ])

@@ -81,7 +81,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
 
         $header1[] = 'Nilai Angka';
         $header1[] = 'Nilai Index';
-        $header1[] = 'Nilai Huruf';
+        $header1[] = 'Nilai Mutu';
         $header2[] = '';
         $header2[] = '';
         $header2[] = '';

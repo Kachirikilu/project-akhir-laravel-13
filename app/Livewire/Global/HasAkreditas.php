@@ -73,10 +73,10 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addAkreditasProdi(
+    protected function addMutuProdi(
         $query,
         ?int $prId = null,
-        string $alias = 'akreditas_cpl_pr',
+        string $alias = 'mutu_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
@@ -160,9 +160,9 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addAkreditasMahasiswa(
+    protected function addMutuMahasiswa(
         $query,
-        string $alias = 'akreditas_mahasiswa'
+        string $alias = 'mutu_mahasiswa'
     ) {
         $query->selectSub(function ($sub) {
 

@@ -33,7 +33,7 @@
                 );
             });
         }
-    }" class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-thin">
+    }" class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
         @php
             $user = Auth::user();
             $lastKelas = session('kelas.last');

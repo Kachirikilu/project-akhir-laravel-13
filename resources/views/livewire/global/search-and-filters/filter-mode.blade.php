@@ -1,4 +1,4 @@
-<div x-data="{ activeTab: @entangle($filterString) }" class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1">
+<div x-data="{ activeTab: @entangle($filterString) }" class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1">
 
     {{-- Tab Semua --}}
     @include('livewire.global.search-and-filters.partial.tab-filter', [

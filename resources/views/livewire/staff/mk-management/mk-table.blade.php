@@ -3,7 +3,7 @@
     <x-slot:sortir>
 
         <div x-data="{ activeTab: @entangle('filterMKgg') }"
-            class="scrollbar-thin flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByMKgg',
                 'xFilter' => 'filterMKgg',

@@ -47,7 +47,7 @@
         'nameXString' => 'Kode Departemen',
         'modelString' => 'kode_dp',
         'iconString' => 'hashtag',
-        'placeholder' => 'Masukkan 3 huruf Kode Departemen',
+        'placeholder' => 'Masukkan 3 mutu Kode Departemen',
         'message' => $errors->first('kode_dp'),
         'isKode' => 3,
         'isFocusSelect' => 1,

@@ -138,8 +138,8 @@ trait WithOBEExcel
         if ($this->selectedSCPMKId && $this->switchTable == 'referensi') {
             $scpmk = SubCPMK::find($this->selectedSCPMKId);
             // $kodeSCPMK = str_replace('-', '', $scpmk->kode);
-            $sInput .= '_SCPMK '.$scpmk->kode;
-            $sINPUT .= strtoupper(' SCPMK '.$scpmk->kode);
+            $sInput .= '_Sub-CPMK '.$scpmk->kode;
+            $sINPUT .= strtoupper(' Sub CPMK '.$scpmk->kode);
         }
 
         switch ($this->switchTable) {
@@ -190,7 +190,6 @@ trait WithOBEExcel
                     $queryOBE,
                     'total_sks'
                 );
-                $this->buttonUserFilter($queryOBE);
                 break;
         }
 

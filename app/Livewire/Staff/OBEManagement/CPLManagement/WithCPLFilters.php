@@ -132,7 +132,7 @@ trait WithCPLFilters
             'count_rps_pr' => $queryCPL->orderBy('count_rps_pr', $this->sortDirection),
             'rekap_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
             'index_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
-            'akreditas_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
+            'mutu_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
             'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
 

@@ -111,7 +111,7 @@
                                 </th>
                                 <th rowspan="3"
                                     class="px-3 py-2 border-b border-r border-gray-200 dark:border-neutral-700 whitespace-nowrap text-center bg-gray-100 dark:bg-neutral-800">
-                                    Nilai Huruf
+                                    Nilai Mutu
                                 </th>
                                 <th rowspan="3"
                                     class="px-3 py-2 border-b border-gray-200 dark:border-neutral-700 whitespace-nowrap text-center bg-gray-100 dark:bg-neutral-800">
@@ -292,13 +292,13 @@
 
                                     <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
-                                            <input wire:model="parsedNilaiRows.{{ $i }}.nilai_huruf"
+                                            <input wire:model="parsedNilaiRows.{{ $i }}.nilai_mutu"
                                                 readonly
-                                                class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['nilai_huruf']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
-                                            @if (isset($rowNilaiErrors[$i]['nilai_huruf']))
+                                                class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['nilai_mutu']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
+                                            @if (isset($rowNilaiErrors[$i]['nilai_mutu']))
                                                 <p
                                                     class="text-red-500 text-[10px] px-2 py-0.5 bg-red-50 border-t border-red-200">
-                                                    {{ $rowNilaiErrors[$i]['nilai_huruf'][0] }}
+                                                    {{ $rowNilaiErrors[$i]['nilai_mutu'][0] }}
                                                 </p>
                                             @endif
                                         </div>

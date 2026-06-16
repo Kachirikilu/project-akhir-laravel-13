@@ -203,11 +203,11 @@
             <td class="table-sub table-border-x whitespace-nowrap text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.nilai-huruf-badge', [
+                        @include('livewire.global.table.badge.nilai-mutu-badge', [
                             'xValue' => $akreditas_x ?? 'E',
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
                         'typeXString' => $switchTable,
                         'nameXString' => $xNameString,

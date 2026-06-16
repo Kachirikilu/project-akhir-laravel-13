@@ -5,7 +5,7 @@
     <div class="table-border border-b gap-4 flex items-end">
 
         <div class="min-w-0 flex-1">
-            <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1 w-full">
+            <div class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1 w-full">
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -50,6 +50,13 @@
                 'xString' => "generateRekapCapaian($pr_id_url, 15)",
                 'color' => 'blue',
                 'icon' => 'academic-cap',
+            ])
+        </div>
+
+        <div class="shrink-0">
+            @include('livewire.global.table.export-button', [
+                'xString' => 'exportRekapExcel()',
+                'autoSmall' => 'sm',
             ])
         </div>
 

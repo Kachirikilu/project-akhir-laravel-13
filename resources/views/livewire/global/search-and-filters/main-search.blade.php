@@ -22,27 +22,42 @@
 @endphp
 
 <div x-data="{
-    search: @entangle('search'),
+    isAlpine: {{ $alpineStore ? 'true' : 'false' }},
+    search: '', 
     selectedMode: '{{ $searchMode ?? '' }}',
-
     isRealtime: {{ $isLive ? 'true' : ($defaultLive ? 'true' : 'false') }},
     showSearchModePopup: false,
 
+    init() {
+        if (!this.isAlpine) {
+            this.search = @entangle('search');
+        }
+    },
+
     triggerRealtimeSearch(val) {
-        $wire.$set('search', val);
-        @if ($alpineStore) $store.{{ $alpineStore }}.search = val; @endif
+        if (this.isAlpine) {
+            $store.{{ $alpineStore }}.search = val;
+        } else {
+            $wire.$set('search', val);
+        }
     },
 
     triggerManualSearch() {
         if (!this.isRealtime) {
-            $wire.$set('search', this.search);
-            $wire.search();
+            if (this.isAlpine) {
+                $store.{{ $alpineStore }}.search = this.$refs.searchInput.value;
+            } else {
+                $wire.$set('search', this.search);
+                $wire.search();
+            }
         }
     },
 
     changeSearchMode(value) {
         this.selectedMode = value;
-        $wire.$set('searchMode', value);
+        if (!this.isAlpine) {
+            $wire.$set('searchMode', value);
+        }
         this.showSearchModePopup = false;
     }
 }" class="relative flex items-center">

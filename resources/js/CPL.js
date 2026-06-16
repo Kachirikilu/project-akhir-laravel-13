@@ -36,7 +36,7 @@ document.addEventListener("alpine:init", () => {
 
         rekap_cpl_pr: "",
         index_cpl_pr: "",
-        akreditas_cpl_pr: "",
+        mutu_cpl_pr: "",
 
         setValueCPL(tingkatanMode, kode, deskripsi) {
             this.typeModal = tingkatanMode;
@@ -44,8 +44,8 @@ document.addEventListener("alpine:init", () => {
             this.deskripsi = deskripsi;
 
             if (kode) {
-                const huruf = kode.match(/[a-zA-Z]+/g);
-                this.kode_cpl_1 = huruf ? huruf[0] : "";
+                const mutu = kode.match(/[a-zA-Z]+/g);
+                this.kode_cpl_1 = mutu ? mutu[0] : "";
                 const angka = kode.match(/\d+/g);
                 this.kode_cpl_2 = angka ? angka[0] : "";
             } else {
@@ -58,12 +58,12 @@ document.addEventListener("alpine:init", () => {
             kode,
             rekap,
             index,
-            huruf,
+            mutu,
         ) {
             this.kode = kode;
             this.rekap_cpl_pr = rekap;
             this.index_cpl_pr = index;
-            this.akreditas_cpl_pr = huruf;
+            this.mutu_cpl_pr = mutu;
         },
 
         setDeleteCPL(namaCPL, kodeCPLDelete, forceDelete) {
@@ -83,7 +83,7 @@ document.addEventListener("alpine:init", () => {
 
                 this.rekap_cpl_pr = "";
                 this.index_cpl_pr = "";
-                this.akreditas_cpl_pr = "";
+                this.mutu_cpl_pr = "";
             }
             if (isAdd == 0) {
                 this.typeModal = "";

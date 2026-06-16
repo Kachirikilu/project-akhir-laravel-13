@@ -1,4 +1,4 @@
-<x-global.main-layout-card :paginator="$periodeNilai">
+<x-global.main-layout-card :paginator="$periodes">
 
     <x-slot:sortir>
         @include('livewire.global.table.head-sortir', [
@@ -22,7 +22,7 @@
         </div>
     </x-slot:search>
 
-    @forelse($periodeNilai as $p)
+    @forelse($periodes as $p)
         <div wire:key="periode-{{ $p->akademik }}-{{ $p->ganjil_genap }}"
             class="relative flex flex-col justify-between p-5 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-200">
 

@@ -104,7 +104,7 @@
             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="max-h-40 overflow-y-auto scrollbar-thin
+            class="max-h-40 overflow-y-auto scrollbar-tiny
                    bg-[var(--main-pop-up-color)]
                    ring-[var(--focus-color)]
                    absolute z-100 mt-1 w-full rounded-md shadow-lg

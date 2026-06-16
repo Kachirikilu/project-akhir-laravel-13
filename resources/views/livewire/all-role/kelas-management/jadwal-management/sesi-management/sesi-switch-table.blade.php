@@ -37,7 +37,7 @@
 
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
 
-            <div class="scrollbar-thin -mb-px flex items-center space-x-3 overflow-x-auto w-full lg:w-auto pb-1">
+            <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full lg:w-auto pb-1">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
