@@ -42,6 +42,7 @@
 
     @if (Auth::user()->admin || Auth::user()->dosen)
         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form')
+        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-delete')
         @include('livewire.all-role.kelas-management.kelas-modal-form')
     @endif
 </div>

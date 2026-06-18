@@ -162,20 +162,22 @@
 
             <td class="table-second table-border-r text-center whitespace-nowrap">
 
-                @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
-                    <x-button-action color="amber"
-                        href="{{ route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
-                        <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
-                        <span>Lihat Kelas
-                    </x-button-action>
-                @else
-                    @php
-                        $buttonClass =
-                            'inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/35 transition-all duration-200 text-sm font-medium shadow-sm cursor-pointer';
-                    @endphp
-                    @if (!empty($j->with_pw))
-                        <x-button-action color="blue"
-                            @click="
+
+                @if (!$j->trashed())
+                    @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
+                        <x-button-action color="amber"
+                            href="{{ route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
+                            <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
+                            <span>Lihat Kelas
+                        </x-button-action>
+                    @else
+                        @php
+                            $buttonClass =
+                                'inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/35 transition-all duration-200 text-sm font-medium shadow-sm cursor-pointer';
+                        @endphp
+                        @if (!empty($j->with_pw))
+                            <x-button-action color="blue"
+                                @click="
                                     $store.jadwal?.setEdit(0);
                                     $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
                                     $flux.modal('jadwal-join').show();
@@ -186,24 +188,30 @@
                                         '{{ $j->label_extra ?? '' }}',
                                     );
                                 ">
-                            <flux:icon name="user-plus" class="w-3.5 h-3.5" />
-                            <span>Join</span>
-                        </x-button-action>
-                    @else
-                        <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
-                            <x-button-action color="blue"
-                                @click="
+                                <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                                <span>Join</span>
+                            </x-button-action>
+                        @else
+                            <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
+                                <x-button-action color="blue"
+                                    @click="
                                         $store.jadwal?.setEdit(0);
                                         $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
                                         $store.jadwal?.setValueJoinJadwal(
                                             '{{ $j->id ?? '' }}',
                                         );
                                     ">
-                                <flux:icon name="user-plus" class="w-3.5 h-3.5" />
-                                <span>Join</span>
-                            </x-button-action>
-                        </form>
+                                    <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                                    <span>Join</span>
+                                </x-button-action>
+                            </form>
+                        @endif
                     @endif
+                @else
+                    <code
+                        class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                        unfound
+                    </code>
                 @endif
 
             </td>

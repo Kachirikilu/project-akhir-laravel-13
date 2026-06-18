@@ -1,5 +1,4 @@
-<div
-    x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
+<div x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
     @table-switched.window="
         activeTable = $event.detail.switchTable;
         window.history.pushState({}, '', $event.detail.targetUrl);
@@ -21,7 +20,11 @@
     @include('livewire.admin.user-management.user-modal-form')
     @include('livewire.admin.user-management.user-excel-modal-form')
     @include('livewire.admin.user-management.user-modal-delete') --}}
-
+    {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header') --}}
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header', [
+        'alpine' => 'periode',
+        'noBackUrl' => $isNilaiMhs ? 1 : 0,
+    ])
 
     @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-card')
 

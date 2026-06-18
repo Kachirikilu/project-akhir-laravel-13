@@ -70,7 +70,7 @@ class Mahasiswa extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
-    public function nilaiMahasiswa()
+    public function nilai_mahasiswa()
     {
         return $this->hasMany(
             NilaiMahasiswa::class,
@@ -100,9 +100,9 @@ class Mahasiswa extends Model
     {
         return Attribute::get(fn () => $this->rekap_nilai?->nilai ?? 0.00);
     }
-    protected function indexMhs(): Attribute
+    protected function ipkMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->nilai_index ?? 0.00);
+        return Attribute::get(fn () => $this->rekap_nilai?->nilai_ipk ?? 0.00);
     }
     protected function mutuMhs(): Attribute
     {
@@ -140,6 +140,16 @@ class Mahasiswa extends Model
                 return null;
             }
         });
+    }
+
+    public function getWhatsappNumberAttribute()
+    {
+        $phone = $this->no_hp;
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+        return $phone;
     }
 
     public function scopeSearchMahasiswa($query, $search)

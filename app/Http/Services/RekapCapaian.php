@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Jobs\ProcessRekapCapaian;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Penilaian\NilaiMahasiswa;
@@ -17,50 +18,56 @@ use App\Models\Penilaian\RekapSubCPMKProdi;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 trait RekapCapaian
 {
-    // public function generateRekapCapaian($prId = null)
-    // {
-    //     $isJobRunning = DB::table('jobs')
-    //         ->where('payload', 'like', '%ProcessRekapCapaian%')
-    //         ->exists();
-
-    //     if ($isJobRunning) {
-    //         $this->toast(
-    //             text: 'Gagal! Proses rekap capaian sebelumnya masih berjalan di latar belakang. Silakan tunggu hingga selesai.',
-    //             variant: 'warning',
-    //             duration: 12000
-    //         );
-
-    //         return;
-    //     }
-
-    //     ProcessRekapCapaian::dispatch($prId);
-
-    //     $this->toast(
-    //         text: 'Rekap data sedang diproses, silakan tunggu beberapa saat.',
-    //         variant: 'info',
-    //         duration: 24000
-    //     );
-    // }
-
     // public function generateRekapCapaianQueue(?int $prId = null)
     // {
-    //     // set_time_limit(0);
-    //     $this->generateRekapNilaiMahasiswa($prId);
+    //     set_time_limit(0);
+    //     DB::disableQueryLog();
+    //     gc_collect_cycles();
 
-    //     $this->generateRekapRPSProdi($prId);
+    //     if ($prId === null) {
+    //         $prodiIds = Prodi::pluck('id')->toArray();
 
-    //     $this->generateRekapSubCPMKMahasiswa($prId);
-    //     $this->generateRekapCPMKMahasiswa($prId);
-    //     $this->generateRekapCPLMahasiswa($prId);
+    //         foreach ($prodiIds as $id) {
+    //             $this->generateRekapNilaiMahasiswa($id);
+    //             $this->generateRekapRPSProdi($id);
+    //             $this->generateRekapSubCPMKMahasiswa($id);
+    //             $this->generateRekapCPMKMahasiswa($id);
+    //             $this->generateRekapCPLMahasiswa($id);
+    //             $this->generateRekapSubCPMKProdi($id);
+    //             $this->generateRekapCPMKProdi($id);
+    //             $this->generateRekapCPLProdi($id);
 
-    //     $this->generateRekapSubCPMKProdi($prId);
-    //     $this->generateRekapCPMKProdi($prId);
-    //     $this->generateRekapCPLProdi($prId);
+    //             RekapSubCPMKMahasiswa::flushEventListeners();
+    //             RekapCPMKMahasiswa::flushEventListeners();
+    //             RekapCPLMahasiswa::flushEventListeners();
+    //             RekapSubCPMKProdi::flushEventListeners();
+    //             RekapCPMKProdi::flushEventListeners();
+    //             RekapCPLProdi::flushEventListeners();
+    //             Mahasiswa::flushEventListeners();
+
+    //             unset($id);
+    //             gc_collect_cycles();
+    //         }
+    //     } else {
+    //         $this->generateRekapNilaiMahasiswa($prId);
+    //         $this->generateRekapRPSProdi($prId);
+    //         $this->generateRekapSubCPMKMahasiswa($prId);
+    //         $this->generateRekapCPMKMahasiswa($prId);
+    //         $this->generateRekapCPLMahasiswa($prId);
+    //         $this->generateRekapSubCPMKProdi($prId);
+    //         $this->generateRekapCPMKProdi($prId);
+    //         $this->generateRekapCPLProdi($prId);
+
+    //         gc_collect_cycles();
+    //     }
     // }
 
+    
     public function generateRekapCapaianQueue(?int $prId = null)
     {
         set_time_limit(0);
@@ -68,29 +75,28 @@ trait RekapCapaian
         gc_collect_cycles();
 
         if ($prId === null) {
-            $prodiIds = Prodi::pluck('id')->toArray();
+            // Ambil ID prodi dalam bentuk chunk agar hemat memori dari awal
+            Prodi::select('id')->chunk(10, function ($prodis) {
+                foreach ($prodis as $prodi) {
+                    $id = $prodi->id;
 
-            foreach ($prodiIds as $id) {
-                $this->generateRekapNilaiMahasiswa($id);
-                $this->generateRekapRPSProdi($id);
-                $this->generateRekapSubCPMKMahasiswa($id);
-                $this->generateRekapCPMKMahasiswa($id);
-                $this->generateRekapCPLMahasiswa($id);
-                $this->generateRekapSubCPMKProdi($id);
-                $this->generateRekapCPMKProdi($id);
-                $this->generateRekapCPLProdi($id);
+                    // Urutan eksekusi dijaga ketat: Nilai & IPK Mahasiswa wajib selesai duluan
+                    $this->generateRekapNilaiMahasiswa($id);
+                    $this->generateRekapRPSProdi($id);
+                    $this->generateRekapSubCPMKMahasiswa($id);
+                    $this->generateRekapCPMKMahasiswa($id);
+                    $this->generateRekapCPLMahasiswa($id);
+                    $this->generateRekapSubCPMKProdi($id);
+                    $this->generateRekapCPMKProdi($id);
+                    $this->generateRekapCPLProdi($id);
 
-                RekapSubCPMKMahasiswa::flushEventListeners();
-                RekapCPMKMahasiswa::flushEventListeners();
-                RekapCPLMahasiswa::flushEventListeners();
-                RekapSubCPMKProdi::flushEventListeners();
-                RekapCPMKProdi::flushEventListeners();
-                RekapCPLProdi::flushEventListeners();
-                Mahasiswa::flushEventListeners();
+                    unset($id);
+                    gc_collect_cycles();
+                }
+            });
 
-                unset($id);
-                gc_collect_cycles();
-            }
+            $this->cleanupGlobalListeners();
+
         } else {
             $this->generateRekapNilaiMahasiswa($prId);
             $this->generateRekapRPSProdi($prId);
@@ -105,48 +111,24 @@ trait RekapCapaian
         }
     }
 
-    // public function generateRekapCapaianQueue(?int $prId = null)
-    // {
-    //     // 1. Matikan Query Log Laravel agar tidak menimbun riwayat query di RAM
-    //     DB::disableQueryLog();
 
-    //     // 2. Jika prId bernilai null (Merekap Semua Prodi)
-    //     if ($prId === null) {
-    //         // Ambil semua ID prodi dalam bentuk array biasa (lebih hemat RAM dibanding objek Eloquent)
-    //         $prodiIds = Prodi::pluck('id')->toArray();
-
-    //         foreach ($prodiIds as $id) {
-    //             // Jalankan seluruh rangkaian rekap prodi demi prodi
-    //             $this->generateRekapNilaiMahasiswa($id);
-    //             $this->generateRekapRPSProdi($id);
-    //             $this->generateRekapSubCPMKMahasiswa($id);
-    //             $this->generateRekapCPMKMahasiswa($id);
-    //             $this->generateRekapCPLMahasiswa($id);
-    //             $this->generateRekapSubCPMKProdi($id);
-    //             $this->generateRekapCPMKProdi($id);
-    //             $this->generateRekapCPLProdi($id);
-
-    //             // Paksa PHP untuk langsung membersihkan memori RAM yang baru saja terpakai
-    //             unset($id);
-    //             gc_collect_cycles();
-    //         }
-    //     } else {
-    //         // 3. Jika hanya menjalankan satu prodi spesifik
-    //         $this->generateRekapNilaiMahasiswa($prId);
-    //         $this->generateRekapRPSProdi($prId);
-    //         $this->generateRekapSubCPMKMahasiswa($prId);
-    //         $this->generateRekapCPMKMahasiswa($prId);
-    //         $this->generateRekapCPLMahasiswa($prId);
-    //         $this->generateRekapSubCPMKProdi($prId);
-    //         $this->generateRekapCPMKProdi($prId);
-    //         $this->generateRekapCPLProdi($prId);
-
-    //         gc_collect_cycles();
-    //     }
-    // }
+    private function cleanupGlobalListeners()
+    {
+        RekapSubCPMKMahasiswa::flushEventListeners();
+        RekapCPMKMahasiswa::flushEventListeners();
+        RekapCPLMahasiswa::flushEventListeners();
+        RekapSubCPMKProdi::flushEventListeners();
+        RekapCPMKProdi::flushEventListeners();
+        RekapCPLProdi::flushEventListeners();
+        Mahasiswa::flushEventListeners();
+        gc_collect_cycles();
+    }
 
     public function generateRekapCapaian($prId = null, $cooldown = null)
     {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
         if ($prId) {
             $prodi = Prodi::find($prId);
             $prName = $prodi->prodi ?? 'ini';
@@ -267,7 +249,7 @@ trait RekapCapaian
             $mahasiswaQuery->where('pr_id', $prId);
         }
 
-        // Memotong proses per 100 mahsiswa untuk menghemat RAM server
+        // Memotong proses per 100 mahasiswa untuk menghemat RAM server
         $mahasiswaQuery->chunkById(100, function ($mahasiswas) {
             foreach ($mahasiswas as $mahasiswa) {
                 $mahasiswaId = $mahasiswa->id;
@@ -281,76 +263,62 @@ trait RekapCapaian
 
                 if ($nilaiMahasiswa->isEmpty()) {
                     RekapNilaiMahasiswa::updateOrCreate(
-                        [
-                            'mahasiswa_id' => $mahasiswaId,
-                        ],
+                        ['mahasiswa_id' => $mahasiswaId],
                         [
                             'nilai' => null,
-                            // 'index' => null,
-                            // 'mutu' => null,
+                            'nilai_ipk' => null,
                             'count_rps' => 0,
                             'total_sks' => 0,
                         ]
                     );
-
                     continue;
                 }
 
-                $nilaiRata = round(
-                    $nilaiMahasiswa
-                        ->whereNotNull('nilai')
-                        ->avg('nilai'),
-                    2
-                );
+                // 1. Ambil data unik berdasarkan rps_id tertinggi (mengantisipasi remedial/double input)
+                $nilaiUnik = $nilaiMahasiswa->groupBy('rps_id')->map(function ($group) {
+                    return collect($group)->sortByDesc('nilai')->first();
+                });
 
-                $jumlahRps = $nilaiMahasiswa
-                    ->pluck('rps_id')
-                    ->filter()
-                    ->unique()
-                    ->count();
+                // 2. Hitung Nilai Rata-Rata Angka Global
+                $nilaiRata = round($nilaiUnik->whereNotNull('nilai')->avg('nilai'), 2);
 
-                $totalSks = $nilaiMahasiswa
-                    ->unique('rps_id')
-                    ->sum(function ($item) {
-                        return $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
-                    });
+                // 3. Hitung Jumlah RPS dan Total SKS
+                $jumlahRps = $nilaiUnik->pluck('rps_id')->filter()->count();
+                
+                $totalSks = $nilaiUnik->sum(function ($item) {
+                    return $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
+                });
 
-                // $index = match (true) {
-                //     $nilaiRata >= 86 => 4.00,
-                //     $nilaiRata >= 80 => 3.70,
-                //     $nilaiRata >= 75 => 3.30,
-                //     $nilaiRata >= 70 => 3.00,
-                //     $nilaiRata >= 65 => 2.70,
-                //     $nilaiRata >= 60 => 2.30,
-                //     $nilaiRata >= 56 => 2.00,
-                //     $nilaiRata >= 40 => 1.00,
-                //     default => 0.00,
-                // };
+                // 4. HITUNG IPK AKURAT BERDASARKAN BOBOT SKS × ACCESSOR nilai_index
+                $totalBobotSks = $nilaiUnik->sum(function ($item) {
+                    $sks = $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
+                    // Memanggil $item->nilai_index langsung memicu logika match ($this->nilai_mutu) di model
+                    $indexMataKuliah = (float) ($item->nilai_index ?? 0.00); 
+                    
+                    return $sks * $indexMataKuliah;
+                });
 
-                // $mutu = match (true) {
-                //     $nilaiRata >= 86 => 'A',
-                //     $nilaiRata >= 80 => 'A-',
-                //     $nilaiRata >= 75 => 'B+',
-                //     $nilaiRata >= 70 => 'B',
-                //     $nilaiRata >= 65 => 'B-',
-                //     $nilaiRata >= 60 => 'C+',
-                //     $nilaiRata >= 56 => 'C',
-                //     $nilaiRata >= 40 => 'D',
-                //     default => 'E',
-                // };
 
+                $ipk = $totalSks > 0 ? round($totalBobotSks / $totalSks, 2) : 0.00;
+                // 5. Simpan ke database rekap
+                // $r = RekapNilaiMahasiswa::updateOrCreate(
                 RekapNilaiMahasiswa::updateOrCreate(
-                    [
-                        'mahasiswa_id' => $mahasiswaId,
-                    ],
+                    ['mahasiswa_id' => $mahasiswaId],
                     [
                         'nilai' => $nilaiRata,
-                        // 'index' => $index,
-                        // 'mutu' => $mutu,
+                        'nilai_ipk' => $ipk,
                         'count_rps' => $jumlahRps,
                         'total_sks' => $totalSks,
                     ]
                 );
+
+                // Log::info('IPK Debug', [
+                //     'mahasiswa_id' => $mahasiswaId,
+                //     'ipk' => $ipk,
+                //     'total_sks' => $totalSks,
+                //     'total_bobot' => $totalBobotSks,
+                // ]);
+                // dump($ipk, $r);
             }
         });
     }

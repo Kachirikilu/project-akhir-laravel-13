@@ -1,6 +1,5 @@
 @if (Auth::user())
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
         @php
             $isTrashed = $x->trashed();
@@ -16,18 +15,20 @@
             'typeXString' => $copyName ?? 'Kode Kelas',
         ])
 
-        <flux:menu.separator />
+        @if (!$isTrashed)
+            <flux:menu.separator />
 
-        <flux:menu.item href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
-            class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
+            <flux:menu.item href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
+                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
 
-            <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
+                <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Lihat Kelas</span>
-                <flux:icon wire:loading wire:target="showKelas" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
+                <div class="flex justify-between items-center w-full">
+                    <span>Lihat Kelas</span>
+                    <flux:icon wire:loading wire:target="showKelas" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+        @endif
 
 
         <flux:menu.separator />
@@ -142,7 +143,7 @@
             @else
                 {{-- Tombol Restore --}}
                 <flux:menu.item wire:click="{{ $restoreCall }}"
-                    class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                     <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -157,7 +158,7 @@
                 {{-- Tombol Delete Permanent --}}
                 <flux:menu.item
                     @click="
-                                $store.kelas?.setDeleteKelas(
+                            $store.kelas?.setDeleteKelas(
                                 '{{ $x->kelas ?? '' }}',
                                 '{{ $x->kode ?? '' }}',
                                 '{{ $isTrashed }}'

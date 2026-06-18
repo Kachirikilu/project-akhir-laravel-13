@@ -22,42 +22,45 @@
 @endphp
 
 <div x-data="{
-    isAlpine: {{ $alpineStore ? 'true' : 'false' }},
-    search: '', 
-    selectedMode: '{{ $searchMode ?? '' }}',
+    @if ($alpineStore)
+        search: '',
+        selectedMode: $store.{{ $alpineStore }}.searchMode || 'simple', {{-- Tambahan inisialisasi state jika pakai Alpine Store --}}
+    @else
+        search: @entangle('search'),
+        selectedMode: @entangle('searchMode'), {{-- Tambahan entangle bawaan jika stand-alone Livewire --}}
+    @endif
+
     isRealtime: {{ $isLive ? 'true' : ($defaultLive ? 'true' : 'false') }},
     showSearchModePopup: false,
 
-    init() {
-        if (!this.isAlpine) {
-            this.search = @entangle('search');
-        }
-    },
-
     triggerRealtimeSearch(val) {
-        if (this.isAlpine) {
+        @if ($alpineStore)
             $store.{{ $alpineStore }}.search = val;
-        } else {
+        @else
             $wire.$set('search', val);
-        }
+        @endif
     },
 
     triggerManualSearch() {
-        if (!this.isRealtime) {
-            if (this.isAlpine) {
-                $store.{{ $alpineStore }}.search = this.$refs.searchInput.value;
-            } else {
+        @if ($alpineStore)
+            $store.{{ $alpineStore }}.search = this.search;
+        @else
+            if (!this.isRealtime) {
                 $wire.$set('search', this.search);
                 $wire.search();
             }
-        }
+        @endif
     },
 
     changeSearchMode(value) {
         this.selectedMode = value;
-        if (!this.isAlpine) {
+        
+        @if ($alpineStore)
+            $store.{{ $alpineStore }}.searchMode = value;
+        @else
             $wire.$set('searchMode', value);
-        }
+        @endif
+
         this.showSearchModePopup = false;
     }
 }" class="relative flex items-center">

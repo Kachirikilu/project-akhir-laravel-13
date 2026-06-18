@@ -63,7 +63,7 @@
 
                    {{-- Baris RPS --}}
                    <div
-                       class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2 text-left transition-colors focus:outline-none cursor-pointer">
+                       class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
                        <flux:icon name="document-text" class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
                        <span
                            class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Total

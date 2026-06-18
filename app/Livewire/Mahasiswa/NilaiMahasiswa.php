@@ -39,7 +39,7 @@ class NilaiMahasiswa extends Component
 
     public $mahasiswa_id;
 
-    protected $listeners = ['refresh-table' => 'refreshKelassList',
+    protected $listeners = ['refresh-table' => 'refreshKelasList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -49,6 +49,7 @@ class NilaiMahasiswa extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'semester'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = '')

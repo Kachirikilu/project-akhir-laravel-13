@@ -7,6 +7,7 @@ use App\Livewire\Global\HasToast;
 use App\Models\Kelas\KelasSesi;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
@@ -26,6 +27,124 @@ trait WithAbsenModal
     public $showEditSesi = false;
 
     public $showMahasiswaAbsen = false;
+
+
+    public function absenSesi($data)
+    {
+        if (! $this->AuthCheck('mahasiswa')) {
+            return;
+        }
+
+        try {
+            $mahasiswa_id = Auth::user()->mahasiswa->id ?? null;
+
+            if (empty($mahasiswa_id)) {
+                $this->toast(message: 'Mahasiswa', type: 'unfound', variant: 'danger');
+
+                return;
+            }
+
+            $validated = validator(
+                $data,
+                [
+                    'sesi_id' => ['required', 'exists:kelas_sesi,id'],
+                    'absen' => [
+                        'required',
+                        'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi',
+                    ],
+                    'keterangan' => [
+                        'required_if:absen,Dispensasi,Sakit,Izin',
+                        'nullable',
+                        'string',
+                        'min:5',
+                        'max:1000',
+                    ],
+                ],
+                [
+                    'sesi_id.required' => 'Sesi Kelas tidak ditemukan!',
+                    'sesi_id.exists' => 'Sesi Kelas tidak valid!',
+
+                    'absen.required' => 'Status Absensi wajib dipilih!',
+                    'absen.in' => 'Status Absensi tidak valid!',
+
+                    'keterangan.required_if' => 'Keterangan wajib diisi untuk status Izin, Sakit, & Dispensasi!',
+                    'keterangan.string' => 'Keterangan harus berupa text!',
+                    'keterangan.min' => 'Keterangan terlalu pendek (Minimal 5 karakter)!',
+                    'keterangan.max' => 'Keterangan terlalu panjang (Maksimal 1000 karakter)!',
+                ]
+            )->validate();
+
+            $sesi = KelasSesi::with(['jadwal_rel.kelas_rel'])->findOrFail($validated['sesi_id']);
+
+            $now = now();
+
+            $mulai = Carbon::parse($sesi->waktu_pelaksanaan);
+            $berakhir = Carbon::parse($sesi->waktu_berakhir);
+            $batasTerlambat = Carbon::parse($sesi->waktu_telat);
+            $batasDispensasi = Carbon::parse($sesi->waktu_dispensasi);
+
+            $statusDipilih = $validated['absen'];
+
+            if ($now->lt($mulai) || $now->gt($batasDispensasi)) {
+                $this->toast(
+                    text: 'Sesi absensi sedang ditutup atau telah kedaluwarsa!',
+                    variant: 'danger'
+                );
+
+                return;
+            }
+
+            if ($statusDipilih === 'Absen') {
+                $validated['absen'] = 'Absen';
+            } elseif ($now->betweenIncluded($mulai, $batasTerlambat)) {
+                if (! in_array($statusDipilih, ['Hadir', 'Izin', 'Sakit', 'Dispensasi'])) {
+                    $validated['absen'] = 'Hadir';
+                }
+            } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir)) {
+                if ($statusDipilih === 'Sakit') {
+                    $validated['absen'] = 'Sakit';
+                } elseif (in_array($statusDipilih, ['Hadir', 'Terlambat', 'Izin'])) {
+                    $validated['absen'] = 'Terlambat';
+                } else {
+                    $validated['absen'] = 'Absen';
+                }
+            } elseif ($now->gt($mulai) && $now->lte($batasDispensasi)) {
+                if ($statusDipilih === 'Dispensasi') {
+                    $validated['absen'] = 'Dispensasi';
+                } else {
+                    $validated['absen'] = 'Absen';
+                }
+            }
+
+            MahasiswaKehadiran::updateOrCreate(
+                [
+                    'sesi_id' => $validated['sesi_id'],
+                    'mahasiswa_id' => $mahasiswa_id,
+                ],
+                [
+                    'status' => $validated['absen'],
+                    'waktu_presensi' => now(),
+                    'keterangan' => $validated['keterangan'] ?? null,
+                ]
+            );
+
+            $this->showSesiAbsen = false;
+            $this->dispatch('refresh-data-sesi');
+
+            $this->toast(
+                message: 'Absensi berhasil dikirim',
+                type: 'success'
+            );
+
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->toast(
+                text: 'Gagal Mengambil Data: '.$e->getMessage(),
+                variant: 'danger'
+            );
+        }
+    }
 
     public function editAbsensi($id, $jadwal_id)
     {

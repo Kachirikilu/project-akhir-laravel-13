@@ -7,22 +7,26 @@
         Input Capaian Pembelajaran Mata Kuliah</h4>
 
 
+
     <div>
-        <div class="grid sm:grid-cols-4 gap-1 sm:gap-3 items-end" x-data="{}"
+        @include('livewire.global.modal-form.partial.label', [
+            'nameXString' => 'Kode CPMK',
+        ])
+        <div class="grid grid-cols-6 gap-1 sm:gap-2 items-end" x-data="{}"
             x-effect="$store.cpmk.kode_cpmk = ($store.cpmk.kode_cpmk_1 || '') + ($store.cpmk.kode_cpmk_2 || '')">
 
-            <div class="sm:col-span-2">
+            <div class="col-span-3">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'cpmk',
-                    'nameXString' => 'Kode CPMK',
+                    'noLabel' => 1,
                     'modelString' => 'kode_cpmk_1',
                     'iconString' => 'academic-cap',
-                    'placeholder' => 'Masukkan mutu Kode CPMK...',
+                    'placeholder' => 'Kode CPMK...',
                     'isKode' => 4,
                     'isFocusSelect' => 1,
                 ])
             </div>
-            <div class="sm:col-span-2">
+            <div class="col-span-3">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'cpmk',
                     'noLabel' => 1,
@@ -34,6 +38,7 @@
                     'isFocusSelect' => 1,
                 ])
             </div>
+
         </div>
         @error('kode_cpmk')
             <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_cpmk') }}</span>

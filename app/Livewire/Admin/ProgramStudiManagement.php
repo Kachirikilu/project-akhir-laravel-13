@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Http\Services\RekapCapaian;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
-use App\Http\Services\RekapCapaian;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
@@ -24,6 +24,7 @@ class ProgramStudiManagement extends Component
 {
     use HasSortir;
     use HasToast;
+    use RekapCapaian;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;
@@ -34,13 +35,12 @@ class ProgramStudiManagement extends Component
     use WithProdiFilters;
     use WithProdiModal;
     use WithProdiSearchFilters;
-    use RekapCapaian;
 
     public $showModal = false;
 
     public $perPage = 8;
 
-    public $switchTable = 'prodi';
+    public $switchTable = '';
 
     public $search = '';
 
@@ -62,9 +62,10 @@ class ProgramStudiManagement extends Component
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'filterPr' => ['except' => ''],
-        // 'switchTable' => ['except' => 'prodi'],
+        // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = '')
@@ -109,7 +110,7 @@ class ProgramStudiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'prodi' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'akreditas_pr', 7 => 'departemen', 8 => 'fakultas', 9 => 'strata', 10 => 'created_at', 11 => 'updated_at'],
+            '' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'akreditas_pr', 7 => 'departemen', 8 => 'fakultas', 9 => 'strata', 10 => 'created_at', 11 => 'updated_at'],
             'departemen' => [1 => 'id', 2 => 'kode', 3 => 'departemen', 4 => 'rekap_dp', 5 => 'index_dp', 6 => 'akreditas_dp', 7 => 'fakultas', 8 => 'created_at', 9 => 'updated_at'],
             'fakultas' => [1 => 'id', 2 => 'kode', 3 => 'fakultas', 4 => 'rekap_fk', 5 => 'index_fk', 6 => 'akreditas_fk', 7 => 'created_at', 8 => 'updated_at'],
         ];
@@ -144,7 +145,7 @@ class ProgramStudiManagement extends Component
         $this->syncSortField($table, $this->sortField);
 
         $limits = [
-            'prodi' => 75,
+            '' => 75,
             'departemen' => 50,
             'fakultas' => 10,
         ];
@@ -190,41 +191,42 @@ class ProgramStudiManagement extends Component
                 $queryFk->onlyTrashed();
             }
 
-            if ($this->switchTable === 'prodi') {
-                $this->addRekapProdi($queryPr, 'rekap_pr');
-                $this->addIndexProdi($queryPr, 'index_pr');
-                $this->addMutuProdi($queryPr, 'akreditas_pr');
-                $this->buttonStrataFilter($queryPr);
+            if ($this->switchTable === 'fakultas') {
+                $this->addRekapFakultas($queryFk, 'rekap_fk');
+                $this->addIndexFakultas($queryFk, 'index_fk');
+                $this->addAkreditasFakultas($queryFk, 'akreditas_fk');
             } elseif ($this->switchTable === 'departemen') {
                 $this->addRekapDepartemen($queryDp, 'rekap_dp');
                 $this->addIndexDepartemen($queryDp, 'index_dp');
                 $this->addAkreditasDepartemen($queryDp, 'akreditas_dp');
-            } elseif ($this->switchTable === 'fakultas') {
-                $this->addRekapFakultas($queryFk, 'rekap_fk');
-                $this->addIndexFakultas($queryFk, 'index_fk');
-                $this->addAkreditasFakultas($queryFk, 'akreditas_fk');
+            } else {
+                $this->addRekapProdi($queryPr, 'rekap_pr');
+                $this->addIndexProdi($queryPr, 'index_pr');
+                $this->addMutuProdi($queryPr, 'akreditas_pr');
+                $this->buttonStrataFilter($queryPr);
             }
 
             // =========================
             // PAGINATION
             // =========================
             if ($this->searchMode == 'full') {
-                if ($this->switchTable === 'prodi') {
-                    $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                if ($this->switchTable === 'fakultas') {
+                    $fakultas = $this->searchOutputPr($queryFk, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
                 } elseif ($this->switchTable === 'departemen') {
                     $departemens = $this->searchOutputPr($queryDp, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
-                } elseif ($this->switchTable === 'fakultas') {
-                    $fakultas = $this->searchOutputPr($queryFk, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                } else {
+                    $prodis = $this->searchOutputPr($queryPr, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
                 }
             } else {
-                if ($this->switchTable === 'prodi') {
-                    $prodis = $queryPr->paginate($this->perPage);
+                if ($this->switchTable === 'fakultas') {
+                    $fakultas = $queryFk->paginate($this->perPage);
                 } elseif ($this->switchTable === 'departemen') {
                     $departemens = $queryDp->paginate($this->perPage);
-                } elseif ($this->switchTable === 'fakultas') {
-                    $fakultas = $queryFk->paginate($this->perPage);
+                } else {
+                    $prodis = $queryPr->paginate($this->perPage);
                 }
             }
+
 
             // =========================
             // COUNT (ISOLATED QUERY)
@@ -232,6 +234,7 @@ class ProgramStudiManagement extends Component
             $countPr = Prodi::query();
             $countDp = Departemen::query();
             $countFk = Fakultas::query();
+
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $countPr->onlyTrashed();
@@ -244,13 +247,14 @@ class ProgramStudiManagement extends Component
                 'departemens' => $departemens,
                 'fakultas' => $fakultas,
 
-                'totalProdis' => $countPr->count(),
-                'totalSarjanas' => (clone $countPr)->where('strata', 'Sarjana')->count(),
-                'totalMagisters' => (clone $countPr)->where('strata', 'Magister')->count(),
-                'totalDoktors' => (clone $countPr)->where('strata', 'Doktor')->count(),
-
-                'totalDepartemen' => (clone $countDp)->count(),
-                'totalFakultas' => (clone $countFk)->count(),
+                'stats' => [
+                    'prodi' => $countPr->count(),
+                    'sarjana' => (clone $countPr)->where('strata', 'Sarjana')->count(),
+                    'magister' => (clone $countPr)->where('strata', 'Magister')->count(),
+                    'doktor' => (clone $countPr)->where('strata', 'Doktor')->count(),
+                    'departemen' => (clone $countDp)->count(),
+                    'fakultas' => (clone $countFk)->count(),
+                ],
             ]);
 
         } catch (QueryException $e) {
@@ -263,12 +267,14 @@ class ProgramStudiManagement extends Component
                 'departemens' => Departemen::whereRaw('1=0')->paginate($this->perPage),
                 'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
 
-                'totalProdis' => '-',
-                'totalSarjanas' => '-',
-                'totalMagisters' => '-',
-                'totalDoktors' => '-',
-                'totalDepartemen' => '-',
-                'totalFakultas' => '-',
+                'stats' => [
+                    'prodi' => '-',
+                    'sarjana' => '-',
+                    'magister' => '-',
+                    'doktor' => '-',
+                    'departemen' => '-',
+                    'fakultas' => '-',
+                ],
             ]);
         }
     }

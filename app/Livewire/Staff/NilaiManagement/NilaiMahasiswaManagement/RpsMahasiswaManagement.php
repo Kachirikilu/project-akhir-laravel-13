@@ -4,19 +4,21 @@ namespace App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithNilaiSearchFilters;
-use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithRPSMahasiswaFilters;
+use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithNilaiDelete;
 use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithNilaiModal;
-
+use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithRPSMahasiswaFilters;
 // use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\WithNilaiMahasiswaFilters;
-use App\Models\Auth\User;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Models\Penilaian\NilaiMahasiswa;
 use App\Models\Auth\Mahasiswa;
 // use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
 // use App\Models\Kelas\NilaiMahasiswa;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
+use App\Models\Auth\User;
+use App\Http\Services\RekapCapaian;
 // use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -24,22 +26,26 @@ class RpsMahasiswaManagement extends Component
 {
     use HasToast;
 
-    // use WithKelasDelete;
-    use WithRPSMahasiswaFilters;
+    use RekapCapaian;
+    use WithNilaiDelete;
     use WithNilaiModal;
     // use WithNilaiMahasiswaFilters;
     use WithNilaiSearchFilters;
-
-    use WithRPSShow;
+    use WithNilaiMahasiswaExcel;
     // use WithRPSModal;
 
     use WithPagination;
+    // use WithKelasDelete;
+    use WithRPSMahasiswaFilters;
+    use WithRPSShow;
 
     public $showModal = false;
 
     public $perPage = 8;
 
     public $switchTable = '';
+
+    public $isNilaiMhs = false;
 
     protected $paginationTheme = 'tailwind';
 
@@ -49,21 +55,23 @@ class RpsMahasiswaManagement extends Component
 
     public $showDeleted = false;
 
-    public User $user;
+    // public User $user;
 
     public Mahasiswa $mahasiswa;
 
-    public $nim;
+    public $nim_url;
 
-    public $user_id;
+    public $user_id_url;
 
-    public $mahasiswa_id;
+    public $mahasiswa_id_url;
 
-    public $ganjil_genap;
+    public $ganjil_genap_url;
 
-    public $akademik;
+    public $akademik_url;
 
-    protected $listeners = ['refresh-table' => 'refreshKelassList',
+    public $akademik_fix_url;
+
+    protected $listeners = ['refresh-table' => 'refreshNilaisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -73,23 +81,81 @@ class RpsMahasiswaManagement extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'id'],
         'sortDirection' => ['except' => 'desc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
-    public function mount($nim = '', $ganjil_genap = null, $akademik = null)
+    public function mount($isNilaiMhs = false, $nim = '', $ganjil_genap = null, $akademik = null)
     {
-        $this->nim = $nim;
-        $this->ganjil_genap = $ganjil_genap;
-        $this->akademik = $akademik;
+        $this->isNilaiMhs = $isNilaiMhs; 
+        $this->nim_url = $nim;
+        $this->ganjil_genap_url = $ganjil_genap;
+        $this->akademik_url = $akademik;
+        
+        $akademik_fix = str_replace('-', '/', $akademik);
+        $this->akademik_fix_url = $akademik_fix;
+
+        $sessionKey = $this->isNilaiMhs ? 'rps_mahasiswa_history.history' : 'rps_nilai.history';
+        $compositeKey = "{$nim}-{$ganjil_genap}-{$akademik}";
+
+        $cleanupRpsHistory = function() use ($compositeKey) {
+            foreach (['rps_nilai.history', 'rps_mahasiswa_history.history'] as $key) {
+                $history = session($key, []);
+                if (isset($history[$compositeKey])) {
+                    unset($history[$compositeKey]);
+                    session([$key => $history]);
+                }
+            }
+        };
 
         $user = User::whereHas('mahasiswa', function ($q) use ($nim) {
             $q->where('mahasiswas.nim', $nim);
         })->first();
+        
+        if (! $user) {
+            $cleanupRpsHistory();
+            abort(404, "Mahasiswa dengan NIM $nim tidak ditemukan!");
+        }
 
+        $lowGg = strtolower($ganjil_genap);
+        if ($lowGg !== 'ganjil' && $lowGg !== 'genap') {
+            $cleanupRpsHistory();
+            abort(404, 'URL '.$ganjil_genap.' tidak valid! Masukkan "Ganjil" atau "Genap"');
+        }
+        
+        $nilai = NilaiMahasiswa::where('mahasiswa_id', $user->mahasiswa->id)
+            ->where('ganjil_genap', $ganjil_genap)
+            ->where('tahun_akademik', $akademik_fix)
+            ->first();
+            
+        if (! $nilai) {
+            $cleanupRpsHistory();
+            abort(404, "Nilai Mahasiswa NIM $nim tidak ditemukan pada Akademik $ganjil_genap $akademik_fix!");
+        }
+  
         $this->user = $user;
         $this->mahasiswa = $user->mahasiswa;
 
-        $this->user_id = $user->id;
-        $this->mahasiswa_id = $user->mahasiswa->id;
+        $this->user_id_url = $user->id;
+        $this->mahasiswa_id_url = $user->mahasiswa->id;
+
+        $rpsHistory = session($sessionKey, []);
+        unset($rpsHistory[$compositeKey]);
+
+        $rpsHistory[$compositeKey] = [
+            'mahasiswa_id' => $user->mahasiswa->id,
+            'nim' => $nim,
+            'ganjil_genap' => $ganjil_genap,
+            'tahun_akademik' => $akademik_fix,
+            'url' => url()->current(),
+        ];
+
+        $rpsHistory = array_slice($rpsHistory, -10, null, true);
+        uasort($rpsHistory, function ($a, $b) {
+            $nimCompare = strcmp($a['nim'], $b['nim']);
+            return ($nimCompare !== 0) ? $nimCompare : strcmp($a['ganjil_genap'], $b['ganjil_genap']);
+        });
+
+        session([$sessionKey => $rpsHistory]);
     }
 
     public function updatingSearch()
@@ -100,6 +166,11 @@ class RpsMahasiswaManagement extends Component
     public function loadingTable() {}
 
     public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function refreshNilaisList()
     {
         $this->resetPage();
     }
@@ -160,9 +231,9 @@ class RpsMahasiswaManagement extends Component
     public function render()
     {
         try {
-            $queryNilai = $this->inputRPSMahasiswaSearch($this->mahasiswa_id);
+            $queryNilai = $this->inputRPSMahasiswaSearch($this->mahasiswa_id_url);
 
-            if (property_exists($this, 'showDeleted') && $this->showDeleted && $this->AuthCheck('staff')) {
+            if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryNilai->onlyTrashed();
             }
 
@@ -177,13 +248,17 @@ class RpsMahasiswaManagement extends Component
             //     });
             // }
 
-            $queryNilai->orderBy($this->sortField, $this->sortDirection);
+            // $queryNilai->orderBy($this->sortField, $this->sortDirection);
 
-            $perPage = $this->perPage ?? 10;
-            $paginatedRps = $queryNilai->paginate($perPage);
+            // $perPage = $this->perPage ?? 10;
+            // $paginatedRps = $queryNilai->paginate($perPage);
+
+            $nilais = $queryNilai->get();
+            
 
             return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management', [
-                'nilais' => $paginatedRps,
+                // 'nilais' => $paginatedRps,
+                'nilais' => $nilais ,
             ]);
 
         } catch (QueryException $e) {

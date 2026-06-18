@@ -20,11 +20,36 @@
     @include('livewire.staff.mk-management.mk-modal-form')
     @include('livewire.staff.mk-management.mk-modal-delete') --}}
 
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Nilai Mahasiswa</h2>
+        {{-- <div class="ml-auto">
+            @include('livewire.global.table.export-button', [
+                'xString' => 'exportRekapMahasiswaExcel()',
+                // 'autoSmall' => 'sm',
+            ])
+        </div> --}}
+    </div>
+
+
+    @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa', 'withCapaian' => 1])
+
     @include('livewire.admin.user-management.user-table', [
-        'withRPS' => true,
-        'withNilai' => true,
+        'withRPS' => 1,
+        'withNilai' => 1,
         'withCapaian' => 1,
+        'withProdi' => 1,
     ])
+
+
+    {{-- <div wire:loading.class="opacity-50" wire:target="switchingTable">
+        @include('livewire.admin.user-management.user-table')
+    </div> --}}
+
     @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
     @include('livewire.staff.obe-management.rps-management.rps-show-modal')
+    
+    @if (Auth::user()->admin)
+        @include('livewire.admin.user-management.user-modal-form')
+        @include('livewire.admin.user-management.user-modal-delete')
+    @endif
 </div>

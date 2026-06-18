@@ -9,7 +9,7 @@
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByRPS',
                 'filterString' => 'filterRPS',
-                'totalTab' => $totalRPSSaya,
+                'totalTab' => $stats['rps-saya'],
                 'totalTab1' => $stats['rps-prodi'],
                 'totalTab2' => $stats['rps'],
                 'totalTab3' => $stats['rps-akademik'],

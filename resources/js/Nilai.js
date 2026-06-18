@@ -6,8 +6,10 @@ document.addEventListener("alpine:init", () => {
         colorIcon: "",
         colorIconBg: "",
 
-        nama_nilai_delete: "",
-        kode_nilai_delete: "",
+        name_delete: "",
+        nim_delete: "",
+        kode_rps_delete: "",
+        mk_delete: "",
 
         setEdit(val) {
             this.isEdit = val;
@@ -98,6 +100,14 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        setDeleteNilai(name, nim, rps, mk, forceDelete) {
+            this.name_delete = name;
+            this.nim_delete = nim;
+            this.kode_rps_delete = rps;
+            this.mk_delete = mk;
+            this.isForceDelete = forceDelete;
+        },
+
         setShowRPS(idRPS) {
             this.resetShow();
             this.rps_id_show = idRPS;
@@ -127,6 +137,11 @@ document.addEventListener("alpine:init", () => {
 
                 this.sks = "";
                 this.showEdit = 0;
+
+                this.name_delete = "";
+                this.nim_delete = "";
+                this.kode_rps_delete = "";
+                this.mk_delete = "";
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

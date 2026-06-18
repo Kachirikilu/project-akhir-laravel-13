@@ -1,7 +1,9 @@
 @php
     $pageTitle = __('Nilai Management');
-
+    
     if (request()->routeIs('nilai-mahasiswa-management')) {
+        $pageTitle = __('Manajemen Periode Nilai Mahasiswa');
+    } elseif (request()->routeIs('rps-mahasiswa-management')) {
         $pageTitle = __('Manajemen Nilai Mahasiswa');
     }
 @endphp

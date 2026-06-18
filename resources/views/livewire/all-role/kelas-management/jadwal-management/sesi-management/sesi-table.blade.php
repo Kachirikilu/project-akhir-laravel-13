@@ -189,7 +189,7 @@
             <td class="table-main text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
             <td class="table-sub text-center whitespace-nowrap">
-                {{ ($s->mhs_absensi ?? 0) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
+                {{ ($s->mhs_absensi) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
             <td class="table-sub text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
             <td class="table-main text-center whitespace-nowrap">

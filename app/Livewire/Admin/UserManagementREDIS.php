@@ -57,6 +57,8 @@ class UserManagement extends Component
         'sortDirection' => ['except' => 'asc'],
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],
+        'showDeleted' =>  ['except' => false],
+
 
         // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],

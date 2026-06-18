@@ -61,6 +61,7 @@ class RpsCapaianManagement extends Component
         // 'switchTable' => ['except' => 'prodi'],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     // public function mount($switchTable = '')

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Kelas\KelasSesi;
+use App\Jobs\SendClassReminderJob;
 
 Route::view('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -40,18 +42,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['is_mahasiswa'])->group(function () {
         Route::view('jadwal-kelas/{switchTable?}', 'jadwal-mahasiswa')->name('jadwal-mahasiswa');
         Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/{switchTable?}', 'jadwal-mahasiswa')->name('sesi-mahasiswa');
+        // Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
+        // Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('nilai-rps-mahasiswa');
+
         Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
-        Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('nilai-rps-mahasiswa');
-        
+        Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('rps-mahasiswa');
     });
 
     Route::view('kelas-management/{switchTable2?}/{switchTable?}', 'kelas-management')->name('kelas-management');
     Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{switchTable?}', 'kelas-management')->name('jadwal-management');
     Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'kelas-management')->name('sesi-management');
 
+    
     // Route::middleware('kelas.access')->group(function () {
     // });
     Route::redirect('settings', 'settings/profile');
+});
+
+
+
+Route::get('/test-wa/{sesi_id}', function ($sesi_id) {
+    $sesi = KelasSesi::findOrFail($sesi_id);
+    SendClassReminderJob::dispatchSync($sesi); 
+    
+    return "Test perkuliahan sesi " . $sesi->id . " berhasil ditembak ke Fonnte!";
 });
 
 Route::get('/database-stats', function () {

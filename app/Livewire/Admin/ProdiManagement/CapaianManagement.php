@@ -129,10 +129,16 @@ class CapaianManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
-        'filterPr' => ['except' => ''],
+        'filterRPS' => ['except' => ''],
+        'filterCPL' => ['except' => ''],
+        'filterCPMK' => ['except' => ''],
+        'filterSCPMK' => ['except' => ''],
+
+        'filterStatus' => ['except' => ''],
         // 'switchTable' => ['except' => 'cpl'],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     // public function mount($switchTable = '')
@@ -160,7 +166,7 @@ class CapaianManagement extends Component
             default => null,
         };
 
-        $this->prodi = Prodi::query()
+        $prodi = Prodi::query()
             ->with(['dp_rel.fk_rel'])
             ->where(function ($query) use ($kode) {
 
@@ -181,8 +187,20 @@ class CapaianManagement extends Component
                 }
             })
             ->where('strata', $strataDb)
-            ->firstOrFail();
+            ->first();
 
+        if (! $prodi) {
+            foreach (['prodi.history', 'capaian.history'] as $key) {
+                $history = session($key, []);
+                if (isset($history[$kode_pr])) {
+                    unset($history[$kode_pr]);
+                    session([$key => $history]);
+                }
+            }
+            abort(404, "Program Studi dengan Kode $kode_pr tidak ditemukan!");
+        }
+
+        $this->prodi = $prodi;
         $this->pr_id_url = $this->prodi->id;
 
         $this->refNameSearch = [
@@ -200,6 +218,29 @@ class CapaianManagement extends Component
             'cpmk' => [],
             'scpmk' => [],
         ];
+
+        $historyKey = 'prodi.history'; 
+        $history = session($historyKey, []);
+        $compositeKey = $prodi->kode;
+        $existingKey = array_search($prodi->id, array_column($history, 'pr_id'));
+        if ($existingKey !== false) {
+            $actualKeys = array_keys($history);
+            unset($history[$actualKeys[$existingKey]]);
+        }
+        unset($history[$compositeKey]);
+
+        $history[$compositeKey] = [
+            'pr_id' => $prodi->id,
+            'kode_pr' => $compositeKey,
+            'url' => url()->current(),
+        ];
+
+        $history = array_slice($history, -5, null, true);
+        ksort($history);
+
+        session([
+            $historyKey => $history,
+        ]);
     }
 
     public function updatingSearch()
@@ -246,17 +287,17 @@ class CapaianManagement extends Component
             // 'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'mutu_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps', 8 => 'created_at', 9 => 'updated_at'],
             // 'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'mutu_cpmk_pr', 7 => 'count_cpl', 8 => 'created_at', 9 => 'updated_at'],
             // 'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'mutu_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator', 9 => 'created_at', 10 => 'updated_at'],
-            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status', 12 => 'created_at', 13 => 'updated_at'],
+            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'ip_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status', 12 => 'created_at', 13 => 'updated_at'],
             'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'mutu_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'mutu_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'mutu_cpmk_pr', 7 => 'count_cpl'],
             'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'mutu_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator'],
-            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'ip_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
         ];
 
         $aliases = [
             'rekap_rps_pr' => ['rekap_cpl_pr', 'rekap_cpmk_pr', 'rekap_scpmk_pr', 'rekap_mhs'],
-            'index_rps_pr' => ['index_cpl_pr', 'index_cpmk_pr', 'index_scpmk_pr', 'index_mhs'],
+            'index_rps_pr' => ['index_cpl_pr', 'index_cpmk_pr', 'index_scpmk_pr', 'ip_mhs'],
             'mutu_rps_pr' => ['mutu_cpl_pr', 'mutu_cpmk_pr', 'mutu_scpmk_pr', 'mutu_mhs'],
 
             'kode' => ['kode', 'name'],
@@ -289,7 +330,7 @@ class CapaianManagement extends Component
             'cpl' => 'filterCPL',
             'cpmk' => 'filterCPMK',
             'sub-cpmk' => 'filterSCPMK',
-            'mahasiswa' => 'filterUser',
+            'mahasiswa' => 'filterStatus',
         ];
 
         foreach ($allFilters as $tableParam => $filterVariable) {
@@ -414,7 +455,7 @@ class CapaianManagement extends Component
                     break;
                 // case 'mahasiswa':
                 //     $this->addRekapMahasiswa($queryUser, 'rekap_mhs');
-                //     $this->addIndexMahasiswa($queryUser, 'index_mhs');
+                //     $this->addIndexMahasiswa($queryUser, 'ip_mhs');
                 //     $this->addMutuMahasiswa($queryUser, 'mutu_mhs');
                 //     $this->addCountRpsMahasiswa($queryUser, 'count_rps');
                 //     $this->addTotalSksMahasiswa($queryUser, 'total_sks');

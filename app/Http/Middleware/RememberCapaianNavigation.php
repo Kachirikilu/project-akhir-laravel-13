@@ -32,7 +32,7 @@ class RememberCapaianNavigation
                 return $next($request);
             }
 
-            $history = session('capaian.history', []);
+            $history = session('prodi.history', []);
 
             unset($history[$kodePr]);
 
@@ -53,7 +53,7 @@ class RememberCapaianNavigation
             ksort($history);
 
             session([
-                'capaian.history' => $history,
+                'prodi.history' => $history,
             ]);
         }
 
@@ -62,63 +62,63 @@ class RememberCapaianNavigation
         | RPS CAPAIAN MANAGEMENT
         |--------------------------------------------------------------------------
         */
-        if ($routeName === 'rps-capaian-management') {
+        // if ($routeName === 'rps-capaian-management') {
 
-            $kodePr = $request->route('kode_pr');
-            $kodeCPL = $request->route('kode_cpl');
+        //     $kodePr = $request->route('kode_pr');
+        //     $kodeCPL = $request->route('kode_cpl');
 
-            $cplExists = CPL::query()
-                ->get()
-                ->contains(function ($cpl) use ($kodeCPL) {
-                    return $cpl->kode === $kodeCPL;
-                });
+        //     $cplExists = CPL::query()
+        //         ->get()
+        //         ->contains(function ($cpl) use ($kodeCPL) {
+        //             return $cpl->kode === $kodeCPL;
+        //         });
 
 
-            if (! $cplExists) {
-                return $next($request);
-            }
+        //     if (! $cplExists) {
+        //         return $next($request);
+        //     }
 
-            $history = session('cpl.history', []);
+        //     $history = session('cpl.history', []);
 
-            $key = $kodePr.'_'.$kodeCPL;
+        //     $key = $kodePr.'_'.$kodeCPL;
 
-            unset($history[$key]);
+        //     unset($history[$key]);
 
-            $history[$key] = [
-                'kode_pr' => $kodePr,
-                'kode_cpl' => $kodeCPL,
-                'url' => route('rps-capaian-management', [
-                    'kode_pr' => $kodePr,
-                    'kode_cpl' => $kodeCPL,
-                ]),
-            ];
+        //     $history[$key] = [
+        //         'kode_pr' => $kodePr,
+        //         'kode_cpl' => $kodeCPL,
+        //         'url' => route('rps-capaian-management', [
+        //             'kode_pr' => $kodePr,
+        //             'kode_cpl' => $kodeCPL,
+        //         ]),
+        //     ];
 
-            $history = array_slice(
-                $history,
-                -15,
-                null,
-                true
-            );
+        //     $history = array_slice(
+        //         $history,
+        //         -15,
+        //         null,
+        //         true
+        //     );
 
-            uasort($history, function ($a, $b) {
+        //     uasort($history, function ($a, $b) {
 
-                $prodiCompare = strcmp(
-                    $a['kode_pr'],
-                    $b['kode_pr']
-                );
+        //         $prodiCompare = strcmp(
+        //             $a['kode_pr'],
+        //             $b['kode_pr']
+        //         );
 
-                return $prodiCompare !== 0
-                    ? $prodiCompare
-                    : strcmp(
-                        $a['kode_cpl'],
-                        $b['kode_cpl']
-                    );
-            });
+        //         return $prodiCompare !== 0
+        //             ? $prodiCompare
+        //             : strcmp(
+        //                 $a['kode_cpl'],
+        //                 $b['kode_cpl']
+        //             );
+        //     });
 
-            session([
-                'cpl.history' => $history,
-            ]);
-        }
+        //     session([
+        //         'cpl.history' => $history,
+        //     ]);
+        // }
 
         return $next($request);
     }

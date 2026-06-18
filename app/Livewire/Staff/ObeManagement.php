@@ -117,6 +117,7 @@ class ObeManagement extends Component
         'filterStatus' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = 'rps')
@@ -413,13 +414,10 @@ class ObeManagement extends Component
                 }
             }
 
-            if (Auth::user()->dosen) {
-                $totalRPSSaya = (clone $countRPS)->whereHas('dosens', function ($q) {
-                    $q->where('dosens.id', Auth::user()->dosen->id);
-                })->count();
-            }
+
 
             $stats = [
+                'rps-saya' => '🏦',
                 'rps-prodi' => '🏦',
                 'rps-akademik' => '📘',
                 'rps-rev-new' => '✨',
@@ -464,6 +462,12 @@ class ObeManagement extends Component
             $stats['ref'] = (clone $countRef)->count();
             $stats['dosen'] = (clone $countDosen)->count();
 
+            if (Auth::user()->dosen) {
+                $stats['rps-saya'] = (clone $countRPS)->whereHas('dosens', function ($q) {
+                    $q->where('dosens.id', Auth::user()->dosen->id);
+                })->count();
+            }
+
             // =========================
             // SWITCH STATS (TIDAK OVERWRITE)
             // =========================
@@ -492,8 +496,6 @@ class ObeManagement extends Component
             // TOTAL (NO GET)
             // =========================
             return view('livewire.staff.obe-management', array_merge($data, [
-                'totalRPSSaya' => $totalRPSSaya ?? 0,
-
                 'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
                 'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
@@ -515,8 +517,7 @@ class ObeManagement extends Component
                 'ref' => Referensi::whereRaw('1=0')->paginate($this->perPage),
                 'users' => User::whereRaw('1=0')->whereHas('dosen')->paginate($this->perPage),
             ], [
-                'totalRPSSaya' => '-',
-             
+                // 'totalRPSSaya' => '-',
                 'cpl_rps_modal_paginator' => collect(),
                 'cpmk_rps_modal_paginator' => collect(),
                 'scpmk_rps_modal_paginator' => collect(),
@@ -525,6 +526,7 @@ class ObeManagement extends Component
 
                 'stats' => [
                     'rps' => '-',
+                    'rps_saya' => '-',
                     'rps-prodi' => '-',
                     'rps-akademik' => '-',
                     'rps-rev-new' => '-',

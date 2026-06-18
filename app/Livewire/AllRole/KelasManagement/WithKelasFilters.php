@@ -39,14 +39,16 @@ trait WithKelasFilters
         $queryKelas = Kelas::query()
             ->with(['jadwals', 'rps_rel.mk_rel.prodis', 'rps_rel.mk_rel.prodis.dp_rel', 'rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
 
-        if (! empty($this->selectedPrId)) {
-            $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
-        }
-        if (! empty($this->selectedDpId)) {
-            $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedDpId));
-        }
-        if (! empty($this->selectedFkId)) {
-            $queryKelas->whereHas('pr_rel.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+        if ($this->filterKelas !== '' && $this->filterKelas !== 'kelas-prodi' && $this->filterKelas !== 'kelas-universitas') {
+            if (! empty($this->selectedPrId)) {
+                $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+            }
+            if (! empty($this->selectedDpId)) {
+                $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedDpId));
+            }
+            if (! empty($this->selectedFkId)) {
+                $queryKelas->whereHas('pr_rel.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            }
         }
         if (! empty($this->selectedRPSId)) {
             $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('id', $this->selectedRPSId));
@@ -54,13 +56,15 @@ trait WithKelasFilters
         if (! empty($this->selectedMKId)) {
             $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('mk_id', $this->selectedMKId));
         }
-        if (! empty($this->selectedDosenId)) {
-            $queryKelas->whereHas('rps_rel.dosens', function ($q) {
-                $q->where('dosens.id', $this->selectedDosenId);
-            });
-            $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                $q->where('dosens.id', $this->selectedDosenId);
-            });
+        if ($this->filterKelas !== '' && !Auth::user()->dosen) {
+            if (! empty($this->selectedDosenId)) {
+                $queryKelas->whereHas('rps_rel.dosens', function ($q) {
+                    $q->where('dosens.id', $this->selectedDosenId);
+                });
+                $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                    $q->where('dosens.id', $this->selectedDosenId);
+                });
+            }
         }
 
         if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {

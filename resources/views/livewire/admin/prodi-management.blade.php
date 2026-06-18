@@ -16,13 +16,13 @@
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @include('livewire.admin.prodi-management.prodi-table', [
             'xResults' => match ($this->switchTable) {
-                'prodi' => $prodis,
+                '', 'prodi' => $prodis,
                 'departemen' => $departemens,
                 'fakultas' => $fakultas,
                 default => collect([]),
             },
             'xNameString' => match ($this->switchTable) {
-                'prodi' => 'Program Studi',
+                '', 'prodi' => 'Program Studi',
                 'departemen' => 'Departemen',
                 'fakultas' => 'Fakultas',
                 default => 'Data',

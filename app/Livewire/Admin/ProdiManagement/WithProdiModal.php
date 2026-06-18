@@ -119,12 +119,12 @@ trait WithProdiModal
     {
         $this->resetErrorBag();
         $this->resetValidation();
+        $data = $this->prepareData($data);
         
         $prodis = [];
 
         /* ===================== PROGRAM STUDI ===================== */
         if ($this->prodiType === 'prodi') {
-
             $kodePr = $data['kode_pr'] ?? null;
             if (! empty($kodePr) && ! empty($data['dp_id'])) {
                 $departemen = DB::table('departemens')->find($data['dp_id']);
@@ -134,43 +134,60 @@ trait WithProdiModal
                     $fakultas = DB::table('fakultas')->find($departemen->fk_id);
                     $kodeDp = $fakultas->kode_fk;
                 }
-                if ($kodePr === $kodeDp) {
-                    $data['kode_pr'] = null;
-                }
-            }
 
+            }
             $prodis = [
                 'nama_pr' => [
                     'required', 'string', 'max:255',
-                    $this->uniqueRule('prodis', 'nama_pr', $isEditingPr ? $this->selected_id_pr : null),
+                    // --- UNIQUE KELOMPOK 1: KOmbinasi nama_pr + strata ---
+                    Rule::unique('prodis', 'nama_pr')
+                        ->where(function ($query) use ($data) {
+                            return $query->where('strata', $data['strata'] ?? null);
+                        })
+                        ->ignore($isEditingPr ? $this->selected_id_pr : null, 'id'),
                 ],
                 'kode_pr' => [
                     'nullable', 'string', 'min:3', 'max:3',
-                    function ($attribute, $value, $fail) use ($data) {
+                    function ($attribute, $value, $fail) use ($data, $isEditingPr) {
                         if (empty($value)) {
+                            return;
+                        }
+
+                        if (empty($data['dp_id'])) {
+                            $fail('Isi terlebih dahulu Departemen!');
                             return;
                         }
 
                         $departemen = DB::table('departemens')->find($data['dp_id']);
                         $fakultasId = $departemen ? $departemen->fk_id : null;
+                        $currentProdiId = $isEditingPr ? $this->selected_id_pr : null;
+
+                        $otherPr = DB::table('prodis')
+                            ->where('kode_pr', $value)
+                            ->where('strata', $data['strata'] ?? null)
+                            ->when($currentProdiId, function ($q) use ($currentProdiId) {
+                                return $q->where('id', '!=', $currentProdiId);
+                            })
+                            ->exists();
 
                         $otherDp = DB::table('departemens')->where('kode_dp', $value)->where('id', '!=', $data['dp_id'])->exists();
                         $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $fakultasId)->exists();
-                        $otherPr = DB::table('prodis')->where('kode_pr', $value)->where('dp_id', '!=', $data['dp_id'])->exists();
 
-                        if (empty($data['dp_id'])) {
-                            $fail('Isi terlebih dahulu Departemen!');
-                        } elseif ($otherDp || $otherFk || $otherPr) {
-                            $fail('Kode Program Studi ini sudah digunakan oleh instansi di luar silsilah Anda!');
+                        if ($otherDp || $otherFk || $otherPr) {
+                            $fail('Kode Program Studi dengan Strata ini sudah digunakan oleh instansi di luar silsilah Anda!');
                         }
                     },
                 ],
                 'dp_id' => ['required', 'integer', 'exists:departemens,id'],
                 'strata' => [
                     'required',
-                    Rule::in(['Sarjana','Magister','Doktor']),
+                    Rule::in(['Sarjana', 'Magister', 'Doktor']),
                 ],
             ];
+
+                if ($kodePr === $kodeDp) {
+                    $data['kode_pr'] = null;
+                }
         }
 
         /* ===================== JURUSAN ===================== */
@@ -316,7 +333,6 @@ trait WithProdiModal
         try {
 
             $validated = $this->inputModalProdi(false, $data);
-            $validated = $this->prepareData($validated);
             $message = '';
 
             DB::transaction(function () use ($validated, $message) {
@@ -381,7 +397,6 @@ trait WithProdiModal
 
         try {
             $validated = $this->inputModalProdi(true, $data);
-            $validated = $this->prepareData($validated);
             $message = '';
 
             DB::transaction(function () use ($validated, &$message) {

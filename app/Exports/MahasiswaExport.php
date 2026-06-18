@@ -77,7 +77,7 @@ class MahasiswaExport extends DefaultValueBinder implements FromCollection, Shou
     {
         $m = $u->mahasiswa;
 
-        $rps = $m->nilaiMahasiswa()
+        $rps = $m->nilai_mahasiswa()
             ->with('rps_rel')
             ->get()
             ->pluck('rps_rel')

@@ -90,6 +90,7 @@ trait WithNilaiMahasiswaFilters
                 } else {
                     $bobot = 0.00;
                 }
+                // $bobot = round((floatval($nilaiAngka) / 100) * 4, 2);
 
                 // Akumulasi bobot perkalian SKS untuk IP Semester
                 $totalBobotPerkalian += ($bobot * $sks);

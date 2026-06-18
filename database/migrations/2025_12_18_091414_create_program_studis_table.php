@@ -31,6 +31,8 @@ return new class extends Migration
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
             $table->softDeletes();
             $table->timestamps();
+            $table->unique(['strata', 'nama_pr']);
+            $table->unique(['strata', 'kode_pr']);
         });
     }
 

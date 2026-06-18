@@ -36,7 +36,7 @@ trait WithSesiFilters
     public function inputSesiSearch($idJadwal)
     {
         $querySesi = KelasSesi::where('kj_id', $idJadwal)
-            ->with(['jadwal_rel', 'jadwal_rel.kelas_rel']);
+            ->with(['jadwal_rel', 'jadwal_rel.kelas_rel', 'override'])->select('kelas_sesi.*');
 
         // $this->sortFieldOrderSesi($querySesi);
 

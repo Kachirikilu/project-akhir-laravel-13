@@ -1,18 +1,24 @@
 <?php
 
 namespace App\Livewire\Navigation;
+
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Route;
 
 class Navbar extends Component
 {
-    public $switchTable = 'rps';
+    public $currentRoute;
 
-    #[On('switch-table-changed')]
-    public function setSwitchTable($table)
+    public function mount()
     {
-        $this->switchTable = $table;
+        $this->currentRoute = Route::currentRouteName();
     }
+
+    // #[On('refresh-layout-sidebar')]
+    // public function refreshNavbar()
+    // {
+    // }
 
     public function render()
     {

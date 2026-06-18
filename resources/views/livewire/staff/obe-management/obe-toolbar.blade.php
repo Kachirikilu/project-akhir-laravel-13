@@ -1,9 +1,32 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    @if ($typeXString == 'all')
-        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">
-            {{ $textString ?? null ? $textString : 'Manajemen Rencana Pembelajaran Semester' }}
-        </h2>
+
+
+    @if (!($withCapaian ?? null))
+        @if ($typeXString == 'all')
+            <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">
+                Manajemen Rencana Pembelajaran Semester
+            </h2>
+        @endif
+    @else
+        <div class="flex items-center gap-4">
+            <a href="{{ $backUrl ?? route('nilai-management') }}" wire:navigate
+                class="mx-2 p-3 rounded-full hover:bg-[var(--hover-table-color)] transition-colors">
+                <flux:icon name="arrow-left" class="h-6 w-6 text-[var(--contrast-second-text)]" />
+            </a>
+            <div>
+                <h2 class="mb-2 text-2xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
+                    <span>{{ $textString }}</span>
+                </h2>
+                <p class="text-[var(--contrast-main-text)] opacity-70 text-sm flex items-center gap-2 flex-wrap mt-0.5">
+                    <span>{{ $textString2 }}</span>
+                    <strong class="opacity-40">|</strong>
+                    <span>{{ $textString3 }}</span>
+                </p>
+            </div>
+        </div>
     @endif
+
+
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" :size="($isSmall ?? false) ? 'sm' : null"
@@ -27,7 +50,8 @@
                 @endif
             </flux:button>
 
-            <flux:menu class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+            <flux:menu
+                class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
 
                 @if ($typeXString == 'all')
                     <flux:menu.heading>Pilih OBE</flux:menu.heading>
@@ -49,7 +73,7 @@
                         <flux:icon name="clipboard-document-list"
                             class="!text-green-600 dark:!text-green-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Rencana Pembelajaran Semester</span>
+                            <span class="mr-7 whitespace-nowrap">Rencana Pembelajaran Semester</span>
                             <flux:icon wire:loading wire:target="addRPS()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -64,7 +88,7 @@
                     <flux:menu.item class="cursor-pointer !text-sky-600 dark:!text-sky-400">
                         <flux:icon name="document-text" class="!text-sky-600 dark:!text-sky-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Capaian Pembelajaran Lulusan</span>
+                            <span class="mr-7 whitespace-nowrap">Capaian Pembelajaran Lulusan</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -83,7 +107,7 @@
                         class="ml-8 cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
                         <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">CPL Program Studi</span>
+                            <span class="mr-7 whitespace-nowrap">CPL Program Studi</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -102,7 +126,7 @@
                         class="ml-8 cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                         <flux:icon name="book-open" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">CPL Departemen</span>
+                            <span class="mr-7 whitespace-nowrap">CPL Departemen</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -122,7 +146,7 @@
                         <flux:icon name="building-library"
                             class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">CPL Fakultas</span>
+                            <span class="mr-7 whitespace-nowrap">CPL Fakultas</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -141,7 +165,7 @@
                         class="ml-8 cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                         <flux:icon name="globe-alt" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">CPL Universitas</span>
+                            <span class="mr-7 whitespace-nowrap">CPL Universitas</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -163,7 +187,7 @@
                         class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                         <flux:icon name="document-text" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Capaian Pembelajaran Lulusan</span>
+                            <span class="mr-7 whitespace-nowrap">Capaian Pembelajaran Lulusan</span>
                             <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -179,7 +203,7 @@
                         </flux:button>
 
                         <flux:menu
-                            class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+                            class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
                             <flux:menu.item
                                 @click="
                                     $store.cpl?.setEdit(0);
@@ -192,7 +216,7 @@
                                 class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                                 <flux:icon name="document-text" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                                 <div class="flex justify-between items-center w-full">
-                                    <span class="mr-7">Capaian Pembelajaran Lulusan</span>
+                                    <span class="mr-7 whitespace-nowrap">Capaian Pembelajaran Lulusan</span>
                                     <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
                                         class="animate-spin h-4 w-4 ml-2" />
                                 </div>
@@ -216,7 +240,7 @@
                         class="cursor-pointer !text-violet-600 dark:!text-violet-400 hover:!bg-violet-100 dark:hover:!bg-violet-900/30">
                         <flux:icon name="academic-cap" class="!text-violet-600 dark:!text-violet-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">CPMK</span>
+                            <span class="mr-7 whitespace-nowrap">CPMK</span>
                             <flux:icon wire:loading wire:target="addCPMK()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -237,7 +261,7 @@
                         class="cursor-pointer !text-fuchsia-600 dark:!text-fuchsia-400 hover:!bg-fuchsia-100 dark:hover:!bg-fuchsia-900/30">
                         <flux:icon name="academic-cap" class="!text-fuchsia-600 dark:!text-fuchsia-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Sub-CPMK</span>
+                            <span class="mr-7 whitespace-nowrap">Sub-CPMK</span>
                             <flux:icon wire:loading wire:target="addSCPMK()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
@@ -259,7 +283,7 @@
                             class="cursor-pointer !text-orange-600 dark:!text-orange-400 hover:!bg-orange-100 dark:hover:!bg-orange-900/30">
                             <flux:icon name="book-open" class="!text-orange-600 dark:!text-orange-400 mr-2 h-4 w-4" />
                             <div class="flex justify-between items-center w-full">
-                                <span class="mr-7">Referensi</span>
+                                <span class="mr-7 whitespace-nowrap">Referensi</span>
                                 <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
                                     class="animate-spin h-4 w-4 ml-2" />
                             </div>
@@ -281,7 +305,7 @@
                             class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-100 dark:hover:!bg-lime-900/30">
                             <flux:icon name="briefcase" class="!text-lime-600 dark:!text-lime-400 mr-2 h-4 w-4" />
                             <div class="flex justify-between items-center w-full">
-                                <span class="mr-7">Dosen</span>
+                                <span class="mr-7 whitespace-nowrap">Dosen</span>
                                 <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
                                     class="animate-spin h-4 w-4 ml-2" />
                             </div>

@@ -40,9 +40,9 @@
             </div>
         </flux:menu.item>
 
-        <flux:menu.separator />
 
         @if (Auth::user()?->admin || Auth::user()?->dosen)
+            <flux:menu.separator />
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
@@ -59,7 +59,7 @@
                         '{{ $x->sks ?? '' }}',
 
                         {{-- '{{ $x->nilai ?? '0.00' }}',
-                        '{{ $x->nilai_index ?? '0.00' }}',
+                        '{{ $x->nilai_ipk ?? '0.00' }}',
                         '{{ $x->nilai_mutu ?? 'E' }}', --}}
 
                         JSON.parse('{{ json_encode($x->nilai_array ?? []) }}'),
@@ -68,7 +68,7 @@
                         JSON.parse('{{ json_encode($x->kode_scpmk_array ?? []) }}'),
                         JSON.parse('{{ json_encode($x->metode_array ?? []) }}'),
                     );
-                    $flux.modal('rps-mahasiswa-modal').show();
+                    $flux.modal('nilai-modal').show();
                 "
                 {{-- wire:click="{{ $editCall }}" --}}
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
@@ -87,10 +87,13 @@
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
                         $store.nilai?.setDeleteNilai(
-                            '{{ $x->email ?? '' }}',
-                            '{{ $x->role }}'
+                            '{{ $mahasiswa->name ?? '' }}',
+                            '{{ $mahasiswa->nim ?? '' }}',
+
+                            '{{ $x->kode_rps ?? '' }}',
+                            '{{ $x->mk ?? '' }}',
                         );
-                        $flux.modal('user-delete').show();
+                        $flux.modal('nilai-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
@@ -123,11 +126,14 @@
             <flux:menu.item
                 @click="
                         $store.nilai?.setDeleteNilai(
-                            '{{ $x->email ?? '' }}',
-                            '{{ $x->role }}',
+                            '{{ $mahasiswa->name ?? '' }}',
+                            '{{ $mahasiswa->nim ?? '' }}',
+
+                            '{{ $x->kode_rps ?? '' }}',
+                            '{{ $x->mk ?? '' }}',
                             '{{ $isTrashed }}'
                         );
-                        $flux.modal('user-delete').show();
+                        $flux.modal('nilai-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">

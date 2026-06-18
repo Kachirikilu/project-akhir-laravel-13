@@ -56,22 +56,28 @@
                 {{-- Baris atas: kode jadwal + tombol menu --}}
                 <div class="flex items-start justify-between gap-2">
 
-                    <flux:dropdown>
-                        <button
-                            class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 focus:outline-none cursor-pointer">
-                            <flux:icon name="academic-cap" class="w-3 h-3" />
-                            {{ $j->kode }}
-                        </button>
-                        @include(
-                            'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
-                            [
-                                'x' => $j,
-                                'editString' => 'editJadwal',
-                                'nameXString' => 'Jadwal',
-                                'confirmDeleteString' => 'deleteJadwal',
-                            ]
-                        )
-                    </flux:dropdown>
+                    <div class="flex items-center gap-2">
+                        <flux:dropdown>
+                            <button
+                                class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 focus:outline-none cursor-pointer">
+                                <flux:icon name="academic-cap" class="w-3 h-3" />
+                                {{ $j->kode }}
+                            </button>
+                            @include(
+                                'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
+                                [
+                                    'x' => $j,
+                                    'editString' => 'editJadwal',
+                                    'nameXString' => 'Jadwal',
+                                    'confirmDeleteString' => 'deleteJadwal',
+                                ]
+                            )
+                        </flux:dropdown>
+                        @if (Auth::user()->admin || Auth::user()->dosen)
+                            <span class="text-xs text-white/60 font-mono">ID:
+                                {{ $j->id }}</span>
+                        @endif
+                    </div>
 
                     {{-- Tombol Menu --}}
                     <flux:dropdown>
@@ -89,6 +95,7 @@
                             ]
                         )
                     </flux:dropdown>
+
                 </div>
 
                 {{-- Label Extra / ID Jadwal --}}
@@ -130,7 +137,7 @@
 
                 {{-- Tanggal Pelaksanaan --}}
                 <div
-                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2">
+                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
                     <flux:icon name="calendar" class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
                     <span
                         class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Tanggal</span>
@@ -185,45 +192,59 @@
             <div class="px-4 pb-4">
                 @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
                     <button
-                        class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
-                        href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}"
-                        wire:navigate>
-                        <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
+                        class="flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
+                            {{ $j->trashed()
+                                ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
+                                : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:scale-[0.99]' }}"
+                        {{ $j->trashed() ? 'disabled' : 'href=' . ($isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal])) . ' wire:navigate' }}>
+                        <flux:icon name="calendar-days" class="w-3.5 h-3.5 {{ $j->trashed() ? 'opacity-40' : '' }}" />
                         <span>Lihat Jadwal Kelas</span>
                     </button>
                 @elseif (!empty($j->with_pw))
                     <button
-                        class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
-                        @click="
-                    $store.jadwal?.setEdit(0);
-                    $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                    $flux.modal('jadwal-join').show();
-                    $store.jadwal?.setValueJoinJadwal(
-                        '{{ $j->id ?? '' }}',
-                        '{{ $j->kode ?? '' }}',
-                        '{{ $j->kode_kelas ?? '' }}',
-                        '{{ $j->label_extra ?? '' }}',
-                    );
-                ">
-                        <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                        class="flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
+                            {{ $j->trashed()
+                                ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
+                                : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:scale-[0.99]' }}"
+                        {{ $j->trashed() ? 'disabled' : '' }}
+                        @if (!$j->trashed()) @click="
+                            $store.jadwal?.setEdit(0);
+                            $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
+                            $flux.modal('jadwal-join').show();
+                            $store.jadwal?.setValueJoinJadwal(
+                                '{{ $j->id ?? '' }}',
+                                '{{ $j->kode ?? '' }}',
+                                '{{ $j->kode_kelas ?? '' }}',
+                                '{{ $j->label_extra ?? '' }}',
+                            );
+                " @endif>
+                        <flux:icon name="user-plus" class="w-3.5 h-3.5 {{ $j->trashed() ? 'opacity-40' : '' }}" />
                         <span>Join Kelas</span>
                     </button>
                 @else
-                    <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
+                    @if ($j->trashed())
                         <button
-                            class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
-                            @click="
-                        $store.jadwal?.setEdit(0);
-                        $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                        $store.jadwal?.setValueJoinJadwal('{{ $j->id ?? '' }}');
-                    ">
-                            <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                            class="flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800"
+                            disabled>
+                            <flux:icon name="user-plus" class="w-3.5 h-3.5 opacity-40" />
                             <span>Join Kelas</span>
                         </button>
-                    </form>
+                    @else
+                        <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
+                            <button
+                                class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                                @click="
+                                    $store.jadwal?.setEdit(0);
+                                    $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
+                                    $store.jadwal?.setValueJoinJadwal('{{ $j->id ?? '' }}');
+                                ">
+                                <flux:icon name="user-plus" class="w-3.5 h-3.5" />
+                                <span>Join Kelas</span>
+                            </button>
+                        </form>
+                    @endif
                 @endif
             </div>
-
         </div>
     @empty
         {{-- KEADAAN KOSONG --}}

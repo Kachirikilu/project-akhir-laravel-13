@@ -4,6 +4,7 @@ namespace App\Livewire\AllRole;
 
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasModal;
+use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
@@ -32,6 +33,7 @@ class KelasManagement extends Component
     // use WithKelasDelete;
     use WithKelasFilters;
     use WithKelasModal;
+    use WithKelasDelete;
     use WithKelasSearchFilters;
     use WithMKSearchFilters;
     use WithPagination;
@@ -59,7 +61,7 @@ class KelasManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshKelassList',
+    protected $listeners = ['refresh-table' => 'refreshKelasList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -71,6 +73,7 @@ class KelasManagement extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = '', $switchTable2 = 'kelas-card')
@@ -306,17 +309,20 @@ class KelasManagement extends Component
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,
 
-                'totalWajib' => $totalWajib,
-                'totalPilihan' => $totalPilihan,
-                'totalUni' => $totalUni,
+                'stats' => [
+                    'kelas-saya' => $totalKelasSaya ?? 0,
+                    'kelas-prodi' => $totalKelasProdi,
 
-                'totalKelasSaya' => $totalKelasSaya ?? 0,
-                'totalKelasProdi' => $totalKelasProdi,
-                'totalKelas' => $totalKelas,
-                'totalTatapMuka' => $totalTatapMuka,
-                'totalPraktikum' => $totalPraktikum,
-                'totalPraktek' => $totalPraktek,
-                'totalSimulasi' => $totalSimulasi,
+                    'kelas' => $totalKelas,
+                    'kelas-tp' => $totalTatapMuka,
+                    'kelas-pr' => $totalPraktikum,
+                    'kelas-pl' => $totalPraktek,
+                    'kelas-sm' => $totalSimulasi,
+
+                    'kelas-wajib' => $totalWajib,
+                    'kelas-pilihan' => $totalPilihan,
+                    'kelas-uni' => $totalUni,
+                ],
             ]);
 
         } catch (QueryException $e) {
@@ -328,20 +334,20 @@ class KelasManagement extends Component
                 'kelas' => Kelas::whereRaw('1 = 0')->paginate($this->perPage),
 
                 'totalGanjilGanjil' => '-',
-                'totalGanjil' => '-',
-                'totalGenap' => '-',
+                'stats' => [
+                    'kelas-saya' => '-',
+                    'kelas-prodi' => '-',
 
-                'totalWajib' => '-',
-                'totalPilihan' => '-',
-                'totalUni' => '-',
+                    'kelas' => '-',
+                    'kelas-tp' => '-',
+                    'kelas-pr' => '-',
+                    'kelas-pl' => '-',
+                    'kelas-sm' => '-',
 
-                'totalKelasSaya' => '-',
-                'totalKelasProdi' => '-',
-                'totalKelas' => '-',
-                'totalTatapMuka' => '-',
-                'totalPraktikum' => '-',
-                'totalPraktek' => '-',
-                'totalSimulasi' => '-',
+                    'kelas-wajib' => '-',
+                    'kelas-pilihan' => '-',
+                    'kelas-uni' => '-',
+                ],
             ]);
         }
     }

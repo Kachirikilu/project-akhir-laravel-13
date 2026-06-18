@@ -2,33 +2,39 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
+use App\Livewire\Global\HasToast;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
-use App\Livewire\Global\HasToast;
 
 trait WithUserDelete
-{    
+{
     use HasToast;
+
     public $showUserDelete = false;
+
     public $userIdToDelete;
+
     public $userEmailToDelete;
+
     public $isPermanentDelete = false;
 
     public function deleteUser($id, $isTrashed = false)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         $user = $isTrashed ? User::withTrashed()->find($id) : User::find($id);
 
-        if (!$user) {
-            $this->toast(type: 'unfound', variant: 'warning', isAKun: 1);
+        if (! $user) {
+            $this->toast(type: 'unfound', variant: 'warning', isAkun: 1);
+
             return;
         }
 
         if (Auth::id() === $user->id) {
             $this->toast(text: 'Anda tidak dapat menghapus Akun sendiri!', variant: 'warning');
+
             return;
         }
 
@@ -41,10 +47,12 @@ trait WithUserDelete
     public function destroyUser()
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
-        if (!$this->userIdToDelete) return;
+        if (! $this->userIdToDelete) {
+            return;
+        }
 
         $type = 'delete';
 
@@ -60,11 +68,11 @@ trait WithUserDelete
                 $user->delete();
             }
 
-            $this->dispatch('refresh-data-user'); 
+            $this->dispatch('refresh-data-user');
             $this->showUserDelete = false;
             $this->toast(message: $this->userEmailToDelete, type: $type, isAkun: true);
             $this->cleanupDeleteStateUser();
-            
+
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
             }
@@ -81,7 +89,7 @@ trait WithUserDelete
         // 1. Cek Dosen
         if ($user->dosen) {
             $dosen = $user->dosen;
-            
+
             if ($dosen->rps()->exists()) {
                 throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data RPS!');
             }
@@ -97,11 +105,10 @@ trait WithUserDelete
 
         // 2. Cek Mahasiswa
         if ($user->mahasiswa) {
-            $mahasiswa = $user->mahasiswa;
-
-            // Cek keterhubungan ke Kelas (via kehadiran)
-            if (\App\Models\Kelas\MahasiswaKehadiran::where('mahasiswa_id', $mahasiswa->id)->exists()) {
-                throw new \Exception('Gagal hapus permanen: User (Mahasiswa) masih terhubung ke data Kelas!');
+            if ($user->mahasiswa?->jadwals()->exists()) {
+                throw new \Exception(
+                    'Gagal hapus permanen: User (Mahasiswa) masih terhubung ke data Kelas!'
+                );
             }
         }
     }
@@ -109,7 +116,7 @@ trait WithUserDelete
     public function restoreUser($id)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         try {

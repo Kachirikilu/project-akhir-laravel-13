@@ -3,13 +3,14 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Global\HasSortir;
-use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
-use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
+// use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
+// use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
@@ -22,10 +23,11 @@ use Livewire\WithPagination;
 class UserManagement extends Component
 {
     use HasToast;
+    use HasStats;
     use HasSortir;
-    use WithDepartemenFilters;
+    // use WithDepartemenFilters;
+    // use WithFakultasFilters;
     use WithDepartemenSearchFilters;
-    use WithFakultasFilters;
     use WithFakultasSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -64,6 +66,8 @@ class UserManagement extends Component
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterAngkatan' => ['except' => ''],
+        'showDeleted' =>  ['except' => false],
+
 
         // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
@@ -209,47 +213,25 @@ class UserManagement extends Component
             // =========================
             // 3. STATS QUERY (SELALU CLEAN)
             // =========================
-            $statsPr = User::query();
-            $statsAll = User::query();
-            $statsAktif = User::query();
-            $statsNonAktif = User::query();
-
-            // =========================
-            // SWITCH TABLE APPLY KE STATS (HANYA ROLE FILTER)
-            // =========================
-            if (! empty($this->switchTable)) {
-                $statsPr->whereHas($this->switchTable);
-                $statsAll->whereHas($this->switchTable);
-                $statsAktif->whereHas($this->switchTable);
-                $statsNonAktif->whereHas($this->switchTable);
-            }
+            $countUser = User::query();
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
-                $statsPr->onlyTrashed();
-                $statsAll->onlyTrashed();
-                $statsAktif->onlyTrashed();
-                $statsNonAktif->onlyTrashed();
+                $countUser->onlyTrashed();
             }
 
-            // =========================
-            // STATUS FILTER DIPISAH PER STAT (INI KUNCI 🔥)
-            // =========================
-            $statsPr->where(function ($q) {
-                $q->whereHas('admin.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
-                    ->orWhereHas('dosen.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
-                    ->orWhereHas('mahasiswa.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id));
-            });
-            $statsAktif->where(function ($q) {
-                $q->whereHas('admin', fn ($s) => $s->where('status', 'Aktif'))
-                    ->orWhereHas('dosen', fn ($s) => $s->where('status', 'Aktif'))
-                    ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', 'Aktif'));
-            });
+            $stats = [
+                'user-prodi'     => '🏛️',
+                'user-opsi'      => '⚙️',
+                'user-aktif'     => '🟢', 
+                'user-non-aktif' => '🔴',
 
-            $statsNonAktif->where(function ($q) {
-                $q->whereHas('admin', fn ($s) => $s->where('status', '!=', 'Aktif'))
-                    ->orWhereHas('dosen', fn ($s) => $s->where('status', '!=', 'Aktif'))
-                    ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif'));
-            });
+                'user'           => '👥',
+                'admin'          => '🛡️', 
+                'dosen'          => '👨‍🏫',
+                'mahasiswa'      => '🧑‍🎓', 
+            ];
+
+            $stats = array_merge($stats, $this->getStatsUser($countUser));
 
             if ($this->searchMode == 'full') {
                 $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
@@ -265,15 +247,19 @@ class UserManagement extends Component
                 // ->orWhere('email', 'like', '%' . $this->search . '%')
                 // ->paginate(10),
 
-                'totalUserProdi' => $statsPr->count(),
-                'totalAllOpsi' => $statsAll->count(),
-                'totalAktif' => $statsAktif->count(),
-                'totalNonAktif' => $statsNonAktif->count(),
+                'stats' => $stats,
 
-                'totalUsers' => User::count(),
-                'totalAdmins' => User::whereHas('admin')->count(),
-                'totalDosens' => User::whereHas('dosen')->count(),
-                'totalMahasiswas' => User::whereHas('mahasiswa')->count(),
+                // 'stats' => [
+                //     'user-prodi' => $statsPr->count(),
+                //     'user-opsi' => $statsAll->count(),
+                //     'user-aktif' => $statsAktif->count(),
+                //     'user-non-aktif' => $statsNonAktif->count(),
+
+                //     'user' => User::count(),
+                //     'admin' => User::whereHas('admin')->count(),
+                //     'dosen' => User::whereHas('dosen')->count(),
+                //     'mahasiswa' => User::whereHas('mahasiswa')->count(),
+                // ],
             ]);
 
         } catch (QueryException $e) {
@@ -285,14 +271,18 @@ class UserManagement extends Component
                 'users' => User::whereRaw('1=0')->paginate($this->perPage),
 
                 'totalUserProdi' => '-',
-                'totalAllOpsi' => '-',
-                'totalAktif' => '-',
-                'totalNonAktif' => '-',
 
-                'totalUsers' => '-',
-                'totalAdmins' => '-',
-                'totalDosens' => '-',
-                'totalMahasiswas' => '-',
+                'stats' => [
+                    'user-prodi' => '-',
+                    'user-opsi' => '-',
+                    'user-aktif' => '-',
+                    'user-non-aktif' => '-',
+
+                    'user' => '-',
+                    'admin' => '-',
+                    'dosen' => '-',
+                    'mahasiswa' => '-',
+                ],
             ]);
         }
     }

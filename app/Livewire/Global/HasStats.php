@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Global;
 
+use App\Models\Auth\User;
+use Illuminate\Support\Facades\Auth;
+
 trait HasStats
 {
     /**
@@ -77,7 +80,7 @@ trait HasStats
         return $stats;
     }
 
-    private function getStatsMahasiswa($query): array
+    private function getStatsMahasiswa($query, $withPr = null): array
     {
         $stats['mahasiswa-aktif'] = (clone $query)->whereHas('mahasiswa', function ($q) {
             $q->where('status', 'aktif');
@@ -85,6 +88,50 @@ trait HasStats
         $stats['mahasiswa-non-aktif'] = (clone $query)->whereHas('mahasiswa', function ($q) {
             $q->where('status', '!=', 'aktif');
         })->count();
+
+        if ($withPr) {
+            $stats['mahasiswa-prodi'] = (clone $query)->where(function ($q) {
+                $q->orWhereHas('mahasiswa.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id));
+            })->count();
+
+            $stats['mahasiswa-opsi'] = (clone $query)->count();
+        }
+
+        return $stats;
+    }
+
+    private function getStatsUser($query): array
+    {
+        // 1. Statistik Berdasarkan Prodi User (Admin, Dosen, atau Mahasiswa)
+        $stats['user-prodi'] = (clone $query)->where(function ($q) {
+            $q->whereHas('admin.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
+                ->orWhereHas('dosen.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
+                ->orWhereHas('mahasiswa.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id));
+        })->count();
+
+        $stats['user-opsi'] = (clone $query)->count();
+
+        // 2. Statistik User yang Berstatus Aktif
+        $stats['user-aktif'] = (clone $query)->where(function ($q) {
+            $q->whereHas('admin', fn ($s) => $s->where('status', 'Aktif'))
+                ->orWhereHas('dosen', fn ($s) => $s->where('status', 'Aktif'))
+                ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', 'Aktif'));
+        })->count();
+
+        // 3. Statistik User yang Berstatus Non-Aktif
+        $stats['user-non-aktif'] = (clone $query)->where(function ($q) {
+            $q->whereHas('admin', fn ($s) => $s->where('status', '!=', 'Aktif'))
+                ->orWhereHas('dosen', fn ($s) => $s->where('status', '!=', 'Aktif'))
+                ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif'));
+        })->count();
+
+        // 4. Statistik Keseluruhan User Berdasarkan Query Saat Ini (User Opsi)
+
+        // 5. Statistik Global Berdasarkan Role (Menggunakan base Model User)
+        $stats['user'] = User::count();
+        $stats['admin'] = User::whereHas('admin')->count();
+        $stats['dosen'] = User::whereHas('dosen')->count();
+        $stats['mahasiswa'] = User::whereHas('mahasiswa')->count();
 
         return $stats;
     }

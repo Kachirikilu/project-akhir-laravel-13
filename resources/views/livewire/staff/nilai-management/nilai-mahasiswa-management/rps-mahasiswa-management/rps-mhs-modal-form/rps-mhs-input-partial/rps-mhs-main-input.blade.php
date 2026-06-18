@@ -137,7 +137,7 @@
                                             'isLivewire' => 0,
                                             'modelString' => 'nilai_' . $targetIndex,
                                             'nameXString' => 'Nilai',
-                                            // 'floatOnly' => 1,
+                                            'floatOnly' => 1,
                                             'maxValue' => 100,
                                             'readonly' => (Auth::user()->admin || Auth::user()->dosen) ? 0 : 1,
                                             'iconString' => 'chart-bar',

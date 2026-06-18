@@ -16,6 +16,8 @@
         openOBEMenu: {{ request()->routeIs('obe-management') ? 'true' : 'false' }},
         openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
+        openRpsNilaiMenu: {{ request()->routeIs('nilai-mahasiswa', 'rps-mahasiswa') ? 'true' : 'false' }},
+        openNilaiMenu: {{ request()->routeIs('nilai-management', 'nilai-mahasiswa-management', 'rps-mahasiswa-management') ? 'true' : 'false' }},
     
         init() {
             this.$nextTick(() => {
@@ -32,6 +34,19 @@
                     this.$el.scrollTop
                 );
             });
+    
+            {{-- window.addEventListener('refresh-layout-sidebar', () => {
+                Livewire.navigate(window.location.href);
+            }); --}}
+    
+            {{-- window.addEventListener('refresh-layout-sidebar', () => {
+                if (window.Livewire) {
+                    const firstComponent = Object.values(Livewire.components)[0];
+                    if (firstComponent) {
+                        firstComponent.$wire.$refresh();
+                    }
+                }
+            }); --}}
         }
     }" class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
         @php
@@ -71,13 +86,6 @@
                 ],
                 [
                     'type' => 'link',
-                    'icon' => 'chart-pie',
-                    'route' => 'nilai-management',
-                    'label' => 'Nilai Mahasiswa',
-                    'roles' => ['admin', 'dosen'],
-                ],
-                [
-                    'type' => 'link',
                     'icon' => 'rectangle-stack',
                     'route' => 'mata-kuliah-management',
                     'label' => 'Mata Kuliah',
@@ -113,13 +121,35 @@
                     'active_routes' => ['kelas-management', 'jadwal-management', 'sesi-management'],
                 ],
                 [
-                    'type' => 'link',
-                    'icon' => 'academic-cap',
-                    'route' => 'nilai-mahasiswa',
-                    'label' => 'Nilai Kuliah',
+                    'type' => 'dropdown-rps-nilai',
+                    'icon' => 'chart-pie',
+                    'route' => 'nilai-management',
+                    'label' => 'Nilai Saya',
                     'roles' => ['mahasiswa'],
-                    'active_routes' => ['nilai-mahasiswa'],
                 ],
+                [
+                    'type' => 'dropdown-nilai',
+                    'icon' => 'chart-pie',
+                    'route' => 'nilai-management',
+                    'label' => 'Nilai Mahasiswa',
+                    'roles' => ['admin', 'dosen'],
+                ],
+
+                // [
+                //     'type' => 'link',
+                //     'icon' => 'chart-pie',
+                //     'route' => 'nilai-management',
+                //     'label' => 'Nilai Mahasiswa',
+                //     'roles' => ['admin', 'dosen'],
+                // ],
+                // [
+                //     'type' => 'link',
+                //     'icon' => 'academic-cap',
+                //     'route' => 'nilai-mahasiswa',
+                //     'label' => 'Nilai Kuliah',
+                //     'roles' => ['mahasiswa'],
+                //     'active_routes' => ['nilai-mahasiswa'],
+                // ],
             ];
 
             $navItems = array_filter($allNavItems, function ($item) use ($user) {
@@ -158,12 +188,13 @@
                 </a>
             @elseif ($item['type'] === 'dropdown-prodi')
                 @php
-                    $currentTable = null;
-                    $isProdiActive = request()->routeIs('program-studi-management')
-                                || request()->routeIs('capaian-management')
-                                || request()->routeIs('rps-capaian-management');
+                    $currentTable = (string) request()->route('switchTable');
+                    $isProdiActive =
+                        request()->routeIs('program-studi-management') ||
+                        request()->routeIs('capaian-management') ||
+                        request()->routeIs('rps-capaian-management');
 
-                    $prodiHistory = session('capaian.history', []);
+                    $prodiHistory = session('prodi.history', []);
                     $cplHistory = session('cpl.history', []);
 
                     $groupedCpl = [];
@@ -183,16 +214,18 @@
                         ksort($groupedCpl[$kodePr]);
                     }
 
+                    // dump($currentTable);
+
                     $subMenus = [
                         [
                             'label' => 'Program Studi',
                             'url' => route('program-studi-management', [
-                                'switchTable' => 'prodi',
+                                'switchTable' => '',
                             ]),
-                            'param' => 'prodi',
+                            'param' => 'default-null',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'active' => $isProdiActive && $currentTable === 'prodi',
+                            'active' => request()->routeIs('program-studi-management') && $currentTable,
                             'active-sub' => request()->routeIs('capaian-management', 'rps-capaian-management'),
                         ],
                     ];
@@ -260,7 +293,7 @@
                         'active' => $isProdiActive && $currentTable === 'fakultas',
                     ];
 
-                    $isSubMenu = ['prodi', 'departemen', 'fakultas'];
+                    $isSubMenu = ['default-null', 'departemen', 'fakultas'];
                     $openMenuVar = 'openProdiMenu';
                     $isMenuIndukActive = $isProdiActive;
                 @endphp
@@ -486,6 +519,156 @@
                         trigger="kelasDropdownTrigger" :active="$isKelasActive" />
                     <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
 
+                </div>
+            @elseif($item['type'] === 'dropdown-rps-nilai')
+                @php
+                    $rpsHistory = session('rps_mahasiswa_history.history', []);
+
+                    $subMenus = [
+                        [
+                            'label' => 'Daftar Nilai Saya',
+                            'url' => route('nilai-mahasiswa'),
+                            'param' => 'nilai-mahasiswa',
+                            'icon' => 'clipboard-document-list',
+                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'active' => request()->routeIs('nilai-mahasiswa') && !request()->route('ganjil_genap'),
+                            'active-sub' => request()->routeIs('rps-mahasiswa'),
+                        ],
+                    ];
+
+                    foreach ($rpsHistory as $rps) {
+                        $nim = $rps['nim'] ?? null;
+                        $ganjilGenap = $rps['ganjil_genap'] ?? null;
+                        $akademik = $rps['tahun_akademik'] ?? null;
+                        // Ganti kembali '/' menjadi '-' untuk kebutuhan parameter rute URL
+                        $akademikUrl = str_replace('/', '-', $akademik);
+
+                        if (!$ganjilGenap || !$akademik) {
+                            continue;
+                        }
+
+                        $subMenus[] = [
+                            // 'label' => 'RPS ' . ucfirst($ganjilGenap) . ' (' . $akademik . ')',
+                            'label' => ucfirst($ganjilGenap) . ' ' . $akademik,
+                            'url' => $rps['url'],
+                            'param' => 'rps-mahasiswa',
+                            'icon' => 'chart-bar',
+                            'color' => 'text-indigo-600 dark:text-indigo-400',
+                            'level' => 1,
+                            'active' =>
+                                request()->routeIs('rps-mahasiswa') &&
+                                request()->route('ganjil_genap') === $ganjilGenap &&
+                                request()->route('akademik') === $akademikUrl,
+                        ];
+                    }
+
+                    $openMenuVar = 'openRpsNilaiMenu';
+                    $isRpsActive = request()->routeIs('nilai-mahasiswa', 'rps-mahasiswa');
+                @endphp
+
+                <div class="relative mr-2" @toggle-menu-obe.window="openRpsNilaiMenu = !openRpsNilaiMenu">
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Nilai Saya"
+                        triggerRef="rpsNilaiDropdownTrigger" />
+                    <x-livewire::navigation.partial.main-button :item="$item" menu="openRpsNilaiMenu"
+                        trigger="rpsNilaiDropdownTrigger" :active="$isRpsActive" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
+                </div>
+            @elseif($item['type'] === 'dropdown-nilai')
+                @php
+                    $nilaiHistory = session('nilai.history', []);
+                    $rpsHistory = session('rps_nilai.history', []);
+
+                    // Kelompokkan data RPS Nilai berdasarkan NIM mahasiswa pendukungnya
+                    $groupedRps = [];
+                    foreach ($rpsHistory as $rps) {
+                        $nim = $rps['nim'] ?? null;
+                        $ganjilGenap = $rps['ganjil_genap'] ?? null;
+                        $akademik = $rps['tahun_akademik'] ?? null;
+
+                        if ($nim === null || $ganjilGenap === null || $akademik === null) {
+                            continue;
+                        }
+
+                        $groupedRps[$nim][] = $rps;
+                    }
+
+                    $subMenus = [
+                        [
+                            'label' => 'Daftar Nilai Mahasiswa',
+                            'url' => route('nilai-management'),
+                            'param' => 'nilai-management',
+                            'icon' => 'rectangle-group',
+                            'color' => 'text-emerald-600 dark:text-emerald-400',
+                            'active' => request()->routeIs('nilai-management') && !request()->route('nim'),
+                            'active-sub' => request()->routeIs(
+                                'nilai-mahasiswa-management',
+                                'rps-mahasiswa-management',
+                            ),
+                        ],
+                    ];
+
+                    foreach ($nilaiHistory as $mhs) {
+                        $nim = $mhs['nim'] ?? null;
+                        $namaMhs = $mhs['nama_mahasiswa'] ?? $nim;
+
+                        if ($nim === null) {
+                            continue;
+                        }
+
+                        // Level 1: Sub-menu Utama Mahasiswa (Berdasarkan NIM & Nama)
+                        $subMenus[] = [
+                            // 'label' => $namaMhs . ' (' . $nim . ')',
+                            'label' => $nim,
+                            'url' => $mhs['url'],
+                            'param' => 'nilai-mahasiswa-management',
+                            'icon' => 'user',
+                            'color' => 'text-amber-600 dark:text-amber-400',
+                            'level' => 1,
+                            'active' =>
+                                request()->routeIs('nilai-mahasiswa-management') && request()->route('nim') === $nim,
+                            'active-sub' =>
+                                request()->routeIs('rps-mahasiswa-management') && request()->route('nim') === $nim,
+                        ];
+
+                        // Level 2: Sub-menu Turunan berisi Histori Pencarian RPS Nilai Mahasiswa tersebut
+                        if (isset($groupedRps[$nim])) {
+                            foreach ($groupedRps[$nim] as $rps) {
+                                $ganjilGenap = $rps['ganjil_genap'] ?? '';
+                                $akademik = $rps['tahun_akademik'] ?? '';
+                                $akademikUrl = str_replace('/', '-', $akademik);
+
+                                $subMenus[] = [
+                                    // 'label' => 'RPS ' . ucfirst($ganjilGenap) . ' (' . $akademik . ')',
+                                    'label' => ucfirst($ganjilGenap) . ' ' . $akademik,
+                                    'url' => $rps['url'],
+                                    'param' => 'rps-mahasiswa-management',
+                                    'icon' => 'chart-bar',
+                                    'color' => 'text-indigo-600 dark:text-indigo-400',
+                                    'level' => 2,
+                                    'active' =>
+                                        request()->routeIs('rps-mahasiswa-management') &&
+                                        request()->route('nim') === $nim &&
+                                        request()->route('ganjil_genap') === $ganjilGenap &&
+                                        request()->route('akademik') === $akademikUrl,
+                                ];
+                            }
+                        }
+                    }
+
+                    $openMenuVar = 'openNilaiMenu';
+                    $isNilaiActive = request()->routeIs(
+                        'nilai-management',
+                        'nilai-mahasiswa-management',
+                        'rps-mahasiswa-management',
+                    );
+                @endphp
+
+                <div class="relative mr-2" @toggle-menu-obe.window="openNilaiMenu = !openNilaiMenu">
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Nilai Management"
+                        triggerRef="nilaiDropdownTrigger" />
+                    <x-livewire::navigation.partial.main-button :item="$item" menu="openNilaiMenu"
+                        trigger="nilaiDropdownTrigger" :active="$isNilaiActive" />
+                    <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
             @endif
         @endforeach

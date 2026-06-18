@@ -75,7 +75,7 @@ class RememberKelasNavigation
             $sessionKey = ($routeName === 'sesi-mahasiswa') ? 'jadwal_mahasiswa.history' : 'jadwal.history';
             $sesiHistory = session($sessionKey, []);
 
-            $compositeKey = $currentKode.'_'.$currentKodeJadwal;
+            $compositeKey = $currentKode.'-'.$currentKodeJadwal;
             unset($sesiHistory[$compositeKey]);
 
             $sesiHistory[$compositeKey] = [

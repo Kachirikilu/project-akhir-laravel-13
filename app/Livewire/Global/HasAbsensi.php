@@ -2,8 +2,23 @@
 
 namespace App\Livewire\Global;
 
+use App\Models\Kelas\MahasiswaKehadiran;
+use Illuminate\Database\Eloquent\Builder;
+
 trait HasAbsensi
 {
+
+
+
+
+protected function addAbsenSesi(
+    Builder $query,
+    string $alias = 'mhs_absensi'
+): void {
+
+    $query->select('kelas_sesi.*')
+          ->selectRaw("99 as `{$alias}`"); 
+}
     protected function addMahasiswaNilaiAkhir(
         $queryUser,
         int $idJadwal,

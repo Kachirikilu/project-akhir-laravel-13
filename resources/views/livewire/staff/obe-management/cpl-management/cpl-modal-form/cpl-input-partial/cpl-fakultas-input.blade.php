@@ -1,48 +1,4 @@
 <div class="space-y-4">
-    <div>
-        <div class="grid sm:grid-cols-6 gap-1 items-end">
-
-            <div class="sm:col-span-2">
-                @include('livewire.global.modal-form.kode-input', [
-                    'alpine' => 'cpl',
-                    'nameXString' => 'Kode CPL',
-                    'pathString' => 'fk_items',
-                    'modelString' => 'kode',
-                    'placeholder' => '---',
-                    'iconString' => 'building-library',
-                ])
-            </div>
-            <div class="sm:col-span-2">
-                @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'cpl',
-                    'nameXString' => 'Kode CPL',
-                    'modelString' => 'kode_cpl_1',
-                    'iconString' => 'document-text',
-                    'placeholder' => 'Kode CPL...',
-                    'isKode' => 4,
-                    'isFocusSelect' => 1,
-                    'noLabel' => 1,
-                ])
-            </div>
-            <div class="sm:col-span-2">
-                @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'cpl',
-                    'noLabel' => 1,
-                    'modelString' => 'kode_cpl_2',
-                    'numberOnly' => 1,
-                    'maxLength' => 6,
-                    'iconString' => 'variable',
-                    'placeholder' => 'Contoh: 121104',
-                    'isFocusSelect' => 1,
-                ])
-            </div>
-        </div>
-        @error('kode_cpl')
-            <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_cpl') }}</span>
-        @enderror
-    </div>
-
-
     @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'cpl',
         'xResults' => $fkResults,

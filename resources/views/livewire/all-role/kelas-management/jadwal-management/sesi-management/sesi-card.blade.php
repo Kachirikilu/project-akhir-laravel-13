@@ -40,9 +40,23 @@
         })
         ->values()
         ->toArray();
+
+    $jsonFreshData = json_encode($alpineData);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PERUBAHAN
+    |--------------------------------------------------------------------------
+    */
+    $alpineVersion = md5(
+        json_encode([
+            'ids' => collect($sesis)->pluck('id')->values(),
+            'updated' => now()->timestamp,
+        ]),
+    );
 @endphp
-<div x-data="{
-    rawItems: {{ json_encode($alpineData) }},
+<div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
+    rawItems: [],
     currentPage: 1,
     perPage: 8,
     sortField: '',
@@ -131,17 +145,8 @@
             this.perPage = val || 8;
             this.currentPage = 1;
         });
-
-        // FIX: Tangkap momen setelah Livewire merubah/menambah DOM (misal setelah insert Sesi Baru)
-        Livewire.hook('morph.updated', () => {
-            // Ambil ulang data terbaru yang dibawa oleh variabel blade $alpineData
-            let freshData = {{ json_encode($alpineData) }};
-            if (freshData && JSON.stringify(this.rawItems) !== JSON.stringify(freshData)) {
-                this.rawItems = freshData;
-            }
-        });
     }
-}" class="w-full">
+}" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
 
     <x-global.main-layout-card>
 
@@ -228,6 +233,11 @@
                                         ]
                                     )
                                 </flux:dropdown>
+
+                                @if (Auth::user()->admin || Auth::user()->dosen)
+                                    <span class="text-xs text-white/60 font-mono">ID:
+                                        {{ $s->id }}</span>
+                                @endif
                             </div>
 
                             {{-- Tombol Menu --}}
@@ -336,7 +346,7 @@
 
                             {{-- Sub-CPMK & Bobot detail --}}
                             <div
-                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2.5 flex flex-col gap-2">
+                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-3 flex flex-col gap-2">
                                 <div class="flex items-center justify-between gap-2">
                                     <span
                                         class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Sub-CPMK</span>
@@ -375,7 +385,7 @@
 
                             {{-- Deskripsi Tugas --}}
                             <div
-                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-2.5 py-2.5">
+                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-3">
                                 <span
                                     class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)] block mb-1.5">Deskripsi
                                     Tugas / Evaluasi</span>

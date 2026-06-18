@@ -2,13 +2,17 @@
 <div class="mb-8">
     <div class="flex items-center gap-4 mb-6">
         <a href="{{ $backUrl ?? route('kelas-management') }}" wire:navigate
-            class="p-2 rounded-full hover:bg-[var(--hover-table-color)] transition-colors">
+            class="mx-2 p-3 rounded-full hover:bg-[var(--hover-table-color)] transition-colors">
             <flux:icon name="arrow-left" class="h-6 w-6 text-[var(--contrast-second-text)]" />
         </a>
         <div>
-            <h2 class="text-2xl font-bold text-[var(--contrast-second-text)]">{{ $kelas->kelas }}</h2>
-            <p class="text-[var(--contrast-main-text)] opacity-70">Manajemen {{ $subHead }} dan Detail untuk
-                {{ $mainHead }} ini</p>
+            <h2 class="mb-2 text-2xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
+                <span>{{ $kelas->kelas }}</span>
+            </h2>
+            <p class="text-[var(--contrast-main-text)] opacity-70 text-sm flex items-center gap-2 flex-wrap mt-0.5">
+                <span>Manajemen {{ $subHead }} dan Detail untuk
+                    {{ $mainHead }} ini</span>
+            </p>
         </div>
     </div>
 

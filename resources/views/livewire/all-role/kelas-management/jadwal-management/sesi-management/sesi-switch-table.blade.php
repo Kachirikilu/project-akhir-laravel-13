@@ -41,7 +41,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalSesiKelas,
+                    'tabFilter' => $stats['sesi'],
                     'tabString' => 'sesi-card',
                     'tabNameString' => 'Pertemuan',
                     'icon' => 'academic-cap',
@@ -50,7 +50,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalSesiKelas,
+                    'tabFilter' => $stats['sesi'],
                     'tabString' => 'sesi-table',
                     'tabNameString' => 'Tabel Pertemuan',
                     'icon' => 'table-cells',
@@ -60,7 +60,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalMahasiswaKelas,
+                    'tabFilter' => $stats['mahasiswa'],
                     'tabString' => 'mahasiswa',
                     'icon' => 'users',
                 ])

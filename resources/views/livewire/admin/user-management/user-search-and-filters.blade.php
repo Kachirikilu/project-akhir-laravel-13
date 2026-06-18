@@ -6,25 +6,65 @@
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByStatus',
                 'filterString' => 'filterStatus',
-                'totalTab' => $totalUserProdi,
-                'totalTab1' => $totalAllOpsi,
-                'totalTab2' => $totalAktif,
-                'totalTab3' => $totalNonAktif,
-                'tab1String' => 'user-all',
-                'tab2String' => 'user-aktif',
-                'tab3String' => 'user-non-aktif',
+                'totalTab' => $stats[($role ?? null ? $role : 'user') . '-prodi'],
+                'totalTab1' => $stats[($role ?? null ? $role : 'user') . '-opsi'],
+                'totalTab2' => $stats[($role ?? null ? $role : 'user') . '-aktif'],
+                'totalTab3' => $stats[($role ?? null ? $role : 'user') . '-non-aktif'],
+                'tab1String' => ($role ?? null ? $role : 'user') . '-all',
+                'tab2String' => ($role ?? null ? $role : 'user') . '-aktif',
+                'tab3String' => ($role ?? null ? $role : 'user') . '-non-aktif',
                 'tabName' => Auth::user()->prodi,
                 'tab1Name' => 'Semua Status',
                 'tab2Name' => 'Aktif',
                 'tab3Name' => 'Tidak Aktif',
             ])
         </div>
-        <div class="shrink-0">
+        {{-- <div class="shrink-0">
             @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
                 'key' => 'page-control-user',
                 'autoSmall' => 'md',
             ])
+        </div> --}}
+        <div class="shrink-0">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full shrink-0">
+                @if ($withCapaian ?? null)
+
+                    @if (Auth::user()->admin || Auth::user()->dosen)
+                        <div x-data="{ activeTab: @entangle('filterStatus') }">
+                            <div x-show="activeTab !== ''" class="shrink-0">
+                                @include('livewire.global.table.export-button', [
+                                    'nameXString' => 'Rekap Capaian',
+                                    'xString' => 'generateRekapCapaian()',
+                                    'color' => 'blue',
+                                    'icon' => 'academic-cap',
+                                ])
+                            </div>
+                            <div x-show="activeTab == ''" class="shrink-0">
+                                @include('livewire.global.table.export-button', [
+                                    'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
+                                    'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                                    'color' => 'blue',
+                                    'icon' => 'academic-cap',
+                                ])
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center">
+                        @include('livewire.global.table.export-button', [
+                            'xString' => 'exportRekapMahasiswaExcel()',
+                        ])
+                    </div>
+                @endif
+                <div class="flex items-center">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                        'key' => 'page-control-user',
+                        'autoSmall' => 'md',
+                    ])
+                </div>
+            </div>
         </div>
     </div>
 

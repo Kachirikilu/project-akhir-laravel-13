@@ -35,13 +35,13 @@ trait WithProdiExcel
 
         $sInput = '';
         $sINPUT = '';
-        if ($this->switchTable == 'departemen' || $this->switchTable == 'prodi') {
+        if ($this->switchTable == 'departemen' || $this->switchTable == '' || $this->switchTable == 'prodi') {
             if ($this->selectedFkId) {
                 $fk = Fakultas::find($this->selectedFkId);
                 $sInput = $fk->fakultas_fk.'_';
                 $sINPUT = strtoupper($fk->fakultas_fk.' ');
             }
-            if ($this->selectedDpId && $this->switchTable == 'prodi') {
+            if ($this->selectedDpId && $this->switchTable == '' || $this->switchTable == 'prodi') {
                 $dp = Departemen::find($this->selectedDpId);
                 $sInput = $dp->departemen_dp.'_';
                 $sINPUT = strtoupper($dp->departemen_dp.' ');
@@ -52,19 +52,21 @@ trait WithProdiExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        if ($this->switchTable === 'prodi') {
-            $this->addRekapProdi($queryPr, 'rekap_pr');
-            $this->addIndexProdi($queryPr, 'index_pr');
-            $this->addMutuProdi($queryPr, 'akreditas_pr');
-            $this->buttonStrataFilter($queryPr);
-        } elseif ($this->switchTable === 'departemen') {
-            $this->addRekapDepartemen($queryPr, 'rekap_dp');
-            $this->addIndexDepartemen($queryPr, 'index_dp');
-            $this->addAkreditasDepartemen($queryPr, 'akreditas_dp');
+        if ($this->switchTable == '' || $this->switchTable == 'prodi') {
+
         } elseif ($this->switchTable === 'fakultas') {
             $this->addRekapFakultas($queryPr, 'rekap_fk');
             $this->addIndexFakultas($queryPr, 'index_fk');
             $this->addAkreditasFakultas($queryPr, 'akreditas_fk');
+        } elseif ($this->switchTable === 'departemen') {
+            $this->addRekapDepartemen($queryPr, 'rekap_dp');
+            $this->addIndexDepartemen($queryPr, 'index_dp');
+            $this->addAkreditasDepartemen($queryPr, 'akreditas_dp');
+        } else {
+            $this->addRekapProdi($queryPr, 'rekap_pr');
+            $this->addIndexProdi($queryPr, 'index_pr');
+            $this->addMutuProdi($queryPr, 'akreditas_pr');
+            $this->buttonStrataFilter($queryPr);
         }
 
         if ($this->searchMode == 'full') {

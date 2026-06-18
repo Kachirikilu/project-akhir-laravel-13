@@ -50,7 +50,7 @@ trait WithMKExcel
 
         $sInput = '';
         $sINPUT = '';
-        if ($this->filterMK !== 'mk-universitas') {
+        if ($this->filterMK !== '' && $this->filterMK !== 'mk_universitas') {
             if ($this->selectedFkId) {
                 $fk = Fakultas::find($this->selectedFkId);
                 $sInput = $fk->fakultas_fk.' ';
@@ -63,12 +63,14 @@ trait WithMKExcel
                 $pr = Prodi::find($this->selectedPrId);
                 $sInput = $pr->prodi.'_';
                 $sINPUT = strtoupper($pr->prodi_pr.' ');
-            } elseif ($this->filterMK == '') {
-                $pr = Auth::user()->prodi;
-                $pr_pr = Auth::user()->prodi_pr;
-                $sInput = $pr.'_';
-                $sINPUT = strtoupper($pr_pr.' ');
             }
+        }
+
+        if ($this->filterMK == '') {
+            $pr = Auth::user()->prodi;
+            $pr_pr = Auth::user()->prodi_pr;
+            $sInput = $pr.'_';
+            $sINPUT = strtoupper($pr_pr.' ');
         }
 
         $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
@@ -78,7 +80,7 @@ trait WithMKExcel
         if ($this->searchMode == 'full') {
             $mks = $this->searchOutputMK($queryMK, $this->search, null, $this->sortField, $this->sortDirection);
         } else {
-            $mks = $queryMK->paginate($this->perPage);
+            $mks = $queryMK;
         }
 
         return Excel::download(new MKExport($mks, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileNameSafe);

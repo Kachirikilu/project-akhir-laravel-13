@@ -568,7 +568,7 @@ trait WithUserSearchFilters
                         );
 
                         $matchNilaiIndex = $this->matchNilaiIndex(
-                            $user->mahasiswa->index_mhs ?? 0,
+                            $user->mahasiswa->ipk_mhs ?? 0,
                             $searchLower
                         );
 
@@ -654,7 +654,7 @@ trait WithUserSearchFilters
                 'name' => fn ($user) => $user->name,
                 'email' => fn ($user) => $user->email,
 
-                'identity1' => fn ($user) => $user->identity1,
+                'identity1', 'kode' => fn ($user) => $user->identity1,
                 'identity2' => fn ($user) => $user->identity2,
                 'identity3' => fn ($user) => $user->identity3,
                 'nip' => fn ($user) => $user->admin->nip ?? $user->dosen->nip ?? null,

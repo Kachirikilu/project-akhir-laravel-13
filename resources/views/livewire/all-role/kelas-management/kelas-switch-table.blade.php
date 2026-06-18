@@ -10,7 +10,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalKelas,
+                    'tabFilter' => $stats['kelas'],
                     'tabString' => '',
                     'tabNameString' => 'Semua Kelas',
                 ])
@@ -18,7 +18,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalTatapMuka,
+                    'tabFilter' => $stats['kelas-tp'],
                     'tabString' => 'tatap-muka',
                     'tabNameString' => 'Tatap Muka',
                 ])
@@ -26,7 +26,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalPraktikum,
+                    'tabFilter' => $stats['kelas-pr'],
                     'tabString' => 'praktikum',
                     'tabNameString' => 'Praktikum',
                 ])
@@ -34,7 +34,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalPraktek,
+                    'tabFilter' => $stats['kelas-pl'],
                     'tabString' => 'praktek-lapangan',
                     'tabNameString' => 'Praktek Lapangan',
                 ])
@@ -42,7 +42,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $totalSimulasi,
+                    'tabFilter' => $stats['kelas-sm'],
                     'tabString' => 'simulasi',
                     'tabNameString' => 'Simulasi',
                 ])

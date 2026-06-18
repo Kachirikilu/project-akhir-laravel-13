@@ -44,7 +44,7 @@ class NilaiRpsMahasiswa extends Component
 
     public $akademik;
 
-    protected $listeners = ['refresh-table' => 'refreshKelassList',
+    protected $listeners = ['refresh-table' => 'refreshKelasList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -54,6 +54,7 @@ class NilaiRpsMahasiswa extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'id'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = '', $ganjil_genap = null, $akademik = null)

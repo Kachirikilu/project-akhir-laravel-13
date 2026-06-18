@@ -177,9 +177,9 @@
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Hadir</span>
                 <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_masuk ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().masuk ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 
@@ -188,9 +188,9 @@
                 <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Dispensasi</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_dispensasi ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_dispensasi ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().dispensasi ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().dispensasi ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 
@@ -199,9 +199,9 @@
                 <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Terlambat</span>
                 <span class="block text-lg font-bold text-amber-800 dark:text-amber-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_terlambat ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_terlambat ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().terlambat ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().terlambat ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 
@@ -210,9 +210,9 @@
                 <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Izin</span>
                 <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_izin ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_izin ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().izin ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().izin ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 
@@ -221,9 +221,9 @@
                 <span class="block text-xs font-medium text-sky-700 dark:text-sky-400">Sakit</span>
                 <span class="block text-lg font-bold text-sky-800 dark:text-sky-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_sakit ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_sakit ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().sakit ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().sakit ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 
@@ -232,9 +232,9 @@
                 <span class="block text-xs font-medium text-rose-700 dark:text-rose-400">Tidak Hadir</span>
                 <span class="block text-lg font-bold text-rose-800 dark:text-rose-300 mt-0.5">
                     <span wire:loading wire:target="editAbsensi"
-                        x-text="($store.sesi?.mhs_tidak_masuk ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="($store.sesi?.mhs_tidak_masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                     <span wire:loading.remove wire:target="editAbsensi"
-                        x-text="(getStats().tidakMasuk ?? 0) + ' / ' + '{{ $totalSesiKelas }}'"></span>
+                        x-text="(getStats().tidakMasuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
 

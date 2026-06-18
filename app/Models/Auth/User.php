@@ -465,7 +465,17 @@ class User extends Authenticatable
         });
     }
 
-    // --- ATTRIBUTE PENDAMPING & IMAGE SYSTEM ---
+    public function getWhatsappNumberAttribute()
+    {
+        $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+        $phone = $profile?->no_hp;
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+        return $phone;
+    }
+
     protected function profilePhotoUrl(): Attribute
     {
         return Attribute::get(function (): string {
@@ -476,7 +486,6 @@ class User extends Authenticatable
             return $this->defaultProfilePhotoUrl();
         });
     }
-
     protected function defaultProfilePhotoUrl(): string
     {
         $name = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));

@@ -112,10 +112,10 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
             $currentRow = $startRow + $index;
 
             $nilaiMahasiswa =
-                $mhs->nilaiMahasiswa->first();
+                $mhs->nilai_mahasiswa->first();
 
             $nilaiArray =
-                $nilaiMahasiswa?->nilai_array
+                $nilai_mahasiswa?->nilai_array
                 ?? [];
 
             $row = [

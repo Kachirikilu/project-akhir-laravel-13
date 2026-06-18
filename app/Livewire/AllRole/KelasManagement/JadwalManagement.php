@@ -5,6 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalModal;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalDelete;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasJadwalSearchFilters;
@@ -25,6 +26,7 @@ class JadwalManagement extends Component
     use HasToast;
     use WithJadwalFilters;
     use WithJadwalModal;
+    use WithJadwalDelete;
     use WithNilaiExcel;
     use WithKelasJadwalSearchFilters;
     use WithKelasModal;
@@ -68,6 +70,7 @@ class JadwalManagement extends Component
         'perPage' => ['except' => 8],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     // public function mount($isJadwalMhs = false, $kode = null, $switchTable = 'jadwal-card')
@@ -90,13 +93,49 @@ class JadwalManagement extends Component
 
         if (! $this->isJadwalMhs && $kode_kelas !== null) {
             $this->kode_kelas_url = $kode_kelas;
-            $this->kelas = Kelas::where('kode_kelas', $kode_kelas)
+            
+            $kelas = Kelas::where('kode_kelas', $kode_kelas)
                 ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
-                ->firstOrFail();
+                ->first(); 
 
+            if (! $kelas) {
+                foreach (['kelas.history', 'kelas_mahasiswa.history'] as $key) {
+                    $history = session($key, []);
+                    
+                    if (isset($history[$kode_kelas])) {
+                        unset($history[$kode_kelas]);
+                        session([$key => $history]);
+                    }
+                }
+
+                abort(404, "Kelas dengan Kode $kode_kelas tidak ditemukan!");
+            }
+
+            $this->kelas = $kelas;
             $this->rps_id_url = $this->kelas->rps_id;
             $this->kode_rps_url = $this->kelas->kode_rps;
         }
+
+            $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
+            $kelasHistory = session($sessionKey, []);
+            $currentKode = $kelas->kode; 
+
+            $existingKey = array_search($kelas->id, array_column($kelasHistory, 'kelas_id'));
+            if ($existingKey !== false) {
+                $actualKeys = array_keys($kelasHistory);
+                unset($kelasHistory[$actualKeys[$existingKey]]);
+            }
+            unset($kelasHistory[$currentKode]);
+            $kelasHistory[$currentKode] = [
+                'kelas_id' => $kelas->id,
+                'kode_kelas' => $currentKode,
+                'url' => url()->current(), 
+            ];
+
+            $kelasHistory = array_slice($kelasHistory, -3, null, true);
+            uasort($kelasHistory, fn ($a, $b) => strcmp($a['kode_kelas'], $b['kode_kelas']));
+
+            session([$sessionKey => $kelasHistory]);
     }
 
     public function loadingTable() {}
@@ -182,7 +221,9 @@ class JadwalManagement extends Component
             return view('livewire.all-role.kelas-management.jadwal-management', [
                 'jadwals' => $jadwals,
                 'kelas' => $this->kelas ?? null,
-                'totalJadwalKelas' => $countJadwal->count(),
+                'stats' => [
+                    'jadwal' => $countJadwal->count(),
+                ],
             ]);
 
         } catch (QueryException $e) {
@@ -193,6 +234,9 @@ class JadwalManagement extends Component
             return view('livewire.all-role.kelas-management.jadwal-management', [
                 'jadwals' => KelasJadwal::whereRaw('1 = 0')->paginate($this->perPage),
                 'kelas' => $this->kelas ?? null,
+                'stats' => [
+                    'jadwal' => '',
+                ],
             ]);
         }
     }

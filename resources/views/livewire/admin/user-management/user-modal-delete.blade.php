@@ -6,7 +6,7 @@
             <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400"
                     x-show="$store.user?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
-                Apakah Anda yakin ingin menghapus akun
+                Apakah Anda yakin ingin menghapus Akun
 
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="$store.user?.email_delete ? '***' + $store.user?.role_delete + ' ' + $store.user?.email_delete + '***' : '***Pengguna ini***'">

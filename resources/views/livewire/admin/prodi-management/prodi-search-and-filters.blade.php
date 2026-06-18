@@ -1,7 +1,7 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
     class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
+    <div x-show="activeTab === ''" x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
@@ -11,10 +11,10 @@
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByStrata',
                 'filterString' => 'filterPr',
-                'totalTab' => $totalProdis,
-                'totalTab1' => $totalSarjanas,
-                'totalTab2' => $totalMagisters,
-                'totalTab3' => $totalDoktors,
+                'totalTab' => $stats['prodi'],
+                'totalTab1' => $stats['sarjana'],
+                'totalTab2' => $stats['magister'],
+                'totalTab3' => $stats['doktor'],
                 'tab1String' => 'sarjana',
                 'tab2String' => 'magister',
                 'tab3String' => 'doktor',
@@ -32,7 +32,7 @@
 
     {{-- BAGIAN SEARCH UTAMA --}}
     <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full z-20">
-        <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
+        <div x-show="activeTab === '' || activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4" class="col-start-1 row-start-1 relative w-full">
@@ -42,7 +42,7 @@
             ])
         </div>
 
-        <div x-show="activeTab !== 'prodi'" x-transition:enter="transition ease-out duration-1000"
+        <div x-show="activeTab !== '' && activeTab !== 'prodi'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"

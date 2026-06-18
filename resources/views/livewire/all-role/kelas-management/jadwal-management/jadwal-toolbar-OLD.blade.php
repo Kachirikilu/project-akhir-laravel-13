@@ -13,7 +13,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable ?? null,
-                        'tabFilter' => $totalJadwalKelas ?? null,
+                        'tabFilter' => $stats['jadwal'] ?? null,
                         'tabString' => 'jadwal-card',
                         'tabNameString' => 'Jadwal Kelas',
                         'icon' => 'academic-cap',
@@ -22,7 +22,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable ?? null,
-                        'tabFilter' => $totalJadwalKelas ?? null,
+                        'tabFilter' => $stats['jadwal'] ?? null,
                         'tabString' => 'jadwal-table',
                         'tabNameString' => 'Tabel Jadwal',
                         'icon' => 'table-cells',
@@ -54,7 +54,7 @@
                     </flux:button>
 
                     <flux:menu
-                        class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+                        class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
                         <flux:menu.heading>Tambah Jadwal</flux:menu.heading>
                         <flux:menu.separator />
 
@@ -68,7 +68,7 @@
                             class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                             <flux:icon name="calendar-days" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                             <div class="flex justify-between items-center w-full">
-                                <span class="mr-7">Jadwal Perkuliahan</span>
+                                <span class="mr-7 whitespace-nowrap">Jadwal Perkuliahan</span>
                                 <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
                                     class="animate-spin h-4 w-4 ml-2" />
                             </div>

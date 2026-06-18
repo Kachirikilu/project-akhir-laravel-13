@@ -157,7 +157,7 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
-            @if (!($withCapaian ?? false))
+            @if ((($withCapaian ?? false) && ($withProdi ?? false)) || !isset($withCapaian))
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'program_studi',
                     'rowSpan' => 2,
@@ -193,8 +193,8 @@
                     'isBorderL' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'index_mhs',
-                    'headString' => 'Index',
+                    'sortFieldString' => 'ipk_mhs',
+                    'headString' => 'IPK',
                     'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
@@ -334,20 +334,27 @@
             @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
                 @if ($withNilai ?? null)
                     <td class="table-second table-border-x whitespace-nowrap">
-                        <x-button-action color="emerald"
-                            href="{{ route('nilai-mahasiswa-management', [
-                                'nim' => $user->mahasiswa->nim ?? null
-                            ]) }}"
-                            wire:navigate>
-                            <flux:icon name="document-text" class="w-3.5 h-3.5" />
-                            Nilai RPS
-                        </x-button-action>
+                        @if (!$user->trashed())
+                            <x-button-action color="emerald"
+                                href="{{ route('nilai-mahasiswa-management', [
+                                    'nim' => $user->mahasiswa->nim ?? null,
+                                ]) }}"
+                                wire:navigate>
+                                <flux:icon name="document-text" class="w-3.5 h-3.5" />
+                                Nilai
+                            </x-button-action>
+                        @else
+                            <code
+                                class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                                unfound
+                            </code>
+                        @endif
                     </td>
                 @endif
                 <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $user->mahasiswa->rekap_mhs ?? '0.00' }}</td>
                 <td class="table-second whitespace-nowrap text-center">
-                    {{ $user->mahasiswa->index_mhs ?? '0.00' }}</td>
+                    {{ $user->mahasiswa->ipk_mhs ?? '0.00' }}</td>
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -397,7 +404,7 @@
                                     '{{ $user->mahasiswa->total_sks ?? ($user->total_sks ?? 0) }}',
 
                                     '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
-                                    '{{ $user->mahasiswa->index_mhs ?? '0.00' }}',
+                                    '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
                                     '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
                                 );
                     
@@ -468,7 +475,7 @@
                 </flux:dropdown>
             </td>
 
-            @if (!($withCapaian ?? false))
+            @if ((($withCapaian ?? false) && ($withProdi ?? false)) || !isset($withCapaian))
                 <td class="table-second min-w-48">
                     {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
             @endif

@@ -117,6 +117,9 @@ document.addEventListener("alpine:init", () => {
                 this.nama_rps_search = "";
                 this.rps_items = "";
                 this.showEdit = 0;
+
+                this.nama_kelas_delete = "";
+                this.kode_kelas_delete = "";
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

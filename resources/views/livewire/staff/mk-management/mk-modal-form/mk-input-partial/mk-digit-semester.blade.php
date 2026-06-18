@@ -18,7 +18,7 @@
 
     @include('livewire.global.modal-form.kode-input', [
         'alpine' => 'mk',
-        'nameXString' => 'Digit Semester',
+        'noLabel' => 1,
         'modelString' => 'digit_semester',
         'placeholder' => '--',
         'iconString' => 'variable',

@@ -42,17 +42,55 @@
         'wireLoading' => 'fetchDp',
     ])
 
-    {{-- 📧 Kode Program Studi Input --}}
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'prodi',
-        'nameXString' => 'Kode Program Studi',
-        'modelString' => 'kode_pr',
-        'iconString' => 'hashtag',
-        'placeholder' => 'Masukkan 3 mutu Kode Program Studi',
-        'message' => $errors->first('kode_pr'),
-        'isKode' => 3,
-        'isFocusSelect' => 1,
-    ])
+
+
+    <div> 
+        @include('livewire.global.modal-form.partial.label', [
+            'nameXString' => 'Kode Program Studi',
+        ])
+        <div class="grid grid-cols-8 gap-2 sm:gap-4">
+            <div class="col-span-3" x-data="{}"
+                x-effect="
+                    if ($store.prodi) {
+                        strata = $store.prodi.strata;
+                        let strLow = strata.toLowerCase();
+
+                        if (strLow === 'sarjana') {
+                            $store.prodi.strata_short = 'S1';
+                        } else if (strLow === 'magister') {
+                            $store.prodi.strata_short = 'S2';
+                        } else if (strLow === 'doktor') {
+                            $store.prodi.strata_short = 'S3';
+                        }
+                    }
+            ">
+                @include('livewire.global.modal-form.kode-input', [
+                    'alpine' => 'prodi',
+                    'noLabel' => 1,
+                    'nameXString' => 'Kode Program Studi',
+                    'modelString' => 'strata_short',
+                    'placeholder' => '--',
+                    'iconString' => 'variable',
+                ])
+            </div>
+            <div class="col-span-5">
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'prodi',
+                    'noLabel' => 1,
+                    'modelString' => 'kode_pr',
+                    'iconString' => 'hashtag',
+                    'placeholder' => 'Masukkan 3 mutu Kode Program Studi',
+                    // 'message' => $errors->first('kode_pr'),
+                    'isKode' => 3,
+                    'isFocusSelect' => 1,
+                ])
+            </div>
+        </div>
+        @error('kode_pr')
+            <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_pr') }}</span>
+        @enderror
+    </div>
+
 
     {{-- 📧 Nama Strata Input --}}
     @include('livewire.global.modal-form.select-form', [

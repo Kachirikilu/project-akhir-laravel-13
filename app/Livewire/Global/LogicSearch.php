@@ -838,15 +838,12 @@ trait LogicSearch
         }
 
         if (
-            str_contains($search, 'sks') ||
-            in_array($search, ['tm', 'tp', 'pr', 'pl', 'sm'])
+            str_contains($search, 'sks')
         ) {
             return 'sks';
         }
 
         if (
-            str_contains($search, 's') ||
-            str_contains($search, 'sem') ||
             str_contains($search, 'semester') ||
             str_contains($search, 'ganjil') ||
             str_contains($search, 'genap')

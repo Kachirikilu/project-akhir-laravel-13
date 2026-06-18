@@ -10,7 +10,7 @@
             $restoreCall = "restoreProdi($x->id, '$typeXString')";
 
             $typeX2String = $typeXString;
-            if ($typeX2String == 'prodi') {
+            if ($typeX2String == '' || $typeX2String == 'prodi') {
                 $typeX2String = 'Program Studi';
             }
         @endphp
@@ -47,7 +47,7 @@
                             '{{ $x->departemenDp ?? '' }}',
                             '{{ $x->fk_id ?? '' }}',
                             '{{ $x->fakultasFk ?? '' }}',
-                            '{{ $x->kode ?? '' }}',
+                            '{{ $x->kode_short ?? '' }}',
                             '{{ $x->kode_dp ?? '' }}',
                             '{{ $x->kode_fk ?? '' }}'
                         );
@@ -94,7 +94,7 @@
             {{-- Tombol Restore --}}
             <flux:menu.item
                 wire:click="{{ $restoreCall }}"
-                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">

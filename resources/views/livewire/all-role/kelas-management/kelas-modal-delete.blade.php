@@ -1,21 +1,19 @@
-<flux:modal name="mk-delete" wire:model="showMKDelete"
+<flux:modal name="kelas-delete" wire:model="showKelasDelete"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400"
-                    x-show="$store.mk?.isForceDelete">PERMANEN!</strong></flux:heading>
+                    x-show="$store.kelas?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
-                Apakah Anda yakin ingin menghapus
+                Apakah Anda yakin ingin menghapus Kelas
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.mk?.nama_mk_delete ? '***Mata Kuliah ' + $store.mk?.nama_mk_delete + '***' : '***Mata Kuliah ini***'
-                    ">
-                </strong> dengan
+                    x-text="'***' + $store.kelas?.nama_kelas_delete + '***'">
+                </strong> dengan kode
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.mk?.kode_mk_delete ? '***Kode ' + $store.mk?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
-                    ">
+                    x-text="'***' + $store.kelas?.kode_kelas_delete + '***'">
                 </strong>?
-                <span x-show="$store.mk?.isForceDelete">
+                <span x-show="$store.kelas?.isForceDelete">
                     Tindakan ini tidak dapat dibatalkan!
                 </span>
             </flux:subheading>
@@ -32,17 +30,19 @@
                     Batal</flux:button>
             </flux:modal.close>
 
-            <flux:button wire:click="destroyMK" wire:loading.attr="disabled" wire:target="deleteMK, destroyMK"
+            <flux:button wire:click="destroyKelas" wire:loading.attr="disabled" wire:target="deleteKelas, destroyKelas"
                 type="submit" variant="primary"
                 class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
-                <span wire:loading.remove wire:target="destroyMK">Ya, Hapus Mata Kuliah
+                <span wire:loading.remove wire:target="destroyKelas">
+                    Ya, Hapus
+                    <strong x-text="$store.kelas?.role_delete">
+                    </strong>?
                 </span>
 
-                <span wire:loading wire:target="destroyMK">
+                <span wire:loading wire:target="destroyKelas">
                     Menghapus...
                 </span>
             </flux:button>
-
         </div>
     </div>
 

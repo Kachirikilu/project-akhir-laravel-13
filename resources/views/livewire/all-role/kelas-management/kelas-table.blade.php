@@ -215,11 +215,17 @@
 
                 </flux:dropdown>
             </td>
-
-            <td class="table-second table-border-r">
-                <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
-                    <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
-                </x-button-action>
+            <td class="table-second table-border-r text-center">
+                @if (!$k->trashed())
+                    <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
+                        <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
+                    </x-button-action>
+                @else
+                    <code
+                        class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                        unfound
+                    </code>
+                @endif
             </td>
             <td class="table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
             <td class="table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>

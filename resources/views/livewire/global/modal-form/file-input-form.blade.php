@@ -1,8 +1,8 @@
 <div wire:key="file-input-{{ $modelString }}-{{ $alpine ?? 'config' }}">
     @include('livewire.global.modal-form.partial.label')
 
-    <div class="mt-1">
-        <div class="relative w-full mt-1 flex items-center gap-2">
+    <div class="{{ $noLabel ?? false ? '' : 'mt-1' }}">
+        <div class="relative w-full flex items-center gap-2">
             
             <div class="relative flex-1">
                 <input wire:model="{{ $modelString }}" type="file" id="{{ $modelString }}"

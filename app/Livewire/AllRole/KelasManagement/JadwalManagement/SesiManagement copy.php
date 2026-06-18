@@ -72,6 +72,7 @@ class SesiManagement extends Component
         'sortField' => ['except' => 'pertemuan_ke'],
         // 'switchTable' => ['except' => 'sesi-card'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     // public function mount($kode, $kode_jadwal, $jadwal_id, $switchTable = 'sesi-card')

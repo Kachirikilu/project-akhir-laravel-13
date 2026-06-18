@@ -62,6 +62,7 @@ class MataKuliahManagement extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted' =>  ['except' => false],
     ];
 
     public function mount($switchTable = '')
@@ -181,17 +182,19 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => $mks,
 
-                'totalMK' => $totalMK,
-                'totalTatapMuka' => $totalTatapMuka,
-                'totalPraktikum' => $totalPraktikum,
-                'totalPraktek' => $totalPraktek,
-                'totalSimulasi' => $totalSimulasi,
+                'stats' => [
+                    'mk' => $totalMK,
+                    'mk-tp' => $totalTatapMuka,
+                    'mk-pr' => $totalPraktikum,
+                    'mk-pl' => $totalPraktek,
+                    'mk-sm' => $totalSimulasi,
 
-                'totalMKProdi' => $totalMKProdi,
-                'totalMKOpsi' => $totalMKOpsi,
-                'totalWajib' => $totalWajib,
-                'totalPilihan' => $totalPilihan,
-                'totalUni' => $totalUni,
+                    'mk-prodi' => $totalMKProdi,
+                    'mk-opsi' => $totalMKOpsi,
+                    'mk-wajib' => $totalWajib,
+                    'mk-pilihan' => $totalPilihan,
+                    'mk-uni' => $totalUni,
+                ],
             ]);
 
         } catch (QueryException $e) {
@@ -202,23 +205,19 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
 
-                'totalGanjilGanjil' => '-',
-                'totalGanjil' => '-',
-                'totalGenap' => '-',
+                'stats' => [
+                    'mK' => '-',
+                    'mk-tp' => '-',
+                    'mk-pr' => '-',
+                    'mk-pl' => '-',
+                    'mk-sm' => '-',
 
-                'totalMK' => '-',
-                'totalGanjil' => '-',
-                'totalGenap' => '-',
-                'totalTatapMuka' => '-',
-                'totalPraktikum' => '-',
-                'totalPraktek' => '-',
-                'totalSimulasi' => '-',
-
-                'totalMKProdi' => '-',
-                'totalMKOpsi' => '-',
-                'totalWajib' => '-',
-                'totalPilihan' => '-',
-                'totalUni' => '-',
+                    'mk-prodi' => '-',
+                    'mk-opsi' => '-',
+                    'mk-wajib' => '-',
+                    'mk-pilihan' => '-',
+                    'mk-uni' => '-',
+                ],
             ]);
         }
     }

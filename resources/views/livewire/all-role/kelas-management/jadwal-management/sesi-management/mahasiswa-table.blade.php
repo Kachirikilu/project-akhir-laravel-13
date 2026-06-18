@@ -245,7 +245,7 @@
                             @if ($isMahasiswa)
                                 @php
                                     $poinMhs = round(
-                                        (($user->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100,
+                                        (($user->mhs_poin_absensi ?? 0) / (2 * ($stats['sesi'] ?? 16))) * 100,
                                         2,
                                     );
                                 @endphp
@@ -266,42 +266,42 @@
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_terlambat ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_terlambat ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_izin ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_izin ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_sakit ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_sakit ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $totalSesiKelas }} Sesi
+                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif

@@ -8,19 +8,29 @@
 @endphp
 
 <div class="flex flex-col mr-4">
-    <span class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $itemLabel }}</span>
-    <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
-        <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                {{ $itemId }}</span></span>
-        <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-        @if ($idString == 'mahasiswa_id_array')
-            <span>NIM: {{ $itemKode }}</span>
-        @else
-            <span>{{ $itemKode }}</span>
-        @endif
+    {{-- Teks utama tetap aman dengan break-words --}}
+    <span class="text-sm font-medium text-[var(--contrast-main-text)] break-words">{{ $itemLabel }}</span>
+    
+    {{-- PERBAIKAN UTAMA: Menggunakan gap-x-3 untuk menjaga spasi horizontal tetap konsisten di semua baris --}}
+    <div class="text-[var(--contrast-main-text)] font-medium text-xs flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 min-w-0">
+        <span class="flex items-center">
+            - <span class="text-[var(--hover-focus-color)] font-bold ml-1">ID: {{ $itemId }}</span>
+        </span>
+        
+        {{-- Pembatas menggunakan margin horizontal yang tegas --}}
+        <span class="text-[var(--contrast-second-text)]">|</span>
+        
+        <span class="flex items-center">
+            @if ($idString == 'mahasiswa_id_array')
+                NIM: {{ $itemKode }}
+            @else
+                {{ $itemKode }}
+            @endif
+        </span>
+        
         @if ($typeX2String ?? null)
-            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-            <span>
+            <span class="text-[var(--contrast-second-text)]">|</span>
+            <span class="flex items-center">
                 @if ($typeX2String == 'count_scpmk')
                     {{ $itemLabel2 }} Pertemuan
                 @else
@@ -28,9 +38,10 @@
                 @endif
             </span>
         @endif
+        
         @if ($typeX3String ?? null)
-            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-            <span>
+            <span class="text-[var(--contrast-second-text)]">|</span>
+            <span class="flex items-center">
                 @if ($typeX3String == 'bobot' || $typeX3String == 'total_bobot')
                     Bobot: {{ $itemLabel3 }}%
                 @else
@@ -38,15 +49,17 @@
                 @endif
             </span>
         @endif
+        
         @if ($typeX4String ?? null)
-            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-            <span>
+            <span class="text-[var(--contrast-second-text)]">|</span>
+            <span class="flex items-center">
                 {{ $itemLabel4 }}
             </span>
         @endif
+        
         @if ($typeX5String ?? null)
-            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-            <span>
+            <span class="text-[var(--contrast-second-text)]">|</span>
+            <span class="flex items-center">
                 {{ $itemLabel5 }}
             </span>
         @endif

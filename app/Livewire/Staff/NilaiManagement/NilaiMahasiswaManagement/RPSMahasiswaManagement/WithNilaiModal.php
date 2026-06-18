@@ -157,7 +157,7 @@ trait WithNilaiModal
             $this->showEditNilai = false;
 
             $this->toast(
-                message: 'Nilai mahasiswa berhasil diperbarui!',
+                message: 'Nilai Mahasiswa berhasil diperbarui!',
                 type: 'update'
             );
 

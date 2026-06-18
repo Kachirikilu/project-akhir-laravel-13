@@ -6,41 +6,12 @@
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Input Kelas Perkuliahan</h4>
 
+
     <div>
-        <div class="grid sm:grid-cols-6 gap-1 items-end">
-
-            <div class="sm:col-span-2">
-                @include('livewire.global.modal-form.kode-input', [
-                    'alpine' => 'jadwal',
-                    'nameXString' => 'Kode Jadwal Kelas',
-                    'modelString' => 'kode_kelas',
-                    'valueString' => $kelas->kode ?? null,
-                    'placeholder' => '---',
-                    'iconString' => 'rectangle-group',
-                ])
-            </div>
-            <div class="sm:col-span-2" x-data="{}"
-                x-effect="
-                    if ($store.jadwal) {
-                        let label = $store.jadwal.label_kelas;
-                        let wilayah = $store.jadwal.kode_wilayah;
-
-                        if (!label || !wilayah) {
-                            $store.jadwal.label_wilayah = '';
-                        } else {
-                            $store.jadwal.label_wilayah = label + '-' + wilayah;
-                        }
-                    }
-                ">
-                @include('livewire.global.modal-form.kode-input', [
-                    'alpine' => 'jadwal',
-                    'modelString' => 'label_wilayah',
-                    'placeholder' => '--',
-                    'iconString' => 'variable',
-                    'noLabel' => 1,
-                ])
-            </div>
-            <div class="sm:col-span-2" x-data="{
+        @include('livewire.global.modal-form.partial.label', [
+            'nameXString' => 'Kode Jadwal Kelas',
+        ])
+        <div class="grid grid-cols-12 gap-1 sm:gap-2 items-end" x-data="{
                 getSuffix(tahun) {
                     let ta = parseInt(tahun);
                     if (!ta) return '';
@@ -51,17 +22,46 @@
                     return String(ta);
                 }
             }"
-                x-effect="
-                        if ($store.jadwal) {
-                            let tahun = $store.jadwal.sesi_1;
-                            if (!tahun) {
-                                $store.jadwal.digit_tahun = '';
-                            } else {
-                                $store.jadwal.digit_tahun = getSuffix(tahun);
-                            }
-                        }
-                    ">
+            x-effect="
+                    if ($store.jadwal) {
+                        let label = $store.jadwal.label_kelas;
+                        let wilayah = $store.jadwal.kode_wilayah;
 
+                        if (!label || !wilayah) {
+                            $store.jadwal.label_wilayah = '';
+                        } else {
+                            $store.jadwal.label_wilayah = label + '-' + wilayah;
+                        }
+
+                        let tahun = $store.jadwal.sesi_1 || $store.jadwal.tanggal_mulai_fix;
+
+                        if (!tahun) {
+                            $store.jadwal.digit_tahun = '';
+                        } else {
+                            $store.jadwal.digit_tahun = getSuffix(tahun);
+                        }
+                    }
+                ">
+            <div class="col-span-12 sm:col-span-5">
+                @include('livewire.global.modal-form.kode-input', [
+                    'alpine' => 'jadwal',
+                    'noLabel' => 1,
+                    'modelString' => 'kode_kelas',
+                    'valueString' => $kelas->kode ?? null,
+                    'placeholder' => '---',
+                    'iconString' => 'rectangle-group',
+                ])
+            </div>
+            <div class="col-span-8 sm:col-span-4">
+                @include('livewire.global.modal-form.kode-input', [
+                    'alpine' => 'jadwal',
+                    'modelString' => 'label_wilayah',
+                    'placeholder' => '--',
+                    'iconString' => 'variable',
+                    'noLabel' => 1,
+                ])
+            </div>
+            <div class="col-span-4 sm:col-span-3">
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'jadwal',
                     'modelString' => 'digit_tahun',

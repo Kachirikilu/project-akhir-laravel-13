@@ -25,7 +25,8 @@
 
     @include('livewire.global.modal-form.kode-input', [
         'alpine' => 'rps',
-        'nameX2String' => 'Kode RPS',
+        'noLabel' => 1,
+        // 'nameX2String' => 'Kode RPS',
         'modelString' => 'digit_akademik',
         'placeholder' => '--',
         'iconString' => 'variable',

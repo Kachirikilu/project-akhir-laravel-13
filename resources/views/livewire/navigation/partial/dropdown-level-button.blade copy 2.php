@@ -7,7 +7,7 @@
 
     <flux:menu x-data="{ currentDropdownTable: '{{ request()->route('switchTable') ?? 'rps' }}' }"
         @table-switched.window="currentDropdownTable = $event.detail.switchTable === '' ? 'rps' : $event.detail.switchTable"
-        class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+        class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
 
         <flux:menu.heading>{{ $title }}</flux:menu.heading>
 

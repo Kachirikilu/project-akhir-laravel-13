@@ -5,7 +5,7 @@ document.addEventListener("alpine:init", () => {
         isForceDelete: 0,
         colorIcon: "",
 
-        nama_jadwal_delete: "",
+        label_jadwal_delete: "",
         kode_jadwal_delete: "",
 
         setEdit(val) {
@@ -42,6 +42,7 @@ document.addEventListener("alpine:init", () => {
         jam_berakhir: "",
 
         tanggal_mulai: "",
+        tanggal_mulai_fix: "",
         tanggal_berakhir: "",
 
         kapasitas: "",
@@ -69,7 +70,7 @@ document.addEventListener("alpine:init", () => {
             this.jam_mulai = jamMulai?.slice(0, 5) || "";
             this.jam_berakhir = jamBerakhir?.slice(0, 5) || "";
 
-            // this.tanggal_mulai = toWeekFormat(tanggalMulai);
+            this.tanggal_mulai_fix = toWeekFormat(tanggalMulai);
             // this.tanggal_berakhir = toWeekFormat(tanggalBerakhir);
 
             this.kapasitas = kapasitas;
@@ -88,8 +89,8 @@ document.addEventListener("alpine:init", () => {
             this.rps_id_show = idRPS;
         },
 
-        setDeleteJadwal(namaJadwal, kodeJadwalDelete, forceDelete) {
-            this.nama_jadwal_delete = namaJadwal;
+        setDeleteJadwal(labelJadwal, kodeJadwalDelete, forceDelete) {
+            this.label_jadwal_delete = labelJadwal;
             this.kode_jadwal_delete = kodeJadwalDelete;
             this.isForceDelete = forceDelete;
         },
@@ -118,9 +119,13 @@ document.addEventListener("alpine:init", () => {
                 this.jam_berakhir = "";
 
                 this.tanggal_mulai = "";
+                this.tanggal_mulai_fix = "";
                 this.tanggal_berakhir = "";
 
                 this.kapasitas = "";
+
+                this.label_jadwal_delete = "";
+                this.kode_jadwal_delete = "";
 
                 for (let i = 1; i <= 16; i++) {
                     this[`sesi_${i}`] = "";

@@ -29,6 +29,50 @@ trait HasAkreditas
         return $query;
     }
 
+    // protected function addIndexProdi(
+    //     $query,
+    //     ?int $prId = null,
+    //     string $alias = 'index_cpl_pr',
+    //     string $pivot = 'rekap_cpl_prodi',
+    //     string $kolom = 'cpl_id',
+    //     string $table = 'cpls',
+    // ) {
+    //     $query->addSelect("$table.*");
+    //     $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+    //         $query->from($pivot)
+    //             ->whereColumn(
+    //                 "$pivot.$kolom",
+    //                 "$table.id"
+    //             );
+
+    //         if ($prId !== null) {
+    //             $query->where(
+    //                 "$pivot.pr_id",
+    //                 $prId
+    //             );
+    //         }
+
+    //         $query->selectRaw('
+    //         CASE
+    //             WHEN nilai >= 86 THEN 4.00
+    //             WHEN nilai >= 80 THEN 3.70
+    //             WHEN nilai >= 75 THEN 3.30
+    //             WHEN nilai >= 70 THEN 3.00
+    //             WHEN nilai >= 65 THEN 2.70
+    //             WHEN nilai >= 60 THEN 2.30
+    //             WHEN nilai >= 56 THEN 2.00
+    //             WHEN nilai >= 40 THEN 1.00
+    //             ELSE 0.00
+    //         END
+    //     ');
+
+    //         $query->limit(1);
+
+    //     }, $alias);
+
+    //     return $query;
+    // }
+
     protected function addIndexProdi(
         $query,
         ?int $prId = null,
@@ -51,20 +95,7 @@ trait HasAkreditas
                     $prId
                 );
             }
-
-            $query->selectRaw('
-            CASE
-                WHEN nilai >= 86 THEN 4.00
-                WHEN nilai >= 80 THEN 3.70
-                WHEN nilai >= 75 THEN 3.30
-                WHEN nilai >= 70 THEN 3.00
-                WHEN nilai >= 65 THEN 2.70
-                WHEN nilai >= 60 THEN 2.30
-                WHEN nilai >= 56 THEN 2.00
-                WHEN nilai >= 40 THEN 1.00
-                ELSE 0.00
-            END
-        ');
+            $query->selectRaw('ROUND((nilai / 100) * 4, 2)');
 
             $query->limit(1);
 
@@ -133,6 +164,33 @@ trait HasAkreditas
         return $query;
     }
 
+    // protected function addIndexMahasiswa(
+    //     $query,
+    //     string $alias = 'index_mahasiswa'
+    // ) {
+    //     $query->selectSub(function ($sub) {
+
+    //         $sub->from('nilai_mahasiswa')
+    //             ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+    //             ->whereColumn('mahasiswas.user_id', 'users.id')
+    //             ->selectRaw('
+    //             CASE
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 86 THEN 4.00
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 80 THEN 3.70
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 75 THEN 3.30
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 70 THEN 3.00
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 65 THEN 2.70
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 60 THEN 2.30
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 56 THEN 2.00
+    //                 WHEN AVG(nilai_mahasiswa.nilai) >= 40 THEN 1.00
+    //                 ELSE 0.00
+    //             END
+    //         ');
+    //     }, $alias);
+
+    //     return $query;
+    // }
+
     protected function addIndexMahasiswa(
         $query,
         string $alias = 'index_mahasiswa'
@@ -142,19 +200,8 @@ trait HasAkreditas
             $sub->from('nilai_mahasiswa')
                 ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                 ->whereColumn('mahasiswas.user_id', 'users.id')
-                ->selectRaw('
-                CASE
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 86 THEN 4.00
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 80 THEN 3.70
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 75 THEN 3.30
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 70 THEN 3.00
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 65 THEN 2.70
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 60 THEN 2.30
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 56 THEN 2.00
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 40 THEN 1.00
-                    ELSE 0.00
-                END
-            ');
+                ->selectRaw('ROUND((AVG(nilai_mahasiswa.nilai) / 100) * 4, 2)');
+
         }, $alias);
 
         return $query;

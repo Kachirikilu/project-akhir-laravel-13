@@ -10,7 +10,7 @@
                 </flux:button>
 
                 <flux:menu
-                    class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+                    class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
                     <flux:menu.heading>Tambah Kelas</flux:menu.heading>
                     <flux:menu.separator />
 
@@ -27,7 +27,7 @@
                         <flux:icon name="rectangle-group"
                             class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
-                            <span class="mr-7">Kelas Perkuliahan</span>
+                            <span class="mr-7 whitespace-nowrap">Kelas Perkuliahan</span>
                             <flux:icon wire:loading wire:target="addKelas()" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>

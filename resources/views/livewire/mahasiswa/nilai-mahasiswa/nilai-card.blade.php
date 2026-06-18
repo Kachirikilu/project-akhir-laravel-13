@@ -57,7 +57,7 @@
             <div
                 class="pt-3 border-t table-border/40 -mx-5 -mb-5 p-4 bg-[var(--second-table-trans)] rounded-b-xl flex justify-end">
                 <flux:button variant="filled" size="sm" icon-after="chevron-right" class="cursor-pointer"
-                    href="{{ route('nilai-rps-mahasiswa', [
+                    href="{{ route('rps-mahasiswa', [
                         'ganjil_genap' => $p->ganjil_genap,
                         'akademik' => str_replace('/', '-', $p->akademik),
                     ]) }}"

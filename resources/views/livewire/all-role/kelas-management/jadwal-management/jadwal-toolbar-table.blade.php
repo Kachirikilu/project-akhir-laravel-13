@@ -14,7 +14,7 @@
             'typeXString' => $copyName ?? 'Kode Jadwal',
         ])
 
-        @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
+        @if (($j->is_my_class || Auth::user()->admin || Auth::user()->dosen) && !$isTrashed)
             <flux:menu.separator />
 
             <flux:menu.item
@@ -76,6 +76,7 @@
                 <flux:menu.item
                     @click="
                         $store.jadwal?.setDeleteJadwal(
+                            '{{ $x->label_extra ?? '' }}',
                             '{{ $x->kode ?? '' }}'
                         );
                         $flux.modal('jadwal-delete').show();
@@ -93,7 +94,7 @@
             @else
                 {{-- Tombol Restore --}}
                 <flux:menu.item wire:click="{{ $restoreCall }}"
-                    class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                     <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -109,6 +110,7 @@
                 <flux:menu.item
                     @click="
                             $store.jadwal?.setDeleteJadwal(
+                            '{{ $x->label_extra ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $isTrashed }}'
                         );

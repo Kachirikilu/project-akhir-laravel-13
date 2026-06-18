@@ -54,6 +54,7 @@ return new class extends Migration
             $table->integer('pertemuan_ke');
             $table->date('tanggal');
             $table->text('catatan')->nullable();
+            $table->boolean('reminder_sent')->default(false);
 
             $table->softDeletes();
             $table->timestamps();

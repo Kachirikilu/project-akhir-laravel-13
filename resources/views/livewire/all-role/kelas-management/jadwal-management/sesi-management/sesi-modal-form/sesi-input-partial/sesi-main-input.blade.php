@@ -18,7 +18,7 @@
                 'message' => $errors->first('jam_mulai'),
             ])
         </div>
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-2 mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'sesi',
                 'nameXString' => 'Jam Berakhir (Default: +' . $kelas->sks * 50 . ' Menit)',

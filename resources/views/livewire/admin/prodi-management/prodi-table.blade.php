@@ -32,13 +32,13 @@
                 'rowSpan' => 2,
             ])
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <th colspan="4" class="table-head-sub">
                     Nilai Capaian
                 </th>
             @endif
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'departemen',
                     'rowSpan' => 2,
@@ -64,7 +64,7 @@
                 </th>
             @endif
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'strata',
                     'isCenter' => 1,
@@ -88,7 +88,7 @@
         </tr>
 
         <tr>
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <th class="table-head border-x whitespace-nowrap">Show</th>
             @endif
 
@@ -158,7 +158,7 @@
 
                     @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
-                        'typeXString' => $switchTable,
+                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
                         'nameXString' => $xNameString,
                     ])
                 </flux:dropdown>
@@ -167,16 +167,23 @@
             <td class="table-second table-border-r whitespace-nowrap">
                 {{ $x->prodi ?? ($x->departemen_dp ?? ($x->fakultas_fk ?? '-')) }}</td>
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <td class="table-second table-border-r">
-                    <x-button-action color="blue"
-                        href="{{ route('capaian-management', [
-                            'kode_pr' => $x->kode,
-                        ]) }}"
-                        wire:navigate>
-                        <flux:icon name="document-text" class="w-3.5 h-3.5" />
-                        CPL
-                    </x-button-action>
+                    @if (!$x->trashed())
+                        <x-button-action color="blue"
+                            href="{{ route('capaian-management', [
+                                'kode_pr' => $x->kode,
+                            ]) }}"
+                            wire:navigate>
+                            <flux:icon name="document-text" class="w-3.5 h-3.5" />
+                            CPL
+                        </x-button-action>
+                    @else
+                        <code
+                            class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                            unfound
+                        </code>
+                    @endif
                 </td>
             @endif
 
@@ -209,13 +216,13 @@
                     </button>
                     @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
-                        'typeXString' => $switchTable,
+                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
                         'nameXString' => $xNameString,
                     ])
                 </flux:dropdown>
             </td>
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <td class="table-second whitespace-nowrap">
                     {{ $x->departemen . ' (' . $x->kode_dp . ')' }}
                 </td>
@@ -226,7 +233,7 @@
             @endif
 
 
-            @if ($switchTable === 'prodi')
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <td class="table-second table-border-l text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -251,7 +258,7 @@
 
                         @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                             'x' => $x,
-                            'typeXString' => $switchTable,
+                            'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
                             'nameXString' => $xNameString,
                         ])
                     </flux:dropdown>
@@ -266,7 +273,7 @@
 
                     @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
-                        'typeXString' => $switchTable,
+                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
                         'nameXString' => $xNameString,
                     ])
 
@@ -279,9 +286,8 @@
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'prodi' => 13,
-                    'departemen' => 10,
                     'fakultas' => 9,
+                    'departemen' => 10,
                     default => 13,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">

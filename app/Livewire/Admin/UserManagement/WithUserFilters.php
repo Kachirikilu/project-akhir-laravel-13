@@ -196,6 +196,14 @@ trait WithUserFilters
                     ->orWhereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
                     ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
             });
+        } elseif ($this->filterStatus === 'mahasiswa-aktif') {
+            $queryUser->where(function ($q) {
+                $q->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', 'Aktif'));
+            });
+        } elseif ($this->filterStatus === 'mahasiswa-non-aktif') {
+            $queryUser->where(function ($q) {
+                $q->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+            });
         } elseif ($this->filterStatus === '' && ! $havePr) {
             $queryUser->where(function ($q) {
                 $q->whereHas('admin.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
@@ -254,7 +262,7 @@ trait WithUserFilters
             'name', 'identity1', 'identity2', 'identity3', 'nik', 'kampus',
             'count_rps', 'total_sks',
             'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu',
-            'rekap_mhs', 'index_mhs', 'mutu_mhs',
+            'rekap_mhs', 'ipk_mhs', 'mutu_mhs',
             'program_studi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
             'nip', 'nitk', 'nidn', 'nidk', 'nim',
         ];
@@ -296,7 +304,7 @@ trait WithUserFilters
 
         if (
             $this->sortField === 'rekap_mhs' ||
-            $this->sortField === 'index_mhs' ||
+            $this->sortField === 'ipk_mhs' ||
             $this->sortField === 'mutu_mhs' ||
             $this->sortField === 'count_rps' ||
             $this->sortField === 'total_sks'
@@ -309,7 +317,7 @@ trait WithUserFilters
                     'rnm.mahasiswa_id'
                 );
             return match ($this->sortField) {
-                'rekap_mhs', 'index_mhs', 'mutu_mhs'  => $queryUser->orderBy(
+                'rekap_mhs', 'ipk_mhs', 'mutu_mhs'  => $queryUser->orderBy(
                     'rnm.nilai',
                     $this->sortDirection
                 ),
@@ -330,7 +338,7 @@ trait WithUserFilters
             'mhs_nilai_index',
             'mhs_nilai_mutu' => 'mhs_nilai_akhir',
 
-            // 'rekap_mhs', 'index_mhs', 'mutu_mhs' => 'rekap_mhs',
+            // 'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => 'rekap_mhs',
 
             'count_rps',
             'total_sks' => $this->sortField,

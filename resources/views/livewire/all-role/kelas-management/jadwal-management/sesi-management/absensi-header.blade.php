@@ -2,8 +2,8 @@
     $isStaff = Auth::user()->admin || Auth::user()->dosen;
     $isMahasiswa = Auth::user()->mahasiswa;
     
-    $maxStaff = ((int) $totalSesiKelas) * ((int) ($totalMahasiswaKelas ?? 0));
-    $maxMhs = $totalSesiKelas ?? 16;
+    $maxStaff = ((int) $stats['sesi']) * ((int) ($stats['mahasiswa'] ?? 0));
+    $maxMhs = $stats['sesi'] ?? 16;
     $denominator = $isStaff ? $maxStaff : $maxMhs;
 
     $dataSource = $isStaff ? $absensi : ($absensi['mahasiswa'] ?? []);

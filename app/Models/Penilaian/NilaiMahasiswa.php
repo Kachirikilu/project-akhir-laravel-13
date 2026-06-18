@@ -31,6 +31,7 @@ class NilaiMahasiswa extends Model
         'nilai' => 'decimal:2',
         'nilai_array' => 'array',
         'bobot_array' => 'array',
+        'deleted_at' => 'datetime',
     ];
 
     /*
@@ -84,23 +85,15 @@ class NilaiMahasiswa extends Model
         return round($total, 2);
     }
 
-    protected function nilaiIndex(): Attribute
-    {
-        return Attribute::get(function () {
 
-            return match ($this->nilai_mutu) {
-                'A' => '4.00',
-                'A-' => '3.70',
-                'B+' => '3.30',
-                'B' => '3.00',
-                'B-' => '2.70',
-                'C+' => '2.30',
-                'C' => '2.00',
-                'D' => '1.00',
-                default => '0.00',
-            };
-        });
-    }
+    // protected function nilaIpk(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $nilai = (float) ($this->nilai ?? 0);
+    //         $indeksRasio = ($nilai / 100) * 4;
+    //         return number_format($indeksRasio, 2);
+    //     });
+    // }
 
     protected function nilaiMutu(): Attribute
     {
@@ -118,6 +111,23 @@ class NilaiMahasiswa extends Model
                 $nilai >= 55 => 'C',
                 $nilai >= 40 => 'D',
                 default => 'E',
+            };
+        });
+    }
+
+    protected function nilaiIndex(): Attribute
+    {
+        return Attribute::get(function () {
+            return match ($this->nilai_mutu) {
+                'A'     => 4.00,
+                'A-'    => 3.70,
+                'B+'    => 3.30,
+                'B'     => 3.00,
+                'B-'    => 2.70,
+                'C+'    => 2.30,
+                'C'     => 2.00,
+                'D'     => 1.00,
+                default => 0.00,
             };
         });
     }

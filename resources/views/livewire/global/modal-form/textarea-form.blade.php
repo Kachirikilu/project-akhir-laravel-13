@@ -18,7 +18,7 @@ wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
         @include('livewire.global.modal-form.partial.label')
     </div>
 
-    <div class="relative mt-1">
+    <div class="relative {{ $noLabel ?? false ? '' : 'mt-1' }}">
         <div class="absolute top-3 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString }}" variant="mini" 
                 x-bind:class="isParentReady ? ($store.{{ $alpine ?? 'config' }}?.colorIcon ?? 'text-blue-500') : 'text-gray-400'" />

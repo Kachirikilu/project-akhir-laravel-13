@@ -31,12 +31,12 @@ trait WithRPSMahasiswaFilters
             $q->where('id', $mhsId);
         });
 
-        if ($this->ganjil_genap) {
-            $queryNilai->where('ganjil_genap', $this->ganjil_genap);
+        if ($this->ganjil_genap_url) {
+            $queryNilai->where('ganjil_genap', $this->ganjil_genap_url);
         }
 
-        if ($this->akademik) {
-            $fixAkademik = str_replace('-', '/', $this->akademik);
+        if ($this->akademik_url) {
+            $fixAkademik = str_replace('-', '/', $this->akademik_url);
             $queryNilai->where('tahun_akademik', $fixAkademik);
         }
 

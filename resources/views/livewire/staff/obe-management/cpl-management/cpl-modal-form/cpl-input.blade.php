@@ -59,11 +59,12 @@
                     @enderror
                 </div> --}}
 
-                <div class="relative" x-data="{}" x-effect="$store.cpl.kode_cpl = ($store.cpl.kode_cpl_1 || '') + ($store.cpl.kode_cpl_2 || '')">
+                <div class="relative" x-data="{}"
+                    x-effect="$store.cpl.kode_cpl = ($store.cpl.kode_cpl_1 || '') + ($store.cpl.kode_cpl_2 || '')">
                     @include('livewire.global.modal-form.loading-animation', [
                         'wireLoading' => 'addCPL, editCPL',
                     ])
-                    <template x-if="$store.cpl?.typeModal == 1" x-cloak>
+                    {{-- <template x-if="$store.cpl?.typeModal == 1" x-cloak>
                         @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-prodi-input')
                     </template>
 
@@ -77,7 +78,102 @@
 
                     <template x-if="$store.cpl?.typeModal == 4" x-cloak>
                         @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-universitas-input')
-                    </template>
+                    </template> --}}
+
+                    <div class="space-y-4">
+                        <div>
+                            @include('livewire.global.modal-form.partial.label', [
+                                'nameXString' => 'Kode CPL',
+                            ])
+                            <div class="grid grid-cols-12 gap-1 sm:gap-2 items-end">
+
+                                <div class="col-span-4 sm:col-span-3">
+                                    <template x-if="$store.cpl?.typeModal == 1" x-cloak>
+                                        @include('livewire.global.modal-form.kode-input', [
+                                            'alpine' => 'cpl',
+                                            'noLabel' => 1,
+                                            'pathString' => 'pr_items',
+                                            'modelString' => 'kode',
+                                            'placeholder' => '---',
+                                            'iconString' => 'academic-cap',
+                                        ])
+                                    </template>
+                                    <template x-if="$store.cpl?.typeModal == 2" x-cloak>
+                                        @include('livewire.global.modal-form.kode-input', [
+                                            'alpine' => 'cpl',
+                                            'noLabel' => 1,
+                                            'pathString' => 'dp_items',
+                                            'modelString' => 'kode',
+                                            'placeholder' => '---',
+                                            'iconString' => 'book-open',
+                                        ])
+                                    </template>
+                                    <template x-if="$store.cpl?.typeModal == 3" x-cloak>
+                                        @include('livewire.global.modal-form.kode-input', [
+                                            'alpine' => 'cpl',
+                                            'noLabel' => 1,
+                                            'pathString' => 'fk_items',
+                                            'modelString' => 'kode',
+                                            'placeholder' => '---',
+                                            'iconString' => 'building-library',
+                                        ])
+                                    </template>
+                                    <template x-if="$store.cpl?.typeModal == 4" x-cloak>
+                                        @include('livewire.global.modal-form.kode-input', [
+                                            'alpine' => 'cpl',
+                                            'noLabel' => 1,
+                                            'modelString' => 'kode',
+                                            'valueString' => 'UNI',
+                                            'iconString' => 'globe-alt',
+                                        ])
+                                    </template>
+                                </div>
+                                <div class="col-span-4">
+                                    @include('livewire.global.modal-form.input-form', [
+                                        'alpine' => 'cpl',
+                                        'nameXString' => 'Kode CPL',
+                                        'modelString' => 'kode_cpl_1',
+                                        'iconString' => 'document-text',
+                                        'placeholder' => 'Kode CPL...',
+                                        'isKode' => 4,
+                                        'isFocusSelect' => 1,
+                                        'noLabel' => 1,
+                                    ])
+                                </div>
+                                <div class="col-span-4 sm:col-span-5">
+                                    @include('livewire.global.modal-form.input-form', [
+                                        'alpine' => 'cpl',
+                                        'noLabel' => 1,
+                                        'modelString' => 'kode_cpl_2',
+                                        'numberOnly' => 1,
+                                        'maxLength' => 6,
+                                        'iconString' => 'variable',
+                                        'placeholder' => 'Contoh: 121104',
+                                        'isFocusSelect' => 1,
+                                    ])
+                                </div>
+                            </div>
+                            @error('kode_cpl')
+                                <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_cpl') }}</span>
+                            @enderror
+                        </div>
+
+                        <template x-if="$store.cpl?.typeModal == 1" x-cloak>
+                            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-prodi-input')
+                        </template>
+
+                        <template x-if="$store.cpl?.typeModal == 2" x-cloak>
+                            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-departemen-input')
+                        </template>
+
+                        <template x-if="$store.cpl?.typeModal == 3" x-cloak>
+                            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-fakultas-input')
+                        </template>
+
+                        <template x-if="$store.cpl?.typeModal == 4" x-cloak>
+                            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-universitas-input')
+                        </template>
+                    </div>
                 </div>
 
 

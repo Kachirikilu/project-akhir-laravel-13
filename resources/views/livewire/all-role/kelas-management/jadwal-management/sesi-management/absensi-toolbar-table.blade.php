@@ -22,7 +22,7 @@
                 $store.sesi?.setValueAbsensi(
                     '{{ $x->name ?? '' }}',
                     '{{ $x->mahasiswa->nim ?? '' }}',
-                    '{{ round((($x->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100, 2) }}',
+                    '{{ round((($x->mhs_poin_absensi ?? 0) / (2 * ($stats['sesi'] ?? 16))) * 100, 2) }}',
                     '{{ $x->mhs_masuk ?? 0 }}',
                     '{{ $x->mhs_dispensasi ?? 0 }}',
                     '{{ $x->mhs_terlambat ?? 0 }}',

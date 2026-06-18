@@ -24,14 +24,16 @@ trait WithMKFilters
             ->with(['prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel']);
 
         // Filter Dropdown Silsilah (Tetap di luar closure search)
-        if (! empty($this->selectedPrId)) {
-            $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
-        }
-        if (! empty($this->selectedDpId)) {
-            $queryMK->whereHas('prodis', fn ($q) => $q->where('dp_id', $this->selectedDpId));
-        }
-        if (! empty($this->selectedFkId)) {
-            $queryMK->whereHas('prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+        if ($this->filterMK !== '' && $this->filterMK !== 'mk_universitas') {
+            if (! empty($this->selectedPrId)) {
+                $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+            }
+            if (! empty($this->selectedDpId)) {
+                $queryMK->whereHas('prodis', fn ($q) => $q->where('dp_id', $this->selectedDpId));
+            }
+            if (! empty($this->selectedFkId)) {
+                $queryMK->whereHas('prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            }
         }
 
         // Filter Tab/Pills

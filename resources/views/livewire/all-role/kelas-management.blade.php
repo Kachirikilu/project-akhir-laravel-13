@@ -29,6 +29,7 @@
 
     @if (Auth::user()->admin || Auth::user()->dosen)
         @include('livewire.all-role.kelas-management.kelas-modal-form')
+        @include('livewire.all-role.kelas-management.kelas-modal-delete')
     @endif
     @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
         'alpineKey' => 'kelas?.rps_id_show',

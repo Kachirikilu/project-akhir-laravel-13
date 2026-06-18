@@ -59,19 +59,19 @@ trait WithOBEExcel
         }
 
         // 3. Logika Filter Berdasarkan Waktu (CPMK, SCPMK, CPL, REF)
-        $filter = $this->filterCPMK ?: $this->filterSCPMK ?: $this->filterCPL ?: $this->filterRef ?: '';
+        // $filter = $this->filterCPMK ?: $this->filterSCPMK ?: $this->filterCPL ?: $this->filterRef ?: '';
 
-        $suffix .= match (true) {
-            str_ends_with($filter, '-month') => '_'.date('M Y'),
-            str_ends_with($filter, '-6-months') => '_'.now()->subMonths(5)->format('M Y').' - '.now()->format('M Y'),
-            str_ends_with($filter, '-year') => " $currentYear",
-            str_ends_with($filter, '-older-5') => ' Keluaran '.($currentYear - 5).' Ke Bawah',
-            $filter == 'ref-2-3-years' => ' '.($currentYear - 2).'-'.($currentYear - 3),
-            $filter == 'ref-4-5-years' => ' '.($currentYear - 4).'-'.($currentYear - 5),
-            $filter == 'ref-6-10-years' => ' '.($currentYear - 6).'-'.($currentYear - 10),
-            $filter == 'ref-older-10' => ' Keluaran '.($currentYear - 10).' Ke Bawah',
-            default => ''
-        };
+        // $suffix .= match (true) {
+        //     str_ends_with($filter, '-month') => '_'.date('M Y'),
+        //     str_ends_with($filter, '-6-months') => '_'.now()->subMonths(5)->format('M Y').' - '.now()->format('M Y'),
+        //     str_ends_with($filter, '-year') => " $currentYear",
+        //     str_ends_with($filter, '-older-5') => ' Keluaran '.($currentYear - 5).' Ke Bawah',
+        //     $filter == 'ref-2-3-years' => ' '.($currentYear - 2).'-'.($currentYear - 3),
+        //     $filter == 'ref-4-5-years' => ' '.($currentYear - 4).'-'.($currentYear - 5),
+        //     $filter == 'ref-6-10-years' => ' '.($currentYear - 6).'-'.($currentYear - 10),
+        //     $filter == 'ref-older-10' => ' Keluaran '.($currentYear - 10).' Ke Bawah',
+        //     default => ''
+        // };
 
         // 4. Finalisasi Variabel
         $sInput .= $suffix;
@@ -236,10 +236,10 @@ trait WithOBEExcel
                 return Excel::download(new SubCPMKExport($obes, $title), $fileNameSafe);
                 break;
             case 'referensi':
-                return Excel::download(new ReferensiExport($obes, $title), $fileName);
+                return Excel::download(new ReferensiExport($obes, $title), $fileNameSafe);
                 break;
             case 'dosen':
-                return Excel::download(new DosenExport($obes, $title), $fileName);
+                return Excel::download(new DosenExport($obes, $title), $fileNameSafe);
                 break;
         }
     }
