@@ -3,7 +3,7 @@
         <div class="flex flex-col w-full">
             <div class="m-3 flex items-center justify-end gap-3 p-2 bg-[var(--second-pop-up-color)] border table-border rounded-xl shadow-sm"
                 x-data="{ localShowDeleted: @entangle('showDeleted').live }">
-                <span class="text-sm font-medium text-[var(--contrast-main-text)]">
+                <span class="text-xs sm:text-sm font-medium text-[var(--contrast-main-text)]">
                     <span x-text="localShowDeleted ? 'Mode Sampah' : 'Data Aktif'"></span>
                 </span>
                 <flux:icon name="check-circle" class="h-4 w-4 transition-colors duration-200"

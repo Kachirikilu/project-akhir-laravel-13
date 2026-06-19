@@ -58,7 +58,7 @@
             <flux:icon.book-open variant="solid" class="size-4 {{ $theme['icon'] }}" />
         </div>
         <div>
-            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">
+            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-xs sm:text-sm">
                 Referensi {{ $targetString ?? null }}
             </h3>
             <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">{{ $textString }}</p>
@@ -67,7 +67,7 @@
 
     {{-- LIST AREA --}}
     <div
-        class="border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
+        class="text-xs sm:text-sm border-2 border-dashed table-border rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
 
         {{-- SUBHEADER --}}
         <div class="flex items-center justify-between mb-3">
@@ -99,7 +99,7 @@
                         <span x-text="'ID' + ref.id"
                             class="text-xs font-bold px-1.5 py-0.5 rounded {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }} flex-shrink-0"></span>
                         <div class="flex-grow min-w-0">
-                            <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200" x-text="ref.judul">
+                            <p class="text-xs sm:text-sm font-bold truncate text-zinc-800 dark:text-zinc-200" x-text="ref.judul">
                             </p>
                             <p class="text-xs text-zinc-500 font-medium italic"
                                 x-text="ref.penulis + ' (' + (ref.tahun || '-') + ')'"></p>
@@ -124,7 +124,7 @@
                                 </span>
                                 <template x-if="ref.link">
                                     <a :href="ref.link" target="_blank"
-                                        class="flex items-center gap-1 hover:underline text-xs font-bold {{ $theme['link'] }}">
+                                        class="flex items-center gap-1 hover:underline active:underline text-xs font-bold {{ $theme['link'] }}">
                                         <flux:icon.link variant="micro" />
                                         <span x-text="ref.link"></span>
                                     </a>

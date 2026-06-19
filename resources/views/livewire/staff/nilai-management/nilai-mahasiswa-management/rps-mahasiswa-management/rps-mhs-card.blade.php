@@ -194,28 +194,30 @@
 
         {{-- Slot Sortir --}}
         <x-slot:sortir>
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'digit_mk',
-                'headString' => 'No MK',
-                'alpine' => 'nilai',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'kode_rps',
-                'alpine' => 'nilai',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'mk',
-                'headString' => 'Mata Kuliah',
-                'alpine' => 'nilai',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'sks',
-                'alpine' => 'nilai',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'nilai',
-                'alpine' => 'nilai',
-            ])
+            <div class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'digit_mk',
+                    'headString' => 'No MK',
+                    'alpine' => 'nilai',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'kode_rps',
+                    'alpine' => 'nilai',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'mk',
+                    'headString' => 'Mata Kuliah',
+                    'alpine' => 'nilai',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'sks',
+                    'alpine' => 'nilai',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'nilai',
+                    'alpine' => 'nilai',
+                ])
+            </div>
         </x-slot:sortir>
 
         {{-- Slot Search --}}
@@ -236,7 +238,7 @@
             <template x-if="itemVisibilityMap[{{ $currentId }}]?.visible">
                 <div wire:key="rps-mahasiswa-{{ $n->id }}" data-rps-mahasiswa-id="{{ $n->id }}"
                     :style="'order: ' + itemVisibilityMap[{{ $currentId }}]?.order"
-                    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg">
+                    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
                     {{-- ═══ HERO ═══ --}}
                     <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
@@ -245,7 +247,7 @@
                             <div class="flex items-center gap-2">
                                 <flux:dropdown>
                                     <button
-                                        class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 focus:outline-none cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                                         <flux:icon name="academic-cap" class="w-3 h-3" />
                                         {{ $n->text_kode_mk ?? $n->kode_mk }}
                                     </button>
@@ -268,7 +270,7 @@
                             {{-- Tombol Menu --}}
                             <flux:dropdown>
                                 <button
-                                    class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/22 focus:outline-none cursor-pointer">
+                                    class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                                     <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                                 </button>
                                 @include(
@@ -359,7 +361,7 @@
                             class="flex w-full items-center justify-center gap-1.5 rounded-bl-[11px] rounded-r-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
                             {{ $n->trashed()
                                 ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
-                                : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:z-10 hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:scale-[0.99]' }}"
+                                : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
                             {{ $n->trashed() ? 'disabled' : '' }}
                             @if (!$n->trashed()) @click="
                                     $store.nilai?.reset();
@@ -387,7 +389,7 @@
                             @endif
                         </button>
                         <button
-                            class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:z-10 hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                            class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                             @click="
                                     $store.nilai?.resetShow();
                                     $store.nilai?.setShowRPS('{{ $n->rps_rel->id ?? '' }}');
@@ -409,7 +411,8 @@
         <x-slot:emptys>
             <div x-show="totalFilteredItems === 0"
                 class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
-                <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada rincian nilai Mata Kuliah yang ditemukan
+                <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada rincian nilai Mata Kuliah
+                    yang ditemukan
                     untuk Periode ini!</p>
             </div>
         </x-slot:emptys>

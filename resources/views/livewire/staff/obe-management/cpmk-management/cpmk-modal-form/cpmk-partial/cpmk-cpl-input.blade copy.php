@@ -1,8 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 
-    {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
-    bg-[var(--main-table-color)] table-border
-    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">

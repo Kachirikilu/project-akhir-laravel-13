@@ -190,7 +190,7 @@
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? {{ $index }})"
                     @click="expanded = !expanded" {{-- TAMBAHKAN h-full DAN flex-shrink-0 DI BAWAH INI --}}
-                    class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/40' : '' }}">
+                    class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/40' : '' }}">
 
                     {{-- ═══ HERO ═══ --}}
                     <div class="flex flex-col gap-3 p-[18px] {{ $isUjian ? 'bg-amber-700' : 'bg-[var(--main-color)]' }}"
@@ -210,7 +210,7 @@
 
                                 <flux:dropdown>
                                     <button
-                                        class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 focus:outline-none cursor-pointer">
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                                         <flux:icon name="academic-cap" class="w-3 h-3" />
                                         {{ $s->metode }}
                                     </button>
@@ -231,7 +231,7 @@
                             {{-- Tombol Menu --}}
                             <flux:dropdown>
                                 <button
-                                    class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/22 focus:outline-none cursor-pointer"
+                                    class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer"
                                     @click.stop>
                                     <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                                 </button>
@@ -458,7 +458,7 @@
                     @if (!$isUjian)
                         <div class="px-4 pb-4" @click.stop>
                             <button
-                                class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] transition-all active:scale-[0.99]"
+                                class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 transition-all active:scale-[0.99]"
                                 @click="expanded = !expanded">
                                 <flux:icon name="chevron-down" class="w-3.5 h-3.5 transition-transform duration-300"
                                     ::class="{ 'rotate-180': expanded }" />
@@ -474,7 +474,7 @@
         {{-- EMPTY STATE ANCHOR --}}
         <div x-cloak x-show="rawItems.length === 0"
             class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
-            <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!</p>
+            <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas ditemukan!</p>
         </div>
 
         {{-- Slot Footer Pagination --}}

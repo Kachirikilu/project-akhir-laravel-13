@@ -453,77 +453,205 @@ trait WithNilaiExcel
             }
 
             $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
-            // dd($jadwal->id);
-            if (! $jadwal) {
-                throw new Exception(
-                    "Kelas {$validated['kode_jadwal']} tidak ditemukan."
-                );
+
+            $rpsId = null;
+            $ganjilGenap = '';
+            $tahunAkademik = '';
+            $jadwalId = null;
+
+            if ($jadwal) {
+                $rpsId = $jadwal->kelas_rel?->rps_id;
+                $ganjilGenap = (string) $jadwal->ganjil_genap;
+                $tahunAkademik = (string) $jadwal->tahun_akademik;
+                $jadwalId = $jadwal->id;
+            } else {
+                $rps = $this->getRPSByKode($validated['kode_rps']);
+
+                if (! $rps) {
+                    throw new \Exception(
+                        "Kelas '{$validated['kode_jadwal']}' maupun RPS dengan kode '{$validated['kode_rps']}' tidak dapat ditemukan."
+                    );
+                }
+
+                $rpsId = $rps->id;
+                $jadwalId = null;
+
+                $now = now();
+                $currentYear = $now->year;
+                $currentMonth = $now->month;
+
+                if ($currentMonth >= 2 && $currentMonth <= 7) {
+                    $ganjilGenap = 'Genap';
+                    $tahunAkademik = ($currentYear - 1).'/'.$currentYear;
+                } else {
+                    $ganjilGenap = 'Ganjil';
+                    $prevYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+                    $tahunAkademik = $prevYear.'/'.($prevYear + 1);
+                }
             }
 
-            $nilaiMahasiswa = NilaiMahasiswa::query()
+            /*
+            |--------------------------------------------------------------------------
+            | 2. Cari atau Instansiasi Objek NilaiMahasiswa
+            |--------------------------------------------------------------------------
+            */
+            $nilai_mahasiswa = NilaiMahasiswa::query()
                 ->where('mahasiswa_id', $mahasiswa->id)
-                ->where('rps_id', $jadwal->kelas_rel->rps_id)
-                ->where('ganjil_genap', (string) $jadwal->ganjil_genap)
-                ->where('tahun_akademik', (string) $jadwal->tahun_akademik)
+                ->where('rps_id', $rpsId)
+                ->where('ganjil_genap', $ganjilGenap)
+                ->where('tahun_akademik', $tahunAkademik)
                 ->lockForUpdate()
                 ->first();
 
-            if (! $nilaiMahasiswa) {
-                $nilaiMahasiswa = new NilaiMahasiswa([
-                    'mahasiswa_id' => $mahasiswa->id,
-                    'rps_id' => $jadwal->kelas_rel->rps_id,
-                    'ganjil_genap' => (string) $jadwal->ganjil_genap,
-                    'tahun_akademik' => (string) $jadwal->tahun_akademik,
-                ]);
+            if (! $nilai_mahasiswa) {
+                $nilai_mahasiswa = new NilaiMahasiswa;
+                $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
+                $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
+                $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
             }
 
-            $nilaiArray = $nilaiMahasiswa->nilai_array ?? [];
-            $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
+            $nilai_mahasiswa->rps_id = $rpsId;
+            $nilai_mahasiswa->kj_id = $jadwalId;
 
-            $sesis = $this->getSesiImportNilai($jadwal->id);
+            $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
+            $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. Mapping index nilai dari sub_cpmk
+            |--------------------------------------------------------------------------
+            */
             $mapScpmk = [];
-
-            foreach ($sesis as $index => $sesi) {
-                $kodeSCPMK = preg_replace(
-                    '/[^A-Za-z0-9]/',
-                    '',
-                    $sesi->scpmk_atr?->kode
-                        ?? $sesi->scpmk_atr?->kode_scpmk
-                        ?? ''
-                );
-                if ($kodeSCPMK !== '') {
-                    $mapScpmk[$kodeSCPMK] = $index;
+            if ($jadwalId) {
+                $sesis = $this->getSesiImportNilai($jadwalId);
+                foreach ($sesis as $index => $sesi) {
+                    $kodeSCPMK = preg_replace(
+                        '/[^A-Za-z0-9]/',
+                        '',
+                        $sesi->scpmk_atr?->kode
+                            ?? $sesi->scpmk_atr?->kode_scpmk
+                            ?? ''
+                    );
+                    if ($kodeSCPMK !== '') {
+                        $mapScpmk[$kodeSCPMK] = $index;
+                    }
                 }
             }
 
-            foreach ($validated['sub_cpmk'] ?? [] as $sub) {
-                $kodeSCPMK = preg_replace(
-                    '/[^A-Za-z0-9]/',
-                    '',
-                    $sub['kode_scpmk'] ?? ''
-                );
+            foreach ($validated['sub_cpmk'] ?? [] as $subIndex => $sub) {
+                $kodeSCPMK = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
 
-                if (empty($kodeSCPMK) || ! isset($mapScpmk[$kodeSCPMK])) {
-                    continue;
-                }
+                $targetIndex = (isset($mapScpmk[$kodeSCPMK]) && $kodeSCPMK !== '')
+                    ? $mapScpmk[$kodeSCPMK]
+                    : $subIndex;
 
-                $targetIndex = $mapScpmk[$kodeSCPMK];
                 $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null)
                     ? (float) $sub['nilai']
-                    : null;
+                    : 0;
                 $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null)
                     ? (float) $sub['bobot']
                     : 0;
             }
 
-            $nilaiMahasiswa->kj_id = $jadwal->id;
-            $nilaiMahasiswa->nilai_array = $nilaiArray;
-            $nilaiMahasiswa->bobot_array = $bobotArray;
-            $nilaiMahasiswa->nilai = $validated['nilai_angka'];
+            ksort($nilaiArray);
+            ksort($bobotArray);
 
-            $nilaiMahasiswa->save();
+            $nilai_mahasiswa->nilai_array = $nilaiArray;
+            $nilai_mahasiswa->bobot_array = $bobotArray;
+            $nilai_mahasiswa->nilai = $validated['nilai_angka'];
+
+            $nilai_mahasiswa->save();
         });
     }
+
+    // private function saveNilaiFromExcel($validated)
+    // {
+    //     DB::transaction(function () use ($validated) {
+    //         $nim = trim($validated['nim']);
+    //         $mahasiswa = Mahasiswa::query()
+    //             ->where('nim', $nim)
+    //             ->first();
+
+    //         if (! $mahasiswa) {
+    //             throw new \Exception(
+    //                 "Mahasiswa dengan NIM {$nim} tidak ditemukan!"
+    //             );
+    //         }
+
+    //         $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
+    //         $rps = $this->getRPSByKode($validated['kode_rps']);
+    //         // dd($jadwal->id);
+    //         if (! $jadwal) {
+    //             throw new Exception(
+    //                 "Kelas {$validated['kode_jadwal']} tidak ditemukan."
+    //             );
+    //         }
+
+
+    //         $nilai_mahasiswa = NilaiMahasiswa::query()
+    //             ->where('mahasiswa_id', $mahasiswa->id)
+    //             ->where('rps_id', $jadwal->kelas_rel->rps_id)
+    //             ->where('ganjil_genap', (string) $jadwal->ganjil_genap)
+    //             ->where('tahun_akademik', (string) $jadwal->tahun_akademik)
+    //             ->lockForUpdate()
+    //             ->first();
+
+    //         if (! $nilai_mahasiswa) {
+    //             $nilai_mahasiswa = new NilaiMahasiswa();
+    //             $nilai_mahasiswa->mahasiswa_id   = $mahasiswa->id;
+    //             $nilai_mahasiswa->ganjil_genap   = (string) $jadwal->ganjil_genap;
+    //             $nilai_mahasiswa->tahun_akademik = (string) $jadwal->tahun_akademik;
+    //         }
+
+    //         $nilai_mahasiswa->rps_id = $jadwal->kelas_rel->rps_id;
+
+    //         $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
+    //         $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
+
+    //         $sesis = $this->getSesiImportNilai($jadwal->id);
+    //         $mapScpmk = [];
+
+    //         foreach ($sesis as $index => $sesi) {
+    //             $kodeSCPMK = preg_replace(
+    //                 '/[^A-Za-z0-9]/',
+    //                 '',
+    //                 $sesi->scpmk_atr?->kode
+    //                     ?? $sesi->scpmk_atr?->kode_scpmk
+    //                     ?? ''
+    //             );
+    //             if ($kodeSCPMK !== '') {
+    //                 $mapScpmk[$kodeSCPMK] = $index;
+    //             }
+    //         }
+
+    //         foreach ($validated['sub_cpmk'] ?? [] as $sub) {
+    //             $kodeSCPMK = preg_replace(
+    //                 '/[^A-Za-z0-9]/',
+    //                 '',
+    //                 $sub['kode_scpmk'] ?? ''
+    //             );
+
+    //             if (empty($kodeSCPMK) || ! isset($mapScpmk[$kodeSCPMK])) {
+    //                 continue;
+    //             }
+
+    //             $targetIndex = $mapScpmk[$kodeSCPMK];
+    //             $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null)
+    //                 ? (float) $sub['nilai']
+    //                 : null;
+    //             $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null)
+    //                 ? (float) $sub['bobot']
+    //                 : 0;
+    //         }
+
+    //         $nilai_mahasiswa->kj_id = $jadwal->id;
+    //         $nilai_mahasiswa->nilai_array = $nilaiArray;
+    //         $nilai_mahasiswa->bobot_array = $bobotArray;
+    //         $nilai_mahasiswa->nilai = $validated['nilai_angka'];
+
+    //         $nilai_mahasiswa->save();
+    //     });
+    // }
 
     private function inputModalNilai($data)
     {
@@ -599,6 +727,41 @@ trait WithNilaiExcel
                 return $kode === $search;
             });
     }
+
+    protected function getRPSByKode(?string $kodeRPS): ?RPS
+    {
+        $rps = $this->findRPSByKode($kodeRPS);
+        if (! $rps) {
+            return null;
+        }
+
+        return $rps;
+    }
+
+    protected function findRPSByKode(?string $kodeRPS): ?RPS
+    {
+        if (blank($kodeRPS)) {
+            return null;
+        }
+        $search = preg_replace(
+            '/[^A-Za-z0-9]/',
+            '',
+            strtolower(trim($kodeRPS))
+        );
+
+        return $this->inputRPSSearch()
+            ->get()
+            ->first(function ($r) use ($search) {
+                $kode = preg_replace(
+                    '/[^A-Za-z0-9]/',
+                    '',
+                    strtolower($r->kode)
+                );
+
+                return $kode === $search;
+            });
+    }
+
 
     // protected function getRPSInfoByKode(?string $kodeRPS): array
     // {

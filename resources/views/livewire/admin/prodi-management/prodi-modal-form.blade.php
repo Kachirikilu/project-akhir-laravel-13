@@ -1,5 +1,5 @@
 <flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveProdi, updateProdi">
@@ -18,7 +18,7 @@
         @endphp --}}
 
         {{-- 1. Header Modal --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
 
@@ -44,8 +44,7 @@
         </div>
 
         {{-- 2. Konten & Form --}}
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
-            {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             <form x-on:submit.prevent="$wire.{{ $isEditingPr ? 'updateProdi' : 'saveProdi' }}($store.prodi)"
                 enctype="multipart/form-data" id="prodiForm">
 
@@ -61,10 +60,8 @@
                     @include('livewire.admin.prodi-management.prodi-modal-form.fakultas-input')
                 </template>
 
-                {{-- 3. Footer / Button Action --}}
-                <div <div
-                    class="bg-[var(--sub-table-color)] table-border
-                    p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                <div
+                    class="form-message-container">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.prodi-management.prodi-modal-form.prodi-message-form')

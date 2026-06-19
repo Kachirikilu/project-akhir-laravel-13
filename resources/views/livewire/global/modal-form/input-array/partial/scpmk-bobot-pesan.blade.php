@@ -9,22 +9,22 @@
                             '{{ $pNilai4 }}'))
                     "></span>
         <template x-if="grandTotalBobot <= {{ $nilai1 }}">
-            <flux:badge color="red" size="sm" variant="pill">
+            <flux:badge color="red" size="sm" variant="pill" class="text-xs text-sm">
                 <span x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai1 }} && grandTotalBobot <= {{ $nilai2 }}">
-            <flux:badge color="orange" size="sm" variant="pill">
+            <flux:badge color="orange" size="sm" variant="pill" class="text-xs text-sm">
                 <span x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai2 }} && grandTotalBobot <= {{ $nilai3 }}">
-            <flux:badge color="green" size="sm" variant="pill">
+            <flux:badge color="green" size="sm" variant="pill" class="text-xs text-sm">
                 <span x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai3 }}">
-            <flux:badge color="blue" size="sm" variant="pill">
+            <flux:badge color="blue" size="sm" variant="pill" class="text-xs text-sm">
                 <span x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>

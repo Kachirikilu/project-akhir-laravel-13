@@ -1,7 +1,7 @@
 <x-global.main-layout-table :paginator="$rps">
     <x-slot:sortir>
         <div x-data="{ activeTab: @entangle('filterRPSgg') }"
-            class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByRPSgg',
                 'xFilter' => 'filterRPSgg',
@@ -184,11 +184,11 @@
 
     @forelse($rps as $r)
         <tr wire:key="{{ $switchTable }}-{{ $r->id }}" data-{{ $switchTable }}-id="{{ $r->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $r->id }}</td>
+            <td class="text-xs sm:text-sm table-second text-center">{{ $r->id }}</td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -206,15 +206,15 @@
             </td>
 
 
-            <td class="table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
 
 
             @if ($withCapaian ?? null)
-                <td class="table-second table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
                     {{ $r->rekap_rps_pr ?? '0.00' }}</td>
-                <td class="table-second whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
                     {{ $r->index_rps_pr ?? '0.00' }}</td>
-                <td class="table-sub table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -230,7 +230,7 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-x text-center">
+            <td class="text-xs sm:text-sm table-second table-border-x text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -249,11 +249,11 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
-            <td class="table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
-            <td class="table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
-            <td class="table-sub whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
-            <td class="table-main table-border-r text-center">
+            <td class="text-xs sm:text-sm table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
+            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-main table-border-r text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -272,11 +272,11 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="table-second table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
                     {{-- {{ $r->cpmks_count . ' CPMK' ?? '-' }} --}}
                     {{ $r->count_cpmk . ' CPMK' ?? '-' }}
                 </td>
-                <td class="table-second whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -307,7 +307,7 @@
                     </flux:dropdown>
                 </td>
 
-                <td class="table-second table-border-r text-center">
+                <td class="text-xs sm:text-sm table-second table-border-r text-center">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -340,7 +340,7 @@
                 </td>
             @endif
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($r->draf == 0)
@@ -361,10 +361,10 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap">{{ $r->revisi_day ?? '-' }}</td>
 
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -380,8 +380,8 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
-                <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

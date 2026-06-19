@@ -39,9 +39,9 @@ trait WithNilaiModal
         |--------------------------------------------------------------------------
         */
 
-        $nilaiMahasiswa = NilaiMahasiswa::find($selectedIdNilai);
+        $nilai_mahasiswa = NilaiMahasiswa::find($selectedIdNilai);
 
-        if (! $nilaiMahasiswa) {
+        if (! $nilai_mahasiswa) {
             $this->toast(
                 message: 'Data Nilai Mahasiswa tidak ditemukan!',
                 type: 'error',
@@ -128,7 +128,7 @@ trait WithNilaiModal
         |--------------------------------------------------------------------------
         */
 
-        $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
+        $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
         $nilaiAkhir = 0;
         foreach ($nilaiArray as $index => $nilai) {
             $bobot = (float) ($bobotArray[$index] ?? 0);
@@ -145,10 +145,10 @@ trait WithNilaiModal
 
             DB::beginTransaction();
 
-            $nilaiMahasiswa->nilai_array = $nilaiArray;
-            $nilaiMahasiswa->nilai = round($nilaiAkhir, 2);
+            $nilai_mahasiswa->nilai_array = $nilaiArray;
+            $nilai_mahasiswa->nilai = round($nilaiAkhir, 2);
 
-            $nilaiMahasiswa->save();
+            $nilai_mahasiswa->save();
 
             DB::commit();
 

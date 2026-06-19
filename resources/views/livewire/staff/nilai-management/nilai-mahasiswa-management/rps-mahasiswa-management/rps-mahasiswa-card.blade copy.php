@@ -86,7 +86,7 @@
         <div
             class="col-span-full text-center p-12 rounded-xl border border-dashed border table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
-            <p class="text-sm text-[var(--contrast-second-text)]">
+            <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">
                 Tidak ada rincian nilai mata kuliah yang ditemukan untuk periode ini.
             </p>
         </div>

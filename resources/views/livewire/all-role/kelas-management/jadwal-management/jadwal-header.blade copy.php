@@ -2,7 +2,7 @@
 <div class="mb-8">
     <div class="flex items-center gap-4 mb-6">
         <a href="{{ $backUrl ?? route('kelas-management') }}" wire:navigate
-            class="p-2 rounded-full hover:bg-[var(--hover-table-color)] transition-colors">
+            class="p-2 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors">
             <flux:icon name="arrow-left" class="h-6 w-6 text-[var(--contrast-second-text)]" />
         </a>
         <div>
@@ -70,7 +70,7 @@
                     $flux.modal('rps-detail-modal').show();
             "
             wire:click="showRPS({{ $kelas->rps_id }})" icon="eye" size="sm"
-            class="!cursor-pointer px-6 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200">
+            class="!cursor-pointer px-6 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200">
             <span>Show RPS</span>
         </flux:button>
 
@@ -156,7 +156,7 @@
                 @click="
                     $store.sesi?.reset();
                     $store.sesi?.setEdit(0);
-                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600');
+                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 active:file:bg-green-800 dark:file:bg-green-500 dark:hover:file:bg-green-600 dark:active:file:bg-green-700');
                     {{-- $wire.addUser('excel'); --}}
                     $flux.modal('nilai-excel-modal').show();
                 "

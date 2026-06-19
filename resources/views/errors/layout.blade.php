@@ -21,11 +21,11 @@
         </div>
 
         <div class="mt-6 flex items-center justify-center gap-4">
-            <a href="{{ url()->previous() }}" class="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1">
+            <a href="{{ url()->previous() }}" class="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline active:underline flex items-center gap-1">
                 &larr; Kembali
             </a>
             <span class="text-gray-300 dark:text-zinc-700">|</span>
-            <a href="{{ url('/') }}" class="text-xs font-bold text-gray-600 dark:text-zinc-400 hover:underline">
+            <a href="{{ url('/') }}" class="text-xs font-bold text-gray-600 dark:text-zinc-400 hover:underline active:underline">
                 Ke Beranda
             </a>
         </div>

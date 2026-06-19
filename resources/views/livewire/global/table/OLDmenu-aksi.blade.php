@@ -1,4 +1,4 @@
-<td class="table-second">
+<td class="text-xs sm:text-sm table-second">
     <flux:dropdown>
         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
         </flux:button>

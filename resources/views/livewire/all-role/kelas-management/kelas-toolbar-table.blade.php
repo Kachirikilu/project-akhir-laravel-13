@@ -19,7 +19,7 @@
             <flux:menu.separator />
 
             <flux:menu.item href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
-                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
+                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 active:!bg-green-200 dark:active:!bg-green-900 transition-colors">
 
                 <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
 
@@ -45,7 +45,7 @@
                     $flux.modal('rps-detail-modal').show();
             "
             wire:click="{{ $showRPSCall }}"
-            class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 transition-colors">
+            class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
             <flux:icon name="eye" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -62,7 +62,7 @@
         <div wire:click="printPDFRPS({{ $x->rps_id }})"
             class="px-3 py-2 flex items-center justify-between w-full cursor-pointer
                 !text-rose-600 dark:!text-rose-400
-                hover:!bg-rose-100 dark:hover:!bg-rose-900/30
+                hover:!bg-rose-100 dark:hover:!bg-rose-900/30 active:!bg-rose-200 dark:active:!bg-rose-900
                 transition-colors select-none rounded-md">
             <div class="flex items-center">
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
@@ -108,7 +108,7 @@
                         $flux.modal('kelas-modal').show();
                     "
                     wire:click="{{ $editCall }}"
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -131,7 +131,7 @@
                             $flux.modal('kelas-delete').show();
                     "
                     wire:click="{{ $deleteCall }}"
-                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                     <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -143,7 +143,7 @@
             @else
                 {{-- Tombol Restore --}}
                 <flux:menu.item wire:click="{{ $restoreCall }}"
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -166,7 +166,7 @@
                             $flux.modal('kelas-delete').show();
                     "
                     wire:click="{{ $deleteCall }}"
-                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                     <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">

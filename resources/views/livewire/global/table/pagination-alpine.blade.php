@@ -3,7 +3,7 @@
 
     {{-- INFO --}}
     <div>
-        <p class="text-sm leading-5 text-[var(--contrast-second-text)]">
+        <p class="text-xs sm:text-sm leading-5 text-[var(--contrast-second-text)]">
             Menampilkan
             <span class="font-bold text-[var(--contrast-main-text)]"
                 x-text="Math.min(((currentPage - 1) * perPage) + 1, totalFilteredItems)">
@@ -25,9 +25,9 @@
 
             {{-- PREVIOUS --}}
             <button type="button" @click="if(currentPage > 1) currentPage--" :disabled="currentPage <= 1"
-                class="inline-flex items-center px-2 py-2 text-sm font-medium leading-5 border transition ease-in-out duration-150
+                class="inline-flex items-center px-2 py-2 text-xs sm:text-sm font-medium leading-5 border transition ease-in-out duration-150
                                 cursor-pointer bg-white border-gray-300 text-gray-500 
-                                enabled:hover:text-gray-400
+                                enabled:hover:text-gray-400 active:text-gray-500
                                 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300
                                 disabled:opacity-50 disabled:cursor-not-allowed
                                 rounded-l-md">
@@ -43,7 +43,7 @@
             {{-- CURRENT PAGE --}}
             <span
                 class="inline-flex items-center justify-center min-w-10 px-3 py-2 -ml-px
-                                text-center text-sm font-bold text-white
+                                text-center text-xs sm:text-sm font-bold text-white
                                 border border-[var(--main-color)]
                                 bg-[var(--main-color)]
                                 leading-5">
@@ -53,7 +53,7 @@
             {{-- TOTAL PAGE --}}
             <span
                 class="inline-flex items-center justify-center min-w-10 px-3 py-2 -ml-px
-                                text-center text-sm font-medium
+                                text-center text-xs sm:text-sm font-medium
                                 border table-border
                                 bg-[var(--main-table-trans)]
                                 text-[var(--contrast-main-text)]
@@ -64,9 +64,9 @@
             {{-- NEXT --}}
             <button type="button" @click="if(currentPage < totalPages) currentPage++"
                 :disabled="currentPage >= totalPages"
-                class="inline-flex items-center px-2 py-2 -ml-px text-sm font-medium leading-5 border transition ease-in-out duration-150
+                class="inline-flex items-center px-2 py-2 -ml-px text-xs sm:text-sm font-medium leading-5 border transition ease-in-out duration-150
                                 cursor-pointer bg-white border-gray-300 text-gray-500 
-                                enabled:hover:text-gray-400
+                                enabled:hover:text-gray-400 active:text-gray-500
                                 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300
                                 disabled:opacity-50 disabled:cursor-not-allowed
                                 rounded-r-md">

@@ -21,16 +21,16 @@
             <tbody>
                 @forelse($users as $user)
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $user->id ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->email ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->name ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->identity1 ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->identity2 ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->identity3 ?? '' }}</td>
-                        <td class="px-4 py-2">
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->id ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->email ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->name ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->identity1 ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->identity2 ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->identity3 ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">
                             {{ $user->admin->pr_rel?->prodi ?? ($user->dosen->pr_rel?->prodi ?? ($user->mahasiswa->pr_rel?->prodi ?? '')) }}
                         </td>
-                        <td class="px-4 py-2">{{ $user->status ?? '' }}</td>
+                        <td class="text-xs sm:text-sm px-4 py-2">{{ $user->status ?? '' }}</td>
                     </tr>
                 @empty
                     <tr>

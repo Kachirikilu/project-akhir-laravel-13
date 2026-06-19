@@ -32,7 +32,7 @@
                 $flux.modal('cpl-modal').show();
             "
             wire:click="{{ $editCallCPL }}"
-            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
             <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -55,7 +55,7 @@
                         $flux.modal('cpl-delete').show();
                 "
             wire:click="{{ $deleteCall }}"
-            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
             <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -67,7 +67,7 @@
     @else
         {{-- Tombol Restore --}}
         <flux:menu.item wire:click="{{ $restoreCall }}"
-            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
             <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -90,7 +90,7 @@
                         $flux.modal('cpl-delete').show();
                 "
             wire:click="{{ $deleteCall }}"
-            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
             <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">

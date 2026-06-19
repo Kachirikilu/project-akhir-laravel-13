@@ -1,5 +1,5 @@
 <flux:modal name="rps-detail-modal" wire:model="detailRPSModal" x-data flyout
-    class="md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
+    class="w-full md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
 
     @php
         $r = $detailRPSData ?? [];

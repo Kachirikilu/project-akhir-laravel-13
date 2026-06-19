@@ -1,6 +1,6 @@
 <flux:modal name="user-modal" wire:model="showUserModal"
     @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser, saveUserExcel, saveUserInternal">
@@ -15,7 +15,7 @@
     <div class="flex flex-col h-full">
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
                 <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
@@ -43,7 +43,7 @@
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
 
             <form
                 @if ($roleType == 'excel') wire:submit.prevent="saveUserExcel"
@@ -61,7 +61,7 @@
 
                 {{-- 3. Footer/Tombol --}}
                 <div
-                    class="bg-[var(--sub-table-color)] table-border p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="form-message-container">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.user-management.user-modal-form.user-message-form')

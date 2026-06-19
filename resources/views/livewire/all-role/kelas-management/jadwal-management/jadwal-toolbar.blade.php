@@ -50,7 +50,7 @@
                 <div class="shrink-0">
                     <flux:dropdown>
                         <flux:button variant="primary" icon="plus" size="sm"
-                            class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out whitespace-nowrap"
+                            class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap"
                             wire:target="addJadwal">
                             Tambah Jadwal
                         </flux:button>
@@ -68,7 +68,7 @@
                                 $flux.modal('jadwal-modal').show();
                                 $wire.addJadwal();
                             "
-                                class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
+                                class="text-xs sm:text-sm cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30 active:!bg-amber-200 dark:active:!bg-amber-900">
                                 <flux:icon name="calendar-days"
                                     class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                                 <div class="flex justify-between items-center w-full">

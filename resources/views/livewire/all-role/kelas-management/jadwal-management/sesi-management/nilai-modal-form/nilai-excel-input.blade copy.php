@@ -166,7 +166,7 @@
                                         {{ $i + 1 }}
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.kode_mk" readonly
                                                 class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['kode_mk']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
@@ -179,7 +179,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nama_mk" readonly
                                                 class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['nama_mk']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
@@ -192,7 +192,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.kelas_kuliah"
                                                 readonly
@@ -207,7 +207,7 @@
                                     </td>
 
                
-                                    <td class="sticky left-0 z-20 p-0 border-b border-r border-gray-200 dark:border-neutral-700 align-top bg-white dark:bg-neutral-800 group-hover:bg-gray-50 dark:group-hover:bg-neutral-700/50">
+                                    <td class="text-xs sm:text-sm sticky left-0 z-20 p-0 border-b border-r border-gray-200 dark:border-neutral-700 align-top bg-white dark:bg-neutral-800 group-hover:bg-gray-50 dark:group-hover:bg-neutral-700/50">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nim" readonly
                                                 class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['nim']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
@@ -220,7 +220,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="sticky left-0 z-20 p-0 border-b border-r border-gray-200 dark:border-neutral-700 align-top bg-white dark:bg-neutral-800 group-hover:bg-gray-50 dark:group-hover:bg-neutral-700/50">
+                                    <td class="text-xs sm:text-sm sticky left-0 z-20 p-0 border-b border-r border-gray-200 dark:border-neutral-700 align-top bg-white dark:bg-neutral-800 group-hover:bg-gray-50 dark:group-hover:bg-neutral-700/50">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nama" readonly
                                                 class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['nama']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
@@ -233,7 +233,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.angkatan" readonly
                                                 class="w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none bg-gray-100/70 dark:bg-neutral-700/50 cursor-text select-text {{ isset($rowNilaiErrors[$i]['angkatan']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : '' }}">
@@ -247,7 +247,7 @@
                                     </td>
 
                                     @foreach ($row['sub_cpmk'] ?? [] as $nilai)
-                                        <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                        <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                             <div class="flex flex-col h-full min-h-[34px]">
                                                 <input type="number" step="0.01"
                                                     wire:model.live="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"
@@ -262,7 +262,7 @@
                                         </td>
                                     @endforeach
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nilai_angka"
                                                 readonly
@@ -276,7 +276,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nilai_index"
                                                 readonly
@@ -290,7 +290,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="p-0 border border-gray-200 dark:border-neutral-700 align-top">
+                                    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                         <div class="flex flex-col h-full min-h-[34px]">
                                             <input wire:model="parsedNilaiRows.{{ $i }}.nilai_mutu"
                                                 readonly

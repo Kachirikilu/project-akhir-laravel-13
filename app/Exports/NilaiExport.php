@@ -99,7 +99,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         $mahasiswas = $this->jadwal
             ->mahasiswas()
             ->with([
-                'nilaiMahasiswa' => function ($q) {
+                'nilai_mahasiswa' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
                       ->where('ganjil_genap', $this->jadwal->ganjil_genap)
                       ->where('tahun_akademik', $this->jadwal->tahun_akademik);
@@ -111,7 +111,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         foreach ($mahasiswas as $index => $mhs) {
             $currentRow = $startRow + $index;
 
-            $nilaiMahasiswa =
+            $nilai_mahasiswa =
                 $mhs->nilai_mahasiswa->first();
 
             $nilaiArray =

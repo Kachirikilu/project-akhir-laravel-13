@@ -27,7 +27,7 @@
                 $wire.{{ $inputXFilterString }}(); 
             "
             @click.outside="open = false" @keydown.escape.window="open = false"
-            class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 px-4 pr-10 rounded-lg shadow-sm
+            class="text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 px-4 pr-10 rounded-lg shadow-sm
             bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                 {{-- placeholder-[var(--contrast-third-text)] --}}
             {{-- focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400 --}}
@@ -57,8 +57,8 @@
                 "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-                hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
-                text-sm">
+                hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90
+                text-xs sm:text-sm">
                 <div class="flex justify-between items-center">
                     <div>
                         <div class="text-[var(--contrast-main-text)] font-medium">
@@ -83,7 +83,7 @@
                             @endif
                         </div> --}}
 
-                        <div class="flex flex-wrap items-center text-sm">
+                        <div class="flex flex-wrap items-center text-xs sm:text-sm">
                             <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
                                 <span class="font-bold">- ID: {{ $x['id'] }}</span>
                             </div>
@@ -111,7 +111,7 @@
                         </div>
 
                     </div>
-                    <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
+                    <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-[9px] sm:text-xs px-2 py-1 rounded-md ml-2">
                         @if ($typeKodeString ?? null)
                             {{ $x[$typeKodeString] }}
                         @else

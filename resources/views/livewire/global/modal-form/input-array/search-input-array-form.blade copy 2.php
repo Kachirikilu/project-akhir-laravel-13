@@ -95,7 +95,7 @@
 
                 @if ($itemId !== null)
                     <div wire:key="res-{{ $typeXString }}-{{ $itemId }}-{{ $alpine }}"
-                        class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
+                        class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 transition-colors">
 
                         @include('livewire.global.modal-form.input-array.partial.dropdown-items')
 
@@ -130,7 +130,7 @@
                                 @endisset
                             }
                             "
-                            :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500' :
+                            :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500 active:bg-red-600' :
                                 'bg-[var(--focus-color)] text-white'"
                             class="p-1.5 rounded-md transition-all group">
 
@@ -160,7 +160,7 @@
     </div>
 
     @error($id2String ?? $idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $message }}</span>
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
@@ -183,7 +183,7 @@
             {{-- <template x-for="(id, index) in items" :key="id"> --}}
             <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
                     <div class="flex items-start gap-3 flex-1">
 
                         <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
@@ -233,7 +233,7 @@
                                 @if ($typeLinkString ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <a :href="itemsAll[index]?.link" target="_blank"
-                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
+                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline active:underline text-xs font-bold">
                                         <flux:icon.link variant="micro" /> <span x-text="itemsAll[index]?.link"></span>
                                     </a>
                                 @endif

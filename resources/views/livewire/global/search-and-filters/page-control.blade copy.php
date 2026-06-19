@@ -75,7 +75,7 @@
                    bg-[var(--second-table-color)] table-border
                    text-[var(--contrast-second-text)]
                    py-1 px-2 text-sm w-full
-                   hover:border-[var(--hover-focus-color)]
+                   hover:border-[var(--hover-focus-color)] active:border-[var(--hover-focus-color)]/90
                    transition-[border-color] duration-200">
             <span x-text="selected">8</span>
 
@@ -112,8 +112,8 @@
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"
                     class="block px-3 py-1 text-sm cursor-pointer transition-colors duration-200
-                           hover:bg-[var(--hover-main-color)]
-                           hover:text-[var(--main-text)]"
+                           hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90
+                           hover:text-[var(--main-text)] active:text-[var(--main-text)]/90"
                     :class="{
                         'bg-[var(--main-color)] text-[var(--main-text)] font-semibold': selected == {{ $option }}
                     }">

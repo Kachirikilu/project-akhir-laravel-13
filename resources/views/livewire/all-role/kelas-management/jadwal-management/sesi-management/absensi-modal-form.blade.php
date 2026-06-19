@@ -1,5 +1,5 @@
 <flux:modal name="absensi-modal" wire:model="showMahasiswaAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="updateAbsensi">
@@ -13,7 +13,7 @@
     <div class="flex flex-col h-full relative">
 
         {{-- 1. Header Modal --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
 
@@ -25,13 +25,13 @@
         </div>
 
         {{-- 2. Konten & Form --}}
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             <form x-on:submit.prevent="$wire.updateAbsensi($store.sesi)" enctype="multipart/form-data" id="sesiForm">
 
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-input')
 
                 <div
-                    class="bg-[var(--sub-table-color)] table-border p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="form-message-container">
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-message-form')
                         @include('livewire.global.modal-form.footer.button-form', [

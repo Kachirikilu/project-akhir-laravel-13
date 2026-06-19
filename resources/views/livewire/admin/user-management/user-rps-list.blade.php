@@ -1,5 +1,5 @@
 <flux:modal name="user-rps-modal" wire:model.live="showUserRPSModal" flyout
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser">
@@ -14,7 +14,7 @@
     <div class="flex flex-col h-full">
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
                 <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
@@ -41,7 +41,7 @@
             }
         @endphp --}}
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             @include('livewire.admin.user-management.user-modal-form.user-rps')
 
             @include('livewire.staff.obe-management.obe-partial.rps-list', [

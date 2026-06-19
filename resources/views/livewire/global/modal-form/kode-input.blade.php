@@ -49,7 +49,7 @@
                 " @endif
             @endif
         placeholder="{{ $placeholder ?? '--' }}"
-        class="
+        class="text-xs text-sm 
                 focus:ring-2 focus:ring-[var(--hover-table-color)] outline-none
                 bg-[var(--second-table-color)]
                 table-border

@@ -7,8 +7,8 @@ use App\Livewire\Global\HasToast;
 use App\Models\Kelas\KelasSesi;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 trait WithAbsenModal
@@ -20,6 +20,10 @@ trait WithAbsenModal
 
     public $selected_id_mahasiswa;
 
+    public $selected_id_jadwal;
+
+    public $selected_id_rps;
+
     public $list_absensi_array = [];
 
     public $isEditingSesi = false;
@@ -27,7 +31,6 @@ trait WithAbsenModal
     public $showEditSesi = false;
 
     public $showMahasiswaAbsen = false;
-
 
     public function absenSesi($data)
     {
@@ -132,7 +135,7 @@ trait WithAbsenModal
             $this->dispatch('refresh-data-sesi');
 
             $this->toast(
-                message: 'Absensi berhasil dikirim',
+                message: 'Absensi berhasil dikirim!',
                 type: 'success'
             );
 
@@ -168,20 +171,52 @@ trait WithAbsenModal
             return;
         }
 
+        // 1. Ambil semua data sesi kelas terlebih dahulu
         $sesis = KelasSesi::with([
             'kehadirans' => function ($query) use ($id) {
                 $query->where('mahasiswa_id', $id);
             },
         ])->where('kj_id', $jadwal_id)->orderBy('pertemuan_ke', 'asc')->get();
 
-        $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
+        $this->selected_id_jadwal = $jadwal_id;
+        $this->selected_id_rps = $this->kelas->rps_id;
+
+        // 2. Cari data NilaiMahasiswa
+        $nilai_mahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
             ->where('rps_id', $this->rps_id_url)
             ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
             ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
             ->first();
 
-        $nilaiArray = $nilaiMahasiswa?->nilai_array ?? [];
-        $bobotArray = $nilaiMahasiswa?->bobot_array ?? [];
+        // 3. JIKA NULL, BUAT DATA BARU SECARA OTOMATIS
+        if (! $nilai_mahasiswa) {
+            $newNilaiArray = [];
+            $newBobotArray = [];
+
+            foreach ($sesis as $sesi) {
+                $index = $sesi->pertemuan_ke - 1;
+                $newNilaiArray[$index] = 0; // Nilai default diganti menjadi 0 sesuai request
+
+                // Ambil nilai dari accessor bobotNormalisasi (dibagi 100 karena accessor menghasilkan angka * 100)
+                $bobotNorm = $sesi->bobot_normalisasi ?? 0;
+                $newBobotArray[$index] = $bobotNorm > 0 ? round($bobotNorm / 100, 4) : 0;
+            }
+
+            // Daftarkan baris record baru ke database
+            $nilai_mahasiswa = NilaiMahasiswa::create([
+                'mahasiswa_id' => $id,
+                'rps_id' => $this->rps_id_url,
+                'ganjil_genap' => (string) $this->jadwal->ganjil_genap,
+                'tahun_akademik' => (string) $this->jadwal->tahun_akademik,
+                'nilai_array' => $newNilaiArray,
+                'bobot_array' => $newBobotArray,
+                // tambahkan field mandatory lain jika ada, contoh: 'nilai_akhir' => 0
+            ]);
+        }
+
+        // 4. Proses array dari data yang dipastikan valid/ada
+        $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
+        $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
 
         $this->list_absensi_array = $sesis->map(function ($sesi) use ($nilaiArray, $bobotArray) {
             $kehadiran = $sesi->kehadirans->first();
@@ -189,6 +224,10 @@ trait WithAbsenModal
 
             $nilaiRaw = $nilaiArray[$index] ?? null;
             $nilaiFinal = ($nilaiRaw === null || $nilaiRaw === '') ? 0 : (float) $nilaiRaw;
+
+            // Mengambil data bobot desimal dari database untuk dikalikan 100% kembali pada tampilan
+            $rawBobot = $bobotArray[$index] ?? null;
+            $tampilanBobot = ($rawBobot !== null) ? round((float) $rawBobot * 100, 2).'%' : '0%';
 
             return [
                 'sesi_id' => $sesi->id,
@@ -210,9 +249,7 @@ trait WithAbsenModal
                 'waktu_presensi' => $kehadiran?->waktu_presensi,
 
                 'nilai' => $nilaiFinal,
-                'bobot' => isset($bobotArray[$index])
-                    ? round($bobotArray[$index] * 100, 2).'%'
-                    : '0%',
+                'bobot' => $tampilanBobot,
             ];
         })->toArray();
 
@@ -226,6 +263,7 @@ trait WithAbsenModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
         /*
         |--------------------------------------------------------------------------
         | 1. Merge data dari frontend dengan aman (Satu kali loop)
@@ -256,27 +294,45 @@ trait WithAbsenModal
 
         /*
         |--------------------------------------------------------------------------
-        | 2. Bangun Validation Rules & Messages secara Dinamis
+        | 2. Ambil atau Instansiasi Record NilaiMahasiswa
         |--------------------------------------------------------------------------
         */
-        $rules = [];
-        $messages = [];
-
-        // --- PERBAIKAN: Langsung gunakan $this->jadwal untuk kondisi Unique Key ---
-        $nilaiMahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)
+        $nilai_mahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)
             ->where('rps_id', $this->rps_id_url)
             ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
             ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
             ->first();
 
-        if (! $nilaiMahasiswa) {
-            $nilaiMahasiswa = new NilaiMahasiswa([
-                'mahasiswa_id' => $this->selected_id_mahasiswa,
-                'rps_id' => $this->rps_id_url,
-                'ganjil_genap' => (string) $this->jadwal->ganjil_genap,
-                'tahun_akademik' => (string) $this->jadwal->tahun_akademik,
-            ]);
+        if (! $nilai_mahasiswa) {
+            $initNilaiArray = [];
+            $initBobotArray = [];
+
+            foreach ($this->list_absensi_array as $index => $item) {
+                $initNilaiArray[$index] = 0;
+
+                $sesiModel = KelasSesi::find($item['sesi_id']);
+                $bobotNorm = $sesiModel?->bobot_normalisasi ?? 0;
+                $initBobotArray[$index] = $bobotNorm > 0 ? round($bobotNorm / 100, 4) : 0;
+            }
+
+            $nilai_mahasiswa = new NilaiMahasiswa;
+            $nilai_mahasiswa->mahasiswa_id = $this->selected_id_mahasiswa;
+            $nilai_mahasiswa->ganjil_genap = (string) $this->jadwal->ganjil_genap;
+            $nilai_mahasiswa->tahun_akademik = (string) $this->jadwal->tahun_akademik;
+            $nilai_mahasiswa->nilai_array = $initNilaiArray;
+            $nilai_mahasiswa->bobot_array = $initBobotArray;
         }
+
+        $nilai_mahasiswa->kj_id = $this->jadwal->id;
+        $nilai_mahasiswa->rps_id = $this->rps_id_url;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Bangun Validation Rules & Messages secara Dinamis
+        |--------------------------------------------------------------------------
+        */
+        $rules = [];
+        $messages = [];
 
         foreach ($this->list_absensi_array as $index => $item) {
             $prefix = "list_absensi_array.{$index}.";
@@ -332,25 +388,30 @@ trait WithAbsenModal
             return;
         }
 
-        $nilaiArray = $nilaiMahasiswa->nilai_array ?? [];
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Hitung Akumulasi Nilai Akhir OBE
+        |--------------------------------------------------------------------------
+        */
+        $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
         foreach ($this->list_absensi_array as $index => $item) {
             $nilaiArray[$index] = (float) ($item['nilai'] ?? 0);
         }
 
-        $nilaiMahasiswa->nilai_array = $nilaiArray;
-        $bobotArray = $nilaiMahasiswa->bobot_array ?? [];
+        $nilai_mahasiswa->nilai_array = $nilaiArray;
+        $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
         $totalNilai = 0;
+
         foreach ($nilaiArray as $i => $nilai) {
             $bobot = $bobotArray[$i] ?? 0;
             $totalNilai += ((float) $nilai) * ((float) $bobot);
         }
 
-        $nilaiMahasiswa->kj_id = $this->jadwal->id;
-        $nilaiMahasiswa->nilai = round($totalNilai, 2);
+        $nilai_mahasiswa->nilai = round($totalNilai, 2);
 
         /*
         |--------------------------------------------------------------------------
-        | 3. Eksekusi Simpan Database
+        | 5. Eksekusi Simpan Database
         |--------------------------------------------------------------------------
         */
         try {
@@ -375,7 +436,7 @@ trait WithAbsenModal
 
                 $kehadiran = MahasiswaKehadiran::updateOrCreate(
                     [
-                        'id' => $item['kehadiran_id'],
+                        'id' => $item['kehadiran_id'] ?: null, // Gunakan fallback null agar jika kosong system memicu insert baru
                     ],
                     [
                         'sesi_id' => $item['sesi_id'],
@@ -392,7 +453,8 @@ trait WithAbsenModal
                 $this->list_absensi_array[$index]['waktu_presensi'] = $kehadiran->waktu_presensi;
             }
 
-            $nilaiMahasiswa->save();
+            // Simpan model NilaiMahasiswa (Otomatis INSERT jika record baru / UPDATE jika record lama)
+            $nilai_mahasiswa->save();
 
             \DB::commit();
 
@@ -457,6 +519,8 @@ trait WithAbsenModal
         $fields = [
             'selected_id_sesi',
             'selected_id_mahasiswa',
+            'selected_id_jadwal',
+            'selected_id_rps',
         ];
 
         $this->list_absensi_array = [];

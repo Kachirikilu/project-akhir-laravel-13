@@ -9,7 +9,7 @@
                     accept="{{ $typeFile ?? '.xlsx, .xls' }}"
                     wire:key="{{ $wireKeyString }}"
                     {{  $multiFile ?? false ? 'multiple' : '' }}
-                    class="
+                    class="text-xs sm:text-sm 
                         bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
                         placeholder-[var(--contrast-third-text)]
                         
@@ -30,7 +30,7 @@
                                 stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                         </svg>
-                        <span class="hidden sm:inline">Memuat...</span>
+                        <span class="text-xs sm:text-sm hidden sm:inline">Memuat...</span>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <button type="button" 
                     wire:click="{{ $fileDelete ?? 'clearExcelFile' }}"
                     wire:loading.attr="disabled"
-                    class="px-3 py-3 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 shrink-0 cursor-pointer"
+                    class="text-xs sm:text-sm px-3 py-3 bg-red-50 hover:bg-red-100 active:bg-red-100/90 dark:bg-red-950/30 dark:hover:bg-red-900/40 active:hover:bg-red-900/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 shrink-0 cursor-pointer"
                     title="Hapus file yang dipilih">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -53,7 +53,7 @@
     </div>
 
     @if (!empty($message))
-        <span class="text-red-500 text-sm mt-1 block">
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">
             {{ $message }}
         </span>
     @endif

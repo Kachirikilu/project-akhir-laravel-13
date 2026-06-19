@@ -3,7 +3,7 @@
     @if ($switchTable == 'mahasiswa')
         <x-slot:sortir>
             <div x-data="{ activeTab: @entangle('filterAngkatan') }"
-                class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+                class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByAngkatan',
@@ -263,13 +263,13 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (!($withNilai ?? false))
-                <td class="table-main text-center">{{ $user->id }}</td>
+                <td class="text-xs sm:text-sm table-main text-center">{{ $user->id }}</td>
 
                 @if ($switchTable !== '')
-                    <td class="table-second table-border-r text-center">{{ $user->role_id }}</td>
+                    <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $user->role_id }}</td>
                 @endif
             @endif
             {{-- @php
@@ -286,17 +286,17 @@
 
     
                 @endphp
-                <td class="table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
+                <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
             {{-- Role --}}
             @if ($withRPS ?? false)
                 @if ($switchTable == 'dosen')
-                    <td class="table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
+                    <td class="text-xs sm:text-sm table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
                         {{ $user->identity2 ?? '-' }}</td>
                 @elseif ($switchTable == 'mahasiswa')
-                    <td class="table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
+                    <td class="text-xs sm:text-sm table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
                 @endif
             @else
-                <td class="table-second text-center">
+                <td class="text-xs sm:text-sm table-second text-center">
                     <flux:dropdown>
 
                         <button class="cursor-pointer">
@@ -328,12 +328,12 @@
             @endif
 
 
-            <td class="{{ $withRPS ?? false ? 'table-second' : 'table-main' }} whitespace-nowrap">
+            <td class="text-xs sm:text-sm {{ $withRPS ?? false ? 'table-second' : 'table-main' }} whitespace-nowrap">
                 {{ $user->name ?? '-' }}</td>
 
             @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
                 @if ($withNilai ?? null)
-                    <td class="table-second table-border-x whitespace-nowrap">
+                    <td class="text-xs sm:text-sm table-second table-border-x whitespace-nowrap">
                         @if (!$user->trashed())
                             <x-button-action color="emerald"
                                 href="{{ route('nilai-mahasiswa-management', [
@@ -351,11 +351,11 @@
                         @endif
                     </td>
                 @endif
-                <td class="table-second table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
                     {{ $user->mahasiswa->rekap_mhs ?? '0.00' }}</td>
-                <td class="table-second whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
                     {{ $user->mahasiswa->ipk_mhs ?? '0.00' }}</td>
-                <td class="table-sub table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -370,10 +370,10 @@
                 </td>
             @endif
             @if (!($withRPS ?? false))
-                <td class="table-second">{{ $user->email }}</td>
+                <td class="text-xs sm:text-sm table-second">{{ $user->email }}</td>
             @endif
             @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
-                <td class="table-second table-border-x text-center">
+                <td class="text-xs sm:text-sm table-second table-border-x text-center">
                     <x-button-action
                         @click="
                             $store.user?.reset();
@@ -416,15 +416,15 @@
                         <span>RPS</span>
                     </x-button-action>
                 </td>
-                <td class="table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
-                <td class="table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
+                <td class="text-xs sm:text-sm table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
+                <td class="text-xs sm:text-sm table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
                     SKS</td>
             @endif
 
             @if (!($withRPS ?? false))
-                <td class="table-main text-center">{{ $user->identity1 ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-main text-center">{{ $user->identity1 ?? '-' }}</td>
                 @if ($switchTable != 'mahasiswa')
-                    <td class="table-sub {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
+                    <td class="text-xs sm:text-sm table-sub {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
                         {{ $user->identity2 ?? '-' }}
                     </td>
                 @endif
@@ -435,15 +435,15 @@
                         {{ $user->identity3 ?? '-' }}
                     </td>
                 @endif
-                <td class="table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'mahasiswa')
-                <td class="table-second table-border-x text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second table-border-x text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
-                <td class="table-second text-center">
+                <td class="text-xs sm:text-sm table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer focus:outline-none">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -460,7 +460,7 @@
                 </td>
             @endif
 
-            <td class="table-second text-center">
+            <td class="text-xs sm:text-sm table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -476,11 +476,11 @@
             </td>
 
             @if ((($withCapaian ?? false) && ($withProdi ?? false)) || !isset($withCapaian))
-                <td class="table-second min-w-48">
+                <td class="text-xs sm:text-sm table-second min-w-48">
                     {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
             @endif
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -495,8 +495,8 @@
             </td>
 
             @if (!(($withRPS ?? false) || ($withNilai ?? false) || Auth::user()?->dosen))
-                <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
-                <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
             @endif
         </tr>
 

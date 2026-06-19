@@ -1,7 +1,5 @@
 <div
-    class="px-4 py-6 mt-4
-            bg-[var(--main-table-color)] table-border
-            shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Input Rencana Pembelajaran Semester</h4>
@@ -84,7 +82,7 @@
                     </div>
                 </div>
                 {{-- @error('kode_pr')
-                    <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('kode_pr') }}</span>
+                    <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $errors->first('kode_pr') }}</span>
                 @enderror --}}
             </div>
 
@@ -168,7 +166,7 @@
                     </div>
 
                     @error('akademik')
-                        <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('akademik') }}</span>
+                        <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $errors->first('akademik') }}</span>
                     @enderror
                 </div>
 

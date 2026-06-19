@@ -110,7 +110,7 @@ store.{{ $modelString }} = valueInput ?? '';
         name="{{ $modelString }}"
         x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
         :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
-        class="bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
+        class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $readonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
         {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}
         @if (($isDate ?? false) === 'year') inputmode="numeric"
@@ -221,13 +221,13 @@ store.{{ $modelString }} = valueInput ?? '';
                 {{-- Icon Mata Terbuka --}}
                 <template x-if="!showPassword">
                     <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon"
-                        class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 transition duration-200" />
+                        class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                 </template>
 
                 {{-- Icon Mata Tertutup --}}
                 <template x-if="showPassword">
                     <flux:icon icon="eye-slash" variant="mini"
-                        class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 transition duration-200" />
+                        class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                 </template>
 
             </button>
@@ -238,14 +238,14 @@ store.{{ $modelString }} = valueInput ?? '';
     {{-- Error Message --}}
     {{-- @if ($message ?? null)
         @error($modelString)
-            <span class="text-red-500 text-sm mt-1 block">
+            <span class="text-xs sm:text-sm text-red-500 mt-1 block">
                 {{ $message }}
             </span>
         @enderror
     @endif --}}
 
     @if (!empty($message))
-        <span class="text-red-500 text-sm mt-1 block">
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">
             {{ $message }}
         </span>
     @endif

@@ -21,7 +21,7 @@
                 'border-[var(--main-text)] bg-white/5 text-[var(--main-text)] pl-3' =>
                     isset($sub['active-sub']) && $sub['active-sub'],
                 // TIDAK ACTIVE
-                'text-[var(--main-text)]/70 hover:bg-white/10 hover:text-[var(--main-text)] border-transparent pl-4' =>
+                'text-[var(--main-text)]/70 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 border-transparent pl-4' =>
                     !($sub['active'] ?? false) && !(isset($sub['active-sub']) && $sub['active-sub']),
             ])>
             <div class="flex items-center">

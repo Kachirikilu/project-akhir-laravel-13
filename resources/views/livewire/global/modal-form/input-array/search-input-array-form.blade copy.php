@@ -95,7 +95,7 @@
     </div>
 
     @error($id2String ?? $idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $message }}</span>
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
@@ -117,7 +117,7 @@
             {{-- <template x-for="(id, index) in items" :key="id"> --}}
             <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
                     <div class="flex items-start gap-3 flex-1">
 
                         <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
@@ -167,7 +167,7 @@
                                 @if ($typeLinkString ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <a :href="itemsAll[index]?.link" target="_blank"
-                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
+                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline active:underline text-xs font-bold">
                                         <flux:icon.link variant="micro" /> <span x-text="itemsAll[index]?.link"></span>
                                     </a>
                                 @endif

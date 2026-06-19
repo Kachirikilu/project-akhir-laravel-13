@@ -165,13 +165,13 @@
             @empty
                 <div class="p-4 text-center">
                     <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-sm text-[var(--focus-color)] font-medium animate-pulse">
+                        <p class="text-xs text-sm text-[var(--focus-color)] font-medium animate-pulse">
                             Sedang mencari data {{ $nameXString ?? null }}...
                         </p>
                     </div>
 
                     <div wire:loading.remove @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                        <p class="text-xs text-sm text-gray-500 dark:text-gray-400 italic">
                             Data {{ $nameXString ?? null }} tidak ditemukan!
                         </p>
                     </div>
@@ -181,16 +181,16 @@
     </div>
 
     @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
     @enderror
     @error($itemsAllString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
         <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
+            <span class="text-xs text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
                 @include('livewire.global.modal-form.partial.reset-all-buttons')
                 <span x-show="items.length > 0"
@@ -208,7 +208,7 @@
                     <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="flex items-start gap-3 flex-1">
                             <button type="button" @click="setKetuaById(id)"
-                                :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
+                                :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400 active:text-amber-500'"
                                 class="cursor-pointer mt-1 transition-colors" title="Jadikan Ketua">
                                 <flux:icon icon="star" variant="solid" class="size-5" />
                             </button>
@@ -222,7 +222,7 @@
                                 </div>
 
                                 {{-- Nama Utama --}}
-                                <span class="text-sm font-bold text-[var(--contrast-main-text)]"
+                                <span class="text-xs text-sm font-bold text-[var(--contrast-main-text)]"
                                     x-text="itemsAll[index]?.slot1"></span>
 
                                 {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
@@ -285,19 +285,19 @@
                             <div class="flex items-center gap-1 ml-2">
                                 <div class="flex flex-col gap-0.5">
                                     <button @click="move(index, -1)" type="button"
-                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600 rounded disabled:opacity-10"
                                         :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
                                         <flux:icon icon="chevron-up" variant="mini" class="size-4" />
                                     </button>
                                     <button @click="move(index, 1)" type="button"
-                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600 rounded disabled:opacity-10"
                                         :disabled="index === items.length - 1 || index == 0">
                                         <flux:icon icon="chevron-down" variant="mini" class="size-4" />
                                     </button>
                                 </div>
 
                                 <button @click="removeItem(index)" type="button"
-                                    class="cursor-pointer p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
+                                    class="cursor-pointer p-1.5 text-red-500 hover:bg-red-100 active:bg-red-100/90 dark:hover:bg-red-900/30 dark:active:bg-red-900/40 rounded-md transition-colors ml-1">
                                     <flux:icon icon="trash" variant="mini" class="size-5" />
                                 </button>
                             </div>

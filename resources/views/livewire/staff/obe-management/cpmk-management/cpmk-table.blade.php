@@ -103,11 +103,11 @@
 
     @forelse($cpmk as $c)
         <tr wire:key="{{ $switchTable }}-{{ $c->id }}" data-{{ $switchTable }}-id="{{ $c->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $c->id }}</td>
+            <td class="text-xs sm:text-sm table-second text-center">{{ $c->id }}</td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="academic-cap" color="violet" size="sm">{{ $c->kode ?? '---' }}
@@ -123,16 +123,16 @@
             </td>
 
 
-            <td class="table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
+            <td class="text-xs sm:text-sm table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
                 {{ $c->deskripsi_cpl ?? '-' }}</td>
 
 
             @if ($withCapaian ?? null)
-                <td class="table-second table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
                     {{ $c->rekap_cpmk_pr ?? '0.00' }}</td>
-                <td class="table-second whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
                     {{ $c->index_cpmk_pr ?? '0.00' }}</td>
-                <td class="table-sub table-border-l whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -148,14 +148,14 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-x whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-second table-border-x whitespace-nowrap text-center">
                 {{ $c->count_cpl ?? '-' }} CPL</td>
             @if (!($withCapaian ?? false))
-                <td class="table-sub whitespace-nowrap text-center">
+                <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">
                     {{ $c->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
-                <td class="table-sub text-center">{{ $c->total_bobot ? $c->total_bobot . '%' : '-' }}</td>
+                <td class="text-xs sm:text-sm table-sub text-center">{{ $c->total_bobot ? $c->total_bobot . '%' : '-' }}</td>
             @endif
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -171,8 +171,8 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
-                <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

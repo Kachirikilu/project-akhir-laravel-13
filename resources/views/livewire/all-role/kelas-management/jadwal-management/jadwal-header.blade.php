@@ -2,16 +2,17 @@
 <div class="mb-8">
     <div class="flex items-center gap-4 mb-6">
         <a href="{{ $backUrl ?? route('kelas-management') }}" wire:navigate
-            class="mx-2 p-3 rounded-full hover:bg-[var(--hover-table-color)] transition-colors">
-            <flux:icon name="arrow-left" class="h-6 w-6 text-[var(--contrast-second-text)]" />
+            class="mx-2 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
+            <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
         </a>
-        <div>
-            <h2 class="mb-2 text-2xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
+
+        <div class="min-w-0">
+            <h2 class="mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
                 <span>{{ $kelas->kelas }}</span>
             </h2>
-            <p class="text-[var(--contrast-main-text)] opacity-70 text-sm flex items-center gap-2 flex-wrap mt-0.5">
-                <span>Manajemen {{ $subHead }} dan Detail untuk
-                    {{ $mainHead }} ini</span>
+            <p
+                class="text-[var(--contrast-main-text)] opacity-70 text-xs sm:text-sm flex items-center gap-2 flex-wrap mt-0.5">
+                <span>Manajemen {{ $subHead }} dan Detail untuk {{ $mainHead }} ini</span>
             </p>
         </div>
     </div>
@@ -20,37 +21,47 @@
     <div
         class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
         <div class="flex flex-col gap-1">
-            <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
                 {{ $mainHead }}</span>
-            <span class="text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
+            <span class="text-md sm:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
 
             @if ($subLabel ?? false)
-                <span class="text-xs text-[var(--contrast-main-text)] opacity-70">{{ $subLabel ?? '---' }}</span>
+                <span
+                    class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">{{ $subLabel ?? '---' }}</span>
             @endif
         </div>
         <div class="flex flex-col gap-1">
-            <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Mata
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Mata
                 Kuliah</span>
-            <span class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
-            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
+            <span
+                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
+            <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->kode_mk ?? '---' }}
                 <strong class="px-2">|</strong>
                 Sem {{ $kelas->semester ?? '-' }}</span>
         </div>
         <div class="flex flex-col gap-1">
-            <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Program
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Program
                 Studi</span>
-            <span class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->prodi ?? '-' }}</span>
-            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">{{ $kelas->kode_pr ?? '---' }}
+            <span
+                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->prodi ?? '-' }}</span>
+            <span
+                class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">{{ $kelas->kode_pr ?? '---' }}
                 <strong class="px-2">|</strong>
                 {{ $kelas->pr_rel->fakultas_fk ?? '----' }}
             </span>
         </div>
         <div class="flex flex-col gap-1">
-            <span class="text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">RPS /
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">RPS
+                /
                 SKS</span>
-            <span class="text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps_url ?? '---' }}</span>
-            <span class="text-xs text-[var(--contrast-main-text)] opacity-70">
+            <span
+                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps_url ?? '---' }}</span>
+            <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->sks ?? '-' }} SKS
                 <strong class="px-2">|</strong>
                 {{ $kelas->sks_text ?? '-' }}</span>
@@ -75,7 +86,7 @@
                     $flux.modal('rps-detail-modal').show();
             "
             wire:click="showRPS({{ $kelas->rps_id }})" icon="eye" size="sm"
-            class="!cursor-pointer px-6 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200">
+            class="!cursor-pointer px-6 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200">
             <span>Show RPS</span>
         </flux:button>
 
@@ -161,7 +172,7 @@
                 @click="
                     $store.sesi?.reset();
                     $store.sesi?.setEdit(0);
-                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600');
+                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 active:file:bg-green-800 dark:file:bg-green-500 dark:hover:file:bg-green-600 dark:active:file:bg-green-700');
                     {{-- $wire.addUser('excel'); --}}
                     $flux.modal('nilai-excel-modal').show();
                 "

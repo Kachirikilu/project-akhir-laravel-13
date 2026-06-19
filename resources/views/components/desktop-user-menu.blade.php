@@ -2,7 +2,7 @@
 
 <flux:dropdown position="bottom" align="start">
     <button type="button"
-        class="group flex w-full items-center rounded-lg p-1 hover:bg-zinc-800/5 dark:hover:bg-white/10"
+        class="group flex w-full items-center rounded-lg p-1 hover:bg-zinc-800/5 dark:hover:bg-white/10 active:bg-white/20"
         data-test="sidebar-menu-button">
         <flux:avatar :initials="Auth()->user()->initials()" size="sm" />
         <div class="in-data-flux-sidebar-collapsed-desktop:hidden mx-2 grid flex-1 text-start text-sm leading-tight">

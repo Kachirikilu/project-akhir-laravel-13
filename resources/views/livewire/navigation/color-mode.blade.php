@@ -110,7 +110,7 @@ class="flex flex-col items-center gap-1 mb-6">
         class="w-[220px] flex justify-between items-center bg-gray-900/80 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg overflow-hidden">
 
         <button @click="scrollThemes('left')" type="button"
-            class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 transition-all cursor-pointer">
+            class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer">
             <flux:icon name="chevron-left" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white" />
         </button>
 
@@ -133,7 +133,7 @@ class="flex flex-col items-center gap-1 mb-6">
 
         {{-- Tombol Kanan --}}
         <button @click="scrollThemes('right')" type="button"
-            class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 transition-all cursor-pointer">
+            class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer">
             <flux:icon name="chevron-right" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white" />
         </button>
     </div>

@@ -11,7 +11,7 @@
             @endif
             
             {{ ($isCenter ?? false) ? 'text-center' : '' }}
-            text-sm text-gray-700">
+            text-xs sm:text-sm text-gray-700">
     {{ $xData ?? null }}
 @if ($isOnlyHeadTd ?? false)
 @else

@@ -11,7 +11,7 @@
     class="cursor-pointer flex items-center text-xs mx-1 p-2 rounded-lg transition-colors w-full
         {{ $active
             ? 'bg-white/20 text-[var(--main-text)]'
-            : 'text-[var(--main-text)]/80 hover:bg-white/10 hover:text-[var(--main-text)]' }}"
+            : 'text-[var(--main-text)]/80 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 active:bg-white/20 active:text-[var(--main-text)]/90' }}"
     title="{{ $item['label'] }}"
 >
     <div class="flex items-center justify-between overflow-hidden w-full">

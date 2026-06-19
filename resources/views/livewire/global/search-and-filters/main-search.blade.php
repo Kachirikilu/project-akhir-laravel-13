@@ -79,6 +79,7 @@
             @input.debounce.{{ $isBounce }}="if(isRealtime) triggerRealtimeSearch($el.value)" @endif
         @dblclick="showSearchModePopup = true" @keydown.enter="triggerManualSearch()"
         class="
+            text-xs sm:text-sm
             focus:ring-2
             focus:ring-[var(--focus-color)]
             outline-none
@@ -122,7 +123,7 @@
                 @dblclick="showSearchModePopup = true" wire:loading.attr="disabled" class="bg-[var(--focus-color)]"
                 :class="{
                     'cursor-pointer h-8 px-5 rounded-md flex items-center shadow-sm transition-all duration-200 select-none': true,
-                    'hover:bg-[var(--hover-focus-color)] text-white': !isRealtime,
+                    'hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 text-white': !isRealtime,
                     'text-white ring-2 ring-white/10': isRealtime
                 }">
                 <div x-show="!isRealtime" class="flex items-center">
@@ -152,10 +153,10 @@
             <div class="px-4 py-3">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-medium text-[var(--contrast-main-text)]">
+                        <div class="text-xs sm:text-sm font-medium text-[var(--contrast-main-text)]">
                             Realtime Search
                         </div>
-                        <div class="text-xs text-[var(--contrast-second-text)]">
+                        <div class="text-[9px] sm:text-xs text-[var(--contrast-second-text)]">
                             Cari otomatis saat mengetik
                         </div>
                     </div>
@@ -173,7 +174,7 @@
             {{-- LOOPING YANG SUDAH DIPERBAIKI --}}
             @if (!empty($searchValues))
                 <div class="px-4 py-2 border-y border-[var(--contrast-second-text)]">
-                    <div class="text-sm font-semibold text-[var(--contrast-main-text)]">
+                    <div class="text-xs sm:text-sm font-semibold text-[var(--contrast-main-text)]">
                         Mode Pencarian
                     </div>
                 </div>
@@ -186,17 +187,17 @@
                     @endphp
 
                     <div @click="changeSearchMode('{{ $value }}')"
-                        class="px-4 py-3 cursor-pointer transition-colors hover:bg-[var(--hover-pop-up-color)]">
+                        class="px-4 py-3 cursor-pointer transition-colors hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
                         <div class="flex items-center justify-between gap-4">
 
                             <div class="flex flex-col min-w-0">
-                                <span class="text-sm font-medium text-[var(--contrast-main-text)]">
+                                <span class="text-xs sm:text-sm font-medium text-[var(--contrast-main-text)]">
                                     {{ $label }}
                                 </span>
 
                                 @if ($desc)
                                     <span
-                                        class="text-[10px] leading-normal text-[var(--contrast-second-text)] opacity-80 mt-0.5 break-words">
+                                        class="text-[9px] sm:text-xs leading-normal text-[var(--contrast-second-text)] opacity-80 mt-0.5 break-words">
                                         {{ $desc }}
                                     </span>
                                 @endif

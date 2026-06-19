@@ -126,14 +126,14 @@
                 @include('livewire.global.modal-form.input-array.partial.search-scpmk-dropdown')
             @empty
                 <div class="p-8 text-center">
-                    <p class="text-sm text-gray-500 italic">Data tidak ditemukan!</p>
+                    <p class="text-xs text-sm text-gray-500 italic">Data tidak ditemukan!</p>
                 </div>
             @endforelse
         </div>
     </div>
 
     @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH --}}
@@ -151,7 +151,7 @@
             {{-- <template x-for="(id, index) in items" :key="id"> --}}
             <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="flex flex-col bg-[var(--second-table-color)] border table-border rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
+                    class="flex flex-col bg-[var(--second-table-color)] border table-border rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
                     @include('livewire.global.modal-form.input-array.partial.scpmk-header')
                     @include('livewire.global.modal-form.input-array.partial.scpmk-table')
                 </div>

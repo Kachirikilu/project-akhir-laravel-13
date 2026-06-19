@@ -1,16 +1,20 @@
 <x-global.main-layout-table :paginator="$sesis">
 
     <x-slot:sortir>
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'pertemuan_ke',
-            'headString' => 'Pertemuan',
-        ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'total_absensi',
-            'headString' => 'Absensi',
-        ])
-        @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
-        @include('livewire.global.table.head-sortir', ['sortFieldString' => 'bobot'])
+        <div
+            class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'pertemuan_ke',
+                'headString' => 'Pertemuan',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'total_absensi',
+                'headString' => 'Absensi',
+            ])
+            @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
+            @include('livewire.global.table.head-sortir', ['sortFieldString' => 'bobot'])
+        </div>
     </x-slot:sortir>
     <x-slot:search>
         <div class="w-full md:w-96 xl:w-108">
@@ -155,13 +159,13 @@
 
     @forelse($sesis as $s)
         <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-second text-center">{{ $s->id }}</td>
+                <td class="text-xs sm:text-sm table-second text-center">{{ $s->id }}</td>
             @endif
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.metode-badge', [
@@ -184,15 +188,15 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second text-center whitespace-nowrap">{{ $s->pertemuan_ke }}</td>
+            <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">{{ $s->pertemuan_ke }}</td>
 
-            <td class="table-main text-center whitespace-nowrap">{{ $s->hari }}</td>
-            <td class="table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
-            <td class="table-sub text-center whitespace-nowrap">
-                {{ ($s->total_absensi) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
-            <td class="table-sub text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
+            <td class="text-xs sm:text-sm table-main text-center whitespace-nowrap">{{ $s->hari }}</td>
+            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
+            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
+                {{ $s->total_absensi . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
+            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
-            <td class="table-main text-center whitespace-nowrap">
+            <td class="text-xs sm:text-sm table-main text-center whitespace-nowrap">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $s->kode_scpmk ?? '---' }}
@@ -212,20 +216,20 @@
                     )
                 </flux:dropdown>
             </td>
-            <td class="table-sub table-border-r text-center whitespace-nowrap">
+            <td class="text-xs sm:text-sm table-sub table-border-r text-center whitespace-nowrap">
                 {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}</td>
-            {{-- <td class="table-sub min-w-84">{{ $s->deskripsi ?? '-' }}</td>
-            <td class="table-sub min-w-48">{{ $s->materi ?? '-' }}</td>
-            <td class="table-sub min-w-48">{{ $s->metodologi ?? '-' }}</td>
-            <td class="table-sub min-w-48">{{ $s->indikator ?? '-' }}</td> --}}
+            {{-- <td class="text-xs sm:text-sm table-sub min-w-84">{{ $s->deskripsi ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub min-w-48">{{ $s->materi ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub min-w-48">{{ $s->metodologi ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub min-w-48">{{ $s->indikator ?? '-' }}</td> --}}
 
-            <td class="table-sub min-w-48">{{ $s->tugas ?? '-' }}</td>
-            <td class="table-sub whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-sub min-w-48">{{ $s->tugas ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">
                 {{ $s->w_tugas ?? 0 }} menit</td>
-            <td class="table-sub table-border-r whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-sub table-border-r whitespace-nowrap text-center">
                 {{ $s->w_mandiri ?? 0 }} menit</td>
 
-            <td class="table-second text-center whitespace-nowrap">
+            <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">
 
                 <flux:dropdown>
                     <button class="cursor-pointer">
@@ -248,7 +252,7 @@
             </td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-main text-center">
+                <td class="text-xs sm:text-sm table-main text-center">
                     <flux:dropdown>
                         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                             inset="top bottom">
@@ -271,8 +275,8 @@
             @endif
 
 
-            {{-- <td class="table-second whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
+            {{-- <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
     @empty
         <tr>

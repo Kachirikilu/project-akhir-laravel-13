@@ -17,7 +17,7 @@
         this.clicked = false
     }
 }" @click.prevent="doSort()"
-    class="w-full h-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs font-medium uppercase whitespace-nowrap transition-all duration-200">
+    class="w-full h-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 sm:text-[9px] sm:text-xs font-medium uppercase whitespace-nowrap transition-all duration-200">
 
     <div class="flex items-center gap-1">
 
@@ -29,7 +29,7 @@
                     !(
                         sortField === '{{ $sortFieldString }}' || clicked)
             }"
-            class="{{ $isCenter ?? false ? 'ml-3' : '' }} transition-colors duration-200">
+            class="{{ $isCenter ?? false ? 'ml-3' : '' }} text-xs sm:text-sm transition-colors duration-200">
             {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
         </span>
 

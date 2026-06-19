@@ -121,7 +121,7 @@
                 "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-                hover:bg-[var(--hover-pop-up-color)]
+                hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90
                 {{-- border-b last:border-none  --}}
                 text-sm">
 
@@ -151,6 +151,6 @@
         @endforelse
     </div>
     @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $message }}</span>
     @enderror
 </div>

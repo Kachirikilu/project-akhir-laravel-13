@@ -44,22 +44,6 @@
             </div>
         </div>
 
-        <div class="shrink-0">
-            @include('livewire.global.table.export-button', [
-                'nameXString' => "Rekap Capaian $kode_pr_url",
-                'xString' => "generateRekapCapaian($pr_id_url, 15)",
-                'color' => 'blue',
-                'icon' => 'academic-cap',
-            ])
-        </div>
-
-        <div class="shrink-0">
-            @include('livewire.global.table.export-button', [
-                'xString' => 'exportRekapExcel()',
-                'autoSmall' => 'sm',
-            ])
-        </div>
-
     </div>
 
 

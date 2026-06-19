@@ -22,26 +22,29 @@
     @endphp
 
     <x-slot:sortir>
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'pertemuan_ke',
-            'headString' => 'NIM',
-        ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'name',
-            'headString' => 'Nama',
-        ])
-        @if (Auth::user()->admin || Auth::user()->dosen)
+        <div
+            class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
             @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'mhs_poin_absensi',
-                'headString' => 'Absensi',
+                'sortFieldString' => 'pertemuan_ke',
+                'headString' => 'NIM',
             ])
-        @endif
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'angkatan',
-        ])
-        @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'status',
-        ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'name',
+                'headString' => 'Nama',
+            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'mhs_poin_absensi',
+                    'headString' => 'Absensi',
+                ])
+            @endif
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'angkatan',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'status',
+            ])
+        </div>
     </x-slot:sortir>
     <x-slot:search>
         <div class="w-full md:w-96 xl:w-108">
@@ -206,12 +209,12 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-main text-center">{{ $user->mahasiswa->id }}</td>
+            <td class="text-xs sm:text-sm table-main text-center">{{ $user->mahasiswa->id }}</td>
 
             {{-- Role --}}
-            <td class="table-second table-border-r text-center">
+            <td class="text-xs sm:text-sm table-second table-border-r text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
@@ -223,7 +226,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-main table-border-r text-center">{{ $user->mahasiswa->nim }}</td>
+            <td class="text-xs sm:text-sm table-main table-border-r text-center">{{ $user->mahasiswa->nim }}</td>
 
 
             @php
@@ -235,10 +238,10 @@
                 }
             @endphp
 
-            <td class="table-second table-border-r whitespace-nowrap">{{ $user->name ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second table-border-r whitespace-nowrap">{{ $user->name ?? '-' }}</td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-second table-border-r text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-second table-border-r text-center whitespace-nowrap">
                     <flux:dropdown>
 
                         <button class="cursor-pointer">
@@ -264,42 +267,42 @@
                         )
                     </flux:dropdown>
                 </td>
-                <td class="table-sub text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_dispensasi ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub table-border-r text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_terlambat ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_izin ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_sakit ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub table-border-r text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
                     @else
@@ -307,21 +310,21 @@
                     @endif
                 </td>
 
-                <td class="table-second text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_akhir ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-second text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_index ?? 0 }}
                     @else
                         -
                     @endif
                 </td>
-                <td class="table-sub table-border-x text-center whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-sub table-border-x text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         <flux:dropdown>
                             <button class="cursor-pointer">
@@ -340,9 +343,9 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
 
-            <td class="table-second text-center">
+            <td class="text-xs sm:text-sm table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer focus:outline-none">
                         @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -357,7 +360,7 @@
                     )
                 </flux:dropdown>
             </td>
-            <td class="table-second text-center">
+            <td class="text-xs sm:text-sm table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -371,10 +374,10 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second min-w-48">
+            <td class="text-xs sm:text-sm table-second min-w-48">
                 {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">

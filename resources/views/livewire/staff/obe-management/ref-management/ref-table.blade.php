@@ -59,11 +59,11 @@
 
     @forelse($ref as $r)
         <tr wire:key="{{ $switchTable }}-{{ $r->id }}" data-{{ $switchTable }}-id="{{ $r->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $r->id }}</td>
+            <td class="text-xs sm:text-sm table-second text-center">{{ $r->id }}</td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
 
@@ -78,14 +78,14 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="table-second table-border-r min-w-84">{{ $r->judul ?? '-' }}</td>
-            <td class="table-second min-w-48">{{ $r->penulis ?? '-' }}</td>
-            <td class="table-second min-w-48">{{ $r->penerbit ?? '-' }}</td>
-            <td class="table-main text-center">{{ $r->tahun ?? '-' }}</td>
-            <td class="table-second min-w-48">
+            <td class="text-xs sm:text-sm table-second table-border-r min-w-84">{{ $r->judul ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second min-w-48">{{ $r->penulis ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second min-w-48">{{ $r->penerbit ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-main text-center">{{ $r->tahun ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second min-w-48">
                 @if ($r->link)
                     <a href="{{ $r->link }}" target="_blank"
-                        class="flex items-center gap-1 hover:underline text-xs font-bold text-blue-600 dark:text-blue-400">
+                        class="flex items-center gap-1 hover:underline active:underline text-xs font-bold text-blue-600 dark:text-blue-400">
                         <flux:icon.link variant="micro" /> <span>{{ $r->link ?? '-' }}</span>
                     </a>
                 @else
@@ -95,7 +95,7 @@
 
             </td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -111,8 +111,8 @@
             </td>
 
 
-            <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
         </tr>
     @empty
         <tr>

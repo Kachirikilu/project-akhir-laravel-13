@@ -80,7 +80,7 @@ wire:key="select-form-{{ $modelString }}">
                 "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-                hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
+                hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90
                 {{-- border-b last:border-none  --}}
                 text-sm">
                 <div class="flex justify-between items-center my-1">
@@ -93,6 +93,6 @@ wire:key="select-form-{{ $modelString }}">
         @endforeach
     </div>
     @error($modelString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $message }}</span>
     @enderror
 </div>

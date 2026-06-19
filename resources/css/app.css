@@ -27,13 +27,34 @@
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 
-    --breakpoint-3xl: 120rem; /* 1920px / 16 */
-    --breakpoint-4xl: 160rem; /* 2560px / 16 */
-    --breakpoint-5xl: 240rem; /* 3840px / 16 */
+    --breakpoint-3xl: 120rem;
+    /* 1920px / 16 */
+    --breakpoint-4xl: 160rem;
+    /* 2560px / 16 */
+    --breakpoint-5xl: 240rem;
+    /* 3840px / 16 */
 }
 
 @layer components {
     /* Border */
+
+    .form-container {
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
+        @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
+        @apply px-2 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
+    }
+
+    .form-message {
+        @apply text-xs text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
+        @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;
+    }
+
+    .form-message-container {
+        @apply border-[var(--border-table-color)];
+        @apply p-4 mt-4 gap-4 rounded-lg shadow-sm border-t transition-colors duration-300;
+        @apply bg-[var(--second-table-trans)] sm:bg-[var(--sub-table-color)];
+    }
+
     .table-border {
         @apply border-[var(--border-table-color)];
     }
@@ -104,6 +125,13 @@
 }
 
 @layer utilities {
+    .btn-card-focus-state {
+        @apply transition-all duration-200;
+        &:hover, &:active {
+            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
+        }
+    }
+
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }
@@ -212,7 +240,7 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],

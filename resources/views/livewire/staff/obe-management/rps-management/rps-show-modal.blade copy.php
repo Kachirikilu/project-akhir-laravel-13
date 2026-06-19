@@ -1,12 +1,12 @@
 <flux:modal name="rps-detail-modal" wire:model="detailRPSModal" x-data flyout
-    class="md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
+    class="w-full md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
 
     @php
         $r = $detailRPSData ?? [];
     @endphp
 
     <flux:button @click="$wire.printPDFRPS($store.rps?.id ?? null)"
-        class="mr-2 mb-8 cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 border border-emerald-200">
+        class="mr-2 mb-8 cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 active:!bg-emerald-200 dark:active:!bg-emerald-900 border border-emerald-200">
 
         <flux:icon name="printer" class="mr-2 h-4 w-4" />
 
@@ -57,7 +57,7 @@
         "
         wire:loading.attr="disabled"
         wire:target="showRPS, editRPS"
-        class="mb-8 cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200">
+        class="mb-8 cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 border border-yellow-200">
 
         <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 

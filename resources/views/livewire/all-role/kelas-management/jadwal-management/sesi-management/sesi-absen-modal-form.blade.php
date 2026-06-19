@@ -1,5 +1,5 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
         <div class="py-4 space-y-4">
@@ -11,17 +11,17 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 ml-1">
-                    <h3 class="text-lg font-bold tracking-tight text-[var(--contrast-main-text)]">
+                    <h3 class="text-md sm:text-lg font-bold tracking-tight text-[var(--contrast-main-text)]">
                         Absen Kelas {{ $jadwal->kode }}
                     </h3>
-                    <x-label-card type="lg">
+                    <x-label-card type="md">
                         <span x-text="'Pertemuan ' + $store.sesi.pertemuan_ke"></span>
                     </x-label-card>
                 </div>
             </div>
             <div class="space-y-2 mt-6 mb-4">
 
-                <label class="flex items-center gap-2 text-sm font-medium mb-3 text-[var(--contrast-main-text)]">
+                <label class="flex items-center gap-2 text-xs sm:text-sm font-medium mb-3 text-[var(--contrast-main-text)]">
                     <flux:icon name="check-badge" class="w-4 h-4"
                         x-bind:class="$store.sesi.colorIcon ?? 'text-gray-400'" />
                     <div>
@@ -38,7 +38,7 @@
                             class="group relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 text-left cursor-pointer"
                             :class="$store.sesi.absen === item.label ?
                                 item.bg_active + ' ring-2 shadow-md scale-[1.02]' :
-                                'table-border bg-[var(--second-pop-up-color)] hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm hover:-translate-y-[1px]'">
+                                'table-border bg-[var(--second-pop-up-color)] hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-sm hover:-translate-y-[1px] active:border-gray-500 dark:active:border-gray-400 active:shadow-sm active:-translate-y-[1px]'">
 
                             <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"
@@ -67,7 +67,7 @@
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-sm text-[var(--contrast-main-text)]"
+                                    <div class="font-semibold text-xs sm:text-sm text-[var(--contrast-main-text)]"
                                         x-text="item.label"></div>
 
                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -88,7 +88,7 @@
                 </div>
 
                 @error('absen')
-                    <p class="text-sm text-red-500">
+                    <p class="text-xs sm:text-sm text-red-500">
                         {{ $message }}
                     </p>
                 @enderror
@@ -107,7 +107,7 @@
 
                 <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="absenSesi"
                     class="cursor-pointer w-full sm:w-auto
-                        bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]
+                        bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90
                         shadow-sm text-white border-none transition-all duration-200">
 
                     <span wire:loading.remove wire:target="absenSesi" class="text-white">

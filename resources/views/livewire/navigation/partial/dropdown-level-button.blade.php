@@ -62,7 +62,7 @@
             @endphp
 
             <flux:menu.item :href="$sub['url']" wire:navigate
-                class="group overflow-hidden rounded-md cursor-pointer !shadow-none !border-none hover:!bg-transparent focus:!bg-transparent active:!bg-transparent">
+                class="group overflow-hidden rounded-md cursor-pointer !shadow-none !border-none hover:!bg-transparent active:!bg-transparent focus:!bg-transparent">
 
                 <span
                     :class="(
@@ -73,8 +73,8 @@
                     'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' :
                     (
                         {{ $isBtnActiveSub ? 'true' : 'false' }} ?
-                        'border-l-2 border-[var(--border-main-color)] text-[var(--contrast-main-text)] bg-[var(--main-pop-up-color)]/90 dark:bg-[var(--main-pop-up-color)]/40 group-hover:bg-[var(--main-table-color)]/90 group-hover:dark:bg-[var(--main-table-color)]/40' :
-                        'border-l-2 border-transparent text-[var(--contrast-main-text)] group-hover:bg-[var(--main-table-color)]/90 group-hover:dark:bg-[var(--main-table-color)]/40'
+                        'border-l-2 border-[var(--border-main-color)] text-[var(--contrast-main-text)] bg-[var(--main-pop-up-color)]/90 dark:bg-[var(--main-pop-up-color)]/40 group-hover:bg-[var(--main-table-color)]/90 group-hover:dark:bg-[var(--main-table-color)]/40 group-active:bg-[var(--main-table-color)] group-active:dark:bg-[var(--main-table-color)]/30' :
+                        'border-l-2 border-transparent text-[var(--contrast-main-text)] group-hover:bg-[var(--main-table-color)]/90 group-hover:dark:bg-[var(--main-table-color)]/40 group-active:bg-[var(--main-table-color)] group-active:dark:bg-[var(--main-table-color)]/30'
                     )"
                     style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px;"
                     class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0">

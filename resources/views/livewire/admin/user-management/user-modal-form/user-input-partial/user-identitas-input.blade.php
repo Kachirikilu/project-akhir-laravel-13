@@ -1,11 +1,7 @@
 {{-- ****************************************************** --}}
 {{-- 2. PERSONAL INFORMATION (SESUAI ROLE) --}}
 {{-- ****************************************************** --}}
-<div
-    class="px-4 py-6 mt-4 
-    {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
-    bg-[var(--main-table-color)] table-border
-    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Identity Information</h4>

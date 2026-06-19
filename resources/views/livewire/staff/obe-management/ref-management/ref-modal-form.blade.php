@@ -1,11 +1,11 @@
 <flux:modal {{-- :flyout="$isFlyoutRef" wire:key="ref-modal-{{ $isFlyoutRef }}" --}} name="ref-modal" wire:model.live="showRefModal" x-data
     @refresh-data-ref.window="$store.ref.reset()"
-    class="md:w-[90vw] max-w-3xl h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
     <div class="flex flex-col h-full relative">
 
 
         {{-- 1. Header Modal --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
 
@@ -17,16 +17,14 @@
         </div>
 
         {{-- 2. Konten & Form --}}
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             <form x-on:submit.prevent="$wire.{{ $isEditingRef ? 'updateRef' : 'saveRef' }}($store.ref)"
                 enctype="multipart/form-data" id="refForm">
 
                 @include('livewire.staff.obe-management.ref-management.ref-modal-form.ref-input')
 
                 <div
-                    class="bg-[var(--sub-table-color)] table-border
-                    p-4 mt-4
-                    rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="form-message-container">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include(

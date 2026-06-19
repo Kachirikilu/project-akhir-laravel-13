@@ -5,7 +5,7 @@
             <flux:icon.academic-cap variant="solid" class="size-4 text-emerald-300" />
         </div>
         <div>
-            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">
+            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-xs sm:text-sm">
                 Capaian Pembelajaran Lulusan dari CPMK
             </h3>
             <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">Mapping CPL</p>
@@ -25,7 +25,7 @@
         </div>
 
         {{-- LIST --}}
-        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-tiny">
+        <div class="text-xs sm:text-sm space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-tiny">
 
             <template x-if="$store.rps.cpl_cpmk.length === 0">
                 <div class="flex flex-col items-center justify-center py-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">

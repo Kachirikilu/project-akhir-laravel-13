@@ -46,7 +46,7 @@
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
-            class="relative z-50 isolate col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
+            class="relative z-40 isolate col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
 
             {{-- Tab Departemen --}}
             <div x-show="activeTab === 'departemen'" x-transition:enter="transition ease-out duration-1000"
@@ -56,7 +56,7 @@
                 class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Departemen atau relasinya...',
+                        'placeholder' => 'Cari Departemen...',
                         'searchValues' => ['simple', 'full'],
                     ])
                 </div>
@@ -70,6 +70,8 @@
                 </div>
             </div>
 
+    
+
             {{-- Tab Fakultas --}}
             <div x-show="activeTab === 'fakultas'" x-transition:enter="transition ease-out duration-1000"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
@@ -78,11 +80,11 @@
                 class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Fakultas atau relasinya...',
+                        'placeholder' => 'Cari Fakultas...',
                         'searchValues' => ['simple', 'full'],
                     ])
                 </div>
-                <div class="col-start-1 row-start-1 sm:col-span-1">
+                <div class="col-start-2 row-start-1 sm:col-span-1">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [3, 5, 8, 10],
                         'key' => 'page-control-fakultas',

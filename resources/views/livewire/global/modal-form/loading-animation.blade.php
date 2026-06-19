@@ -25,7 +25,7 @@
             </path>
         </svg>
 
-        <p class="mt-3 text-sm font-semibold text-[var(--focus-color)] tracking-wide animate-pulse">
+        <p class="text-xs text-sm mt-3 text-sm font-semibold text-[var(--focus-color)] tracking-wide animate-pulse">
             {{ $textString ?? 'Sedang Memproses...' }}
         </p>
     </div>

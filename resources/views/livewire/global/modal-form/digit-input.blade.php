@@ -8,6 +8,6 @@
 
         <input type="text" x-bind:value="$store.{{ $alpine ?? 'config' }}?.{{ $modelString }} || '--'" readonly
             placeholder="--"
-            class="bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 px-3 py-2 text-center font-bold">
+            class="text-xs text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 px-3 py-2 text-center font-bold">
     </div>
 </div>

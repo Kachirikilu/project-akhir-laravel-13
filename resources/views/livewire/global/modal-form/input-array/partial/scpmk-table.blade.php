@@ -23,23 +23,23 @@
                 </thead>
                 <tbody class="divide-y divide-[var(--border-table-color)]">
                     <template x-for="sub in subItems[index]?.scpmk" :key="sub.id">
-                        <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                            <td class="py-2.5 px-2 leading-relaxed text-center" x-text="sub.id || '-'">
+                        <tr class="hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-colors">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed text-center" x-text="sub.id || '-'">
                             </td>
-                            <td class="py-2.5 px-2">
+                            <td class="text-xs sm:text-sm py-2.5 px-2">
                                 <flux:badge color="fuchsia" size="sm"
                                     class="py-0 px-1.5 text-xs font-bold uppercase">
                                     <span x-text="sub.kode || '-'"></span>
                                 </flux:badge>
                             </td>
-                            <td class="py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
                             </td>
-                            <td class="py-2.5 px-2 leading-relaxed" x-text="sub.metodologi || '-'"></td>
-                            <td class="py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.metodologi || '-'"></td>
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
                             </td>
-                            <td class="py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
                             </td>
-                            <td class="py-2.5 px-2 text-center leading-relaxed">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed">
                                 <div class="flex justify-center">
                                     <template x-if="sub.metode === 'UTS' || sub.metode === 'UAS'">
                                         <flux:badge color="amber" size="sm" class="text-xs font-bold uppercase"
@@ -62,17 +62,17 @@
                                     </template>
                                 </div>
                             </td>
-                            <td class="py-2.5 px-2 text-center leading-relaxed font-black text-[var(--hover-focus-color)]"
+                            <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed font-black text-[var(--hover-focus-color)]"
                                 x-text="sub.bobot + '%'"></td>
-                            <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
                                 x-text="sub.tugas || '-'"></td>
-                            <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
+                            <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
                                 x-text="sub.w_tugas || '-'"></td>
-                            <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
+                            <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
                                 x-text="sub.w_mandiri || '-'"></td>
 
                             @unless (($this->showSCPMKModal || $this->isEditingSCPMK) && ($this->isFlyoutRPS || $this->isFlyoutCPMK))
-                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
+                                <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
 
                                     {{-- 3. Tombol Aksi (Minimalist Style) --}}
                                     <div

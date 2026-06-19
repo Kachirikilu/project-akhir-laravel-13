@@ -75,7 +75,7 @@
 
     @php
         if ($layoutGrid) {
-            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
+            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
         } else {
             $layout_grid = 'space-y-4';
         }

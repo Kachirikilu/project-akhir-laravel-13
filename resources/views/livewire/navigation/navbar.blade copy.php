@@ -131,7 +131,7 @@
                     class="flex items-center text-xs mx-1 p-2 rounded-lg overflow-hidden transition-colors
                             {{ $isActive
                                 ? 'bg-white/20 text-[var(--main-text)]'
-                                : 'text-[var(--main-text)]/80 hover:bg-white/10 hover:text-[var(--main-text)]' }}"
+                                : 'text-[var(--main-text)]/80 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90' }}"
                     title="{{ $item['label'] }}">
                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
                     <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
@@ -349,7 +349,7 @@
             x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
             class="mx-1 flex justify-end">
             <button type="button" @click="toggleExpanded()"
-                class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-[var(--main-text)]">
+                class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/50 text-[var(--main-text)]">
                 <span class="transition-all" :class="expanded ? 'rotate-[-180deg]' : ''">
                     <flux:icon name="chevron-double-right" variant="mini" class="w-6 h-6 text-[var(--main-text)]" />
                 </span>

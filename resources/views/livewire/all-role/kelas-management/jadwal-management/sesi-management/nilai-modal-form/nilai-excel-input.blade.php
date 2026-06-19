@@ -222,7 +222,7 @@
                                     ])
 
                                     @foreach ($row['sub_cpmk'] ?? [] as $nilai)
-                                        <td class="p-0 border border-gray-200 dark:border-neutral-800 align-top">
+                                        <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-800 align-top">
                                             <div class="flex flex-col h-full min-h-[34px]">
                                                 <input type="number" step="0.01" min="0" max="100"
                                                     x-model="nilaiInputs[{{ $loop->index }}]"

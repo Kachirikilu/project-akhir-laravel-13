@@ -202,7 +202,7 @@
         <div
             class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
-            <p class="text-sm text-[var(--contrast-second-text)]">Tidak ada data Jadwal Kelas ditemukan!</p>
+            <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Jadwal Kelas ditemukan!</p>
         </div>
     @endforelse
 

@@ -36,7 +36,7 @@
     {{-- ================= HEADER ================= --}}
     <table class="w-full rps-table">
         <tr>
-            <td class="w-[12%] text-center">
+            <td class="text-xs sm:text-sm w-[12%] text-center">
                 <div class="flex items-center justify-center">
                     @if ($logoBase64 ?? null)
                         <img src="{{ $logoBase64 }}" class="h-20 object-contain">
@@ -45,7 +45,7 @@
                     @endif
                 </div>
             </td>
-            <td class="w-[76%] !border-r-0 text-center font-bold text-lg leading-tight uppercase">
+            <td class="text-xs sm:text-sm w-[76%] !border-r-0 text-center font-bold text-lg leading-tight uppercase">
                 <div>
                     <div>{{ strtoupper(env('UNIVERSITAS')) }}</div>
                     <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
@@ -53,7 +53,7 @@
                     <div>Program Studi {{ $data['prodi'] ?? '' }}</div>
                 </div>
             </td>
-            <td class="w-[12%] !border-l-0">
+            <td class="text-xs sm:text-sm w-[12%] !border-l-0">
             </td>
         </tr>
         <tr>
@@ -75,8 +75,8 @@
             <td rowspan="2" class="w-1/6">Tanggal Revisi</td>
         </tr>
         <tr class="font-bold text-center bg-gray-50">
-            <td class="w-1/12">Kuliah</td>
-            <td class="w-1/12">Praktikum</td>
+            <td class="text-xs sm:text-sm w-1/12">Kuliah</td>
+            <td class="text-xs sm:text-sm w-1/12">Praktikum</td>
         </tr>
         <tr class="text-center">
             <td>{{ $data['nama_mk'] ?? '' }}</td>
@@ -88,7 +88,7 @@
             <td>{{ $data['revisi'] ?? '' }}</td>
         </tr>
         <tr>
-            <td class="font-bold bg-gray-50 text-center">Deskripsi Mata Kuliah</td>
+            <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Deskripsi Mata Kuliah</td>
             <td colspan="6" class="text-justify leading-relaxed">
                 {{ $data['deskripsi'] ?? '' }}
             </td>
@@ -158,7 +158,7 @@
                 @endif
             </td>
             @if (!empty($data['instruktur']))
-                <td class="font-bold bg-gray-50 text-center">Ketua Pengajar</td>
+                <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Ketua Pengajar</td>
                 <td colspan="2">
                     <div class="font-bold">{{ $data['ketua_tim_pengajar'] ?? '-' }}</div>
                 </td>
@@ -166,7 +166,7 @@
         </tr>
         <tr>
             @if (!empty($data['instruktur']))
-                <td class="font-bold bg-gray-50 text-center">Instruktur</td>
+                <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Instruktur</td>
                 <td colspan="3">
                     @if (str_contains($data['instruktur'] ?? '', "\n"))
                         @foreach (explode("\n", $data['instruktur']) as $idx => $line)
@@ -184,7 +184,7 @@
             @endif
         </tr>
         <tr>
-            <td class="font-bold bg-gray-50 text-center align-middle">Otoritas</td>
+            <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center align-middle">Otoritas</td>
 
             <td colspan="3" class="text-center">
                 <div class="flex flex-col justify-between h-18">
@@ -275,7 +275,7 @@
 
                     {{-- KOLOM CPMK --}}
                     @if (!$isEmptyExam && isset($rowspanCpmk[$index]))
-                        <td class="p-2 border border-black text-center font-bold align-top"
+                        <td class="text-xs sm:text-sm p-2 border border-black text-center font-bold align-top"
                             rowspan="{{ $rowspanCpmk[$index] }}">
                             {{ $row['cpmk'] ?? '-' }}
                         </td>
@@ -284,7 +284,7 @@
                     {{-- Kolom yang TIDAK digabung (Sub CPMK & Materi) --}}
                     @if ($isEmptyExam)
                         {{-- UTS/UAS dengan kolom kosong: gunakan colspan 6 --}}
-                        <td class="p-2 border border-black text-center text-center font-bold" colspan="6">
+                        <td class="text-xs sm:text-sm p-2 border border-black text-center text-center font-bold" colspan="6">
                             @if ($row['metode'] == 'UTS')
                                 Ujian Tengah Semester
                             @elseif ($row['metode'] == 'UAS')
@@ -294,21 +294,21 @@
                     @else
                         {{-- Normal row --}}
                         @if ($row['metode'] == 'UTS')
-                            <td class="p-2 border border-black text-left">Ujian Tengah Semester</td>
+                            <td class="text-xs sm:text-sm p-2 border border-black text-left">Ujian Tengah Semester</td>
                         @elseif ($row['metode'] == 'UAS')
-                            <td class="p-2 border border-black text-left">Ujian Akhir Semester</td>
+                            <td class="text-xs sm:text-sm p-2 border border-black text-left">Ujian Akhir Semester</td>
                         @else
-                            <td class="p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
+                            <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
                         @endif
-                        <td class="p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
+                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
+                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
+                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
+                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
                     @endif
 
                     {{-- KOLOM BOBOT --}}
                     @if (isset($rowspanBobot[$index]))
-                        <td class="p-2 border border-black text-center font-bold"
+                        <td class="text-xs sm:text-sm p-2 border border-black text-center font-bold"
                             rowspan="{{ $rowspanBobot[$index] }}">
                             {{ $row['bobot'] ?? '-' }}
                         </td>
@@ -317,7 +317,7 @@
                     {{-- KOLOM DOSEN --}}
                     @if (!$isDosenUniform)
                         @if (isset($rowspanDosen[$index]))
-                            <td class="p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
+                            <td class="text-xs sm:text-sm p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
                                 @if (str_contains($row['dosen'] ?? '', "\n"))
                                     @foreach (explode("\n", $row['dosen'] ?? '') as $line)
                                         @if (trim($line))
@@ -385,58 +385,58 @@
             </thead>
             <tbody class="text-center">
                 <tr>
-                    <td class="py-0.5 px-1 leading-tight !border-0">A</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">86-100</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">4.00</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">A</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">86-100</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">4.00</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
                 </tr>
                 <tr>
-                    <td class="py-0.5 px-1 leading-tight !border-0">A-</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">80-85</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">3.70</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">A-</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">80-85</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.70</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B+</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">75-79</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">3.30</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B+</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">75-79</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.30</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">70-74</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">3.00</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">70-74</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.00</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B-</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">65-69</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">2.70</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B-</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">65-69</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.70</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">C+</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">60-64</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">2.30</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">C+</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">60-64</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.30</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Cukup</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">C</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">56-59</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">2.00</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">C</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">56-59</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.00</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Cukup</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">D</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">40-55</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">1.00</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">Kurang</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">D</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">40-55</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">1.00</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Kurang</td>
                 </tr>
                 <tr>
-                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">E</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">0-39</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0">0.00</td>
-                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Kurang</td>
+                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">E</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">0-39</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">0.00</td>
+                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Kurang</td>
                 </tr>
             </tbody>
         </table>

@@ -2,7 +2,7 @@
 
     <x-slot:sortir>
         <div x-data="{ activeTab: @entangle('filterKelasgg') }"
-            class="scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
@@ -32,7 +32,7 @@
         </div>
     </x-slot:sortir>
     <x-slot:search>
-        <div x-data="{ activeTab: @entangle('switchTable2') }" class="scrollbar-tiny flex space-x-4 overflow-x-auto">
+        <div x-data="{ activeTab: @entangle('switchTable2') }" class="pb-1 scrollbar-tiny flex space-x-4 overflow-x-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
@@ -171,12 +171,12 @@
 
     @forelse($kelas as $k)
         <tr wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-second text-center">{{ $k->id }}</td>
+                <td class="text-xs sm:text-sm table-second text-center">{{ $k->id }}</td>
             @endif
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -195,7 +195,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second table-border-r text-center">
+            <td class="text-xs sm:text-sm table-second table-border-r text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
@@ -215,7 +215,7 @@
 
                 </flux:dropdown>
             </td>
-            <td class="table-second table-border-r text-center">
+            <td class="text-xs sm:text-sm table-second table-border-r text-center">
                 @if (!$k->trashed())
                     <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
                         <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
@@ -227,10 +227,10 @@
                     </code>
                 @endif
             </td>
-            <td class="table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
-            <td class="table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
+            <td class="text-xs sm:text-sm table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
 
-            <td class="table-main text-center align-top">
+            <td class="text-xs sm:text-sm table-main text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -248,7 +248,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="table-sub whitespace-nowrap text-center align-top">
+            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -259,7 +259,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="table-sub text-center">
+            <td class="text-xs sm:text-sm table-sub text-center">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -270,7 +270,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="table-sub table-border-r whitespace-nowrap text-center align-top">
+            <td class="text-xs sm:text-sm table-sub table-border-r whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -282,7 +282,7 @@
                 @endif
             </td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -302,12 +302,12 @@
 
                 </flux:dropdown>
             </td>
-            <td class="table-sub min-w-42">{{ $k->mk ?? '-' }}</td>
-            <td class="table-sub text-center">{{ $k->semester ?? '-' }}</td>
-            <td class="table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
-            <td class="table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub min-w-42">{{ $k->mk ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub text-center">{{ $k->semester ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
+            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
 
-            <td class="table-second table-border-r table-border-l text-center">
+            <td class="text-xs sm:text-sm table-second table-border-r table-border-l text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -328,7 +328,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -345,8 +345,8 @@
             </td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
-                <td class="table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

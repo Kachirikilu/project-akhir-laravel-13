@@ -1,10 +1,7 @@
 {{-- ****************************************************** --}}
 {{-- 1. ACCOUNT INFORMATION (EMAIL & PASSWORD) --}}
 {{-- ****************************************************** --}}
-<div
-    class="px-4 py-6 mt-4 
-    bg-[var(--main-table-color)] table-border
-    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Account Information</h4>

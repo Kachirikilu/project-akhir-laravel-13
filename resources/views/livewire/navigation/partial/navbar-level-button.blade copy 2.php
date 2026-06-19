@@ -15,7 +15,7 @@
             style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px"
             :class="(currentTable === '{{ $sub['param'] }}' || (currentTable === '' && '{{ $sub['param'] }}' === 'rps')) ?
                 'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' :
-                'text-[var(--main-text)]/70 hover:bg-white/10 hover:text-[var(--main-text)] border-transparent pl-4'"
+                'text-[var(--main-text)]/70 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 border-transparent pl-4'"
             class="block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95">
             <div class="flex items-center">
                 <flux:icon :name="$sub['icon']" class="

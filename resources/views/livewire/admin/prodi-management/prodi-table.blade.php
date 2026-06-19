@@ -123,11 +123,11 @@
 
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $x->id }}</td>
+            <td class="text-xs sm:text-sm table-second text-center">{{ $x->id }}</td>
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @switch($x->tingkatan_prodi)
@@ -164,11 +164,11 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second table-border-r whitespace-nowrap">
+            <td class="text-xs sm:text-sm table-second table-border-r whitespace-nowrap">
                 {{ $x->prodi ?? ($x->departemen_dp ?? ($x->fakultas_fk ?? '-')) }}</td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="table-second table-border-r">
+                <td class="text-xs sm:text-sm table-second table-border-r">
                     @if (!$x->trashed())
                         <x-button-action color="blue"
                             href="{{ route('capaian-management', [
@@ -203,11 +203,11 @@
                     $akreditas_x = $x->akreditas_pr;
                 }
             @endphp
-            <td class="table-second table-border-l whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
                 {{ $rekap_x ?? '0.00' }}</td>
-            <td class="table-second whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
                 {{ $index_x ?? '0.00' }}</td>
-            <td class="table-sub table-border-x whitespace-nowrap text-center">
+            <td class="text-xs sm:text-sm table-sub table-border-x whitespace-nowrap text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -223,18 +223,18 @@
             </td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="table-second whitespace-nowrap">
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap">
                     {{ $x->departemen . ' (' . $x->kode_dp . ')' }}
                 </td>
             @endif
 
             @if ($switchTable !== 'fakultas')
-                <td class="table-second whitespace-nowrap">{{ $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
+                <td class="text-xs sm:text-sm table-second whitespace-nowrap">{{ $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
             @endif
 
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="table-second table-border-l text-center">
+                <td class="text-xs sm:text-sm table-second table-border-l text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)
@@ -265,7 +265,7 @@
                 </td>
             @endif
 
-            <td class="table-main text-center">
+            <td class="text-xs sm:text-sm table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -280,8 +280,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-second whitespace-nowrap text-center">{{ $x->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $x->updated_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $x->created_day ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>

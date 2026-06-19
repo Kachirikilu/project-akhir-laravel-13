@@ -64,7 +64,7 @@
             (
                 {{ $isBtnActiveSub ? 'true' : 'false' }} ?
                 'border-[var(--main-text)] bg-white/5 text-[var(--main-text)] pl-3' :
-                'text-[var(--main-text)]/70 hover:bg-white/10 hover:text-[var(--main-text)] border-transparent pl-4'
+                'text-[var(--main-text)]/70 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 active:bg-white/20 active:text-[var(--main-text)]/90 border-transparent pl-4'
             )"
             class="block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95">
 

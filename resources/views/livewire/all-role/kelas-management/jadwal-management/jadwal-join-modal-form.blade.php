@@ -1,5 +1,5 @@
 <flux:modal name="jadwal-join" wire:model="showJadwalJoin" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
-    class="sm:w-full md:w-lg max-w-lg !bg-[var(--second-pop-up-color)] !text-[var(--contrast-main-text)]">
+    class="w-full md:w-lg max-w-lg !bg-[var(--second-pop-up-color)] !text-[var(--contrast-main-text)]">
 
     <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
         <div class="py-4 space-y-4">
@@ -35,7 +35,7 @@
 
                 <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="joinJadwal"
                     class="cursor-pointer w-full sm:w-auto
-                        bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]
+                        bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90
                         shadow-sm text-white border-none transition-all duration-200">
 
                     <span wire:loading.remove wire:target="joinJadwal" class="text-white">

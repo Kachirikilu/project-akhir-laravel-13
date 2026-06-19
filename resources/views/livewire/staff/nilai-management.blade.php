@@ -20,18 +20,49 @@
     @include('livewire.staff.mk-management.mk-modal-form')
     @include('livewire.staff.mk-management.mk-modal-delete') --}}
 
-    <div class="flex flex-wrap items-center gap-2 mb-4">
-        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Nilai Mahasiswa</h2>
-        {{-- <div class="ml-auto">
-            @include('livewire.global.table.export-button', [
-                'xString' => 'exportRekapMahasiswaExcel()',
-                // 'autoSmall' => 'sm',
-            ])
-        </div> --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2 md:mb-6 w-full min-w-0">
+
+        <h2 class="text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] min-w-0 break-words">
+            Manajemen Nilai Mahasiswa
+        </h2>
+
+        <div
+            class="flex flex-row-reverse items-center justify-start gap-3 w-full md:w-auto overflow-x-auto scrollbar-tiny flex-nowrap shrink-0 pb-1">
+
+            <div class="shrink-0 flex items-center">
+                @include('livewire.global.table.export-button', [
+                    'xString' => 'exportRekapMahasiswaExcel()',
+                    'autoSmall' => 'sm',
+                ])
+            </div>
+
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <div x-data="{ activeTab: @entangle('filterStatus') }" class="shrink-0">
+                    <div x-show="activeTab !== ''" class="shrink-0">
+                        @include('livewire.global.table.export-button', [
+                            'nameXString' => 'Rekap Capaian',
+                            'xString' => 'generateRekapCapaian()',
+                            'color' => 'blue',
+                            'icon' => 'academic-cap',
+                        ])
+                    </div>
+                    <div x-show="activeTab == ''" class="shrink-0">
+                        @include('livewire.global.table.export-button', [
+                            'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
+                            'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                            'color' => 'blue',
+                            'icon' => 'academic-cap',
+                        ])
+                    </div>
+                </div>
+            @endif
+
+        </div>
     </div>
 
 
-    @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa', 'withCapaian' => 1])
+
+    @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa'])
 
     @include('livewire.admin.user-management.user-table', [
         'withRPS' => 1,
@@ -47,7 +78,7 @@
 
     @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
     @include('livewire.staff.obe-management.rps-management.rps-show-modal')
-    
+
     @if (Auth::user()->admin)
         @include('livewire.admin.user-management.user-modal-form')
         @include('livewire.admin.user-management.user-modal-delete')

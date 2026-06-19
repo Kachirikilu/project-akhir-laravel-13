@@ -21,6 +21,8 @@
     @include('livewire.admin.user-management.user-excel-modal-form')
     @include('livewire.admin.user-management.user-modal-delete') --}}
     {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header') --}}
+    
+    
     @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header', [
         'alpine' => 'periode',
         'noBackUrl' => $isNilaiMhs ? 1 : 0,

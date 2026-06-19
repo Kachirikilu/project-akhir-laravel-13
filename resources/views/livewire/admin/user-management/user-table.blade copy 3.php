@@ -42,10 +42,10 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] transition-colors duration-200">
-            <td class="table-main text-center">{{ $user->id }}</td>
-            <td class="table-main whitespace-nowrap">{{ $user->name ?? '-' }}</td>
-            <td class="table-second">{{ $user->email }}</td>
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+            <td class="text-xs sm:text-sm table-main text-center">{{ $user->id }}</td>
+            <td class="text-xs sm:text-sm table-main whitespace-nowrap">{{ $user->name ?? '-' }}</td>
+            <td class="text-xs sm:text-sm table-second">{{ $user->email }}</td>
         </tr>
 
         @empty

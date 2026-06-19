@@ -12,7 +12,7 @@
     <div class="flex flex-col h-full min-h-[34px] w-full">
         <div class="grid w-full items-center" style="{{ $widthStyle }}">
 
-            <span class="invisible col-start-1 row-start-1 px-3 py-2 text-xs whitespace-nowrap">
+            <span class="invisible col-start-1 row-start-1 px-3 py-2 text-xs text-sm whitespace-nowrap">
                 {{ $model ?? '' }}
             </span>
 
@@ -20,7 +20,7 @@
             @if (isset($isSelect) && $isSelect)
 
                 <select wire:model.live="{{ $wireModel }}" {{ isset($isReadonly) && $isReadonly ? 'disabled' : '' }}
-                    class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none">
+                    class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs text-sm outline-none">
 
                     @foreach ($xOptions ?? [] as $option)
                         <option value="{{ $option }}">
@@ -39,13 +39,13 @@
                             .replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '')
                             .slice(0, {{ $maxLength ?? 255 }})
                     " @endif
-                    class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs outline-none cursor-text select-text">
+                    class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs text-sm outline-none cursor-text select-text">
             @endif
         </div>
 
         @if (isset($message) && is_array($message) && isset($message[0]))
             <p
-                class="text-red-500 text-[10px] px-2 py-0.5 bg-red-50 dark:bg-red-950/30 border-t border-red-200 whitespace-nowrap">
+                class="text-xs text-sm text-red-500 text-[10px] px-2 py-0.5 bg-red-50 dark:bg-red-950/30 border-t border-red-200 whitespace-nowrap">
                 {{ $message[0] }}
             </p>
         @endif

@@ -104,7 +104,7 @@
                 @dblclick="showSearchModePopup = true" wire:loading.attr="disabled" class="bg-[var(--focus-color)]"
                 :class="{
                     'cursor-pointer h-8 px-5 rounded-md flex items-center shadow-sm transition-all duration-200 select-none': true,
-                    'hover:bg-[var(--hover-focus-color)] text-white': !isRealtime,
+                    'hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 text-white': !isRealtime,
                     'text-white ring-2 ring-white/10': isRealtime
                 }">
                 <div x-show="!isRealtime" class="flex items-center">
@@ -168,7 +168,7 @@
                     @endphp
 
                     <div @click="changeSearchMode('{{ $value }}')"
-                        class="px-4 py-3 cursor-pointer transition-colors hover:bg-[var(--hover-pop-up-color)]">
+                        class="px-4 py-3 cursor-pointer transition-colors hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
                         <div class="flex items-center justify-between gap-4">
 
                             <div class="flex flex-col min-w-0">

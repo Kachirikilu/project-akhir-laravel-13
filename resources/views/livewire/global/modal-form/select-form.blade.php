@@ -103,13 +103,15 @@
             );
         @endif
     ">
-    <label for="{{ $modelString }}" class="block text-sm font-medium" :class="isDisabled ? 'opacity-50' : ''">
+    {{-- <label for="{{ $modelString }}" class="block text-sm font-medium" :class="isDisabled ? 'opacity-50' : ''">
         {{ $nameXString ?? ucfirst($modelString) }}
 
         @if ($isRequired ?? true)
             <span class="text-red-500" x-show="!isDisabled">*</span>
         @endif
-    </label>
+    </label> --}}
+    @include('livewire.global.modal-form.partial.label')
+
 
     <div class="relative {{ $noLabel ?? false ? '' : 'mt-2' }}">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -130,7 +132,7 @@
                 ?
                 'bg-gray-100 dark:bg-zinc-800 cursor-not-allowed opacity-70 text-gray-500 border-gray-200' :
                 'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
-            class="focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
+            class="text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
 
         <template x-if="!isDisabled">
             @if ($isLivewire ?? false)
@@ -184,13 +186,13 @@
 
                     open = false;
                 "
-                class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)]">
+                class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
                 <div class="flex justify-between items-center my-1">
-                    <span class="text-[var(--contrast-main-text)] font-semibold">
+                    <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
                         {{ $label }}
                     </span>
 
-                    <span class="bg-[var(--focus-color)] text-white text-xs px-2 py-1 rounded-md ml-2">
+                    <span class="text-xs sm:text-sm  bg-[var(--focus-color)] text-white text-xs px-2 py-1 rounded-md ml-2">
                         Pilih
                     </span>
                 </div>
@@ -199,7 +201,7 @@
     </div>
 
     @if (!empty($message))
-        <span class="text-red-500 text-sm mt-1 block">
+        <span class="text-xs sm:text-sm text-red-500 mt-1 block">
             {{ $message }}
         </span>
     @endif

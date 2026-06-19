@@ -1,8 +1,11 @@
 <div x-data="{ activeFilter: @entangle('filterStatus') }"
     class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    <div class="table-border flex items-end justify-between border-b mb-4 gap-4">
-        <div class="min-w-0 flex-1 overflow-hidden">
+{{-- Container Utama: Menggunakan flex-col-reverse agar di mobile bagian tombol pindah ke ATAS filter --}}
+    <div class="table-border flex flex-col-reverse lg:flex-row lg:items-end lg:justify-between border-b mb-4 gap-4 w-full min-w-0">
+        
+        {{-- Bagian Kiri: Komponen Filter Mode --}}
+        <div class="min-w-0 flex-1 overflow-hidden w-full">
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByStatus',
                 'filterString' => 'filterStatus',
@@ -19,22 +22,49 @@
                 'tab3Name' => 'Tidak Aktif',
             ])
         </div>
-        {{-- <div class="shrink-0">
-            @include('livewire.global.search-and-filters.page-control', [
-                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-                'key' => 'page-control-user',
-                'autoSmall' => 'md',
-            ])
-        </div> --}}
-        <div class="shrink-0">
-            @include('livewire.global.search-and-filters.page-control', [
-                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-                'key' => 'page-control-user',
-                'autoSmall' => 'md',
-            ])
+        
+        {{-- Bagian Kanan: Wadah Seluruh Tombol (Export & Page Control) --}}
+        <div class="flex flex-row items-center justify-end gap-3 w-full lg:w-auto shrink-0 pb-2 lg:pb-0">
+            
+            @if ($withCapaian ?? null)
+                @if (Auth::user()->admin || Auth::user()->dosen)
+                    <div x-data="{ activeTab: @entangle('filterStatus') }" class="shrink-0">
+                        <div x-show="activeTab !== ''">
+                            @include('livewire.global.table.export-button', [
+                                'nameXString' => 'Rekap Capaian',
+                                'xString' => 'generateRekapCapaian()',
+                                'color' => 'blue',
+                                'icon' => 'academic-cap',
+                            ])
+                        </div>
+                        <div x-show="activeTab == ''">
+                            @include('livewire.global.table.export-button', [
+                                'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
+                                'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                                'color' => 'blue',
+                                'icon' => 'academic-cap',
+                            ])
+                        </div>
+                    </div>
+                @endif
+
+                <div class="shrink-0 flex items-center">
+                    @include('livewire.global.table.export-button', [
+                        'xString' => 'exportRekapMahasiswaExcel()',
+                    ])
+                </div>
+            @endif
+
+            <div class="shrink-0 flex items-center">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                    'key' => 'page-control-user',
+                    'autoSmall' => 'md',
+                ])
+            </div>
+            
         </div>
     </div>
-
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
         <div x-show="activeFilter == ''" x-transition:enter="transition ease-out duration-1000"

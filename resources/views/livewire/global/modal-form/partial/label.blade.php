@@ -1,5 +1,5 @@
 @if (isset($noLabel) == 0)
-    <label for="{{ $modelString ?? null }}" class="block text-sm font-medium mb-2 text-[var(--contrast-main-text)]">
+    <label for="{{ $modelString ?? null }}" class="block text-xs sm:text-sm font-medium mb-2 text-[var(--contrast-main-text)]">
         @if ($nameAlpine ?? null)
             <span x-text="$store.{{ $alpine ?? 'config' }}.{{ $nameAlpine ?? null }}"></span>
         @else

@@ -254,14 +254,14 @@ trait RekapCapaian
             foreach ($mahasiswas as $mahasiswa) {
                 $mahasiswaId = $mahasiswa->id;
 
-                $nilaiMahasiswa = NilaiMahasiswa::query()
+                $nilai_mahasiswa = NilaiMahasiswa::query()
                     ->with([
                         'rps_rel.mk_rel',
                     ])
                     ->where('mahasiswa_id', $mahasiswaId)
                     ->get();
 
-                if ($nilaiMahasiswa->isEmpty()) {
+                if ($nilai_mahasiswa->isEmpty()) {
                     RekapNilaiMahasiswa::updateOrCreate(
                         ['mahasiswa_id' => $mahasiswaId],
                         [
@@ -275,7 +275,7 @@ trait RekapCapaian
                 }
 
                 // 1. Ambil data unik berdasarkan rps_id tertinggi (mengantisipasi remedial/double input)
-                $nilaiUnik = $nilaiMahasiswa->groupBy('rps_id')->map(function ($group) {
+                $nilaiUnik = $nilai_mahasiswa->groupBy('rps_id')->map(function ($group) {
                     return collect($group)->sortByDesc('nilai')->first();
                 });
 
@@ -348,15 +348,15 @@ trait RekapCapaian
             })
             ->chunkById(200, function ($nilais) use (&$hasil) {
 
-                foreach ($nilais as $nilaiMahasiswa) {
-                    $rps = $nilaiMahasiswa->rps_rel;
+                foreach ($nilais as $nilai_mahasiswa) {
+                    $rps = $nilai_mahasiswa->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
-                    $nilaiArray = collect($nilaiMahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilaiMahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
+                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
 
                     $total = 0;
                     $totalBobot = 0;
@@ -430,8 +430,8 @@ trait RekapCapaian
                 $q->where('pr_id', $prId);
             })
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilaiMahasiswa) {
-                    $rps = $nilaiMahasiswa->rps_rel;
+                foreach ($nilais as $nilai_mahasiswa) {
+                    $rps = $nilai_mahasiswa->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
@@ -439,8 +439,8 @@ trait RekapCapaian
 
                     $sks = $rps->mk_rel?->sks_kuliah ?? 1;
 
-                    $nilaiArray = collect($nilaiMahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilaiMahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
+                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
 
                     $mapping = $this->buildCpmkMeetingMap($rps);
 
@@ -590,17 +590,17 @@ trait RekapCapaian
                 $q->where('pr_id', $prId);
             })
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilaiMahasiswa) {
-                    $mahasiswaId = $nilaiMahasiswa->mahasiswa_id;
-                    $rps = $nilaiMahasiswa->rps_rel;
+                foreach ($nilais as $nilai_mahasiswa) {
+                    $mahasiswaId = $nilai_mahasiswa->mahasiswa_id;
+                    $rps = $nilai_mahasiswa->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
                     $sks = $rps->mk_rel?->sks_kuliah ?? 1;
-                    $nilaiArray = collect($nilaiMahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilaiMahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
+                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
                     $mapping = $this->buildCpmkMeetingMap($rps);
 
                     foreach ($mapping as $cpmkId => $indexes) {
@@ -735,15 +735,15 @@ trait RekapCapaian
             ])
             ->whereHas('mahasiswa_rel', fn ($q) => $q->where('pr_id', $prId))
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilaiMahasiswa) {
-                    $mahasiswaId = $nilaiMahasiswa->mahasiswa_id;
-                    $rps = $nilaiMahasiswa->rps_rel;
+                foreach ($nilais as $nilai_mahasiswa) {
+                    $mahasiswaId = $nilai_mahasiswa->mahasiswa_id;
+                    $rps = $nilai_mahasiswa->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
-                    $nilaiArray = collect($nilaiMahasiswa->nilai_array ?? []);
+                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
                     $meetingIndex = 0;
 
                     foreach ($rps->cpmks as $cpmk) {

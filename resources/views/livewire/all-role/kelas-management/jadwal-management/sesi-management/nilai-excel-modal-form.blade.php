@@ -1,6 +1,6 @@
 <flux:modal name="nilai-excel-modal" wire:model="showNilaiExcelModal" flyout
     @refresh-data-nilai.window="if (!$wire.showNilaiExcelModal) $store.sesi.reset()"
-    class="md:w-[98vw] lg:max-w-[95vw] xl:max-w-[90vw] h-[98vh] !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-screen-2xl max-w-screen-2xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveNilaiExcel">
@@ -13,7 +13,7 @@
 
     <div class="flex flex-col h-full">
 
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
             <h3 class="text-xl font-semibold">
                 <flux:badge icon="cog-6-tooth" color="green" size="lg">
@@ -22,7 +22,7 @@
             </h3>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
+        <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
 
             <form wire:submit.prevent="saveNilaiExcel" enctype="multipart/form-data" id="nilaiForm">
 
@@ -30,7 +30,7 @@
 
                 {{-- 3. Footer/Tombol --}}
                 <div
-                    class="bg-[var(--sub-table-color)] table-border p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    class="form-message-container">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         {{-- @include('livewire.admin.nilai-management.nilai-modal-form.nilai-message-form') --}}

@@ -21,7 +21,7 @@
     <div x-data="{ open: false }" class="relative">
 
         <button @click="open = !open" @click.outside="open = false"
-            class="cursor-pointer w-full flex items-center gap-4 p-1 rounded-lg hover:bg-white/10 transition">
+            class="cursor-pointer w-full flex items-center gap-4 p-1 rounded-lg hover:bg-white/10 active:bg-white/20 transition">
 
             <!-- Avatar -->
             @if (Auth()->user()->profile_photo_path)

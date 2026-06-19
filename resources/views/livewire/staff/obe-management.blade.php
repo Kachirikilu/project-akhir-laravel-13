@@ -22,7 +22,7 @@
 
             @case('cpl')
                 @include('livewire.staff.obe-management.cpl-management.cpl-table')
-    @include('livewire.staff.obe-management.cpl-management.cpl-rps-list')
+                @include('livewire.staff.obe-management.cpl-management.cpl-rps-list')
             @break
 
             @case('cpmk')

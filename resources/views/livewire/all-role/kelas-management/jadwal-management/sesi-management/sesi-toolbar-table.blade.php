@@ -50,7 +50,7 @@
                     $flux.modal('sesi-modal').show();
                 "
                     wire:click="{{ $editCall }}"
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">

@@ -1,7 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 
-    bg-[var(--main-table-color)] table-border
-    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Rencana Pembelajaran Semester</h4>
@@ -20,7 +18,7 @@
                     <flux:icon.clipboard-document-list variant="solid" class="size-4 text-green-300" />
                 </div>
                 <div>
-                    <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">RPS Terhubung</h3>
+                    <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-xs sm:text-sm">RPS Terhubung</h3>
                     <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">
                         Daftar RPS yang menggunakan {{ $nameXString }} ini
                     </p>
@@ -75,7 +73,7 @@
 
                                     <div class="flex-grow min-w-0">
                                         <div class="flex items-center gap-3">
-                                            <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200">
+                                            <p class="text-xs sm:text-sm font-bold truncate text-zinc-800 dark:text-zinc-200">
                                                 {{ $r['mk'] }}</p>
                                             <span
                                                 class="shrink-0 text-xs font-mono px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
@@ -101,7 +99,7 @@
 
                                 {{-- DETAIL EXPANDABLE --}}
                                 <div x-show="expanded" x-collapse>
-                                    <div class="px-3 pb-3 pt-0 ml-1">
+                                    <div class="text-xs sm:text-sm px-3 pb-3 pt-0 ml-1">
                                         <div
                                             class="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-100 dark:border-zinc-700 space-y-3">
 

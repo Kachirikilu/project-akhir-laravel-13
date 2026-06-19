@@ -71,7 +71,7 @@
     <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 mr-6">
 
         <button type="button" @click="manualToggle()"
-            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-[var(--main-text)] transition-all">
+            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/50 text-[var(--main-text)] transition-all">
 
             <span class="flex items-center justify-center w-4 h-4 bg-white rounded-full shadow-sm">
                 {{-- ☀️ LIGHT --}}
@@ -126,7 +126,7 @@
 
         <div x-show="typeof expanded !== 'undefined' ? expanded : true" x-cloak class="ml-auto flex items-center">
             <button type="button" @click="toggleColorMenu()"
-                class="ml-2 cursor-pointer flex items-center justify-center p-1 rounded hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                class="ml-2 cursor-pointer flex items-center justify-center p-1 rounded hover:bg-white/10 active:bg-white/20 text-white/70 hover:text-white transition-colors"
                 aria-label="Toggle Color Menu">
                 <flux:icon name="chevron-down" variant="mini" class="w-4 h-4 transition-transform duration-300"
                     ::class="!colorMenuOpen ? 'rotate-180' : ''" />

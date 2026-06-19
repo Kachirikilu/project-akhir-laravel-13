@@ -10,7 +10,7 @@
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
     <div class="mb-6">
-    @include('livewire.staff.obe-management.obe-toolbar', [
+    @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar', [
         'typeXString' => 'all',
         'withCapaian' => 1,
         'textString' => "Manajemen Capaian $prodi->prodi",
