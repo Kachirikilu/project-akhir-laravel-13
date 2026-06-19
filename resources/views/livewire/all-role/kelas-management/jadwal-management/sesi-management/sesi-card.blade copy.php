@@ -7,7 +7,7 @@
             'headString' => 'Pertemuan',
         ])
         @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'jumlah_absensi',
+            'sortFieldString' => 'total_absensi',
             'headString' => 'Absensi',
         ])
         @include('livewire.global.table.head-sortir', [

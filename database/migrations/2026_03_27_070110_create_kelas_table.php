@@ -113,6 +113,7 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
+        
 
 
         Schema::create('sesi_pivot_dosen', function (Blueprint $table) {

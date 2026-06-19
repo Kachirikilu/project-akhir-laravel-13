@@ -18,8 +18,13 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
-    'fonnte' => [
-        'token' => env('FONNTE_TOKEN'),
+    // 'fonnte' => [
+    //     'token' => env('FONNTE_TOKEN'),
+    // ],
+
+    'nodejs' => [
+        'url' => env('NODEJS_URL'),
+        'token' => env('NODEJS_TOKEN'),
     ],
 
     'resend' => [

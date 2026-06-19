@@ -14,7 +14,7 @@
                 'id' => $s->id,
                 'dbIndex' => $index,
                 'pertemuan_ke' => $p,
-                'jumlah_absensi' => (int) ($s->jumlah_absensi ?? 0),
+                'total_absensi' => (int) ($s->total_absensi ?? 0),
                 'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                 'metode' => strtolower($s->metode ?? ''),
                 'tugas' => strtolower($s->tugas ?? ''),
@@ -158,7 +158,7 @@
                 'headString' => 'Pertemuan',
             ])
             @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'jumlah_absensi',
+                'sortFieldString' => 'total_absensi',
                 'alpine' => 'sesi',
                 'headString' => 'Absensi',
             ])
@@ -298,7 +298,7 @@
                                 <span
                                     class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Absensi</span>
                                 <span
-                                    class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $s->mhs_absensi ?? 0 }}</span>
+                                    class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $s->total_absensi ?? 0 }}</span>
                                 <span class="text-[9px] font-semibold text-[var(--contrast-second-text)]">/
                                     {{ $s->count_mahasiswa }}</span>
                             </div>

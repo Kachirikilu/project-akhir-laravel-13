@@ -62,11 +62,15 @@ class SendClassReminderJob implements ShouldQueue
             return;
         }
 
-        $token = config('services.fonnte.token');
-
-        if (blank($token)) {
-            throw new \Exception('Token Fonnte belum dikonfigurasi.');
+        $url = config('services.nodejs.url');
+        if (blank($url)) {
+            throw new \Exception('URL Node.JS belum dikonfigurasi!');
         }
+        $token = config('services.nodejs.token');
+        if (blank($token)) {
+            throw new \Exception('Token Node.JS belum dikonfigurasi!');
+        }
+
 
         $jamMulai = $sesi->override?->jam_mulai ?? $jadwal->jam_mulai;
         $namaKelas = $jadwal->label_kelas ?? 'Kelas';
@@ -101,19 +105,28 @@ class SendClassReminderJob implements ShouldQueue
 
                 $response = Http::withHeaders([
                     'Authorization' => $token,
+                    'Bypass-Tunnel-Reminder'  => 'true',
                 ])
                     ->timeout(30)
                     ->asForm()
-                    ->post('https://api.fonnte.com/send', [
-                        'target' => $noHp,
-                        'message' => $pesan,
-                        'delay' => 5,
-                        'typing' => false,
+                    ->post($url, [
+                        'whatsapp_number' => $noHp,
+                        'whatsapp_message' => $pesan,
+                        // 'delay' => 5,
+                        // 'typing' => false,
                     ]);
+
+                    // $response = Http::withHeaders([
+                    //     'Authorization'           => $token,
+                    //     'Bypass-Tunnel-Reminder'  => 'true',
+                    // ])->post($url, [
+                    //     'whatsapp_number'  => $noHp,
+                    //     'whatsapp_message' => $pesanCustom,
+                    // ]);
 
                 if (! $response->successful()) {
 
-                    Log::error('Fonnte HTTP Error', [
+                    Log::error('Node.JS HTTP Error', [
                         'mahasiswa_id' => $mahasiswa->id,
                         'nomor' => $noHp,
                         'status' => $response->status(),
@@ -130,7 +143,7 @@ class SendClassReminderJob implements ShouldQueue
                     isset($result['status']) &&
                     $result['status'] === false
                 ) {
-                    Log::error('Fonnte Reject', [
+                    Log::error('Node.JS Reject', [
                         'mahasiswa_id' => $mahasiswa->id,
                         'nomor' => $noHp,
                         'response' => $result,

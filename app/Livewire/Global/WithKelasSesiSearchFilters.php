@@ -328,12 +328,12 @@ trait WithKelasSesiSearchFilters
                         $searchLower
                     );
 
-                    $absensi = ($s->mhs_absensi ?? 0).' / '.($s->count_mahasiswa ?? 0);
+                    $absensi = ($s->total_absensi ?? 0).' / '.($s->count_mahasiswa ?? 0);
                     $matchAbsensi = $this->containsStrict(
                         $absensi,
                         $searchLower
                     ) || $this->matchOnlyCount(
-                        $s->mhs_absensi ?? null,
+                        $s->total_absensi ?? null,
                         $searchLower, ['mahasiswa', 'mhs', 'maha', 'absen', 'abs', 'absensi']
                     );
 
@@ -427,7 +427,7 @@ trait WithKelasSesiSearchFilters
 
                 'hari_pelaksanaan' => fn ($s) => $s->hari,
                 'jam_pelaksanaan' => fn ($s) => $s->jam_pelaksanaan,
-                'jumlah_absensi', 'absensi' => fn ($s) => $s->mhs_absensi,
+                'total_absensi', 'absensi' => fn ($s) => $s->total_absensi,
                 'tanggal_pelaksanaan' => fn ($s) => $s->tanggal_pelaksanaan,
 
                 'bobot_normalisasi', 'bobot' => fn ($s) => $s->bobot_normalisasi,

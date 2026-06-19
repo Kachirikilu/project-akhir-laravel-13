@@ -6,7 +6,7 @@
             'headString' => 'Pertemuan',
         ])
         @include('livewire.global.table.head-sortir', [
-            'sortFieldString' => 'jumlah_absensi',
+            'sortFieldString' => 'total_absensi',
             'headString' => 'Absensi',
         ])
         @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
@@ -90,7 +90,7 @@
             ])
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'jumlah_absensi',
+                'sortFieldString' => 'total_absensi',
                 'headString' => 'Absensi',
                 'isCenter' => 1,
             ])
@@ -189,7 +189,7 @@
             <td class="table-main text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
             <td class="table-sub text-center whitespace-nowrap">
-                {{ ($s->mhs_absensi) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
+                {{ ($s->total_absensi) . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
             <td class="table-sub text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
             <td class="table-main text-center whitespace-nowrap">

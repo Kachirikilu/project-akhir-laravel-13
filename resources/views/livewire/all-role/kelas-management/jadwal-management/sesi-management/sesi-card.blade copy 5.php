@@ -161,7 +161,7 @@
                 'headString' => 'Pertemuan',
             ])
             @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'jumlah_absensi',
+                'sortFieldString' => 'total_absensi',
                 'isAlpineSortir' => 1,
                 'alpine' => 'sesi',
                 'headString' => 'Absensi',
@@ -260,7 +260,7 @@
                 x-show="matchSearchPassed && (localVisibleIndex >= ($store.sesi.currentPage - 1) * $store.sesi.perPage && localVisibleIndex < $store.sesi.currentPage * $store.sesi.perPage)"
                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100" @click="expanded = !expanded"
-                data-pertemuan_ke="{{ $s->pertemuan_ke }}" data-jumlah_absensi="{{ $s->jumlah_absensi ?? 0 }}"
+                data-pertemuan_ke="{{ $s->pertemuan_ke }}" data-total_absensi="{{ $s->total_absensi ?? 0 }}"
                 data-tanggal_pelaksanaan="{{ $s->tanggal_pelaksanaan }}" data-metode="{{ $s->metode }}"
                 class="card-sesi-item {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }} relative flex flex-col self-start p-3 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300">
 

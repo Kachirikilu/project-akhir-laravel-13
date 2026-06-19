@@ -248,16 +248,16 @@ class SesiManagement extends Component
             $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'angkatan', 5 => 'status', 6 => 'prodi'];
         }
         $columns = [
-            'sesi-card' => [1 => 'pertemuan_ke', 2 => 'jumlah_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
-            'sesi-table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'jumlah_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
+            'sesi-card' => [1 => 'pertemuan_ke', 2 => 'total_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
+            'sesi-table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'total_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
             'mahasiswa' => $mahasiswa,
         ];
         $aliases = [
             'id' => ['id', 'mahasiswa_id'],
             'mahasiswa_id' => ['mahasiswa_id', 'id'],
             'pertemuan_ke' => ['pertemuan_ke', 'name'],
-            'jumlah_absensi' => ['jumlah_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
-            // 'mhs_poin_absensi' => ['jumlah_absensi'],
+            'total_absensi' => ['total_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
+            // 'mhs_poin_absensi' => ['total_absensi'],
             // 'name' => ['pertemuan_ke'],
         ];
 

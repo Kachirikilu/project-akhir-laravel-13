@@ -127,6 +127,14 @@ class KelasSesi extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'sesi_id');
     }
 
+    public function totalAbsensi(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->kehadirans
+                ->whereIn('status', ['Hadir', 'Terlambat', 'Dispensasi'])
+                ->count();
+        });
+    }
     // public function nilai_details()
     // {
     //     return $this->hasMany(

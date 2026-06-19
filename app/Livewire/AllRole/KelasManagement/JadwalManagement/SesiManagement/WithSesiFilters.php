@@ -180,7 +180,7 @@ trait WithSesiFilters
     //         'hari_pelaksanaan' => $querySesi->orderByRaw('WEEKDAY(kelas_sesi.tanggal) '.$this->sortDirection),
     //         'tanggal_pelaksanaan' => $querySesi->orderBy('kelas_sesi.tanggal', $this->sortDirection),
     //         'jam_pelaksanaan' => $querySesi->orderByRaw('COALESCE(kelas_sesi_overrides.jam_mulai, kelas_jadwals.jam_mulai) '.$this->sortDirection),
-    //         'jumlah_absensi' => $querySesi->orderBy('kehadirans_count', $this->sortDirection),
+    //         'total_absensi' => $querySesi->orderBy('kehadirans_count', $this->sortDirection),
 
     //         // 'metode' => $this->applyMetodeSort($querySesi),
 
