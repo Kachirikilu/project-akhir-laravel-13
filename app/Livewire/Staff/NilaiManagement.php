@@ -47,7 +47,7 @@ class NilaiManagement extends Component
     use WithUserDelete;
     use WithUserModal;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

@@ -3,7 +3,7 @@
         @if ($nameAlpine ?? null)
             <span x-text="$store.{{ $alpine ?? 'config' }}.{{ $nameAlpine ?? null }}"></span>
         @else
-            {{ $nameX2String ?? $nameXString ?? ucfirst($modelString ?? null) }}
+            {{ $nameX2String ?? $nameXString ?? str($modelString ?? '')->replace(['-', '_'], ' ')->title() }}
         @endif
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>

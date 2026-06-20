@@ -20,7 +20,7 @@ class RpsCapaianManagement extends Component
     use WithRPSFilters;
     use WithRPSSearchFilters;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

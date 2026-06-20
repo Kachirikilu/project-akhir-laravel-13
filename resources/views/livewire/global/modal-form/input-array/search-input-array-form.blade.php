@@ -101,14 +101,14 @@
             @empty
                 <div class="p-4 text-center">
                     <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-xs text-sm text-[var(--focus-color)] font-medium animate-pulse">
+                        <p class="text-xs sm:text-sm text-[var(--focus-color)] font-medium animate-pulse">
                             Sedang mencari data {{ $nameXString ?? null }}...
                         </p>
                     </div>
 
                     <div wire:loading.remove
                         @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-xs text-sm text-gray-500 dark:text-gray-400 italic">
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 italic">
                             Data {{ $nameXString ?? null }} tidak ditemukan!
                         </p>
                     </div>
@@ -118,7 +118,7 @@
     </div>
 
     @error($id2String ?? $idString)
-        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span>
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
@@ -126,7 +126,7 @@
         class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
         <div class="flex items-center justify-between mb-4">
-            <span class="text-xs text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
+            <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
 
                 @include('livewire.global.modal-form.partial.reset-all-buttons')
@@ -161,7 +161,7 @@
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
 
-                            <span class="text-xs text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
+                            <span class="text-xs sm:text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
                                 x-text="itemsAll[index]?.slot1"></span>
 
                             <div class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">

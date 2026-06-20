@@ -33,31 +33,31 @@ export default defineConfig(({ mode }) => {
             tailwindcss(),
         ],
 
-        // server: {
-        //     cors: true,
-        //     watch: {
-        //         ignored: ['**/storage/framework/views/**'],
-        //     },
-        // },
-
         server: {
-            host: '0.0.0.0',
-            port: 5173,
-
-            allowedHosts: [
-                '.ngrok-free.app',
-            ],
-
-            cors: {
-                origin: '*',
-                credentials: true,
-            },
-
-            hmr: {
-                host: env.VITE_HMR_HOST,
-                protocol: 'wss',
-                clientPort: 443,
+            cors: true,
+            watch: {
+                ignored: ['**/storage/framework/views/**'],
             },
         },
+
+        // server: {
+        //     host: '0.0.0.0',
+        //     port: 5173,
+
+        //     allowedHosts: [
+        //         '.ngrok-free.app',
+        //     ],
+
+        //     cors: {
+        //         origin: '*',
+        //         credentials: true,
+        //     },
+
+        //     hmr: {
+        //         host: env.VITE_HMR_HOST,
+        //         protocol: 'wss',
+        //         clientPort: 443,
+        //     },
+        // },
     };
 });

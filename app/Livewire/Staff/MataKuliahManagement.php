@@ -32,7 +32,7 @@ class MataKuliahManagement extends Component
     use WithPagination;
     use WithProdiSearchFilters;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

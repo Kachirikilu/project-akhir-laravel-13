@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use ZipArchive;
 
 trait WithNilaiExcel
 {
@@ -51,34 +52,72 @@ trait WithNilaiExcel
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
         if (! (Auth::user()->admin || Auth::user()->dosen)) {
             return;
         }
+
         if (! empty($this->jadwal)) {
             return $this->prosesDownloadTunggal($this->jadwal);
         }
-        if (! empty($this->kelas)) {
-            $this->jadwalQueue = $this->kelas->jadwals()->pluck('id')->toArray();
 
-            return $this->downloadNextInQueue();
+        if (! empty($this->kelas)) {
+            $jadwals = $this->kelas->jadwals()->get();
+            if ($jadwals->count() === 1) {
+                return $this->prosesDownloadTunggal($jadwals->first());
+            }
+
+            return $this->prosesDownloadZip($jadwals);
         }
     }
 
-    public function downloadNextInQueue()
+    private function prosesDownloadZip($jadwals)
     {
-        if (empty($this->jadwalQueue)) {
-            return;
-        }
-        $currentJadwalId = array_shift($this->jadwalQueue);
+        $kode = $this->kelas->kode;
+        $rps = $this->kelas->kode_rps;
+        $mk = $this->kelas->mk;
 
-        $j = KelasJadwal::find($currentJadwalId);
-        if ($j) {
-            if (! empty($this->jadwalQueue)) {
-                $this->dispatch('trigger-next-download');
-            }
+        $zipName = str_replace(
+            ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+            '-',
+            $kode.'_'.$rps.'_'.$mk.'_'.now()->format('Y-m-d').'.zip'
+        );
 
-            return $this->prosesDownloadTunggal($j);
+        $tempDir = storage_path('app/temp');
+        if (! file_exists($tempDir)) {
+            mkdir($tempDir, 0777, true);
         }
+
+        $zipPath = $tempDir.'/'.$zipName;
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new \Exception('Gagal membuat file ZIP di server.');
+        }
+
+  
+        foreach ($jadwals as $jadwal) {
+            $rawFileName = $jadwal->kode.'_'.$jadwal->kode_rps.'_'.$mk.'_'.now()->format('Y-m-d').'.xlsx';
+            $fileName = str_replace(
+                ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+                '-',
+                $rawFileName
+            );
+
+            $excelContent = Excel::raw(
+                new NilaiExport($jadwal->id),
+                \Maatwebsite\Excel\Excel::XLSX
+            );
+
+            $zip->addFromString($fileName, $excelContent);
+        }
+
+        $zip->close();
+
+        if (! file_exists($zipPath)) {
+            throw new \Exception('File ZIP gagal digenerate.');
+        }
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     private function prosesDownloadTunggal($jadwalModel)
@@ -89,9 +128,46 @@ trait WithNilaiExcel
         $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
         $fileNameSafe = str_replace('/', '-', $fileName);
 
-        // Murni Excel::download() tanpa store file!
         return Excel::download(new NilaiExport($jadwalModel->id), $fileNameSafe);
     }
+
+    // public function exportNilaiExcel()
+    // {
+    //     if (! $this->AuthCheck('staff')) {
+    //         return;
+    //     }
+    //     if (! (Auth::user()->admin || Auth::user()->dosen)) {
+    //         return;
+    //     }
+    //     if (! empty($this->jadwal)) {
+    //         return $this->prosesDownloadTunggal($this->jadwal);
+    //     }
+    //     if (! empty($this->kelas)) {
+    //         $this->jadwalQueue = $this->kelas->jadwals()->pluck('id')->toArray();
+
+    //         return $this->downloadNextInQueue();
+    //     }
+    // }
+
+    // public function downloadNextInQueue()
+    // {
+    //     if (empty($this->jadwalQueue)) {
+    //         return;
+    //     }
+    //     $currentJadwalId = array_shift($this->jadwalQueue);
+
+    //     $j = KelasJadwal::find($currentJadwalId);
+    //     if ($j) {
+    //         if (! empty($this->jadwalQueue)) {
+    //             $this->dispatch(
+    //                 'download-multiple',
+    //                 jadwalIds: $this->kelas->jadwals()->pluck('id')->toArray()
+    //             );
+    //         }
+
+    //         return $this->prosesDownloadTunggal($j);
+    //     }
+    // }
 
     public function getPaginatedNilaiRowsProperty()
     {
@@ -275,9 +351,9 @@ trait WithNilaiExcel
     {
         $this->excel_nilai_file = null;
         $this->reset([
-            'parsedNilaiRows', 
+            'parsedNilaiRows',
             'rowNilaiErrors',
-            'parsedNilaiHeaders'
+            'parsedNilaiHeaders',
         ]);
         if (method_exists($this, 'setPage')) {
             $this->setPage(1, 'excelPage');
@@ -355,10 +431,10 @@ trait WithNilaiExcel
             'excel_nilai_file.*' => 'file|mimes:xlsx,xls|max:27684',
         ], [
             'excel_nilai_file.required' => 'File Excel Data Nilai Mahasiswa wajib diunggah!',
-            'excel_nilai_file.array'    => 'Format unggahan tidak valid!',
-            'excel_nilai_file.*.file'   => 'Salah satu file Excel Data Nilai Mahasiswa harus berupa file yang valid!',
-            'excel_nilai_file.*.mimes'  => 'Setiap file Excel Data Nilai Mahasiswa harus berformat .xlsx atau .xls!',
-            'excel_nilai_file.*.max'    => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
+            'excel_nilai_file.array' => 'Format unggahan tidak valid!',
+            'excel_nilai_file.*.file' => 'Salah satu file Excel Data Nilai Mahasiswa harus berupa file yang valid!',
+            'excel_nilai_file.*.mimes' => 'Setiap file Excel Data Nilai Mahasiswa harus berformat .xlsx atau .xls!',
+            'excel_nilai_file.*.max' => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
         ]);
         if (empty($this->parsedNilaiRows)) {
             $this->toast(text: 'Tidak ada data nilai untuk disimpan!', variant: 'warning');
@@ -587,7 +663,6 @@ trait WithNilaiExcel
     //             );
     //         }
 
-
     //         $nilai_mahasiswa = NilaiMahasiswa::query()
     //             ->where('mahasiswa_id', $mahasiswa->id)
     //             ->where('rps_id', $jadwal->kelas_rel->rps_id)
@@ -761,7 +836,6 @@ trait WithNilaiExcel
                 return $kode === $search;
             });
     }
-
 
     // protected function getRPSInfoByKode(?string $kodeRPS): array
     // {

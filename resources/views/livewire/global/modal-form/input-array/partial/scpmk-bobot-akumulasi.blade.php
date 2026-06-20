@@ -1,26 +1,26 @@
 <div class="flex items-center justify-between mb-4">
-    <span class="text-xs text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
+    <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
     <div class="flex items-center gap-2">
 
         @include('livewire.global.modal-form.partial.reset-all-buttons')
 
         <template x-if="grandTotalBobot <= {{ $nilai1 }}">
-            <flux:badge color="red" size="sm" variant="pill" class="text-xs text-sm">
+            <flux:badge color="red" size="sm" variant="pill" class="text-xs sm:text-sm">
                 Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai1 }} && grandTotalBobot < {{ $nilai2 }}">
-            <flux:badge color="orange" size="sm" variant="pill" class="text-xs text-sm">
+            <flux:badge color="orange" size="sm" variant="pill" class="text-xs sm:text-sm">
                 Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot >= {{ $nilai2 }} && grandTotalBobot <= {{ $nilai3 }}">
-            <flux:badge color="green" size="sm" variant="pill" class="text-xs text-sm">
+            <flux:badge color="green" size="sm" variant="pill" class="text-xs sm:text-sm">
                 Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai3 }}">
-            <flux:badge color="blue" size="sm" variant="pill" class="text-xs text-sm">
+            <flux:badge color="blue" size="sm" variant="pill" class="text-xs sm:text-sm">
                 Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>

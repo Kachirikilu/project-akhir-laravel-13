@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable(['email', 'password', 'current_team_id'])] // Menggunakan PHP Attribute ala Laravel 13 (Name sengaja dilepas/di-comment seperti versi lama)
@@ -43,7 +44,7 @@ class User extends Authenticatable
         'status',
         'status_full',
         'kode_wilayah',
-        'wilayah'
+        'wilayah',
     ];
 
     /**
@@ -265,21 +266,36 @@ class User extends Authenticatable
         });
     }
 
+    protected function tanggalLahir(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $value = null;
+
+                if ($this->admin) {
+                    $value = $this->admin->tanggal_lahir;
+                } elseif ($this->dosen) {
+                    $value = $this->dosen->tanggal_lahir;
+                } elseif ($this->mahasiswa) {
+                    $value = $this->mahasiswa->tanggal_lahir;
+                }
+
+                if (empty($value)) {
+                    return null;
+                }
+
+                return Carbon::parse($value)->format('Y-m-d');
+            }
+        );
+    }
+
     protected function tglLahir(): Attribute
     {
-        return Attribute::get(function () {
-            $value = null;
-
-            if ($this->admin) {
-                $value = $this->admin->tanggal_lahir;
-            } elseif ($this->dosen) {
-                $value = $this->dosen->tanggal_lahir;
-            } elseif ($this->mahasiswa) {
-                $value = $this->mahasiswa->tanggal_lahir;
+        return Attribute::make(
+            get: function () {
+                return Carbon::parse($this->tanggal_lahir)->translatedFormat('j F Y');
             }
-
-            return empty($value) ? null : $value;
-        });
+        );
     }
 
     protected function gender(): Attribute
@@ -330,6 +346,61 @@ class User extends Authenticatable
             }
 
             return empty($value) ? null : $value;
+        });
+    }
+
+    protected function noWa(): Attribute
+    {
+        return Attribute::get(function () {
+            $phone = $this->no_hp; 
+
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (str_starts_with($phone, '0')) {
+                $phone = '62' . substr($phone, 1);
+            }
+
+            return $phone ?? null;
+        });
+    }
+    
+    protected function waAktif(): Attribute
+    {
+        return Attribute::get(function () {
+
+            $value = false;
+
+            if ($this->admin) {
+                $value = $this->admin->is_wa_active;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->is_wa_active;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->is_wa_active;
+            }
+
+            return empty($value) ? false : $value;
+        });
+    }
+
+    protected function noHpBack(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->no_hp;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->no_hp;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->no_hp;
+            }
+
+            if (empty($value)) {
+                return null;
+            }
+            $cleaned = preg_replace('/\D/', '', $value);
+            $cleaned = preg_replace('/^(62|0)+/', '', $cleaned);
+
+            return $cleaned;
         });
     }
 
@@ -465,16 +536,16 @@ class User extends Authenticatable
         });
     }
 
-    public function getWhatsappNumberAttribute()
-    {
-        $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
-        $phone = $profile?->no_hp;
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (str_starts_with($phone, '0')) {
-            $phone = '62' . substr($phone, 1);
-        }
-        return $phone;
-    }
+    // public function getWhatsappNumberAttribute()
+    // {
+    //     $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+    //     $phone = $profile?->no_hp;
+    //     $phone = preg_replace('/[^0-9]/', '', $phone);
+    //     if (str_starts_with($phone, '0')) {
+    //         $phone = '62' . substr($phone, 1);
+    //     }
+    //     return $phone;
+    // }
 
     protected function profilePhotoUrl(): Attribute
     {
@@ -486,6 +557,7 @@ class User extends Authenticatable
             return $this->defaultProfilePhotoUrl();
         });
     }
+
     protected function defaultProfilePhotoUrl(): string
     {
         $name = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
@@ -534,7 +606,7 @@ class User extends Authenticatable
         $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
+        return $query->where(function ($q) use ($search, $searchTerm, $withTahun) {
 
             if ($withTahun == false) {
                 $q->where('email', 'like', $searchTerm);
@@ -620,7 +692,7 @@ class User extends Authenticatable
     //                             ->orWhere('kode_pr', 'like', $searchTerm);
     //                         $pGroup->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
     //                         $aliasStrataSql = "
-    //                         CASE 
+    //                         CASE
     //                             WHEN LOWER(strata) LIKE '%sarjana%' THEN 'S1'
     //                             WHEN LOWER(strata) LIKE '%magister%' THEN 'S2'
     //                             WHEN LOWER(strata) LIKE '%doktor%' THEN 'S3'

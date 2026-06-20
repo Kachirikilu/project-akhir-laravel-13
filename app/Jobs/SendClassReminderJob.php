@@ -83,7 +83,7 @@ class SendClassReminderJob implements ShouldQueue
 
             try {
 
-                $noHp = $mahasiswa->whatsapp_number ?? null;
+                $noHp = $mahasiswa->no_wa ?? null;
 
                 if (blank($noHp)) {
                     continue;
@@ -98,7 +98,7 @@ class SendClassReminderJob implements ShouldQueue
                 Log::info('Mahasiswa Queue', [
                     'id' => $mahasiswa->id,
                     'name' => $mahasiswa->name,
-                    'whatsapp' => $mahasiswa->whatsapp_number,
+                    'whatsapp' => $mahasiswa->no_wa,
                 ]);
 
                 $pesan = "Halo {$nama}, pengingat untuk kelas *{$namaKelas}* (Pertemuan ke-{$pertemuan}) akan dimulai hari ini pukul *{$jamMulai}*. Jangan lupa hadir tepat waktu ya!";
@@ -110,7 +110,7 @@ class SendClassReminderJob implements ShouldQueue
                     ->timeout(30)
                     ->asForm()
                     ->post($url, [
-                        'whatsapp_number' => $noHp,
+                        'no_wa' => $noHp,
                         'whatsapp_message' => $pesan,
                         // 'delay' => 5,
                         // 'typing' => false,
@@ -120,7 +120,7 @@ class SendClassReminderJob implements ShouldQueue
                     //     'Authorization'           => $token,
                     //     'Bypass-Tunnel-Reminder'  => 'true',
                     // ])->post($url, [
-                    //     'whatsapp_number'  => $noHp,
+                    //     'no_wa'  => $noHp,
                     //     'whatsapp_message' => $pesanCustom,
                     // ]);
 

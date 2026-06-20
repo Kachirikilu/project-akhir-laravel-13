@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -30,10 +31,9 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
 
     protected $title;
 
+    // return Excel::download(new NilaiMahasiswaExport($mhsId, $gg, $aka, $title), $fileNameSafe);
 
-        // return Excel::download(new NilaiMahasiswaExport($mhsId, $gg, $aka, $title), $fileNameSafe);
-
-    public function __construct($mahasiswa_id, $ganjil_genap = null, $akademik = null, $title)
+    public function __construct($mahasiswa_id, $ganjil_genap, $akademik, $title)
     {
         $this->mahasiswa_id = $mahasiswa_id;
         $this->title = $title;
@@ -248,13 +248,23 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
                 $sheet = $event->sheet->getDelegate();
                 $highestColumn = $sheet->getHighestColumn();
 
+                $title = $this->title;
+
+                $highestColumn = $sheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow();
+
                 $sheet->mergeCells("A2:{$highestColumn}2");
-                $sheet->setCellValue('A2', $this->title);
+                $sheet->setCellValue('A2', $title);
 
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 13, 'color' => ['rgb' => '075985']],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
+
+                $sheet->getStyle("A1:{$highestColumn}5")->getProtection()->setLocked(Protection::PROTECTION_PROTECTED);
+                // $sheet->getStyle("A6:{$highestColumn}{$highestRow}")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $sheet->getProtection()->setPassword(env('PW_EXCEL', '121104'));
+                $sheet->getProtection()->setSheet(true);
 
                 $sheet->getRowDimension(2)->setRowHeight(35);
                 $sheet->getRowDimension(4)->setRowHeight(25);

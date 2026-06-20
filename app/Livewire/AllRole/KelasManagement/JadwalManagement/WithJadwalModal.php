@@ -467,21 +467,32 @@ trait WithJadwalModal
                 // =========================================
                 // CREATE SESI 1 - 16
                 // =========================================
+                $jamMulai = $validated['jam_mulai'];
+                $sesiSent = $data['sesi_sent'];
+
                 for ($i = 1; $i <= 16; $i++) {
-
                     $tanggalSesi = $data["sesi_{$i}"] ?? null;
-
                     if (! $tanggalSesi) {
                         continue;
+                    }
+                    // Jika true/1 -> custom_sent jadi 0 (Aktif)
+                    // Jika false/0 -> custom_sent jadi 1 (Nonaktif)
+                    $customSent = $sesiSent ? 0 : 1;
+
+                    $jamAcuan = ! empty($jamMulai) ? $jamMulai : '00:00';
+                    $waktuSesi = Carbon::parse($tanggalSesi.' '.$jamAcuan);
+
+                    if ($waktuSesi->isPast()) {
+                        $customSent = 1;
                     }
 
                     KelasSesi::create([
                         'kj_id' => $jadwal->id,
                         'pertemuan_ke' => $i,
                         'tanggal' => $tanggalSesi,
+                        'reminder_sent' => $customSent,
                     ]);
                 }
-
                 // =========================================
                 // ATTACH MAHASISWA
                 // =========================================
@@ -574,13 +585,35 @@ trait WithJadwalModal
                 ]);
 
                 // =========================================
-                // UPDATE / CREATE SESI 1-16
+                // UPDATE OR CREATE SESI 1 - 16
                 // =========================================
+                $jamMulai = $validated['jam_mulai'];
+                $sesiSent = $data['sesi_sent_edit'];
+
                 for ($i = 1; $i <= 16; $i++) {
                     $tanggalSesi = $data["sesi_{$i}"] ?? null;
 
                     if (! $tanggalSesi) {
                         continue;
+                    }
+
+                    $sesiLama = KelasSesi::where('kj_id', $jadwal->id)
+                        ->where('pertemuan_ke', $i)
+                        ->first();
+                        
+                    if ($sesiSent === 'active') {
+                        $customSent = 0;
+                    } elseif ($sesiSent === 'inactive') {
+                        $customSent = 1;
+                    } else {
+                        $customSent = $sesiLama ? $sesiLama->reminder_sent : 0;
+                    }
+
+                    $jamAcuan = ! empty($jamMulai) ? $jamMulai : '00:00';
+                    $waktuSesi = Carbon::parse($tanggalSesi.' '.$jamAcuan);
+
+                    if ($waktuSesi->isPast()) {
+                        $customSent = 1;
                     }
 
                     $sesi = KelasSesi::updateOrCreate(
@@ -590,8 +623,10 @@ trait WithJadwalModal
                         ],
                         [
                             'tanggal' => $tanggalSesi,
+                            'reminder_sent' => $customSent,
                         ]
                     );
+
                     if ($isRestartSesi) {
                         $sesi->override()->delete();
                     }

@@ -221,10 +221,21 @@ trait WithSesiModal
             }
         }
 
+        $sentValue = isset($data['sent']) ? (int) $data['sent'] : 0;
+
+        if (!empty($validated['tanggal'])) {
+            $jamMulai = !empty($validated['jam_mulai']) ? $validated['jam_mulai'] : '00:00';
+            $waktuSesi = \Carbon\Carbon::parse($validated['tanggal'] . ' ' . $jamMulai);
+            if ($waktuSesi->isPast()) {
+                $sentValue = 1;
+            }
+        }
+
         return [
             'main_data' => [
                 'pertemuan_ke' => $validated['pertemuan_ke'],
                 'tanggal' => $validated['tanggal'] ?? null,
+                'reminder_sent' => $sentValue
             ],
             'override_data' => $overridePayload,
             'has_override' => $hasOverrideContent,
@@ -312,7 +323,7 @@ trait WithSesiModal
     {
         $messages = [
             'tanggal.required' => 'Tanggal Sesi Kelas pertemuan wajib diisi!',
-            'tanggal.date' => 'Format tanggal Sesi Kelas tidak valid!',
+            'tanggal.date' => 'Format Tanggal Sesi Kelas tidak valid!',
 
             'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
             'jam_mulai.date_format' => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',

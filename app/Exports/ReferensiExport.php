@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ReferensiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -110,12 +111,18 @@ class ReferensiExport extends DefaultValueBinder implements FromCollection, Shou
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                $highestColumn = $sheet->getHighestColumn();
-
                 $title = $this->title;
+
+                $highestColumn = $sheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow();
 
                 $sheet->mergeCells("A2:{$highestColumn}2");
                 $sheet->setCellValue('A2', $title);
+
+                $sheet->getStyle("A1:{$highestColumn}4")->getProtection()->setLocked(Protection::PROTECTION_PROTECTED);
+                $sheet->getStyle("A5:{$highestColumn}{$highestRow}")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $sheet->getProtection()->setPassword(env('PW_EXCEL', '121104'));
+                $sheet->getProtection()->setSheet(true);
 
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => [

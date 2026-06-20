@@ -52,7 +52,7 @@
 
     {{-- Info Terpilih --}}
     <div x-show="itemsAll && search" x-cloak>
-        <p class="text-[var(--focus-color)] text-xs text-sm mt-1 font-medium italic">
+        <p class="text-[var(--focus-color)] text-xs sm:text-sm mt-1 font-medium italic">
             Terpilih:
             <span x-text="itemsAll?.slot1" class="ml-1"></span>
             <span class="mx-1">|</span>
@@ -93,14 +93,14 @@
             @empty
                 <div class="p-4 text-center">
                     <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-xs text-sm text-[var(--focus-color)] font-medium animate-pulse">
+                        <p class="text-xs sm:text-sm text-[var(--focus-color)] font-medium animate-pulse">
                             Sedang mencari data {{ $nameXString ?? null }}...
                         </p>
                     </div>
 
                     <div wire:loading.remove
                         @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
-                        <p class="text-xs text-sm text-gray-500 dark:text-gray-400 italic">
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 italic">
                             Data {{ $nameXString ?? null }} tidak ditemukan!
                         </p>
                     </div>
@@ -109,6 +109,6 @@
         </div>
     </div>
     @error($idString)
-        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span>
     @enderror
 </div>

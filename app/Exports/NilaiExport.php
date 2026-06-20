@@ -165,11 +165,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         // ==========================
         // PROTECTION
         // ==========================
-        $sheet->getProtection()
-            ->setPassword('Plat-Khusus-TA-2026');
-
-        $sheet->getProtection()
-            ->setSheet(true);
+        $sheet->getProtection()->setPassword(env('PW_EXCEL') ?? 'Wildan121104');
+        $sheet->getProtection()->setSheet(true);
 
         // ==========================
         // HEADER STYLE
@@ -217,35 +214,23 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         // ==========================
         // FORMAT BOBOT (%)
         // ==========================
-        $startSesiCol =
-            Coordinate::stringFromColumnIndex(7);
-
-        $endSesiCol =
-            Coordinate::stringFromColumnIndex(
+        $startSesiCol = Coordinate::stringFromColumnIndex(7);
+        $endSesiCol = Coordinate::stringFromColumnIndex(
                 6 + $totalSesis
             );
 
-        $sheet->getStyle(
-            "{$startSesiCol}3:{$endSesiCol}3"
-        )
-            ->getNumberFormat()
-            ->setFormatCode('0.00%');
+        $sheet->getStyle("{$startSesiCol}3:{$endSesiCol}3")->getNumberFormat()->setFormatCode('0.00%');
 
         // ==========================
         // NILAI AKHIR CENTER
         // ==========================
-        $startFinalCol =
-            Coordinate::stringFromColumnIndex(
+        $startFinalCol = Coordinate::stringFromColumnIndex(
                 7 + $totalSesis
             );
 
         $sheet->getStyle(
             "{$startFinalCol}{$dataStart}:{$highestColumn}{$highestRow}"
-        )
-            ->getAlignment()
-            ->setHorizontal(
-                Alignment::HORIZONTAL_CENTER
-            );
+        )->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // ==========================================
         // PERUBAHAN UTAMA: FORMAT 2 DIGIT BELAKANG KOMA (.00)
@@ -254,28 +239,15 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         $nilaiIndexColLetter = Coordinate::stringFromColumnIndex(8 + $totalSesis);
 
         // Terapkan mask format '0.00' ke seluruh baris data Nilai Angka & Nilai Index
-        $sheet->getStyle("{$nilaiAngkaColLetter}{$dataStart}:{$nilaiAngkaColLetter}{$highestRow}")
-            ->getNumberFormat()
-            ->setFormatCode('0.00');
-
-        $sheet->getStyle("{$nilaiIndexColLetter}{$dataStart}:{$nilaiIndexColLetter}{$highestRow}")
-            ->getNumberFormat()
-            ->setFormatCode('0.00');
+        $sheet->getStyle("{$nilaiAngkaColLetter}{$dataStart}:{$nilaiAngkaColLetter}{$highestRow}")->getNumberFormat()->setFormatCode('0.00');
+        $sheet->getStyle("{$nilaiIndexColLetter}{$dataStart}:{$nilaiIndexColLetter}{$highestRow}")->getNumberFormat()->setFormatCode('0.00');
 
         // ==========================
         // INPUT NILAI EDITABLE
         // ==========================
         if ($totalSesis > 0) {
-
-            $editableRange =
-                "{$startSesiCol}{$dataStart}:{$endSesiCol}{$highestRow}";
-
-            $sheet->getStyle($editableRange)
-                ->getProtection()
-                ->setLocked(
-                    Protection::PROTECTION_UNPROTECTED
-                );
-
+            $editableRange = "{$startSesiCol}{$dataStart}:{$endSesiCol}{$highestRow}";
+            $sheet->getStyle($editableRange)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
             // background editable
             $sheet->getStyle($editableRange)
                 ->getFill()
@@ -304,11 +276,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                 AfterSheet $event
             ) {
 
-                $sheet =
-                    $event->sheet->getDelegate();
-
-                $totalSesis =
-                    count($this->sesis);
+                $sheet = $event->sheet->getDelegate();
+                $totalSesis = count($this->sesis);
 
                 // HEADER FIX
                 $headerTop = 1;
@@ -317,30 +286,15 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                 // ==========================
                 // ROWSPAN IDENTITAS
                 // ==========================
-                $columnsToRowspan = [
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
+                $columnsToRowspan = [1, 2, 3, 4, 5, 6,
                     7 + $totalSesis,
                     8 + $totalSesis,
                     9 + $totalSesis,
                 ];
 
-                foreach (
-                    $columnsToRowspan as $colIndex
-                ) {
-
-                    $letter =
-                        Coordinate::stringFromColumnIndex(
-                            $colIndex
-                        );
-
-                    $sheet->mergeCells(
-                        "{$letter}{$headerTop}:{$letter}{$headerBottom}"
-                    );
+                foreach ($columnsToRowspan as $colIndex) {
+                    $letter = Coordinate::stringFromColumnIndex($colIndex);
+                    $sheet->mergeCells("{$letter}{$headerTop}:{$letter}{$headerBottom}");
                 }
 
                 // ==========================
@@ -350,23 +304,11 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                 $endCol = 6 + $totalSesis;
 
                 if ($totalSesis > 0) {
+                    $currentLeft = $startCol;
 
-                    $currentLeft =
-                        $startCol;
+                    $currentValue = $sheet->getCell(Coordinate::stringFromColumnIndex($startCol).'1')->getValue();
 
-                    $currentValue =
-                        $sheet->getCell(
-                            Coordinate::stringFromColumnIndex(
-                                $startCol
-                            ).'1'
-                        )->getValue();
-
-                    for (
-                        $c = $startCol + 1;
-                        $c <= $endCol;
-                        $c++
-                    ) {
-
+                    for ($c = $startCol + 1; $c <= $endCol; $c++) {
                         $checkValue =
                             $sheet->getCell(
                                 Coordinate::stringFromColumnIndex(
@@ -374,56 +316,22 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                                 ).'1'
                             )->getValue();
 
-                        if (
-                            $checkValue !==
-                            $currentValue
-                        ) {
-
-                            if (
-                                $c - 1 >
-                                $currentLeft
-                            ) {
-
-                                $left =
-                                    Coordinate::stringFromColumnIndex(
-                                        $currentLeft
-                                    );
-
-                                $right =
-                                    Coordinate::stringFromColumnIndex(
-                                        $c - 1
-                                    );
-
-                                $sheet->mergeCells(
-                                    "{$left}1:{$right}1"
-                                );
+                        if ($checkValue !== $currentValue) {
+                            if ($c - 1 > $currentLeft) {
+                                $left = Coordinate::stringFromColumnIndex($currentLeft);
+                                $right = Coordinate::stringFromColumnIndex($c - 1);
+                                $sheet->mergeCells("{$left}1:{$right}1");
                             }
-
                             $currentLeft = $c;
-                            $currentValue =
-                                $checkValue;
+                            $currentValue = $checkValue;
                         }
                     }
 
                     // merge terakhir
-                    if (
-                        $endCol >
-                        $currentLeft
-                    ) {
-
-                        $left =
-                            Coordinate::stringFromColumnIndex(
-                                $currentLeft
-                            );
-
-                        $right =
-                            Coordinate::stringFromColumnIndex(
-                                $endCol
-                            );
-
-                        $sheet->mergeCells(
-                            "{$left}1:{$right}1"
-                        );
+                    if ($endCol > $currentLeft) {
+                        $left = Coordinate::stringFromColumnIndex($currentLeft);
+                        $right = Coordinate::stringFromColumnIndex($endCol );
+                        $sheet->mergeCells("{$left}1:{$right}1");
                     }
                 }
             },

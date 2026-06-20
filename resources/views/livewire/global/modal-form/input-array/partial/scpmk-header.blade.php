@@ -9,7 +9,7 @@
             x-on:click="expanded.includes(index) ? expanded = expanded.filter(i => i !== index) : expanded.push(index)">
 
             {{-- KODE SEBAGAI BADGE DI ATAS --}}
-            <div class="text-xs text-sm flex items-center gap-2">
+            <div class="text-xs sm:text-sm flex items-center gap-2">
                 <div class="flex items-center gap-1.5 mb-1.5">
                     <flux:icon icon="chevron-right" variant="mini" class="transition-transform duration-200"
                         x-bind:class="expanded.includes(index) ? 'rotate-90 text-[var(--hover-focus-color)]' :
@@ -21,11 +21,11 @@
             </div>
 
             {{-- NAMA UTAMA --}}
-            <span class="text-xs text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
+            <span class="text-xs sm:text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
                 x-text="itemsAll[index]?.slot1"></span>
 
             {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
-            <div class="text-xs text-sm flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+            <div class="text-xs sm:text-sm flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
                 <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
                 <span class="mx-1.5 opacity-50">|</span>
                 <span class="flex items-center gap-1">

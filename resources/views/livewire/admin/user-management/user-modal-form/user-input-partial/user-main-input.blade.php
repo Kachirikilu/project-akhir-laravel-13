@@ -18,17 +18,33 @@
     ])
 
     {{-- 🔒 Password Input --}}
-    <template x-if="$store.user?.isEdit == 0" x-cloak>
-        @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
-            'alpine' => 'user',
-            'modelString' => 'password',
-            'typeString' => 'password',
-            'iconString' => 'lock-closed',
-            'placeholder' => 'Masukkan Password',
-            'message' => $errors->first('password'),
-        ])
+    <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>
+        <template x-if="$store.user?.isEdit == 0" x-cloak>
+            @include('livewire.global.modal-form.input-form', [
+                // 'colorIcon' => $colorIcon,
+                'alpine' => 'user',
+                'modelString' => 'password',
+                'typeString' => 'password',
+                'iconString' => 'lock-closed',
+                'placeholder' => 'Default: NIP',
+                'message' => $errors->first('password'),
+            ])
+        </template>
     </template>
+    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+        <template x-if="$store.user?.isEdit == 0" x-cloak>
+            @include('livewire.global.modal-form.input-form', [
+                // 'colorIcon' => $colorIcon,
+                'alpine' => 'user',
+                'modelString' => 'password',
+                'typeString' => 'password',
+                'iconString' => 'lock-closed',
+                'placeholder' => 'Default: NIM',
+                'message' => $errors->first('password'),
+            ])
+        </template>
+    </template>
+    
     <template x-if="$store.user?.isEdit == 1" x-cloak>
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,

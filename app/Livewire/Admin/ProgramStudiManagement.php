@@ -36,7 +36,7 @@ class ProgramStudiManagement extends Component
     use WithProdiModal;
     use WithProdiSearchFilters;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

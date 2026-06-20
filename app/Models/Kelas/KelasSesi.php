@@ -235,6 +235,13 @@ class KelasSesi extends Model
         return $this->jadwal->kelas_rel->rps_rel->dosens;
     }
 
+    protected function sent(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->reminder_sent;
+        });
+    }
+
     protected function kodeJadwal(): Attribute
     {
         return Attribute::get(function () {
@@ -360,6 +367,13 @@ class KelasSesi extends Model
     {
         return Attribute::get(function () {
             return $this->override->waktu_mandiri ?? $this->scpmk_atr->waktu_mandiri ?? 60 * $this->jadwal_rel->kelas_rel->rps_rel->sks ?? null;
+        });
+    }
+
+    protected function tanggalFix(): Attribute
+    {
+        return Attribute::get(function () {
+            return Carbon::parse($this->tanggal)->format('Y-m-d');
         });
     }
 

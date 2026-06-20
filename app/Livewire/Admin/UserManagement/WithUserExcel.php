@@ -219,9 +219,10 @@ trait WithUserExcel
                 foreach ($headers as $col => $header) {
                     $data[$header] = trim((string) ($row[$col] ?? ''));
                 }
+
                 $this->parsedUserRows[] = [
                     'email' => $data['email'] ?? '',
-                    'password' => $data['password'] ?? '12345678',
+                    'password' => $data['password'] ?? '',
                     'name' => $data['name'] ?? $data['nama'] ?? '',
                     'nip' => $data['nip'] ?? '',
                     'nitk' => $data['nitk'] ?? '',
@@ -229,9 +230,14 @@ trait WithUserExcel
                     'nidk' => $data['nidk'] ?? '',
                     'nim' => $data['nim'] ?? '',
                     'nik' => $data['nik'] ?? '',
+                    'no_hp' => $data['no. hp'] ?? $data['no hp'] ?? $data['no telepon'] ?? $data['telepon'] ?? $data['wa'] ?? $data['no wa'],
+                    'agama' => $data['agama'] ??  $data['kepercayaan'],
+                    'jenis_kelamin' => $data['jenis kelamin'] ??  $data['gender'],
+                    'tempat_lahir' => $data['tempat lahir'] ??  $data['tmt lahir'],
+                    'tanggal_lahir' => $data['tanggal lahir'] ??  $data['tgl lahir'],
                     'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
                     'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
-                    'role' => strtolower($data['role'] ?? ''),
+                    'role' => ucfirst($data['role'] ?? ''),
                 ];
             }
         }
@@ -239,7 +245,7 @@ trait WithUserExcel
         $this->toast(text: 'Semua file Excel ('.count($this->excel_user_file).' file) berhasil dimuat. Silakan periksa data!');
     }
 
-    public function clearUserNilaiFile()
+    public function clearUserExcelFile()
     {
         $this->excel_user_file = null;
         $this->reset([
@@ -327,8 +333,8 @@ trait WithUserExcel
                             $dataToValidate['status'] = 'Aktif';
                         }
 
-                        $validatedData = $this->inputModalUser(false, $dataToValidate);
-                        $this->saveUserFromExcel($validatedData, $row['role']);
+                        $validatedData = $this->inputModalUser(false, $dataToValidate, strtolower($row['role']));
+                        $this->saveUserFromExcel($validatedData, strtolower($row['role']));
 
                         $successfulIndices[] = $index;
                         $successCount++;
@@ -395,6 +401,13 @@ trait WithUserExcel
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
                     'kode_wilayah' => $validated['kode_wilayah'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+
                     'status' => $validated['status'],
                 ]);
             } elseif ($role === 'dosen') {
@@ -406,6 +419,13 @@ trait WithUserExcel
                     'nidk' => $validated['nidk'] ?? null,
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+
                     'status' => $validated['status'],
                 ]);
             } elseif ($role === 'mahasiswa') {
@@ -417,6 +437,13 @@ trait WithUserExcel
                     'angkatan' => $validated['angkatan'],
                     'pr_id' => $validated['pr_id'],
                     'kode_wilayah' => $validated['kode_wilayah'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+                    
                     'status' => $validated['status'],
                 ]);
             }

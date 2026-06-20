@@ -76,6 +76,7 @@ document.addEventListener("alpine:init", () => {
 
         sks: "",
         sks_menit: 0,
+        sent: 1,
 
         setValueSesi(
             jamMulai,
@@ -90,8 +91,9 @@ document.addEventListener("alpine:init", () => {
             tugas,
             wTugas,
             wMandiri,
-
             sks,
+
+            sent,
         ) {
             this.jam_mulai = jamMulai?.slice(0, 5) || "";
             this.jam_berakhir = jamBerakhir?.slice(0, 5) || "";
@@ -107,12 +109,15 @@ document.addEventListener("alpine:init", () => {
             this.deskripsi_tugas = tugas;
             this.waktu_tugas = wTugas;
             this.waktu_mandiri = wMandiri;
-
             this.sks = sks;
+
+            this.sent = sent;
         },
         setValueAbsenSesi(
             sesiId,
             pertemuanKe,
+            scpmk,
+            keterangan,
             wPelaksanaan,
             wBerakhir,
             wTelat,
@@ -120,6 +125,8 @@ document.addEventListener("alpine:init", () => {
         ) {
             this.sesi_id = sesiId;
             this.pertemuan_ke = pertemuanKe;
+            this.kode_scpmk = scpmk;
+            this.keterangan = keterangan;
 
             this.w_pelaksanaan = wPelaksanaan;
             this.w_berakhir = wBerakhir;
@@ -216,7 +223,8 @@ document.addEventListener("alpine:init", () => {
                 }
                 if (item.label === "Terlambat") {
                     return (
-                        sekarang > this.w_telat && sekarang <= this.w_berakhir
+                        sekarang > this.w_pelaksanaan && sekarang <= this.w_berakhir
+                        // sekarang > this.w_telat && sekarang <= this.w_berakhir
                     );
                 }
                 if (item.label === "Dispensasi") {
@@ -298,9 +306,10 @@ document.addEventListener("alpine:init", () => {
 
                 this.sesi_id = "";
                 this.pertemuan_ke = "";
-                ((this.absen = ""),
-                    (this.keterangan = ""),
-                    (this.jam_mulai = ""));
+                this.kode_scpmk = "";
+                this.absen = "",
+                this.keterangan = "",
+                this.jam_mulai = "";
                 this.jam_berakhir = "";
 
                 this.pertemuan_ke_name = "";
@@ -315,6 +324,7 @@ document.addEventListener("alpine:init", () => {
                 this.waktu_mandiri = "";
 
                 this.sks = "";
+                this.sent = 1;
                 this.showEdit = 0;
             }
             if (isAdd == 0) {

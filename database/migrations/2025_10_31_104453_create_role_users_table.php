@@ -33,6 +33,8 @@ return new class extends Migration
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
             $table->string('no_hp', 20)->nullable();
+            $table->boolean('is_wa_active')->default(false);
+            $table->tinyInteger('wa_limit')->unsigned()->default(0);
 
             // Data Kepegawaian BLU
             $table->string('pangkat')->nullable();
@@ -77,9 +79,10 @@ return new class extends Migration
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
             $table->string('no_hp', 20)->nullable();
-            $table->string('no_karpeg')->nullable();
+            $table->boolean('is_wa_active')->default(false);
+            $table->tinyInteger('wa_limit')->unsigned()->default(0);
 
-            // Data Kepangkatan & Jabatan (AK)
+            $table->string('no_karpeg')->nullable();
             $table->string('pangkat_terakhir')->nullable();
             $table->string('golongan_terakhir')->nullable();
             $table->date('tmt_golongan')->nullable();
@@ -122,6 +125,8 @@ return new class extends Migration
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
             $table->string('no_hp')->nullable();
+            $table->boolean('is_wa_active')->default(false);
+            $table->tinyInteger('wa_limit')->unsigned()->default(0);
 
             // Data Akademik
             $table->year('angkatan');

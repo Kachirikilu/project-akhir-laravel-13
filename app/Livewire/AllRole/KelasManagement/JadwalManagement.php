@@ -114,7 +114,6 @@ class JadwalManagement extends Component
             $this->kelas = $kelas;
             $this->rps_id_url = $this->kelas->rps_id;
             $this->kode_rps_url = $this->kelas->kode_rps;
-        }
 
             $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
             $kelasHistory = session($sessionKey, []);
@@ -136,6 +135,7 @@ class JadwalManagement extends Component
             uasort($kelasHistory, fn ($a, $b) => strcmp($a['kode_kelas'], $b['kode_kelas']));
 
             session([$sessionKey => $kelasHistory]);
+        }
     }
 
     public function loadingTable() {}

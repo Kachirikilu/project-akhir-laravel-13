@@ -65,7 +65,7 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');
                     "
-                    class="text-xs sm:text-sm cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 active:!bg-cyan-200 dark:active:!bg-cyan-900 active:!bg-cyan-200 dark:active:!bg-cyan-900">
+                    class="text-xs sm:text-sm cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900">
                     <flux:icon name="book-open" class="!text-cyan-600 dark:!text-cyan-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7 whitespace-nowrap">Mahasiswa</span>

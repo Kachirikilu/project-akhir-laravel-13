@@ -49,6 +49,8 @@ document.addEventListener("alpine:init", () => {
         restart_sesi: 0,
 
         sks_menit: 0,
+        sesi_sent: 0,
+        sesi_sent_edit: 'keep',
 
         setValueJadwal(
             label,
@@ -132,6 +134,8 @@ document.addEventListener("alpine:init", () => {
                     this[`base_sesi_${i}`] = "";
                 }
                 this.showEdit = 0;
+                this.sesi_sent = 0;
+                this.sesi_sent_edit = 'keep';
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

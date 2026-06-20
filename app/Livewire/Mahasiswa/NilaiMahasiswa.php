@@ -23,7 +23,7 @@ class NilaiMahasiswa extends Component
     use WithNilaiSearchFilters;
     use WithPagination;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

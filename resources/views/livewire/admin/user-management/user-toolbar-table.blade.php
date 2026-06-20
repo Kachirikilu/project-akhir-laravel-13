@@ -94,9 +94,16 @@
 
                         '{{ $x->mahasiswa->count_rps ?? 0 }}',
                         '{{ $x->mahasiswa->total_sks ?? 0 }}',
-                        '{{ $user->mahasiswa->rekap_mhs ?? 0.00 }}',
-                        '{{ $user->mahasiswa->index_mhs ?? 0.00 }}',
-                        '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
+                        '{{ $x->mahasiswa->rekap_mhs ?? 0.00 }}',
+                        '{{ $x->mahasiswa->index_mhs ?? 0.00 }}',
+                        '{{ $x->mahasiswa->mutu_mhs ?? 'E' }}',
+
+                        '{{ $x->gender ?? '' }}',
+                        '{{ $x->agama ?? '' }}',
+                        '{{ $x->tmt_lahir ?? '' }}',
+                        '{{ $x->tanggal_lahir ?? '' }}',
+
+                        '{{ $x->no_hp_back ?? '' }}',
                     );
                     $flux.modal('user-modal').show();
             "

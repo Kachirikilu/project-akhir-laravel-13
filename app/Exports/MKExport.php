@@ -21,6 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
@@ -179,9 +180,15 @@ class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoS
                 $title = $this->title;
 
                 $highestColumn = $sheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow();
 
                 $sheet->mergeCells("A2:{$highestColumn}2");
                 $sheet->setCellValue('A2', $title);
+
+                $sheet->getStyle("A1:{$highestColumn}5")->getProtection()->setLocked(Protection::PROTECTION_PROTECTED);
+                $sheet->getStyle("A6:{$highestColumn}{$highestRow}")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $sheet->getProtection()->setPassword(env('PW_EXCEL', '121104'));
+                $sheet->getProtection()->setSheet(true);
 
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => [

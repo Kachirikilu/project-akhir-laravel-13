@@ -32,7 +32,7 @@ class UserManagement extends Component
     use WithUserFilters;
     use WithUserModal;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

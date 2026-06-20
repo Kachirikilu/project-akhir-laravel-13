@@ -39,7 +39,7 @@ class RpsMahasiswaManagement extends Component
     use WithRPSMahasiswaFilters;
     use WithRPSShow;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

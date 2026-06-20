@@ -98,7 +98,7 @@ class CapaianManagement extends Component
     use WithPagination;
 
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

@@ -76,7 +76,7 @@
                     'noLabel' => 1,
                     'modelString' => 'kode_pr',
                     'iconString' => 'hashtag',
-                    'placeholder' => 'Masukkan 3 mutu Kode Program Studi',
+                    'placeholder' => 'Masukkan 3 huruf Kode Program Studi',
                     // 'message' => $errors->first('kode_pr'),
                     'isKode' => 3,
                     'isFocusSelect' => 1,

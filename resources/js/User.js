@@ -52,6 +52,15 @@ document.addEventListener("alpine:init", () => {
 
         kode_wilayah: "",
 
+        jenis_kelamin: "",
+        agama: "",
+        tempat_lahir: "",
+        tanggal_lahir: "",
+
+        kode_no_hp: "+62",
+        no_hp_back: "",
+        no_hp: "",
+
         setValueUser(
             email,
             password,
@@ -75,6 +84,12 @@ document.addEventListener("alpine:init", () => {
             rekap,
             index,
             mutu,
+
+            jk,
+            agama,
+            tmtLahir,
+            tglLahir,
+            noHP,
         ) {
             this.email = email;
             this.password = password;
@@ -105,6 +120,15 @@ document.addEventListener("alpine:init", () => {
             this.rekap_mhs = rekap;
             this.index_mhs = index;
             this.mutu_mhs = mutu;
+
+            this.jenis_kelamin = jk;
+            this.agama = agama;
+            this.tempat_lahir = tmtLahir;
+            this.tanggal_lahir = tglLahir;
+
+            let cleaned = noHP.replace(/\D/g, '').slice(0, 12);
+            let formatted = cleaned.match(/(\d{1,3})(\d{1,4})?(\d{1,5})?/);
+            this.no_hp_back = formatted ? formatted.slice(1).filter(Boolean).join(' - ') : cleaned;
         },
         setValueUserRPS(
             name,
@@ -173,6 +197,14 @@ document.addEventListener("alpine:init", () => {
                 this.rekap_mhs = "";
                 this.index_mhs = "";
                 this.mutu_mhs = "";
+
+                this.jenis_kelamin = "";
+                this.agama = "";
+                this.tempat_lahir = "";
+                this.tanggal_lahir = "";
+
+                this.no_hp_back = "";
+                this.no_hp = "";
             }
             if (isAdd == 0) {
                 this.typeModal = "";

@@ -1,5 +1,5 @@
 <div wire:key="res-array-{{ $typeXString }}-{{ $itemId }}-{{ $alpine }}"
-    class="text-xs text-sm flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 transition-colors">
+    class="text-xs sm:text-sm flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 transition-colors">
 
     @include('livewire.global.modal-form.input-array.partial.dropdown-items')
 

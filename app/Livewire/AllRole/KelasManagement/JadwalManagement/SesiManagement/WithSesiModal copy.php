@@ -703,7 +703,7 @@ trait WithSesiModal
     {
         $messages = [
             'tanggal.required' => 'Tanggal Sesi Kelas pertemuan wajib diisi!',
-            'tanggal.date' => 'Format tanggal Sesi Kelas tidak valid!',
+            'tanggal.date' => 'Format Tanggal Sesi Kelas tidak valid!',
 
             'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
             'jam_mulai.date_format' => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',

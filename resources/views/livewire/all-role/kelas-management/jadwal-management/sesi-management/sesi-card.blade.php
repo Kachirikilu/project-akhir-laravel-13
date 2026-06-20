@@ -16,6 +16,7 @@
                 'pertemuan_ke' => $p,
                 'total_absensi' => (int) ($s->total_absensi ?? 0),
                 'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
+                'tanggal' => $s->tanggal ?? '',
                 'metode' => strtolower($s->metode ?? ''),
                 'tugas' => strtolower($s->tugas ?? ''),
                 'kode_scpmk' => strtolower($stringKodeSCPMK),
@@ -431,15 +432,15 @@
                                     <template x-if="sekarang >= mulai && sekarang <= dispensasi">
                                         <x-button-action color="blue" size="sm" class="w-full justify-center"
                                             @click="
-                                    $store.sesi?.setEdit(0);
-                                    $store.sesi?.setColor('text-blue-700 dark:text-blue-400');
-                                    $flux.modal('sesi-absen').show();
-                                    $store.sesi?.setValueAbsenSesi(
-                                        '{{ $s->id ?? '' }}', '{{ $s->pertemuan_ke ?? '' }}',
-                                        '{{ $s->waktu_pelaksanaan ?? '' }}', '{{ $s->waktu_berakhir ?? '' }}',
-                                        '{{ $s->waktu_telat ?? '' }}', '{{ $s->waktu_dispensasi ?? '' }}'
-                                    );
-                                ">
+                                                $store.sesi?.setEdit(0);
+                                                $store.sesi?.setColor('text-blue-700 dark:text-blue-400');
+                                                $flux.modal('sesi-absen').show();
+                                                $store.sesi?.setValueAbsenSesi(
+                                                    '{{ $s->id ?? '' }}', '{{ $s->pertemuan_ke ?? '' }}', '{{ $s->kode_scpmk }}', '{{ $kehadiran_mhs->keterangan ?? null }}',
+                                                    '{{ $s->waktu_pelaksanaan ?? '' }}', '{{ $s->waktu_berakhir ?? '' }}',
+                                                    '{{ $s->waktu_telat ?? '' }}', '{{ $s->waktu_dispensasi ?? '' }}'
+                                                );
+                                            ">
                                             <flux:icon name="user-plus" class="w-3.5 h-3.5" />
                                             <span>Absensi</span>
                                         </x-button-action>

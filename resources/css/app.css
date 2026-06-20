@@ -45,7 +45,7 @@
     }
 
     .form-message {
-        @apply text-xs text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
+        @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
         @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;
     }
 

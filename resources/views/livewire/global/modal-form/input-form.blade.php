@@ -93,9 +93,7 @@ store.{{ $modelString }} = valueInput ?? '';
                 x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
-        <input
-            @if ($readonly ?? null) readonly @endif
-            
+        <input @if ($readonly ?? null) readonly @endif
             @if ($isLivewire ?? false) @if (isset($itemsString))
                     wire:model.live="{{ $modelString . '.' . $itemsString }}"
                 @else
@@ -145,8 +143,24 @@ store.{{ $modelString }} = valueInput ?? '';
                         .slice(0, {{ $isKode }})
                 "
 
+            {{-- Nomor Telepon --}}
+            @elseif (isset($isNoHP) && $isNoHP)
+                inputmode="numeric"
+                maxLength="17"
+                oninput="
+                let val = this.value.replace(/\D/g, '');
+                val = val.slice(0, 12);
+                
+                let matches = [];
+                if (val.length > 0) matches.push(val.substring(0, 3));
+                if (val.length > 3) matches.push(val.substring(3, 7));
+                if (val.length > 7) matches.push(val.substring(7, 12));
+                
+                this.value = matches.join(' - ');
+                this.dispatchEvent(new Event('input'));
+            "
+            
             {{-- Number/ FLOAT ONLY --}}
-
             @elseif (isset($floatOnly) && $floatOnly)
 
                 inputmode="decimal"
@@ -179,12 +193,12 @@ store.{{ $modelString }} = valueInput ?? '';
                             val = maxVal.toString();
                         } @endif
 
-                        this.value = val;
-                        "
-                @elseif (isset($numberOnly) && $numberOnly)
-                    inputmode="numeric"
+        this.value = val;
+        "
+    @elseif (isset($numberOnly) && $numberOnly)
+        inputmode="numeric"
 
-                    oninput=" let val = this.value;
+        oninput=" let val = this.value;
                         val = val.replace(/[^0-9]/g, '');
                         @if ($maxLength ?? null) if (val.length > {{ $maxLength }}) {
                                 val = val.slice(0, {{ $maxLength }});
@@ -195,12 +209,11 @@ store.{{ $modelString }} = valueInput ?? '';
 
                             if (numVal > maxVal) {
                                 val = maxVal.toString();
-                            }
-                        @endif
+                            } @endif
                         this.value = val;
                     "
 
-                onkeydown="
+        onkeydown="
                     if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
                         event.preventDefault();
                     }

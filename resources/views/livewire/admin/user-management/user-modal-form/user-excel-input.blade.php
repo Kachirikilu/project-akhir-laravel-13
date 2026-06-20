@@ -18,7 +18,7 @@
             'nameXString' => 'Pilih File Excel Pengguna',
             'wireLoading' => 'parseExcelUserFile',
             'multiFile' => 1,
-            'fileDelete' => 'clearUserNilaiFile',
+            'fileDelete' => 'clearUserExcelFile',
             'message' => $errors->first('excel_user_file'),
         ])
     </div>
@@ -78,6 +78,7 @@
                             <tr class="text-left">
                                 <th class="{{ $headColumn }}">#</th>
                                 <th class="{{ $headColumn }}">Email</th>
+                                <th class="{{ $headColumn }}">Role</th>
                                 <th class="{{ $headColumn }}">Password</th>
                                 <th class="{{ $headColumn }}">Nama</th>
                                 <th class="{{ $headColumn }}">NIP</th>
@@ -89,7 +90,12 @@
                                 <th class="{{ $headColumn }}">Tahun Masuk</th>
                                 <th class="{{ $headColumn }}">Kode Wilayah</th>
                                 {{-- <th  class="{{ $headColumn }}">Program Studi</th> --}}
-                                <th class="{{ $headColumn }}">Role</th>
+                                <th class="{{ $headColumn }}">No HP</th>
+                                <th class="{{ $headColumn }}">Gender</th>
+                                <th class="{{ $headColumn }}">Tempat Lahir</th>
+                                <th class="{{ $headColumn }}">Tanggal Lahir</th>
+                                <th class="{{ $headColumn }}">Agama</th>
+
                                 <th class="{{ $headColumn }}">Aksi</th>
                             </tr>
                         </thead>
@@ -116,6 +122,16 @@
                                         'wireModel' => "parsedUserRows.$i.email",
                                         'message' => $rowUserErrors[$i]['email'] ?? null,
                                         'inputType' => 'email',
+                                        'minW' => '192',
+                                    ])
+
+                                   @include('livewire.global.modal-form.table.excel-input-form', [
+                                        'model' => $this->parsedUserRows[$i]['role'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.role",
+                                        'isSelect' => 1,
+                                        'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
+                                        'message' => $rowUserErrors[$i]['role'] ?? null,
+                                        'isDark' => 1,
                                         'minW' => '192',
                                     ])
 
@@ -207,19 +223,50 @@
                                         'isDark' => 1,
                                         'minW' => '32',
                                     ])
+
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => $this->parsedUserRows[$i]['role'] ?? '',
-                                        'wireModel' => "parsedUserRows.$i.kode_wilayah",
+                                        'model' => $this->parsedUserRows[$i]['no_hp'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.no_hp",
+                                        'numberOnly' => 1,
+                                        'maxLength' => 14,
+                                        'message' => $rowUserErrors[$i]['no_hp'] ?? null,
+                                        'minW' => '192',
+                                    ])
+
+
+                                    @include('livewire.global.modal-form.table.excel-input-form', [
+                                        'model' => $this->parsedUserRows[$i]['jenis_kelamin'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.jenis_kelamin",
                                         'isSelect' => 1,
-                                        'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
-                                        'message' => $rowUserErrors[$i]['role'] ?? null,
-                                        'isDark' => 1,
-                                        'minW' => '32',
+                                        'xOptions' => ['Laki-laki', 'Perempuan'],
+                                        'message' => $rowUserErrors[$i]['jenis_kelamin'] ?? null,
+                                        'minW' => '192',
+                                    ])
+                                    @include('livewire.global.modal-form.table.excel-input-form', [
+                                        'model' => $this->parsedUserRows[$i]['tempat_lahir'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.tempat_lahir",
+                                        'message' => $rowUserErrors[$i]['tempat_lahir'] ?? null,
+                                        'minW' => '192',
+                                    ])
+                                    @include('livewire.global.modal-form.table.excel-input-form', [
+                                        'model' => $this->parsedUserRows[$i]['tanggal_lahir'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.tanggal_lahir",
+                                        'inputType' => 'date',
+                                        'message' => $rowUserErrors[$i]['tanggal_lahir'] ?? null,
+                                        'minW' => '192',
+                                    ])
+                                    @include('livewire.global.modal-form.table.excel-input-form', [
+                                        'model' => $this->parsedUserRows[$i]['agama'] ?? '',
+                                        'wireModel' => "parsedUserRows.$i.agama",
+                                        'isSelect' => 1,
+                                        'xOptions' => ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'],
+                                        'message' => $rowUserErrors[$i]['agama'] ?? null,
+                                        'minW' => '192',
                                     ])
 
                                     <td
                                         class="bg-gray-100 dark:bg-neutral-800 px-2 py-1 border border-gray-300 dark:border-neutral-700 text-center align-middle">
-                                        <button wire:click="removeParsedNilaiRow({{ $i }})" type="button"
+                                        <button wire:click="removeParsedUserRow({{ $i }})" type="button"
                                             class="cursor-pointer text-red-500 hover:text-red-700 p-1 transition-colors block mx-auto">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                 viewBox="0 0 24 24" stroke="currentColor">

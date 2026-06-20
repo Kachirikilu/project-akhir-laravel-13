@@ -34,7 +34,7 @@
                         '{{ $x->jam_berakhir ?? '' }}',
 
                         '{{ $x->pertemuan_ke ?? '' }}',
-                        '{{ $x->tanggal ?? '' }}',
+                        '{{ $x->tanggal_fix ?? '' }}',
 
                         '{{ $x->deskripsi ?? '' }}',
                         '{{ $x->materi ?? '' }}',
@@ -43,8 +43,9 @@
                         '{{ $x->tugas ?? '' }}',
                         '{{ $x->w_tugas ?? '' }}',
                         '{{ $x->w_mandiri ?? '' }}',
-
                         '{{ $kelas->sks ?? '' }}',
+
+                        '{{ $x->sent ?? '' }}',
                     );
 
                     $flux.modal('sesi-modal').show();

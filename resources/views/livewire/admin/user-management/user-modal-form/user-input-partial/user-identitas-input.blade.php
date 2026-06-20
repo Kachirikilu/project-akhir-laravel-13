@@ -86,4 +86,5 @@
         'message' => $errors->first('nik'),
     ])
 
+
 </div>

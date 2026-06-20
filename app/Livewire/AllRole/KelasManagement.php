@@ -41,7 +41,7 @@ class KelasManagement extends Component
     use WithRPSSearchFilters;
     use WithRPSShow;
 
-    public $showModal = false;
+
 
     public $perPage = 8;
 

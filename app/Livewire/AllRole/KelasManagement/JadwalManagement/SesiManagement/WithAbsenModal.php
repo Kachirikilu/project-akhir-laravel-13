@@ -8,7 +8,9 @@ use App\Models\Kelas\KelasSesi;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 trait WithAbsenModal
@@ -47,35 +49,31 @@ trait WithAbsenModal
                 return;
             }
 
-            $validated = validator(
-                $data,
-                [
-                    'sesi_id' => ['required', 'exists:kelas_sesi,id'],
-                    'absen' => [
-                        'required',
-                        'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi',
-                    ],
-                    'keterangan' => [
-                        'required_if:absen,Dispensasi,Sakit,Izin',
-                        'nullable',
-                        'string',
-                        'min:5',
-                        'max:1000',
-                    ],
+            $validated = Validator::make($data, [
+                'sesi_id' => ['required', 'exists:kelas_sesi,id'],
+                'absen' => [
+                    'required',
+                    'in:Hadir,Terlambat,Absen,Sakit,Izin,Dispensasi',
                 ],
-                [
-                    'sesi_id.required' => 'Sesi Kelas tidak ditemukan!',
-                    'sesi_id.exists' => 'Sesi Kelas tidak valid!',
+                'keterangan' => [
+                    'required_if:absen,Dispensasi,Terlambat,Sakit,Izin,Absen',
+                    'nullable',
+                    'string',
+                    'min:5',
+                    'max:1000',
+                ],
+            ], [
+                'sesi_id.required' => 'Sesi Kelas tidak ditemukan!',
+                'sesi_id.exists' => 'Sesi Kelas tidak valid!',
 
-                    'absen.required' => 'Status Absensi wajib dipilih!',
-                    'absen.in' => 'Status Absensi tidak valid!',
+                'absen.required' => 'Status Absensi wajib dipilih!',
+                'absen.in' => 'Status Absensi tidak valid!',
 
-                    'keterangan.required_if' => 'Keterangan wajib diisi untuk status Izin, Sakit, & Dispensasi!',
-                    'keterangan.string' => 'Keterangan harus berupa text!',
-                    'keterangan.min' => 'Keterangan terlalu pendek (Minimal 5 karakter)!',
-                    'keterangan.max' => 'Keterangan terlalu panjang (Maksimal 1000 karakter)!',
-                ]
-            )->validate();
+                'keterangan.required_if' => 'Keterangan wajib diisi untuk status Terlambat, Izin, Sakit, Dispensasi, & Absen!',
+                'keterangan.string' => 'Keterangan harus berupa text!',
+                'keterangan.min' => 'Keterangan terlalu pendek (Minimal 5 karakter)!',
+                'keterangan.max' => 'Keterangan terlalu panjang (Maksimal 1000 karakter)!',
+            ])->validate();
 
             $sesi = KelasSesi::with(['jadwal_rel.kelas_rel'])->findOrFail($validated['sesi_id']);
 
@@ -100,7 +98,7 @@ trait WithAbsenModal
             if ($statusDipilih === 'Absen') {
                 $validated['absen'] = 'Absen';
             } elseif ($now->betweenIncluded($mulai, $batasTerlambat)) {
-                if (! in_array($statusDipilih, ['Hadir', 'Izin', 'Sakit', 'Dispensasi'])) {
+                if (! in_array($statusDipilih, ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi'])) {
                     $validated['absen'] = 'Hadir';
                 }
             } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir)) {

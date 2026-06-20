@@ -208,10 +208,31 @@ trait WithUserModal
         $this->loadMahasiswaRPSPagination();
     }
 
-    private function inputModalUser($isEditingUser, $data)
+    private function inputModalUser($isEditingUser, $data, $role)
     {
         $this->resetErrorBag();
         $this->resetValidation();
+
+        if (empty($data['no_hp_back']) && ! empty($data['no_hp'])) {
+            $data['kode_no_hp'] = null;
+            $noHPLengkap = null;
+        } elseif ($data['kode_no_hp'] && $data['no_hp_back']) {
+            $data['no_hp'] = $data['kode_no_hp'].$data['no_hp_back'];
+            $data['no_hp'] = str_replace([' ', '-', '+', '/'], '', $data['no_hp']);
+        }
+
+        if (empty($data['password']) && ! $isEditingUser) {
+            if ($role === 'admin' || $role === 'dosen') {
+                $data['password'] = $data['nip'];
+            } elseif ($role === 'mahasiswa') {
+                $data['password'] = $data['nim'];
+
+            }
+        }
+
+        if (empty($data['tanggal_lahir'])) {
+            $data['tanggal_lahir'] = null;
+        }
 
         $rules = [
             'email' => [
@@ -230,7 +251,7 @@ trait WithUserModal
         ];
 
         /* ===================== ADMIN ===================== */
-        if ($this->roleType === 'admin') {
+        if ($role === 'admin') {
 
             $rules['nip'] = [
                 'required',
@@ -290,10 +311,11 @@ trait WithUserModal
                     'Meninggal Dunia',         // Merah (Permanen)
                 ]),
             ];
+
         }
 
         /* ===================== DOSEN ===================== */
-        elseif ($this->roleType === 'dosen') {
+        elseif ($role === 'dosen') {
 
             $rules['nip'] = [
                 'required',
@@ -365,7 +387,7 @@ trait WithUserModal
         }
 
         /* ===================== MAHASISWA ===================== */
-        elseif ($this->roleType === 'mahasiswa') {
+        elseif ($role === 'mahasiswa') {
 
             $rules['nim'] = [
                 'required',
@@ -419,13 +441,44 @@ trait WithUserModal
             ];
         }
 
+        $rules['no_hp'] = [
+            'nullable',
+            'min:11',
+            'max:14',
+        ];
+
+        $rules['jenis_kelamin'] = [
+            'required',
+            Rule::in([
+                'Laki-laki',
+                'Perempuan',
+            ]),
+        ];
+
+        $rules['agama'] = [
+            'required',
+            Rule::in([
+                'Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya',
+            ]),
+        ];
+
+        $rules['tempat_lahir'] = [
+            'nullable',
+            'max:255',
+        ];
+
+        $rules['tanggal_lahir'] = [
+            'nullable',
+            'date',
+        ];
+
         $rules['pr_id'] = 'required|exists:prodis,id';
 
         $validator = Validator::make($data, $rules, $this->validationMessagesUser());
 
-        $validator->after(function ($validator) use ($data) {
+        $validator->after(function ($validator) use ($data, $role) {
 
-            if ($this->roleType === 'admin') {
+            if ($role === 'admin') {
 
                 if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk'] && $data['nip'] === $data['nik']) {
 
@@ -436,7 +489,7 @@ trait WithUserModal
 
                 }
 
-            } elseif ($this->roleType === 'dosen') {
+            } elseif ($role === 'dosen') {
 
                 if (! empty($data['nip']) && ! empty($data['nidn']) && $data['nip'] === $data['nidn'] && $data['nip'] === $data['nik']) {
 
@@ -490,7 +543,7 @@ trait WithUserModal
         }
 
         try {
-            $validated = $this->inputModalUser(false, $data);
+            $validated = $this->inputModalUser(false, $data, $this->roleType);
 
             DB::transaction(function () use ($validated) {
 
@@ -500,7 +553,6 @@ trait WithUserModal
                     'password' => Hash::make($validated['password']),
                 ]);
 
-                $nameInput = $validated['name'];
                 if ($this->roleType !== 'mahasiswa') {
                     $identity1Input = $validated['nip'];
                     if ($this->roleType == 'admin') {
@@ -512,54 +564,48 @@ trait WithUserModal
                     $identity1Input = $validated['nim'];
                 }
 
-                $nikInput = $validated['nik'];
-                $prodiInput = $validated['pr_id'];
-
                 if ($this->roleType !== 'dosen') {
                     $kodeWly = $validated['kode_wilayah'];
                 }
-                $statusInput = $validated['status'];
 
                 $dosen = null;
 
-                // 2. Buat Data Berdasarkan Role
+                $data = [
+                    'user_id' => $user->id,
+                    'name' => $validated['name'],
+                    'nik' => $validated['nik'],
+                    'pr_id' => $validated['pr_id'],
+                    'status' => $validated['status'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                ];
+
                 if ($this->roleType === 'admin') {
-                    Admin::create([
-                        'user_id' => $user->id,
-                        'name' => $nameInput,
+                    Admin::create(array_merge($data, [
                         'nip' => $identity1Input,
                         'nitk' => $identity2Input,
-                        'nik' => $nikInput,
-                        'pr_id' => $prodiInput,
                         'kode_wilayah' => $kodeWly,
-                        'status' => $statusInput,
-                    ]);
+                    ]));
                 } elseif ($this->roleType === 'dosen') {
-                    $dosen = Dosen::create([
-                        'user_id' => $user->id,
-                        'name' => $nameInput,
+                    $dosen = Dosen::create(array_merge($data, [
                         'nip' => $identity1Input,
                         'nidn' => $identity2Input,
                         'nidk' => ($validated['nidk'] ?? null) ?: null,
-                        'nik' => $nikInput,
-                        'pr_id' => $prodiInput,
-                        'status' => $statusInput,
-                    ]);
+                    ]));
                 } elseif ($this->roleType === 'mahasiswa') {
-                    Mahasiswa::create([
-                        'user_id' => $user->id,
-                        'name' => $nameInput,
+                    Mahasiswa::create(array_merge($data, [
                         'nim' => $identity1Input,
-                        'nik' => $nikInput,
                         'angkatan' => $validated['angkatan'],
-                        'pr_id' => $prodiInput,
                         'kode_wilayah' => $kodeWly,
-                        'status' => $statusInput,
-                    ]);
+                    ]));
                 }
 
                 $team = Team::forceCreate([
-                    'name' => explode(' ', $nameInput)[0]."'s Team",
+                    'name' => explode(' ', $validated['name'])[0]."'s Team",
                     'is_personal' => true,
                 ]);
 
@@ -625,7 +671,7 @@ trait WithUserModal
         }
 
         try {
-            $validated = $this->inputModalUser(true, $data);
+            $validated = $this->inputModalUser(true, $data, $this->roleType);
 
             DB::transaction(function () use ($validated) {
 
@@ -636,7 +682,6 @@ trait WithUserModal
                     $user->update(['password' => Hash::make($validated['password'])]);
                 }
 
-                $nameInput = $validated['name'];
                 if ($this->roleType !== 'mahasiswa') {
                     $identity1Input = $validated['nip'];
                     if ($this->roleType == 'admin') {
@@ -647,49 +692,51 @@ trait WithUserModal
                 } else {
                     $identity1Input = $validated['nim'];
                 }
-                $nikInput = $validated['nik'];
-                $prodiInput = $validated['pr_id'];
 
                 if ($this->roleType !== 'dosen') {
                     $kodeWly = $validated['kode_wilayah'];
                 }
-                $statusInput = $validated['status'];
+
+                $model = match ($this->roleType) {
+                    'admin' => $user->admin,
+                    'dosen' => $user->dosen,
+                    'mahasiswa' => $user->mahasiswa,
+                };
+
+                $data = [
+                    'name' => $validated['name'],
+                    'nik' => $validated['nik'],
+                    'pr_id' => $validated['pr_id'],
+                    'status' => $validated['status'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                ];
 
                 if ($this->roleType === 'admin') {
-                    $user->admin->update(
-                        [
-                            'name' => $nameInput,
-                            'nip' => $identity1Input,
-                            'nitk' => $identity2Input,
-                            'nik' => $nikInput,
-                            'pr_id' => $prodiInput,
-                            'kode_wilayah' => $kodeWly,
-                            'status' => $statusInput,
-                        ]
-                    );
-                } elseif ($this->roleType === 'dosen') {
-                    $user->dosen->update(
-                        [
-                            'name' => $nameInput,
-                            'nip' => $identity1Input,
-                            'nidn' => $identity2Input,
-                            'nidk' => ($validated['nidk'] ?? null) ?: null,
-                            'nik' => $nikInput,
-                            'pr_id' => $prodiInput,
-                            'status' => $statusInput,
-                        ]
-                    );
-                } elseif ($this->roleType === 'mahasiswa') {
-                    $user->mahasiswa->update([
-                        'name' => $nameInput,
-                        'nim' => $identity1Input,
-                        'nik' => $nikInput,
-                        'angkatan' => $validated['angkatan'],
-                        'pr_id' => $prodiInput,
+                    $data += [
+                        'nip' => $identity1Input,
+                        'nitk' => $identity2Input,
                         'kode_wilayah' => $kodeWly,
-                        'status' => $statusInput,
-                    ]);
+                    ];
+                } elseif ($this->roleType === 'dosen') {
+                    $data += [
+                        'nip' => $identity1Input,
+                        'nidn' => $identity2Input,
+                        'nidk' => ($validated['nidk'] ?? null) ?: null,
+                    ];
+                } elseif ($this->roleType === 'mahasiswa') {
+                    $data += [
+                        'nim' => $identity1Input,
+                        'angkatan' => $validated['angkatan'],
+                        'kode_wilayah' => $kodeWly,
+                    ];
                 }
+
+                $model->update($data);
             });
 
             $this->toast(message: ucfirst($this->roleType), type: 'update', isAkun: true);
@@ -738,6 +785,8 @@ trait WithUserModal
             'nik.unique' => 'NIK ini sudah terdaftar!',
             'nik.min' => 'NIK minimal harus 12 karakter!',
             'nik.max' => 'NIK maksimal 16 karakter!',
+            'no_hp.min' => 'Nomor Telepon minimal harus 11 digit!',
+            'no_hp.max' => 'Nomor Telepon maksimal 14 digit!',
             'angkatan.required' => 'Tahun angkatan wajib diisi!',
             'angkatan.integer' => 'Tahun angkatan harus berupa angka!',
             'angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
@@ -754,6 +803,13 @@ trait WithUserModal
             'kode_wilayah.in' => "Kode Wilayah hanya boleh 'IDL' & 'PLG'!",
             'status.required' => 'Status pengguna wajib dipilih!',
             'status.in' => 'Status yang dipilih tidak sesuai dengan kategori yang diizinkan!',
+
+            'tempat_lahir.max' => 'Tempat Lahir tidak boleh lebih dari 255 karakter!',
+            'tanggal_lahir.date' => 'Format Tanggal Lahir tidak valid!',
+            'agama.required' => 'Agama wajib diisi!',
+            'agama.in' => 'Agama yang dipilih tidak sesuai dengan kategori yang diizinkan!',
+            'jenis_kelamin.required' => 'Agama wajib diisi!',
+            'jenis_kelamin.in' => 'Gender hanya boleh Laki-laki atau Perempuan!',
         ];
     }
 
@@ -778,7 +834,14 @@ trait WithUserModal
                 'nim',
                 'nik',
             ]),
-            4 => $this->getErrorCount([]),
+            4 => $this->getErrorCount([
+                'jenis_kelamin',
+                'agama',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'no_hp',
+            ]),
+            5 => $this->getErrorCount([]),
         ];
     }
 

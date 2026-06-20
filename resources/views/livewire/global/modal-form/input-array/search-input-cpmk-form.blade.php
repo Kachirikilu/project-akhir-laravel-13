@@ -144,14 +144,14 @@
                 @include('livewire.global.modal-form.input-array.partial.search-cpmk-dropdown')
             @empty
                 <div class="p-8 text-center">
-                    <p class="text-xs text-sm text-gray-500 italic">Data tidak ditemukan!</p>
+                    <p class="text-xs sm:text-sm text-gray-500 italic">Data tidak ditemukan!</p>
                 </div>
             @endforelse
         </div>
     </div>
 
     @error($idString)
-        <span class="text-red-500 text-xs text-sm mt-1 block">{{ $message }}</span>
+        <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span>
     @enderror
 
     <div class="grid sm:grid-cols-4 gap-3 items-start" x-data="{}"

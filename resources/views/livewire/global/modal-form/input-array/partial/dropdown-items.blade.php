@@ -9,10 +9,10 @@
 
 <div class="flex flex-col mr-4">
     {{-- Teks utama tetap aman dengan break-words --}}
-    <span class="text-xs text-sm font-medium text-[var(--contrast-main-text)] break-words">{{ $itemLabel }}</span>
+    <span class="text-xs sm:text-sm font-medium text-[var(--contrast-main-text)] break-words">{{ $itemLabel }}</span>
     
     {{-- PERBAIKAN UTAMA: Menggunakan gap-x-3 untuk menjaga spasi horizontal tetap konsisten di semua baris --}}
-    <div class="text-xs text-sm text-[var(--contrast-main-text)] font-medium text-xs flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 min-w-0">
+    <div class="text-xs sm:text-sm text-[var(--contrast-main-text)] font-medium text-xs flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 min-w-0">
         <span class="flex items-center">
             - <span class="text-[var(--hover-focus-color)] font-bold ml-1">ID: {{ $itemId }}</span>
         </span>

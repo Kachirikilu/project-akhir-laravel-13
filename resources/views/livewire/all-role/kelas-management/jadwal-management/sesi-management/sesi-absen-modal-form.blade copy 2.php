@@ -1,5 +1,5 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="max-w-lg w-full">
+    class="max-w-md w-full">
 
     <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
         <div class="flex flex-col gap-5">
@@ -13,8 +13,7 @@
                     <div>
                         <flux:heading size="lg">Absen Kelas {{ $jadwal->kode }}</flux:heading>
                         <flux:text class="text-xs sm:text-sm text-[var(--contrast-third-text)]">
-                            <span
-                                x-text="'Pertemuan ' + $store.sesi.pertemuan_ke + ' — ' +  $store.sesi.kode_scpmk"></span>
+                            <span x-text="'Pertemuan ' + $store.sesi.pertemuan_ke"></span> — isi status kehadiran Anda
                         </flux:text>
                     </div>
                 </div>
@@ -22,26 +21,20 @@
 
             {{-- Status Kehadiran: pilihan kartu --}}
             <div class="flex flex-col gap-2">
-                <label
-                    class="flex items-center gap-2 text-xs sm:text-sm font-medium mb-3 text-[var(--contrast-main-text)]">
-                    <flux:icon name="check-badge" class="w-4 h-4"
+                <span
+                    class="text-[10px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)] flex items-center gap-1.5">
+                    <flux:icon name="check-badge" class="w-3.5 h-3.5"
                         x-bind:class="$store.sesi.colorIcon ?? 'text-gray-400'" />
-                    <div>
-                        <span class="font-semibold text-[var(--contrast-main-text)]">
-                            Status Kehadiran
-                        </span>
-                        <span class="text-red-500">*</span>
-                    </div>
-                </label>
-
+                    Status Kehadiran
+                    <span class="text-red-500">*</span>
+                </span>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <template x-for="item in $store.sesi.getOpsiStatus()" :key="item.label">
                         <button type="button" @click="$store.sesi.absen = item.label"
                             class="group relative flex flex-col items-center gap-1.5 rounded-[12px] border px-2 py-3 text-center transition-all duration-200 cursor-pointer"
                             :class="$store.sesi.absen === item.label ?
-                                item.bg_active +
-                                ' ring-2 shadow-md scale-[1.02] border-[var(--focus-color)] bg-[var(--focus-color)]/10 ring-1 ring-[var(--focus-color)]' :
+                                'border-[var(--focus-color)] bg-[var(--focus-color)]/10 ring-1 ring-[var(--focus-color)]' :
                                 'border-[var(--border-table-color)] bg-[var(--second-table-color)] hover:bg-[var(--sub-table-color)]'">
 
                             {{-- Indikator centang aktif --}}
@@ -98,48 +91,34 @@
             </div>
 
             {{-- Divider --}}
-            <div class="flex items-center gap-3 mt-4">
+            <div class="flex items-center gap-3">
                 <div class="h-px flex-1 bg-[var(--border-table-color)]"></div>
-                <span class="text-[10px] font-bold uppercase tracking-wide text-[var(--contrast-third-text)]">
-                    Keterangan Tambahan
-                </span>
+                <span class="text-[10px] font-bold uppercase tracking-wide text-[var(--contrast-third-text)]">Keterangan
+                    Tambahan</span>
                 <div class="h-px flex-1 bg-[var(--border-table-color)]"></div>
             </div>
 
             {{-- Keterangan --}}
             <div
-                class="mt-3 rounded-[12px] border border-[var(--border-table-color)] bg-[var(--sub-table-color)] px-3 py-2.5">
-                <div x-show="$store.sesi.absen == 'Hadir'">
-                    @include('livewire.global.modal-form.input-form', [
-                        'alpine' => 'sesi',
-                        'modelString' => 'keterangan',
-                        'iconString' => 'pencil-square',
-                        'placeholder' => 'Masukkan Keterangan...',
-                        'isRequired' => 0,
-                        'message' => $errors->first('keterangan'),
-                    ])
-                </div>
-
-                <div x-show="$store.sesi.absen !== 'Hadir'">
-                    @include('livewire.global.modal-form.input-form', [
-                        'alpine' => 'sesi',
-                        'modelString' => 'keterangan',
-                        'iconString' => 'pencil-square',
-                        'placeholder' => 'Masukkan Keterangan...',
-                        'message' => $errors->first('keterangan'),
-                    ])
-                </div>
+                class="rounded-[12px] border border-[var(--border-table-color)] bg-[var(--sub-table-color)] px-3 py-2.5">
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'sesi',
+                    'modelString' => 'keterangan',
+                    'iconString' => 'pencil-square',
+                    'placeholder' => 'Masukkan Keterangan...',
+                    'isRequired' => 0,
+                    'message' => $errors->first('keterangan'),
+                ])
             </div>
-
 
             {{-- Footer Aksi --}}
             <div class="flex items-center gap-2 pt-1">
                 <flux:modal.close>
-                    <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">Batal</flux:button>
+                    <flux:button variant="ghost" class="flex-1 justify-center">Batal</flux:button>
                 </flux:modal.close>
                 <flux:button type="submit" variant="primary" icon="check-circle" wire:loading.attr="disabled"
                     wire:target="absenSesi"
-                    class="cursor-pointer flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 text-white border-none transition-all ">
+                    class="flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] text-white border-none">
                     <span wire:loading.remove wire:target="absenSesi">Absen</span>
                     <span wire:loading wire:target="absenSesi">Memproses...</span>
                 </flux:button>
