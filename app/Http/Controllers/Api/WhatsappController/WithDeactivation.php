@@ -46,6 +46,7 @@ trait WithDeactivation
                 'head' => '*✅ Penonaktifan Sukses!*',
                 'message' => "Halo *_{$nameWA}_*, nomor {$noWA} telah ```DINONAKTIFKAN``` secara mandiri! Untuk mengaktifkannya kembali, silakan kirim ulang pesan format *VERIFIKASI [{$user->label_id1}]*.".
                             "\n\n- Nama: {$user->name}".
+                            "\n- Role: {$user->role}".
                             "\n- $user->label_id1: {$user->identity1}".
                             "\n- WA: {$user->no_wa_full}"
             ]);

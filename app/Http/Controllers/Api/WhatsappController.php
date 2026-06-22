@@ -31,13 +31,17 @@ class WhatsappController extends Controller
 
     public $deactivateKey = ['NONAKTIFKAN', 'MATIKAN', 'DIAM', 'SILENT', 'LOGOUT', 'KELUAR', 'LOG OUT', 'MUTE', 'MIC MATI'];
 
-    public $kelasKey = ['KELAS HARI INI',  'KELAS MINGGU INI', 'KELAS HARI',  'KELAS MINGGU',  'CHECK KELAS',  'KELAS SAYA',  'KELAS', 'JADWAL KELAS', 'JADWAL', 'KELAS JADWAL'];
+    public $kelasKey = ['LIST KELAS', 'SEMUA KELAS', 'DAFTAR KELAS', 'KELAS HARI INI',  'KELAS MINGGU INI', 'KELAS HARI',  'KELAS MINGGU',  'CHECK KELAS',  'KELAS SAYA',  'KELAS', 'JADWAL KELAS', 'JADWAL', 'KELAS JADWAL'];
+
+    public $daftarKelasKey = ['LIST KELAS', 'SEMUA KELAS', 'DAFTAR KELAS'];
 
     public $kelasMingguKey = ['MINGGU INI', 'KELAS MINGGU', 'JADWAL KELAS', 'KELAS JADWAL', 'JADWAL'];
 
     public $kelasHariKey = ['HARI INI', 'KELAS HARI'];
 
     public $excelNilaiKey = ['EXCEL NILAI', 'INPUT NILAI', 'UPLOAD NILAI', 'INPUT FILE NILAI', 'FILE NILAI'];
+
+    public $excelGetNilaiKey = ['DOWNLOAD NILAI', 'DOWNLOAD EXCEL NILAI', 'GET EXCEL NILAI', 'GET NILAI', 'DOWNLOAD EXCEL NILAI'];
 
     public $nilaiMahasiswaKey = ['NILAI', 'NILAI SAYA', 'LIHAT NILAI', 'NILAI SEMESTER'];
 
@@ -60,6 +64,9 @@ class WhatsappController extends Controller
         $nameWA = $request->input('whatsapp_name');
         $pesan = trim($request->input('whatsapp_message'));
 
+        if ($this->isTrigger($pesan, $this->kelasKey)) {
+            return $this->processKelas($noWA, $nameWA, $pesan, $this->daftarKelasKey, $this->kelasMingguKey, $this->kelasHariKey);
+        }
         if ($this->isTrigger($pesan, $this->verifyKey)) {
             return $this->processVerification($noWA, $nameWA, $pesan);
         }
@@ -73,14 +80,15 @@ class WhatsappController extends Controller
             return $this->processDeactivateToken($noWA, $nameWA, $pesan);
         }
 
-        if ($this->isTrigger($pesan, $this->kelasKey)) {
-            return $this->processKelas($noWA, $nameWA, $pesan, $this->kelasMingguKey, $this->kelasHariKey);
-        }
+
 
         if ($this->isTrigger($pesan, $this->nilaiMahasiswaKey)) {
             return $this->processNilaiMahasiswa($noWA, $nameWA, $pesan);
         }
 
+        if ($this->isTrigger($pesan, $this->excelGetNilaiKey)) {
+            return $this->processGetExcelNilai($noWA, $nameWA, $pesan);
+        }
         if ($this->isTrigger($pesan, $this->excelNilaiKey)) {
             return $this->processGateAwayExcelNilai($noWA, $nameWA, $pesan);
         }
@@ -110,4 +118,5 @@ class WhatsappController extends Controller
     {
         return property_exists($this, $property);
     }
+
 }

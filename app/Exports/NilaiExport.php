@@ -8,6 +8,8 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
+// 🌟 1. WAJIB IMPORT CONCERN WITHTITLE DI SINI:
+use Maatwebsite\Excel\Concerns\WithTitle; 
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -16,7 +18,8 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
+// 🌟 2. TAMBAHKAN WIthTitle PADA LIST IMPLEMENTS CLASS
+class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, WithTitle
 {
     protected $jadwalId;
 
@@ -24,9 +27,12 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
 
     protected $sesis;
 
-    public function __construct($jadwalId)
+    protected $title; 
+
+    public function __construct($jadwalId, $title = 'Data Nilai')
     {
         $this->jadwalId = $jadwalId;
+        $this->title = $title;
 
         $this->jadwal = KelasJadwal::with([
             'kelas_rel',
@@ -34,6 +40,11 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         ])->findOrFail($jadwalId);
 
         $this->sesis = $this->jadwal->sesis->sortBy('pertemuan_ke')->values();
+    }
+
+    public function title(): string
+    {
+        return $this->title;
     }
 
     public function array(): array
@@ -101,8 +112,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
             ->with([
                 'nilai_mahasiswa' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
-                      ->where('ganjil_genap', $this->jadwal->ganjil_genap)
-                      ->where('tahun_akademik', $this->jadwal->tahun_akademik);
+                        ->where('ganjil_genap', $this->jadwal->ganjil_genap)
+                        ->where('tahun_akademik', $this->jadwal->tahun_akademik);
                 },
             ])
             ->get();
@@ -145,6 +156,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
             $row[] = "=IF({$nilaiAngkaCoordinate}>=86,\"A\",IF({$nilaiAngkaCoordinate}>=80,\"A-\",IF({$nilaiAngkaCoordinate}>=75,\"B+\",IF({$nilaiAngkaCoordinate}>=70,\"B\",IF({$nilaiAngkaCoordinate}>=65,\"B-\",IF({$nilaiAngkaCoordinate}>=60,\"C+\",IF({$nilaiAngkaCoordinate}>=56,\"C\",IF({$nilaiAngkaCoordinate}>=40,\"D\",\"E\"))))))))";
             $rows[] = $row;
         }
+
         return $rows;
     }
 
@@ -216,8 +228,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         // ==========================
         $startSesiCol = Coordinate::stringFromColumnIndex(7);
         $endSesiCol = Coordinate::stringFromColumnIndex(
-                6 + $totalSesis
-            );
+            6 + $totalSesis
+        );
 
         $sheet->getStyle("{$startSesiCol}3:{$endSesiCol}3")->getNumberFormat()->setFormatCode('0.00%');
 
@@ -225,8 +237,8 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
         // NILAI AKHIR CENTER
         // ==========================
         $startFinalCol = Coordinate::stringFromColumnIndex(
-                7 + $totalSesis
-            );
+            7 + $totalSesis
+        );
 
         $sheet->getStyle(
             "{$startFinalCol}{$dataStart}:{$highestColumn}{$highestRow}"
@@ -330,7 +342,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles
                     // merge terakhir
                     if ($endCol > $currentLeft) {
                         $left = Coordinate::stringFromColumnIndex($currentLeft);
-                        $right = Coordinate::stringFromColumnIndex($endCol );
+                        $right = Coordinate::stringFromColumnIndex($endCol);
                         $sheet->mergeCells("{$left}1:{$right}1");
                     }
                 }

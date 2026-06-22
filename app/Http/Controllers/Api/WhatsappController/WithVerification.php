@@ -103,6 +103,7 @@ trait WithVerification
             'head' => '*✅ Verifikasi Sukses!*',
             'message' => "Halo *_{$nameWA}_*, verifikasi kamu berhasil disinkronkan! Anda login sebagai ```{$user->role}```.".
                         "\n\n- Nama: {$user->name}".
+                        "\n- Role: {$user->role}".
                         "\n- {$user->label_id1}: {$user->identity1}".
                         "\n- WA: {$user->no_wa_full}".
                         ($user->mahasiswa ? "\n- Token: {$user->mahasiswa->wa_limit}" : ''),

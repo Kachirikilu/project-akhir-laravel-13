@@ -150,99 +150,108 @@ trait WithUserExcel
         ]);
 
         $this->parsedUserRows = [];
+        $totalSheetsProcessed = 0;
 
+        // 1. LOOP UTAMA: Mengulang setiap file berkas yang diunggah
         foreach ($this->excel_user_file as $singleFile) {
 
             $spreadsheet = IOFactory::load($singleFile->getRealPath());
-            $worksheet = $spreadsheet->getActiveSheet();
-            $allData = $worksheet->toArray();
+            $allSheets = $spreadsheet->getAllSheets();
 
-            if (empty($allData)) {
-                continue;
-            }
-
-            /** ===============================
-             * CARI HEADER (Robust Search)
-             * =============================== */
-            $headerRowIndex = null;
-            $secondHeaderRowIndex = null;
-
-            foreach ($allData as $i => $row) {
-                $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
-
-                if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
-                    $headerRowIndex = $i;
-                    if (isset($allData[$i + 1])) {
-                        $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
-                        if ($nextRow->count() > 0) {
-                            $secondHeaderRowIndex = $i + 1;
-                        }
-                    }
-                    break;
-                }
-            }
-
-            if ($headerRowIndex === null) {
-                continue;
-            }
-
-            $rawHeader1 = $allData[$headerRowIndex];
-            $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
-
-            $headers = [];
-            foreach ($rawHeader1 as $idx => $value) {
-                $val1 = Str::lower(trim((string) $value));
-                $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
-
-                $finalHeader = $val1;
-                if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
-                    $finalHeader = $val2;
-                }
-
-                if ($finalHeader !== '') {
-                    $headers[$idx] = $finalHeader;
-                }
-            }
-
-            /** ===============================
-             * PARSE DATA KE TABLE PREVIEW
-             * =============================== */
-            $startDataIndex = ($secondHeaderRowIndex ?? $headerRowIndex) + 1;
-            $dataRows = array_slice($allData, $startDataIndex);
-
-            foreach ($dataRows as $excelIndex => $row) {
-                if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() === 0) {
+            // 2. LOOP KEDUA: Mengulang setiap Halaman (Sheet) di dalam berkas saat ini
+            foreach ($allSheets as $worksheet) {
+                $allData = $worksheet->toArray();
+                if (empty($allData)) {
                     continue;
                 }
 
-                $data = [];
-                foreach ($headers as $col => $header) {
-                    $data[$header] = trim((string) ($row[$col] ?? ''));
+                /** ===============================
+                 * CARI HEADER (Robust Search)
+                 * =============================== */
+                $headerRowIndex = null;
+                $secondHeaderRowIndex = null;
+
+                foreach ($allData as $i => $row) {
+                    $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
+
+                    if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
+                        $headerRowIndex = $i;
+                        if (isset($allData[$i + 1])) {
+                            $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
+                            if ($nextRow->count() > 0) {
+                                $secondHeaderRowIndex = $i + 1;
+                            }
+                        }
+                        break;
+                    }
                 }
 
-                $this->parsedUserRows[] = [
-                    'email' => $data['email'] ?? '',
-                    'password' => $data['password'] ?? '',
-                    'name' => $data['name'] ?? $data['nama'] ?? '',
-                    'nip' => $data['nip'] ?? '',
-                    'nitk' => $data['nitk'] ?? '',
-                    'nidn' => $data['nidn'] ?? '',
-                    'nidk' => $data['nidk'] ?? '',
-                    'nim' => $data['nim'] ?? '',
-                    'nik' => $data['nik'] ?? '',
-                    'no_hp' => $data['no. hp'] ?? $data['no hp'] ?? $data['no telepon'] ?? $data['telepon'] ?? $data['wa'] ?? $data['no wa'],
-                    'agama' => $data['agama'] ??  $data['kepercayaan'],
-                    'jenis_kelamin' => $data['jenis kelamin'] ??  $data['gender'],
-                    'tempat_lahir' => $data['tempat lahir'] ??  $data['tmt lahir'],
-                    'tanggal_lahir' => $data['tanggal lahir'] ??  $data['tgl lahir'],
-                    'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
-                    'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
-                    'role' => ucfirst($data['role'] ?? ''),
-                ];
-            }
-        }
+                if ($headerRowIndex === null) {
+                    continue;
+                }
 
-        $this->toast(text: 'Semua file Excel ('.count($this->excel_user_file).' file) berhasil dimuat. Silakan periksa data!');
+                $totalSheetsProcessed++;
+
+                $rawHeader1 = $allData[$headerRowIndex];
+                $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
+
+                $headers = [];
+                foreach ($rawHeader1 as $idx => $value) {
+                    $val1 = Str::lower(trim((string) $value));
+                    $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
+
+                    $finalHeader = $val1;
+                    if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
+                        $finalHeader = $val2;
+                    }
+
+                    if ($finalHeader !== '') {
+                        $headers[$idx] = $finalHeader;
+                    }
+                }
+
+                /** ===============================
+                 * PARSE DATA KE TABLE PREVIEW
+                 * =============================== */
+                $startDataIndex = ($secondHeaderRowIndex ?? $headerRowIndex) + 1;
+                $dataRows = array_slice($allData, $startDataIndex);
+
+                foreach ($dataRows as $excelIndex => $row) {
+                    if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() === 0) {
+                        continue;
+                    }
+
+                    $data = [];
+                    foreach ($headers as $col => $header) {
+                        $data[$header] = trim((string) ($row[$col] ?? ''));
+                    }
+
+                    $this->parsedUserRows[] = [
+                        'email' => $data['email'] ?? '',
+                        'password' => $data['password'] ?? '',
+                        'name' => $data['name'] ?? $data['nama'] ?? '',
+                        'nip' => $data['nip'] ?? '',
+                        'nitk' => $data['nitk'] ?? '',
+                        'nidn' => $data['nidn'] ?? '',
+                        'nidk' => $data['nidk'] ?? '',
+                        'nim' => $data['nim'] ?? '',
+                        'nik' => $data['nik'] ?? '',
+                        'no_hp' => $data['no. hp'] ?? $data['no hp'] ?? $data['no telepon'] ?? $data['telepon'] ?? $data['wa'] ?? $data['no wa'] ?? '',
+                        'agama' => $data['agama'] ?? $data['kepercayaan'] ?? '',
+                        'jenis_kelamin' => $data['jenis kelamin'] ?? $data['gender'] ?? '',
+                        'tempat_lahir' => $data['tempat lahir'] ?? $data['tmt lahir'] ?? '',
+                        'tanggal_lahir' => $data['tanggal lahir'] ?? $data['tgl lahir'] ?? '',
+                        'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
+                        'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
+                        'role' => ucfirst($data['role'] ?? ''),
+                    ];
+                }
+            } // 🌟 Akhir loop sheet
+        } // Akhir loop file
+
+        $this->toast(
+            text: 'Berhasil memuat '.count($this->excel_user_file).' file ('.$totalSheetsProcessed.' sheet). Silakan periksa data!'
+        );
     }
 
     public function clearUserExcelFile()
@@ -443,7 +452,7 @@ trait WithUserExcel
                     'jenis_kelamin' => $validated['jenis_kelamin'],
                     'tanggal_lahir' => $validated['tanggal_lahir'],
                     'tempat_lahir' => $validated['tempat_lahir'],
-                    
+
                     'status' => $validated['status'],
                 ]);
             }

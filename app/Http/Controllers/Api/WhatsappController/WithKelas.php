@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 trait WithKelas
 {
-    private function processKelas(string $noWA, string $nameWA, string $pesan, array $kelasMingguKey, array $kelasHariKey)
+    private function processKelas(string $noWA, string $nameWA, string $pesan, array $daftarKelasKey, array $kelasMingguKey, array $kelasHariKey)
     {
         Log::info('=== SEDANG MENCARI KELAS BERDASARKAN SESI ===');
 
@@ -33,91 +33,116 @@ trait WithKelas
         $filterWaktu = 'Semua';
         $filterTeks = '';
 
-        if (Str::contains($pesanUpper, $kelasHariKey)) {
-            $mulaiTanggal = now()->startOfDay()->toDateString();
-            $selesaiTanggal = now()->endOfDay()->toDateString();
-            $filterWaktu = 'Hari Ini';
-            $filterTeks = "($filterWaktu)";
-        } elseif (Str::contains($pesanUpper, $kelasMingguKey)) {
-            $mulaiTanggal = now()->startOfWeek()->toDateString();
-            $selesaiTanggal = now()->endOfWeek()->toDateString();
-            $filterWaktu = 'Minggu Ini';
-            $filterTeks = "($filterWaktu)";
+        $isDaftarKelasMurni = Str::contains($pesanUpper, array_map('strtoupper', $daftarKelasKey));
+
+        if (! $isDaftarKelasMurni) {
+            if (Str::contains($pesanUpper, $kelasHariKey)) {
+                $mulaiTanggal = now()->startOfDay()->toDateString();
+                $selesaiTanggal = now()->endOfDay()->toDateString();
+                $filterWaktu = 'Hari Ini';
+                $filterTeks = "($filterWaktu)";
+            } elseif (Str::contains($pesanUpper, $kelasMingguKey)) {
+                $mulaiTanggal = now()->startOfWeek()->toDateString();
+                $selesaiTanggal = now()->endOfWeek()->toDateString();
+                $filterWaktu = 'Minggu Ini';
+                $filterTeks = "($filterWaktu)";
+            }
         }
 
         $daftarKelas = collect();
 
-        if ($roleClean === 'admin' && $user->admin) {
-            $prIdAdmin = $user->admin->pr_id;
-            $queryKelasAdmin = Kelas::where('pr_id', $prIdAdmin);
 
-            if ($mulaiTanggal && $selesaiTanggal) {
-                $queryKelasAdmin->whereHas('jadwals.sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
-                    $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+        if ($isDaftarKelasMurni) {
+            $queryKelas = Kelas::query();
+
+            if ($roleClean === 'admin' && $user->admin ) {
+                $queryKelas->where('pr_id', $user->pr_id);
+            } elseif ($roleClean === 'dosen' && $user->dosen) {
+                $idDosen = $user->dosen->id;
+                $queryKelas->whereHas('rps_rel.dosens', function ($q) use ($idDosen) {
+                    $q->where('dosens.id', $idDosen);
+                });
+            } elseif ($roleClean === 'mahasiswa' && $user->mahasiswa) {
+                $idMahasiswa = $user->mahasiswa->id;
+                $queryKelas->whereHas('jadwals.mahasiswas', function ($q) use ($idMahasiswa) {
+                    $q->where('mahasiswas.id', $idMahasiswa);
+                });
+            }
+            $daftarKelas = $queryKelas->with(['rps_rel', 'jadwals'])->get();
+
+        } else {
+            if ($roleClean === 'admin' && $user->admin) {
+                $prIdAdmin = $user->admin->pr_id;
+                $queryKelasAdmin = Kelas::where('pr_id', $prIdAdmin);
+
+                if ($mulaiTanggal && $selesaiTanggal) {
+                    $queryKelasAdmin->whereHas('jadwals.sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
+                        $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                    });
+
+                    $daftarKelas = $queryKelasAdmin->with([
+                        'rps_rel',
+                        'jadwals.sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
+                            $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                        },
+                    ])->get();
+                } else {
+                    $daftarKelas = $queryKelasAdmin->with('rps_rel')->get();
+                }
+
+            } elseif ($roleClean === 'dosen' && $user->dosen) {
+                $idDosen = $user->dosen->id;
+
+                $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.dosens', function ($query) use ($idDosen) {
+                    $query->where('dosens.id', $idDosen);
                 });
 
-                $daftarKelas = $queryKelasAdmin->with([
-                    'rps_rel',
-                    'jadwals.sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
+                if ($mulaiTanggal && $selesaiTanggal) {
+                    $queryJadwal->whereHas('sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
                         $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                    });
+                }
+
+                $daftarKelas = $queryJadwal->with([
+                    'kelas_rel.rps_rel',
+                    'sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
+                        if ($mulaiTanggal && $selesaiTanggal) {
+                            $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                        }
                     },
                 ])->get();
-            } else {
-                $daftarKelas = $queryKelasAdmin->with('rps_rel')->get();
-            }
 
-        } elseif ($roleClean === 'dosen' && $user->dosen) {
-            $idDosen = $user->dosen->id;
+            } elseif ($roleClean === 'mahasiswa' && $user->mahasiswa) {
+                $idMahasiswa = $user->mahasiswa->id;
 
-            $queryJadwal = KelasJadwal::whereHas('kelas.rps_rel.dosens', function ($query) use ($idDosen) {
-                $query->where('dosens.id', $idDosen);
-            });
-
-            if ($mulaiTanggal && $selesaiTanggal) {
-                $queryJadwal->whereHas('sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
-                    $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                $queryJadwal = KelasJadwal::whereHas('mahasiswas', function ($query) use ($idMahasiswa) {
+                    $query->where('mahasiswas.id', $idMahasiswa);
                 });
-            }
 
-            $daftarKelas = $queryJadwal->with([
-                'kelas_rel.rps_rel',
-                'sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
-                    if ($mulaiTanggal && $selesaiTanggal) {
+                if ($mulaiTanggal && $selesaiTanggal) {
+                    $queryJadwal->whereHas('sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
                         $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
-                    }
-                },
-            ])->get();
+                    });
+                }
 
-        } elseif ($roleClean === 'mahasiswa' && $user->mahasiswa) {
-            $idMahasiswa = $user->mahasiswa->id;
-
-            $queryJadwal = KelasJadwal::whereHas('mahasiswas', function ($query) use ($idMahasiswa) {
-                $query->where('mahasiswas.id', $idMahasiswa);
-            });
-
-            if ($mulaiTanggal && $selesaiTanggal) {
-                $queryJadwal->whereHas('sesis', function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
-                    $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
-                });
+                $daftarKelas = $queryJadwal->with([
+                    'kelas_rel.rps_rel',
+                    'sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
+                        if ($mulaiTanggal && $selesaiTanggal) {
+                            $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
+                        }
+                    },
+                ])->get();
             }
-
-            $daftarKelas = $queryJadwal->with([
-                'kelas_rel.rps_rel',
-                'sesis' => function ($querySesi) use ($mulaiTanggal, $selesaiTanggal) {
-                    if ($mulaiTanggal && $selesaiTanggal) {
-                        $querySesi->whereBetween('tanggal', [$mulaiTanggal, $selesaiTanggal]);
-                    }
-                },
-            ])->get();
         }
 
         $head = "Halo _{$nameWA}_, berikut adalah...";
-
-        $teksKelas = "📅 *Daftar Jadwal Kelas". (empty($filterTeks) ? '' : ' '.$filterTeks) ."*".
-        "\n- {$user->prodi_pr}\n\n";
+        $filterTeksX = ! empty($filterTeks) ? ' '.$filterTeks : '';
+        $teksKelas = '📅 *Daftar Kelas'.$filterTeksX."*\n- {$user->prodi_pr}\n\n";
 
         if ($daftarKelas->isEmpty()) {
-            $teksKelas .= "_Tidak ada Kelas untuk " . strtolower(empty($filterTeks) ? 'saat ini' : $filterWaktu )."!_";
+            $teksKelas .= '_Tidak ada Kelas untuk '.strtolower(empty($filterTeks) ? 'saat ini' : $filterWaktu).'!_';
+
             return response()->json([
                 'status' => true,
                 'head' => trim($head),
@@ -132,7 +157,7 @@ trait WithKelas
         // ==========================================
         foreach ($daftarKelas as $item) {
 
-            if ($roleClean === 'admin') {
+            if ($roleClean === 'admin' || $isDaftarKelasMurni) {
                 $mk = $item->rps_rel->mk ?? 'Mata Kuliah';
                 $sks = $item->rps_rel->mk->sks ?? 2;
                 $kode = $item->kode ?? 'MBG-121104';
@@ -147,7 +172,7 @@ trait WithKelas
                 }
 
                 if ($sesis->isEmpty()) {
-                    $teksKelas .= "{$nomor}. *{$mk}*\n";
+                    $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
                     $teksKelas .= "- Kode: {$kode}\n\n";
                     $nomor++;
                 } else {
@@ -157,7 +182,7 @@ trait WithKelas
 
                         $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
                         $teksKelas .= "- Kelas {$label}\n";
-                        $teksKelas .= "- Kode: {$kodeJadwal}\n";
+                        $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
                         $teksKelas .= $this->formatSesiTeks($sesi);
                         $nomor++;
                     }
@@ -174,7 +199,7 @@ trait WithKelas
                 foreach ($sesis as $sesi) {
                     $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
                     $teksKelas .= "- Kelas {$label}\n";
-                    $teksKelas .= "- Kode: {$kodeJadwal}\n";
+                    $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
                     $teksKelas .= $this->formatSesiTeks($sesi);
                     $nomor++;
                 }

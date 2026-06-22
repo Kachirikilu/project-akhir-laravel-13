@@ -113,7 +113,7 @@ trait WithNilaiMahasiswa
             ->get();
 
         if ($daftarNilai->isEmpty()) {
-            $periodeAktif = array_filter([$filterSemester, $filterTA]);
+            $periodeAktif = array_filter([$filterTA, $filterSemester]);
             $infoFilter = !empty($periodeAktif) ? " untuk Periode " . implode(' ', $periodeAktif) : '';
 
             return response()->json([

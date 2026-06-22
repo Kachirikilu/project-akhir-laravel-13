@@ -2,6 +2,7 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
+use App\Exports\MultiJadwalNilaiExport;
 use App\Exports\NilaiExport;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasToast;
@@ -10,8 +11,8 @@ use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
-use App\Models\Kelas\KelasJadwal;
 // use Illuminate\Support\LazyCollection;
+use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
 use App\Models\Sesi;
 use Carbon\Carbon;
@@ -66,19 +67,148 @@ trait WithNilaiExcel
 
         if (! empty($this->kelas)) {
             $jadwals = $this->kelas->jadwals()->get();
+            if ($jadwals->isEmpty()) {
+                $this->toast(text: '⚠️ Tidak ada jadwal aktif untuk kelas ini.', type: 'error');
+
+                return;
+            }
+
             if ($jadwals->count() === 1) {
                 return $this->prosesDownloadTunggal($jadwals->first());
             }
-
-            return $this->prosesDownloadZip($jadwals);
+            return $this->prosesDownloadMultiSheet($jadwals, $this->kelas);
         }
     }
 
-    private function prosesDownloadZip($jadwals)
+    private function prosesDownloadMultiSheet($jadwals, $kelas)
     {
-        $kode = $this->kelas->kode;
-        $rps = $this->kelas->kode_rps;
-        $mk = $this->kelas->mk;
+        $kode = $kelas->kode;
+        $rps = $kelas->kode_rps;
+        $mk = $kelas->mk;
+        $nowStr = now()->format('Y-m-d');
+
+        $fileName = $kode.'_'.$rps.'_'.$mk.'_'.$nowStr.'.xlsx';
+        $fileNameSafe = str_replace(
+            ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+            '-',
+            $fileName
+        );
+
+        return Excel::download(
+            new MultiJadwalNilaiExport($jadwals),
+            $fileNameSafe,
+            \Maatwebsite\Excel\Excel::XLSX
+        );
+    }
+
+    private function prosesDownloadTunggal($jadwalModel)
+    {
+        $mk = $jadwalModel->mk;
+        $nowStr = now()->format('Y-m-d');
+
+        $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
+        $fileNameSafe = str_replace(
+            ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+            '-',
+            $fileName
+        );
+
+        return Excel::download(
+            new NilaiExport($jadwalModel->id),
+            $fileNameSafe,
+            \Maatwebsite\Excel\Excel::XLSX
+        );
+    }
+
+    // public function exportNilaiExcel()
+    // {
+    //     if (! $this->AuthCheck('staff')) {
+    //         return;
+    //     }
+
+    //     if (! (Auth::user()->admin || Auth::user()->dosen)) {
+    //         return;
+    //     }
+
+    //     if (! empty($this->jadwal)) {
+    //         return $this->prosesDownloadTunggal($this->jadwal);
+    //     }
+
+    //     if (! empty($this->kelas)) {
+    //         $jadwals = $this->kelas->jadwals()->get();
+    //         if ($jadwals->count() === 1) {
+    //             return $this->prosesDownloadTunggal($jadwals->first());
+    //         }
+
+    //         return $this->prosesDownloadZip($jadwals, $this->kelas);
+    //     }
+    // }
+
+    // private function prosesDownloadZip($jadwals, $kelas)
+    // {
+    //     $kode = $kelas->kode;
+    //     $rps = $kelas->kode_rps;
+    //     $mk = $kelas->mk;
+
+    //     $zipName = str_replace(
+    //         ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+    //         '-',
+    //         $kode.'_'.$rps.'_'.$mk.'_'.now()->format('Y-m-d').'.zip'
+    //     );
+
+    //     $tempDir = storage_path('app/temp');
+    //     if (! file_exists($tempDir)) {
+    //         mkdir($tempDir, 0777, true);
+    //     }
+
+    //     $zipPath = $tempDir.'/'.$zipName;
+
+    //     $zip = new ZipArchive;
+    //     if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+    //         throw new \Exception('Gagal membuat file ZIP di server.');
+    //     }
+
+    //     foreach ($jadwals as $jadwal) {
+    //         $rawFileName = $jadwal->kode.'_'.$jadwal->kode_rps.'_'.$mk.'_'.now()->format('Y-m-d').'.xlsx';
+    //         $fileName = str_replace(
+    //             ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
+    //             '-',
+    //             $rawFileName
+    //         );
+
+    //         $excelContent = Excel::raw(
+    //             new NilaiExport($jadwal->id),
+    //             \Maatwebsite\Excel\Excel::XLSX
+    //         );
+
+    //         $zip->addFromString($fileName, $excelContent);
+    //     }
+
+    //     $zip->close();
+
+    //     if (! file_exists($zipPath)) {
+    //         throw new \Exception('File ZIP gagal digenerate.');
+    //     }
+
+    //     return response()->download($zipPath)->deleteFileAfterSend(true);
+    // }
+
+    // private function prosesDownloadTunggal($jadwalModel)
+    // {
+    //     $mk = $jadwalModel->mk;
+    //     $nowStr = now()->format('Y-m-d');
+
+    //     $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
+    //     $fileNameSafe = str_replace('/', '-', $fileName);
+
+    //     return Excel::download(new NilaiExport($jadwalModel->id), $fileNameSafe);
+    // }
+
+    private function prosesDownloadZipForWhatsApp($jadwals, $kelas)
+    {
+        $kode = $kelas->kode;
+        $rps = $kelas->kode_rps;
+        $mk = $kelas->mk;
 
         $zipName = str_replace(
             ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
@@ -120,18 +250,17 @@ trait WithNilaiExcel
             throw new \Exception('File ZIP gagal digenerate.');
         }
 
-        return response()->download($zipPath)->deleteFileAfterSend(true);
-    }
+        $base64Data = base64_encode(file_get_contents($zipPath));
+        unlink($zipPath);
 
-    private function prosesDownloadTunggal($jadwalModel)
-    {
-        $mk = $this->kelas->mk;
-        $nowStr = now()->format('Y-m-d');
-
-        $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
-        $fileNameSafe = str_replace('/', '-', $fileName);
-
-        return Excel::download(new NilaiExport($jadwalModel->id), $fileNameSafe);
+        return response()->json([
+            'status' => true,
+            'head' => '*📦 Berkas ZIP Berhasil Dibuat!*',
+            'message' => "Kelas memiliki beberapa jadwal aktif. Berikut paket file ZIP dokumen nilai untuk kelas: *{$kode}*",
+            'file_type' => 'zip',
+            'file_name' => $zipName,
+            'file_base64' => $base64Data,
+        ]);
     }
 
     // public function exportNilaiExcel()
@@ -205,148 +334,129 @@ trait WithNilaiExcel
         $this->reset(['parsedNilaiRows', 'rowNilaiErrors']);
         $this->setPage(1, 'excelPage');
 
-        // 1. PERBAIKAN VALIDASI: Tambahkan asterisk (*) untuk memvalidasi setiap file di dalam array
         $this->validate([
             'excel_nilai_file' => 'required|array',
             'excel_nilai_file.*' => 'file|mimes:xlsx,xls|max:10240',
         ]);
 
-        // Pastikan properti parsedNilaiRows siap menampung data dari semua file
         $this->parsedNilaiRows = [];
 
-        // 2. PERBAIKAN UTAMA: Looping array file-file yang diunggah
+        // 1. LOOP UTAMA: Mengulang setiap file berkas yang diunggah
         foreach ($this->excel_nilai_file as $singleFile) {
 
-            // Membaca path file saat ini dari loop
             $spreadsheet = IOFactory::load($singleFile->getRealPath());
-            $worksheet = $spreadsheet->getActiveSheet();
+            $allSheets = $spreadsheet->getAllSheets();
 
-            $allData = $worksheet->toArray(null, true, false, false);
+            foreach ($allSheets as $worksheet) {
 
-            if (empty($allData)) {
-                // Kita gunakan continue alih-alih throw Exception agar file kosong dilewati,
-                // dan file valid lainnya tetap diproses.
-                continue;
-            }
+                $allData = $worksheet->toArray(null, true, false, false);
 
-            // ==================================================
-            // HEADER FIXED
-            // ==================================================
-            $header1 = $allData[0] ?? []; // CPMK
-            $header2 = $allData[1] ?? []; // SCPMK
-            $header3 = $allData[2] ?? []; // Bobot
-
-            $startRPSIndex = 0; // A
-            $startJadwalKelasIndex = 2; // C
-            $startNilaiIndex = 6; // G
-
-            $nilaiRPSIndex = collect($header1)->search(function ($v) {
-                $value = Str::lower(trim((string) $v));
-
-                return in_array($value, ['kode rps', 'rps']);
-            });
-
-            $nilaiJadwalKelasIndex = collect($header1)->search(function ($v) {
-                $value = Str::lower(trim((string) $v));
-
-                return in_array($value, ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal']);
-            });
-
-            $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
-
-            // Jika struktur file salah, lewati file ini dan lanjut ke file berikutnya
-            if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
-                continue;
-            }
-
-            // ==================================================
-            // PARSE SUB CPMK
-            // ==================================================
-            $subCpmkColumns = [];
-            $currentCPMK = null;
-
-            for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
-                $rawCpmk = trim((string) ($header1[$col] ?? ''));
-                if ($rawCpmk !== '') {
-                    $currentCPMK = $rawCpmk;
-                }
-
-                $rawSub = trim((string) ($header2[$col] ?? ''));
-                if ($rawSub === '') {
+                if (empty($allData) || count($allData) < 4) {
                     continue;
                 }
-                preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
 
-                $kodeSCPMK = $matches[1] ?? $rawSub;
-                $pertemuan = $matches[2] ?? null;
-                $bobot = (float) ($header3[$col] ?? 0);
-                if ($bobot > 1) {
-                    $bobot /= 100;
-                }
+                $header1 = $allData[0] ?? []; // CPMK
+                $header2 = $allData[1] ?? []; // SCPMK
+                $header3 = $allData[2] ?? []; // Bobot
 
-                $subCpmkColumns[$col] = [
-                    'cpmk' => $currentCPMK,
-                    'kode_scpmk' => $kodeSCPMK,
-                    'pertemuan' => $pertemuan,
-                    'bobot' => $bobot,
-                ];
-            }
+                $startNilaiIndex = 6; // G
 
-            // Catatan: Properti ini akan menyimpan header dari file terakhir yang dibaca sukses.
-            $this->parsedNilaiHeaders = collect($subCpmkColumns)
-                ->map(fn ($item) => [
-                    'cpmk' => $item['cpmk'],
-                    'sub_cpmk' => $item['kode_scpmk'],
-                    'pertemuan' => $item['pertemuan'],
-                    'bobot' => $item['bobot'],
-                ])
-                ->values()
-                ->toArray();
+                $nilaiRPSIndex = collect($header1)->search(function ($v) {
+                    return in_array(Str::lower(trim((string) $v)), ['kode rps', 'rps']);
+                });
 
-            // ==================================================
-            // KOLOM FINAL
-            // ==================================================
-            $nilaiIndexIndex = $nilaiAngkaIndex + 1;
-            $nilaiMutuIndex = $nilaiAngkaIndex + 2;
-            $dataRows = array_slice($allData, 3);
+                $nilaiJadwalKelasIndex = collect($header1)->search(function ($v) {
+                    return in_array(Str::lower(trim((string) $v)), ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal']);
+                });
 
-            foreach ($dataRows as $rowIndex => $row) {
-                if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->isEmpty()) {
+                $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
+
+                // Jika format sheet ini bukan template nilai, lewati sheet ini
+                if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
                     continue;
                 }
-                $subCpmk = [];
 
-                foreach ($subCpmkColumns as $col => $meta) {
-                    $nilaiRaw = $row[$col] ?? '';
-                    $subCpmk[] = [
-                        'cpmk' => $meta['cpmk'],
-                        'kode_scpmk' => $meta['kode_scpmk'],
-                        'pertemuan' => $meta['pertemuan'],
-                        'bobot' => $meta['bobot'],
-                        'nilai' => is_numeric($nilaiRaw) ? (float) $nilaiRaw : null,
+                $subCpmkColumns = [];
+                $currentCPMK = null;
+
+                for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
+                    $rawCpmk = trim((string) ($header1[$col] ?? ''));
+                    if ($rawCpmk !== '') {
+                        $currentCPMK = $rawCpmk;
+                    }
+
+                    $rawSub = trim((string) ($header2[$col] ?? ''));
+                    if ($rawSub === '') {
+                        continue;
+                    }
+                    preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
+
+                    $kodeSCPMK = $matches[1] ?? $rawSub;
+                    $pertemuan = $matches[2] ?? null;
+                    $bobot = (float) ($header3[$col] ?? 0);
+                    if ($bobot > 1) {
+                        $bobot /= 100;
+                    }
+
+                    $subCpmkColumns[$col] = [
+                        'cpmk' => $currentCPMK,
+                        'kode_scpmk' => $kodeSCPMK,
+                        'pertemuan' => $pertemuan,
+                        'bobot' => $bobot,
                     ];
                 }
 
-                // Gabungkan semua baris data dari semua file ke dalam satu properti global
-                $this->parsedNilaiRows[] = [
-                    '_index' => count($this->parsedNilaiRows),
-                    'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
-                    'nama_mk' => trim((string) ($row[1] ?? '')),
-                    'kode_jadwal' => trim((string) ($row[2] ?? '')),
-                    'nim' => trim((string) ($row[3] ?? '')),
-                    'nama' => trim((string) ($row[4] ?? '')),
-                    'angkatan' => trim((string) ($row[5] ?? '')),
-                    'sub_cpmk' => $subCpmk,
-                    'nilai_angka' => is_numeric($row[$nilaiAngkaIndex] ?? null) ? (float) $row[$nilaiAngkaIndex] : 0,
-                    'nilai_index' => is_numeric($row[$nilaiIndexIndex] ?? null) ? (float) $row[$nilaiIndexIndex] : null,
-                    'nilai_mutu' => strtoupper(trim((string) ($row[$nilaiMutuIndex] ?? ''))),
-                    'role' => 'mahasiswa',
-                ];
-            }
-        } // Akhir dari foreach file excel_nilai_file
+                $this->parsedNilaiHeaders = collect($subCpmkColumns)
+                    ->map(fn ($item) => [
+                        'cpmk' => $item['cpmk'],
+                        'sub_cpmk' => $item['kode_scpmk'],
+                        'pertemuan' => $item['pertemuan'],
+                        'bobot' => $item['bobot'],
+                    ])
+                    ->values()
+                    ->toArray();
+
+                $nilaiIndexIndex = $nilaiAngkaIndex + 1;
+                $nilaiMutuIndex = $nilaiAngkaIndex + 2;
+                $dataRows = array_slice($allData, 3);
+
+                foreach ($dataRows as $row) {
+                    if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->isEmpty()) {
+                        continue;
+                    }
+                    $subCpmk = [];
+
+                    foreach ($subCpmkColumns as $col => $meta) {
+                        $nilaiRaw = $row[$col] ?? '';
+                        $subCpmk[] = [
+                            'cpmk' => $meta['cpmk'],
+                            'kode_scpmk' => $meta['kode_scpmk'],
+                            'pertemuan' => $meta['pertemuan'],
+                            'bobot' => $meta['bobot'],
+                            'nilai' => is_numeric($nilaiRaw) ? (float) $nilaiRaw : null,
+                        ];
+                    }
+
+                    $this->parsedNilaiRows[] = [
+                        '_index' => count($this->parsedNilaiRows),
+                        'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
+                        'nama_mk' => trim((string) ($row[1] ?? '')),
+                        'kode_jadwal' => trim((string) ($row[2] ?? '')),
+                        'nim' => trim((string) ($row[3] ?? '')),
+                        'nama' => trim((string) ($row[4] ?? '')),
+                        'angkatan' => trim((string) ($row[5] ?? '')),
+                        'sub_cpmk' => $subCpmk,
+                        'nilai_angka' => is_numeric($row[$nilaiAngkaIndex] ?? null) ? (float) $row[$nilaiAngkaIndex] : 0,
+                        'nilai_index' => is_numeric($row[$nilaiIndexIndex] ?? null) ? (float) $row[$nilaiIndexIndex] : null,
+                        'nilai_mutu' => strtoupper(trim((string) ($row[$nilaiMutuIndex] ?? ''))),
+                        'role' => 'mahasiswa',
+                    ];
+                }
+            } // 🌟 Akhir loop sheet
+        } // Akhir loop file
 
         $this->toast(
-            text: 'Semua file Excel ('.count($this->excel_nilai_file).' file) berhasil dimuat. Silakan periksa nilai mahasiswa!'
+            text: 'Semua file Excel berhasil dimuat. Silakan periksa nilai mahasiswa!'
         );
     }
 
@@ -658,121 +768,132 @@ trait WithNilaiExcel
 
         try {
             $spreadsheet = IOFactory::load($fileExcel->getRealPath());
-            $worksheet = $spreadsheet->getActiveSheet();
-            $allData = $worksheet->toArray(null, true, false, false);
 
-            if (empty($allData)) {
-                throw new \Exception('File Excel kosong atau tidak dapat dibaca.');
-            }
+            $allSheets = $spreadsheet->getAllSheets();
 
-            $header1 = $allData[0] ?? [];
-            $header2 = $allData[1] ?? [];
-            $header3 = $allData[2] ?? [];
-
-            $startNilaiIndex = 6;
-
-            $nilaiRPSIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['kode rps', 'rps']));
-            $nilaiJadwalKelasIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal']));
-            $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
-
-            if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
-                throw new \Exception('Struktur format Header file Excel tidak sesuai standar.');
-            }
-
-            $subCpmkColumns = [];
-            $currentCPMK = null;
-
-            for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
-                $rawCpmk = trim((string) ($header1[$col] ?? ''));
-                if ($rawCpmk !== '') {
-                    $currentCPMK = $rawCpmk;
-                }
-
-                $rawSub = trim((string) ($header2[$col] ?? ''));
-                if ($rawSub === '') {
-                    continue;
-                }
-
-                preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
-                $kodeSCPMK = $matches[1] ?? $rawSub;
-                $pertemuan = $matches[2] ?? null;
-                $bobot = (float) ($header3[$col] ?? 0);
-                if ($bobot > 1) {
-                    $bobot /= 100;
-                }
-
-                $subCpmkColumns[$col] = [
-                    'cpmk' => $currentCPMK,
-                    'kode_scpmk' => $kodeSCPMK,
-                    'pertemuan' => $pertemuan,
-                    'bobot' => $bobot,
-                ];
-            }
-
-            $dataRows = array_slice($allData, 3);
             $successCount = 0;
             $errors = [];
+            $totalSheetsProcessed = 0;
 
-            foreach ($dataRows as $row) {
-                if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->isEmpty()) {
+            foreach ($allSheets as $worksheet) {
+                $sheetName = $worksheet->getTitle();
+                $allData = $worksheet->toArray(null, true, false, false);
+
+                if (empty($allData) || count($allData) < 4) {
                     continue;
                 }
 
-                $subCpmk = [];
-                $totalNilai = 0;
-                $count = 0;
+                $header1 = $allData[0] ?? [];
+                $header2 = $allData[1] ?? [];
+                $header3 = $allData[2] ?? [];
 
-                foreach ($subCpmkColumns as $col => $meta) {
-                    $nilaiRaw = $row[$col] ?? '';
-                    $nilaiFix = is_numeric($nilaiRaw) ? (float) $nilaiRaw : null;
+                $startNilaiIndex = 6;
 
-                    if ($nilaiFix !== null) {
-                        $totalNilai += $nilaiFix;
+                $nilaiRPSIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['kode rps', 'rps']));
+                $nilaiJadwalKelasIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal']));
+                $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
+
+                if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
+                    Log::warning("Sheet '{$sheetName}' dilewati karena struktur header tidak sesuai.");
+
+                    continue;
+                }
+
+                $totalSheetsProcessed++;
+
+                $subCpmkColumns = [];
+                $currentCPMK = null;
+
+                for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
+                    $rawCpmk = trim((string) ($header1[$col] ?? ''));
+                    if ($rawCpmk !== '') {
+                        $currentCPMK = $rawCpmk;
                     }
-                    $count++;
 
-                    $subCpmk[] = [
-                        'cpmk' => $meta['cpmk'],
-                        'kode_scpmk' => $meta['kode_scpmk'],
-                        'pertemuan' => $meta['pertemuan'],
-                        'bobot' => $meta['bobot'],
-                        'nilai' => $nilaiFix,
+                    $rawSub = trim((string) ($header2[$col] ?? ''));
+                    if ($rawSub === '') {
+                        continue;
+                    }
+
+                    preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
+                    $kodeSCPMK = $matches[1] ?? $rawSub;
+                    $pertemuan = $matches[2] ?? null;
+                    $bobot = (float) ($header3[$col] ?? 0);
+                    if ($bobot > 1) {
+                        $bobot /= 100;
+                    }
+
+                    $subCpmkColumns[$col] = [
+                        'cpmk' => $currentCPMK,
+                        'kode_scpmk' => $kodeSCPMK,
+                        'pertemuan' => $pertemuan,
+                        'bobot' => $bobot,
                     ];
                 }
 
-                $average = $count > 0 ? round(($totalNilai / $count), 2) : 0;
+                $dataRows = array_slice($allData, 3);
 
-                $mockRowData = [
-                    'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
-                    'nama_mk' => trim((string) ($row[1] ?? '')),
-                    'kode_jadwal' => trim((string) ($row[2] ?? '')),
-                    'nim' => trim((string) ($row[3] ?? '')),
-                    'nama' => trim((string) ($row[4] ?? '')),
-                    'angkatan' => trim((string) ($row[5] ?? '')),
-                    'sub_cpmk' => $subCpmk,
-                    'nilai_angka' => $average,
-                ];
+                foreach ($dataRows as $row) {
+                    if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->isEmpty()) {
+                        continue;
+                    }
 
-                try {
-                    // 🌟 SEKARANG AMAN: Memanggil fungsi asli bawaan kamu langsung
-                    $this->saveNilaiFromExcel($mockRowData);
-                    $successCount++;
-                } catch (\Throwable $e) {
-                    $errors[] = "NIM {$mockRowData['nim']}: ".$e->getMessage();
+                    $subCpmk = [];
+                    $totalNilai = 0;
+                    $count = 0;
+
+                    foreach ($subCpmkColumns as $col => $meta) {
+                        $nilaiRaw = $row[$col] ?? '';
+                        $nilaiFix = is_numeric($nilaiRaw) ? (float) $nilaiRaw : null;
+
+                        if ($nilaiFix !== null) {
+                            $totalNilai += $nilaiFix;
+                        }
+                        $count++;
+
+                        $subCpmk[] = [
+                            'cpmk' => $meta['cpmk'],
+                            'kode_scpmk' => $meta['kode_scpmk'],
+                            'pertemuan' => $meta['pertemuan'],
+                            'bobot' => $meta['bobot'],
+                            'nilai' => $nilaiFix,
+                        ];
+                    }
+
+                    $average = $count > 0 ? round(($totalNilai / $count), 2) : 0;
+
+                    $mockRowData = [
+                        'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
+                        'nama_mk' => trim((string) ($row[1] ?? '')),
+                        'kode_jadwal' => trim((string) ($row[2] ?? '')),
+                        'nim' => trim((string) ($row[3] ?? '')),
+                        'nama' => trim((string) ($row[4] ?? '')),
+                        'angkatan' => trim((string) ($row[5] ?? '')),
+                        'sub_cpmk' => $subCpmk,
+                        'nilai_angka' => $average,
+                    ];
+
+                    try {
+                        $this->saveNilaiFromExcel($mockRowData);
+                        $successCount++;
+                    } catch (\Throwable $e) {
+                        $errors[] = "[Sheet: {$sheetName}] NIM {$mockRowData['nim']}: ".$e->getMessage();
+                    }
                 }
             }
 
-            // Logout kembali setelah proses selesai demi keamanan session
             Auth::logout();
 
-            $failCount = count($errors);
+            if ($totalSheetsProcessed === 0) {
+                throw new \Exception('Tidak ada halaman (sheet) dalam file Excel yang sesuai dengan standar format format nilai.');
+            }
 
-            $spreadsheet = IOFactory::load($fileExcel->getRealPath());
-            $worksheet = $spreadsheet->getActiveSheet();
-            $allData = $worksheet->toArray(null, true, false, false);
+            $failCount = count($errors);
             $namaFileAsli = $fileExcel->getClientOriginalName();
+
             $resMessage = "🟢 *Hasil Impor Nilai Excel via WhatsApp*\n\n".
-                          "📄 File: ```{$namaFileAsli}```\n\n".
+                          "📄 File: ```{$namaFileAsli}```\n".
+                          "📊 Total Sheet Diproses: *{$totalSheetsProcessed}* halaman\n\n".
                           "✅ Sukses disimpan: *{$successCount}* mahasiswa\n".
                           "❌ Gagal diproses: *{$failCount}* baris\n";
 
@@ -783,7 +904,6 @@ trait WithNilaiExcel
             return ['status' => true, 'message' => $resMessage];
 
         } catch (\Throwable $e) {
-            // Pastikan logout jika di tengah jalan ada crash script
             Auth::logout();
             Log::error('Gagal memproses excel langsung: '.$e->getMessage());
 
