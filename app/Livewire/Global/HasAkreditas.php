@@ -104,7 +104,7 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addMutuProdi(
+    protected function addAkreditasProdi(
         $query,
         ?int $prId = null,
         string $alias = 'mutu_cpl_pr',

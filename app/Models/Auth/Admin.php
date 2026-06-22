@@ -2,18 +2,16 @@
 
 namespace App\Models\Auth;
 
-use App\Traits\ValidatesGlobalIdentity;
+use App\Models\ProgramStudi\Prodi;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Models\ProgramStudi\Prodi;
 
 class Admin extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'admins';
 
     protected $fillable = [
@@ -29,6 +27,8 @@ class Admin extends Model
         'jenis_kelamin',
         'agama',
         'no_hp',
+        'is_wa_active',
+        'wa_limit',
         'pangkat',
         'golongan_awal',
         'golongan_akhir',
@@ -37,11 +37,11 @@ class Admin extends Model
         'status',
     ];
 
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
     public function pr_rel(): BelongsTo
     {
         return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
@@ -63,23 +63,28 @@ class Admin extends Model
 
     protected function noWa(): Attribute
     {
-        $phone = $this->no_hp;
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (str_starts_with($phone, '0')) {
-            $phone = '62' . substr($phone, 1);
-        }
-        return $phone;
+        return Attribute::get(function () {
+            $phone = $this->no_hp;
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (str_starts_with($phone, '0')) {
+                $phone = '62'.substr($phone, 1);
+            }
+
+            return $phone;
+        });
     }
     protected function waAktif(): Attribute
     {
-        return $this->is_wa_active;
+        return Attribute::get(function () {
+            return $this->is_wa_active;
+        });
     }
 
     protected static function booted()
     {
         static::saving(function ($admin) {
             if ($admin->nip && \DB::table('dosens')->where('nip', $admin->nip)->exists()) {
-                throw new \Exception("NIP ini sudah terdaftar sebagai Dosen!");
+                throw new \Exception('NIP ini sudah terdaftar sebagai Dosen!');
             }
         });
     }

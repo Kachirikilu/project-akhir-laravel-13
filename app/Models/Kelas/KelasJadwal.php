@@ -263,7 +263,7 @@ class KelasJadwal extends Model
                 ? Carbon::parse($this->tanggal_berakhir)->format('d/m/Y')
                 : 'Selesai';
 
-            return "{$mulai} - {$akhir}";
+            return "{$mulai} – {$akhir}";
         });
     }
 
@@ -279,7 +279,7 @@ class KelasJadwal extends Model
                 ? Carbon::parse($this->jam_berakhir)->format('H:i')
                 : '';
 
-            return $akhir ? "{$mulai} - {$akhir}" : $mulai;
+            return ($akhir ? "{$mulai}–{$akhir}" : $mulai) . ' WIB';
         });
     }
 

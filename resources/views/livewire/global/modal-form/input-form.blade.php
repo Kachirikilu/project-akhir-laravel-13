@@ -146,7 +146,7 @@ store.{{ $modelString }} = valueInput ?? '';
             {{-- Nomor Telepon --}}
             @elseif (isset($isNoHP) && $isNoHP)
                 inputmode="numeric"
-                maxLength="17"
+                maxLength="18"
                 oninput="
                 let val = this.value.replace(/\D/g, '');
                 val = val.slice(0, 12);

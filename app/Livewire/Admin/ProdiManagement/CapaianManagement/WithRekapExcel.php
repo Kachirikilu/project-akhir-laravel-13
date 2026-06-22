@@ -148,7 +148,7 @@ trait WithRekapExcel
                 $TAG = 'CAPAIAN RENCANA PEMBELAJARAN SEMESTER';
                 $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                 $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                $this->addMutuProdi($queryOBE, $this->pr_id_url, 'mutu_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                 $this->buttonRPSFilter($queryOBE, $currentYear, $fiveYearsAgo->year);
                 break;
             case 'cpl':
@@ -165,7 +165,7 @@ trait WithRekapExcel
 
                 $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
                 $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
-                $this->addMutuProdi($queryOBE, $this->pr_id_url, 'mutu_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
                 $this->buttonCPLFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'cpmk':
@@ -174,7 +174,7 @@ trait WithRekapExcel
                 $TAG = 'CAPAIAN PEMBELAJARAN MATA KULIAH';
                 $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
                 $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
-                $this->addMutuProdi($queryOBE, $this->pr_id_url, 'mutu_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
                 $this->buttonCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'sub-cpmk':
@@ -183,7 +183,7 @@ trait WithRekapExcel
                 $TAG = 'SUB CAPAIAN PEMBELAJARAN MATA KULIAH';
                 $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
                 $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
-                $this->addMutuProdi($queryOBE, $this->pr_id_url, 'mutu_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
                 $this->buttonSCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'mahasiswa':

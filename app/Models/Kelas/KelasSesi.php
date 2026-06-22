@@ -405,7 +405,7 @@ class KelasSesi extends Model
                 return '-';
             }
 
-            return "{$this->jam_mulai} - {$this->jam_berakhir}";
+            return "{$this->jam_mulai}–{$this->jam_berakhir} WIB";
         });
     }
 

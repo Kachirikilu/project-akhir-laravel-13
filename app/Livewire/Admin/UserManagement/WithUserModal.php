@@ -444,7 +444,7 @@ trait WithUserModal
         $rules['no_hp'] = [
             'nullable',
             'min:11',
-            'max:14',
+            'max:15',
         ];
 
         $rules['jenis_kelamin'] = [
@@ -786,7 +786,7 @@ trait WithUserModal
             'nik.min' => 'NIK minimal harus 12 karakter!',
             'nik.max' => 'NIK maksimal 16 karakter!',
             'no_hp.min' => 'Nomor Telepon minimal harus 11 digit!',
-            'no_hp.max' => 'Nomor Telepon maksimal 14 digit!',
+            'no_hp.max' => 'Nomor Telepon maksimal 15 digit!',
             'angkatan.required' => 'Tahun angkatan wajib diisi!',
             'angkatan.integer' => 'Tahun angkatan harus berupa angka!',
             'angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',

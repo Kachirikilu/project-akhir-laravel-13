@@ -202,7 +202,7 @@ class ProgramStudiManagement extends Component
             } else {
                 $this->addRekapProdi($queryPr, 'rekap_pr');
                 $this->addIndexProdi($queryPr, 'index_pr');
-                $this->addMutuProdi($queryPr, 'akreditas_pr');
+                $this->addAkreditasProdi($queryPr, 'akreditas_pr');
                 $this->buttonStrataFilter($queryPr);
             }
 

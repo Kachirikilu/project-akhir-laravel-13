@@ -2,7 +2,7 @@
     $pageTitle = __('Dashboard Pengguna');
 
     if (Auth::user()->admin) {
-        $pageTitle = __('Dashboard Admin ' . Auth::user()->role);
+        $pageTitle = __('Dashboard ' . Auth::user()->role);
     }
 
 @endphp

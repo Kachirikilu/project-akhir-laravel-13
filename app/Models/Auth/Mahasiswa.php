@@ -32,6 +32,8 @@ class Mahasiswa extends Model
         'jenis_kelamin',
         'agama',
         'no_hp',
+        'is_wa_active',
+        'wa_limit',
         'angkatan',
         'tanggal_yudisium',
         'tanggal_wisuda',
@@ -142,19 +144,23 @@ class Mahasiswa extends Model
         });
     }
 
-    // public function getWhatsappNumberAttribute()
     protected function noWa(): Attribute
     {
-        $phone = $this->no_hp;
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (str_starts_with($phone, '0')) {
-            $phone = '62' . substr($phone, 1);
-        }
-        return $phone;
+        return Attribute::get(function () {
+            $phone = $this->no_hp;
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (str_starts_with($phone, '0')) {
+                $phone = '62'.substr($phone, 1);
+            }
+
+            return $phone;
+        });
     }
     protected function waAktif(): Attribute
     {
-        return $this->is_wa_active;
+        return Attribute::get(function () {
+            return $this->is_wa_active;
+        });
     }
 
     public function scopeSearchMahasiswa($query, $search)

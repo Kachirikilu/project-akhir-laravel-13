@@ -253,10 +253,10 @@ class KelasManagement extends Component
                 $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
                     $mk->whereHas('rps_rel.dosens', function ($q) {
                         $q->where('dosens.id', Auth::user()->dosen->id);
-                    })
-                        ->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                            $q->where('dosens.id', Auth::user()->dosen->id);
-                        });
+                    });
+                        // ->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                        //     $q->where('dosens.id', Auth::user()->dosen->id);
+                        // });
                 })->count();
             } elseif (Auth::user()->mahasiswa) {
                 $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {

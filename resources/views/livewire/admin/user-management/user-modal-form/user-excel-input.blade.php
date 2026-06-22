@@ -228,7 +228,7 @@
                                         'model' => $this->parsedUserRows[$i]['no_hp'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.no_hp",
                                         'numberOnly' => 1,
-                                        'maxLength' => 14,
+                                        'maxLength' => 15,
                                         'message' => $rowUserErrors[$i]['no_hp'] ?? null,
                                         'minW' => '192',
                                     ])

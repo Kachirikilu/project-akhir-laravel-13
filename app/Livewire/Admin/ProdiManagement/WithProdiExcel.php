@@ -52,9 +52,7 @@ trait WithProdiExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        if ($this->switchTable == '' || $this->switchTable == 'prodi') {
-
-        } elseif ($this->switchTable === 'fakultas') {
+        if ($this->switchTable === 'fakultas') {
             $this->addRekapFakultas($queryPr, 'rekap_fk');
             $this->addIndexFakultas($queryPr, 'index_fk');
             $this->addAkreditasFakultas($queryPr, 'akreditas_fk');
@@ -65,7 +63,7 @@ trait WithProdiExcel
         } else {
             $this->addRekapProdi($queryPr, 'rekap_pr');
             $this->addIndexProdi($queryPr, 'index_pr');
-            $this->addMutuProdi($queryPr, 'akreditas_pr');
+            $this->addAkreditasProdi($queryPr, 'akreditas_pr');
             $this->buttonStrataFilter($queryPr);
         }
 

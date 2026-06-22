@@ -8,14 +8,17 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
+use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 // use Illuminate\Support\LazyCollection;
 use App\Models\Penilaian\NilaiMahasiswa;
+use App\Models\Sesi;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
@@ -95,7 +98,6 @@ trait WithNilaiExcel
             throw new \Exception('Gagal membuat file ZIP di server.');
         }
 
-  
         foreach ($jadwals as $jadwal) {
             $rawFileName = $jadwal->kode.'_'.$jadwal->kode_rps.'_'.$mk.'_'.now()->format('Y-m-d').'.xlsx';
             $fileName = str_replace(
@@ -117,6 +119,7 @@ trait WithNilaiExcel
         if (! file_exists($zipPath)) {
             throw new \Exception('File ZIP gagal digenerate.');
         }
+
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
@@ -640,6 +643,276 @@ trait WithNilaiExcel
         });
     }
 
+    public function directImportFromWhatsApp($fileExcel, $user)
+    {
+        Log::info('=== MEMULAI PROSES IMPOR LANGSUNG VIA WHATSAPP ===');
+
+        if (! $user || ! ($user->admin || $user->dosen)) {
+            return [
+                'status' => true,
+                'head' => '*❌ Akses Gagal!*',
+                'message' => 'Mahasiswa tidak memiliki akses untuk menginput File Excel!',
+            ];
+        }
+        Auth::login($user);
+
+        try {
+            $spreadsheet = IOFactory::load($fileExcel->getRealPath());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $allData = $worksheet->toArray(null, true, false, false);
+
+            if (empty($allData)) {
+                throw new \Exception('File Excel kosong atau tidak dapat dibaca.');
+            }
+
+            $header1 = $allData[0] ?? [];
+            $header2 = $allData[1] ?? [];
+            $header3 = $allData[2] ?? [];
+
+            $startNilaiIndex = 6;
+
+            $nilaiRPSIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['kode rps', 'rps']));
+            $nilaiJadwalKelasIndex = collect($header1)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal']));
+            $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
+
+            if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
+                throw new \Exception('Struktur format Header file Excel tidak sesuai standar.');
+            }
+
+            $subCpmkColumns = [];
+            $currentCPMK = null;
+
+            for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
+                $rawCpmk = trim((string) ($header1[$col] ?? ''));
+                if ($rawCpmk !== '') {
+                    $currentCPMK = $rawCpmk;
+                }
+
+                $rawSub = trim((string) ($header2[$col] ?? ''));
+                if ($rawSub === '') {
+                    continue;
+                }
+
+                preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
+                $kodeSCPMK = $matches[1] ?? $rawSub;
+                $pertemuan = $matches[2] ?? null;
+                $bobot = (float) ($header3[$col] ?? 0);
+                if ($bobot > 1) {
+                    $bobot /= 100;
+                }
+
+                $subCpmkColumns[$col] = [
+                    'cpmk' => $currentCPMK,
+                    'kode_scpmk' => $kodeSCPMK,
+                    'pertemuan' => $pertemuan,
+                    'bobot' => $bobot,
+                ];
+            }
+
+            $dataRows = array_slice($allData, 3);
+            $successCount = 0;
+            $errors = [];
+
+            foreach ($dataRows as $row) {
+                if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->isEmpty()) {
+                    continue;
+                }
+
+                $subCpmk = [];
+                $totalNilai = 0;
+                $count = 0;
+
+                foreach ($subCpmkColumns as $col => $meta) {
+                    $nilaiRaw = $row[$col] ?? '';
+                    $nilaiFix = is_numeric($nilaiRaw) ? (float) $nilaiRaw : null;
+
+                    if ($nilaiFix !== null) {
+                        $totalNilai += $nilaiFix;
+                    }
+                    $count++;
+
+                    $subCpmk[] = [
+                        'cpmk' => $meta['cpmk'],
+                        'kode_scpmk' => $meta['kode_scpmk'],
+                        'pertemuan' => $meta['pertemuan'],
+                        'bobot' => $meta['bobot'],
+                        'nilai' => $nilaiFix,
+                    ];
+                }
+
+                $average = $count > 0 ? round(($totalNilai / $count), 2) : 0;
+
+                $mockRowData = [
+                    'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
+                    'nama_mk' => trim((string) ($row[1] ?? '')),
+                    'kode_jadwal' => trim((string) ($row[2] ?? '')),
+                    'nim' => trim((string) ($row[3] ?? '')),
+                    'nama' => trim((string) ($row[4] ?? '')),
+                    'angkatan' => trim((string) ($row[5] ?? '')),
+                    'sub_cpmk' => $subCpmk,
+                    'nilai_angka' => $average,
+                ];
+
+                try {
+                    // 🌟 SEKARANG AMAN: Memanggil fungsi asli bawaan kamu langsung
+                    $this->saveNilaiFromExcel($mockRowData);
+                    $successCount++;
+                } catch (\Throwable $e) {
+                    $errors[] = "NIM {$mockRowData['nim']}: ".$e->getMessage();
+                }
+            }
+
+            // Logout kembali setelah proses selesai demi keamanan session
+            Auth::logout();
+
+            $failCount = count($errors);
+
+            $spreadsheet = IOFactory::load($fileExcel->getRealPath());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $allData = $worksheet->toArray(null, true, false, false);
+            $namaFileAsli = $fileExcel->getClientOriginalName();
+            $resMessage = "🟢 *Hasil Impor Nilai Excel via WhatsApp*\n\n".
+                          "📄 File: ```{$namaFileAsli}```\n\n".
+                          "✅ Sukses disimpan: *{$successCount}* mahasiswa\n".
+                          "❌ Gagal diproses: *{$failCount}* baris\n";
+
+            if ($failCount > 0) {
+                $resMessage .= "\n*Daftar Eror:*\n".implode("\n", array_slice($errors, 0, 5));
+            }
+
+            return ['status' => true, 'message' => $resMessage];
+
+        } catch (\Throwable $e) {
+            // Pastikan logout jika di tengah jalan ada crash script
+            Auth::logout();
+            Log::error('Gagal memproses excel langsung: '.$e->getMessage());
+
+            return ['status' => true, 'message' => '❌ *Gagal memproses file:* '.$e->getMessage()];
+        }
+    }
+
+    // private function saveNilaiMurniDariWhatsApp($validated)
+    // {
+    //     DB::transaction(function () use ($validated) {
+    //         $nim = trim($validated['nim']);
+
+    //         // 1. Cari Mahasiswa murni berdasarkan NIM
+    //         $mahasiswa = Mahasiswa::query()
+    //             ->where('nim', $nim)
+    //             ->first();
+
+    //         if (! $mahasiswa) {
+    //             throw new \Exception("Mahasiswa dengan NIM {$nim} tidak ditemukan di sistem!");
+    //         }
+
+    //         // 2. Cari Jadwal Kelas murni via Model langsung
+    //         $jadwal = KelasJadwal::query()
+    //             ->where('kode_jadwal', $validated['kode_jadwal'])
+    //             ->first();
+
+    //         $rpsId = null;
+    //         $ganjilGenap = '';
+    //         $tahunAkademik = '';
+    //         $jadwalId = null;
+
+    //         if ($jadwal) {
+    //             $rpsId = $jadwal->kelas_rel?->rps_id;
+    //             $ganjilGenap = (string) $jadwal->ganjil_genap;
+    //             $tahunAkademik = (string) $jadwal->tahun_akademik;
+    //             $jadwalId = $jadwal->id;
+    //         } else {
+    //             $rps = RPS::query()
+    //                 ->where('kode_rps', $validated['kode_rps'])
+    //                 ->first();
+
+    //             if (! $rps) {
+    //                 throw new \Exception("Kelas '{$validated['kode_jadwal']}' maupun RPS dengan kode '{$validated['kode_rps']}' tidak ditemukan.");
+    //             }
+
+    //             $rpsId = $rps->id;
+    //             $jadwalId = null;
+
+    //             $now = now();
+    //             $currentYear = $now->year;
+    //             $currentMonth = $now->month;
+
+    //             if ($currentMonth >= 2 && $currentMonth <= 7) {
+    //                 $ganjilGenap = 'Genap';
+    //                 $tahunAkademik = ($currentYear - 1).'/'.$currentYear;
+    //             } else {
+    //                 $ganjilGenap = 'Ganjil';
+    //                 $prevYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+    //                 $tahunAkademik = $prevYear.'/'.($prevYear + 1);
+    //             }
+    //         }
+
+    //         // 3. Cari atau Instansiasi Objek NilaiMahasiswa
+    //         $nilai_mahasiswa = NilaiMahasiswa::query()
+    //             ->where('mahasiswa_id', $mahasiswa->id)
+    //             ->where('rps_id', $rpsId)
+    //             ->where('ganjil_genap', $ganjilGenap)
+    //             ->where('tahun_akademik', $tahunAkademik)
+    //             ->lockForUpdate()
+    //             ->first();
+
+    //         if (! $nilai_mahasiswa) {
+    //             $nilai_mahasiswa = new NilaiMahasiswa;
+    //             $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
+    //             $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
+    //             $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
+    //         }
+
+    //         $nilai_mahasiswa->rps_id = $rpsId;
+    //         $nilai_mahasiswa->kj_id = $jadwalId;
+
+    //         $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
+    //         $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
+
+    //         // 4. Mapping index nilai dari sub_cpmk menggunakan query Sesi murni
+    //         $mapScpmk = [];
+    //         if ($jadwalId) {
+    //             // Ambil sesi langsung menggunakan Model murni untuk memotong fungsi bawaan Livewire
+    //             $sesis = Sesi::query()
+    //                 ->where('kj_id', $jadwalId) // Sesuaikan foreign key jadwal ke sesi Anda
+    //                 ->orderBy('pertemuan_ke')
+    //                 ->get();
+
+    //             foreach ($sesis as $index => $sesi) {
+    //                 // Ambil kode SCPMK dengan aman, pastikan relasi 'scpmk_atr' tidak mengikat Auth::user()
+    //                 $kodeSCPMK = preg_replace(
+    //                     '/[^A-Za-z0-9]/',
+    //                     '',
+    //                     $sesi->scpmk_atr?->kode
+    //                         ?? $sesi->scpmk_atr?->kode_scpmk
+    //                         ?? ''
+    //                 );
+    //                 if ($kodeSCPMK !== '') {
+    //                     $mapScpmk[$kodeSCPMK] = $index;
+    //                 }
+    //             }
+    //         }
+
+    //         foreach ($validated['sub_cpmk'] ?? [] as $subIndex => $sub) {
+    //             $kodeSCPMK = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+
+    //             $targetIndex = (isset($mapScpmk[$kodeSCPMK]) && $kodeSCPMK !== '')
+    //                 ? $mapScpmk[$kodeSCPMK]
+    //                 : $subIndex;
+
+    //             $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null) ? (float) $sub['nilai'] : 0;
+    //             $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null) ? (float) $sub['bobot'] : 0;
+    //         }
+
+    //         ksort($nilaiArray);
+    //         ksort($bobotArray);
+
+    //         $nilai_mahasiswa->nilai_array = $nilaiArray;
+    //         $nilai_mahasiswa->bobot_array = $bobotArray;
+    //         $nilai_mahasiswa->nilai = $validated['nilai_angka'];
+
+    //         $nilai_mahasiswa->save();
+    //     });
+    // }
     // private function saveNilaiFromExcel($validated)
     // {
     //     DB::transaction(function () use ($validated) {

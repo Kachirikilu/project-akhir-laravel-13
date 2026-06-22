@@ -385,6 +385,22 @@ trait WithUserSearchFilters
                         $user->kode_fk,
                         $searchLower
                     );
+                    $searchNormalized = $this->normalizePhoneNumber($searchLower);
+                    $userHPNormalized = $this->normalizePhoneNumber($user->no_hp);
+                    $userWANormalized = $this->normalizePhoneNumber($user->no_wa);
+
+                    $matchHP = ($searchNormalized !== '' && (
+                        str_contains($userHPNormalized, $searchNormalized) || 
+                        str_contains($userWANormalized, $searchNormalized)
+                    ));
+                    $matchGender = $this->containsStrict(
+                        'Gender '.$user->gender,
+                        $searchLower
+                    );
+                    $matchAgama = $this->containsStrict(
+                        'Agama '.$user->agama,
+                        $searchLower
+                    );
 
                     $basePr = [
                         $user->prodi,
@@ -577,7 +593,6 @@ trait WithUserSearchFilters
                             $searchLower
                         );
                     }
-                    
 
                     $matchCreatedAt = $this->matchDateField(
                         $user->created_at,
@@ -644,6 +659,8 @@ trait WithUserSearchFilters
                         || $matchRPS
                         || $matchSKS
 
+                        || $matchHP || $matchGender || $matchAgama
+
                         || $matchCreatedAt
                         || $matchUpdatedAt;
                 });
@@ -695,6 +712,7 @@ trait WithUserSearchFilters
                 return $allUser->values();
             }
             $currentPage = Paginator::resolveCurrentPage() ?: 1;
+
             return new LengthAwarePaginator(
                 $allUser->forPage($currentPage, $perPage)->values(),
                 $allUser->count(),
@@ -707,6 +725,7 @@ trait WithUserSearchFilters
         if (empty($perPage)) {
             return $queryUser;
         }
-        return $queryUser->paginate($perPage);;
+
+        return $queryUser->paginate($perPage);
     }
 }

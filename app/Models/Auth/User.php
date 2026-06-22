@@ -4,6 +4,7 @@ namespace App\Models\Auth;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\HasTeams;
+use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -16,7 +17,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable(['email', 'password', 'current_team_id'])] // Menggunakan PHP Attribute ala Laravel 13 (Name sengaja dilepas/di-comment seperti versi lama)
@@ -194,6 +194,20 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
+    protected function labelId1(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin || $this->dosen) {
+                $value = 'NIP';
+            } elseif ($this->mahasiswa) {
+                $value = 'NIM';
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
 
     protected function identity2(): Attribute
     {
@@ -204,6 +218,20 @@ class User extends Authenticatable
                 $value = $this->admin->nitk;
             } elseif ($this->dosen) {
                 $value = $this->dosen->nidn;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+    protected function labelId2(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = 'NITK';
+            } elseif ($this->dosen) {
+                $value = 'NIDN';
             }
 
             return empty($value) ? null : $value;
@@ -352,17 +380,43 @@ class User extends Authenticatable
     protected function noWa(): Attribute
     {
         return Attribute::get(function () {
-            $phone = $this->no_hp; 
+            $phone = $this->no_hp;
 
             $phone = preg_replace('/[^0-9]/', '', $phone);
             if (str_starts_with($phone, '0')) {
-                $phone = '62' . substr($phone, 1);
+                $phone = '62'.substr($phone, 1);
             }
 
             return $phone ?? null;
         });
     }
-    
+
+    protected function noWaFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $phone = $this->no_hp;
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (empty($phone)) {
+                return null;
+            }
+            if (str_starts_with($phone, '0')) {
+                $phone = '62'.substr($phone, 1);
+            }
+
+            $countryCode = '62';
+            $body = substr($phone, 2);
+            $firstThree = substr($body, 0, 3);
+            $rest = substr($body, 3);
+            if ($rest !== false && $rest !== '') {
+                $chunks = str_split($rest, 4);
+
+                return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
+            }
+
+            return '+'.$countryCode.'-'.$firstThree;
+        });
+    }
+
     protected function waAktif(): Attribute
     {
         return Attribute::get(function () {

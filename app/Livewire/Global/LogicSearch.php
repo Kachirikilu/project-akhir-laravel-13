@@ -258,6 +258,18 @@ trait LogicSearch
         return true;
     }
 
+    private function normalizePhoneNumber(?string $phone): string
+    {
+        if (!$phone) {
+            return '';
+        }
+        $cleaned = preg_replace('/[^0-9]/', '', $phone);
+        if (str_starts_with($cleaned, '62')) {
+            $cleaned = '0' . substr($cleaned, 2);
+        }
+        return $cleaned;
+    }
+
     protected function matchCount(
         mixed $value,
         string $search,

@@ -181,8 +181,22 @@ class KelasSeeder extends Seeder
                                     $candidateIds->count()
                                 );
 
-                                if ($maxMahasiswa === 0) {
-                                    continue;
+                                if ($maxMahasiswa > 0) {
+                                    $jumlahMahasiswa = rand(
+                                        min(20, $maxMahasiswa),
+                                        $maxMahasiswa
+                                    );
+
+                                    $mhsIds = $candidateIds
+                                        ->take($jumlahMahasiswa)
+                                        ->values();
+
+                                    foreach ($mhsIds as $mhsId) {
+                                        $kelasDiambilMahasiswa[$mhsId] =
+                                            ($kelasDiambilMahasiswa[$mhsId] ?? 0) + 1;
+                                    }
+
+                                    $jadwal->mahasiswas()->attach($mhsIds);
                                 }
 
                                 $jumlahMahasiswa = rand(
@@ -213,81 +227,48 @@ class KelasSeeder extends Seeder
                                     $pertemuan <= 16;
                                     $pertemuan++
                                 ) {
+                                    $sesi = KelasSesi::create([
+                                        'kj_id' => $jadwal->id,
+                                        'pertemuan_ke' => $pertemuan,
+                                        'tanggal' => (clone $tglMulai)->addWeeks($pertemuan - 1),
+                                        'catatan' => "Sesi rutin pertemuan ke-{$pertemuan}",
+                                    ]);
 
-                                    $sesi =
-                                        KelasSesi::create([
-                                            'kj_id' => $jadwal->id,
-                                            'pertemuan_ke' => $pertemuan,
-                                            'tanggal' => (clone $tglMulai)
-                                                ->addWeeks(
-                                                    $pertemuan - 1
-                                                ),
-                                            'catatan' => "Sesi rutin pertemuan ke-{$pertemuan}",
-                                        ]);
+                                    if ($maxMahasiswa > 0 && isset($mhsIds)) {
+                                        $statuses = ['Hadir', 'Terlambat', 'Absen', 'Sakit', 'Izin', 'Dispensasi'];
+                                        $weights = ['Hadir' => 65, 'Terlambat' => 10, 'Absen' => 8, 'Sakit' => 5, 'Izin' => 7, 'Dispensasi' => 5];
 
-                                    // 4. Generate 16 Sesi
-                                    // Seeder absensi mahasiswa
-                                    $statuses = [
-                                        'Hadir',
-                                        'Terlambat',
-                                        'Absen',
-                                        'Sakit',
-                                        'Izin',
-                                        'Dispensasi',
-                                    ];
+                                        foreach ($mhsIds as $mhsId) {
+                                            $random = rand(1, array_sum($weights));
+                                            $current = 0;
+                                            $selectedStatus = 'Absen';
 
-                                    // bobot probabilitas agar realistis
-                                    $weights = [
-                                        'Hadir' => 65,
-                                        'Terlambat' => 10,
-                                        'Absen' => 8,
-                                        'Sakit' => 5,
-                                        'Izin' => 7,
-                                        'Dispensasi' => 5,
-                                    ];
-
-                                    foreach ($mhsIds as $mhsId) {
-
-                                        // random weighted status
-                                        $random = rand(1, array_sum($weights));
-                                        $current = 0;
-                                        $selectedStatus = 'Absen';
-
-                                        foreach ($weights as $status => $weight) {
-                                            $current += $weight;
-
-                                            if ($random <= $current) {
-                                                $selectedStatus = $status;
-                                                break;
+                                            foreach ($weights as $status => $weight) {
+                                                $current += $weight;
+                                                if ($random <= $current) {
+                                                    $selectedStatus = $status;
+                                                    break;
+                                                }
                                             }
+
+                                            MahasiswaKehadiran::create([
+                                                'sesi_id' => $sesi->id,
+                                                'mahasiswa_id' => $mhsId,
+                                                'status' => $selectedStatus,
+                                                'waktu_presensi' => in_array($selectedStatus, ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi'])
+                                                    ? $sesi->tanggal->copy()->setTime(8, rand(0, 45))
+                                                    : null,
+                                                'keterangan' => match ($selectedStatus) {
+                                                    'Sakit' => 'Sakit demam',
+                                                    'Izin' => 'Ada keperluan keluarga',
+                                                    'Dispensasi' => 'Dispensasi akademik',
+                                                    default => null,
+                                                },
+                                            ]);
                                         }
-
-                                        MahasiswaKehadiran::create([
-                                            'sesi_id' => $sesi->id,
-                                            'mahasiswa_id' => $mhsId,
-                                            'status' => $selectedStatus,
-
-                                            'waktu_presensi' => in_array($selectedStatus, [
-                                                'Hadir',
-                                                'Terlambat',
-                                                'Izin',
-                                                'Sakit',
-                                                'Dispensasi',
-                                            ])
-                                                ? $sesi->tanggal
-                                                    ->copy()
-                                                    ->setTime(8, rand(0, 45))
-                                                : null,
-
-                                            'keterangan' => match ($selectedStatus) {
-                                                'Sakit' => 'Sakit demam',
-                                                'Izin' => 'Ada keperluan keluarga',
-                                                'Dispensasi' => 'Dispensasi akademik',
-                                                default => null,
-                                            },
-                                        ]);
                                     }
 
+                                    // Generate UTS/UAS
                                     if ($pertemuan == 8 && $totalScpmk < 16 && $rps->bobot_uts) {
                                         $sesi->override()->create([
                                             'deskripsi' => 'Ujian Tengah Semester',
@@ -311,14 +292,7 @@ class KelasSeeder extends Seeder
                                     if (isset($scpmkList[$scpmkIndex])) {
                                         $scpmkIndex++;
                                     }
-
-                                    if (
-                                        isset(
-                                            $scpmkList[
-                                                $scpmkIndex
-                                            ]
-                                        )
-                                    ) {
+                                    if (isset($scpmkList[$scpmkIndex])) {
                                         $scpmkIndex++;
                                     }
                                 }
