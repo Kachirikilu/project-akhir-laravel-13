@@ -3,7 +3,7 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithAbsenModal;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiAbsenModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
@@ -22,7 +22,7 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
-    use WithAbsenModal;
+    use WithNilaiAbsenModal;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
     use WithMahasiswaSearchFilters;

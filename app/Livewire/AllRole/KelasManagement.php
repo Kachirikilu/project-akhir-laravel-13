@@ -182,18 +182,13 @@ class KelasManagement extends Component
 
     public function render()
     {
-        // if (Auth::user()->dosen) {
-        //     $this->selectedDosenId = Auth::user()->id;
-        // }
-
-        $this->inputPrFilter();
-        $this->inputDpFilter();
-        $this->inputFkFilter();
-        $this->inputRPSFilter();
-        $this->inputMKFilter();
-        $this->inputDosenFilter();
-
         try {
+            $this->inputPrFilter();
+            $this->inputDpFilter();
+            $this->inputFkFilter();
+            $this->inputRPSFilter();
+            $this->inputMKFilter();
+            $this->inputDosenFilter();
             // =========================
             // QUERY UTAMA (TABLE)
             // =========================
@@ -282,10 +277,10 @@ class KelasManagement extends Component
                 $q->where('mata_kuliahs.level_mk', 4);
             })->count();
 
-            // $totalGanjil = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
+            // $totalGanjilKelas = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
             //     $q->whereRaw('mata_kuliahs.semester % 2 = 1');
             // })->count();
-            // $totalGenap = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
+            // $totalGenapKelas = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
             //     $q->whereRaw('mata_kuliahs.semester % 2 = 0');
             // })->count();
 

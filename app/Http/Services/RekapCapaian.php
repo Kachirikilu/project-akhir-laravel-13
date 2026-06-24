@@ -348,15 +348,15 @@ trait RekapCapaian
             })
             ->chunkById(200, function ($nilais) use (&$hasil) {
 
-                foreach ($nilais as $nilai_mahasiswa) {
-                    $rps = $nilai_mahasiswa->rps_rel;
+                foreach ($nilais as $nilai) {
+                    $rps = $nilai->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
-                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai->nilai_array ?? []);
+                    $bobotArray = collect($nilai->bobot_array ?? []);
 
                     $total = 0;
                     $totalBobot = 0;
@@ -430,8 +430,8 @@ trait RekapCapaian
                 $q->where('pr_id', $prId);
             })
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilai_mahasiswa) {
-                    $rps = $nilai_mahasiswa->rps_rel;
+                foreach ($nilais as $nilai) {
+                    $rps = $nilai->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
@@ -439,8 +439,8 @@ trait RekapCapaian
 
                     $sks = $rps->mk_rel?->sks_kuliah ?? 1;
 
-                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai->nilai_array ?? []);
+                    $bobotArray = collect($nilai->bobot_array ?? []);
 
                     $mapping = $this->buildCpmkMeetingMap($rps);
 
@@ -590,17 +590,17 @@ trait RekapCapaian
                 $q->where('pr_id', $prId);
             })
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilai_mahasiswa) {
-                    $mahasiswaId = $nilai_mahasiswa->mahasiswa_id;
-                    $rps = $nilai_mahasiswa->rps_rel;
+                foreach ($nilais as $nilai) {
+                    $mahasiswaId = $nilai->mahasiswa_id;
+                    $rps = $nilai->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
                     $sks = $rps->mk_rel?->sks_kuliah ?? 1;
-                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
-                    $bobotArray = collect($nilai_mahasiswa->bobot_array ?? []);
+                    $nilaiArray = collect($nilai->nilai_array ?? []);
+                    $bobotArray = collect($nilai->bobot_array ?? []);
                     $mapping = $this->buildCpmkMeetingMap($rps);
 
                     foreach ($mapping as $cpmkId => $indexes) {
@@ -735,15 +735,15 @@ trait RekapCapaian
             ])
             ->whereHas('mahasiswa_rel', fn ($q) => $q->where('pr_id', $prId))
             ->chunkById(100, function ($nilais) use (&$hasil) {
-                foreach ($nilais as $nilai_mahasiswa) {
-                    $mahasiswaId = $nilai_mahasiswa->mahasiswa_id;
-                    $rps = $nilai_mahasiswa->rps_rel;
+                foreach ($nilais as $nilai) {
+                    $mahasiswaId = $nilai->mahasiswa_id;
+                    $rps = $nilai->rps_rel;
 
                     if (! $rps || $rps->is_draf) {
                         continue;
                     }
 
-                    $nilaiArray = collect($nilai_mahasiswa->nilai_array ?? []);
+                    $nilaiArray = collect($nilai->nilai_array ?? []);
                     $meetingIndex = 0;
 
                     foreach ($rps->cpmks as $cpmk) {

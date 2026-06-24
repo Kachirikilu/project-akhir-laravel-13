@@ -27,24 +27,22 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
 
     protected $sesis;
 
-    protected $title; 
+    protected $sheetName; 
 
-    public function __construct($jadwalId, $title = 'Data Nilai')
+    public function __construct($jadwal, $sheetName = null)
     {
-        $this->jadwalId = $jadwalId;
-        $this->title = $title;
+        $this->jadwalId = $jadwal->id;
 
-        $this->jadwal = KelasJadwal::with([
-            'kelas_rel',
-            'sesis',
-        ])->findOrFail($jadwalId);
+        $this->jadwal = $jadwal;
 
-        $this->sesis = $this->jadwal->sesis->sortBy('pertemuan_ke')->values();
+        $this->sheetName = $sheetName ?? $jadwal->kode;
+
+        $this->sesis = $jadwal->sesis->sortBy('pertemuan_ke')->values();
     }
 
     public function title(): string
     {
-        return $this->title;
+        return $this->sheetName;
     }
 
     public function array(): array
@@ -110,7 +108,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
         $mahasiswas = $this->jadwal
             ->mahasiswas()
             ->with([
-                'nilai_mahasiswa' => function ($q) {
+                'nilai_mahasiswas' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
                         ->where('ganjil_genap', $this->jadwal->ganjil_genap)
                         ->where('tahun_akademik', $this->jadwal->tahun_akademik);
@@ -122,11 +120,11 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
         foreach ($mahasiswas as $index => $mhs) {
             $currentRow = $startRow + $index;
 
-            $nilai_mahasiswa =
-                $mhs->nilai_mahasiswa->first();
+            $nilai_mahasiswas =
+                $mhs->nilai_mahasiswas->first();
 
             $nilaiArray =
-                $nilai_mahasiswa?->nilai_array
+                $nilai_mahasiswas?->nilai_array
                 ?? [];
 
             $row = [

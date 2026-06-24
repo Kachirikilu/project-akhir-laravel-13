@@ -67,12 +67,14 @@ trait WithRPSShow
                 ->noSandbox()
                 ->format('A4')
                 ->showBackground()
-->setChromePath('/usr/bin/google-chrome-stable')
+                // ->setChromePath('/usr/bin/google-chrome-stable')
                 ->pdf();
         }, $fileNameSafe, [
             'Content-Type' => 'application/pdf',
         ]);
     }
+
+
 
     private function formatRPSDetailForShow(RPS $rps): array
     {
@@ -378,7 +380,7 @@ trait WithRPSShow
     private function formatDosenNames(array $names): string
     {
         if (empty($names)) {
-            return '-';
+            return 'Tim Pengajar';
         }
 
         if (count($names) === 1) {
@@ -386,8 +388,8 @@ trait WithRPSShow
         }
 
         // Jika ada 'Tim', return 'Tim'
-        if (in_array('Tim', $names)) {
-            return 'Tim';
+        if (in_array('Tim Pengajar', $names)) {
+            return 'Tim Pengajar';
         }
 
         // Lebih dari 1, kembalikan nama dosen dalam baris baru.

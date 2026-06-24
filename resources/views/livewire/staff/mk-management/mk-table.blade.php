@@ -7,7 +7,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByMKgg',
                 'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilMK + $totalGenapMK,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
@@ -16,7 +16,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByMKgg',
                 'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGanjil,
+                'tabFilter' => $totalGanjilMK,
                 'tabString' => 'mk-ganjil',
                 'tabNameString' => 'Ganjil',
                 'icon' => 'calendar-days',
@@ -25,7 +25,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByMKgg',
                 'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGenap,
+                'tabFilter' => $totalGenapMK,
                 'tabString' => 'mk-genap',
                 'tabNameString' => 'Genap',
                 'icon' => 'calendar-days',
@@ -54,6 +54,7 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
                 'isMain' => 1,
+                'isSticky' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'mk',
@@ -67,7 +68,7 @@
             ])
 
             {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
-            <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub">
+            <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub table-border-l">
                 Bobot Mata Kuliah (SKS)
             </th>
 
@@ -75,7 +76,7 @@
                 'sortFieldString' => 'wajib',
                 'rowSpan' => 2,
                 'isCenter' => 1,
-                'isBorderL' => 1
+                'isBorderL' => 1,
             ])
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
@@ -141,8 +142,8 @@
         <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="text-xs sm:text-sm table-second text-center">{{ $mk->id }}</td>
-            <td class="text-xs sm:text-sm table-second text-center">
+            <td class="table-second text-center">{{ $mk->id }}</td>
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -162,7 +163,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
@@ -182,31 +183,31 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second min-w-84">{{ $mk->mk ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-second text-center">{{ $mk->semester ?? '-' }}</td>
+            <td class="table-second min-w-84">{{ $mk->mk ?? '-' }}</td>
+            <td class="table-second text-center">{{ $mk->semester ?? '-' }}</td>
 
-            <td class="text-xs sm:text-sm table-main text-center">{{ $mk->sks ?? '-' }}</td>
+            <td class="table-main text-center table-border-x">{{ $mk->sks ?? '-' }}</td>
 
             @if ($switchTable == 'tatap-muka' || $switchTable == '')
-                <td class="text-xs sm:text-sm table-sub text-center">{{ $mk->sks_tm ?? '-' }}</td>
+                <td class="table-sub text-center">{{ $mk->sks_tm ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktikum' || $switchTable == '')
-                <td class="text-xs sm:text-sm table-sub text-center">
+                <td class="table-sub text-center">
                     {{ $mk->sks_pr ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
-                <td class="text-xs sm:text-sm table-sub text-center">
+                <td class="table-sub text-center">
                     {{ $mk->sks_pl ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'simulasi' || $switchTable == '')
-                <td class="text-xs sm:text-sm table-sub text-center">
+                <td class="table-sub text-center">
                     {{ $mk->sks_sm ?? '-' }}</td>
             @endif
 
-            <td class="text-xs sm:text-sm table-second table-border-l text-center">
+            <td class="table-second table-border-l text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -226,7 +227,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center table-border-x">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -243,8 +244,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
     @empty
         <tr>

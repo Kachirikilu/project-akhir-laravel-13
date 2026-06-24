@@ -36,8 +36,6 @@ class ProgramStudiManagement extends Component
     use WithProdiModal;
     use WithProdiSearchFilters;
 
-
-
     public $perPage = 8;
 
     public $switchTable = '';
@@ -65,7 +63,7 @@ class ProgramStudiManagement extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
     public function mount($switchTable = '')
@@ -169,14 +167,21 @@ class ProgramStudiManagement extends Component
 
     public function render()
     {
-        $this->inputDpFilter();
-        $this->inputFkFilter();
-
-        $queryPr = $this->inputPrSearch();
-        $queryDp = $this->inputDpSearch();
-        $queryFk = $this->inputFkSearch();
-
         try {
+            $this->inputDpFilter();
+            $this->inputFkFilter();
+
+            $queryPr = collect();
+            $queryDp = collect();
+            $queryFk = collect();
+
+            if ($this->switchTable === 'fakultas') {
+                $queryFk = $this->inputFkSearch();
+            } elseif ($this->switchTable === 'departemen') {
+                $queryDp = $this->inputDpSearch();
+            } else {
+                $queryPr = $this->inputPrSearch();
+            }
 
             $prodis = collect();
             $departemens = collect();
@@ -227,14 +232,12 @@ class ProgramStudiManagement extends Component
                 }
             }
 
-
             // =========================
             // COUNT (ISOLATED QUERY)
             // =========================
             $countPr = Prodi::query();
             $countDp = Departemen::query();
             $countFk = Fakultas::query();
-
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $countPr->onlyTrashed();

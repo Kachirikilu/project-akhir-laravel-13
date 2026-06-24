@@ -73,7 +73,7 @@
 
     /* Header Utama */
     .table-head {
-        @apply px-6 py-4 text-[9px] sm:text-xs uppercase;
+        @apply px-6 py-4 text-[9px] sm:text-xs uppercase border-b border-[var(--border-table-color)];
         @apply border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
         @apply text-[var(--contrast-main-text)];
@@ -81,14 +81,14 @@
 
     /* Isi Utama */
     .table-main {
-        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply px-6 py-4 text-xs sm:text-sm border-b border-[var(--border-table-color)];
         @apply border-x border-[var(--border-table-color)];
         @apply bg-[var(--main-table-trans)];
         @apply text-[var(--contrast-main-text)];
     }
 
     .table-main-sticky {
-        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply px-6 py-4 text-xs sm:text-sm border-b border-[var(--border-table-color)];
         @apply border-x border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
         @apply text-[var(--contrast-main-text)];
@@ -97,13 +97,13 @@
 
     /* Isi Sekunder */
     .table-second {
-        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply px-6 py-4 text-xs sm:text-sm border-[var(--border-table-color)];
         @apply bg-[var(--second-table-trans)];
         @apply text-[var(--contrast-second-text)];
     }
 
     .table-second-sticky {
-        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply px-6 py-4 text-xs sm:text-sm border-[var(--border-table-color)];
         @apply bg-[var(--second-table-color)];
         @apply text-[var(--contrast-second-text)];
         @apply sticky left-0 z-20;
@@ -111,7 +111,7 @@
 
     /* Header Sub Kolom */
     .table-head-sub {
-        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply px-6 py-4 text-xs sm:text-sm border-b border-[var(--border-table-color)];
         @apply text-center font-bold uppercase whitespace-nowrap;
         @apply border-x border-b border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
@@ -141,20 +141,27 @@
 
 @layer utilities {
 
-    thead.sticky th {
-        border-bottom: none !important;
-        background-color: var(--main-table-color) !important;
-        box-shadow: inset 0 -1px 0 var(--border-table-color) !important;
+    /* thead.sticky th {
+        box-shadow: inset 0 -1px 0 var(--border-table-color);
+        background-color: var(--main-table-color);
+        box-shadow: inset -1px 0 0 var(--border-table-color),
+            inset 1px 0 0 var(--border-table-color),
+            inset 0 -1px 0 var(--border-table-color);
     }
 
-    /* .table-main-sticky {
-        border-left: none !important;
-        border-right: none !important;
+    .table-main-sticky {
+        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply sticky left-0 z-20;
         background-color: var(--main-table-color) !important;
         box-shadow: inset -1px 0 0 var(--border-table-color),
-                    inset 0 -1px 0 var(--border-table-color) !important;
+            inset 1px 0 0 var(--border-table-color),
+            inset 0 -1px 0 var(--border-table-color);
+    } */
+
+    tbody td {
+        box-shadow: inset 0 -1px 0 var(--border-table-color);
     }
-     */
+
     .btn-card-focus-state {
         @apply transition-all duration-200;
 

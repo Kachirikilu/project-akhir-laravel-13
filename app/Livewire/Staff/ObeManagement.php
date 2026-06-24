@@ -5,9 +5,9 @@ namespace App\Livewire\Staff;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
-use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
@@ -49,10 +49,10 @@ use Livewire\WithPagination;
 
 class ObeManagement extends Component
 {
+    use HasAkreditas;
     use HasSortir;
     use HasStats;
     use HasToast;
-    use HasAkreditas;
     use WithCPLDelete;
     use WithCPLFilters;
     use WithCPLModal;
@@ -117,7 +117,7 @@ class ObeManagement extends Component
         'filterStatus' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
     public function mount($switchTable = 'rps')
@@ -274,32 +274,50 @@ class ObeManagement extends Component
 
     public function render()
     {
-        // =========================
-        // FILTER INPUT
-        // =========================
-        $this->inputPrFilter();
-        $this->inputMKFilter();
-        $this->inputRPSFilter();
-        $this->inputCPLFilter();
-        $this->inputCPMKFilter();
-        $this->inputSCPMKFilter();
-        $this->inputDosenFilter();
-        $this->inputFkFilter();
-
         // $this->updatedMKNameSearch($this->mkNameSearch);
         // $this->updatedPrNameSearch($this->prNameSearch);
-
         try {
-
+            // =========================
+            // FILTER INPUT
+            // =========================
+            $this->inputPrFilter();
+            $this->inputMKFilter();
+            $this->inputRPSFilter();
+            $this->inputCPLFilter();
+            $this->inputCPMKFilter();
+            $this->inputSCPMKFilter();
+            $this->inputDosenFilter();
+            $this->inputFkFilter();
             // =========================
             // QUERY BASE
             // =========================
-            $queryRPS = $this->inputRPSSearch();
-            $queryCPL = $this->inputCPLSearch();
-            $queryCPMK = $this->inputCPMKSearch();
-            $querySCPMK = $this->inputSCPMKSearch();
-            $queryRef = $this->inputRefSearch();
-            $queryUser = $this->inputUserSearch('dosen');
+            $queryRPS = collect();
+            $queryCPL = collect();
+            $queryCPMK = collect();
+            $querySCPMK = collect();
+            $queryRef = collect();
+            $queryUser = collect();
+
+            switch ($this->switchTable) {
+                case 'rps':
+                    $queryRPS = $this->inputRPSSearch();
+                    break;
+                case 'cpl':
+                    $queryCPL = $this->inputCPLSearch();
+                    break;
+                case 'cpmk':
+                    $queryCPMK = $this->inputCPMKSearch();
+                    break;
+                case 'sub-cpmk':
+                    $querySCPMK = $this->inputSCPMKSearch();
+                    break;
+                case 'referensi':
+                    $queryRef = $this->inputRefSearch();
+                    break;
+                case 'dosen':
+                    $queryUser = $this->inputUserSearch('dosen');
+                    break;
+            }
 
             $countRPS = RPS::query();
             $countCPL = CPL::query();
@@ -413,8 +431,6 @@ class ObeManagement extends Component
                         break;
                 }
             }
-
-
 
             $stats = [
                 'rps-saya' => '🏦',

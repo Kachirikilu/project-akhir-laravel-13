@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\WhatsappController;
 
-use App\Exports\MultiJadwalNilaiExport;
+use App\Exports\MultiNilaiExport;
+use App\Exports\NilaiExport;
 use App\Jobs\SendSesiExpiredNotification;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
+use App\Livewire\Global\HasGetByKode;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -15,6 +17,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 trait WithExcelNilai
 {
+    use HasGetByKode;
     use WithNilaiExcel;
 
     private function processGateAwayExcelNilai(string $noWA, string $nameWA, string $pesan)
@@ -88,7 +91,7 @@ trait WithExcelNilai
             return response()->json([
                 'status' => false,
                 'head' => '*⚠️ Menghentikan Proses File Excel!*',
-                'message' => "Sebelum mengirim file Excel, silahkan ketik:\n`UPLOAD NILAI`\n\nAkses upload ```File Excel``` berlaku selama 10 menit.",
+                'message' => "Sebelum mengirim file Excel, silahkan ketik:\n`UPLOAD NILAI`\n\nAkses upload ```File Excel``` berlaku selama 10 menit!",
             ], 403);
         }
 
@@ -98,7 +101,7 @@ trait WithExcelNilai
         return response()->json($result);
     }
 
-    private function processGetExcelNilai(string $noWA, string $nameWA, string $pesan)
+    private function processGetExcelNilai(string $noWA, string $nameWA, string $pesan, array $excelGetNilaiKey)
     {
         Log::info('=== PROSES GET EXCEL NILAI ===');
         Log::info("Nomor dari Node.JS: {$noWA} | Pemicu: {$pesan}");
@@ -125,7 +128,7 @@ trait WithExcelNilai
         // 2. Ekstraksi Parameter Kode dari Teks Pesan
         // Menghapus trigger kata pemicu untuk menyisakan kodenya saja
         $cleanMessage = strtoupper(trim($pesan));
-        foreach ($this->excelGetNilaiKey as $trigger) {
+        foreach ($excelGetNilaiKey as $trigger) {
             if (str_starts_with($cleanMessage, $trigger)) {
                 $cleanMessage = trim(substr($cleanMessage, strlen($trigger)));
                 break;
@@ -169,12 +172,12 @@ trait WithExcelNilai
 
         // 4. Proses Query Database Menggunakan Method Bawaan Anda
         try {
-            $this->getKelasAndJadwal($kodeKelas, $kodeJadwal);
+            $this->getKelasAndJadwalByKode($kodeKelas, $kodeJadwal);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Data Tidak Ditemukan!*',
-                'message' => "Kode Kelas/Jadwal `{$cleanMessage}` tidak terdaftar di sistem.",
+                'message' => "Kode Kelas/Jadwal `{$cleanMessage}` tidak terdaftar di sistem!",
             ], 404);
         } catch (\Throwable $th) {
             return response()->json([
@@ -199,13 +202,12 @@ trait WithExcelNilai
                 $fileNameSafe = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $fileName);
                 $path = $tempDir.DIRECTORY_SEPARATOR.$fileNameSafe;
 
-                // 🌟 TRIK TERBAIK: Simpan lewat download handler murni ke path temporary murni
-                Excel::download(new NilaiExport($this->jadwal->id), $fileNameSafe, \Maatwebsite\Excel\Excel::XLSX)
+                Excel::download(new NilaiExport($this->jadwal, $this->jadwal->kode), $fileNameSafe, \Maatwebsite\Excel\Excel::XLSX)
                     ->getFile()
                     ->move($tempDir, $fileNameSafe);
 
                 $base64Data = base64_encode(file_get_contents($path));
-                @unlink($path); // Bersihkan file temporary
+                @unlink($path);
 
                 return response()->json([
                     'status' => true,
@@ -234,15 +236,13 @@ trait WithExcelNilai
                 $path = $tempDir.DIRECTORY_SEPARATOR.$fileNameSafe;
 
                 if ($jadwals->count() === 1) {
-                    // 🌟 TRIK TERBAIK: Simpan lewat download handler untuk single sheet
                     Excel::download(new NilaiExport($jadwals->first()->id), $fileNameSafe, \Maatwebsite\Excel\Excel::XLSX)
                         ->getFile()
                         ->move($tempDir, $fileNameSafe);
 
                     $msgTeks = "Berikut berkas Excel nilai tunggal untuk Kelas *{$kodeKelas}*";
                 } else {
-                    // 🌟 TRIK TERBAIK: Simpan lewat download handler untuk multi sheet
-                    Excel::download(new MultiJadwalNilaiExport($jadwals), $fileNameSafe, \Maatwebsite\Excel\Excel::XLSX)
+                    Excel::download(new MultiNilaiExport($jadwals), $fileNameSafe, \Maatwebsite\Excel\Excel::XLSX)
                         ->getFile()
                         ->move($tempDir, $fileNameSafe);
 
@@ -271,72 +271,108 @@ trait WithExcelNilai
         }
     }
 
-    public function getKelasAndJadwal(
+    public function getKelasAndJadwalByKode(
         $kode = null,
-        $kode_jadwal = null,
+        $kode_jadwal = null
     ) {
         $this->kode = $kode;
-
-        // 🌟 PERBAIKAN 1: Gunakan ->first() alih-alih firstOrFail() agar kita bisa handle manual jika kosong
-        $this->kelas = Kelas::query()
-            ->where('kode_kelas', $kode)
-            ->orWhereRaw(
-                "REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')",
-                [$kode]
-            )
-            ->first();
-
-        // Jika kelas tidak ditemukan, langsung lempar exception agar ditangkap catch-block di luar
-        if (! $this->kelas) {
-            throw new ModelNotFoundException("Kelas dengan kode {$kode} tidak ditemukan.");
-        }
-
         $this->kode_jadwal = $kode_jadwal;
 
-        // 🌟 PERBAIKAN 2: Jalankan pencarian jadwal HANYA JIKA $kode_jadwal diisi oleh user
+        $this->kelas = $this->getKelasByKode($kode);
+
+        if (! $this->kelas) {
+            throw new ModelNotFoundException("Kelas dengan kode {$kode} tidak ditemukan!");
+        }
+
         if (! empty($kode_jadwal)) {
-            $parts = explode('-', $kode_jadwal);
 
-            if (count($parts) < 3) {
-                throw new \Exception('Format susunan komponen Kode Jadwal tidak valid (Harus mengandung Label-Wilayah-Tahun)!');
-            }
+            $fullKodeJadwal = str_contains($kode_jadwal, $this->kode)
+                ? $kode_jadwal
+                : $this->kode.'-'.$kode_jadwal;
 
-            $labelKelas = $parts[0];
-            $kodeWilayah = $parts[1];
-            $tahunBlok = $parts[2];
-
-            $this->jadwal = KelasJadwal::query()
-                ->where('kelas_id', $this->kelas->id)
-                ->where('label_kelas', $labelKelas)
-                ->where('kode_wilayah', $kodeWilayah)
-                ->whereRaw(
-                    '
-            CASE
-                WHEN YEAR(tanggal_mulai) >= 3000
-                    THEN YEAR(tanggal_mulai)
-
-                WHEN YEAR(tanggal_mulai) >= 2100
-                    THEN RIGHT(YEAR(tanggal_mulai), 3)
-
-                WHEN YEAR(tanggal_mulai) >= 2000
-                    THEN RIGHT(YEAR(tanggal_mulai), 2)
-
-                ELSE YEAR(tanggal_mulai)
-            END = ?
-            ',
-                    [$tahunBlok]
-                )
-                ->first();
+            $this->jadwal = $this->getJadwalByKode($fullKodeJadwal);
 
             if (! $this->jadwal) {
-                throw new ModelNotFoundException("Jadwal spesifik '{$kode_jadwal}' tidak ditemukan untuk Kelas ini.");
+                throw new ModelNotFoundException("Jadwal spesifik '{$kode_jadwal}' tidak ditemukan!");
+            }
+
+            if ($this->jadwal->kelas_id !== $this->kelas->id) {
+                throw new \Exception("Jadwal '{$kode_jadwal}' tidak cocok dengan Kelas '{$kode}'!");
             }
 
             $this->jadwal_id = $this->jadwal->id;
         } else {
-            // Kosongkan properti jadwal jika request murni pencarian tingkat kelas
             $this->jadwal = null;
             $this->jadwal_id = null;
         }
     }
+
+    // public function getKelasAndJadwalByKode(
+    //     $kode = null,
+    //     $kode_jadwal = null,
+    // ) {
+    //     $this->kode = $kode;
+
+    //     // 🌟 PERBAIKAN 1: Gunakan ->first() alih-alih firstOrFail() agar kita bisa handle manual jika kosong
+    //     $this->kelas = Kelas::query()
+    //         ->where('kode_kelas', $kode)
+    //         ->orWhereRaw(
+    //             "REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')",
+    //             [$kode]
+    //         )
+    //         ->first();
+
+    //     // Jika kelas tidak ditemukan, langsung lempar exception agar ditangkap catch-block di luar
+    //     if (! $this->kelas) {
+    //         throw new ModelNotFoundException("Kelas dengan kode {$kode} tidak ditemukan!");
+    //     }
+
+    //     $this->kode_jadwal = $kode_jadwal;
+
+    //     // 🌟 PERBAIKAN 2: Jalankan pencarian jadwal HANYA JIKA $kode_jadwal diisi oleh user
+    //     if (! empty($kode_jadwal)) {
+    //         $parts = explode('-', $kode_jadwal);
+
+    //         if (count($parts) < 3) {
+    //             throw new \Exception('Format susunan komponen Kode Jadwal tidak valid (Harus mengandung Label-Wilayah-Tahun)!');
+    //         }
+
+    //         $labelKelas = $parts[0];
+    //         $kodeWilayah = $parts[1];
+    //         $tahunBlok = $parts[2];
+
+    //         $this->jadwal = KelasJadwal::query()
+    //             ->where('kelas_id', $this->kelas->id)
+    //             ->where('label_kelas', $labelKelas)
+    //             ->where('kode_wilayah', $kodeWilayah)
+    //             ->whereRaw(
+    //                 '
+    //         CASE
+    //             WHEN YEAR(tanggal_mulai) >= 3000
+    //                 THEN YEAR(tanggal_mulai)
+
+    //             WHEN YEAR(tanggal_mulai) >= 2100
+    //                 THEN RIGHT(YEAR(tanggal_mulai), 3)
+
+    //             WHEN YEAR(tanggal_mulai) >= 2000
+    //                 THEN RIGHT(YEAR(tanggal_mulai), 2)
+
+    //             ELSE YEAR(tanggal_mulai)
+    //         END = ?
+    //         ',
+    //                 [$tahunBlok]
+    //             )
+    //             ->first();
+
+    //         if (! $this->jadwal) {
+    //             throw new ModelNotFoundException("Jadwal spesifik '{$kode_jadwal}' tidak ditemukan untuk Kelas ini!");
+    //         }
+
+    //         $this->jadwal_id = $this->jadwal->id;
+    //     } else {
+    //         // Kosongkan properti jadwal jika request murni pencarian tingkat kelas
+    //         $this->jadwal = null;
+    //         $this->jadwal_id = null;
+    //     }
+    // }
 }

@@ -2,16 +2,15 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
-use App\Exports\MultiJadwalNilaiExport;
+use App\Exports\MultiNilaiExport;
 use App\Exports\NilaiExport;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
-use App\Models\Akademik\RPS;
+use App\Livewire\Global\HasGetByKode;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 // use Illuminate\Support\LazyCollection;
+// use App\Models\Akademik\RPS;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
 use App\Models\Sesi;
@@ -32,9 +31,8 @@ use ZipArchive;
 trait WithNilaiExcel
 {
     use HasToast;
+    use HasGetByKode;
     use WithFileUploads;
-    use WithJadwalFilters;
-    use WithRPSFilters;
     use WithSesiFilters;
 
     public $showNilaiExcelModal;
@@ -51,18 +49,20 @@ trait WithNilaiExcel
 
     public array $jadwalQueue = [];
 
-    public function exportNilaiExcel()
+    public function exportNilaiExcel($idJadwal = null)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        if (! (Auth::user()->admin || Auth::user()->dosen)) {
-            return;
+        if (! empty($idJadwal)) {
+            $jadwal = KelasJadwal::where('id', $idJadwal)->first();
+
+            return $this->prosesNilaiExcelTunggal($jadwal);
         }
 
         if (! empty($this->jadwal)) {
-            return $this->prosesDownloadTunggal($this->jadwal);
+            return $this->prosesNilaiExcelTunggal($this->jadwal);
         }
 
         if (! empty($this->kelas)) {
@@ -74,13 +74,14 @@ trait WithNilaiExcel
             }
 
             if ($jadwals->count() === 1) {
-                return $this->prosesDownloadTunggal($jadwals->first());
+                return $this->prosesNilaiExcelTunggal($jadwals->first());
             }
-            return $this->prosesDownloadMultiSheet($jadwals, $this->kelas);
+
+            return $this->prosesNilaiExcelMultiSheet($jadwals, $this->kelas);
         }
     }
 
-    private function prosesDownloadMultiSheet($jadwals, $kelas)
+    private function prosesNilaiExcelMultiSheet($jadwals, $kelas)
     {
         $kode = $kelas->kode;
         $rps = $kelas->kode_rps;
@@ -95,26 +96,34 @@ trait WithNilaiExcel
         );
 
         return Excel::download(
-            new MultiJadwalNilaiExport($jadwals),
+            new MultiNilaiExport($jadwals),
             $fileNameSafe,
             \Maatwebsite\Excel\Excel::XLSX
         );
     }
 
-    private function prosesDownloadTunggal($jadwalModel)
+    private function prosesNilaiExcelTunggal($jadwal)
     {
-        $mk = $jadwalModel->mk;
+        $mk = $jadwal->mk;
         $nowStr = now()->format('Y-m-d');
 
-        $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
+        $fileName = $jadwal->kode.'_'.$jadwal->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
         $fileNameSafe = str_replace(
             ['/', '\\', ':', '*', '?', '"', '<', '>', '|'],
             '-',
             $fileName
         );
 
+        $sheetName = $jadwal->kode;
+        $sheetNameSafe = substr(
+            str_replace(['*', ':', '?', '/', '\\', '[', ']'], '-', $sheetName),
+            0,
+            31
+        );
+        $sheets[] = new NilaiExport($jadwal, $sheetNameSafe);
+
         return Excel::download(
-            new NilaiExport($jadwalModel->id),
+            new NilaiExport($jadwal, $sheetNameSafe),
             $fileNameSafe,
             \Maatwebsite\Excel\Excel::XLSX
         );
@@ -131,13 +140,13 @@ trait WithNilaiExcel
     //     }
 
     //     if (! empty($this->jadwal)) {
-    //         return $this->prosesDownloadTunggal($this->jadwal);
+    //         return $this->prosesNilaiExcelTunggal($this->jadwal);
     //     }
 
     //     if (! empty($this->kelas)) {
     //         $jadwals = $this->kelas->jadwals()->get();
     //         if ($jadwals->count() === 1) {
-    //             return $this->prosesDownloadTunggal($jadwals->first());
+    //             return $this->prosesNilaiExcelTunggal($jadwals->first());
     //         }
 
     //         return $this->prosesDownloadZip($jadwals, $this->kelas);
@@ -193,18 +202,18 @@ trait WithNilaiExcel
     //     return response()->download($zipPath)->deleteFileAfterSend(true);
     // }
 
-    // private function prosesDownloadTunggal($jadwalModel)
+    // private function prosesNilaiExcelTunggal($jadwal)
     // {
-    //     $mk = $jadwalModel->mk;
+    //     $mk = $jadwal->mk;
     //     $nowStr = now()->format('Y-m-d');
 
-    //     $fileName = $jadwalModel->kode.'_'.$jadwalModel->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
+    //     $fileName = $jadwal->kode.'_'.$jadwal->kode_rps.'_'.$mk.'_'.$nowStr.'.xlsx';
     //     $fileNameSafe = str_replace('/', '-', $fileName);
 
-    //     return Excel::download(new NilaiExport($jadwalModel->id), $fileNameSafe);
+    //     return Excel::download(new NilaiExport($jadwal->id), $fileNameSafe);
     // }
 
-    private function prosesDownloadZipForWhatsApp($jadwals, $kelas)
+    private function prosesExcelNilaiForWhatsApp($jadwals, $kelas)
     {
         $kode = $kelas->kode;
         $rps = $kelas->kode_rps;
@@ -272,7 +281,7 @@ trait WithNilaiExcel
     //         return;
     //     }
     //     if (! empty($this->jadwal)) {
-    //         return $this->prosesDownloadTunggal($this->jadwal);
+    //         return $this->prosesNilaiExcelTunggal($this->jadwal);
     //     }
     //     if (! empty($this->kelas)) {
     //         $this->jadwalQueue = $this->kelas->jadwals()->pluck('id')->toArray();
@@ -297,7 +306,7 @@ trait WithNilaiExcel
     //             );
     //         }
 
-    //         return $this->prosesDownloadTunggal($j);
+    //         return $this->prosesNilaiExcelTunggal($j);
     //     }
     // }
 
@@ -574,7 +583,7 @@ trait WithNilaiExcel
         $total = count($this->parsedNilaiRows);
 
         LazyCollection::make($this->parsedNilaiRows)
-            ->chunk(50)
+            ->chunk(20)
             ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
                 foreach ($chunk as $index => $row) {
                     try {
@@ -737,6 +746,7 @@ trait WithNilaiExcel
                 $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null)
                     ? (float) $sub['nilai']
                     : 0;
+
                 $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null)
                     ? (float) $sub['bobot']
                     : 0;
@@ -745,9 +755,26 @@ trait WithNilaiExcel
             ksort($nilaiArray);
             ksort($bobotArray);
 
+            // 🌟 KUNCI PERBAIKAN: NORMALISASI BOBOT SUPAYA TOTAL HARUS 100% (1.0)
+            $totalBobotRPS = array_sum($bobotArray);
+            $totalNilaiAkhir = 0;
+
+            if ($totalBobotRPS > 0) {
+                foreach ($nilaiArray as $index => $nilai) {
+                    $bobotMentah = $bobotArray[$index] ?? 0;
+
+                    // Normalisasikan bobot tiap elemen terhadap total bobot keseluruhan
+                    $bobotNormal = $bobotMentah / $totalBobotRPS;
+
+                    $totalNilaiAkhir += ($nilai * $bobotNormal);
+                }
+            }
+
             $nilai_mahasiswa->nilai_array = $nilaiArray;
             $nilai_mahasiswa->bobot_array = $bobotArray;
-            $nilai_mahasiswa->nilai = $validated['nilai_angka'];
+
+            // 🌟 Mengabaikan $validated['nilai_angka'] dan menggunakan kalkulasi proporsional murni
+            $nilai_mahasiswa->nilai = round($totalNilaiAkhir, 2);
 
             $nilai_mahasiswa->save();
         });
@@ -1160,74 +1187,6 @@ trait WithNilaiExcel
                 'sub_cpmk.*.bobot.numerik' => 'Bobot Sub-CPMK harus berupa teks!!',
             ]
         )->validate();
-    }
-
-    protected function getJadwalByKode(?string $kodeJadwal): ?KelasJadwal
-    {
-        $jadwal = $this->findJadwalByKode($kodeJadwal);
-        if (! $jadwal) {
-            return null;
-        }
-
-        return $jadwal;
-    }
-
-    protected function findJadwalByKode(?string $kodeJadwal): ?KelasJadwal
-    {
-        if (blank($kodeJadwal)) {
-            return null;
-        }
-        $search = preg_replace(
-            '/[^A-Za-z0-9]/',
-            '',
-            strtolower(trim($kodeJadwal))
-        );
-
-        return $this->inputJadwalSearch()
-            ->get()
-            ->first(function ($j) use ($search) {
-                $kode = preg_replace(
-                    '/[^A-Za-z0-9]/',
-                    '',
-                    strtolower($j->kode)
-                );
-
-                return $kode === $search;
-            });
-    }
-
-    protected function getRPSByKode(?string $kodeRPS): ?RPS
-    {
-        $rps = $this->findRPSByKode($kodeRPS);
-        if (! $rps) {
-            return null;
-        }
-
-        return $rps;
-    }
-
-    protected function findRPSByKode(?string $kodeRPS): ?RPS
-    {
-        if (blank($kodeRPS)) {
-            return null;
-        }
-        $search = preg_replace(
-            '/[^A-Za-z0-9]/',
-            '',
-            strtolower(trim($kodeRPS))
-        );
-
-        return $this->inputRPSSearch()
-            ->get()
-            ->first(function ($r) use ($search) {
-                $kode = preg_replace(
-                    '/[^A-Za-z0-9]/',
-                    '',
-                    strtolower($r->kode)
-                );
-
-                return $kode === $search;
-            });
     }
 
     // protected function getRPSInfoByKode(?string $kodeRPS): array

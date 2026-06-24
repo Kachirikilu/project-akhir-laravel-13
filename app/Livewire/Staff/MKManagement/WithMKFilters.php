@@ -14,9 +14,9 @@ trait WithMKFilters
 
     public $filterMKgg = '';
 
-    public $totalGanjil = '';
+    public $totalGanjilMK = '';
 
-    public $totalGenap = '';
+    public $totalGenapMK = '';
 
     public function inputMKSearch()
     {
@@ -70,8 +70,8 @@ trait WithMKFilters
             $queryMK->where('level_mk', 4);
         }
 
-        $this->totalGanjil = (clone $queryMK)->whereRaw('semester % 2 = 1')->count();
-        $this->totalGenap = (clone $queryMK)->whereRaw('semester % 2 = 0')->count();
+        $this->totalGanjilMK = (clone $queryMK)->whereRaw('semester % 2 = 1')->count();
+        $this->totalGenapMK = (clone $queryMK)->whereRaw('semester % 2 = 0')->count();
 
         if ($this->filterMKgg === 'mk-ganjil') {
             $queryMK->whereRaw('semester % 2 = 1');

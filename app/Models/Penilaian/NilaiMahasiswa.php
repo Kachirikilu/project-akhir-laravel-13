@@ -85,7 +85,6 @@ class NilaiMahasiswa extends Model
         return round($total, 2);
     }
 
-
     // protected function nilaIpk(): Attribute
     // {
     //     return Attribute::get(function () {
@@ -119,14 +118,14 @@ class NilaiMahasiswa extends Model
     {
         return Attribute::get(function () {
             return match ($this->nilai_mutu) {
-                'A'     => 4.00,
-                'A-'    => 3.70,
-                'B+'    => 3.30,
-                'B'     => 3.00,
-                'B-'    => 2.70,
-                'C+'    => 2.30,
-                'C'     => 2.00,
-                'D'     => 1.00,
+                'A' => 4.00,
+                'A-' => 3.70,
+                'B+' => 3.30,
+                'B' => 3.00,
+                'B-' => 2.70,
+                'C+' => 2.30,
+                'C' => 2.00,
+                'D' => 1.00,
                 default => 0.00,
             };
         });
@@ -214,20 +213,148 @@ class NilaiMahasiswa extends Model
         });
     }
 
+    protected function bobotCpmkArray(): Attribute
+    {
+        return Attribute::get(function () {
+            $mapping = collect($this->mapping_pertemuan);
+
+            $totalBobotPerCpmk = $mapping->groupBy('kode_cpmk')
+                ->map(fn ($group) => $group->sum('bobot'));
+
+            return $mapping->map(function ($item) use ($totalBobotPerCpmk) {
+                $cpmk = $item['kode_cpmk'];
+                $totalCpmkBobot = $totalBobotPerCpmk[$cpmk] ?? 0;
+
+                if ($totalCpmkBobot <= 0) {
+                    return 0;
+                }
+
+                $bobotNormalisasiCpmk = $item['bobot'] / $totalCpmkBobot;
+
+                return round($bobotNormalisasiCpmk, 4);
+            })
+                ->values()
+                ->toArray();
+        });
+    }
+
+    // protected function mappingPertemuan(): Attribute
+    // {
+    //     return Attribute::get(function () {
+
+    //         $rps = $this->rps_rel;
+
+    //         if (! $rps) {
+    //             return [];
+    //         }
+
+    //         $allScpmk = $rps->cpmks
+    //             ->flatMap(function ($cpmk) {
+    //                 return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
+
+    //                     $scpmk->parent_kode_cpmk = $cpmk->kode;
+
+    //                     return $scpmk;
+    //                 });
+    //             })
+    //             ->values();
+
+    //         $getNearestCpmk = function (int $sourceIndex) use ($allScpmk) {
+    //             for ($i = $sourceIndex - 1; $i >= 0; $i--) {
+    //                 if (! empty($allScpmk[$i]?->parent_kode_cpmk)) {
+    //                     return $allScpmk[$i]->parent_kode_cpmk;
+    //                 }
+    //             }
+    //             for ($i = $sourceIndex; $i < $allScpmk->count(); $i++) {
+    //                 if (! empty($allScpmk[$i]?->parent_kode_cpmk)) {
+    //                     return $allScpmk[$i]->parent_kode_cpmk;
+    //                 }
+    //             }
+
+    //             return '-';
+    //         };
+
+    //         $hasUts = $allScpmk->contains(function ($item) {
+    //             return Str::contains(
+    //                 $item->deskripsi ?? '',
+    //                 SubCPMK::$UTS_FIELDS,
+    //                 ignoreCase: true
+    //             ) || Str::contains(
+    //                 $item->metode ?? '',
+    //                 SubCPMK::$UTS_FIELDS,
+    //                 ignoreCase: true
+    //             );
+    //         });
+
+    //         $hasUas = $allScpmk->contains(function ($item) {
+    //             return Str::contains(
+    //                 $item->deskripsi ?? '',
+    //                 SubCPMK::$UAS_FIELDS,
+    //                 ignoreCase: true
+    //             ) || Str::contains(
+    //                 $item->metode ?? '',
+    //                 SubCPMK::$UAS_FIELDS,
+    //                 ignoreCase: true
+    //             );
+    //         });
+
+    //         $result = [];
+    //         $sourceIndex = 0;
+
+    //         for ($pertemuan = 1; $pertemuan <= 16; $pertemuan++) {
+
+    //             // UTS otomatis
+    //             if (! $hasUts && $pertemuan == 8) {
+    //                 $result[] = [
+    //                     'kode_scpmk' => 'UTS',
+    //                     'kode_cpmk' => $getNearestCpmk($sourceIndex),
+    //                     'metode' => 'UTS',
+    //                     'bobot' => $rps->bobot_uts / 100,
+    //                 ];
+
+    //                 continue;
+    //             }
+    //             // UAS otomatis
+    //             if (! $hasUas && $pertemuan == 16) {
+    //                 $result[] = [
+    //                     'kode_scpmk' => 'UAS',
+    //                     'kode_cpmk' => $getNearestCpmk($sourceIndex),
+    //                     'metode' => 'UAS',
+    //                     'bobot' => $rps->bobot_uas / 100,
+    //                 ];
+
+    //                 continue;
+    //             }
+
+    //             $scpmk = $allScpmk->get($sourceIndex);
+
+    //             $result[] = [
+    //                 'kode_scpmk' => $scpmk?->kode ?? '-',
+    //                 'kode_cpmk' => $getNearestCpmk($sourceIndex),
+    //                 'metode' => $scpmk?->metode ?? '-',
+    //                 'bobot' => ($scpmk?->bobot ?? 0) / 100,
+    //             ];
+
+    //             $sourceIndex++;
+    //         }
+
+    //         return $result;
+    //     });
+    // }
+
     protected function mappingPertemuan(): Attribute
     {
         return Attribute::get(function () {
-
             $rps = $this->rps_rel;
 
             if (! $rps) {
                 return [];
             }
 
+            // 1. Ambil semua Sub-CPMK secara berurutan sesuai kurikulum
             $allScpmk = $rps->cpmks
                 ->flatMap(function ($cpmk) {
                     return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
-
                         $scpmk->parent_kode_cpmk = $cpmk->kode;
 
                         return $scpmk;
@@ -235,13 +362,34 @@ class NilaiMahasiswa extends Model
                 })
                 ->values();
 
-            $getNearestCpmk = function (int $sourceIndex) use ($allScpmk) {
-                for ($i = $sourceIndex - 1; $i >= 0; $i--) {
+            // 2. Ambil keywords filter dari .env
+            $envUtsFields = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
+            $envUasFields = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+
+            $utsFields = array_map('trim', explode(',', $envUtsFields));
+            $uasFields = array_map('trim', explode(',', $envUasFields));
+
+            // 3. Deteksi apakah RPS sudah punya baris UTS/UAS bawaan
+            $hasUts = $allScpmk->contains(function ($item) use ($utsFields) {
+                $text = ($item->deskripsi ?? '').' '.($item->metode ?? '');
+
+                return \Str::contains($text, $utsFields, ignoreCase: true);
+            });
+
+            $hasUas = $allScpmk->contains(function ($item) use ($uasFields) {
+                $text = ($item->deskripsi ?? '').' '.($item->metode ?? '');
+
+                return \Str::contains($text, $uasFields, ignoreCase: true);
+            });
+
+            // 4. CLOSURE: Mencari CPMK terdekat berdasarkan posisi index saat ini
+            $getNearestCpmk = function (int $currentIndex) use ($allScpmk) {
+                for ($i = $currentIndex - 1; $i >= 0; $i--) {
                     if (! empty($allScpmk[$i]?->parent_kode_cpmk)) {
                         return $allScpmk[$i]->parent_kode_cpmk;
                     }
                 }
-                for ($i = $sourceIndex; $i < $allScpmk->count(); $i++) {
+                for ($i = $currentIndex; $i < $allScpmk->count(); $i++) {
                     if (! empty($allScpmk[$i]?->parent_kode_cpmk)) {
                         return $allScpmk[$i]->parent_kode_cpmk;
                     }
@@ -250,38 +398,17 @@ class NilaiMahasiswa extends Model
                 return '-';
             };
 
-            $hasUts = $allScpmk->contains(function ($item) {
-                return Str::contains(
-                    $item->deskripsi ?? '',
-                    SubCPMK::$UTS_FIELDS,
-                    ignoreCase: true
-                ) || Str::contains(
-                    $item->metode ?? '',
-                    SubCPMK::$UTS_FIELDS,
-                    ignoreCase: true
-                );
-            });
-
-            $hasUas = $allScpmk->contains(function ($item) {
-                return Str::contains(
-                    $item->deskripsi ?? '',
-                    SubCPMK::$UAS_FIELDS,
-                    ignoreCase: true
-                ) || Str::contains(
-                    $item->metode ?? '',
-                    SubCPMK::$UAS_FIELDS,
-                    ignoreCase: true
-                );
-            });
-
             $result = [];
             $sourceIndex = 0;
 
+            // 5. Loop tepat 16 kali
             for ($pertemuan = 1; $pertemuan <= 16; $pertemuan++) {
 
-                // UTS otomatis
+                // A. INJEKSI SLOT UTS OTOMATIS (Slot ke-8)
                 if (! $hasUts && $pertemuan == 8) {
                     $result[] = [
+                        'no_pertemuan' => $pertemuan, // 🌟 Flag nomor pertemuan
+                        'is_evaluasi' => 'UTS',      // 🌟 Flag penanda UTS
                         'kode_scpmk' => 'UTS',
                         'kode_cpmk' => $getNearestCpmk($sourceIndex),
                         'metode' => 'UTS',
@@ -290,9 +417,12 @@ class NilaiMahasiswa extends Model
 
                     continue;
                 }
-                // UAS otomatis
+
+                // B. INJEKSI SLOT UAS OTOMATIS (Slot ke-16)
                 if (! $hasUas && $pertemuan == 16) {
                     $result[] = [
+                        'no_pertemuan' => $pertemuan,
+                        'is_evaluasi' => 'UAS',      // 🌟 Flag penanda UAS
                         'kode_scpmk' => 'UAS',
                         'kode_cpmk' => $getNearestCpmk($sourceIndex),
                         'metode' => 'UAS',
@@ -302,11 +432,25 @@ class NilaiMahasiswa extends Model
                     continue;
                 }
 
+                // C. PERTEMUAN BIASA
                 $scpmk = $allScpmk->get($sourceIndex);
 
+                // Cek apakah sub-CPMK bawaan DB ini sebenarnya adalah UTS/UAS murni dari teksnya
+                $evalType = null;
+                if ($scpmk) {
+                    $fullText = ($scpmk->deskripsi ?? '').' '.($scpmk->metode ?? '');
+                    if (\Str::contains($fullText, $utsFields, ignoreCase: true)) {
+                        $evalType = 'UTS';
+                    } elseif (\Str::contains($fullText, $uasFields, ignoreCase: true)) {
+                        $evalType = 'UAS';
+                    }
+                }
+
                 $result[] = [
+                    'no_pertemuan' => $pertemuan,
+                    'is_evaluasi' => $evalType, // 🌟 Bernilai 'UTS', 'UAS', atau null jika materi biasa
                     'kode_scpmk' => $scpmk?->kode ?? '-',
-                    'kode_cpmk' => $getNearestCpmk($sourceIndex),
+                    'kode_cpmk' => $scpmk?->parent_kode_cpmk ?? $getNearestCpmk($sourceIndex),
                     'metode' => $scpmk?->metode ?? '-',
                     'bobot' => ($scpmk?->bobot ?? 0) / 100,
                 ];
@@ -317,4 +461,73 @@ class NilaiMahasiswa extends Model
             return $result;
         });
     }
+
+    // protected function mappingPertemuan(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $rps = $this->rps_rel;
+
+    //         if (! $rps) {
+    //             return [];
+    //         }
+
+    //         // 1. Ambil semua Sub-CPMK secara sekuensial
+    //         $allScpmk = $rps->cpmks
+    //             ->flatMap(function ($cpmk) {
+    //                 return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
+    //                     $scpmk->parent_kode_cpmk = $cpmk->kode;
+
+    //                     return $scpmk;
+    //                 });
+    //             })
+    //             ->values();
+
+    //         // 🌟 2. AMBIL KEYWORDS DARI .ENV DAN KONVERSI MENJADI ARRAY
+    //         $envUtsFields = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
+    //         $envUasFields = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+
+    //         $utsFields = array_map('trim', explode(',', $envUtsFields));
+    //         $uasFields = array_map('trim', explode(',', $envUasFields));
+
+    //         // 3. Deteksi keberadaan UTS/UAS berdasarkan teks di deskripsi atau metode
+    //         $hasUts = $allScpmk->contains(function ($item) use ($utsFields) {
+    //             $text = ($item->deskripsi ?? '').' '.($item->metode ?? '');
+
+    //             return \Str::contains($text, $utsFields, ignoreCase: true);
+    //         });
+
+    //         $hasUas = $allScpmk->contains(function ($item) use ($uasFields) {
+    //             $text = ($item->deskripsi ?? '').' '.($item->metode ?? '');
+
+    //             return \Str::contains($text, $uasFields, ignoreCase: true);
+    //         });
+
+    //         $result = [];
+    //         $totalItems = $allScpmk->count();
+
+    //         // 4. Map data & injeksi bobot otomatis jika baris evaluasi tidak ditemukan
+    //         foreach ($allScpmk as $index => $scpmk) {
+    //             $bobotSub = ($scpmk->bobot ?? 0) / 100;
+
+    //             // Injeksi UTS ke elemen tengah (misal indeks ke-6 atau ke-7) jika tidak ada baris UTS murni
+    //             if (! $hasUts && $index === 6 && ($rps->bobot_uts > 0)) {
+    //                 $bobotSub += ($rps->bobot_uts / 100);
+    //             }
+
+    //             // Injeksi UAS ke elemen paling terakhir jika tidak ada baris UAS murni
+    //             if (! $hasUas && $index === ($totalItems - 1) && ($rps->bobot_uas > 0)) {
+    //                 $bobotSub += ($rps->bobot_uas / 100);
+    //             }
+
+    //             $result[] = [
+    //                 'kode_scpmk' => $scpmk->kode ?? '-',
+    //                 'kode_cpmk' => $scpmk->parent_kode_cpmk ?? '-',
+    //                 'metode' => $scpmk->metode ?? '-',
+    //                 'bobot' => $bobotSub,
+    //             ];
+    //         }
+
+    //         return $result;
+    //     });
+    // }
 }

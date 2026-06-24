@@ -91,7 +91,8 @@
         }, 3000);
     }
 }">
-    <flux:button @click="handleClick" size="sm" :icon="$full ? $icon ?? 'printer' : null"
+    <flux:button @click="handleClick" size="sm" 
+        {{-- :icon="$full ? $icon ?? 'printer' : null" --}}
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}
     {{ $full ? $colorClassFull : '' }}
@@ -101,10 +102,8 @@
             '{{ $colorClassActive }}' :
             ''">
         <div class="flex items-center">
-            @if (!$full)
-                <flux:icon name="{{ $icon ?? 'printer' }}" class="h-3.5 w-3.5" />
+                <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}" class="h-3.5 w-3.5" />
                 {{-- <flux:icon name="{{ $icon ?? 'printer' }}" @class(['h-3.5 w-3.5', 'mr-2' => !$manualSmall && !$breakpoint]) /> --}}
-            @endif
 
             <div class="relative inline-flex justify-center items-center">
                 @if (!$manualSmall)

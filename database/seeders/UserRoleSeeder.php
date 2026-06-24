@@ -64,9 +64,13 @@ class UserRoleSeeder extends Seeder
             $this->createMahasiswaProfile($mhsUser5, 'Dzaki Udin', '03041282227062', '6285707091624', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
             $this->createPersonalTeamForUser($mhsUser5, 'Dzaki Udin');
 
-            $mhsUser5 = User::create(['email' => 'aisyah@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($mhsUser5, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0]);
-            $this->createPersonalTeamForUser($mhsUser5, 'Aisyah Nada Khalilah');
+            $mhsUser6 = User::create(['email' => 'aisyah@gmail.com', 'password' => $defaultPw]);
+            $this->createDosenProfile($mhsUser6, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0]);
+            $this->createPersonalTeamForUser($mhsUser6, 'Aisyah Nada Khalilah');
+
+            $mhsUser7 = User::create(['email' => 'afif@gmail.com', 'password' => $defaultPw]);
+            $this->createDosenProfile($mhsUser7, 'Afif Budiani', '03011382126114', '6289506506639', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createPersonalTeamForUser($mhsUser7, 'Afif Budiani');
         });
 
         // --- 2. DATA DUMMY (Distribusi 10/30/60) ---

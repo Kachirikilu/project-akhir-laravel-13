@@ -16,6 +16,7 @@
                 'isMain' => 1,
                 'isCenter' => 1,
                 'rowSpan' => 2,
+                'isSticky' => 1,
             ])
 
             @include('livewire.global.table.head-table', [
@@ -97,9 +98,9 @@
         <tr wire:key="{{ $switchTable }}-{{ $c->id }}" data-{{ $switchTable }}-id="{{ $c->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="text-xs sm:text-sm table-second text-center">{{ $c->id }}</td>
+            <td class="table-second text-center">{{ $c->id }}</td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         <flux:badge icon="beaker" color="sky" size="sm">{{ $c->kode ?? '---' }}
@@ -115,15 +116,15 @@
             </td>
 
 
-            <td class="text-xs sm:text-sm table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
+            <td class="table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
                 {{ $c->deskripsi ?? '-' }}</td>
 
             @if ($withCapaian ?? null)
-                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
+                <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $c->rekap_cpl_pr ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
+                <td class="table-second whitespace-nowrap text-center">
                     {{ $c->index_cpl_pr ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
+                <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -138,7 +139,7 @@
                     </flux:dropdown>
                 </td>
 
-                {{-- <td class="text-xs sm:text-sm table-second table-border-x">
+                {{-- <td class="table-second table-border-x">
                     <x-button-action color="emerald"
                         href="{{ route('rps-capaian-management', [
                             'kode_cpl' => $c->kode,
@@ -150,7 +151,7 @@
                     </x-button-action>
                 </td> --}}
             @endif
-            <td class="text-xs sm:text-sm table-second table-border-x text-center">
+            <td class="table-second table-border-x text-center">
                 <x-button-action
                     @click="
                             $store.cpl?.reset();
@@ -177,12 +178,12 @@
                 </x-button-action>
             </td>
             @if ($withCapaian ?? null)
-                <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">
+                <td class="table-sub whitespace-nowrap text-center">
                     {{ $c->count_rps_pr ?? '-' }} RPS</td>
             @endif
-            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">
+            <td class="table-sub whitespace-nowrap text-center">
                 {{ $c->count_rps ?? '-' }} RPS</td>
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -198,8 +199,8 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

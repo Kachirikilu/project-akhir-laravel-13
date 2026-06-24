@@ -4,14 +4,14 @@
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
-            Histori Absensi Mahasiswa</h4>
+            Histori Nilai & Absensi Mahasiswa</h4>
     </div>
 
     <div class="relative">
 
 
         @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'editAbsensi, updateAbsensi',
+            'wireLoading' => 'editNilaiAbsensi, updateNilaiAbsensi',
         ])
 
         <div class="space-y-4">

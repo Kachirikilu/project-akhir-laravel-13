@@ -3,7 +3,7 @@
 
         @php
             $mahasiswaId = $x->mahasiswa?->id ?? 0;
-            $editCall = "editAbsensi({$mahasiswaId}, {$jadwal_id_url})";
+            $editCall = "editNilaiAbsensi({$mahasiswaId}, {$jadwal_id_url})";
         @endphp
 
         @include('livewire.global.table.text-copy', [
@@ -42,9 +42,9 @@
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Edit Absensi</span>
+                    <span>Edit Nilai & Absensi</span>
 
-                    <flux:icon wire:loading wire:target="editAbsensi" name="arrow-path"
+                    <flux:icon wire:loading wire:target="editNilaiAbsensi" name="arrow-path"
                         class="animate-spin h-4 w-4 ml-2" />
                 </div>
             </flux:menu.item>

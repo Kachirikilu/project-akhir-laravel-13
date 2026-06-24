@@ -165,9 +165,9 @@
                 class="col-span-2 p-2.5 rounded-lg border border-lime-200 dark:border-lime-900/60 bg-lime-50/50 dark:bg-lime-950/20 text-center">
                 <span class="block text-xs font-medium text-lime-700 dark:text-lime-400">Poin</span>
                 <span class="block text-lg font-bold text-lime-800 dark:text-lime-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_poin_absensi ?? 0) + '%'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats()?.poinPersen ?? $store.sesi?.mhs_poin_absensi ?? 0) + '%'"></span>
                 </span>
             </div>
@@ -176,9 +176,9 @@
                 class="p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Hadir</span>
                 <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -187,9 +187,9 @@
                 class="p-2.5 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
                 <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Dispensasi</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_dispensasi ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().dispensasi ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -198,9 +198,9 @@
                 class="p-2.5 rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-center">
                 <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Terlambat</span>
                 <span class="block text-lg font-bold text-amber-800 dark:text-amber-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_terlambat ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().terlambat ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -209,9 +209,9 @@
                 class="p-2.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
                 <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Izin</span>
                 <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_izin ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().izin ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -220,9 +220,9 @@
                 class="p-2.5 rounded-lg border border-sky-200 dark:border-sky-900/60 bg-sky-50/50 dark:bg-sky-950/20 text-center">
                 <span class="block text-xs font-medium text-sky-700 dark:text-sky-400">Sakit</span>
                 <span class="block text-lg font-bold text-sky-800 dark:text-sky-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_sakit ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().sakit ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -231,9 +231,9 @@
                 class="p-2.5 rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 text-center">
                 <span class="block text-xs font-medium text-rose-700 dark:text-rose-400">Tidak Hadir</span>
                 <span class="block text-lg font-bold text-rose-800 dark:text-rose-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi"
+                    <span wire:loading wire:target="editNilaiAbsensi"
                         x-text="($store.sesi?.mhs_tidak_masuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi"
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
                         x-text="(getStats().tidakMasuk ?? 0) + ' / ' + '{{ $stats['sesi'] }}'"></span>
                 </span>
             </div>
@@ -242,8 +242,8 @@
                 class="sm:col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai Akhir</span>
                 <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi" x-text="$store.sesi?.mhs_nilai_akhir ?? '0.00'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi" x-text="getStats().nilai_akhir"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_akhir ?? '0.00'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_akhir"></span>
                 </span>
             </div>
 
@@ -251,8 +251,8 @@
                 class="sm:col-span-1 md:col-span-3 px-2.5 py-4 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
                 <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Index (0-4)</span>
                 <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi" x-text="$store.sesi?.mhs_nilai_index ?? '0.00'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi" x-text="getStats().nilai_index"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_index ?? '0.00'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_index"></span>
                 </span>
             </div>
 
@@ -260,8 +260,8 @@
                 class="sm:col-span-1 md:col-span-2 px-2.5 py-4 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
                 <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Mutu</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
-                    <span wire:loading wire:target="editAbsensi" x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
-                    <span wire:loading.remove wire:target="editAbsensi" x-text="getStats().nilai_mutu"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_mutu"></span>
                 </span>
             </div>
         </div>

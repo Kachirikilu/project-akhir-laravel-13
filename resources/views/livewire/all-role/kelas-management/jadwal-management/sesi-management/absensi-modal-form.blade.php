@@ -2,7 +2,7 @@
     class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
-    <div wire:loading wire:target="updateAbsensi">
+    <div wire:loading wire:target="updateNilaiAbsensi">
         <div
             class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
@@ -18,7 +18,7 @@
             <h3 class="text-xl font-semibold">
 
                 <flux:badge icon="academic-cap" color="emerald" size="lg">
-                    <span>Absensi Mahasiswa</span>
+                    <span>Nilai & Absensi Mahasiswa</span>
                 </flux:badge>
 
             </h3>
@@ -26,7 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.updateAbsensi($store.sesi)" enctype="multipart/form-data" id="sesiForm">
+            <form x-on:submit.prevent="$wire.updateNilaiAbsensi($store.sesi)" enctype="multipart/form-data" id="sesiForm">
 
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-input')
 
@@ -35,7 +35,7 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-message-form')
                         @include('livewire.global.modal-form.footer.button-form', [
-                            'targetX' => 'editAbsensi, updateAbsensi',
+                            'targetX' => 'editNilaiAbsensi, updateNilaiAbsensi',
                             'isLeft' => 0
                         ])
                     </div>

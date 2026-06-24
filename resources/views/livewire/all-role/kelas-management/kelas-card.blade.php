@@ -3,73 +3,106 @@
     {{-- 1. Isi bagian Sortir --}}
     <x-slot:sortir>
         <div x-data="{ activeTab: @entangle('filterKelasgg') }"
-                class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
-                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                    'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
-                    'tabFilter' => $totalGanjil + $totalGenap,
-                    'tabString' => '',
-                    'tabNameString' => 'Semua',
-                    'icon' => 'table-cells',
-                ])
+            class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
+                'tabString' => '',
+                'tabNameString' => 'Semua',
+                'icon' => 'table-cells',
+            ])
 
-                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                    'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
-                    'tabFilter' => $totalGanjil,
-                    'tabString' => 'kelas-ganjil',
-                    'tabNameString' => 'Ganjil',
-                    'icon' => 'calendar-days',
-                ])
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
+                'tabFilter' => $totalGanjilKelas,
+                'tabString' => 'kelas-ganjil',
+                'tabNameString' => 'Ganjil',
+                'icon' => 'calendar-days',
+            ])
 
-                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                    'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
-                    'tabFilter' => $totalGenap,
-                    'tabString' => 'kelas-genap',
-                    'tabNameString' => 'Genap',
-                    'icon' => 'calendar-days',
-                ])
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByKelasgg',
+                'xFilter' => 'filterKelasgg',
+                'tabFilter' => $totalGenapKelas,
+                'tabString' => 'kelas-genap',
+                'tabNameString' => 'Genap',
+                'icon' => 'calendar-days',
+            ])
         </div>
     </x-slot:sortir>
 
     <x-slot:search>
-        <div x-data="{ activeTab: @entangle('switchTable2') }" class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'kode',
-                    'headString' => 'Kode Kelas',
-                ])
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'kode_rps',
-                    'headString' => 'Kode RPS',
-                ])
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'kelas',
-                    'headString' => 'Nama Kelas',
-                ])
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'mk',
-                    'headString' => 'Mata Kuliah',
-                ])
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'semester',
-                ])
-                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                    'xString' => 'switchingTable2',
-                    'xFilter' => 'switchTable2',
-                    'tabFilter' => $totalGanjil + $totalGenap,
-                    'tabString' => 'kelas-table',
-                    'tabNameString' => 'Tabel Kelas',
-                    'icon' => 'table-cells',
-                ])
+        <div x-data="{ activeTab: @entangle('switchTable2') }"
+            class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode',
+                'headString' => 'Kode Kelas',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode_rps',
+                'headString' => 'Kode RPS',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kelas',
+                'headString' => 'Nama Kelas',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'mk',
+                'headString' => 'Mata Kuliah',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'semester',
+            ])
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'switchingTable2',
+                'xFilter' => 'switchTable2',
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
+                'tabString' => 'kelas-table',
+                'tabNameString' => 'Tabel Kelas',
+                'icon' => 'table-cells',
+            ])
         </div>
     </x-slot:search>
 
-
+            @for ($i = 0; $i < 8; $i++)
+                <div wire:loading
+                    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/30 min-h-[320px]">
+                    {{-- Skeleton Hero --}}
+                    <div class="flex flex-col gap-3 p-[18px] bg-gray-200/60 dark:bg-zinc-800/60">
+                        <div class="flex justify-between items-center">
+                            <div class="h-6 w-20 bg-gray-300 dark:bg-zinc-700 rounded-lg"></div> {{-- Kode Kelas --}}
+                            <div class="h-[30px] w-[30px] bg-gray-300 dark:bg-zinc-700 rounded-lg"></div>
+                            {{-- Menu Button --}}
+                        </div>
+                        <div class="h-5 w-4/5 bg-gray-300 dark:bg-zinc-700 rounded mt-1"></div> {{-- Mata Kuliah --}}
+                        <div class="flex gap-2 mt-1">
+                            <div class="h-3 w-12 bg-gray-300 dark:bg-zinc-700 rounded"></div>
+                            <div class="h-3 w-16 bg-gray-300 dark:bg-zinc-700 rounded"></div>
+                        </div>
+                    </div>
+                    {{-- Skeleton Body --}}
+                    <div class="flex flex-1 flex-col gap-2.5 p-4">
+                        <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Baris RPS --}}
+                        <div class="grid grid-cols-3 gap-1.5 mt-1">
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Smt --}}
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- SKS --}}
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Strata --}}
+                        </div>
+                    </div>
+                    {{-- Skeleton Footer --}}
+                    <div class="px-4 pb-4 flex gap-1.5">
+                        <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-md"></div>
+                        <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-md"></div>
+                    </div>
+                </div>
+            @endfor
 
     {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
     @forelse($kelas as $k)
-        <div wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
+
+        <div wire:loading.remove wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
             class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
             {{-- ═══ HERO ═══ --}}

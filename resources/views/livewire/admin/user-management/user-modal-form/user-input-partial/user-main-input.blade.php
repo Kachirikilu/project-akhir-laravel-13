@@ -4,7 +4,7 @@
 <div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        Account Information</h4>
+        Informasi Akun</h4>
 
     {{-- 📧 Email Input --}}
     @include('livewire.global.modal-form.input-form', [

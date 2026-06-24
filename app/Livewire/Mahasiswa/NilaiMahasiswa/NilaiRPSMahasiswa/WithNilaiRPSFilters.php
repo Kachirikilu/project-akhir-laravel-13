@@ -18,9 +18,9 @@ trait WithNilaiRPSFilters
 
     public $filterNilaigg = '';
 
-    public $totalGanjil = '';
+    public $totalGanjilNilai = '';
 
-    public $totalGenap = '';
+    public $totalGenapNilai = '';
 
     public function inputNilaiRPSSearch($mhsId)
     {
@@ -57,8 +57,8 @@ trait WithNilaiRPSFilters
     //         $queryNilai->where('level_mk', 4);
     //     }
 
-    //     $this->totalGanjil = (clone $queryNilai)->whereRaw('semester % 2 = 1')->count();
-    //     $this->totalGenap = (clone $queryNilai)->whereRaw('semester % 2 = 0')->count();
+    //     $this->totalGanjilNilai = (clone $queryNilai)->whereRaw('semester % 2 = 1')->count();
+    //     $this->totalGenapNilai = (clone $queryNilai)->whereRaw('semester % 2 = 0')->count();
 
     //     if ($this->filterNilaigg === 'mk-ganjil') {
     //         $queryNilai->whereRaw('semester % 2 = 1');

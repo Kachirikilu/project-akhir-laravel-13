@@ -6,7 +6,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
@@ -15,7 +15,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGanjil,
+                'tabFilter' => $totalGanjilKelas,
                 'tabString' => 'kelas-ganjil',
                 'tabNameString' => 'Ganjil',
                 'icon' => 'calendar-days',
@@ -24,7 +24,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGenap,
+                'tabFilter' => $totalGenapKelas,
                 'tabString' => 'kelas-genap',
                 'tabNameString' => 'Genap',
                 'icon' => 'calendar-days',

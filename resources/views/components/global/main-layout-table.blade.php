@@ -79,8 +79,7 @@
 @endif
 
 @if (isset($sortir) || isset($search))
-    <div
-        class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
         <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
             @if (isset($sortir))
                 {{ $sortir }}
@@ -97,14 +96,11 @@
 
 <div class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
     id="table-results-container">
-    <div class="scrollbar-medium overflow-x-auto">
+    <div class="scrollbar-x-large overflow-auto max-h-[1000px]">
         <table class="min-w-full divide-y">
-            {{-- Head Table --}}
-            <thead class="bg-[var(--main-table-color)] table-border">
+            <thead class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
-
-            {{-- Body Table --}}
             <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="{{ $targetLoading }}"
                 class="bg-[var(--second-table-color)] table-border divide-y">
@@ -112,6 +108,19 @@
             </tbody>
         </table>
     </div>
+
+
+    {{-- <div class="scrollbar-medium overflow-auto max-h-[1000px] relative">
+        <table class="min-w-full border-separate border-spacing-0">
+            <thead class="sticky top-0 z-30 bg-[var(--main-table-color)]">
+                {{ $header }}
+            </thead>
+            <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
+                wire:target="{{ $targetLoading }}" class="bg-[var(--second-table-color)]">
+                {{ $slot }}
+            </tbody>
+        </table>
+    </div> --}}
 
     @if (isset($footer))
         {{ $footer }}

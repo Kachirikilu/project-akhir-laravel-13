@@ -7,7 +7,7 @@
                 }
             ">
     {{-- 1. TEMPLATE KONDISI TERKUNCI (DRAF ONLY) --}}
-    <template x-if="$store.rps.count_scpmk < 14 || $store.rps.count_scpmk > 16 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 140">
+    <template x-if="$store.rps.count_scpmk < 14 || $store.rps.count_scpmk > 16 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 200">
         <div wire:key="status-draf-only">
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'rps',

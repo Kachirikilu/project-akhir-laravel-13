@@ -67,7 +67,7 @@ private function processKelas(string $noWA, string $nameWA, string $pesan, array
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Gagal Memuat Data!*',
-                'message' => 'Data Program Studi Anda tidak ditemukan.',
+                'message' => 'Data Program Studi Anda tidak ditemukan!',
             ], 400);
         }
 

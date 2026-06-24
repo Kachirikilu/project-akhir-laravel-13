@@ -17,9 +17,9 @@ trait WithRPSFilters
 
     public $filterRPSgg = '';
 
-    public $totalGanjil = 0;
+    public $totalGanjilRPS = 0;
 
-    public $totalGenap = 0;
+    public $totalGenapRPS = 0;
 
     public $searchBobotRPS = '';
 
@@ -46,7 +46,7 @@ trait WithRPSFilters
                 'cpmks.scpmks', 'cpmks.scpmks.refs',
             ]);
 
-        if ($this->switchTable === 'rps') {
+        if (isset($this->switchTable) && $this->switchTable === 'rps') {
 
             if (! empty($cplId)) {
                 $queryRPS->whereHas('cpmks.cpls', function ($q) use ($cplId) {
@@ -126,10 +126,10 @@ trait WithRPSFilters
             $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
         }
 
-        $this->totalGanjil = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
+        $this->totalGanjilRPS = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
             $q->whereRaw('mata_kuliahs.semester % 2 = 1');
         })->count();
-        $this->totalGenap = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
+        $this->totalGenapRPS = (clone $queryRPS)->whereHas('mk_rel', function ($q) {
             $q->whereRaw('mata_kuliahs.semester % 2 = 0');
         })->count();
 

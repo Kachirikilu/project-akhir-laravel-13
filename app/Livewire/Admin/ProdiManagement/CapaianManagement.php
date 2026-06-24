@@ -3,54 +3,45 @@
 namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Http\Services\RekapCapaian;
+use App\Livewire\Admin\ProdiManagement\CapaianManagement\WithRekapExcel;
+use App\Livewire\Admin\UserManagement\WithUserDelete;
+use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
-
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-
-use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
-use App\Livewire\Global\WithSubCPMKSearchFilters;
-use App\Livewire\Global\WithReferensiSearchFilters;
-use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
-
-
+use App\Livewire\Global\WithProdiSearchFilters;
 // use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 // use App\Livewire\Staff\OBEManagement\WithRPSDelete;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Livewire\Global\WithReferensiSearchFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Global\WithSubCPMKSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLDelete;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLFilters;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKFilters;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKFilters;
-use App\Livewire\Admin\UserManagement\WithUserFilters;
-
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLModal;
+use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKDelete;
+use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKFilters;
 use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKModal;
+use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKDelete;
+use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKModal;
 use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefModal;
-use App\Livewire\Admin\UserManagement\WithUserModal;
-
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSDelete;
-use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLDelete;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKDelete;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKDelete;
-use App\Livewire\Admin\UserManagement\WithUserDelete;
-
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\Auth\User;
-
-use App\Livewire\Admin\ProdiManagement\CapaianManagement\WithRekapExcel;
-
+use App\Models\ProgramStudi\Prodi;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -61,44 +52,34 @@ class CapaianManagement extends Component
     use HasStats;
     use HasToast;
     use RekapCapaian;
-
-    use WithProdiSearchFilters;
+    use WithCPLDelete;
+    use WithCPLFilters;
+    use WithCPLModal;
+    use WithCPLSearchFilters;
+    use WithCPMKDelete;
+    use WithCPMKFilters;
+    use WithCPMKModal;
+    use WithCPMKSearchFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
-
-    use WithRPSSearchFilters;
-    use WithCPLSearchFilters;
-    use WithCPMKSearchFilters;
-    use WithSubCPMKSearchFilters;
-    use WithUserSearchFilters;
-    use WithReferensiSearchFilters;
     use WithMKSearchFilters;
-
-    use WithRPSFilters;
-    use WithCPLFilters;
-    use WithCPMKFilters;
-    use WithSubCPMKFilters;
-    use WithUserFilters;
-
-    use WithRPSModal;
-    use WithCPLModal;
-    use WithCPMKModal;
-    use WithSubCPMKModal;
-    use WithRefModal;
-    use WithUserModal;
-
-    use WithRPSDelete;
-    use WithCPLDelete;
-    use WithCPMKDelete;
-    use WithSubCPMKDelete;
-    use WithUserDelete;
-
-    use WithRekapExcel;
-
     use WithPagination;
-
-
-
+    use WithProdiSearchFilters;
+    use WithReferensiSearchFilters;
+    use WithRefModal;
+    use WithRekapExcel;
+    use WithRPSDelete;
+    use WithRPSFilters;
+    use WithRPSModal;
+    use WithRPSSearchFilters;
+    use WithSubCPMKDelete;
+    use WithSubCPMKFilters;
+    use WithSubCPMKModal;
+    use WithSubCPMKSearchFilters;
+    use WithUserDelete;
+    use WithUserFilters;
+    use WithUserModal;
+    use WithUserSearchFilters;
 
     public $perPage = 8;
 
@@ -138,7 +119,7 @@ class CapaianManagement extends Component
         // 'switchTable' => ['except' => 'cpl'],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
     // public function mount($switchTable = '')
@@ -219,7 +200,7 @@ class CapaianManagement extends Component
             'scpmk' => [],
         ];
 
-        $historyKey = 'prodi.history'; 
+        $historyKey = 'prodi.history';
         $history = session($historyKey, []);
         $compositeKey = $prodi->kode;
         $existingKey = array_search($prodi->id, array_column($history, 'pr_id'));
@@ -355,26 +336,44 @@ class CapaianManagement extends Component
         $suffix = ($table && $table !== 'cpl') ? "/{$table}" : '';
 
         $targetPath = "/program-studi-management/kode/{$this->kode_pr_url}{$suffix}";
-        
+
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
     public function render()
     {
-        $prId = $this->pr_id_url;
-        $queryRPS = $this->inputRPSSearch($prId, null , 1);
-        $queryCPL = $this->inputCPLSearch($prId);
-        $queryCPMK = $this->inputCPMKSearch($prId);
-        $querySCPMK = $this->inputSCPMKSearch($prId);
-        $queryUser = $this->inputUserSearch('mahasiswa', null, $prId);
-
-        // $this->inputPrFilter();
-        $this->inputRPSFilter();
-        $this->inputCPLFilter();
-        $this->inputCPMKFilter();
-
-
         try {
+            // $this->inputPrFilter();
+            $this->inputRPSFilter();
+            $this->inputCPLFilter();
+            $this->inputCPMKFilter();
+
+            $prId = $this->pr_id_url;
+
+            $queryRPS = collect();
+            $queryCPL = collect();
+            $queryCPMK = collect();
+            $querySCPMK = collect();
+            $queryUser = collect();
+
+            switch ($this->switchTable) {
+                case 'rps':
+                    $queryRPS = $this->inputRPSSearch($prId, null, 1);
+                    break;
+                case 'cpl':
+                    $queryCPL = $this->inputCPLSearch($prId);
+                    break;
+                case 'cpmk':
+                    $queryCPMK = $this->inputCPMKSearch($prId);
+                    break;
+                case 'sub-cpmk':
+                    $querySCPMK = $this->inputSCPMKSearch($prId);
+                    break;
+                case 'mahasiswa':
+                    $queryUser = $this->inputUserSearch('mahasiswa', null, $prId);
+                    break;
+            }
+
             $countRPS = RPS::where(function ($q) use ($prId) {
                 $q->whereRelation('mk_rel.prodis', 'prodis.id', $prId);
             });
@@ -391,7 +390,7 @@ class CapaianManagement extends Component
 
             $countMahasiswa = User::where(function ($q) use ($prId) {
                 $q->whereRelation('mahasiswa.pr_rel', 'prodis.id', $prId);
-            });;
+            });
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryRPS->onlyTrashed();
@@ -453,13 +452,13 @@ class CapaianManagement extends Component
                     $this->addAkreditasProdi($querySCPMK, $this->pr_id_url, 'mutu_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
                     $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
-                // case 'mahasiswa':
-                //     $this->addRekapMahasiswa($queryUser, 'rekap_mhs');
-                //     $this->addIndexMahasiswa($queryUser, 'ip_mhs');
-                //     $this->addMutuMahasiswa($queryUser, 'mutu_mhs');
-                //     $this->addCountRpsMahasiswa($queryUser, 'count_rps');
-                //     $this->addTotalSksMahasiswa($queryUser, 'total_sks');
-                //     break;
+                    // case 'mahasiswa':
+                    //     $this->addRekapMahasiswa($queryUser, 'rekap_mhs');
+                    //     $this->addIndexMahasiswa($queryUser, 'ip_mhs');
+                    //     $this->addMutuMahasiswa($queryUser, 'mutu_mhs');
+                    //     $this->addCountRpsMahasiswa($queryUser, 'count_rps');
+                    //     $this->addTotalSksMahasiswa($queryUser, 'total_sks');
+                    //     break;
             }
 
             if ($this->searchMode == 'full') {

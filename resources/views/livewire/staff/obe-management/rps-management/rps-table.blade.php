@@ -5,7 +5,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByRPSgg',
                 'xFilter' => 'filterRPSgg',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilRPS + $totalGenapRPS,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
@@ -14,7 +14,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByRPSgg',
                 'xFilter' => 'filterRPSgg',
-                'tabFilter' => $totalGanjil ?? 0,
+                'tabFilter' => $totalGanjilRPS ?? 0,
                 'tabString' => 'rps-ganjil',
                 'tabNameString' => 'Ganjil',
                 'icon' => 'calendar-days',
@@ -23,7 +23,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByRPSgg',
                 'xFilter' => 'filterRPSgg',
-                'tabFilter' => $totalGenap ?? 0,
+                'tabFilter' => $totalGenapRPS ?? 0,
                 'tabString' => 'rps-genap',
                 'tabNameString' => 'Genap',
                 'icon' => 'calendar-days',
@@ -46,6 +46,7 @@
                 'isMain' => 1,
                 'isCenter' => 1,
                 'rowSpan' => 2,
+                'isSticky' => 1,
             ])
 
 
@@ -186,9 +187,9 @@
         <tr wire:key="{{ $switchTable }}-{{ $r->id }}" data-{{ $switchTable }}-id="{{ $r->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="text-xs sm:text-sm table-second text-center">{{ $r->id }}</td>
+            <td class="table-second text-center">{{ $r->id }}</td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -206,15 +207,15 @@
             </td>
 
 
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
 
 
             @if ($withCapaian ?? null)
-                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
+                <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $r->rekap_rps_pr ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
+                <td class="table-second whitespace-nowrap text-center">
                     {{ $r->index_rps_pr ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
+                <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -230,7 +231,7 @@
                 </td>
             @endif
 
-            <td class="text-xs sm:text-sm table-second table-border-x text-center">
+            <td class="table-second table-border-x text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -249,11 +250,11 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="text-xs sm:text-sm table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
-            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-main table-border-r text-center">
+            <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
+            <td class="table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
+            <td class="table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
+            <td class="table-main table-border-r text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -272,11 +273,11 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
+                <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{-- {{ $r->cpmks_count . ' CPMK' ?? '-' }} --}}
                     {{ $r->count_cpmk . ' CPMK' ?? '-' }}
                 </td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
+                <td class="table-second whitespace-nowrap text-center">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -307,7 +308,7 @@
                     </flux:dropdown>
                 </td>
 
-                <td class="text-xs sm:text-sm table-second table-border-r text-center">
+                <td class="table-second table-border-r text-center">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -340,7 +341,7 @@
                 </td>
             @endif
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($r->draf == 0)
@@ -361,10 +362,10 @@
                     ])
                 </flux:dropdown>
             </td>
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap">{{ $r->revisi_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? '-' }}</td>
 
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -380,8 +381,8 @@
             </td>
 
             @if (!($withCapaian ?? false))
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

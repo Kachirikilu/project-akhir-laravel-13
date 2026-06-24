@@ -4,7 +4,7 @@
 <div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        Identity Information</h4>
+        ID Akademik</h4>
 
     <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
@@ -74,17 +74,7 @@
             'message' => $errors->first('nim'),
         ])
     </template>
-    @include('livewire.global.modal-form.input-form', [
-        // 'colorIcon' => $colorIcon,
-        'alpine' => 'user',
-        'nameXString' => 'Nomor Induk Kependudukan (NIK)',
-        'modelString' => 'nik',
-        'numberOnly' => 1,
-        'maxLength' => 16,
-        'iconString' => 'identification',
-        'placeholder' => 'Masukkan NIK',
-        'message' => $errors->first('nik'),
-    ])
+
 
 
 </div>

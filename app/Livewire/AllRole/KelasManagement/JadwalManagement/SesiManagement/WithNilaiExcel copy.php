@@ -235,7 +235,7 @@ trait WithNilaiExcel
         $total = count($this->parsedNilaiRows);
 
         LazyCollection::make($this->parsedNilaiRows)
-            ->chunk(50)
+            ->chunk(20)
             ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
                 foreach ($chunk as $index => $row) {
                     try {

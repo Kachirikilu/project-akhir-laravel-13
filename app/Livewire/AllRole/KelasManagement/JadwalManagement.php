@@ -13,6 +13,7 @@ use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Global\HasGetByKode;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Database\QueryException;
@@ -24,6 +25,7 @@ class JadwalManagement extends Component
 {
     use HasSortir;
     use HasToast;
+    use HasGetByKode;
     use WithJadwalFilters;
     use WithJadwalModal;
     use WithJadwalDelete;
@@ -86,6 +88,58 @@ class JadwalManagement extends Component
     //     $this->switchTable = $switchTable;
     // }
 
+    // public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
+    // {
+    //     $this->isJadwalMhs = $isJadwalMhs;
+    //     $this->switchTable = $switchTable;
+
+    //     if (! $this->isJadwalMhs && $kode_kelas !== null) {
+    //         $this->kode_kelas_url = $kode_kelas;
+            
+    //         $kelas = Kelas::where('kode_kelas', $kode_kelas)
+    //             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
+    //             ->first(); 
+
+    //         if (! $kelas) {
+    //             foreach (['kelas.history', 'kelas_mahasiswa.history'] as $key) {
+    //                 $history = session($key, []);
+                    
+    //                 if (isset($history[$kode_kelas])) {
+    //                     unset($history[$kode_kelas]);
+    //                     session([$key => $history]);
+    //                 }
+    //             }
+
+    //             abort(404, "Kelas dengan Kode $kode_kelas tidak ditemukan!");
+    //         }
+
+    //         $this->kelas = $kelas;
+    //         $this->rps_id_url = $this->kelas->rps_id;
+    //         $this->kode_rps_url = $this->kelas->kode_rps;
+
+    //         $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
+    //         $kelasHistory = session($sessionKey, []);
+    //         $currentKode = $kelas->kode; 
+
+    //         $existingKey = array_search($kelas->id, array_column($kelasHistory, 'kelas_id'));
+    //         if ($existingKey !== false) {
+    //             $actualKeys = array_keys($kelasHistory);
+    //             unset($kelasHistory[$actualKeys[$existingKey]]);
+    //         }
+    //         unset($kelasHistory[$currentKode]);
+    //         $kelasHistory[$currentKode] = [
+    //             'kelas_id' => $kelas->id,
+    //             'kode_kelas' => $currentKode,
+    //             'url' => url()->current(), 
+    //         ];
+
+    //         $kelasHistory = array_slice($kelasHistory, -3, null, true);
+    //         uasort($kelasHistory, fn ($a, $b) => strcmp($a['kode_kelas'], $b['kode_kelas']));
+
+    //         session([$sessionKey => $kelasHistory]);
+    //     }
+    // }
+
     public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
     {
         $this->isJadwalMhs = $isJadwalMhs;
@@ -93,15 +147,13 @@ class JadwalManagement extends Component
 
         if (! $this->isJadwalMhs && $kode_kelas !== null) {
             $this->kode_kelas_url = $kode_kelas;
-            
-            $kelas = Kelas::where('kode_kelas', $kode_kelas)
-                ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
-                ->first(); 
+
+            $kelas = $this->getKelasByKode($kode_kelas);
 
             if (! $kelas) {
                 foreach (['kelas.history', 'kelas_mahasiswa.history'] as $key) {
                     $history = session($key, []);
-                    
+
                     if (isset($history[$kode_kelas])) {
                         unset($history[$kode_kelas]);
                         session([$key => $history]);
@@ -117,7 +169,7 @@ class JadwalManagement extends Component
 
             $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
             $kelasHistory = session($sessionKey, []);
-            $currentKode = $kelas->kode; 
+            $currentKode = $kelas->kode;
 
             $existingKey = array_search($kelas->id, array_column($kelasHistory, 'kelas_id'));
             if ($existingKey !== false) {
@@ -128,7 +180,7 @@ class JadwalManagement extends Component
             $kelasHistory[$currentKode] = [
                 'kelas_id' => $kelas->id,
                 'kode_kelas' => $currentKode,
-                'url' => url()->current(), 
+                'url' => url()->current(),
             ];
 
             $kelasHistory = array_slice($kelasHistory, -3, null, true);
@@ -137,6 +189,7 @@ class JadwalManagement extends Component
             session([$sessionKey => $kelasHistory]);
         }
     }
+
 
     public function loadingTable() {}
 

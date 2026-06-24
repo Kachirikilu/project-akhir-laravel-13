@@ -16,9 +16,10 @@
                 'isCenter' => 1,
                 'isMain' => 1,
                 'rowSpan' => 2,
+                'isSticky' => 1,
             ])
 
-            <th rowspan="2" class="table-head border-x">Show</th>
+            <th rowspan="2" class="table-head table-border-r">Show</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'label_kelas',
@@ -32,9 +33,10 @@
                     'sortFieldString' => 'password',
                     'isCenter' => 1,
                     'rowSpan' => 2,
+                    'isBorderR' => 1
                 ])
             @else
-                <th rowspan="2" class="table-head">Password</th>
+                <th rowspan="2" class="table-head table-border-r">Password</th>
             @endif
 
             @if ($kelas == null)
@@ -81,7 +83,7 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'hari_pelaksanaan',
                 'headString' => 'Hari',
-                'isMain' => 1,
+                'isBorderR' => 1,
                 'isCenter' => 1,
             ])
 
@@ -138,10 +140,10 @@
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="text-xs sm:text-sm table-second text-center">{{ $j->id }}</td>
+                <td class="table-second text-center">{{ $j->id }}</td>
             @endif
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center table-border-x">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -160,7 +162,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second table-border-r text-center whitespace-nowrap">
+            <td class="table-second table-border-r text-center whitespace-nowrap">
 
 
                 @if (!$j->trashed())
@@ -216,8 +218,8 @@
 
             </td>
 
-            <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">{{ $j->label_full }}</td>
-            <td class="text-xs sm:text-sm table-second text-center whitespace-nowrap">
+            <td class="table-second text-center whitespace-nowrap">{{ $j->label_full }}</td>
+            <td class="table-second text-center whitespace-nowrap table-border-r">
 
                 @if ($j->is_my_class)
                     <code
@@ -248,19 +250,19 @@
                 @endif
 
                 @if ($kelas == null)
-            <td class="text-xs sm:text-sm table-second min-w-42">{{ $j->mk ?? '-' }}</td>
+            <td class="table-second min-w-42">{{ $j->mk ?? '-' }}</td>
     @endif
 
 
-    <td class="text-xs sm:text-sm table-main text-center whitespace-nowrap">{{ $j->hari }}</td>
-    <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
-    <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">
+    <td class="table-main text-center whitespace-nowrap table-border-r">{{ $j->hari }}</td>
+    <td class="table-sub text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
+    <td class="table-second text-center whitespace-nowrap">
         {{ $j->count_mhs_jadwal }}</td>
-    <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
+    <td class="table-sub text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
 
 
     @if ($kelas == null)
-        <td class="text-xs sm:text-sm table-main text-center">
+        <td class="table-main text-center">
             <flux:dropdown>
                 <button class="cursor-pointer">
                     @include('livewire.global.table.badge.level-mk-badge', [
@@ -280,11 +282,11 @@
 
             </flux:dropdown>
         </td>
-        <td class="text-xs sm:text-sm table-sub text-center">{{ $j->semester ?? '-' }}</td>
-        <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $j->sks ?? '-' }} SKS</td>
-        <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $j->sks_text ?? '-' }}</td>
+        <td class="table-sub text-center">{{ $j->semester ?? '-' }}</td>
+        <td class="table-sub text-center whitespace-nowrap">{{ $j->sks ?? '-' }} SKS</td>
+        <td class="table-sub text-center whitespace-nowrap">{{ $j->sks_text ?? '-' }}</td>
 
-        <td class="text-xs sm:text-sm table-second table-border-r table-border-l text-center">
+        <td class="table-second table-border-r table-border-l text-center">
             <flux:dropdown>
                 <button class="cursor-pointer">
                     @include('livewire.global.table.badge.wajib-badge', [
@@ -304,11 +306,11 @@
 
             </flux:dropdown>
         </td>
-        <td class="text-xs sm:text-sm table-second min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }}
+        <td class="table-second min-w-24">{{ $j->kelas_rel->pr_rel->prodi ?? '-' }}
             ({{ $j->kelas_rel->pr_rel->kode_pr ?? '---' }})</td>
     @endif
     @if (Auth::user()->admin || Auth::user()->dosen)
-        <td class="text-xs sm:text-sm table-main text-center">
+        <td class="table-main text-center table-border-x">
             <flux:dropdown>
                 <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                     inset="top bottom">
@@ -324,8 +326,8 @@
             </flux:dropdown>
         </td>
 
-        <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
-        <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
+        <td class="table-second whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
+        <td class="table-second whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
     @endif
     </tr>
 @empty

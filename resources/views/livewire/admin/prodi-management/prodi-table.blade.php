@@ -14,6 +14,7 @@
                 'isMain' => 1,
                 'isCenter' => 1,
                 'rowSpan' => 2,
+                'isSticky' => 1,
             ])
 
 
@@ -33,7 +34,7 @@
             ])
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <th colspan="4" class="table-head-sub">
+                <th colspan="4" class="table-head-sub table-border-x">
                     Nilai Capaian
                 </th>
             @endif
@@ -46,7 +47,7 @@
             @endif
 
             @if ($switchTable === 'departemen')
-                <th colspan="3" class="table-head-sub">
+                <th colspan="3" class="table-head-sub table-border-x">
                     Nilai Capaian
                 </th>
             @endif
@@ -59,7 +60,7 @@
             @endif
 
             @if ($switchTable === 'fakultas')
-                <th colspan="3" class="table-head-sub">
+                <th colspan="3" class="table-head-sub table-border-x">
                     Nilai Capaian
                 </th>
             @endif
@@ -68,11 +69,11 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'strata',
                     'isCenter' => 1,
-                    'isMain' => 1,
                     'rowSpan' => 2,
+                    'isBorderL' => 1,
                 ])
             @endif
-            <th rowspan="2" class="table-head border-x">Aksi</th>
+            <th rowspan="2" class="table-head {{ $switchTable === 'fakultas' ? 'table-border-r' : 'table-border-x' }}">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
@@ -89,7 +90,7 @@
 
         <tr>
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <th class="table-head border-x whitespace-nowrap">Show</th>
+                <th class="table-head table-border-l whitespace-nowrap">Show</th>
             @endif
 
             @php
@@ -103,7 +104,7 @@
                 'sortFieldString' => 'rekap_' . $rekap,
                 'headString' => 'Nilai',
                 'isCenter' => 1,
-                'isBorderL' => 1,
+                'isBorderL' => 1
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'index_' . $rekap,
@@ -125,9 +126,9 @@
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="text-xs sm:text-sm table-second text-center">{{ $x->id }}</td>
+            <td class="table-second text-center">{{ $x->id }}</td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @switch($x->tingkatan_prodi)
@@ -164,11 +165,11 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second table-border-r whitespace-nowrap">
+            <td class="table-second whitespace-nowrap">
                 {{ $x->prodi ?? ($x->departemen_dp ?? ($x->fakultas_fk ?? '-')) }}</td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="text-xs sm:text-sm table-second table-border-r">
+                <td class="table-second table-border-l">
                     @if (!$x->trashed())
                         <x-button-action color="blue"
                             href="{{ route('capaian-management', [
@@ -203,11 +204,11 @@
                     $akreditas_x = $x->akreditas_pr;
                 }
             @endphp
-            <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
+            <td class="table-second table-border-l whitespace-nowrap text-center">
                 {{ $rekap_x ?? '0.00' }}</td>
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
+            <td class="table-second whitespace-nowrap text-center">
                 {{ $index_x ?? '0.00' }}</td>
-            <td class="text-xs sm:text-sm table-sub table-border-x whitespace-nowrap text-center">
+            <td class="table-sub table-border-x whitespace-nowrap text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -223,18 +224,18 @@
             </td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap">
+                <td class="table-second whitespace-nowrap">
                     {{ $x->departemen . ' (' . $x->kode_dp . ')' }}
                 </td>
             @endif
 
             @if ($switchTable !== 'fakultas')
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap">{{ $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
+                <td class="table-second whitespace-nowrap">{{ $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
             @endif
 
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="text-xs sm:text-sm table-second table-border-l text-center">
+                <td class="table-second table-border-l text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)
@@ -265,7 +266,7 @@
                 </td>
             @endif
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center {{ $switchTable == 'fakultas' ? 'table-border-r' : 'table-border-x' }}">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -280,8 +281,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $x->created_day ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $x->updated_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $x->created_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap text-center">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>

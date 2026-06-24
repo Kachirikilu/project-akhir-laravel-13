@@ -302,6 +302,11 @@ trait WithUserSearchFilters
                         $searchLower
                     );
 
+                    $matchIDRole = $this->matchID(
+                        $user->role_id,
+                        $searchLower
+                    );
+
                     $matchRole = $this->containsStrict(
                         $user->role,
                         $searchLower
@@ -608,7 +613,7 @@ trait WithUserSearchFilters
 
                     switch ($mode) {
                         case 'id':
-                            return $matchID;
+                            return $matchID || $matchIDRole;
                         case 'nilai':
                             return $matchNilaiAkhir || $matchNilaiMutu || $matchNilaiAkhirKelas || $matchNilaiMutuKelas;
                         case 'index':
@@ -619,6 +624,7 @@ trait WithUserSearchFilters
 
                     return
                         $matchID
+                        || $matchIDRole
                         || $matchRole
                         || $matchName
                         || $matchEmail
@@ -667,6 +673,7 @@ trait WithUserSearchFilters
             }
 
             $sortValue = match ($sortField) {
+                'admin_id', 'dosen_id', 'mahasiswa_id' => fn ($user) => $user->role_id,
                 'role' => fn ($user) => $user->role,
                 'name' => fn ($user) => $user->name,
                 'email' => fn ($user) => $user->email,

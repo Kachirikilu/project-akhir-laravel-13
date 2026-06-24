@@ -6,7 +6,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                 'tabString' => '',
                 'tabNameString' => 'Semua',
                 'icon' => 'table-cells',
@@ -15,7 +15,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGanjil,
+                'tabFilter' => $totalGanjilKelas,
                 'tabString' => 'kelas-ganjil',
                 'tabNameString' => 'Ganjil',
                 'icon' => 'calendar-days',
@@ -24,7 +24,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'filterByKelasgg',
                 'xFilter' => 'filterKelasgg',
-                'tabFilter' => $totalGenap,
+                'tabFilter' => $totalGenapKelas,
                 'tabString' => 'kelas-genap',
                 'tabNameString' => 'Genap',
                 'icon' => 'calendar-days',
@@ -36,7 +36,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                 'tabString' => 'kelas-card',
                 'tabNameString' => 'Daftar Kelas',
                 'icon' => 'rectangle-group',
@@ -45,7 +45,7 @@
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
-                'tabFilter' => $totalGanjil + $totalGenap,
+                'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                 'tabString' => 'kelas-table',
                 'tabNameString' => 'Tabel Kelas',
                 'icon' => 'table-cells',
@@ -69,14 +69,14 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
                 'isMain' => 1,
+                'isSticky' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode_rps',
                 'rowSpan' => 2,
                 'isCenter' => 1,
-                'isBorderR' => 1,
             ])
-            <th rowspan="2" class="table-head border-x">Show</th>
+            <th rowspan="2" class="table-head table-border-x">Show</th>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kelas',
                 'rowSpan' => 2,
@@ -86,17 +86,17 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="4" class="table-head-sub">
+            <th colspan="4" class="table-head-sub table-border-l">
                 Informasi Jadwal Kelas
             </th>
 
 
-            <th colspan="6" class="table-head-sub">
+            <th colspan="6" class="table-head-sub table-border-l">
                 Informasi Mata Kuliah
             </th>
 
 
-            <th rowspan="2" class="table-head border-x">Aksi</th>
+            <th rowspan="2" class="table-head table-border-x">Aksi</th>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
                 @include('livewire.global.table.head-table', [
@@ -162,7 +162,7 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'wajib',
                 'isCenter' => 1,
-                'isMain' => 1,
+                'isBorderL' => 1,
             ])
 
         </tr>
@@ -174,9 +174,9 @@
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="text-xs sm:text-sm table-second text-center">{{ $k->id }}</td>
+                <td class="table-second text-center">{{ $k->id }}</td>
             @endif
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main-sticky text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -195,7 +195,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-second table-border-r text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
@@ -215,7 +215,7 @@
 
                 </flux:dropdown>
             </td>
-            <td class="text-xs sm:text-sm table-second table-border-r text-center">
+            <td class="table-second table-border-x text-center">
                 @if (!$k->trashed())
                     <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
                         <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
@@ -227,10 +227,10 @@
                     </code>
                 @endif
             </td>
-            <td class="text-xs sm:text-sm table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
+            <td class="table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
+            <td class="table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
 
-            <td class="text-xs sm:text-sm table-main text-center align-top">
+            <td class="table-main text-center align-top table-border-x">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -248,7 +248,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="text-xs sm:text-sm table-sub whitespace-nowrap text-center align-top">
+            <td class="table-sub whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -259,7 +259,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="text-xs sm:text-sm table-sub text-center">
+            <td class="table-second text-center">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -270,7 +270,7 @@
                     </ul>
                 @endif
             </td>
-            <td class="text-xs sm:text-sm table-sub table-border-r whitespace-nowrap text-center align-top">
+            <td class="table-sub whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
@@ -282,7 +282,7 @@
                 @endif
             </td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center table-border-x">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
@@ -302,12 +302,12 @@
 
                 </flux:dropdown>
             </td>
-            <td class="text-xs sm:text-sm table-sub min-w-42">{{ $k->mk ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-sub text-center">{{ $k->semester ?? '-' }}</td>
-            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
-            <td class="text-xs sm:text-sm table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
+            <td class="table-second min-w-42">{{ $k->mk ?? '-' }}</td>
+            <td class="table-sub text-center">{{ $k->semester ?? '-' }}</td>
+            <td class="table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
+            <td class="table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
 
-            <td class="text-xs sm:text-sm table-second table-border-r table-border-l text-center">
+            <td class="table-second table-border-l text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
@@ -328,7 +328,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center table-border-x">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -345,8 +345,8 @@
             </td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $k->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $k->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty

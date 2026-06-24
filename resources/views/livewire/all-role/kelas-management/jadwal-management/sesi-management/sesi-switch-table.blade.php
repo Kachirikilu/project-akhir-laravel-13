@@ -22,7 +22,7 @@
                     'withB' => 0,
                 ])
             </div>
-            <div x-show="activeTab === 'mahasiswa'">
+            <div x-show="activeTab === 'mahasiswa' || activeTab === 'cpmk'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
                     'key' => 'page-control-mahasiswa',
@@ -56,7 +56,6 @@
                     'icon' => 'table-cells',
                 ])
 
-                {{-- @if (Auth::user()->admin || Auth::user()->dosen) --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -64,7 +63,16 @@
                     'tabString' => 'mahasiswa',
                     'icon' => 'users',
                 ])
-                {{-- @endif --}}
+
+                @if (Auth::user()->admin || Auth::user()->dosen)
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'switchingTable',
+                        'xFilter' => $switchTable,
+                        'tabFilter' => $stats['mahasiswa'],
+                        'tabString' => 'cpmk',
+                        'icon' => 'academic-cap',
+                    ])
+                @endif
             </div>
 
             {{-- <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
@@ -91,7 +99,7 @@
                         'withB' => 0,
                     ])
                 </div>
-                <div x-show="activeTab === 'mahasiswa'">
+                <div x-show="activeTab === 'mahasiswa' || activeTab === 'cpmk'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
                         'key' => 'page-control-mahasiswa',

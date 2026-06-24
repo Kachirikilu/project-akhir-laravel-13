@@ -175,18 +175,15 @@ trait WithRPSModal
         $this->resetValidation();
 
         $mkId = $data['mk_id'] ?? null;
-        $mk = DB::table('mata_kuliahs')->where('id', $mkId ?? null)->first();
+        $mk = DB::table('mata_kuliahs')->where('id', $mkId)->first();
         $desMK = $mk?->deskripsi ?? '';
 
         $desMK = $this->normalizeText($desMK);
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi']);
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         if ($data['deskripsi'] == $desMK) {
             $data['deskripsi'] = '';
         }
-
-        // 1. Ambil data dari CPMK terpilih
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         $cplFromCpmk = [];
         $refFromCpmkScpmk = [];
@@ -199,23 +196,47 @@ trait WithRPSModal
             }
         }
 
-        // 2. Tambahkan Ref dari Sub-CPMK JSON
-        if (! empty($data['cpmk_sub_items_array'])) {
-            foreach ($data['cpmk_sub_items_array'] as $group) {
-                foreach ($group['scpmk'] ?? [] as $scpmk) {
-                    if (! empty($scpmk['ref_ids'])) {
-                        $refFromCpmkScpmk = array_merge($refFromCpmkScpmk, (array) $scpmk['ref_ids']);
+        // --- 🌟 HITUNG TOTAL SUB-CPMK & DETEKSI UTS/UAS (HANYA SATU BLOK YANG BENAR) ---
+        $totalSubCPMK = 0;
+        $totalBobot = 0;
+        $hasUTS = false;
+        $hasUAS = false;
+
+        if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
+            $utsEnv = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
+            $uasEnv = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+
+            $utsFields = array_map('trim', array_map('strtoupper', explode(',', $utsEnv)));
+            $uasFields = array_map('trim', array_map('strtoupper', explode(',', $uasEnv)));
+
+            foreach ($data['cpmk_sub_items_array'] as $cpmkItem) {
+                $scpmkList = $cpmkItem['scpmk'] ?? [];
+
+                if (is_array($scpmkList)) {
+                    foreach ($scpmkList as $scpmk) {
+                        $totalSubCPMK++;
+                        $totalBobot += (float) ($scpmk['bobot'] ?? 0);
+                        $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
+
+                        if (in_array($method, $utsFields, true)) {
+                            $hasUTS = true;
+                        }
+
+                        if (in_array($method, $uasFields, true)) {
+                            $hasUAS = true;
+                        }
+
+                        if (! empty($scpmk['ref_ids'])) {
+                            $refFromCpmkScpmk = array_merge($refFromCpmkScpmk, (array) $scpmk['ref_ids']);
+                        }
                     }
                 }
             }
         }
 
-        // --- PROSES PEMBERSIHAN ---
-        // $cleanCpl = [];
-        // if (isset($data['cpl_id_array']) && is_array($data['cpl_id_array'])) {
-        //     $cleanCpl = array_values(array_diff(array_unique($data['cpl_id_array']), $cplFromCpmk));
-        // }
+        // dd($hasUTS, $hasUAS);
 
+        // --- PROSES PEMBERSIHAN ---
         $cleanRef = [];
         if (isset($data['ref_id_array']) && is_array($data['ref_id_array'])) {
             $cleanRef = array_values(array_diff(array_unique($data['ref_id_array']), $refFromCpmkScpmk));
@@ -235,33 +256,44 @@ trait WithRPSModal
         $bobotUTS = $data['bobot_uts'];
         $bobotUAS = $data['bobot_uas'];
 
-        $totalSubCPMK = 0;
-        $totalBobot = 0;
-        $hasUTS = false;
-        $hasUAS = false;
+        // dd($bobotUTS, $hasUTS);
+        // dd(
+        //     $data['bobot_uts'] ?? 'NOT_FOUND',
+        //     isset($rules['bobot_uts']),
+        //     array_key_exists('bobot_uts', $data)
+        // );
 
-        if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
-            foreach ($data['cpmk_sub_items_array'] as $group) {
-                foreach ($group['scpmk'] ?? [] as $scpmk) {
-                    $totalSubCPMK++;
-                    $totalBobot += (float) ($scpmk['bobot'] ?? 0);
-                    $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
-
-                    if (in_array($method, ['UTS', 'EVALUASI AWAL'], true)) {
-                        $hasUTS = true;
-                    }
-
-                    if (in_array($method, ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
-                        $hasUAS = true;
-                    }
+        if (($data['is_draf'] ?? 0) == 0) {
+            $errorsBobot = [];
+            // Pengecekan UTS
+            if ($hasUTS) {
+                if ($bobotUTS !== null && $bobotUTS !== '') {
+                    $errorsBobot['bobot_uts'][] = 'Bobot UTS tidak boleh diisi dari luar karena metode UTS sudah ada di dalam Sub-CPMK!';
                 }
+            } else {
+                if ($bobotUTS === null || $bobotUTS === '') {
+                    $errorsBobot['bobot_uts'][] = 'Bobot UTS wajib diisi karena metode UTS tidak ditemukan di dalam pertemuan Sub-CPMK!';
+                }
+            }
+            // Pengecekan UAS
+            if ($hasUAS) {
+                if ($bobotUAS !== null && $bobotUAS !== '') {
+                    $errorsBobot['bobot_uas'][] = 'Bobot UAS tidak boleh diisi dari luar karena metode UAS/Evaluasi Akhir sudah ada di dalam Sub-CPMK!';
+                }
+            } else {
+                if ($bobotUAS === null || $bobotUAS === '') {
+                    $errorsBobot['bobot_uas'][] = 'Bobot UAS wajib diisi karena metode UAS/Evaluasi Akhir tidak ditemukan di dalam pertemuan Sub-CPMK!';
+                }
+            }
+
+            if (! empty($errorsBobot)) {
+                throw ValidationException::withMessages($errorsBobot);
             }
         }
 
         // --- RULES VALIDASI ---
-        // dd($data['akademik'], $data['akademik_1'], $data['akademik_2']);
         $rules = [
-            'deskripsi' => 'string|string|min:5|max:1000',
+            'deskripsi' => 'nullable|string|min:5|max:1000',
             'mk_id' => 'required|exists:mata_kuliahs,id',
             'akademik' => [
                 'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
@@ -317,59 +349,57 @@ trait WithRPSModal
                     }
                 },
             ],
-            'bobot_uts' => [
-                'nullable',
-                'integer',
-                'min:1',
-                'max:100',
-                function ($attribute, $value, $fail) use ($bobotUTS, $hasUTS) {
-                    if ($hasUTS && $bobotUTS !== null && $bobotUTS !== '') {
-                        $fail('Bobot UTS tidak boleh diisi jika UTS sudah ada pada Sub-CPMK!');
-                    }
-
-                    if (! $hasUTS) {
-                        if ($bobotUTS === null || $bobotUTS === '') {
-                            $fail('Bobot UTS wajib diisi untuk mode tanpa UTS/UAS!');
-
-                            return;
-                        }
-                    }
-                },
-            ],
-            'bobot_uas' => [
-                'nullable',
-                'integer',
-                'min:1',
-                'max:100',
-                function ($attribute, $value, $fail) use ($bobotUAS, $hasUAS) {
-                    if ($hasUAS && $bobotUAS !== null && $bobotUAS !== '') {
-                        $fail('Bobot UAS tidak boleh diisi jika UAS atau setingkatnya sudah ada pada Sub-CPMK!');
-                    }
-
-                    if (! $hasUAS) {
-                        if ($bobotUAS === null || $bobotUAS === '') {
-                            $fail('Bobot UAS wajib diisi untuk mode tanpa UTS/UAS!');
-
-                            return;
-                        }
-                    }
-                },
-            ],
-            // 'cpl_id_array' => 'nullable|array',
+            'bobot_uts' => 'nullable|numeric|min:1|max:60',
+            'bobot_uas' => 'nullable|numeric|min:1|max:60',
+            // 'bobot_uts' => [
+            //     // 'nullable',
+            //     'numeric',
+            //     'min:1',
+            //     'max:60',
+            //     function ($attribute, $value, $fail) use ($bobotUTS, $hasUTS, $data) {
+            //         // dd('MASUK CALLBACK UTS', $value);
+            //         if (($data['is_draf'] ?? 0) == 1) {
+            //             return;
+            //         }
+            //         if ($hasUTS) {
+            //             if ($bobotUTS !== null && $bobotUTS !== '') {
+            //                 $fail('Bobot UTS tidak boleh diisi dari luar karena metode UTS sudah ada di dalam Sub-CPMK!');
+            //             }
+            //         } else {
+            //             if ($bobotUTS === null || $bobotUTS === '') {
+            //                 $fail('Bobot UTS wajib diisi karena metode UTS tidak ditemukan di dalam pertemuan Sub-CPMK!');
+            //             }
+            //         }
+            //     },
+            // ],
+            // 'bobot_uas' => [
+            //     // 'nullable',
+            //     'numeric',
+            //     'min:1',
+            //     'max:60',
+            //     function ($attribute, $value, $fail) use ($bobotUAS, $hasUAS, $data) {
+            //         if (($data['is_draf'] ?? 0) == 1) {
+            //             return;
+            //         }
+            //         if ($hasUAS) {
+            //             if ($bobotUAS !== null && $bobotUAS !== '') {
+            //                 $fail('Bobot UAS tidak boleh diisi dari luar karena metode UAS/Evaluasi Akhir sudah ada di dalam Sub-CPMK!');
+            //             }
+            //         } else {
+            //             if ($bobotUAS === null || $bobotUAS === '') {
+            //                 $fail('Bobot UAS wajib diisi karena metode UAS/Evaluasi Akhir tidak ditemukan di dalam pertemuan Sub-CPMK!');
+            //             }
+            //         }
+            //     },
+            // ],
             'ref_id_array' => 'nullable|array',
             'pertemuan_dosen' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
             'dosen_items_array' => [
-                // 'required',
                 'array',
-                // 'min:1',
                 function ($attribute, $value, $fail) use ($data) {
-
                     $hasKetua = collect($value)->contains(function ($item) {
-                        return isset($item['is_ketua']) &&
-                            ($item['is_ketua'] === 1 ||
-                             $item['is_ketua'] === '1' ||
-                             $item['is_ketua'] === true);
+                        return isset($item['is_ketua']) && ($item['is_ketua'] === 1 || $item['is_ketua'] === '1' || $item['is_ketua'] === true);
                     });
 
                     if (! $hasKetua && ! collect($data['dosen_id_array'] ?? [])->isEmpty()) {
@@ -381,6 +411,11 @@ trait WithRPSModal
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesRPS());
+
+        // dd(
+        //     array_key_exists('bobot_uts', $rules),
+        //     $rules['bobot_uts'] ?? null
+        // );
 
         if ($validator->fails()) {
             $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
@@ -420,7 +455,6 @@ trait WithRPSModal
         $validated['bobot_uts'] = $data['bobot_uts'] ?? null;
         $validated['bobot_uas'] = $data['bobot_uas'] ?? null;
 
-        // $validated['cpl_id_array'] = $cleanCpl;
         $validated['ref_id_array'] = $cleanRef;
         $validated['cpmk_id_array'] = array_values(array_unique($data['cpmk_id_array'] ?? []));
         $validated['dosen_items_array'] = $data['dosen_items_array'] ?? [];
@@ -682,12 +716,12 @@ trait WithRPSModal
             'is_draf.required' => 'Status RPS wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
             // Bobot UTS & UAS
-            'bobot_uts.integer' => 'Bobot UTS harus berupa angka bulat!',
+            'bobot_uts.numeric' => 'Bobot UTS harus berupa angka desimal!',
             'bobot_uts.min' => 'Bobot UTS minimal 1!',
-            'bobot_uts.max' => 'Bobot UTS maksimal 100!',
-            'bobot_uas.integer' => 'Bobot UAS harus berupa angka bulat!',
+            'bobot_uts.max' => 'Bobot UTS maksimal 60!',
+            'bobot_uas.numeric' => 'Bobot UAS harus berupa angka desimal!',
             'bobot_uas.min' => 'Bobot UAS minimal 1!',
-            'bobot_uas.max' => 'Bobot UAS maksimal 100!',
+            'bobot_uas.max' => 'Bobot UAS maksimal 60!',
 
             // CPMK & Relasi Data
             'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk RPS ini!',

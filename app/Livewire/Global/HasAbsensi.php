@@ -2,23 +2,75 @@
 
 namespace App\Livewire\Global;
 
-use App\Models\Kelas\MahasiswaKehadiran;
 use Illuminate\Database\Eloquent\Builder;
 
 trait HasAbsensi
 {
+    protected function addNilaiJadwalSubquery(
+        $queryUser,
+        int $jadwalId,
+        string $alias = 'mhs_nilai_data',
+        string $columnToSelect = 'nilai_array'
+    ) {
+        $queryUser->selectSub(function ($query) use ($jadwalId, $columnToSelect) {
+            $query->from('nilai_mahasiswa')
+                ->join(
+                    'mahasiswas',
+                    'nilai_mahasiswa.mahasiswa_id',
+                    '=',
+                    'mahasiswas.id'
+                )
+                ->whereColumn(
+                    'mahasiswas.user_id',
+                    'users.id'
+                )
+                ->where(
+                    'nilai_mahasiswa.kj_id',
+                    $jadwalId
+                )
+                ->select("nilai_mahasiswa.$columnToSelect")
+                ->limit(1);
+        }, $alias);
+        return $queryUser;
+    }
 
+    protected function addNilaiRPSSubquery(
+        $queryUser,
+        int $rpsId,
+        string $alias = 'mhs_nilai_data',
+        string $columnToSelect = 'nilai_array'
+    ) {
+        $queryUser->selectSub(function ($query) use ($rpsId, $columnToSelect) {
+            $query->from('nilai_mahasiswa')
+                ->join(
+                    'mahasiswas',
+                    'nilai_mahasiswa.mahasiswa_id',
+                    '=',
+                    'mahasiswas.id'
+                )
+                ->whereColumn(
+                    'mahasiswas.user_id',
+                    'users.id'
+                )
+                ->where(
+                    'nilai_mahasiswa.rps_id',
+                    $rpsId
+                )
+                ->select("nilai_mahasiswa.$columnToSelect")
+                ->limit(1);
+        }, $alias);
+        return $queryUser;
+    }
 
+    protected function addAbsenSesi(
+        Builder $query,
+        string $alias = 'mhs_absensi'
+    ): void {
 
+        $query->select('kelas_sesi.*')
+            ->selectRaw("99 as `{$alias}`");
+    }
 
-protected function addAbsenSesi(
-    Builder $query,
-    string $alias = 'mhs_absensi'
-): void {
-
-    $query->select('kelas_sesi.*')
-          ->selectRaw("99 as `{$alias}`"); 
-}
     protected function addMahasiswaNilaiAkhir(
         $queryUser,
         int $idJadwal,

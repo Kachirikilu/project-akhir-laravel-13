@@ -43,7 +43,7 @@
                         'sortFieldString' => 'admin_id',
                         'headString' => 'ADM ID',
                         'rowSpan' => 2,
-                        'isMain' => 1,
+                        'isBorderR' => 1,
                         'isCenter' => 1,
                     ])
                 @elseif ($switchTable == 'dosen')
@@ -51,7 +51,7 @@
                         'sortFieldString' => 'dosen_id',
                         'headString' => 'DSN ID',
                         'rowSpan' => 2,
-                        'isMain' => 1,
+                        'isBorderR' => 1,
                         'isCenter' => 1,
                     ])
                 @elseif ($switchTable == 'mahasiswa')
@@ -59,7 +59,7 @@
                         'sortFieldString' => 'mahasiswa_id',
                         'headString' => 'MHS ID',
                         'rowSpan' => 2,
-                        'isMain' => 1,
+                        'isBorderR' => 1,
                         'isCenter' => 1,
                     ])
                 @endif
@@ -74,6 +74,7 @@
                     'rowSpan' => 2,
                     'isMain' => 1,
                     'isCenter' => 1,
+                    'isSticky' => 1,
                 ])
             @else
                 @if ($switchTable == '')
@@ -83,7 +84,7 @@
                         'isCenter' => 1,
                     ])
                 @else
-                    <th rowspan="2" class="table-head border-x">Role</th>
+                    <th rowspan="2" class="table-head ">Role</th>
                 @endif
             @endif
 
@@ -92,6 +93,7 @@
                 'headString' => 'Nama',
                 'rowSpan' => 2,
                 'isMain' => 1,
+                'isSticky' => ($withRPS ?? false) ? 0 : 1,
             ])
             @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
                 <th colspan="{{ $withNilai ?? false ? 4 : 3 }}" class="table-head-sub">
@@ -108,13 +110,13 @@
 
             @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
                 <th colspan="3" class="table-head-sub">
-                    RPS
+                    Rencana Pembelajaran Semester
                 </th>
             @endif
 
             @if (!($withRPS ?? false))
                 <th colspan="{{ $switchTable == 'mahasiswa' ? 2 : ($switchTable == 'admin' ? 3 : 4) }}"
-                    class="table-head-sub">
+                    class="table-head-sub border-x">
                     Identitas (ID)
                 </th>
             @endif
@@ -131,7 +133,7 @@
                         'maxLength' => 4,
                         'placeholder' => 'Tahun',
                         'rowSpan' => 2,
-                        'isBorderX' => 1,
+                        'isBorderR' => 1,
                     ])
                 @else
                     @include('livewire.global.table.head-table', [
@@ -226,7 +228,8 @@
                     'headString' =>
                         $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
                     'isCenter' => 1,
-                    'isMain' => 1,
+                    'isBorderL' => 1,
+                    'isBorderR' => $switchTable == 'mahasiswa' ? 0 : 1,
                 ])
                 @if ($switchTable !== 'mahasiswa')
                     @include('livewire.global.table.head-table', [
@@ -235,7 +238,7 @@
                         'headString' =>
                             $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
                         'isCenter' => 1,
-                        'isBorderR' => $switchTable == 'admin' ? 1 : 0,
+                        // 'isBorderR' => $switchTable == 'admin' ? 1 : 0,
                     ])
                     @if ($switchTable !== 'admin')
                         @include('livewire.global.table.head-table', [
@@ -266,10 +269,10 @@
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             @if (!($withNilai ?? false))
-                <td class="text-xs sm:text-sm table-main text-center">{{ $user->id }}</td>
+                <td class="table-main text-center table-border-x">{{ $user->id }}</td>
 
                 @if ($switchTable !== '')
-                    <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $user->role_id }}</td>
+                    <td class="table-second table-border-r text-center">{{ $user->role_id }}</td>
                 @endif
             @endif
             {{-- @php
@@ -286,17 +289,17 @@
 
     
                 @endphp
-                <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
+                <td class="table-second table-border-r text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
             {{-- Role --}}
             @if ($withRPS ?? false)
                 @if ($switchTable == 'dosen')
-                    <td class="text-xs sm:text-sm table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
+                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
                         {{ $user->identity2 ?? '-' }}</td>
                 @elseif ($switchTable == 'mahasiswa')
-                    <td class="text-xs sm:text-sm table-main whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
+                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
                 @endif
             @else
-                <td class="text-xs sm:text-sm table-second text-center">
+                <td class="table-second text-center">
                     <flux:dropdown>
 
                         <button class="cursor-pointer">
@@ -328,12 +331,12 @@
             @endif
 
 
-            <td class="text-xs sm:text-sm {{ $withRPS ?? false ? 'table-second' : 'table-main' }} whitespace-nowrap">
+            <td class="{{ $withRPS ?? false ? 'table-second' : 'table-main-sticky' }} whitespace-nowrap">
                 {{ $user->name ?? '-' }}</td>
 
             @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
                 @if ($withNilai ?? null)
-                    <td class="text-xs sm:text-sm table-second table-border-x whitespace-nowrap">
+                    <td class="table-second table-border-x whitespace-nowrap">
                         @if (!$user->trashed())
                             <x-button-action color="emerald"
                                 href="{{ route('nilai-mahasiswa-management', [
@@ -351,11 +354,11 @@
                         @endif
                     </td>
                 @endif
-                <td class="text-xs sm:text-sm table-second table-border-l whitespace-nowrap text-center">
+                <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $user->mahasiswa->rekap_mhs ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">
+                <td class="table-second whitespace-nowrap text-center">
                     {{ $user->mahasiswa->ipk_mhs ?? '0.00' }}</td>
-                <td class="text-xs sm:text-sm table-sub table-border-l whitespace-nowrap text-center">
+                <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
@@ -370,10 +373,10 @@
                 </td>
             @endif
             @if (!($withRPS ?? false))
-                <td class="text-xs sm:text-sm table-second">{{ $user->email }}</td>
+                <td class="table-second">{{ $user->email }}</td>
             @endif
             @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
-                <td class="text-xs sm:text-sm table-second table-border-x text-center">
+                <td class="table-second table-border-x text-center">
                     <x-button-action
                         @click="
                             $store.user?.reset();
@@ -416,34 +419,34 @@
                         <span>RPS</span>
                     </x-button-action>
                 </td>
-                <td class="text-xs sm:text-sm table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
-                <td class="text-xs sm:text-sm table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
+                <td class="table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
+                <td class="table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
                     SKS</td>
             @endif
 
             @if (!($withRPS ?? false))
-                <td class="text-xs sm:text-sm table-main text-center">{{ $user->identity1 ?? '-' }}</td>
+                <td class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">{{ $user->identity1 ?? '-' }}</td>
                 @if ($switchTable != 'mahasiswa')
-                    <td class="text-xs sm:text-sm table-sub {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
+                    <td class="table-sub text-center">
                         {{ $user->identity2 ?? '-' }}
                     </td>
                 @endif
 
                 @if ($switchTable == 'dosen' || $switchTable == '')
                     <td
-                        class="table-sub {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
+                        class="table-sub text-center">
                         {{ $user->identity3 ?? '-' }}
                     </td>
                 @endif
-                <td class="text-xs sm:text-sm table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
+                <td class="table-sub table-border-x text-center">{{ $user->nik ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'mahasiswa')
-                <td class="text-xs sm:text-sm table-second table-border-x text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
-                <td class="text-xs sm:text-sm table-second text-center">
+                <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer focus:outline-none">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
@@ -460,7 +463,7 @@
                 </td>
             @endif
 
-            <td class="text-xs sm:text-sm table-second text-center">
+            <td class="table-second text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
@@ -476,11 +479,11 @@
             </td>
 
             @if ((($withCapaian ?? false) && ($withProdi ?? false)) || !isset($withCapaian))
-                <td class="text-xs sm:text-sm table-second min-w-48">
+                <td class="table-second min-w-48">
                     {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
             @endif
 
-            <td class="text-xs sm:text-sm table-main text-center">
+            <td class="table-main text-center table-border-x">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -495,8 +498,8 @@
             </td>
 
             @if (!(($withRPS ?? false) || ($withNilai ?? false) || Auth::user()?->dosen))
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
-                <td class="text-xs sm:text-sm table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
             @endif
         </tr>
 

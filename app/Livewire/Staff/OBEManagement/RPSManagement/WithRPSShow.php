@@ -42,11 +42,19 @@ trait WithRPSShow
 
     public function printPDFRPS($id)
     {
-        $rps = RPS::with(['mk_rel', 'dosens',
-                // 'cpls',
-                'cpmks.scpmks', 'refs'])->findOrFail($id);
+        $rps = RPS::with(['mk_rel', 'dosens', 'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);
+        
+        $fileNameSafe = str_replace('/', '-', 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$data['akademik'].'.pdf');
 
+        return response()->streamDownload(function () use ($rps) {
+            echo $this->generateRawPDFContent($rps);
+        }, $fileNameSafe, ['Content-Type' => 'application/pdf']);
+    }
+
+    protected function generateRawPDFContent($rps): string
+    {
+        $data = $this->formatRPSDetailForShow($rps);
         $logoPath = public_path('images/logo-unsri.png');
         $logoBase64 = '';
 
@@ -61,19 +69,16 @@ trait WithRPSShow
             'logoBase64' => $logoBase64,
         ])->render();
 
-        $fileName = 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$data['akademik'].'.pdf';
-        $fileNameSafe = str_replace('/', '-', $fileName);
+        $browsershot = Browsershot::html($html)
+            ->noSandbox()
+            ->format('A4')
+            ->showBackground();
 
-        return response()->streamDownload(function () use ($html) {
-            echo Browsershot::html($html)
-                ->noSandbox()
-                ->format('A4')
-                ->showBackground()
-->setChromePath('/usr/bin/google-chrome-stable')
-                ->pdf();
-        }, $fileNameSafe, [
-            'Content-Type' => 'application/pdf',
-        ]);
+        if ($chromePath = env('BROWSERSHOT_CHROME_PATH')) {
+            $browsershot->setChromePath($chromePath);
+        }
+
+        return $browsershot->pdf();
     }
 
     private function formatRPSDetailForShow(RPS $rps): array
@@ -98,7 +103,7 @@ trait WithRPSShow
             $desRPS .= '.';
         }
         
-        return [
+        $data = [
             'rps_id' => $rps->id,
             'kode_blok' => $rps->kode_blok ?? null,
             'kode_rps' => $rps->kode ?? null,
@@ -144,6 +149,8 @@ trait WithRPSShow
             'program_pembelajaran' => $this->buildProgramPembelajaranRows($rps),
             'referensi' => $this->collectReferensiByPriority($rps),
         ];
+
+        return $data;
     }
 
     private function collectReferensiByPriority(RPS $rps): string
@@ -236,12 +243,14 @@ trait WithRPSShow
         $uasFields = SubCPMK::$UAS_FIELDS;
 
         $hasUTS = collect($rows)->contains(function ($row) {
-            return SubCPMK::isUTS($row['metode'] ?? '', $row['sub_cpmk'] ?? '');
+            return SubCPMK::isUTS($row['metode'] ?? '');
         });
 
         $hasUAS = collect($rows)->contains(function ($row) {
-            return SubCPMK::isUAS($row['metode'] ?? '', $row['sub_cpmk'] ?? '');
+            return SubCPMK::isUAS($row['metode'] ?? '');
         });
+
+
 
         $finalRows = [];
 
@@ -368,7 +377,7 @@ trait WithRPSShow
     private function formatDosenNames(array $names): string
     {
         if (empty($names)) {
-            return '-';
+            return 'Tim Pengajar';
         }
 
         if (count($names) === 1) {
@@ -376,8 +385,8 @@ trait WithRPSShow
         }
 
         // Jika ada 'Tim', return 'Tim'
-        if (in_array('Tim', $names)) {
-            return 'Tim';
+        if (in_array('Tim Pengajar', $names)) {
+            return 'Tim Pengajar';
         }
 
         // Lebih dari 1, kembalikan nama dosen dalam baris baru.

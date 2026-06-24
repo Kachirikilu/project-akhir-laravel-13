@@ -170,7 +170,7 @@ trait WithSesiModal
         }
     }
 
-    // public function editAbsensi($id, $jadwal_id)
+    // public function editNilaiAbsensi($id, $jadwal_id)
     // {
     //     if (! $this->AuthCheck('staff')) {
     //         return;
@@ -235,7 +235,7 @@ trait WithSesiModal
     //     $this->dispatch('refresh-component');
     // }
 
-    // public function updateAbsensi($data)
+    // public function updateNilaiAbsensi($data)
     // {
     //     if (! $this->AuthCheck('staff')) {
     //         return;

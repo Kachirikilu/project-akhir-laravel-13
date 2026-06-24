@@ -4,6 +4,7 @@ namespace App\Models\Akademik;
 
 use App\Models\Auth\Dosen;
 use App\Models\Kelas\Kelas;
+use App\Models\Penilaian\NilaiMahasiswa;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,6 +71,14 @@ class RPS extends Model
         return $this->hasMany(Kelas::class, 'rps_id');
     }
 
+    public function nilai_mahasiswas()
+    {
+        return $this->hasMany(
+            NilaiMahasiswa::class,
+            'mahasiswa_id'
+        );
+    }
+
     public function getDosensSubCpmk($subCpmkId)
     {
         $subCpmk = $this->scpmks()->find($subCpmkId);
@@ -121,12 +130,10 @@ class RPS extends Model
             if (! $kodeMK || ! $this->akademik) {
                 return null;
             }
-            $suffixKode = $this->kode_blok;
-
-            $ganjilGenap = $this->mk_rel?->kode_semester;
-            $suffixKode .= '-'.$ganjilGenap;
-
-            return "{$suffixKode}-{$kodeMK}";
+            $kodeBlok = $this->kode_blok;
+            $gg = $this->mk_rel?->kode_semester;
+ 
+            return "{$kodeBlok}-{$gg}-{$kodeMK}";
         });
     }
 

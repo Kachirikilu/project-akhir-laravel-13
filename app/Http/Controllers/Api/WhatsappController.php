@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\WhatsappController\WithDeactivation;
-use App\Http\Controllers\Api\WhatsappController\WithKelas;
 use App\Http\Controllers\Api\WhatsappController\WithDataDiri;
-use App\Http\Controllers\Api\WhatsappController\WithVerification;
-use App\Http\Controllers\Api\WhatsappController\WithNilaiMahasiswa;
+use App\Http\Controllers\Api\WhatsappController\WithDeactivation;
 use App\Http\Controllers\Api\WhatsappController\WithExcelNilai;
+use App\Http\Controllers\Api\WhatsappController\WithKelas;
+use App\Http\Controllers\Api\WhatsappController\WithRPS;
+use App\Http\Controllers\Api\WhatsappController\WithNilaiMahasiswa;
+use App\Http\Controllers\Api\WhatsappController\WithVerification;
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
 use Illuminate\Http\Request;
@@ -16,18 +17,19 @@ use Illuminate\Support\Str;
 
 class WhatsappController extends Controller
 {
-    use WithDeactivation;
-    use WithKelas;
     use WithDataDiri;
-    use WithVerification;
-    use WithNilaiMahasiswa;
+    use WithDeactivation;
     use WithExcelNilai;
+    use WithKelas;
+    use WithRPS;
+    use WithNilaiMahasiswa;
+    use WithVerification;
 
     public $verifyKey = ['VERIFIKASI', 'VERIFY', 'VERYFICATION', 'IDENTITAS', 'DAFTAR', 'REGISTRASI', 'LOGIN', 'LOG IN', 'MASUK'];
 
-    public $dataDiriKey = ["DATA DIRI", "MY SELF", "DATA", "AUTH", "AKUN", "USER", "TOKEN", "CHECK TOKEN", "CEK TOKEN", "INFORMASI TOKEN", "LIMTI", "CHECK LIMIT", "LIMIT",];
+    public $dataDiriKey = ['DATA DIRI', 'MY SELF', 'DATA', 'AUTH', 'AKUN', 'USER', 'TOKEN', 'CHECK TOKEN', 'CEK TOKEN', 'INFORMASI TOKEN', 'LIMTI', 'CHECK LIMIT', 'LIMIT'];
 
-    public $updateTokenKey = ["ISI TOKEN", "PERBARUI TOKEN", "TOKEN BARU", "RESET TOKEN", "TAMBAH TOKEN", "PERBARUI LIMIT", "UPDATE TOKEN", "TOKEN UPDATE",];
+    public $updateTokenKey = ['ISI TOKEN', 'PERBARUI TOKEN', 'TOKEN BARU', 'RESET TOKEN', 'TAMBAH TOKEN', 'PERBARUI LIMIT', 'UPDATE TOKEN', 'TOKEN UPDATE'];
 
     public $deactivateKey = ['NONAKTIFKAN', 'MATIKAN', 'DIAM', 'SILENT', 'LOGOUT', 'KELUAR', 'LOG OUT', 'MUTE', 'MIC MATI'];
 
@@ -45,12 +47,31 @@ class WhatsappController extends Controller
 
     public $nilaiMahasiswaKey = ['NILAI', 'NILAI SAYA', 'LIHAT NILAI', 'NILAI SEMESTER'];
 
+    public $rpsKey = ['LIST RPS', 'SEMUA RPS', 'DAFTAR RPS', 'RPS SAYA',  'RPS'];
+
+    public $daftarRPSKey = ['LIST RPS', 'SEMUA RPS', 'DAFTAR RPS'];
+
+    public $pdfGetRPSKey = ['DOWNLOAD RPS', 'DOWNLOAD PDF RPS', 'GET PDF RPS', 'GET RPS', 'DOWNLOAD PDF RPS', 'PRINT RPS', 'PRINT PDF RPS', 'PRINT RPS PDF'];
+
     private function isTrigger(string $pesan, array $key): bool
     {
         $pesanUpper = strtoupper($pesan);
-        // return in_array($pesanUpper, $key);
         return Str::startsWith($pesanUpper, $key);
     }
+
+    // private function isTrigger(string $pesan, array $key): bool
+    // {
+    //     $pesanUpper = trim(strtoupper($pesan));
+
+    //     foreach ($key as $trigger) {
+    //         $triggerUpper = strtoupper($trigger);
+    //         if ($pesanUpper === $triggerUpper || str_starts_with($pesanUpper, $triggerUpper . ' ')) {
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
     public function handleIncomingChat(Request $request)
     {
@@ -80,20 +101,25 @@ class WhatsappController extends Controller
             return $this->processDeactivateToken($noWA, $nameWA, $pesan);
         }
 
-
-
         if ($this->isTrigger($pesan, $this->nilaiMahasiswaKey)) {
             return $this->processNilaiMahasiswa($noWA, $nameWA, $pesan);
         }
 
         if ($this->isTrigger($pesan, $this->excelGetNilaiKey)) {
-            return $this->processGetExcelNilai($noWA, $nameWA, $pesan);
+            return $this->processGetExcelNilai($noWA, $nameWA, $pesan, $this->excelGetNilaiKey);
         }
         if ($this->isTrigger($pesan, $this->excelNilaiKey)) {
             return $this->processGateAwayExcelNilai($noWA, $nameWA, $pesan);
         }
         if ($request->hasFile('excel_file')) {
             return $this->processExcelNilai($noWA, $nameWA, $pesan, $request);
+        }
+
+        if ($this->isTrigger($pesan, $this->rpsKey)) {
+            return $this->processRPS($noWA, $nameWA, $pesan, $this->daftarRPSKey);
+        }
+        if ($this->isTrigger($pesan, $this->pdfGetRPSKey)) {
+            return $this->processGetPDFRPS($noWA, $nameWA, $pesan, $this->pdfGetRPSKey);
         }
 
         return response()->json(['status' => false, 'message' => 'Perintah tidak dikenali!'], 400);
@@ -118,5 +144,4 @@ class WhatsappController extends Controller
     {
         return property_exists($this, $property);
     }
-
 }

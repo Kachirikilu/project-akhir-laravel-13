@@ -19,7 +19,6 @@ use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\KelasSesi;
-use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -31,10 +30,10 @@ class SesiManagement extends Component
     use HasGetByKode;
     use HasSortir;
     use HasToast;
+    use WithNilaiAbsenModal;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
     use WithMahasiswaSearchFilters;
-    use WithNilaiAbsenModal;
     use WithNilaiExcel;
     use WithPagination;
     use WithRPSShow;
@@ -336,28 +335,20 @@ class SesiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         if (Auth::user()->admin || Auth::user()->dosen) {
-            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_dispensasi', 7 => 'mhs_terlambat', 8 => 'mhs_izin', 9 => 'mhs_sakit', 10 => 'mhs_tidak_masuk', 11 => 'mhs_nilai_akhir', 12 => 'mhs_nilai_index', 13 => 'mhs_nilai_mutu', 14 => 'angkatan', 15 => 'status', 16 => 'program_studi'];
+            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_dispensasi', 7 => 'mhs_terlambat', 8 => 'mhs_izin', 9 => 'mhs_sakit', 10 => 'mhs_tidak_masuk', 11 => 'angkatan', 12 => 'status', 13 => 'prodi'];
         } else {
-            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'angkatan', 5 => 'status', 6 => 'program_studi'];
+            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'angkatan', 5 => 'status', 6 => 'prodi'];
         }
         $columns = [
             'sesi-card' => [1 => 'pertemuan_ke', 2 => 'total_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
             'sesi-table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'total_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
             'mahasiswa' => $mahasiswa,
-            'cpmk' => [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_nilai_akhir', 5 => 'mhs_nilai_index', 6 => 'mhs_nilai_mutu', 7 => 'angkatan', 8 => 'status', 9 => 'program_studi'],
         ];
         $aliases = [
             'id' => ['id', 'mahasiswa_id'],
             'mahasiswa_id' => ['mahasiswa_id', 'id'],
             'pertemuan_ke' => ['pertemuan_ke', 'name'],
-            // 'total_absensi' => ['total_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
-            'mhs_nilai_akhir' => ['mhs_nilai_akhir'],
-            'mhs_nilai_index' => ['mhs_nilai_index'],
-            'mhs_nilai_huruf' => ['mhs_nilai_huruf'],
-            'angkatan' => ['angkatan'],
-            'status' => ['status'],
-            'program_studi' => ['program_studi'],
-
+            'total_absensi' => ['total_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
             // 'mhs_poin_absensi' => ['total_absensi'],
             // 'name' => ['pertemuan_ke'],
         ];
@@ -409,29 +400,32 @@ class SesiManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
+    protected function addNilaiJadwalSubquery(
+        $query,
+        int $idJadwal,
+        string $alias = 'mhs_nilai_data',
+        string $columnToSelect = 'nilai_array'
+    ) {
+        return $query->addSelect([
+            $alias => DB::table('nilai_mahasiswas')
+                ->join('mahasiswas', 'nilai_mahasiswas.mahasiswa_id', '=', 'mahasiswas.id')
+                ->select("nilai_mahasiswas.$columnToSelect")
+                ->whereColumn('mahasiswas.user_id', 'users.id')
+                ->where('nilai_mahasiswas.kj_id', $idJadwal)
+                ->whereNull('nilai_mahasiswas.deleted_at')
+                ->limit(1),
+        ]);
+    }
+
     public function render()
     {
         try {
-            $jadwalId = $this->jadwal_id_url;
-
-            $querySesi = collect();
-            $queryUser = collect();
-
-            switch ($this->switchTable) {
-                case '':
-                case 'sesi-card':
-                case 'sesi-table':
-                    $querySesi = $this->inputSesiSearch($jadwalId);
-                    break;
-                case 'mahasiswa':
-                case 'cpmk':
-                    $queryUser = $this->inputUserSearch('mahasiswa', $jadwalId, null, 1);
-                    break;
-            }
+            $idJadwal = $this->jadwal_id_url;
+            $querySesi = $this->inputSesiSearch($idJadwal);
 
             if (Auth::user()->mahasiswa) {
                 $mahasiswaId = Auth::user()->mahasiswa->id;
-                $isInJadwal = KelasJadwal::where('id', $jadwalId)
+                $isInJadwal = KelasJadwal::where('id', $idJadwal)
                     ->whereHas('mahasiswas', function ($q) use ($mahasiswaId) {
                         $q->where('mahasiswas.id', $mahasiswaId);
                     })
@@ -464,11 +458,11 @@ class SesiManagement extends Component
                         $query->where('mahasiswa_id', $mahasiswaId);
                     },
                 ])
-                    ->where('kj_id', $jadwalId)
+                    ->where('kj_id', $idJadwal)
                     ->get();
             } else {
                 $sesiList = KelasSesi::with(['jadwal_rel', 'override'])
-                    ->where('kj_id', $jadwalId)
+                    ->where('kj_id', $idJadwal)
                     ->get();
 
             }
@@ -485,29 +479,51 @@ class SesiManagement extends Component
                     ->lt(now());
             })->pluck('id')->all();
 
+            $queryUser = $this->inputUserSearch('mahasiswa', $idJadwal, null, 1)->select('users.*');
+
             $expiredCount = (int) count($expiredSesiIds ?: []);
 
             if (Auth::user()->admin || Auth::user()->dosen) {
 
-                switch ($this->switchTable) {
-                    case '':
-                    case 'sesi-card':
-                    case 'sesi-table':
-                        $this->addAbsenSesi($querySesi, $jadwalId, 'mhs_absensi');
-                        break;
-                    case 'mahasiswa':
-                        $this->addMahasiswaNilaiAkhir($queryUser, $jadwalId, 'mhs_nilai_akhir');
-                        $this->addMahasiswaNilaiIndex($queryUser, $jadwalId, 'mhs_nilai_index');
-                        $this->addMahasiswaNilaiMutu($queryUser, $jadwalId, 'mhs_nilai_mutu');
-                        $this->addMahasiswaAttendanceStats($queryUser, $jadwalId);
-                        $this->addMahasiswaTidakMasuk($queryUser, $jadwalId, $expiredCount, 'mhs_tidak_masuk');
-                        break;
-                    case 'cpmk':
-                        // $this->addNilaiRPSSubquery($queryUser, $this->rps_id_url, 'mhs_nilai_array', 'nilai_array');
-                        // $this->addNilaiRPSSubquery($queryUser, $this->rps_id_url, 'mhs_bobot_array', 'bobot_array');
-                        $this->addNilaiJadwalSubquery($queryUser, $jadwalId, 'mhs_nilai_array', 'nilai_array');
-                        $this->addNilaiJadwalSubquery($queryUser, $jadwalId, 'mhs_bobot_array', 'bobot_array');
-                        break;
+                $this->addMahasiswaNilaiAkhir(
+                    $queryUser,
+                    $idJadwal,
+                    'mhs_nilai_akhir'
+                );
+
+                $this->addMahasiswaNilaiIndex(
+                    $queryUser,
+                    $idJadwal,
+                    'mhs_nilai_index'
+                );
+
+                $this->addMahasiswaNilaiMutu(
+                    $queryUser,
+                    $idJadwal,
+                    'mhs_nilai_mutu'
+                );
+
+                $this->addMahasiswaAttendanceStats(
+                    $queryUser,
+                    $idJadwal
+                );
+
+                $this->addMahasiswaTidakMasuk(
+                    $queryUser,
+                    $idJadwal,
+                    $expiredCount,
+                    'mhs_tidak_masuk'
+                );
+
+                $this->addAbsenSesi(
+                    $querySesi,
+                    $idJadwal,
+                    'mhs_absensi'
+                );
+
+                if ($this->switchTable == 'cpmk') {
+                    $this->addNilaiJadwalSubquery($queryUser, $idJadwal, 'mhs_nilai_array', 'nilai_array');
+                    $this->addNilaiJadwalSubquery($queryUser, $idJadwal, 'mhs_bobot_array', 'bobot_array');
                 }
             }
 
@@ -516,10 +532,10 @@ class SesiManagement extends Component
              * COUNTING
              * =========================
              */
-            $countSesi = KelasSesi::where('kj_id', $jadwalId);
+            $countSesi = KelasSesi::where('kj_id', $idJadwal);
 
-            $countMahasiswa = User::whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {
-                $q->where('kj_id', $jadwalId);
+            $countMahasiswa = User::whereHas('mahasiswa.jadwals', function ($q) use ($idJadwal) {
+                $q->where('kj_id', $idJadwal);
             });
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
@@ -531,13 +547,49 @@ class SesiManagement extends Component
 
             /**
              * =========================
+             * SEARCH FILTER
+             * =========================
+             */
+            // $search = trim($this->search);
+
+            // if (! empty($search)) {
+
+            //     $totalSesiUntukPersen = (clone $countSesi)->count() ?: 1;
+            //     $cleanNumber = preg_replace('/[^0-9.]/', '', $search);
+
+            //     if (is_numeric($cleanNumber) && $cleanNumber !== '') {
+
+            //         if (str_contains($search, '%')) {
+            //             $queryUser->havingRaw(
+            //                 '(mhs_poin_absensi / (2 * ?)) * 100 LIKE ?',
+            //                 [$totalSesiUntukPersen, "%{$cleanNumber}%"]
+            //             );
+            //         } else {
+            //             $queryUser->having('mhs_absensi', '=', $cleanNumber)
+            //                 ->orHaving('mhs_masuk', '=', $cleanNumber)
+            //                 ->orHaving('mhs_hadir', '=', $cleanNumber)
+            //                 ->orHaving('mhs_terlambat', '=', $cleanNumber)
+            //                 ->orHaving('mhs_izin', '=', $cleanNumber)
+            //                 ->orHaving('mhs_sakit', '=', $cleanNumber)
+            //                 ->orHaving('mhs_dispensasi', '=', $cleanNumber)
+            //                 ->orHaving('mhs_absen', '=', $cleanNumber)
+            //                 ->orHaving('mhs_tidak_masuk', '=', $cleanNumber)
+            //                 ->orHaving('mhs_poin_absensi', '=', $cleanNumber);
+            //         }
+            //     }
+            // }
+
+            /**
+             * =========================
              * DEFAULT DATA
              * =========================
              */
             $sesis = collect();
             $users = collect();
+            $cpmkUsers = collect();
             $groupsCpmk = collect();
             $totalBobotPerCpmk = collect();
+            $bobotCpmkArray = [];
 
             $absensi = [
                 'mhs_poin_absensi' => 0,
@@ -563,49 +615,46 @@ class SesiManagement extends Component
                     $sesis = $querySesi->get();
                     break;
                 case 'sesi-table':
-                    $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                    // if ($this->searchMode == 'full') {
+                    $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
+                    // } else {
+                    //     $sesis = $querySesi->paginate($this->perPage);
+                    // }
                     break;
                 case 'mahasiswa':
                     if ($this->searchMode == 'full') {
-                        $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                        $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
                     } else {
                         $users = $queryUser->paginate($this->perPage);
                     }
                     break;
-
                 case 'cpmk':
-                    $sampleNilai = NilaiMahasiswa::where('rps_id', $this->rps_id_url)->first();
+                    try {
+                        // 1. Suntikkan subquery nilai & bobot berdasarkan $idJadwal ke dalam $queryUser
 
-                    if (! $sampleNilai) {
-                        $sampleNilai = new NilaiMahasiswa;
-                        $sampleNilai->rps_id = $this->rps_id_url;
+                        // 2. Lakukan pencarian atau langsung eksekusi pagination
+                        if ($this->searchMode == 'full') {
+                            $cpmkUsers = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $idJadwal);
+                        } else {
+                            $cpmkUsers = $queryUser->paginate($this->perPage);
+                        }
+                    } catch (\Exception $e) {
+                        // 🌟 Jika disubquery ada typo nama tabel/kolom, dia akan tertangkap di sini
+                        dd('SQL ERROR PADA SUBQUERY:', $e->getMessage(), $e->getTraceAsString());
                     }
-                    $mappingData = $sampleNilai->mapping_pertemuan ?? [];
 
-                    if ($this->searchMode == 'full') {
-                        $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
-                    } else {
-                        $users = $queryUser->paginate($this->perPage);
-                    }
+                    // Jika aman, dd di bawah ini pasti muncul datanya
+                    dd($cpmkUsers);
+
+                    // 3. Siapkan group data CPMK untuk view seperti sebelumnya
+                    $mappingData = $this->mapping_pertemuan ?? [];
                     if (! empty($mappingData)) {
-                        $collectionMapping = collect($mappingData);
-
-                        $totalGlobalBobotMentah = $collectionMapping->sum('bobot');
-                        $totalGlobalBobotMentah = $totalGlobalBobotMentah > 0 ? $totalGlobalBobotMentah : 1;
-
-                        $normalizedMapping = $collectionMapping->map(function ($item) use ($totalGlobalBobotMentah) {
-                            $bobotMentah = $item['bobot'] ?? 0;
-                            $item['bobot'] = ($bobotMentah / $totalGlobalBobotMentah) * 100;
-
-                            return $item;
-                        })->toArray();
-
-                        $this->mapping_pertemuan = $normalizedMapping;
-                        $groupsCpmk = collect($normalizedMapping)->groupBy('kode_cpmk');
+                        $groupsCpmk = collect($mappingData)->groupBy('kode_cpmk');
+                        $totalBobotPerCpmk = $groupsCpmk->map(fn ($group) => $group->sum('bobot'));
                     } else {
                         $groupsCpmk = collect();
+                        $totalBobotPerCpmk = collect();
                     }
-
                     break;
             }
 
@@ -617,8 +666,8 @@ class SesiManagement extends Component
             $totalSesiKelas = $countSesi->count() ?: 0;
 
             $summaryQuery = User::query()
-                ->whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {
-                    $q->where('kj_id', $jadwalId);
+                ->whereHas('mahasiswa.jadwals', function ($q) use ($idJadwal) {
+                    $q->where('kj_id', $idJadwal);
                 })
                 ->select('users.*');
 
@@ -645,7 +694,7 @@ class SesiManagement extends Component
             if (Auth::user()->admin || Auth::user()->dosen || Auth::user()->mahasiswa) {
                 foreach ($statuses as $alias => $condition) {
 
-                    $summaryQuery->selectSub(function ($query) use ($jadwalId, $alias, $condition) {
+                    $summaryQuery->selectSub(function ($query) use ($idJadwal, $alias, $condition) {
 
                         if ($alias === 'mhs_poin_absensi') {
                             $rawSql = "COALESCE(SUM($condition),0)";
@@ -658,7 +707,7 @@ class SesiManagement extends Component
                             ->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')
                             ->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')
                             ->whereColumn('mahasiswas.user_id', 'users.id')
-                            ->where('kelas_sesi.kj_id', $jadwalId);
+                            ->where('kelas_sesi.kj_id', $idJadwal);
 
                     }, $alias);
                 }
@@ -737,6 +786,7 @@ class SesiManagement extends Component
             return view('livewire.all-role.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => $sesis,
                 'users' => $users,
+                'cpmkUsers' => $cpmkUsers,
                 'groupsCpmk' => $groupsCpmk ?? null,
                 'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
                 'absensi' => $absensi,

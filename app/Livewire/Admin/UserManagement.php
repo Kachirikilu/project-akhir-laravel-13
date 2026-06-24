@@ -2,29 +2,29 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Global\HasSortir;
+use App\Livewire\Admin\UserManagement\WithUserDelete;
 // use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 // use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
-use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
-use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Models\Auth\User;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class UserManagement extends Component
 {
-    use HasToast;
-    use HasStats;
     use HasSortir;
+    use HasStats;
+    use HasToast;
+
     // use WithDepartemenFilters;
     // use WithFakultasFilters;
     use WithDepartemenSearchFilters;
@@ -36,8 +36,6 @@ class UserManagement extends Component
     use WithUserFilters;
     use WithUserModal;
     use WithUserSearchFilters;
-
-
 
     public $perPage = 8;
 
@@ -66,8 +64,7 @@ class UserManagement extends Component
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterAngkatan' => ['except' => ''],
-        'showDeleted' =>  ['except' => false],
-
+        'showDeleted' => ['except' => false],
 
         // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
@@ -190,11 +187,11 @@ class UserManagement extends Component
 
     public function render()
     {
-        $this->inputPrFilter();
-        $this->inputDpFilter();
-        $this->inputFkFilter();
-
         try {
+            $this->inputPrFilter();
+            $this->inputDpFilter();
+            $this->inputFkFilter();
+
             $queryUser = $this->inputUserSearch($this->switchTable);
 
             // =========================
@@ -220,15 +217,15 @@ class UserManagement extends Component
             }
 
             $stats = [
-                'user-prodi'     => '🏛️',
-                'user-opsi'      => '⚙️',
-                'user-aktif'     => '🟢', 
+                'user-prodi' => '🏛️',
+                'user-opsi' => '⚙️',
+                'user-aktif' => '🟢',
                 'user-non-aktif' => '🔴',
 
-                'user'           => '👥',
-                'admin'          => '🛡️', 
-                'dosen'          => '👨‍🏫',
-                'mahasiswa'      => '🧑‍🎓', 
+                'user' => '👥',
+                'admin' => '🛡️',
+                'dosen' => '👨‍🏫',
+                'mahasiswa' => '🧑‍🎓',
             ];
 
             $stats = array_merge($stats, $this->getStatsUser($countUser));
@@ -236,8 +233,9 @@ class UserManagement extends Component
             if ($this->searchMode == 'full') {
                 $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
-                 $users = $queryUser->paginate($this->perPage);
+                $users = $queryUser->paginate($this->perPage);
             }
+
             // =========================
             // RESULT VIEW
             // =========================

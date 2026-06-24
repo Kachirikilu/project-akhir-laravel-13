@@ -328,7 +328,7 @@
                                         @endif
                                     @endforeach
                                 @else
-                                    {{ $row['dosen'] ?? '-' }}
+                                    {{ $row['dosen'] ?? 'Tim Pengajar' }}
                                 @endif
                             </td>
                         @endif

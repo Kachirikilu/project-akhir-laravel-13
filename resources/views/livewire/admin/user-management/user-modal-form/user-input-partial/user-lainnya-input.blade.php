@@ -4,7 +4,7 @@
 <div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        Identity Information</h4>
+        Lainnya</h4>
 
     <div>
         @include('livewire.global.modal-form.partial.label', [
@@ -44,20 +44,11 @@
         @enderror
     </div>
 
-    @include('livewire.global.modal-form.select-form', [
-        'alpine' => 'user',
-        'modelString' => 'jenis_kelamin',
-        'xOptions' => ['Laki-laki', 'Perempuan'],
-        'iconString' => 'tag',
-        'placeholder' => 'Pilih Gender...',
-        'message' => $errors->first('jenis_kelamin'),
-    ])
-
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
         'modelString' => 'tempat_lahir',
-        'iconString' => 'user-circle',
+        'iconString' => 'map-pin',
         'placeholder' => 'Contoh: Kota Palembang',
         'isRequired' => 0,
         'message' => $errors->first('tempat_lahir'),
@@ -67,21 +58,13 @@
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
         'modelString' => 'tanggal_lahir',
-        'iconString' => 'user-circle',
+        'iconString' => 'calendar',
         'placeholder' => 'Contoh: Kota Palembang',
         'isDate' => 1,
         'isRequired' => 0,
         'message' => $errors->first('tanggal_lahir'),
     ])
 
-    @include('livewire.global.modal-form.select-form', [
-        'alpine' => 'user',
-        'modelString' => 'agama',
-        'xOptions' => ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'],
-        'iconString' => 'tag',
-        'placeholder' => 'Pilih Agama...',
-        'message' => $errors->first('agama'),
-    ])
 
 
 </div>

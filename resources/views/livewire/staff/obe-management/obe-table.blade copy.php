@@ -33,7 +33,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByRPSgg',
                     'xFilter' => 'filterRPSgg',
-                    'tabFilter' => $totalGanjil + $totalGenap,
+                    'tabFilter' => $totalGanjilRPS + $totalGenapRPS,
                     'tabString' => '',
                     'tabNameString' => 'Semua',
                     'icon' => 'table-cells',
@@ -42,7 +42,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByRPSgg',
                     'xFilter' => 'filterRPSgg',
-                    'tabFilter' => $totalGanjil ?? 0,
+                    'tabFilter' => $totalGanjilRPS ?? 0,
                     'tabString' => 'rps-ganjil',
                     'tabNameString' => 'Ganjil',
                     'icon' => 'calendar-days',
@@ -51,7 +51,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByRPSgg',
                     'xFilter' => 'filterRPSgg',
-                    'tabFilter' => $totalGenap ?? 0,
+                    'tabFilter' => $totalGenapRPS ?? 0,
                     'tabString' => 'rps-genap',
                     'tabNameString' => 'Genap',
                     'icon' => 'calendar-days',

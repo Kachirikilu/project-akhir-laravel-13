@@ -10,19 +10,19 @@
     @if ($withRPS ?? false)
         <template x-if="$store.user.isEdit" x-cloak>
             @include('livewire.global.modal-form.paginate.tab-form', [
-                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas', 4 => 'Lainnya', 5 => 'RPS Terkait'],
+                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Akademik', 4 => 'Akademik', 5 => 'Lainnya', 6 => 'RPS Terkait'],
                 'errorsCount' => $this->getUserErrorSections(),
             ])
         </template>
         <template x-if="$store.user.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.paginate.tab-form', [
-                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas', 4 => 'Lainnya'],
+                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Akademik', 4 => 'Akademik', 5 => 'Lainnya'],
                 'errorsCount' => $this->getUserErrorSections(),
             ])
         </template>
     @else
         @include('livewire.global.modal-form.paginate.tab-form', [
-            'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas', 4 => 'Lainnya'],
+            'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Akademik', 4 => 'Akademik', 5 => 'Lainnya'],
             'errorsCount' => $this->getUserErrorSections(),
         ])
     @endif
@@ -31,15 +31,17 @@
     <div class="mt-4">
         <div x-show="step === 1">
             @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-main-input')
-
         </div>
         <div x-show="step === 2">
             @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-personal-input')
         </div>
         <div x-show="step === 3">
-            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-identitas-input')
+            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-id-akademik-input')
         </div>
         <div x-show="step === 4">
+            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-akademik-input')
+        </div>
+        <div x-show="step === 5">
             @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-lainnya-input')
         </div>
         @if ($withRPS ?? false)
@@ -62,17 +64,17 @@
     @if ($withRPS ?? false)
         <template x-if="$store.user.isEdit" x-cloak>
             @include('livewire.global.modal-form.paginate.stepper-form', [
-                'maxStep' => 4,
+                'maxStep' => 5,
             ])
         </template>
         <template x-if="$store.user.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.paginate.stepper-form', [
-                'maxStep' => 3,
+                'maxStep' => 4,
             ])
         </template>
     @else
         @include('livewire.global.modal-form.paginate.stepper-form', [
-            'maxStep' => 3,
+            'maxStep' => 4,
         ])
     @endif
 </div>

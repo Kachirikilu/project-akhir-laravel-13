@@ -19,9 +19,9 @@ trait WithKelasFilters
 
     public $searchBobotKelas = '';
 
-    public $totalGanjil = '';
+    public $totalGanjilKelas = '';
 
-    public $totalGenap = '';
+    public $totalGenapKelas = '';
 
     public function updatingSearchBobotKelas()
     {
@@ -129,10 +129,10 @@ trait WithKelasFilters
             });
         }
 
-        $this->totalGanjil = (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
+        $this->totalGanjilKelas = (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
             $q->whereRaw('mata_kuliahs.semester % 2 = 1');
         })->count();
-        $this->totalGenap = (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
+        $this->totalGenapKelas = (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
             $q->whereRaw('mata_kuliahs.semester % 2 = 0');
         })->count();
 

@@ -40,7 +40,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
 
         if ($ganjil_genap && $akademik) {
             $this->mahasiswa = Mahasiswa::with([
-                'nilai_mahasiswa' => function ($query) use ($ganjil_genap, $akademik) {
+                'nilai_mahasiswas' => function ($query) use ($ganjil_genap, $akademik) {
                     if (! is_null($ganjil_genap)) {
                         $query->where('ganjil_genap', $ganjil_genap);
                     }
@@ -48,12 +48,12 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
                         $query->where('tahun_akademik', $akademik);
                     }
                 },
-                'nilai_mahasiswa.rps_rel.mk_rel',
+                'nilai_mahasiswas.rps_rel.mk_rel',
                 'pr_rel',
             ])->findOrFail($mahasiswa_id);
         } else {
             $this->mahasiswa = Mahasiswa::with([
-                'nilai_mahasiswa.rps_rel.mk_rel',
+                'nilai_mahasiswas.rps_rel.mk_rel',
                 'pr_rel',
             ])->findOrFail($mahasiswa_id);
         }
@@ -61,7 +61,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
 
     public function collection()
     {
-        $koleksiNilai = $this->mahasiswa->nilai_mahasiswa;
+        $koleksiNilai = $this->mahasiswa->nilai_mahasiswas;
         $koleksiTerurut = $koleksiNilai->sortBy(function ($nilai) {
             return $nilai->rps_rel?->mk_rel?->digit_mk ?? 0;
         });
@@ -195,7 +195,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
         $sheet->setCellValue("A{$summaryRow}", 'TOTAL AKUMULASI');
 
         // Logika PHP untuk menyaring rps_id unik dengan nilai tertinggi
-        $nilaiUnik = $this->mahasiswa->nilai_mahasiswa
+        $nilaiUnik = $this->mahasiswa->nilai_mahasiswas
             ->groupBy('rps_id')
             ->map(function ($group) {
                 // Ambil data nilai yang paling besar di dalam rps_id yang sama

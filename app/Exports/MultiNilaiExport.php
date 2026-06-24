@@ -5,7 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class MultiJadwalNilaiExport implements WithMultipleSheets
+class MultiNilaiExport implements WithMultipleSheets
 {
     use Exportable;
 
@@ -21,18 +21,13 @@ class MultiJadwalNilaiExport implements WithMultipleSheets
         $sheets = [];
 
         foreach ($this->jadwals as $jadwal) {
-            // 🌟 AMBIL KODE JADWAL SEBAGAI NAMA SHEET
             $sheetName = $jadwal->kode; 
-
-            // 🌟 BERSIHKAN DARI KARAKTER ILLEGAL EXCEL & POTONG MAKSIMAL 31 KARAKTER
             $sheetNameSafe = substr(
                 str_replace(['*', ':', '?', '/', '\\', '[', ']'], '-', $sheetName), 
                 0, 
                 31
             );
-
-            // Masukkan ke array sheets
-            $sheets[] = new NilaiExport($jadwal->id, $sheetNameSafe); 
+            $sheets[] = new NilaiExport($jadwal, $sheetNameSafe); 
         }
 
         return $sheets;

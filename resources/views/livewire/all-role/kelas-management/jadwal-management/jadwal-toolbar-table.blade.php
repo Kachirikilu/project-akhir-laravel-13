@@ -35,6 +35,18 @@
 
             <flux:menu.separator />
 
+            <flux:menu.item
+                wire:click="exportNilaiExcel({{ $x->id }})"
+                class="!cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 active:!bg-emerald-200 dark:active:!bg-emerald-900 transition-colors">
+                <flux:icon name="printer" class="mr-2 h-4 w-4" />
+                <div class="flex justify-between items-center w-full">
+                    <span>Export Nilai</span>
+                    <flux:icon wire:loading wire:target="exportNilaiExcel({{ $x->id }})" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+
+            <flux:menu.separator />
+
             @if (!$isTrashed)
                 {{-- Tombol Edit --}}
                 <flux:menu.item

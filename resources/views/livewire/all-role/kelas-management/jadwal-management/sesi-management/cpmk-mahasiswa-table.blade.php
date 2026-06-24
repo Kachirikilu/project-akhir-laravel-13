@@ -1,5 +1,4 @@
 <x-global.main-layout-table :paginator="$users">
-
     <x-slot:sortir>
         <div
             class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
@@ -12,10 +11,6 @@
                 'headString' => 'Nama',
             ])
             @if (Auth::user()->admin || Auth::user()->dosen)
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'mhs_poin_absensi',
-                    'headString' => 'Absensi',
-                ])
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'mhs_nilai_akhir',
                     'headString' => 'Nilai',
@@ -75,12 +70,39 @@
             ])
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <th colspan="7" class="table-head-sub">
-                    Kehadiran Mahasiswa
-                </th>
                 <th colspan="3" class="table-head-sub">
                     Nilai Mahasiswa
                 </th>
+
+                @foreach ($groupsCpmk as $kodeCpmk => $pertemuans)
+                    @php
+                        $collection = collect($pertemuans);
+
+                        $minP = $collection->min('no_pertemuan');
+                        $maxP = $collection->max('no_pertemuan');
+                        $rangePertemuan = "(P{$minP}–P{$maxP})";
+
+                        $containsUts = $collection->contains('is_evaluasi', 'UTS');
+                        $containsUas = $collection->contains('is_evaluasi', 'UAS');
+
+                        $colorClass = '';
+                        $hasEvaluasi = $containsUts || $containsUas;
+
+                        if ($hasEvaluasi) {
+                            $colorClass = 'text-amber-700 dark:text-amber-500 font-bold';
+                        }
+                    @endphp
+                    <th colspan="3" x-data="{ showLine: {{ $hasEvaluasi ? 'true' : 'false' }} }"
+                        class="{{ $colorClass }} table-head-sub text-center border-x relative">
+
+                        <div class="text-xs sm:text-sm">{{ $kodeCpmk }}</div>
+                        <div class="text-[10px] font-normal opacity-90">{{ $rangePertemuan }}</div>
+
+                        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] h-[3px] mb-1 bg-amber-700 dark:bg-amber-500 origin-center"
+                            x-show="showLine" x-init="$nextTick(() => { if ({{ $hasEvaluasi ? 'true' : 'false' }}) showLine = true; })">
+                        </div>
+                    </th>
+                @endforeach
             @endif
 
             @include('livewire.global.search-and-filters.table-search', [
@@ -116,44 +138,6 @@
         <tr>
             @if (Auth::user()->admin || Auth::user()->dosen)
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_poin_absensi',
-                    'headString' => 'Poin',
-                    'isCenter' => 1,
-                    'isMain' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_masuk',
-                    'headString' => 'Hadir',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_dispensasi',
-                    'headString' => 'Dispensi',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_terlambat',
-                    'headString' => 'Terlambat',
-                    'isCenter' => 1,
-                    'isBorderR' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_izin',
-                    'headString' => 'Izin',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_sakit',
-                    'headString' => 'Sakit',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mhs_tidak_masuk',
-                    'headString' => 'Tidak Hadir',
-                    'isCenter' => 1,
-                    'isBorderR' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mhs_nilai_akhir',
                     'headString' => 'Angka',
                     'isCenter' => 1,
@@ -169,14 +153,19 @@
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
-                {{-- @elseif (Auth::user()->mahasiswa)
-                <th rowspan="1" class="table-head border-x">Poin</th>
-                <th rowspan="1" class="table-head">Hadir</th>
-                <th rowspan="1" class="table-head">Dispensi</th>
-                <th rowspan="1" class="table-head border-r">Terlambat</th>
-                <th rowspan="1" class="table-head">Izin</th>
-                <th rowspan="1" class="table-head">Sakit</th>
-                <th rowspan="1" class="table-head border-r whitespace-nowrap">Tidak Hadir</th> --}}
+                @foreach ($groupsCpmk as $kodeCpmk => $pertemuans)
+                    <th class="table-head whitespace-nowrap">
+                        Skor Murni
+                    </th>
+                    <th class="table-head whitespace-nowrap text-blue-700 dark:text-blue-500"
+                        title="Nilai Kontribusi Riil terhadap Total Nilai Kelompok">
+                        Kontribusi
+                    </th>
+                    <th class="table-head whitespace-nowrap text-green-700 dark:text-green-500 border-r"
+                        title="Persentase Bobot CPMK">
+                        Bobot
+                    </th>
+                @endforeach
             @endif
         </tr>
 
@@ -222,75 +211,6 @@
             <td class="table-second table-border-r whitespace-nowrap">{{ $user->name ?? '-' }}</td>
 
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <td class="table-second table-border-r text-center whitespace-nowrap">
-                    <flux:dropdown>
-
-                        <button class="cursor-pointer">
-                            @if ($isMahasiswa)
-                                @php
-                                    $poinMhs = round(
-                                        (($user->mhs_poin_absensi ?? 0) / (2 * ($stats['sesi'] ?? 16))) * 100,
-                                        2,
-                                    );
-                                @endphp
-                                @include('livewire.global.table.badge.poin-absen-badge', [
-                                    'xValue' => $poinMhs . '%',
-                                    'sortir' => $poinMhs,
-                                ])
-                            @else
-                                -
-                            @endif
-                        </button>
-
-                        @include(
-                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                            ['x' => $user]
-                        )
-                    </flux:dropdown>
-                </td>
-                <td class="table-sub text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-                <td class="table-sub text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-                <td class="table-second table-border-r text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_terlambat ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-                <td class="table-sub text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_izin ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-                <td class="table-sub text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_sakit ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-                <td class="table-second table-border-r text-center whitespace-nowrap">
-                    @if ($isMahasiswa)
-                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
-                    @else
-                        -
-                    @endif
-                </td>
-
                 <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
                         {{ $user->mhs_nilai_akhir ?? 0 }}
@@ -322,6 +242,61 @@
                         -
                     @endif
                 </td>
+
+                @php
+                    $arrayNilai = is_array($user->mhs_nilai_array)
+                        ? $user->mhs_nilai_array
+                        : json_decode($user->mhs_nilai_array ?? '[]', true);
+
+                    $bobotCpmkArray = is_array($user->mhs_bobot_array)
+                        ? $user->mhs_bobot_array
+                        : json_decode($user->mhs_bobot_array ?? '[]', true);
+
+                    $globalTotalBobotMentah = collect($groupsCpmk)
+                        ->map(function ($pertemuans) {
+                            return collect($pertemuans)->sum('bobot');
+                        })
+                        ->sum();
+
+                    $globalTotalBobotMentah = $globalTotalBobotMentah > 0 ? $globalTotalBobotMentah : 1;
+                @endphp
+
+                @foreach ($groupsCpmk as $kodeCpmk => $pertemuans)
+                    @php
+                        $totalNilaiKontribusiCpmk = 0;
+                        $skorMurniCpmk = 0;
+
+                        $allMapping = collect($this->mapping_pertemuan)->values();
+
+                        $bobotMentahCpmkIni = collect($pertemuans)->sum('bobot');
+                        $bobotNormalisasiGlobalCpmk = ($bobotMentahCpmkIni / $globalTotalBobotMentah) * 100;
+
+                        foreach ($pertemuans as $pertemuan) {
+                            $originalIndex = $allMapping->search(function ($item) use ($pertemuan) {
+                                return $item['kode_scpmk'] === $pertemuan['kode_scpmk'] &&
+                                    $item['kode_cpmk'] === $pertemuan['kode_cpmk'];
+                            });
+
+                            $nilaiPertemuan = $arrayNilai[$originalIndex] ?? 0;
+                            $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
+                            $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+                        }
+                        $totalNilaiKontribusiCpmk = ($skorMurniCpmk / $bobotNormalisasiGlobalCpmk) * 100;
+
+                    @endphp
+
+                    <td class="table-second text-center font-bold">
+                        {{ !empty($arrayNilai) ? round($skorMurniCpmk, 2) : '-' }}
+                    </td>
+
+                    <td class="table-second text-center font-semibold text-blue-600">
+                        {{ !empty($arrayNilai) ? round($totalNilaiKontribusiCpmk, 2) : '-' }}
+                    </td>
+
+                    <td class="table-sub text-center border-r font-medium text-green-600">
+                        {{ round($bobotNormalisasiGlobalCpmk, 2) }}%
+                    </td>
+                @endforeach
             @endif
 
             <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
@@ -374,7 +349,7 @@
 
     @empty
         <tr>
-            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '19' : '9' }}"
+            <td colspan="{{ 12 + (count($groupsCpmk ?? []) * 3) }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Mahasiswa Kelas ditemukan!
             </td>

@@ -183,7 +183,7 @@ trait WithUserModal
         $rps = RPS::query()
             ->whereIn('id', function ($query) use ($mahasiswa) {
                 $query->select('rps_id')
-                    ->from('nilai_mahasiswa')
+                    ->from('nilai_mahasiswas')
                     ->where('mahasiswa_id', $mahasiswa->id)
                     ->whereNotNull('rps_id')
                     ->distinct();
@@ -822,9 +822,9 @@ trait WithUserModal
             ]),
             2 => $this->getErrorCount([
                 'name',
-                'angkatan',
-                'pr_id',
-                'status',
+                'nik',
+                'jenis_kelamin',
+                'agama',
             ]),
             3 => $this->getErrorCount([
                 'nip',
@@ -832,16 +832,18 @@ trait WithUserModal
                 'nidn',
                 'nidk',
                 'nim',
-                'nik',
             ]),
             4 => $this->getErrorCount([
-                'jenis_kelamin',
-                'agama',
+                'pr_id',
+                'angkatan',
+                'status',
+            ]),
+            5 => $this->getErrorCount([
                 'tempat_lahir',
                 'tanggal_lahir',
                 'no_hp',
             ]),
-            5 => $this->getErrorCount([]),
+            6 => $this->getErrorCount([]),
         ];
     }
 

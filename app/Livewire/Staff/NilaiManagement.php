@@ -13,15 +13,12 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
 use App\Models\Akademik\CPL;
 use App\Models\Auth\User;
-use App\Models\ProgramStudi\Prodi;
-
-
-use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -34,20 +31,17 @@ class NilaiManagement extends Component
     use RekapCapaian;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
+    use WithNilaiMahasiswaExcel;
     use WithPagination;
     use WithProdiSearchFilters;
     use WithRPSModal;
+    use WithRPSSearchFilters;
+    use WithUserDelete;
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
-    use WithUserSearchFilters;
-    use WithNilaiMahasiswaExcel;
-    use WithRPSSearchFilters;
-
-    use WithUserDelete;
     use WithUserModal;
-
-
+    use WithUserSearchFilters;
 
     public $perPage = 8;
 
@@ -77,7 +71,7 @@ class NilaiManagement extends Component
 
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'desc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
     // public function mount($switchTable = '')
@@ -198,13 +192,14 @@ class NilaiManagement extends Component
 
     public function render()
     {
-        $queryUser = $this->inputUserSearch('mahasiswa');
-
-        $this->inputPrFilter();
-        $this->inputDpFilter();
-        $this->inputFkFilter();
 
         try {
+            $this->inputPrFilter();
+            $this->inputDpFilter();
+            $this->inputFkFilter();
+            
+            $queryUser = $this->inputUserSearch('mahasiswa');
+
             $countMahasiswa = User::whereHas('mahasiswa');
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
@@ -221,12 +216,11 @@ class NilaiManagement extends Component
             }
 
             $stats = [
-                'mahasiswa-prodi'     => '🏛️',
-                'mahasiswa-opsi'      => '⚙️',
-                'mahasiswa-aktif'     => '🟢', 
+                'mahasiswa-prodi' => '🏛️',
+                'mahasiswa-opsi' => '⚙️',
+                'mahasiswa-aktif' => '🟢',
                 'mahasiswa-non-aktif' => '🔴',
             ];
-
 
             $stats = array_merge($stats, $this->getStatsMahasiswa($countMahasiswa, 1));
 
@@ -246,8 +240,8 @@ class NilaiManagement extends Component
                 'mahasiswa_rps_modal_paginator' => collect(),
 
                 'stats' => [
-                    'mahasiswa-prodi'     => '-',
-                    'mahasiswa-opsi'      => '-',
+                    'mahasiswa-prodi' => '-',
+                    'mahasiswa-opsi' => '-',
                     'mahasiswa-aktif' => '-',
                     'mahasiswa-non-aktif' => '-',
                 ],

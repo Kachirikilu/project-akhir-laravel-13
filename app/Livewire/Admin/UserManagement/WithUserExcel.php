@@ -329,7 +329,7 @@ trait WithUserExcel
         $total = count($this->parsedUserRows);
 
         LazyCollection::make($this->parsedUserRows)
-            ->chunk(50)
+            ->chunk(20)
             ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
                 foreach ($chunk as $index => $row) {
                     try {

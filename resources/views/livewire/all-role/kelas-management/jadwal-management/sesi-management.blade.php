@@ -32,6 +32,9 @@
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table')
         @elseif ($this->switchTable == 'mahasiswa')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-table')
+        @elseif ($this->switchTable == 'cpmk')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-mahasiswa-table')
         @endif
     </div>
 

@@ -72,7 +72,7 @@ class Mahasiswa extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
-    public function nilai_mahasiswa()
+    public function nilai_mahasiswas()
     {
         return $this->hasMany(
             NilaiMahasiswa::class,

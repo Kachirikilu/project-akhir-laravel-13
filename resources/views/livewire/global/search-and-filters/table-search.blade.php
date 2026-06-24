@@ -1,11 +1,17 @@
-<th rowspan="{{ $rowSpan ?? 1 }}" rowspan="{{ $rowspan ?? 1 }}" colspan="{{ $colspan ?? 1 }}"
+<th rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colspan ?? 1 }}"
     class="p-6 {{ $isSubHeader ?? false ? 'bg-gray-100/50' : '' }}
-        {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
         {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-6' : 'py-6' }}
-        bg-[var(--main-table-color)] table-border relative
-        ">
+        bg-[var(--main-table-color)] table-border relative border-b
+        
+        {{ ($isSticky ?? false) 
+            ? 'sticky left-0 border-x z-30' 
+            : '' 
+        }}
+
+        {{ (!($isSticky ?? false)) && (($isBorderX ?? false) || ($isMain ?? false)) ? 'border-x' : '' }}
+    ">
     <div class="flex flex-col gap-1 items-center">
 
         @include('livewire.global.table.head-table', [
