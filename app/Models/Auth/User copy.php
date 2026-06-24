@@ -124,128 +124,124 @@ class User extends Authenticatable
         return $this->hasMany(Pendidikan::class);
     }
 
-    private function getProfile()
-    {
-        return data_get($this, 'admin') 
-            ?? data_get($this, 'dosen') 
-            ?? data_get($this, 'mahasiswa');
-    }
-
+    // --- ATTRIBUTE / ACCESSOR UTAMA USER ---
     protected function name(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'name');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->name ?? $this->email;
         });
     }
 
-    // public function role(): Attribute
-    // {
-    //     return Attribute::get(fn () => match (true) {
-    //         $this->admin()->exists() => 'Admin',
-    //         $this->dosen()->exists() => 'Dosen',
-    //         $this->mahasiswa()->exists() => 'Mahasiswa',
-    //         default => 'User',
-    //     });
-    // }
-
     public function role(): Attribute
     {
-        return Attribute::get(function () {
-            if ($this->relationLoaded('admin') && $this->admin !== null) {
-                return 'Admin';
-            }
-            if ($this->relationLoaded('dosen') && $this->dosen !== null) {
-                return 'Dosen';
-            }
-            if ($this->relationLoaded('mahasiswa') && $this->mahasiswa !== null) {
-                return 'Mahasiswa';
-            }
-
-            if (array_key_exists('admin', $this->attributes) || isset($this->admin)) {
-                if (data_get($this, 'admin') !== null) return 'Admin';
-            }
-            if (array_key_exists('dosen', $this->attributes) || isset($this->dosen)) {
-                if (data_get($this, 'dosen') !== null) return 'Dosen';
-            }
-            if (array_key_exists('mahasiswa', $this->attributes) || isset($this->mahasiswa)) {
-                if (data_get($this, 'mahasiswa') !== null) return 'Mahasiswa';
-            }
-
-            $profile = $this->getProfile();
-            if ($profile) {
-                if (data_get($profile, 'nim')) return 'Mahasiswa';
-                if (data_get($profile, 'nidn') || data_get($profile, 'nidk')) return 'Dosen';
-                if (data_get($profile, 'nitk') || data_get($profile, 'nip')) return 'Admin';
-            }
-
-            return 'User';
+        return Attribute::get(fn () => match (true) {
+            $this->admin()->exists() => 'Admin',
+            $this->dosen()->exists() => 'Dosen',
+            $this->mahasiswa()->exists() => 'Mahasiswa',
+            default => 'User',
         });
     }
 
     protected function roleId(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'id');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->id;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->id;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->id;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function nik(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'nik');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->nik;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nik;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->nik;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function identity1(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->admin, 'nip') 
-                ?? data_get($this->dosen, 'nip') 
-                ?? data_get($this->mahasiswa, 'nim');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->nip;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nip;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->nim;
+            }
+
             return empty($value) ? null : $value;
         });
     }
-
     protected function labelId1(): Attribute
     {
         return Attribute::get(function () {
-            if (data_get($this, 'admin') || data_get($this, 'dosen')) {
-                return 'NIP';
-            } elseif (data_get($this, 'mahasiswa')) {
-                return 'NIM';
+            $value = null;
+
+            if ($this->admin || $this->dosen) {
+                $value = 'NIP';
+            } elseif ($this->mahasiswa) {
+                $value = 'NIM';
             }
 
-            return null;
+            return empty($value) ? null : $value;
         });
     }
 
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->admin, 'nitk') 
-                ?? data_get($this->dosen, 'nidn');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->nitk;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nidn;
+            }
 
             return empty($value) ? null : $value;
         });
     }
-
     protected function labelId2(): Attribute
     {
         return Attribute::get(function () {
-            if (data_get($this, 'admin')) {
-                return 'NITK';
-            } elseif (data_get($this, 'dosen')) {
-                return 'NIDN';
+            $value = null;
+
+            if ($this->admin) {
+                $value = 'NITK';
+            } elseif ($this->dosen) {
+                $value = 'NIDN';
             }
 
-            return null;
+            return empty($value) ? null : $value;
         });
     }
 
     protected function identity3(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->dosen, 'nidk');
+            $value = $this->dosen?->nidk;
 
             return $value ?: null;
         });
@@ -254,21 +250,47 @@ class User extends Authenticatable
     protected function kodeWilayah(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'kode_wilayah') ?? null;
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->kode_wilayah;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->kode_wilayah;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function wilayah(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'wilayah') ?? null;
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->wilayah;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->wilayah;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function tmtLahir(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'tempat_lahir');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->tempat_lahir;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->tempat_lahir;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->tempat_lahir;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
@@ -276,10 +298,20 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: function () {
-                $value = data_get($this->getProfile(), 'tanggal_lahir');
+                $value = null;
+
+                if ($this->admin) {
+                    $value = $this->admin->tanggal_lahir;
+                } elseif ($this->dosen) {
+                    $value = $this->dosen->tanggal_lahir;
+                } elseif ($this->mahasiswa) {
+                    $value = $this->mahasiswa->tanggal_lahir;
+                }
+
                 if (empty($value)) {
                     return null;
                 }
+
                 return Carbon::parse($value)->format('Y-m-d');
             }
         );
@@ -289,11 +321,7 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: function () {
-                $tanggal = data_get($this, 'tanggal_lahir');
-                if (empty($tanggal)) {
-                    return null; 
-                }
-                return Carbon::parse($tanggal)->translatedFormat('j F Y');
+                return Carbon::parse($this->tanggal_lahir)->translatedFormat('j F Y');
             }
         );
     }
@@ -301,21 +329,51 @@ class User extends Authenticatable
     protected function gender(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'jenis_kelamin');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->jenis_kelamin;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->jenis_kelamin;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->jenis_kelamin;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function agama(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'agama');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->agama;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->agama;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->agama;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
     protected function noHp(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'no_hp');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->no_hp;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->no_hp;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->no_hp;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
@@ -351,8 +409,10 @@ class User extends Authenticatable
             $rest = substr($body, 3);
             if ($rest !== false && $rest !== '') {
                 $chunks = str_split($rest, 4);
+
                 return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
             }
+
             return '+'.$countryCode.'-'.$firstThree;
         });
     }
@@ -360,14 +420,33 @@ class User extends Authenticatable
     protected function waAktif(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'is_wa_active');
+
+            $value = false;
+
+            if ($this->admin) {
+                $value = $this->admin->is_wa_active;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->is_wa_active;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->is_wa_active;
+            }
+
+            return empty($value) ? false : $value;
         });
     }
 
     protected function noHpBack(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->getProfile(), 'no_hp');
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->no_hp;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->no_hp;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->no_hp;
+            }
 
             if (empty($value)) {
                 return null;
@@ -379,12 +458,13 @@ class User extends Authenticatable
         });
     }
 
- 
     protected function status(): Attribute
     {
-        return Attribute::get(function () {
-            return data_get($this->getProfile(), 'status');
-        });
+        return Attribute::get(fn () => $this->admin?->status ??
+            $this->dosen?->status ??
+            $this->mahasiswa?->status ??
+            'Tidak Ada'
+        );
     }
 
     protected function statusFull(): Attribute
@@ -392,95 +472,121 @@ class User extends Authenticatable
         return Attribute::get(fn () => 'Status: '.$this->status);
     }
 
+    // --- ATTRIBUTE PRODI / DEPARTEMEN / FAKULTAS ---
     protected function prId(): Attribute
     {
         return Attribute::get(function () {
-            $profile = $this->getProfile();
-            return data_get($profile, 'pr_id', 0);
+            return $this->admin?->pr_id
+                ?? $this->dosen?->pr_id
+                ?? $this->mahasiswa?->pr_id ?? 0;
         });
     }
 
     protected function prodi(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.prodi');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->prodi;
         });
     }
 
     protected function prodiPr(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.prodi_pr');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->prodi_pr;
         });
     }
 
     protected function prodiStrata(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.prodi_strata');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->prodi_strata;
         });
     }
 
     protected function kodePr(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.kode');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->kode;
         });
     }
 
     protected function dpId(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.dp_id');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->dp_id;
         });
     }
 
     protected function kodeDp(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.kode_dp');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->kode_dp;
         });
     }
 
     protected function departemen(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.departemen');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->departemen;
         });
     }
 
     protected function departemenDp(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.departemen_dp');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->departemen_dp;
         });
     }
 
     protected function fkId(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.dp_rel.fk_id');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->dp_rel?->fk_id;
         });
     }
 
     protected function kodeFk(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.kode_fk');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->kode_fk;
         });
     }
 
     protected function fakultas(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.fakkultas'); 
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->fakkultas;
         });
     }
 
     protected function fakultasFk(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.fakkultas_fk');
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->fakkultas_fk;
         });
     }
 
