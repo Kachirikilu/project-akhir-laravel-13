@@ -7,7 +7,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNil
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
-use App\Livewire\Global\HasAbsensi;
+use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
@@ -27,7 +27,7 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
-    use HasAbsensi;
+    use HasNilaiAbsensi;
     use HasGetByKode;
     use HasSortir;
     use HasToast;
@@ -91,136 +91,6 @@ class SesiManagement extends Component
         'showDeleted' => ['except' => false],
     ];
 
-    // public function mount($kode_kelas, $kode_jadwal_short_url, $jadwal_id, $switchTable = 'sesi-card')
-    // {
-    //     $this->kode_kelas = $kode_kelas;
-    //     $this->kelas = Kelas::where('kode_kelas', $kode_kelas)
-    //         ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
-    //         ->firstOrFail();
-
-    //     $this->jadwal_id = $jadwal_id;
-    //     $this->jadwal = KelasJadwal::where('id', $jadwal_id)->firstOrFail();
-    //     $this->kode_jadwal_short_url = $this->jadwal->kode_jadwal_short_url;
-
-    //     $this->switchTable = $switchTable;
-    // }
-
-    // public function mount(
-    //     $isJadwalMhs = false,
-    //     $kode_kelas = null,
-    //     $kode_jadwal_short = null,
-    //     $switchTable = 'sesi-card'
-    // ) {
-    //     $this->kode_kelas_url = $kode_kelas;
-    //     $this->isJadwalMhs = $isJadwalMhs;
-
-    //     $kelas = Kelas::where('kode_kelas', $kode_kelas)
-    //             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
-    //             ->first();
-
-    //     if (! $kelas) {
-    //         foreach (['kelas.history', 'kelas_mahasiswa.history'] as $key) {
-    //             $history = session($key, []);
-
-    //             if (isset($history[$kode_kelas])) {
-    //                 unset($history[$kode_kelas]);
-    //                 session([$key => $history]);
-    //             }
-    //         }
-
-    //         abort(404, "Kelas dengan Kode $kode_kelas tidak ditemukan!");
-    //     }
-
-    //     $this->kode_jadwal_short_url = $kode_jadwal_short;
-
-    //      $this->kelas = $kelas;
-    //     $parts = explode('-', $kode_jadwal_short);
-
-    //     if (count($parts) < 3) {
-    //         abort(404, 'Format Kode Jadwal Kelas tidak valid!');
-    //     }
-
-    //     $labelKelas = $parts[0];
-    //     $kodeWilayah = $parts[1];
-
-    //     $tahunBlok = $parts[2];
-
-    //     $jadwal = KelasJadwal::query()
-    //         ->where('kelas_id', $this->kelas->id)
-    //         ->where('label_kelas', $labelKelas)
-    //         ->where('kode_wilayah', $kodeWilayah)
-    //         ->whereRaw(
-    //             '
-    //         CASE
-    //             WHEN YEAR(tanggal_mulai) >= 3000
-    //                 THEN YEAR(tanggal_mulai)
-
-    //             WHEN YEAR(tanggal_mulai) >= 2100
-    //                 THEN RIGHT(YEAR(tanggal_mulai), 3)
-
-    //             WHEN YEAR(tanggal_mulai) >= 2000
-    //                 THEN RIGHT(YEAR(tanggal_mulai), 2)
-
-    //             ELSE YEAR(tanggal_mulai)
-    //         END = ?
-    //         ',
-    //             [$tahunBlok]
-    //         )
-    //         ->first();
-
-    //     if (! $jadwal) {
-    //         $compositeKey = "{$kode_kelas}-{$kode_jadwal_short}";
-    //         foreach (['jadwal.history', 'jadwal_mahasiswa.history'] as $key) {
-    //             $history = session($key, []);
-
-    //             if (isset($history[$compositeKey])) {
-    //                 unset($history[$compositeKey]);
-    //                 session([$key => $history]);
-    //             }
-    //         }
-    //         abort(404, "Jadwal Kelas dengan Kode {$kode_kelas}-{$kode_jadwal_short} tidak ditemukan!");
-    //     }
-
-    //     $this->jadwal = $jadwal;
-    //     $this->jadwal_id_url = $this->jadwal->id;
-    //     $this->kode_jadwal_url = $this->jadwal->kode;
-    //     $this->rps_id_url = $this->jadwal->rps_id;
-    //     $this->kode_rps_url = $this->jadwal->kode_rps;
-    //     $this->switchTable = $switchTable;
-
-    //     $sessionKey = $this->isJadwalMhs ? 'jadwal_mahasiswa.history' : 'jadwal.history';
-    //     $sesiHistory = session($sessionKey, []);
-
-    //     $currentKode = $kelas->kode;
-    //     $compositeKey = $jadwal->kode;
-
-    //     $existingKey = array_search($jadwal->id, array_column($sesiHistory, 'jadwal_id'));
-    //     if ($existingKey !== false) {
-    //         $actualKeys = array_keys($sesiHistory);
-    //         unset($sesiHistory[$actualKeys[$existingKey]]);
-    //     }
-
-    //     unset($sesiHistory[$compositeKey]);
-
-    //     $sesiHistory[$compositeKey] = [
-    //         'kelas_id' => $kelas->id,
-    //         'jadwal_id' => $jadwal->id,
-    //         'kode_kelas' => $currentKode,
-    //         'kode_jadwal_short' => $jadwal->kode_jadwal,
-    //         'switchTable' => $switchTable,
-    //         'url' => url()->current(),
-    //     ];
-
-    //     $sesiHistory = array_slice($sesiHistory, -12, null, true);
-
-    //     uasort($sesiHistory, function ($a, $b) {
-    //         $kodeCompare = strcmp($a['kode_kelas'], $b['kode_kelas']);
-    //         return ($kodeCompare !== 0) ? $kodeCompare : strcmp($a['kode_jadwal_short'], $b['kode_jadwal_short']);
-    //     });
-
-    //     session([$sessionKey => $sesiHistory]);
-    // }
-
     public function mount(
         $isJadwalMhs = false,
         $kode_kelas = null,
@@ -230,7 +100,6 @@ class SesiManagement extends Component
         $this->kode_kelas_url = $kode_kelas;
         $this->isJadwalMhs = $isJadwalMhs;
 
-        // 🌟 1. Gunakan fungsi pembantu untuk mencari Kelas
         $kelas = $this->getKelasByKode($kode_kelas);
 
         if (! $kelas) {
@@ -249,10 +118,8 @@ class SesiManagement extends Component
         $this->kode_jadwal_short_url = $kode_jadwal_short;
         $this->kelas = $kelas;
 
-        // 🌟 2. Gunakan fungsi pembantu untuk mencari Jadwal
         $jadwal = $this->getJadwalByKode($kode_kelas.'-'.$kode_jadwal_short);
 
-        // Validasi tambahan: Pastikan jadwal ditemukan DAN merupakan bagian dari kelas yang dicari
         if (! $jadwal || $jadwal->kelas_id !== $this->kelas->id) {
             $compositeKey = "{$kode_kelas}-{$kode_jadwal_short}";
             foreach (['jadwal.history', 'jadwal_mahasiswa.history'] as $key) {
@@ -350,16 +217,12 @@ class SesiManagement extends Component
             'id' => ['id', 'mahasiswa_id'],
             'mahasiswa_id' => ['mahasiswa_id', 'id'],
             'pertemuan_ke' => ['pertemuan_ke', 'name'],
-            // 'total_absensi' => ['total_absensi', 'mhs_poin_absensi', 'mhs_masuk', 'mhs_dispensasi', 'mhs_terlambat', 'mhs_hadir', 'mhs_sakit', 'mhs_tidak_masuk'],
             'mhs_nilai_akhir' => ['mhs_nilai_akhir'],
             'mhs_nilai_index' => ['mhs_nilai_index'],
             'mhs_nilai_huruf' => ['mhs_nilai_huruf'],
             'angkatan' => ['angkatan'],
             'status' => ['status'],
             'program_studi' => ['program_studi'],
-
-            // 'mhs_poin_absensi' => ['total_absensi'],
-            // 'name' => ['pertemuan_ke'],
         ];
 
         $this->sortField($table, $sortField, $columns, $aliases);
@@ -381,7 +244,7 @@ class SesiManagement extends Component
 
         $currentTable = $table ?? $this->table ?? 'sesi-table';
 
-        if ($this->switchTable == 'mahasiswa') {
+        if ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk') {
             if ($this->perPage == 2) {
                 $this->perPage = 3;
             } elseif ($this->perPage == 4) {
@@ -405,7 +268,6 @@ class SesiManagement extends Component
         $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}/sesi{$suffix}";
-
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
@@ -496,9 +358,6 @@ class SesiManagement extends Component
                         $this->addAbsenSesi($querySesi, $jadwalId, 'mhs_absensi');
                         break;
                     case 'mahasiswa':
-                        $this->addMahasiswaNilaiAkhir($queryUser, $jadwalId, 'mhs_nilai_akhir');
-                        $this->addMahasiswaNilaiIndex($queryUser, $jadwalId, 'mhs_nilai_index');
-                        $this->addMahasiswaNilaiMutu($queryUser, $jadwalId, 'mhs_nilai_mutu');
                         $this->addMahasiswaAttendanceStats($queryUser, $jadwalId);
                         $this->addMahasiswaTidakMasuk($queryUser, $jadwalId, $expiredCount, 'mhs_tidak_masuk');
                         break;
@@ -509,6 +368,12 @@ class SesiManagement extends Component
                         $this->addNilaiJadwalSubquery($queryUser, $jadwalId, 'mhs_bobot_array', 'bobot_array');
                         break;
                 }
+            }
+
+            if ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk') {
+                $this->addMahasiswaNilaiAkhir($queryUser, $jadwalId, 'mhs_nilai_akhir');
+                $this->addMahasiswaNilaiIndex($queryUser, $jadwalId, 'mhs_nilai_index');
+                $this->addMahasiswaNilaiMutu($queryUser, $jadwalId, 'mhs_nilai_mutu');
             }
 
             /**
@@ -572,7 +437,6 @@ class SesiManagement extends Component
                         $users = $queryUser->paginate($this->perPage);
                     }
                     break;
-
                 case 'cpmk':
                     $sampleNilai = NilaiMahasiswa::where('rps_id', $this->rps_id_url)->first();
 

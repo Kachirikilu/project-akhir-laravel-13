@@ -47,7 +47,7 @@
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
         @forelse ($xSearchResults as $x)
             <div wire:key="x-{{ $x['id'] }}"
                 @click="

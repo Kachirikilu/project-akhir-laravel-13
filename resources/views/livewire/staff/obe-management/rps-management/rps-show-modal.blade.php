@@ -2,113 +2,106 @@
     class="w-full md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
 
     @php
-        $r = $detailRPSData ?? [];
+        // $r = $detailRPSData ?? [];
     @endphp
 
-    <div class="flex items-center justify-between my-9">
+    <div class="flex flex-col xl:flex-row gap-5 my-9">
 
-        {{-- KIRI: Badge nama & status --}}
-        <div class="flex items-center gap-2">
-            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)" icon="printer"
-                size="sm"
-                class="!cursor-pointer px-6 !text-rose-600 dark:!text-rose-400 !bg-rose-50 hover:!bg-rose-100 dark:!bg-rose-950/20 dark:hover:!bg-rose-900/30 !border-rose-200/60 dark:!border-rose-800/40 transition-all duration-200">
-                <span>Print PDF RPS</span>
-                <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-3 dark:!text-rose-600" />
-            </flux:button>
+        {{-- KIRI: Tombol Export & Select Form (Lebar Lumayan) --}}
+        <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-2/3 order-2 xl:order-1">
+            <div class="flex-shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'nameXString' => 'Export PDF',
+                    'xString' => 'printPDFRPS($store.rps?.rps_id_show, $store.rps?.pr_id_show)',
+                    'icon' => 'arrow-down-tray',
+                    'isFull' => 1,
+                    'valuePx' => 'px-6',
+                    'valuePy' => 'py-2.5',
+                    'color' => 'rose',
+                    'wireLoading' => 'printPDFRPS()',
+                ])
+            </div>
 
-            {{-- @include('livewire.global.table.export-button', [
-                'nameXString' => 'Export Excel Mahasiswa',
-                'xClick' => "\$wire.exportExcel()",
-                'xString' => 'exportExcel',
-                'isFull' => 1,
-                'color' => 'green',
-            ]) --}}
-            {{-- @include('livewire.global.table.export-button', [
-                'nameXString' => 'Print PDF RPS',
-                'xString' => "printPDFRPS(\$store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)",
-                'valuePx' => 6,
-                'isFull' => 1,
-                'isTextMd' => 1,
-                'color' => 'rose',
-            ]) --}}
-
-            @if ($isEdit ?? true)
-                @if (!$this->showRPSModal)
-                    <flux:button
-                        @click="
-                    $store.rps?.setEdit(1);
-                    $store.rps?.setFlyout(true);
-                    $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
-                    $store.rps?.setValueRPS(
-                        '{{ $r['kode_blok'] ?? null }}',
-                        '{{ $r['deskripsi'] ?? null }}',
-                        '{{ $r['mk_id'] ?? null }}',
-                        '{{ $r['kode_mk'] ?? null }}',
-                        '{{ $r['nama_mk'] ?? null }}',
-                        '{{ $r['akademik'] ?? null }}',
-                        '{{ $r['is_draf'] ?? null }}',
-                        '{{ $r['count_scpmk'] ?? null }}',
-                        '{{ $r['bobot_uts'] ?? null }}',
-                        '{{ $r['bobot_uas'] ?? null }}',
-                        '{{ $r['total_bobot'] ?? null }}'
-                    );
-                    $flux.modal('rps-modal').show();
-                    $wire.editRPS($store.rps?.id ?? null)
-                "
-                        wire:loading.attr="disabled" wire:target="showRPS, editRPS" icon="pencil-square" size="sm"
-                        class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
-                        <span>Edit RPS</span>
-                        <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
-                    </flux:button>
-                @endif
-            @endif
+            <div wire:loading.class="opacity-50 pointer-events-none" wire:target="showRPS"
+                class="transition-opacity duration-200 flex-grow min-w-[250px]">
+                @php $prodisCollection = collect($prodisRPS); @endphp
+                @include('livewire.global.modal-form.select-form', [
+                    'alpine' => 'rps',
+                    'noLabel' => 1,
+                    'modelString' => 'pr_id_show',
+                    'xOptions' => $prodisCollection->pluck('prodi')->toArray(),
+                    'xValues' => $prodisCollection->pluck('id')->toArray(),
+                    'iconString' => 'academic-cap',
+                    'placeholder' => 'Pilih Program Studi...',
+                    'maxH' => 'max-h-180',
+                ])
+            </div>
         </div>
 
-        {{-- KANAN: Tombol --}}
-        <div wire:loading.class="opacity-0" wire:target="showRPS" class="flex items-center gap-2">
-
-            @switch($r['level_mk'] ?? null)
-                @case(1)
-                    <flux:badge icon="academic-cap" color="emerald" size="lg" class="px-4">{{ $r['kode_rps'] ?? '-' }}
-                    </flux:badge>
-                @break
-
-                @case(2)
-                    <flux:badge icon="book-open" color="amber" size="lg" class="px-4">{{ $r['kode_rps'] ?? '-' }}
-                    </flux:badge>
-                @break
-
-                @case(3)
-                    <flux:badge icon="building-library" color="indigo" size="lg" class="px-4">
-                        {{ $r['kode_rps'] ?? '-' }}
-                    </flux:badge>
-                @break
-
-                @default
-                    <flux:badge icon="globe-alt" color="red" size="lg" class="px-4">
-                        {{ $r['kode_rps'] ?? 'YYYY-0X-XXXZZZZ' }}
-                    </flux:badge>
-            @endswitch
-            <flux:badge color="emerald" size="lg" class="px-4">
-                {{ $r['nama_rps'] ?? 'Rencana Pembelajaran Semester' }}
+        {{-- KANAN-ATAS: Badges --}}
+        <div class="flex flex-wrap items-center justify-start xl:justify-end gap-2 w-full order-1 xl:order-2">
+            <flux:badge x-show="$store.rps?.level_mk_show == 1" icon="academic-cap" color="emerald" size="lg"
+                class="px-4">
+                <span x-text="$store.rps?.kode_rps_show"></span>
+            </flux:badge>
+            <flux:badge x-show="$store.rps?.level_mk_show == 2" icon="book-open" color="amber" size="lg"
+                class="px-4">
+                <span x-text="$store.rps?.kode_rps_show"></span>
+            </flux:badge>
+            <flux:badge x-show="$store.rps?.level_mk_show == 3" icon="building-library" color="indigo" size="lg"
+                class="px-4">
+                <span x-text="$store.rps?.kode_rps_show"></span>
+            </flux:badge>
+            <flux:badge x-show="$store.rps?.level_mk_show == 4" icon="globe-alt" color="red" size="lg"
+                class="px-4">
+                <span x-text="$store.rps?.kode_rps_show"></span>
             </flux:badge>
 
-            @if (($r['is_draf'] ?? 1) == 0)
-                <flux:badge color="green" size="lg" class="px-4">Aktif</flux:badge>
-            @else
-                <flux:badge color="yellow" size="lg" class="px-4">Draf</flux:badge>
-            @endif
+            <flux:badge color="emerald" size="lg" class="px-4" x-text="$store.rps?.rps_show"></flux:badge>
+
+            <flux:badge x-show="$store.rps?.draf_show == 0" color="green" size="lg" class="px-4"
+                icon="check-circle">Aktif</flux:badge>
+            <flux:badge x-show="$store.rps?.draf_show == 1" color="red" size="lg" class="px-4"
+                icon="document-text">Draf</flux:badge>
         </div>
-
-
     </div>
 
-
-    <div class="p-4 relative bg-white rounded-md border-2">
+    {{-- <div class="p-4 relative bg-white rounded-md border-2">
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'showRPS', 'updateRPS'])
-
         @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-table')
+    </div> --}}
+
+    <div class="p-4 relative bg-white rounded-md border-2" x-data="{
+        get rpsId() { return $store.rps?.rps_id_show; },
+        get prId() { return $store.rps?.pr_id_show; }
+    }">
+
+        <div class="flex justify-end mb-4">
+            <button type="button" onclick="document.getElementById('pdf-frame').contentWindow.print()"
+                class="cursor-pointer text-sm sm:text-md flex items-center gap-2 bg-blue-600 text-white px-12 py-2 rounded shadow hover:bg-blue-700 active:bg-blue-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Cetak PDF
+            </button>
+        </div>
+
+        <div class="w-full h-[2000px] border" wire:ignore
+            x-effect="
+                const frame = document.getElementById('pdf-frame');
+                if (rpsId) {
+                    let urlParts = ['{{ url('/rps/pdf-preview/') }}', rpsId];
+                    if (prId && prId !== '' && prId !== 'null' && prId !== 'undefined') {
+                        urlParts.push(prId);
+                    }
+                    const newUrl = urlParts.join('/');
+                    if (frame.src !== newUrl) {
+                        frame.src = newUrl;
+                    }
+                }
+            ">
+            <iframe id="pdf-frame" src="about:blank" class="w-full h-full border-none"></iframe>
+        </div>
     </div>
 </flux:modal>

@@ -225,7 +225,7 @@
                 @endforeach
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
 
             <td class="table-second text-center">
                 <flux:dropdown>

@@ -413,6 +413,71 @@
                                 </p>
                             </div>
 
+                            {{-- Tambahkan ini di view --}}
+
+                            <div
+                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-3">
+                                <span
+                                    class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)] block mb-1.5">
+                                    Referensi
+                                </span>
+                                    @php
+                                        $referensiList = $s->referensi_sesi ?? collect();
+                                    @endphp
+                                    @forelse($referensiList as $refs)
+                                    <div class="text-xs text-[var(--contrast-main-text)] flex items-start gap-2">
+                                        <div class="{{ $referensiList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+                                            
+                                            @if ($referensiList->count() > 1)
+                                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                            @endif
+                                            <span>{{ $refs->citation }}</span>
+                                            @if($refs->link)
+                                                <a href="{{ $refs->link }}" target="_blank"
+                                                class="inline-flex items-center ml-2 hover:opacity-70 transition-opacity {{ $theme['link'] ?? 'text-blue-600' }}">
+                                                    <flux:icon.link variant="micro" />
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @empty
+                                        <li class="text-xs text-zinc-400 italic">Tidak ada data dosen</li>
+                                    @endforelse
+                            </div>
+
+                            <div
+                                class="rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-3">
+                                <span
+                                    class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)] block mb-1.5">
+                                    Dosen Pengajar
+                                </span>
+                                    @php
+                                        $dosenList = $s->dosens_sesi ?? collect();
+                                    @endphp
+                                    @forelse($dosenList as $dosen)
+                                        <div class="text-xs text-[var(--contrast-main-text)] flex items-center gap-2">
+                                            <div class="{{ $dosenList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+                                                
+                                                @if ($dosenList->count() > 1)
+                                                    <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                                @endif
+                                                
+                                                {{ $dosen->name }}
+                                                
+                                                @if ($dosen->pivot->is_ketua ?? ($dosen->is_ketua ?? false))
+                                                    <span class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
+                                                        KETUA
+                                                    </span>
+                                                @endif
+                                                
+                                                <br>NIP: {{ $dosen->nip }}
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <li class="text-xs text-zinc-400 italic">Tidak ada data dosen</li>
+                                    @endforelse
+                            </div>
+
                             {{-- Tombol Absensi (Mahasiswa) --}}
                             @if (Auth::user()->mahasiswa)
                                 <div x-data="{

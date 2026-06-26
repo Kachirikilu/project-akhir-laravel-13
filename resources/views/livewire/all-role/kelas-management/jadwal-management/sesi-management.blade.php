@@ -11,7 +11,10 @@
 
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
         'alpine' => 'sesi',
-        'backUrl' => $isJadwalMhs ?? null ? route('jadwal-mahasiswa') : route('jadwal-management', ['kode_kelas' => $kode_kelas_url]),
+        'backUrl' =>
+            $isJadwalMhs ?? null
+                ? route('jadwal-mahasiswa')
+                : route('jadwal-management', ['kode_kelas' => $kode_kelas_url]),
         'mainKode' => $kode_jadwal_url ?? '-',
         'subLabel' => 'Kelas ' . ($jadwal->label_extra ?? '- ---'),
         'mainHead' => 'Jadwal Kelas',
@@ -33,8 +36,21 @@
         @elseif ($this->switchTable == 'mahasiswa')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-table')
         @elseif ($this->switchTable == 'cpmk')
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-mahasiswa-table')
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <div class="flex justify-end mb-4 no-print">
+                    <button type="button" onclick="window.print()"
+                        class="cursor-pointer text-sm sm:text-md flex items-center gap-2 bg-blue-600 text-white px-12 py-2 rounded shadow hover:bg-blue-700 transition">
+                        Cetak/Preview PDF
+                    </button>
+                </div>
+
+                <div id="print-content">
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
+                </div>
+
+                {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table') --}}
+                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-mahasiswa-table')
+            @endif
         @endif
     </div>
 

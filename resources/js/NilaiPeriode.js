@@ -31,8 +31,6 @@ document.addEventListener("alpine:init", () => {
         toItem: 8,
         totalItems: 0,
 
-        rps_id_show: "",
-
         // search: "",
         // perPage: 8,
         // sortField: "pertemuan_ke",
@@ -105,14 +103,6 @@ document.addEventListener("alpine:init", () => {
                     this[`bobot_persen_${i}`] = "";
                 }
             }
-        },
-
-        setShowRPS(idRPS) {
-            this.resetShow();
-            this.rps_id_show = idRPS;
-        },
-        resetShow() {
-            this.rps_id_show = "";
         },
 
         reset(isAdd = 0) {

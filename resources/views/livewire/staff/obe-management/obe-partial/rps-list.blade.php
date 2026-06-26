@@ -156,37 +156,47 @@
                                             <div
                                                 class="col-span-2 flex items-center gap-6 pt-3 mt-1 border-t border-zinc-200/50 dark:border-zinc-700/50">
 
-
                                                 <button type="button"
                                                     class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
                                                     @click="
-                                                    $store.rps?.resetShow();
-
+                                                        $store.rps?.resetShow();
                                                         $store.rps?.setShowRPS(
-                                                            '{{ $r['id'] }}',
-                                                            '{{ $r['rps'] }}',
+                                                            '{{ $r['id'] ?? '' }}',
+                                                            '{{ $r['kode'] ?? '' }}',
+                                                            '{{ $r['rps'] ?? '' }}',
+                                                            '{{ $r['draf'] ?? '' }}',
+                                                            '{{ $r['level_mk'] ?? '' }}',
+                                                            '{{ $pr_id ?? $prodi->id ?? '' }}'
                                                         );
-
-                                                    $flux.modal('rps-detail-modal').show();
-                                                "
-                                                    wire:click="showRPS({{ $r['id'] }})">
+                                                         $store.rps?.setColor('text-green-700 dark:text-green-400');
+                                                        $flux.modal('rps-detail-modal').show();
+                                                    "
+                                                    wire:click="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})"
+                                                    >
                                                     <div
                                                         class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30 transition-colors">
                                                         <flux:icon name="eye" variant="micro" class="w-3.5 h-3.5" />
                                                     </div>
                                                     <span>Show RPS</span>
-                                                    <flux:icon wire:loading wire:target="showRPS({{ $r['id'] }})"
+                                                    <flux:icon wire:loading wire:target="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})"
                                                         name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                 </button>
 
                                                 <button type="button"
-                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-200"
-                                                    wire:click="printPDFRPS({{ $r['id'] }})">
-                                                    <div
-                                                        class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
-                                                        <flux:icon name="printer" variant="micro" class="w-3.5 h-3.5" />
+                                                    x-data="{ isWaiting: false }"
+                                                    @click="isWaiting = true; setTimeout(() => isWaiting = false, 1000)"
+                                                    @dblclick="isWaiting = false"
+                                                    wire:dblclick="printPDFRPS({{ $r['id'] }})"
+                                                    :class="isWaiting ? 'ring-2 ring-rose-300 rounded-md px-1' : ''"
+                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all duration-200">
+                                                    
+                                                    <div class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors"
+                                                        :class="isWaiting ? 'bg-rose-100' : ''">
+                                                        <flux:icon name="arrow-down-tray" variant="micro" class="w-3.5 h-3.5" />
                                                     </div>
-                                                    <span>Print PDF RPS</span>
+                                                    
+                                                    <span x-text="isWaiting ? 'Double click...' : 'Export RPS'"></span>
+
                                                     <flux:icon wire:loading
                                                         wire:target="printPDFRPS({{ $r['id'] }})"
                                                         name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
@@ -221,7 +231,7 @@
                                                             '{{ $r['bobot_uts'] }}',
                                                             '{{ $r['bobot_uas'] }}',
                                                             '{{ $r['total_bobot'] }}',
-                                                            '{{ $r['mk_rel']->kode_semester ?? '' }}',
+                                                            '{{ $r['kode_semester'] ?? '' }}',
                                                         );
                                                         $flux.modal('rps-modal').show();
                                                     "

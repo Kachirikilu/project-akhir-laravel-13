@@ -11,7 +11,7 @@
         <flux:icon name="printer" class="mr-2 h-4 w-4" />
 
         <div class="flex justify-between items-center w-full">
-            <span>Print PDF RPS
+            <span>Export RPS
                  {{-- - <span x-text="$store.rps?.nama_rps"></span> --}}
             </span>
             <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"

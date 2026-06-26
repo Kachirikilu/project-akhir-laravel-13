@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('rps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
+            $table->index('mk_id');
             $table->text('deskripsi');
             $table->string('akademik', 9);
             $table->string('bobot_uts', 2)->nullable();

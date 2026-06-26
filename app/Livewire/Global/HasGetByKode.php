@@ -5,6 +5,7 @@ namespace App\Livewire\Global;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\RPS;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -14,6 +15,55 @@ trait HasGetByKode
     use WithJadwalFilters;
     use WithKelasFilters;
     use WithRPSFilters;
+
+    protected function getProdiByKode(?string $kodePr): ?Prodi
+    {
+        if (blank($kodePr)) {
+            return null;
+        }
+        return $this->findProdiByKode($kodePr);
+    }
+
+    protected function findProdiByKode(string $kodePr): ?Prodi
+    {
+        $strataMap = [
+            'SARJANA' => 'Sarjana', 'S1' => 'Sarjana',
+            'MAGISTER' => 'Magister', 'S2' => 'Magister',
+            'DOKTOR' => 'Doktor', 'S3' => 'Doktor',
+        ];
+
+        $inputUpper = strtoupper($kodePr);
+        $detectedStrata = null;
+
+        foreach ($strataMap as $keyword => $value) {
+            if (str_contains($inputUpper, $keyword)) {
+                $detectedStrata = $value;
+                break;
+            }
+        }
+
+        $searchNormalized = preg_replace('/[^A-Za-z0-9]/', '', $inputUpper);
+
+        $query = Prodi::query()
+            ->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+            ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+            ->whereRaw("
+                REPLACE(REPLACE(UPPER(CONCAT(
+                    CASE 
+                        WHEN prodis.strata = 'Sarjana' THEN 'S1'
+                        WHEN prodis.strata = 'Magister' THEN 'S2'
+                        WHEN prodis.strata = 'Doktor' THEN 'S3'
+                        ELSE prodis.strata 
+                    END,
+                    COALESCE(NULLIF(prodis.kode_pr, ''), NULLIF(departemens.kode_dp, ''), NULLIF(fakultas.kode_fk, ''), 'UNI')
+                )), '-', ''), ' ', '') LIKE ?", ['%' . $searchNormalized . '%']);
+
+        if ($detectedStrata) {
+            $query->where('prodis.strata', $detectedStrata);
+        }
+
+        return $query->first();
+    }
 
     protected function getRPSByKode(?string $kodeRPS): ?RPS
     {
@@ -57,7 +107,6 @@ trait HasGetByKode
 
         return $kelas;
     }
-
     protected function findKelasByKode(?string $kodeKelas): ?Kelas
     {
         if (blank($kodeKelas)) {

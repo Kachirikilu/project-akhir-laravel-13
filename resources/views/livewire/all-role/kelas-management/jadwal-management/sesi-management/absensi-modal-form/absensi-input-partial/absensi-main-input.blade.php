@@ -58,7 +58,7 @@
                                     @include('livewire.global.modal-form.input-form', [
                                         'alpine' => 'sesi',
                                         'isLivewire' => 1,
-                                        'readonly' => 1,
+                                        'isReadonly' => 1,
                                         'nameXString' => 'Bobot',
                                         'modelString' => 'list_absensi_array',
                                         'itemsString' => "$index.bobot",

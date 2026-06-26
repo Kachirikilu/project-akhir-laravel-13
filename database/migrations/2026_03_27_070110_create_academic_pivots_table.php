@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
             $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->index('rps_id');
+            $table->index('dosen_id');
             $table->enum('peran', [
                 'Koordinator',
                 'Pengajar',
@@ -31,6 +33,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
+            $table->index('rps_id');
+            $table->index('cpmk_id');
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
@@ -50,6 +54,10 @@ return new class extends Migration
             $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
             $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
 
+            $table->index('rps_id');
+            $table->index('dosen_id');
+            $table->index('scpmk_id');
+
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
@@ -59,6 +67,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
             $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
+            $table->index('cpmk_id');
+            $table->index('scpmk_id');
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
@@ -68,6 +78,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
+            $table->index('cpl_id');
+            $table->index('cpmk_id');
             $table->integer('sort_order')->default(0);
         });
 
@@ -76,6 +88,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
             $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->index('cpmk_id');
+            $table->index('ref_id');
             $table->integer('sort_order')->default(0);
         });
 
@@ -84,6 +98,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
             $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->index('scpmk_id');
+            $table->index('ref_id');
             $table->integer('sort_order')->default(0);
         });
 
@@ -92,6 +108,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pr_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
+            $table->index('pr_id');
+            $table->index('cpl_id');
             $table->integer('sort_order')->default(0);
         });
 
@@ -100,6 +118,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
             $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->index('rps_id');
+            $table->index('ref_id');
             $table->integer('sort_order')->default(0);
         });
     }

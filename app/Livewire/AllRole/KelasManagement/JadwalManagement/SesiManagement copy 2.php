@@ -7,7 +7,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNil
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
-use App\Livewire\Global\HasAbsensi;
+use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
@@ -26,7 +26,7 @@ use Livewire\WithPagination;
 
 class SesiManagement extends Component
 {
-    use HasAbsensi;
+    use HasNilaiAbsensi;
     use HasGetByKode;
     use HasSortir;
     use HasToast;
@@ -407,12 +407,12 @@ class SesiManagement extends Component
         string $columnToSelect = 'nilai_array'
     ) {
         return $query->addSelect([
-            $alias => DB::table('nilai_mahasiswas')
-                ->join('mahasiswas', 'nilai_mahasiswas.mahasiswa_id', '=', 'mahasiswas.id')
-                ->select("nilai_mahasiswas.$columnToSelect")
+            $alias => DB::table('nilai_mahasiswa')
+                ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
+                ->select("nilai_mahasiswa.$columnToSelect")
                 ->whereColumn('mahasiswas.user_id', 'users.id')
-                ->where('nilai_mahasiswas.kj_id', $idJadwal)
-                ->whereNull('nilai_mahasiswas.deleted_at')
+                ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                ->whereNull('nilai_mahasiswa.deleted_at')
                 ->limit(1),
         ]);
     }

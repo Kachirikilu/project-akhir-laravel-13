@@ -18,6 +18,12 @@
             ])
 
             @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'citation',
+                'rowSpan' => 2,
+                'isBorderR' => 1
+            ])
+
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'judul',
                 'rowSpan' => 2,
                 'isBorderR' => 1
@@ -79,6 +85,7 @@
                     ])
                 </flux:dropdown>
             </td>
+            <td class="table-second table-border-r min-w-100">{{ $r->citation ?? '-' }}</td>
             <td class="table-second table-border-r min-w-84">{{ $r->judul ?? '-' }}</td>
             <td class="table-second min-w-48">{{ $r->penulis ?? '-' }}</td>
             <td class="table-sub min-w-48">{{ $r->penerbit ?? '-' }}</td>
@@ -117,7 +124,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="10" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+            <td colspan="11" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Referensi ditemukan!
             </td>
         </tr>

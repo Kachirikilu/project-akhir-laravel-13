@@ -25,6 +25,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         rps_id_show: "",
+        pr_id_show: "",
 
         id: "",
         nama_rps: "",
@@ -153,9 +154,14 @@ document.addEventListener("alpine:init", () => {
             this.total_bobot = totalBobot;
         },
 
-        setShowRPS(idRPS) {
+        setShowRPS(idRPS, kode, rps, draf, level, idPr) {
             this.resetShow();
             this.rps_id_show = idRPS;
+            this.kode_rps_show = kode;
+            this.rps_show = rps;
+            this.draf_show = draf;
+            this.level_mk_show = level;
+            this.pr_id_show = idPr
         },
 
         setDeleteRPS(namaRPS, kodeCPLDelete, forceDelete) {
@@ -173,6 +179,11 @@ document.addEventListener("alpine:init", () => {
 
         resetShow() {
             this.rps_id_show = "";
+            this.kode_rps_show = "";
+            this.rps_show = "";
+            this.draf_show = "";
+            this.level_mk_show = "";
+            this.pr_id_show = "";
         },
 
         reset(isAdd = 0) {

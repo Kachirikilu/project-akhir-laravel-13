@@ -18,6 +18,7 @@ return new class extends Migration
         Schema::create('departemens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('fk_id')->nullable() ->constrained('fakultas')->onDelete('set null');
+            $table->index('fk_id');
             $table->string('kode_dp')->nullable();
             $table->string('nama_dp');
             $table->softDeletes();
@@ -26,6 +27,7 @@ return new class extends Migration
         Schema::create('prodis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('dp_id')->nullable() ->constrained('departemens')->onDelete('set null');
+            $table->index('dp_id');
             $table->string('kode_pr')->nullable();
             $table->string('nama_pr');
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');

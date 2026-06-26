@@ -30,13 +30,13 @@
         }
     </style>
 
-    @php
-        $data = $detailRPSData ?? [];
-    @endphp
+    {{-- @php
+        $dataX = $detailRPSData ?? [];
+    @endphp --}}
     {{-- ================= HEADER ================= --}}
     <table class="w-full rps-table">
         <tr>
-            <td class="text-xs sm:text-sm w-[12%] text-center">
+            <td class="w-[12%] text-center">
                 <div class="flex items-center justify-center">
                     @if ($logoBase64 ?? null)
                         <img src="{{ $logoBase64 }}" class="h-20 object-contain">
@@ -45,15 +45,21 @@
                     @endif
                 </div>
             </td>
-            <td class="text-xs sm:text-sm w-[76%] !border-r-0 text-center font-bold text-lg leading-tight uppercase">
+            <td class="w-[76%] !border-r-0 text-center font-bold text-lg leading-tight uppercase">
+                @php
+                    $prodiHead = $prodi ?? $rps->mk_rel?->prodis->first();
+                @endphp
                 <div>
                     <div>{{ strtoupper(env('UNIVERSITAS')) }}</div>
-                    <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
-                    <div>Departemen {{ $data['departemen'] ?? '' }}</div>
-                    <div>Program Studi {{ $data['prodi'] ?? '' }}</div>
+                    {{-- <div>Fakultas {{ $dataX['fakultas'] ?? '' }}</div>
+                    <div>Departemen {{ $dataX['departemen'] ?? '' }}</div>
+                    <div>Program Studi {{ $dataX['prodi'] ?? '' }}</div> --}}
+                    <div>{{ $prodiHead->dp_rel->fk_rel->fakultas_fk ?? '' }}</div>
+                    <div>{{ $prodiHead->dp_rel->departemen_dp ?? '' }}</div>
+                    <div>{{ $prodiHead->prodi_pr ?? '' }}</div>
                 </div>
             </td>
-            <td class="text-xs sm:text-sm w-[12%] !border-l-0">
+            <td class="w-[12%] !border-l-0">
             </td>
         </tr>
         <tr>
@@ -75,116 +81,86 @@
             <td rowspan="2" class="w-1/6">Tanggal Revisi</td>
         </tr>
         <tr class="font-bold text-center bg-gray-50">
-            <td class="text-xs sm:text-sm w-1/12">Kuliah</td>
-            <td class="text-xs sm:text-sm w-1/12">Praktikum</td>
+            <td class="w-1/12">Kuliah</td>
+            <td class="w-1/12">
+                {{ ($rps->mk_rel->sks_text ?? 'Tatap Muka') === 'Tatap Muka' ? 'Praktikum' : $rps->mk_rel->sks_text }}
+            </td>
         </tr>
         <tr class="text-center">
-            <td>{{ $data['nama_mk'] ?? '' }}</td>
-            <td>{{ $data['kode_mk'] ?? '' }}</td>
-            <td>{{ $data['bahan_kajian'] ?? '' }}</td>
-            <td>{{ $data['sks'] ?? '-' }}</td>
-            <td>{{ $data['sks_pr'] ?? '-' }}</td>
-            <td>{{ $data['semester'] ?? '' }}</td>
-            <td>{{ $data['revisi'] ?? '' }}</td>
+            <td>{{ $rps->mk_rel->mk ?? '' }}</td>
+            <td>{{ $rps->mk_rel->kode ?? '' }}</td>
+            <td>{{ $rps->mk_rel->bahan_kajian ?? '' }}</td>
+            <td>{{ $rps->mk_rel->sks_tp ?? '-' }}</td>
+            <td>{{ $rps->mk_rel->sks_pr ?? ($rps->mk_rel->sks_pl ?? ($rps->mk_rel->sks_sm ?? '-')) }}</td>
+            <td>{{ $rps->mk_rel->semester ?? '' }}</td>
+            <td>{{ $rps->revisi_day ?? '' }}</td>
         </tr>
         <tr>
-            <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Deskripsi Mata Kuliah</td>
+            <td class="text-center font-bold">Deskripsi Mata Kuliah</td>
             <td colspan="6" class="text-justify leading-relaxed">
-                {{ $data['deskripsi'] ?? '' }}
+                {{ $rps->mk_rel->deskripsi ?? '' }}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="font-bold bg-gray-50 text-center">Capaian Pembelajaran Mata
+                Kuliah<br>(CPMK)</td>
+            <td colspan="6">
+                @foreach ($rps->cpmks as $cpmk)
+                    <div class="list-indent text-justify leading-relaxed mb-1">
+                        <span class="mr-[5px] font-bold">{{ $loop->iteration }}.</span>
+                        <span class="mr-[3px] font-bold">{{ $cpmk->kode }}:</span> {{ $cpmk->deskripsi_cpl }}
+                    </div>
+                @endforeach
             </td>
         </tr>
         @php
-            $hasCpl = collect(explode("\n", $data['cpl'] ?? ''))
-                ->filter(fn($line) => trim($line))
-                ->isNotEmpty();
+            $allDosens = $rps->dosens ?? collect();
+            $ketua = $allDosens->firstWhere('pivot.is_ketua', 1);
+            $instruktur = $allDosens->filter(fn($d) => (int) $d->pivot->is_ketua !== 1);
+            $label = $allDosens->count() === 1 ? 'Dosen Pengampu' : 'Tim Pengajar';
         @endphp
         <tr>
-            <td rowspan="{{ $hasCpl ? 2 : 1 }}" class="font-bold bg-gray-50 text-center">Capaian Pembelajaran Mata
-                Kuliah
-                (CPMK)</td>
-            @if ($hasCpl)
-                <td colspan="6">
-                    @foreach (explode("\n", $data['cpl'] ?? '') as $line)
-                        @if (trim($line))
-                            <div class="list-indent text-justify leading-relaxed mb-1">
-                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                {{ trim($line) }}
-                            </div>
-                        @endif
-                    @endforeach
-                </td>
-            @else
-                <td colspan="6">
-                    @foreach (explode("\n", $data['cpmk'] ?? '') as $line)
-                        @if (trim($line))
-                            <div class="list-indent text-justify leading-relaxed mb-1">
-                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                {{ trim($line) }}
-                            </div>
-                        @endif
-                    @endforeach
-                </td>
-            @endif
-        </tr>
-        @if ($hasCpl)
-            <tr>
-                <td colspan="6">
-                    @foreach (explode("\n", $data['cpmk'] ?? '') as $line)
-                        @if (trim($line))
-                            <div class="list-indent text-justify leading-relaxed mb-1">
-                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                {{ trim($line) }}
-                            </div>
-                        @endif
-                    @endforeach
-                </td>
-            </tr>
-        @endif
-        <tr>
-            <td rowspan="2" class="font-bold bg-gray-50 text-center"">
-                {{ $data['tim_pengajar_label'] ?? 'Tim Pengajar' }}</td>
-            <td rowspan="2" @if (!empty($data['instruktur'])) colspan="3" @else colspan="6" @endif>
-                @if (str_contains($data['tim_pengajar'] ?? '', "\n"))
-                    @foreach (explode("\n", $data['tim_pengajar']) as $idx => $line)
-                        @if (trim($line))
-                            <div class="list-indent mb-1">
-                                <span class="mr-[5px]">{{ $idx + 1 }}.</span>
-                                {!! $line !!}
-                            </div>
-                        @endif
-                    @endforeach
+            <td rowspan="2" class="font-bold bg-gray-50 text-center">
+                {{ $label }}
+            </td>
+            <td rowspan="2" @if ($instruktur->isNotEmpty()) colspan="3" @else colspan="6" @endif>
+                @if ($allDosens->count() === 1)
+                    {{ $allDosens->first()->name }}<br>NIP: {{ $allDosens->first()->nip }}
                 @else
-                    {!! $data['tim_pengajar'] ?? '' !!}
+                    @foreach ($allDosens as $idx => $dosen)
+                        <div class="list-indent mb-1">
+                            <span class="mr-[5px]">{{ $idx + 1 }}.</span>
+                            {{ $dosen->name }}<br>NIP: {{ $dosen->nip }}
+                        </div>
+                    @endforeach
                 @endif
             </td>
-            @if (!empty($data['instruktur']))
-                <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Ketua Pengajar</td>
+            @if ($instruktur->isNotEmpty())
+                <td class="font-bold text-center">Ketua Pengajar</td>
                 <td colspan="2">
-                    <div class="font-bold">{{ $data['ketua_tim_pengajar'] ?? '-' }}</div>
+                    <div class="list-indent font-bold">
+                        <span class="mr-[5px]">1. </span>
+                        {{ $ketua->name ?? '-' }}
+                    </div>
                 </td>
             @endif
         </tr>
         <tr>
-            @if (!empty($data['instruktur']))
-                <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center">Instruktur</td>
+            @if ($instruktur->isNotEmpty())
+                <td class="font-bold text-center">Instruktur</td>
                 <td colspan="3">
-                    @if (str_contains($data['instruktur'] ?? '', "\n"))
-                        @foreach (explode("\n", $data['instruktur']) as $idx => $line)
-                            @if (trim($line))
-                                <div class="list-indent">
-                                    <span class="mr-[5px]">{{ $idx + 1 }}.</span>
-                                    {!! $line !!}
-                                </div>
-                            @endif
-                        @endforeach
-                    @else
-                        {{ $data['instruktur'] ?? '-' }}
-                    @endif
+                    @foreach ($instruktur as $idx => $dosen)
+                        <div class="list-indent">
+                            <span class="mr-[5px]">{{ $idx + 1 }}.</span>
+                            {{ $dosen->name }}
+                        </div>
+                    @endforeach
                 </td>
             @endif
         </tr>
         <tr>
-            <td class="text-xs sm:text-sm font-bold bg-gray-50 text-center align-middle">Otoritas</td>
+            <td class="font-bold text-center align-middle">Otoritas</td>
 
             <td colspan="3" class="text-center">
                 <div class="flex flex-col justify-between h-18">
@@ -210,19 +186,58 @@
 
     <div class="page-break"></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {{-- ================= PROGRAM PEMBELAJARAN ================= --}}
     <div class="font-bold mt-8 mb-2">B. PROGRAM PEMBELAJARAN</div>
+
     <table class="w-full text-[10px] leading-tight rps-table">
         @php
-            $programData = collect($data['program_pembelajaran'] ?? []);
-
+            $programData = $rps->scpmkAtr;
             $calculateRowspan = function ($data, $column) {
                 $counts = [];
                 $index = 0;
                 while ($index < count($data)) {
-                    $currentValue = $data[$index][$column] ?? '';
+                    $row = $data[$index];
+
+                    if ($column === 'dosen_id_string') {
+                        $currentValue = $row->dosen_id_string ?? '';
+                    } else {
+                        $val = $row->$column ?? '';
+                        $currentValue =
+                            is_array($val) || $val instanceof \Illuminate\Support\Collection
+                                ? (string) $val->pluck('id')->sort()->implode(',')
+                                : (string) $val;
+                    }
+
                     $step = 0;
-                    while ($index + $step < count($data) && ($data[$index + $step][$column] ?? '') === $currentValue) {
+                    while ($index + $step < count($data)) {
+                        $nextRow = $data[$index + $step];
+                        $nextVal = $nextRow->$column ?? '';
+
+                        $nextValue =
+                            is_array($nextVal) || $nextVal instanceof \Illuminate\Support\Collection
+                                ? (string) $nextVal->pluck('id')->sort()->implode(',')
+                                : (string) $nextVal;
+
+                        if ($nextValue !== $currentValue) {
+                            break;
+                        }
                         $step++;
                     }
                     $counts[$index] = $step;
@@ -231,20 +246,22 @@
                 return $counts;
             };
 
-            $rowspanCpmk = $calculateRowspan($programData, 'cpmk');
-            // $rowspanMetode = $calculateRowspan($programData, 'metode');
-            // $rowspanIndikator = $calculateRowspan($programData, 'indikator');
+            $dosenList = $programData->map(fn($item) => (string) ($item->dosen_id_string ?? ''))->unique();
+            $isDosenUniform = $dosenList->count() <= 1;
+
+            $rowspanCpmk = $calculateRowspan($programData, 'kode_cpmk');
             $rowspanBobot = $calculateRowspan($programData, 'bobot');
-            $rowspanDosen = $calculateRowspan($programData, 'dosen');
-            $isDosenUniform = $programData->pluck('dosen')->unique()->count() === 1;
+            $rowspanDosen = $calculateRowspan($programData, 'dosen_id_string');
         @endphp
+
+
+
         <thead class="bg-gray-50 font-bold text-center">
             <tr>
                 <th class="p-1">CPMK</th>
-                <th class="p-1 w-[15%]">Kompetensi Mingguan (Sub-CPMK)</th>
+                <th class="p-1 w-[15%]">Kompetensi Mingguan<br>(Sub-CPMK)</th>
                 <th class="p-1 w-[15%]">Materi Pembelajaran</th>
-                <th class="p-1">Metodologi Pembelajaran dan Alokasi Waktunya</th>
-                {{-- <th class="p-1">Metode</th> --}}
+                <th class="p-1">Metodologi Pembelajaran<br>dan Alokasi Waktunya</th>
                 <th class="p-1 w-[15%]">Deskripsi Tugas atau Asesmen beserta Alokasi Waktunya</th>
                 <th class="p-1">Indikator</th>
                 <th class="p-1">Bobot</th>
@@ -254,108 +271,98 @@
             </tr>
         </thead>
         <tbody class="border-t border-black">
+            @php
+                $utsMethods = explode(',', env('UTS_FIELDS', 'UTS'));
+                $uasMethods = explode(',', env('UAS_FIELDS', 'UAS'));
+                $examMethods = array_merge($utsMethods, $uasMethods);
+                $examMethods = array_map('trim', $examMethods);
+            @endphp
             @foreach ($programData as $index => $row)
                 @php
-                    $isPlaceholder = $row['is_placeholder'] ?? false;
-                    $isExam =
-                        strtoupper(trim($row['metode'] ?? '')) === 'UTS' ||
-                        strtoupper(trim($row['metode'] ?? '')) === 'UAS';
+                    $isExam = in_array(strtoupper($row->metode ?? ''), $examMethods);
+                    $isExamKode = in_array(strtoupper($row->kode ?? ''), ['UTS', 'UAS']);
 
-                    // Check if this is UTS/UAS with empty columns
-                    $isEmptyExam =
-                        $isExam &&
-                        empty(trim($row['cpmk'] ?? '')) &&
-                        empty(trim($row['materi'] ?? '')) &&
-                        empty(trim($row['metodologi'] ?? '')) &&
-                        empty(trim($row['tugas'] ?? '')) &&
-                        empty(trim($row['indikator'] ?? ''));
+                    $textStyle = 'p-2 border border-black';
+                    if ($isExamKode) {
+                        $textStyle .= ' font-bold';
+                    }
                 @endphp
-
-                <tr class="{{ $isPlaceholder || $isExam ? 'bg-gray-50 font-semibold italic' : '' }}">
-
-                    {{-- KOLOM CPMK --}}
-                    @if (!$isEmptyExam && isset($rowspanCpmk[$index]))
-                        <td class="text-xs sm:text-sm p-2 border border-black text-center font-bold align-top"
+                <tr class="{{ $isExam ? 'bg-gray-50 font-semibold italic' : '' }}">
+                    {{-- CPMK --}}
+                    @if (isset($rowspanCpmk[$index]))
+                        <td class="{{ $textStyle }} text-center align-top font-bold"
                             rowspan="{{ $rowspanCpmk[$index] }}">
-                            {{ $row['cpmk'] ?? '-' }}
+                            {{ $row->kode_cpmk }}
                         </td>
                     @endif
 
-                    {{-- Kolom yang TIDAK digabung (Sub CPMK & Materi) --}}
-                    @if ($isEmptyExam)
-                        {{-- UTS/UAS dengan kolom kosong: gunakan colspan 6 --}}
-                        <td class="text-xs sm:text-sm p-2 border border-black text-center text-center font-bold" colspan="6">
-                            @if ($row['metode'] == 'UTS')
-                                Ujian Tengah Semester
-                            @elseif ($row['metode'] == 'UAS')
-                                Ujian Akhir Semester
-                            @endif
+                    {{-- Kolom Materi/Sub-CPMK --}}
+                    @if ($isExam && $isExamKode)
+                        <td class="{{ $textStyle }} text-center" colspan="5">
+                            {{ $row->deskripsi }}
                         </td>
                     @else
-                        {{-- Normal row --}}
-                        @if ($row['metode'] == 'UTS')
-                            <td class="text-xs sm:text-sm p-2 border border-black text-left">Ujian Tengah Semester</td>
-                        @elseif ($row['metode'] == 'UAS')
-                            <td class="text-xs sm:text-sm p-2 border border-black text-left">Ujian Akhir Semester</td>
-                        @else
-                            <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
-                        @endif
-                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
-                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
-                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
-                        <td class="text-xs sm:text-sm p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->kode ?? '-' }}<br>Metode: {{ $row->metode }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->materi ?? '-' }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->metodologi ?? '-' }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->tugas ?? '-' }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->indikator ?? '-' }}</td>
                     @endif
 
-                    {{-- KOLOM BOBOT --}}
+                    {{-- Bobot --}}
                     @if (isset($rowspanBobot[$index]))
-                        <td class="text-xs sm:text-sm p-2 border border-black text-center font-bold"
-                            rowspan="{{ $rowspanBobot[$index] }}">
-                            {{ $row['bobot'] ?? '-' }}
+                        <td class="{{ $textStyle }} text-center font-bold" rowspan="{{ $rowspanBobot[$index] }}">
+                            {{ $row->bobot_normalisasi ?? '-' }}%
                         </td>
                     @endif
 
                     {{-- KOLOM DOSEN --}}
-                    @if (!$isDosenUniform)
-                        @if (isset($rowspanDosen[$index]))
-                            <td class="text-xs sm:text-sm p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
-                                @if (str_contains($row['dosen'] ?? '', "\n"))
-                                    @foreach (explode("\n", $row['dosen'] ?? '') as $line)
-                                        @if (trim($line))
-                                            <div class="list-indent leading-relaxed mb-1">
-                                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                                {{ trim($line) }}
-                                            </div>
+                    @if (!$isDosenUniform && isset($rowspanDosen[$index]))
+                        <td class="p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
+                            @if ($row->dosens_collection->isEmpty())
+                                <span class="italic text-gray-500">Tim Pengajar</span>
+                            @else
+                                @foreach ($row->dosens_collection as $dosen)
+                                    @php
+                                        $rowDosCount = false;
+                                        if ($row->dosens_collection->count() > 1) {
+                                            $rowDosCount = true;
+                                        }
+                                    @endphp
+                                    <div class="{{ $rowDosCount ? 'list-indent leading-relaxed' : '' }}">
+                                        @if ($rowDosCount)
+                                            <span class="mr-[5px]">{{ $loop->iteration }}.</span>
                                         @endif
-                                    @endforeach
-                                @else
-                                    {{ $row['dosen'] ?? 'Tim Pengajar' }}
-                                @endif
-                            </td>
-                        @endif
+                                        {{ $dosen->name }}
+                                    </div>
+                                @endforeach
+                            @endif
+                        </td>
                     @endif
+
                 </tr>
             @endforeach
             <tr>
                 <td colspan="8" class="font-bold p-2">
-                    Beban Belajar Mahasiswa Selama Satu Semester: <span class="pl-1">{{ $data['total_sks'] ?? '0' }}
-                        SKS</span>
+                    <span>Beban Belajar Mahasiswa Selama Satu Semester:</span>
+                    <span class="float-right">{{ $rps->sks ?? '0' }} SKS</span>
                 </td>
             </tr>
         </tbody>
     </table>
 
+
     <div class="page-break"></div>
 
-    <div class="mt-8">
+    <div class="mt-6">
         <h3 class="font-bold p-1 text-[10px]">Referensi</h3>
         <div class="px-1">
             <ul class="list-none">
-                @foreach (explode("\n", $data['referensi'] ?? '') as $ref)
-                    @if (trim($ref))
-                        <li class="list-indent text-justify text-[10px] leading-relaxed mb-1">
-                            <span class="font-bold mr-[5px]">{{ $loop->iteration }}.</span> {{ trim($ref) }}
-                        </li>
-                    @endif
+                @foreach ($rps->all_refs as $ref)
+                    <li class="list-indent text-justify text-[10px] leading-relaxed mb-1">
+                        <span class="font-bold mr-[5px]">{{ $loop->iteration }}.</span>
+                        {{ $ref->citation }}
+                    </li>
                 @endforeach
             </ul>
         </div>
@@ -385,58 +392,61 @@
             </thead>
             <tbody class="text-center">
                 <tr>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">A</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">86-100</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">4.00</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">A</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">86-100</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">4.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik
+                    </td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">A-</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">80-85</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.70</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">A-</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">80-85</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.70</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Baik
+                    </td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B+</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">75-79</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.30</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B+</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">75-79</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.30</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">70-74</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">3.00</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">70-74</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">3.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">B-</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">65-69</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.70</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Baik</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">B-</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">65-69</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.70</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Baik</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">C+</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">60-64</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.30</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Cukup</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">C+</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">60-64</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.30</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">C</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">56-59</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">2.00</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Cukup</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">C</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">56-59</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">2.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Cukup</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">D</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">40-55</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">1.00</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">Kurang</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">D</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">40-55</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">1.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">Kurang</td>
                 </tr>
                 <tr>
-                    <td class="text-xs sm:text-sm font-medium py-0.5 px-1 leading-tight !border-0">E</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">0-39</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0">0.00</td>
-                    <td class="text-xs sm:text-sm py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Kurang</td>
+                    <td class="font-medium py-0.5 px-1 leading-tight !border-0">E</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">0-39</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0">0.00</td>
+                    <td class="py-0.5 px-1 leading-tight !border-0 whitespace-nowrap">Sangat Kurang
+                    </td>
                 </tr>
             </tbody>
         </table>

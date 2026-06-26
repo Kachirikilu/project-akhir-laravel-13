@@ -409,6 +409,7 @@
                                     '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
                                     '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
                                     '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
+                                    '{{ $user->pr_id ?? '' }}',
                                 );
                     
                             $flux.modal('user-rps-modal').show();
@@ -442,7 +443,7 @@
             @endif
 
             @if ($switchTable == 'mahasiswa')
-                <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
             @endif
 
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')

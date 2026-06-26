@@ -1,5 +1,5 @@
 @if (Auth::user())
-    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
         @php
             $isTrashed = $x->trashed();
@@ -35,15 +35,23 @@
 
             <flux:menu.separator />
 
-            <flux:menu.item
-                wire:click="exportNilaiExcel({{ $x->id }})"
-                class="!cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 active:!bg-emerald-200 dark:active:!bg-emerald-900 transition-colors">
-                <flux:icon name="printer" class="mr-2 h-4 w-4" />
-                <div class="flex justify-between items-center w-full">
-                    <span>Export Nilai</span>
-                    <flux:icon wire:loading wire:target="exportNilaiExcel({{ $x->id }})" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+            <div x-data="{ isWaiting: false }" @click="isWaiting = true; setTimeout(() => isWaiting = false, 1000)"
+                @dblclick="isWaiting = false" wire:dblclick="exportNilaiExcel({{ $x->id }})"
+                :class="isWaiting ? 'ring-2 ring-emerald-400' : ''"
+                class="px-2 py-1.5 flex items-center justify-between w-full cursor-pointer
+                        !text-emerald-600 dark:!text-emerald-400
+                        hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 
+                        active:!bg-emerald-200 dark:active:!bg-emerald-900
+                        transition-all duration-300 select-none rounded-md">
+
+                <div class="flex items-center">
+                    <flux:icon name="arrow-down-tray" class="mr-2 h-4 w-4" />
+                    <span x-text="isWaiting ? 'Double click...' : 'Export Nilai'"></span>
                 </div>
-            </flux:menu.item>
+
+                <flux:icon wire:loading wire:target="exportNilaiExcel({{ $x->id }})" name="arrow-path"
+                    class="animate-spin h-4 w-4 ml-2" />
+            </div>
 
             <flux:menu.separator />
 

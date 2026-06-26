@@ -345,11 +345,11 @@
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($r->draf == 0)
-                            <flux:badge color="green" size="sm">
+                            <flux:badge color="green" size="sm" icon="check-circle">
                                 Aktif
                             </flux:badge>
                         @else
-                            <flux:badge color="red" size="sm">
+                            <flux:badge color="red" size="sm" icon="document-text">
                                 Draf
                             </flux:badge>
                         @endif

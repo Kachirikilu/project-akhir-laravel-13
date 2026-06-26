@@ -4,7 +4,7 @@ namespace App\Livewire\Global;
 
 use Illuminate\Database\Eloquent\Builder;
 
-trait HasAbsensi
+trait HasNilaiAbsensi
 {
     protected function addNilaiJadwalSubquery(
         $queryUser,

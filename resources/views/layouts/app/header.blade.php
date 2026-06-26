@@ -55,7 +55,7 @@
                     :initials="Auth()->user()->initials()"
                 />
 
-                <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+                <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">

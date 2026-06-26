@@ -67,6 +67,8 @@ trait WithRPSSearchFilters
             'bobot_uts' => $r->bobot_uts,
             'bobot_uas' => $r->bobot_uas,
             'total_bobot' => $r->total_bobot,
+            'kode_semester' => $r->kode_semester,
+            'level_mk' => $r->level_mk,
         ])->toArray();
     }
 
@@ -413,6 +415,9 @@ trait WithRPSSearchFilters
 
                     $matchNo = $this->matchNo(
                         $rps->mk_rel->digit_mk,
+                        $searchLower
+                    ) || $this->matchNo(
+                        intval($rps->mk_rel->digit_mk), 
                         $searchLower
                     );
 

@@ -1,6 +1,6 @@
 <flux:modal name="user-modal" wire:model="showUserModal"
     @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser, saveUserExcel, saveUserInternal">

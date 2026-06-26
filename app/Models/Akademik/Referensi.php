@@ -35,6 +35,27 @@ class Referensi extends Model
         });
     }
     
+
+    protected function citation(): Attribute
+    {
+        return Attribute::get(function () {
+        $parts = [];
+        if (!empty($this->penulis)) {
+            $parts[] = $this->penulis;
+        }
+        if (!empty($this->tahun)) {
+            $parts[] = "({$this->tahun})";
+        }
+        if (!empty($this->judul)) {
+            $parts[] = trim($this->judul) . '.';
+        }
+        if (!empty($this->penerbit)) {
+            $parts[] = trim($this->penerbit) . '.';
+        }
+        return trim(implode(' ', $parts));
+        });
+    }
+
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
@@ -72,31 +93,36 @@ class Referensi extends Model
     }
 
     
-    public function scopeSearchRef($query, $search)
-    {
-        if (empty(trim($search))) {
-            return $query;
-        }
-
-        $search = trim($search);
-        $searchTerm = '%'.$search.'%';
-        $searchLower = '%'.strtolower($search).'%';
-        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
-
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
-            $q->where('referensis.kode_ref', 'like', $searchTerm)
-                    ->orWhere('referensis.kode_ref', 'like', $searchClean)
-                    ->orWhere('referensis.judul', 'like', $searchTerm)
-                    ->orWhere('referensis.penulis', 'like', $searchTerm)
-                    ->orWhere('referensis.penerbit', 'like', $searchTerm)
-                    ->orWhere('referensis.tahun', 'like', $searchTerm)
-                    ->orWhere('referensis.link', 'like', $searchTerm);
-
-                if (is_numeric($searchTerm)) {
-                    $q->orWhere('referensis.id', 'like', $search);
-                }
-        });
+public function scopeSearchRef($query, $search)
+{
+    if (empty(trim($search))) {
+        return $query;
     }
+
+    $searchTerm = '%' . trim($search) . '%';
+
+    return $query->where(function ($q) use ($searchTerm, $search) {
+        // 1. Pencarian kolom standar tetap dipertahankan untuk performa
+        $q->where('kode_ref', 'like', $searchTerm)
+          ->orWhere('judul', 'like', $searchTerm)
+          ->orWhere('penulis', 'like', $searchTerm)
+          ->orWhere('penerbit', 'like', $searchTerm)
+          ->orWhere('tahun', 'like', $searchTerm);
+
+        // 2. Pencarian "Virtual" (Meniru logic Accessor Citation)
+        $q->orWhereRaw("
+            CONCAT_WS(' ', 
+                penulis, 
+                IF(tahun IS NOT NULL AND tahun != '', CONCAT('(', tahun, ')'), NULL), 
+                IF(judul IS NOT NULL AND judul != '', CONCAT(TRIM(judul), '.'), NULL), 
+                IF(penerbit IS NOT NULL AND penerbit != '', CONCAT(TRIM(penerbit), '.'), NULL)
+            ) LIKE ?", [$searchTerm]);
+
+        if (is_numeric($search)) {
+            $q->orWhere('id', $search);
+        }
+    });
+}
 
     // public function scopeSearchRef($query, $search)
     // {

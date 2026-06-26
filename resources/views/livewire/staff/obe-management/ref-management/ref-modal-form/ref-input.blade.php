@@ -111,6 +111,28 @@
                 ])
 
 
+                <div x-data x-effect="
+                    let s = $store.ref;
+                    let parts = [];
+                    if (s.penulis) parts.push(s.penulis);
+                    if (s.tahun) parts.push(`(${s.tahun})`);
+                    if (s.judul) parts.push(s.judul.replace(/\.$/, '') + '.');
+                    if (s.penerbit) parts.push(s.penerbit.replace(/\.$/, '') + '.');
+                    
+                    s.citation = parts.join(' ');
+                ">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'ref',
+                        'nameXString' => 'Sitasi',
+                        'modelString' => 'citation',
+                        'iconString' => 'book-open',
+                        'placeholder' => 'Wildan Athif M. (2022) New ISOCELL S5KHMX. ISOCELL.',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+
+
             </div>
         </div>
         <div x-show="step === 2">

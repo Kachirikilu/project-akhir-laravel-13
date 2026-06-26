@@ -30,8 +30,6 @@ document.addEventListener("alpine:init", () => {
         kode_kelas: "",
         label_extra: "",
 
-        rps_id_show: "",
-
         kode_wilayah: "",
         label_kelas: "",
 
@@ -86,19 +84,10 @@ document.addEventListener("alpine:init", () => {
             this.label_extra = labelExtra;
         },
 
-        setShowRPS(idRPS) {
-            this.resetShow();
-            this.rps_id_show = idRPS;
-        },
-
         setDeleteJadwal(labelJadwal, kodeJadwalDelete, forceDelete) {
             this.label_jadwal_delete = labelJadwal;
             this.kode_jadwal_delete = kodeJadwalDelete;
             this.isForceDelete = forceDelete;
-        },
-
-        resetShow() {
-            this.rps_id_show = "";
         },
 
         reset(isAdd = 0) {

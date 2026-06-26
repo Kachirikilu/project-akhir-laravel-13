@@ -324,6 +324,11 @@ trait WithReferensiSearchFilters
                         $searchLower
                     );
 
+                    $matchSitasi = $this->containsStrict(
+                        $ref->citation,
+                        $searchLower
+                    );
+
                     $matchJudul = $this->containsStrict(
                         $ref->judul,
                         $searchLower
@@ -371,6 +376,7 @@ trait WithReferensiSearchFilters
                     return
                         $matchID
                         || $matchKode
+                        || $matchSitasi
                         || $matchJudul
 
                         || $matchPenulis
@@ -385,6 +391,7 @@ trait WithReferensiSearchFilters
 
             $sortValue = match ($sortField) {
                 'kode' => fn ($ref) => $ref->kode,
+                'citation' => fn ($ref) => $ref->citation,
                 'judul' => fn ($ref) => $ref->judul,
                 'penulis' => fn ($ref) => $ref->penulis,
                 'penerbit' => fn ($ref) => $ref->penerbit,

@@ -19,6 +19,8 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
+            $table->index('user_id');
+            $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
 
             // Data Identitas
@@ -65,6 +67,8 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
+            $table->index('user_id');
+            $table->index('pr_id');
 
             // Data Identitas
             $table->string('name');
@@ -112,6 +116,8 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
+            $table->index('user_id');
+            $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
 
             // Data Identitas

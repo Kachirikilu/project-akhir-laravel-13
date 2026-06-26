@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('kode_kelas')->unique();
             $table->foreignId('rps_id')->nullable()->constrained('rps')->onDelete('set null');
             $table->foreignId('pr_id')->nullable()->constrained('prodis')->onDelete('set null');
-
+            $table->index('rps_id');
+            $table->index('pr_id');
             $table->string('nama_kelas');
             $table->text('deskripsi')->nullable();
 
@@ -27,7 +28,7 @@ return new class extends Migration
         Schema::create('kelas_jadwals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
-            
+            $table->index('kelas_id');
             $table->string('password')->nullable();
 
             $table->string('label_kelas');
@@ -50,6 +51,7 @@ return new class extends Migration
         Schema::create('kelas_sesi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kj_id')->constrained('kelas_jadwals')->onDelete('cascade');
+            $table->index('kj_id');
 
             $table->integer('pertemuan_ke');
             $table->date('tanggal');
@@ -64,6 +66,7 @@ return new class extends Migration
         Schema::create('kelas_sesi_overrides', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
+            $table->index('sesi_id');
 
             $table->time('jam_mulai')->nullable();
             $table->time('jam_berakhir')->nullable();
@@ -92,6 +95,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
             $table->foreignId('kj_id')->constrained('kelas_jadwals')->onDelete('cascade');
+            $table->index('mahasiswa_id');
+            $table->index('kj_id');
             $table->timestamps();
         });
 
@@ -99,6 +104,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
+            $table->index('sesi_id');
+            $table->index('mahasiswa_id');
 
             $table->enum('status', [
                 'Hadir',
@@ -120,6 +127,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
             $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->index('sesi_id');
+            $table->index('dosen_id');
             $table->enum('peran', ['Koordinator', 'Pengajar', 'Asisten'])->default('Pengajar');
             $table->boolean('is_ketua')->default(false);
             $table->integer('sort_order')->default(0);
@@ -130,6 +139,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sesi_id')->constrained('kelas_sesi')->onDelete('cascade');
             $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->index('sesi_id');
+            $table->index('ref_id');
             $table->timestamps();
         });
 

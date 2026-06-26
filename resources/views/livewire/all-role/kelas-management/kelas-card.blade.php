@@ -236,17 +236,22 @@
                 <button
                     class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-bl-[11px] rounded-r-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                     @click="
-                        $store.kelas?.resetShow();
-                        $store.kelas?.setShowRPS(
-                            '{{ $k->rps_id ?? '' }}',
+                        $store.rps?.resetShow();
+                        $store.rps?.setShowRPS(
+                            '{{ $x->rps_id ?? '' }}',
+                            '{{ $x->rps_rel->kode ?? '' }}',
+                            '{{ $x->rps_rel->rps ?? '' }}',
+                            '{{ $x->rps_rel->draf ?? '' }}',
+                            '{{ $x->rps_rel->level_mk ?? '' }}',
                         );
+                        $store.rps?.setColor('text-green-700 dark:text-green-400');
                         $flux.modal('rps-detail-modal').show();
                     "
-                    wire:click="showRPS({{ $k->rps_id }})">
+                    wire:click="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})">
                     <flux:icon wire:loading.remove wire:target="showRPS({{ $k->rps_id }})"
                         name="clipboard-document-list" class="w-3.5 h-3.5" />
-                    <span wire:loading.remove wire:target="showRPS({{ $k->rps_id }})">Lihat RPS</span>
-                    <flux:icon wire:loading wire:target="showRPS({{ $k->rps_id }})" name="arrow-path"
+                    <span wire:loading.remove wire:target="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})">Lihat RPS</span>
+                    <flux:icon wire:loading wire:target="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})" name="arrow-path"
                         class="animate-spin h-4 w-4 ml-2" />
                 </button>
 

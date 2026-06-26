@@ -152,42 +152,146 @@ trait WithRPS
         ]);
     }
 
+    // private function processGetPDFRPS(string $noWA, string $nameWA, string $pesan, $pdfGetRPSKey)
+    // {
+
+    //     Log::info('=== SEDANG MEMPROSES RPS MENJADI PDF ===');
+
+    //     $sufiksNomor = substr($noWA, -9);
+    //     $user = $this->searchUserWhatsApp($sufiksNomor);
+
+    //     if (! $user) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'head' => '*❌ Autentikasi Gagal!*',
+    //             'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+    //         ], 442);
+    //     }
+
+    //     $matchedKey = collect($pdfGetRPSKey)->first(fn($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
+    //     $kodeRPSInput = trim(str_ireplace($matchedKey, '', $pesan));
+
+    //     if (empty($kodeRPSInput)) {
+    //         return response()->json([
+    //             'status' => true,
+    //             'head' => '*❌ Gagal Mencari RPS!*',
+    //             'message' => "Silakan masukkan Kode RPS setelah kata kunci! Contoh: *{$matchedKey} KODE-RPS*",
+    //         ], 400);
+    //     }
+
+    //     $rps = $this->getRPSByKode($kodeRPSInput);
+    //     if (! $rps) {
+    //         return response()->json([
+    //             'status' => true,
+    //             'head' => '*❌ Gagal Mencari RPS!*',
+    //             'message' => "Berkas RPS dengan kode `{$kodeRPSInput}` tidak ditemukan!",
+    //         ], 404);
+    //     }
+
+    //     try {
+    //         $prodis = $rps->mk_rel->prodis->sortBy([
+    //             ['prodi', 'asc'],
+    //             ['strata', 'asc'],
+    //         ]);
+    //         $prodi = null;
+
+    //         if (//nanti ini ambil id pada prodi hasil pencarian getProdiByKode) {
+    //             $prodi = $prodis->find(//nanti ini ambil id pada prodi hasil pencarian getProdiByKode);
+    //         } 
+    //         if (!$prodi) {
+    //             $prodi = $prodis->firstWhere('id', $user->pr_id);
+    //         }
+    //         if (!$prodi) {
+    //             $prodi = $prodis->first();
+    //         }
+    //         if (!$prodi) {
+    //             return response()->json([
+    //                 'status' => true,
+    //                 'head' => '*❌ Gagal Mencari RPS!*',
+    //                 'message' => "Data Program Studi tidak ditemukan pada RPS ini!",
+    //             ], 400);
+    //         }
+    //         $pdfRawContent = $this->generateRawPdfContent($rps, $prodi);
+    //         // $data = $this->formatRPSDetailForShow($rps);
+    //         $fileNameSafe = str_replace('/', '-', 'RPS_'.$prodi->kode.'_'.$rps->kode.'_'.$rps->mk_rel->mk.'.pdf');
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => "Berkas RPS *{$rps->mk_rel->mk}* dengan Kode `{$rps->kode}` berhasil dibuat!",
+    //             'file_base64' => base64_encode($pdfRawContent),
+    //             'file_name' => $fileNameSafe,
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => '❌ Gagal me-render PDF RPS: '.$e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
     private function processGetPDFRPS(string $noWA, string $nameWA, string $pesan, $pdfGetRPSKey)
     {
-        $matchedKey = collect($pdfGetRPSKey)->first(fn($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
-        $kodeRPSInput = trim(str_ireplace($matchedKey, '', $pesan));
+        Log::info('=== SEDANG MEMPROSES RPS MENJADI PDF ===');
 
-        if (empty($kodeRPSInput)) {
-            return response()->json([
-                'status' => false,
-                'message' => "Silakan masukkan Kode RPS setelah kata kunci! Contoh: *{$matchedKey} KODE-RPS*",
-            ], 400);
+        $sufiksNomor = substr($noWA, -9);
+        $user = $this->searchUserWhatsApp($sufiksNomor);
+
+        if (!$user) {
+            return response()->json(['status' => false, 'head' => '*❌ Autentikasi Gagal!*', 'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`"], 442);
         }
 
+        $matchedKey = collect($pdfGetRPSKey)->first(fn($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
+        $inputParams = trim(str_ireplace($matchedKey, '', $pesan));
+
+        if (empty($inputParams)) {
+            return response()->json(['status' => true, 'head' => '*❌ Gagal Mencari RPS!*', 'message' => "Format: *{$matchedKey} KODE_RPS [KODE_PRODI]*"], 400);
+        }
+
+        $parts = explode(' ', $inputParams);
+        $kodeRPSInput = $parts[0];
+        $kodePrInput = $parts[1] ?? null;
+
+        // Coba cari RPS
         $rps = $this->getRPSByKode($kodeRPSInput);
-        if (! $rps) {
-            return response()->json([
-                'status' => false,
-                'message' => "❌ Berkas RPS dengan kode '{$kodeRPSInput}' tidak ditemukan!",
-            ], 404);
+        
+        if (!$rps && isset($parts[1])) {
+            $rps = $this->getRPSByKode($parts[1]);
+            $kodePrInput = $kodeRPSInput;
+            $kodeRPSInput = $parts[1];
+        }
+
+        if (!$rps) {
+            return response()->json(['status' => true, 'head' => '*❌ Gagal Mencari RPS!*', 'message' => "Berkas RPS dengan kode `{$kodeRPSInput}` tidak ditemukan!"], 404);
         }
 
         try {
-            $pdfRawContent = $this->generateRawPdfContent($rps);
-            $data = $this->formatRPSDetailForShow($rps);
-            $fileNameSafe = str_replace('/', '-', 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'.pdf');
+            $prodis = $rps->mk_rel->prodis;
+            $prodi = null;
+
+            if ($kodePrInput) {
+                $foundProdi = $this->getProdiByKode($kodePrInput);
+                if ($foundProdi) {
+                    $prodi = $prodis->firstWhere('id', $foundProdi->id);
+                }
+            }
+            if (!$prodi) $prodi = $prodis->firstWhere('id', $user->pr_id);
+            if (!$prodi) $prodi = $prodis->first();
+
+            if (!$prodi) {
+                return response()->json(['status' => true, 'head' => '*❌ Gagal!*', 'message' => "Data Program Studi tidak ditemukan pada RPS ini!"], 400);
+            }
+
+            $pdfRawContent = $this->generateRawPdfContent($rps, $prodi);
+            $fileNameSafe = str_replace(['/', '\\'], '-', "RPS_{$prodi->kode}_{$rps->kode}_{$rps->mk_rel->mk}.pdf");
 
             return response()->json([
                 'status' => true,
-                'message' => "Berkas RPS *{$data['nama_mk']}* dengan Kode `{$data['kode_rps']}` berhasil dibuat!",
+                'message' => "Berkas RPS *{$rps->mk_rel->mk}* {$prodi->prodi} dengan kode ```{$rps->kode}``` berhasil dibuat!",
                 'file_base64' => base64_encode($pdfRawContent),
                 'file_name' => $fileNameSafe,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => '❌ Gagal me-render PDF RPS: '.$e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'head' => '*❌ Gagal Render PDF*', 'message' => 'Terjadi Error: ' . $e->getMessage()], 500);
         }
     }
 

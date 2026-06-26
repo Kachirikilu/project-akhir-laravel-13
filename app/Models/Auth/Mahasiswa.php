@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -72,14 +73,13 @@ class Mahasiswa extends Model
         return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
-    public function nilai_mahasiswas()
+    public function nilai_mahasiswas(): HasMany
     {
         return $this->hasMany(
             NilaiMahasiswa::class,
             'mahasiswa_id'
         );
     }
-
 
     public function rekap_nilai(): HasOne
     {
@@ -100,11 +100,12 @@ class Mahasiswa extends Model
 
     protected function rekapMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->nilai ?? 0.00);
+        return Attribute::get(fn () => number_format($this->rekap_nilai?->nilai ?? 0, 2, '.', ''));
     }
+
     protected function ipkMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->nilai_ipk ?? 0.00);
+        return Attribute::get(fn () => number_format($this->rekap_nilai?->nilai_ipk ?? 0, 2, '.', ''));
     }
     protected function mutuMhs(): Attribute
     {
@@ -160,6 +161,29 @@ class Mahasiswa extends Model
     {
         return Attribute::get(function () {
             return $this->is_wa_active;
+        });
+    }
+    protected function noWaFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $phone = $this->no_hp;
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (empty($phone)) {
+                return null;
+            }
+            if (str_starts_with($phone, '0')) {
+                $phone = '62'.substr($phone, 1);
+            }
+
+            $countryCode = '62';
+            $body = substr($phone, 2);
+            $firstThree = substr($body, 0, 3);
+            $rest = substr($body, 3);
+            if ($rest !== false && $rest !== '') {
+                $chunks = str_split($rest, 4);
+                return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
+            }
+            return '+'.$countryCode.'-'.$firstThree;
         });
     }
 

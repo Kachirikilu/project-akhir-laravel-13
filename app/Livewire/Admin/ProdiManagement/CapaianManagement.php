@@ -11,6 +11,7 @@ use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
@@ -47,6 +48,7 @@ use Livewire\WithPagination;
 
 class CapaianManagement extends Component
 {
+    use HasGetByKode;
     use HasAkreditas;
     use HasSortir;
     use HasStats;
@@ -170,6 +172,8 @@ class CapaianManagement extends Component
             ->where('strata', $strataDb)
             ->first();
 
+        // $prodi = $this->getProdiByKode($kode_pr);
+
         if (! $prodi) {
             foreach (['prodi.history', 'capaian.history'] as $key) {
                 $history = session($key, []);
@@ -182,7 +186,8 @@ class CapaianManagement extends Component
         }
 
         $this->prodi = $prodi;
-        $this->pr_id_url = $this->prodi->id;
+
+        $this->pr_id_url = $prodi->id;
 
         $this->refNameSearch = [
             'rps' => '',
@@ -222,6 +227,7 @@ class CapaianManagement extends Component
         session([
             $historyKey => $history,
         ]);
+
     }
 
     public function updatingSearch()

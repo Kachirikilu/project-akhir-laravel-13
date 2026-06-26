@@ -1,5 +1,5 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="w-full md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
         <div class="py-4 space-y-4">

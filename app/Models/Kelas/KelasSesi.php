@@ -33,94 +33,128 @@ class KelasSesi extends Model
         return $this->hasOne(KelasSesiOverride::class, 'sesi_id');
     }
 
-    public function getAllScpmkAttribute()
-    {
-        $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
+    // public function getAllScpmkAttribute()
+    // {
+    //     $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
 
-        if (! $rps) {
-            return collect();
-        }
+    //     if (! $rps) {
+    //         return collect();
+    //     }
 
-        return $rps->cpmks->flatMap(function ($cpmk) {
+    //     return $rps->cpmks->flatMap(function ($cpmk) {
 
-            return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
+    //         return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
 
-                $scpmk->cpmk_atr = $cpmk;
+    //             $scpmk->cpmk_atr = $cpmk;
 
-                return $scpmk;
-            });
+    //             return $scpmk;
+    //         });
 
-        })->values();
-    }
+    //     })->values();
+    // }
 
+    // protected function scpmkAtr(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $p = $this->pertemuan_ke;
+    //         $allScpmk = $this->all_scpmk;
+
+    //         // 1. Deteksi status UTS/UAS di dalam koleksi SCPMK
+    //         $hasUtsInRps = $allScpmk->contains(fn($i) => 
+    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || 
+    //             Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true)
+    //         );
+
+    //         $hasUasInRps = $allScpmk->contains(fn($i) => 
+    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || 
+    //             Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true)
+    //         );
+
+    //         // 2. Fungsi Helper untuk objek UTS/UAS
+    //         $getUtsObject = fn() => (object) [
+    //             'kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 
+    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 
+    //             'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'
+    //         ];
+
+    //         $getUasObject = fn() => (object) [
+    //             'kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 
+    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 
+    //             'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'
+    //         ];
+
+    //         // 3. Logika Penentuan
+    //         if (!$hasUtsInRps && $p == 8) return $getUtsObject();
+    //         if (!$hasUasInRps && $p == 16) return $getUasObject();
+
+    //         // Tentukan index SCPMK
+    //         $targetIndex = ($p < 8) ? ($p - 1) : (($p > 8 && !$hasUtsInRps) ? ($p - 2) : ($p - 1));
+    //         // Sesuaikan index jika ada UTS tapi sudah lewat minggu 8
+    //         if ($hasUtsInRps && $p > 8 && !$hasUasInRps) $targetIndex = $p - 2;
+
+    //         return $allScpmk->get($targetIndex) ?? (object) [
+    //             'kode' => '-', 'kode_cpmk' => '-', 'bobot' => '-', 'metode' => '-', 
+    //             'deskripsi' => 'Materi belum ditentukan'
+    //         ];
+    //     });
+    // }
+
+
+    // public function getAllScpmkAttribute()
+    // {
+    //     $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
+    //     return $rps ? $rps->all_scpmk : collect();
+    // }
     protected function scpmkAtr(): Attribute
     {
         return Attribute::get(function () {
-            $p = $this->pertemuan_ke;
-            $allScpmk = $this->all_scpmk;
 
-            $hasUtsInRps = $allScpmk->contains(function ($item) {
-                return Str::contains($item->deskripsi ?? '', SubCPMK::$UTS_FIELDS, ignoreCase: true) ||
-                       Str::contains($item->metode ?? '', SubCPMK::$UTS_FIELDS, ignoreCase: true);
-            });
+            $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
 
-            $hasUasInRps = $allScpmk->contains(function ($item) {
-                return Str::contains($item->deskripsi ?? '', SubCPMK::$UAS_FIELDS, ignoreCase: true) ||
-                       Str::contains($item->metode ?? '', SubCPMK::$UAS_FIELDS, ignoreCase: true);
-            });
-
-            if ($hasUtsInRps && $hasUasInRps) {
-                $targetIndex = $p - 1;
-            } elseif ($hasUtsInRps && ! $hasUasInRps) {
-                if ($p == 16) {
-                    return (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
-                }
-                $targetIndex = $p - 1;
-            } elseif (! $hasUtsInRps && $hasUasInRps) {
-                if ($p == 8) {
-                    return (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
-                }
-                $targetIndex = ($p < 8) ? ($p - 1) : ($p - 2);
-            } else {
-                if ($p == 8) {
-                    return (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
-                }
-                if ($p == 16) {
-                    return (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
-                }
-                $targetIndex = ($p < 8) ? ($p - 1) : ($p - 2);
-            }
-
-            return $allScpmk->get($targetIndex) ?? (object) ['kode' => '-', 'kode_cpmk' => '-', 'bobot' => '-', 'metode' => '-', 'deskripsi' => 'Materi belum ditentukan'];
-        });
-    }
-
-    protected function bobotNormalisasi(): Attribute
-    {
-        return Attribute::get(function () {
-
-            $allSesi = $this->jadwal_rel?->sesis;
-
-            if (! $allSesi) {
+            if (!$rps) {
                 return null;
             }
 
-            $totalBobot = $allSesi->sum(function ($sesi) {
-                return is_numeric($sesi->bobot)
-                    ? (float) $sesi->bobot
-                    : 0;
-            });
-
-            if ($totalBobot <= 0 || ! is_numeric($this->bobot)) {
-                return null;
-            }
-
-            return round(
-                ($this->bobot / $totalBobot) * 100,
-                2
+            return collect($rps->scpmk_atr)->get(
+                $this->pertemuan_ke - 1
             );
         });
     }
+
+    protected function dosensSesi(): Attribute
+    {
+        return Attribute::get(function () {
+            $dosenScpmk = $this->scpmk_atr->dosens_collection;
+            $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
+
+            if (isset($dosenScpmk) && $dosenScpmk->isNotEmpty()) {
+                return $dosenScpmk;
+            }
+
+            return $rps ? $rps->dosens : collect();
+        });
+    }
+
+protected function referensiSesi(): Attribute
+{
+    return Attribute::get(function () {
+        $scpmk = $this->scpmk_atr;
+        $cpmk = $scpmk->cpmk_rel ?? null;
+        $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
+        $referensi = collect();
+        if (isset($scpmk->refs)) {
+            $referensi = $referensi->merge($scpmk->refs);
+        }
+        if ($cpmk && isset($cpmk->refs)) {
+            $referensi = $referensi->merge($cpmk->refs);
+        }
+        if ($rps && isset($rps->refs)) {
+            $referensi = $referensi->merge($rps->refs);
+        }
+        return $referensi->unique('id')->values();
+    });
+}
+    
 
     public function kehadirans(): HasMany
     {
@@ -218,22 +252,25 @@ class KelasSesi extends Model
             ->withTimestamps();
     }
 
-    public function dosens(): BelongsToMany
-    {
-        return $this->belongsToMany(Dosen::class, 'sesi_pivot_dosen', 'sesi_id', 'dosen_id')
-            ->withPivot(['peran', 'is_ketua', 'sort_order'])
-            ->orderBy('sort_order')
-            ->withTimestamps();
-    }
+    // public function getPengajarAttribute()
+    // {
+    //     if ($this->dosens()->exists()) {
+    //         return $this->dosens;
+    //     }
 
-    public function getPengajarAttribute()
-    {
-        if ($this->dosens()->exists()) {
-            return $this->dosens;
-        }
+    //     return $this->jadwal->kelas_rel->rps_rel->dosens;
+    // }
 
-        return $this->jadwal->kelas_rel->rps_rel->dosens;
-    }
+    // protected function dosens(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $currentScpmk = $this->scpmk_atr;
+    //         if ($currentScpmk instanceof \App\Models\Akademik\SubCPMK && $currentScpmk->dosens()->exists()) {
+    //             return $currentScpmk->dosens;
+    //         }
+    //         return $this->jadwal_rel?->kelas_rel?->rps_rel?->dosens ?? collect();
+    //     });
+    // }
 
     protected function sent(): Attribute
     {
@@ -296,21 +333,27 @@ class KelasSesi extends Model
         });
     }
 
-    protected function bobot(): Attribute
+    protected function bobotNormalisasi(): Attribute
     {
         return Attribute::get(function () {
-            $bobot = $this->override->bobot ?? $this->scpmk_atr->bobot ?? null;
+
+            $scpmk = $this->scpmk_atr;
+
+            if (!$scpmk) {
+                return '-';
+            }
+
+            $bobot = data_get($scpmk, 'bobot_normalisasi');
+
             if ($bobot === null) {
                 return '-';
             }
-            if ($bobot % 1 == 0) {
-                return (int) $bobot;
-            }
 
-            return number_format($bobot, 2);
+            return fmod($bobot, 1.0) == 0
+                ? (int) $bobot
+                : number_format($bobot, 2);
         });
     }
-
     protected function deskripsi(): Attribute
     {
         return Attribute::get(function () {

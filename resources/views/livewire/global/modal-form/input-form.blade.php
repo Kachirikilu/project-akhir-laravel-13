@@ -93,7 +93,7 @@ store.{{ $modelString }} = valueInput ?? '';
                 x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
-        <input @if ($readonly ?? null) readonly @endif
+        <input @if ($isReadonly ?? null) readonly @endif
             @if ($isLivewire ?? false) @if (isset($itemsString))
                     wire:model.live="{{ $modelString . '.' . $itemsString }}"
                 @else
@@ -109,7 +109,7 @@ store.{{ $modelString }} = valueInput ?? '';
         x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
         :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
         class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
-            focus:ring-2 {{ $readonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
+            focus:ring-2 {{ $isReadonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
         {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}
         @if (($isDate ?? false) === 'year') inputmode="numeric"
                 oninput="

@@ -44,6 +44,7 @@ trait WithRPSFilters
                 'refs',
                 'cpmks', 'cpmks.cpls', 'cpmks.refs',
                 'cpmks.scpmks', 'cpmks.scpmks.refs',
+                'dosens'
             ]);
 
         if (isset($this->switchTable) && $this->switchTable === 'rps') {

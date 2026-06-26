@@ -33,6 +33,8 @@ document.addEventListener("alpine:init", () => {
         penerbit: "",
         tahun: "",
         link: "",
+        citation: "",
+
 
         setValueRef(kode, judul, penulis, penerbit, tahun, link) {
             this.kode_ref = kode;
@@ -70,6 +72,7 @@ document.addEventListener("alpine:init", () => {
                 this.penerbit = "";
                 this.tahun = "";
                 this.link = "";
+                this.citation = "";
                 this.showEdit = 0;
             }
             if (isAdd == 0) {

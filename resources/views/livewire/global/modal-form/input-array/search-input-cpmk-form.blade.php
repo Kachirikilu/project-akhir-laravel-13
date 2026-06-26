@@ -137,7 +137,7 @@
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" @click.stop
-        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-72 overflow-y-auto">
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
 
         <div>
             @forelse ($xResults as $x)

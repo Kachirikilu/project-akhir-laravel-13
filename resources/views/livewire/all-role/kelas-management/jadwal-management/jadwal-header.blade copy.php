@@ -77,9 +77,9 @@
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
-                'nameXString' => 'Print RPS',
+                'nameXString' => 'Export RPS',
                 'xString' => "printPDFRPS($kelas->rps_id)",
-                'valuePx' => 6,
+                'valuePx' => 'px-6',
                 'isFull' => 1,
                 'isTextMd' => 1,
                 'color' => 'rose',
@@ -174,7 +174,7 @@
     @include('livewire.global.table.export-button', [
         'nameXString' => 'Export Nilai',
         'xString' => 'exportNilaiExcel()',
-        'valuePx' => 6,
+        'valuePx' => 'px-6',
         'isTextMd' => 1,
         'isNoPb' => 1,
     ])

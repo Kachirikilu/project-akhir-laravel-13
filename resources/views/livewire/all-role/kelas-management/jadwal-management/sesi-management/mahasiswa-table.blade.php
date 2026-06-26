@@ -293,14 +293,14 @@
 
                 <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_akhir ?? 0 }}
+                        {{ number_format(floatval($user->mhs_nilai_akhir ?? 0), 2, '.', '') }}
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_index ?? 0 }}
+                        {{ number_format(floatval($user->mhs_nilai_index ?? 0), 2, '.', '') }}
                     @else
                         -
                     @endif
@@ -324,7 +324,7 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
 
             <td class="table-second text-center">
                 <flux:dropdown>

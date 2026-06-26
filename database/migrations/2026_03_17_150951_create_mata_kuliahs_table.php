@@ -29,6 +29,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pr_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
+            $table->index('pr_id');
+            $table->index('mk_id');
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });

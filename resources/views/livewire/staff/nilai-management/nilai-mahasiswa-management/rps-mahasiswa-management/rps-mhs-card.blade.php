@@ -391,8 +391,16 @@
                         <button
                             class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                             @click="
-                                    $store.nilai?.resetShow();
-                                    $store.nilai?.setShowRPS('{{ $n->rps_rel->id ?? '' }}');
+                                    $store.rps?.resetShow();
+                                    $store.rps?.setShowRPS(
+                                        '{{ $n->rps_id ?? '' }}',
+                                        '{{ $n->rps_rel->kode ?? '' }}',
+                                        '{{ $n->rps_rel->rps ?? '' }}',
+                                        '{{ $n->rps_rel->draf ?? '' }}',
+                                        '{{ $n->rps_rel->level_mk ?? '' }}',
+                                        '{{ $mahasiswa->pr_rel->id ?? '' }}',
+                                    );
+                                    $store.rps?.setColor('text-green-700 dark:text-green-400');
                                     $flux.modal('rps-detail-modal').show();
                                 "
                             wire:click="showRPS({{ $n->rps_rel->id ?? 0 }})">

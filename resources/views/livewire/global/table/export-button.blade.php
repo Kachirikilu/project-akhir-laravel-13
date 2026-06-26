@@ -19,7 +19,7 @@
         'lg' => 'px-2 lg:px-3',
         'xl' => 'px-2 xl:px-3',
         '2xl' => 'px-2 2xl:px-3',
-        default => 'px-' . ($valuePx ?? '3'),
+        default => $valuePx ?? 'px-3',
     };
 
     $colorClass = match ($color ?? '') {
@@ -96,7 +96,7 @@
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}
     {{ $full ? $colorClassFull : '' }}
-    {{ $colorClass }} border transition-colors transition-all duration-200 ease-in-out {{ $buttonWidthClass }}"
+    {{ $colorClass }} border transition-colors transition-all duration-200 ease-in-out {{ $valuePy ?? '' }} py-4.5 {{ $buttonWidthClass }}"
         x-bind:class="confirmExport
             ?
             '{{ $colorClassActive }}' :
@@ -107,15 +107,15 @@
 
             <div class="relative inline-flex justify-center items-center">
                 @if (!$manualSmall)
-                    <span wire:loading.remove wire:target="{{ $xString }}" class="ml-2 {{ $autoSmallClass }}">
+                    <span wire:loading.remove wire:target="{{ $wireLoading ?? $xString }}" class="ml-2 {{ $autoSmallClass }}">
                         {{ $name }}
                     </span>
                 @endif
-                <span wire:loading wire:target="{{ $xString }}"
+                <span wire:loading wire:target="{{ $wireLoading ?? $xString }}"
                     class="invisible {{ $autoSmallClass }} whitespace-nowrap">
                     {{ $name }}
                 </span>
-                <span wire:loading wire:target="{{ $xString }}"
+                <span wire:loading wire:target="{{ $wireLoading ?? $xString }}"
                     class="absolute flex justify-center items-center pointer-events-none">
                     <flux:icon name="arrow-path" class="animate-spin h-3.5 w-3.5 text-current" />
                 </span>

@@ -104,7 +104,7 @@ class MahasiswaExport extends DefaultValueBinder implements FromCollection, Shou
             $u->prodi ?? '', // J
 
             $rps->pluck('kode')->implode(' / '), // K
-            $m->total_sks, // L
+            $m->total_sks > 0 ? $m->total_sks : '0', // l
             $m->count_rps > 0 ? $m->count_rps : '0', // M
         ];
     }

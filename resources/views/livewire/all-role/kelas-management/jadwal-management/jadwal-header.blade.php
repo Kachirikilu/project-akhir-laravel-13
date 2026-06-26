@@ -70,28 +70,65 @@
         @if ($alpine == 'sesi')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-header')
         @endif
+
+        @foreach ($kelas->rps_rel->dosens as $dosen)
+            <div class="flex flex-col gap-1">
+                <span
+                    class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
+                    {{ $loop->first ? 'Dosen Pengampu' : 'Tim Dosen' }}
+                </span>
+
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">
+                        {{ $dosen->name }}
+                    </span>
+                    @if ($dosen->pivot->is_ketua)
+                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                    @endif
+                </div>
+
+                <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
+                    NIP: {{ $dosen->nip }}
+                    <strong class="px-2">|</strong>
+                    <span class="font-medium text-[var(--contrast-second-text)]">{{ $dosen->pivot->peran }}</span>
+                </span>
+
+                <span class="flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
+                    <flux:icon.phone variant="micro" />
+                    {{ $dosen->no_wa_full }}
+                </span>
+            </div>
+        @endforeach
     </div>
 
     <div class="flex flex-wrap items-stretch sm:items-center gap-2.5 my-4">
 
         <flux:button
             @click="
-            $store.{{ $alpine ?? 'jadwal' }}?.resetShow();
-            $store.{{ $alpine ?? 'jadwal' }}?.setColor('text-emerald-700 dark:text-emerald-400');
-            $store.{{ $alpine ?? 'jadwal' }}?.setShowRPS('{{ $kelas->rps_id ?? '' }}');
-            $flux.modal('rps-detail-modal').show();
-        "
-            wire:click="showRPS({{ $kelas->rps_id }})" icon="eye" size="sm"
+                $store.rps?.resetShow();
+                $store.rps?.setShowRPS(
+                    '{{ $kelas->rps_id ?? '' }}',
+                    '{{ $kelas->rps_rel->kode ?? '' }}',
+                    '{{ $kelas->rps_rel->rps ?? '' }}',
+                    '{{ $kelas->rps_rel->draf ?? '' }}',
+                    '{{ $kelas->rps_rel->level_mk ?? '' }}',
+                    '{{ $kelas->pr_id ?? '' }}',
+                );
+                $store.rps?.setColor('text-green-700 dark:text-green-400');
+                $flux.modal('rps-detail-modal').show();
+            "
+            wire:click="showRPS({{ $kelas->rps_id }}, {{ $kelas->pr_id }})" icon="eye" size="sm"
             class="!cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
             <span>Show RPS</span>
         </flux:button>
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
-                'nameXString' => 'Print RPS',
-                'xString' => "printPDFRPS($kelas->rps_id)",
+                'nameXString' => 'Export RPS',
+                'xString' => "printPDFRPS($kelas->rps_id, $kelas->pr_id)",
+                'icon' => 'arrow-down-tray',
                 'isFull' => 1,
-                'valuePx' => 4,
+                'valuePx' => 'px-4',
                 'isTextMd' => 0,
                 'isNoPb' => 1,
                 'color' => 'rose',
@@ -171,7 +208,7 @@
                 @include('livewire.global.table.export-button', [
                     'nameXString' => 'Export Nilai ' . ($jadwal->kode_jadwal ?? $kelas->kode),
                     'xString' => 'exportNilaiExcel()',
-                    'valuePx' => 4,
+                    'valuePx' => 'px-4',
                     'isTextMd' => 0,
                     'isNoPb' => 1,
                 ])

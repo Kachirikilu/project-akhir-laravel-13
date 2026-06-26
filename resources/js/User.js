@@ -61,6 +61,8 @@ document.addEventListener("alpine:init", () => {
         no_hp_back: "",
         no_hp: "",
 
+        pr_id_show: "",
+
         setValueUser(
             email,
             password,
@@ -141,6 +143,7 @@ document.addEventListener("alpine:init", () => {
             rekap,
             index,
             mutu,
+            prId,
         ) {
             this.name = name;
             this.nip = nip;
@@ -153,6 +156,7 @@ document.addEventListener("alpine:init", () => {
             this.rekap_mhs = rekap;
             this.index_mhs = index;
             this.mutu_mhs = mutu;
+            this.pr_id_show = prId;
         },
         setDeleteUser(email, role, forceDelete) {
             this.email_delete = email;
@@ -197,6 +201,7 @@ document.addEventListener("alpine:init", () => {
                 this.rekap_mhs = "";
                 this.index_mhs = "";
                 this.mutu_mhs = "";
+                this.pr_id_show = "";
 
                 this.jenis_kelamin = "";
                 this.agama = "";

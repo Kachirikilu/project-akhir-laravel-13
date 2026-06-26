@@ -19,8 +19,6 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
-        rps_id_show: "",
-
         kode_kelas: "",
         kode_kelas_1: "",
         kode_kelas_2: "",
@@ -86,19 +84,10 @@ document.addEventListener("alpine:init", () => {
             };
         },
 
-        setShowRPS(idRPS) {
-            this.resetShow();
-            this.rps_id_show = idRPS;
-        },
-
         setDeleteKelas(namaKelas, kodeKelasDelete, forceDelete) {
             this.nama_kelas_delete = namaKelas;
             this.kode_kelas_delete = kodeKelasDelete;
             this.isForceDelete = forceDelete;
-        },
-
-        resetShow() {
-            this.rps_id_show = "";
         },
 
         reset(isAdd = 0) {

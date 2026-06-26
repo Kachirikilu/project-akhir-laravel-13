@@ -107,6 +107,7 @@ trait WithRefFilters
         return match ($this->sortField) {
             'kode' => $queryRef->orderBy('kode_ref', $this->sortDirection),
 
+            'citation' => $queryRef->orderByRaw("CONCAT_WS(' ', penulis, tahun, judul, penerbit) " . $this->sortDirection),
             'judul' => $queryRef->orderBy('judul', $this->sortDirection),
             'penulis' => $queryRef->orderBy('penulis', $this->sortDirection),
             'penerbit' => $queryRef->orderBy('penerbit', $this->sortDirection),

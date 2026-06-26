@@ -159,7 +159,7 @@
     </div>
 
     <div x-show="open && !isDisabled" x-cloak x-transition
-        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto custom-scrollbar">
         @foreach ($xOptions as $i => $option)
             @php
                 $label = is_array($option) ? $option['label'] ?? '-' : $option;

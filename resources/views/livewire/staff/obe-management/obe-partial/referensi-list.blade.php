@@ -129,7 +129,7 @@
                                         <span x-text="ref.link"></span>
                                     </a>
                                 </template>
-                                <flux:badge color="{{ $theme['flux-badge'] }}" size="xs" x-text="ref.kode">
+                                <flux:badge color="{{ $theme['flux-badge'] }}" size="xs" class="text-[9px] sm:text-xs" x-text="ref.kode">
                                 </flux:badge>
                             </div>
                         </div>

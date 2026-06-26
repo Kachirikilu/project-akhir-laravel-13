@@ -14,11 +14,14 @@
         'typeXString' => 'all',
         'withCapaian' => 1,
         'textString' => "Manajemen Capaian $prodi->prodi",
-        'textString2' => "$prodi->prodi ($prodi->kode)",
+        'textString2' => "$prodi->prodi ($kode_pr_url)",
         'textString3' => "$prodi->fakultas_fk ($prodi->kode_fk)",
         'backUrl' => route('program-studi-management'),
     ])
     </div>
+
+    @php
+    @endphp
     @include('livewire.admin.prodi-management.capaian-management.capian-switch-table')
     @include('livewire.admin.prodi-management.capaian-management.capaian-search-and-filters')
 

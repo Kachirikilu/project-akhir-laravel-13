@@ -262,7 +262,7 @@
             <td class="text-xs sm:text-sm table-sub table-border-r text-center">{{ $user->nik ?? '-' }}</td>
 
             @if ($switchTable == 'mahasiswa')
-                <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="text-xs sm:text-sm table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
             @endif
 
             <td class="text-xs sm:text-sm table-second text-center">

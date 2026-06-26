@@ -5,7 +5,7 @@
         ($this->showRefModal && $this->isEditingRef))
     <template x-if="$store.rps?.isFlyout == 1">
         <flux:modal name="rps-modal" wire:model="showRPSModal" x-data @refresh-data-rps.window="$store.rps.reset()" flyout
-            class="md:w-[90vw] max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+            class="md:w-[90vw] max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
             @include('livewire.staff.obe-management.rps-management.rps-modal-form')
         </flux:modal>
     </template>
@@ -13,7 +13,7 @@
 
 <template x-if="$store.rps?.isFlyout == 0"> --}}
     <flux:modal name="rps-modal" wire:model="showRPSModal" x-data @refresh-data-rps.window="$store.rps.reset()"
-        class="md:w-[90vw] max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+        class="md:w-[90vw] max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
         @include('livewire.staff.obe-management.rps-management.rps-modal-form')
     </flux:modal>
 {{-- </template> --}}

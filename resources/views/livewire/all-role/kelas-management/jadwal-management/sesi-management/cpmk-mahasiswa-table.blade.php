@@ -213,14 +213,14 @@
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_akhir ?? 0 }}
+                        {{ number_format(floatval($user->mhs_nilai_akhir ?? 0), 2, '.', '') }}
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-second text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_nilai_index ?? 0 }}
+                        {{ number_format(floatval($user->mhs_nilai_index ?? 0), 2, '.', '') }}
                     @else
                         -
                     @endif
@@ -286,20 +286,20 @@
                     @endphp
 
                     <td class="table-second text-center font-bold">
-                        {{ !empty($arrayNilai) ? round($skorMurniCpmk, 2) : '-' }}
+                        {{ number_format(!empty($arrayNilai) ? $skorMurniCpmk : 0, 2, '.', '') }}
                     </td>
 
                     <td class="table-second text-center font-semibold text-blue-600">
-                        {{ !empty($arrayNilai) ? round($totalNilaiKontribusiCpmk, 2) : '-' }}
+                        {{ number_format(!empty($arrayNilai) ? $totalNilaiKontribusiCpmk : 0, 2, '.', '') }}
                     </td>
 
                     <td class="table-sub text-center border-r font-medium text-green-600">
-                        {{ round($bobotNormalisasiGlobalCpmk, 2) }}%
+                        {{ number_format($bobotNormalisasiGlobalCpmk, 2, '.', '') }}%
                     </td>
                 @endforeach
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? '-' }}</td>
+            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
 
             <td class="table-second text-center">
                 <flux:dropdown>
@@ -349,7 +349,7 @@
 
     @empty
         <tr>
-            <td colspan="{{ 12 + (count($groupsCpmk ?? []) * 3) }}"
+            <td colspan="{{ 12 + count($groupsCpmk ?? []) * 3 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Mahasiswa Kelas ditemukan!
             </td>

@@ -292,7 +292,6 @@ class Prodi extends Model
             | S1TKE / S1-TKE / S1 TKE
             |--------------------------------------------------------------------------
             */
-
             $q->orWhereRaw("
                 REPLACE(
                     REPLACE(

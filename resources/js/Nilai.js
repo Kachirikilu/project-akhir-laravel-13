@@ -24,8 +24,6 @@ document.addEventListener("alpine:init", () => {
 
         nilai_mahasiswa_id: "",
 
-        rps_id_show: "",
-
         search: "",
         perPage: 8,
         sortField: "digit_mk",
@@ -106,14 +104,6 @@ document.addEventListener("alpine:init", () => {
             this.kode_rps_delete = rps;
             this.mk_delete = mk;
             this.isForceDelete = forceDelete;
-        },
-
-        setShowRPS(idRPS) {
-            this.resetShow();
-            this.rps_id_show = idRPS;
-        },
-        resetShow() {
-            this.rps_id_show = "";
         },
 
         reset(isAdd = 0) {

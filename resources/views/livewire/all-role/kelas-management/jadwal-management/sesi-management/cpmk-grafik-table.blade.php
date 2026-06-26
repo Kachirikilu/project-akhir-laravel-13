@@ -1,130 +1,190 @@
-<x-global.main-layout-table :paginator="$users">
+@php
+    $allMapping = collect($this->mapping_pertemuan)->values();
+    // Hitung bobot total untuk normalisasi global agar total semua CPMK = 100%
+    $globalTotalBobotMentah = collect($groupsCpmk)->map(fn($p) => collect($p)->sum('bobot'))->sum() ?: 1;
+    $daftarCpmk = collect($groupsCpmk)->keys()->toArray();
 
-    <x-slot:header>
+    // Siapkan data untuk grafik
+    $seriesData = [];
+    foreach ($daftarCpmk as $kode) {
+        $seriesData[$kode] = [
+            'name' => $kode,
+            'data' => [],
+        ];
+    }
+    $daftarNim = [];
 
-    </x-slot:header>
+    foreach ($users as $user) {
+        $daftarNim[] = $user->identity1;
 
+        $arrayNilai = is_array($user->mhs_nilai_array)
+            ? $user->mhs_nilai_array
+            : json_decode($user->mhs_nilai_array ?? '[]', true);
+        $bobotCpmkArray = is_array($user->mhs_bobot_array)
+            ? $user->mhs_bobot_array
+            : json_decode($user->mhs_bobot_array ?? '[]', true);
 
-    @forelse($users as $user)
+        foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
+            $skorMurniCpmk = 0;
 
-        {{-- <tr wire:key="user-{{ $user->id }}" class="table-border">
-            <td class="table-main-sticky text-center">{{ $user->identity1 }}</td>
-        </tr> --}}
+            // Hitung bobot normalisasi untuk CPMK ini saja
+            $bobotMentahCpmkIni = collect($pertemuans)->sum('bobot');
+            $bobotNormalisasiGlobalCpmk = ($bobotMentahCpmkIni / $globalTotalBobotMentah) * 100;
 
-        <tr wire:key="user-chart-{{ $user->id }}"
-            class="bg-gray-50/50 dark:bg-zinc-900/30 border-b border-[var(--border-table-color)]">
-            <td
-                class="table-main-sticky bg-gray-50 dark:bg-zinc-900 text-[10px] uppercase font-bold text-gray-400 text-center py-2">
-                Grafik Capaian
-            </td>
+            foreach ($pertemuans as $pertemuan) {
+                $originalIndex = $allMapping->search(
+                    fn($item) => $item['kode_scpmk'] === $pertemuan['kode_scpmk'] &&
+                        $item['kode_cpmk'] === $pertemuan['kode_cpmk'],
+                );
 
-            @php
-                $getCpmkColor = function ($str) {
-                    $hash = md5($str);
-                    $hue = hexdec(substr($hash, 0, 3)) % 360;
-                    return "hsl({$hue}, 70%, 45%)";
-                };
+                $nilaiPertemuan = $arrayNilai[$originalIndex] ?? 0;
+                $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
+                $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+            }
+            // Hitung kontribusi akhir: (skor murni / bobot normalisasi) * 100
+            $totalNilaiKontribusiCpmk = ($skorMurniCpmk / $bobotNormalisasiGlobalCpmk) * 100;
+            // Masukkan ke series data
+            $seriesData[$kodeCpmk]['data'][] = round($totalNilaiKontribusiCpmk, 1);
+        }
+    }
 
-                $allMapping = collect($this->mapping_pertemuan)->values();
-            @endphp
+    $bobotCpmkLegend = [];
+    foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
+        $bobotMentah = collect($pertemuans)->sum('bobot');
+        $bobotNormalisasi = ($bobotMentah / $globalTotalBobotMentah) * 100;
+        $bobotCpmkLegend[$kodeCpmk] = number_format($bobotNormalisasi, 2, '.', '');
+    }
 
-            <td colspan="{{ 1 + count($groupsCpmk ?? []) * 3 }}" class="p-4">
-                <div class="flex flex-col gap-3 w-full max-w-4xl mx-auto">
+    $finalSeries = array_values($seriesData);
+    $colorPalette = ['#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b', '#10b981', '#ec4899', '#14b8a6'];
+    $totalMahasiswa = count($daftarNim);
+    $calculatedWidth = max($totalMahasiswa * 160, 800);
+@endphp
 
-                    @php
-                        $arrayNilai = is_array($user->mhs_nilai_array)
-                            ? $user->mhs_nilai_array
-                            : json_decode($user->mhs_nilai_array ?? '[]', true);
+<div
+    class="w-full bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">
 
-                        $bobotCpmkArray = is_array($user->mhs_bobot_array)
-                            ? $user->mhs_bobot_array
-                            : json_decode($user->mhs_bobot_array ?? '[]', true);
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 px-5 py-4">
+        <div>
+            <h3 class="text-sm font-bold text-gray-800 dark:text-zinc-100 tracking-wide">Distribusi Capaian Nilai per
+                Mahasiswa</h3>
+            <p class="text-[11px] text-gray-400 mt-0.5">Grafik perbandingan evaluasi CPMK antar mahasiswa</p>
+        </div>
 
-                        $globalTotalBobotMentah = collect($groupsCpmk)
-                            ->map(function ($pertemuans) {
-                                return collect($pertemuans)->sum('bobot');
-                            })
-                            ->sum();
-
-                        $globalTotalBobotMentah = $globalTotalBobotMentah > 0 ? $globalTotalBobotMentah : 1;
-                    @endphp
-
-                    @foreach ($groupsCpmk as $kodeCpmk => $pertemuans)
-                        @php
-                            // 1. Rekalkulasi Skor CPMK murni & Kontribusi untuk grafik
-                            $skorMurniCpmk = 0;
-                            $bobotMentahCpmkIni = collect($pertemuans)->sum('bobot');
-
-                            // AMANKAN PEMBAGI GLOBAL
-                            $pembagiGlobal = ($globalTotalBobotMentah ?? 0) > 0 ? $globalTotalBobotMentah : 1;
-                            $bobotNormalisasiGlobalCpmk = ($bobotMentahCpmkIni / $pembagiGlobal) * 100;
-
-
-                            foreach ($pertemuans as $pertemuan) {
-                                $originalIndex = $allMapping->search(function ($item) use ($pertemuan) {
-                                    return $item['kode_scpmk'] === $pertemuan['kode_scpmk'] &&
-                                        $item['kode_cpmk'] === $pertemuan['kode_cpmk'];
-                                });
-                                $nilaiPertemuan = $arrayNilai[$originalIndex] ?? 0;
-                                $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
-                                $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
-                            }
-
-                            // AMANKAN PEMBAGI CPMK INI
-                            $pembagiCpmk = $bobotNormalisasiGlobalCpmk > 0 ? $bobotNormalisasiGlobalCpmk : 1;
-                            $totalNilaiKontribusiCpmk = ($skorMurniCpmk / $bobotNormalisasiGlobalCpmk) * 100;
-
-                            // Batasi max rendering di 100%
-                            $realBarPercent = min($totalNilaiKontribusiCpmk, 100);
-                            $pureBarPercent = min($skorMurniCpmk, 100);
-
-                            // 🌟 2. PANGGIL MENGGUNAKAN TANDA '$' KARENA DIA ADALAH CLOSURE VARIABEL
-                            $cpmkColor = $getCpmkColor($kodeCpmk);
-                        @endphp
-                        {{-- Render Single Row Bar CPMK --}}
-                        <div class="grid grid-cols-12 items-center gap-2">
-                            <div class="col-span-2 text-xs font-bold truncate text-gray-700 dark:text-gray-300"
-                                title="{{ $kodeCpmk }}">
-                                {{ $kodeCpmk }}
-                            </div>
-
-                            <div
-                                class="col-span-9 relative h-6 bg-gray-200 dark:bg-zinc-800 rounded-md overflow-hidden ring-1 ring-gray-300/50 dark:ring-zinc-700/50">
-
-                                {{-- 1. Nilai Sebenarnya (Kontribusi Rasio 100) - Opacity Ringan --}}
-                                <div class="absolute top-0 left-0 h-full rounded-l-md transition-all duration-500"
-                                    style="width: {{ $realBarPercent }}%; background-color: {{ $cpmkColor }}; opacity: 0.35;">
-                                </div>
-
-                                {{-- 2. Nilai Skor Murni - Ditimpa Lebih Tebal/Solid di Atasnya --}}
-                                <div class="absolute top-1/2 -translate-y-1/2 left-0 h-4 rounded-r-sm transition-all duration-500"
-                                    style="width: {{ $pureBarPercent }}%; background-color: {{ $cpmkColor }}; shadow: 0 1px 2px rgba(0,0,0,0.15);">
-                                </div>
-
-                                {{-- 3. Garis Batas Capaian Minimal Kriteria (70%) --}}
-                                <div class="absolute top-0 bottom-0 left-[70%] w-[2px] bg-red-500 dark:bg-red-400 z-10 before:content-['']"
-                                    title="Batas Minimum Kelulusan Capaian (70%)">
-                                    <span
-                                        class="absolute -top-1.5 -translate-x-1/2 text-[8px] font-black text-red-500 dark:text-red-400 bg-white dark:bg-zinc-900 px-0.5 rounded">70%</span>
-                                </div>
-                            </div>
-
-                            <div class="col-span-1 text-right text-[11px] font-bold text-gray-600 dark:text-gray-400">
-                                {{ round($skorMurniCpmk, 1) }}
-                            </div>
-                        </div>
-                    @endforeach
-
+        <div
+            class="flex items-center gap-4 bg-gray-50 dark:bg-zinc-950/50 px-4 py-2 rounded-lg border border-gray-100 dark:border-zinc-800">
+            @foreach ($daftarCpmk as $index => $kodeCpmk)
+                @php
+                    $currentColor = $colorPalette[$index % count($colorPalette)];
+                    $bobot = $bobotCpmkLegend[$kodeCpmk] ?? 0;
+                @endphp
+                <div class="flex items-center gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-200 leading-none">
+                            {{ $kodeCpmk }}
+                        </span>
+                        <span class="text-[9px] text-gray-500 font-medium leading-none mt-0.5">
+                            {{ $bobot }}%
+                        </span>
+                    </div>
                 </div>
-            </td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="{{ 12 + count($groupsCpmk ?? []) * 3 }}"
-                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                Tidak ada data Mahasiswa Kelas ditemukan!
-            </td>
-        </tr>
-    @endforelse
+            @endforeach
+        </div>
+    </div>
 
-    </x-admin.global.table.main-layout-table>
+    <div class="w-full overflow-x-auto p-4 scrollbar-large" wire:ignore>
+
+        <div style="width: {{ $calculatedWidth }}px;" x-data="{
+            chart: null,
+            initChart() {
+                if (this.chart) this.chart.destroy();
+        
+                let isDark = document.documentElement.classList.contains('dark');
+                let options = {
+                    series: {{ json_encode($finalSeries) }},
+                    chart: {
+                        type: 'bar',
+                        height: 320,
+                        toolbar: { show: false },
+                        parentHeightOffset: 0,
+                        fontFamily: 'Inter, sans-serif'
+                    },
+                    colors: {{ json_encode($colorPalette) }},
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '80%',
+                            barHeight: '100%',
+                            borderRadius: 3,
+                            dataLabels: { position: 'top' }
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontSize: '10px',
+                            fontWeight: '700',
+                            // Ubah agar kontras: Putih di mode gelap, Abu Tua di mode terang
+                            colors: [isDark ? '#e4e4e7' : '#18181b']
+                        }
+                    },
+                    xaxis: {
+                        categories: {{ json_encode($daftarNim) }},
+                        labels: {
+                            style: {
+                                colors: isDark ? '#a1a1aa' : '#3f3f46', // Lebih gelap agar terbaca di terang
+                                fontSize: '11px',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        axisBorder: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' },
+                        axisTicks: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' }
+                    },
+                    yaxis: {
+                        max: 100,
+                        min: 0,
+                        tickAmount: 5,
+                        labels: {
+                            style: {
+                                colors: isDark ? '#a1a1aa' : '#3f3f46', // Sama, buat lebih tegas
+                                fontSize: '10px'
+                            }
+                        },
+                        axisBorder: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' }
+                    },
+                    grid: {
+                        show: true,
+                        borderColor: isDark ? '#3f3f46' : '#e4e4e7', // Gunakan abu-abu sangat muda di mode terang
+                        strokeDashArray: 0,
+                        xaxis: { lines: { show: true } }
+                    },
+                    annotations: {
+                        yaxis: [{
+                            y: 70,
+                            borderColor: '#ef4444',
+                            strokeDashArray: 4,
+                            label: {
+                                borderColor: '#ef4444',
+                                // Label ini akan selalu putih karena background merah, ini sudah oke
+                                style: { color: '#fff', background: '#ef4444', fontSize: '9px', fontWeight: 700 },
+                                text: 'Batas Kelulusan (70%)'
+                            }
+                        }]
+                    }
+                };
+        
+                this.chart = new ApexCharts($refs.canvas, options);
+                this.chart.render();
+            }
+        }" x-init="$nextTick(() => initChart())"
+            x-effect="
+                $wire.$watch('finalSeries', () => initChart());
+                $wire.$watch('daftarNim', () => initChart());
+            ">
+            <div x-ref="canvas"></div>
+        </div>
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

@@ -123,8 +123,8 @@ trait WithUserModal
             $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
             $this->selected_id_user = $user->id;
 
-            if (! $isRPS) {
                 $this->pr_id = $user->pr_id;
+            if (! $isRPS) {
                 $this->pr_id_2 = $user->pr_id;
                 $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
                 $this->prNameSearch = $user->prodi;
@@ -183,7 +183,7 @@ trait WithUserModal
         $rps = RPS::query()
             ->whereIn('id', function ($query) use ($mahasiswa) {
                 $query->select('rps_id')
-                    ->from('nilai_mahasiswas')
+                    ->from('nilai_mahasiswa')
                     ->where('mahasiswa_id', $mahasiswa->id)
                     ->whereNotNull('rps_id')
                     ->distinct();

@@ -317,6 +317,9 @@ trait WithMKSearchFilters
                     $matchNo = $this->matchNo(
                         $mk->digit_mk,
                         $searchLower
+                    ) || $this->matchNo(
+                        intval($mk->digit_mk), 
+                        $searchLower
                     );
                     $matchKode = $this->matchKode(
                         $mk->kode,

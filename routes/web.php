@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Kelas\KelasSesi;
 use App\Jobs\SendClassReminderJob;
+use App\Livewire\Staff\OBEManagement\RPSManagement\iFrameRpsController;
 
 Route::view('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -54,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{switchTable?}', 'kelas-management')->name('jadwal-management');
     Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'kelas-management')->name('sesi-management');
 
+    Route::get('/rps/pdf-preview/{rps_id}/{pr_id?}', [iFrameRpsController::class, 'preview'])->name('rps.pdf.preview');
     
     // Route::middleware('kelas.access')->group(function () {
     // });

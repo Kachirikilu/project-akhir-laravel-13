@@ -36,8 +36,6 @@ document.addEventListener("alpine:init", () => {
         absen: "",
         keterangan: "",
 
-        rps_id_show: "",
-
         jam_mulai: "",
         jam_berakhir: "",
 
@@ -268,19 +266,11 @@ document.addEventListener("alpine:init", () => {
             this.mhs_nilai_index = nilaiIndex;
             this.mhs_nilai_mutu = nilaiMutu;
         },
-        setShowRPS(idRPS) {
-            this.resetShow();
-            this.rps_id_show = idRPS;
-        },
 
         setDeleteJadwal(namaJadwal, kodeJadwalDelete, forceDelete) {
             this.nama_sesi_delete = namaJadwal;
             this.kode_sesi_delete = kodeJadwalDelete;
             this.isForceDelete = forceDelete;
-        },
-
-        resetShow() {
-            this.rps_id_show = "";
         },
 
         reset(isAdd = 0) {

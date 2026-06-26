@@ -1,6 +1,6 @@
 <flux:modal {{-- :flyout="$isFlyoutCPL" wire:key="cpl-modal-{{ $isFlyoutCPL }}" --}} name="cpl-modal" wire:model.live="showCPLModal" x-data
     @refresh-data-cpl.window="$store.cpl.reset()"
-    class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
 
     <div class="flex flex-col h-full relative">

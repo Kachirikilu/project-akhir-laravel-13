@@ -150,7 +150,7 @@
                                             'alpine' => 'nilai',
                                             'isLivewire' => 0,
                                             'modelString' => 'bobot_persen_' . $targetIndex,
-                                            'readonly' => 1,
+                                            'isReadonly' => 1,
                                             'nameXString' => 'Bobot',
                                             'iconString' => 'scale',
                                             'placeholder' => 'Bobot...',

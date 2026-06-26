@@ -79,15 +79,139 @@ class RPS extends Model
         );
     }
 
-    public function getDosensSubCpmk($subCpmkId)
+    // public function getDosensSubCpmk($subCpmkId)
+    // {
+    //     $subCpmk = $this->scpmks()->find($subCpmkId);
+
+    //     if ($subCpmk && $subCpmk->dosens->isNotEmpty()) {
+    //         return $subCpmk->dosens;
+    //     }
+
+    //     return $this->dosens;
+    // }
+
+    public function getAllScpmkAttribute()
     {
-        $subCpmk = $this->scpmks()->find($subCpmkId);
-
-        if ($subCpmk && $subCpmk->dosens->isNotEmpty()) {
-            return $subCpmk->dosens;
+        if ($this->cpmks->isEmpty()) {
+            return collect();
         }
+        return $this->cpmks->flatMap(function ($cpmk) {
+            return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
+                if (!isset($scpmk->cpmk_list)) {
+                    $scpmk->cpmk_list = collect();
+                }
+                $scpmk->cpmk_list->push($cpmk);
+                return $scpmk;
+            });
+        })->values();
+    }
 
-        return $this->dosens;
+    protected function scpmkAtr(): Attribute
+    {
+        return Attribute::get(function () {
+            $allScpmk = $this->all_scpmk;
+
+            $hasUts = $allScpmk->contains(fn($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true));
+            $hasUas = $allScpmk->contains(fn($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true));
+
+            $program = collect();
+            $scpmkIndex = 0;
+
+            $dosenRps = $this->dosens ?? collect();
+
+            $assignedGlobally = $this->all_scpmk->flatMap(function ($scpmk) {
+                return $scpmk->dosens ?? collect();
+            })->filter(fn($d) => (int)($d->pivot->rps_id ?? 0) === (int)$this->id)
+            ->pluck('id')->unique()->toArray();
+
+            for ($p = 1; $p <= 16; $p++) {
+                    if ($p == 8 && !$hasUts) {
+                            $item = (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => (float)$this->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
+                        } elseif ($p == 16 && !$hasUas) {
+                            $item = (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => (float)$this->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                        } else {
+                            $rawItem = $allScpmk->get($scpmkIndex);
+                            if ($rawItem) {
+                                $item = clone $rawItem;
+                                $scpmkIndex++;
+                            } else {
+                                $item = (object) ['kode' => '-', 'kode_cpmk' => '-', 'deskripsi' => 'Materi belum ditentukan', 'bobot' => 0];
+                            }
+                        }
+
+                        if (!isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
+                            $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
+                        }
+
+                if ($item instanceof \App\Models\Akademik\SubCPMK && !empty($item->materi)) {
+
+                    if (!$item->relationLoaded('dosens')) {
+                        $item->load('dosens');
+                    }
+
+                    $assignedLocal = collect($item->dosens ?? [])
+                        ->filter(fn($d) => (int)($d->pivot->rps_id ?? 0) === (int)$this->id);
+                    if ($assignedLocal->isEmpty()) {
+                        $dosenBelumMuncul = $dosenRps->filter(fn($d) => !in_array($d->id, $assignedGlobally));
+                        $item->dosens_collection = $dosenBelumMuncul;
+                    } else {
+                        $dosenBelumMuncul = $dosenRps->filter(fn($d) => !in_array($d->id, $assignedGlobally));
+                        $item->dosens_collection = $assignedLocal->merge($dosenBelumMuncul)->unique('id');
+                    }
+                } else {
+                    $item->dosens_collection = collect();
+                }
+
+                $item->dosens_collection->transform(function ($dosen) use ($dosenRps) {
+                    $pivotIsKetua = isset($dosen->pivot->is_ketua) ? (bool)$dosen->pivot->is_ketua : null;
+                    if ($pivotIsKetua === null) {
+                        $dosenMaster = $dosenRps->firstWhere('id', $dosen->id);
+                        $dosen->is_ketua = (bool)($dosenMaster->pivot->is_ketua ?? false);
+                    } else {
+                        $dosen->is_ketua = $pivotIsKetua;
+                    }
+                    
+                    return $dosen;
+                });
+
+                $currentIds = $item->dosens_collection->pluck('id')->sort()->values()->toArray();
+                $masterIds = $dosenRps->pluck('id')->sort()->values()->toArray();
+                if ($currentIds === $masterIds && !empty($masterIds)) {
+                    $item->dosens_collection = collect();
+                }
+                $item->dosen_id_string = $item->dosens_collection->pluck('id')->sort()->implode(',');
+                $program->push($item);
+            }
+
+          $totalInput = $program->sum(fn($i) => (float)($i->bobot ?? 0));
+            if ($totalInput > 0) {
+                $program->transform(function ($item) use ($totalInput) {
+                    $item->bobot_normalisasi = round(((float)($item->bobot ?? 0) / $totalInput) * 100, 2);
+                    return $item;
+                });
+                $totalNormalisasi = $program->sum(fn($i) => (float)$i->bobot_normalisasi);
+                $diff = round(100 - $totalNormalisasi, 2);
+                if ($diff != 0 && $last = $program->last()) {
+                    $last->bobot_normalisasi = round($last->bobot_normalisasi + $diff, 2);
+                }
+            }
+
+            return $program;
+        });
+    }
+
+    public function getAllRefsAttribute()
+    {
+        $refsRps = $this->refs ?? collect();
+        $refsCpmk = $this->cpmks->flatMap->refs ?? collect();
+        $refsSubCpmk = $this->cpmks->flatMap(function ($cpmk) {
+            return $cpmk->scpmks->flatMap->refs;
+        });
+        return $refsRps
+            ->concat($refsCpmk)
+            ->concat($refsSubCpmk)
+            ->unique('id')
+            ->values();
     }
 
     public function mk_rel(): BelongsTo
@@ -151,6 +275,11 @@ class RPS extends Model
     protected function mk(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->mk);
+    }
+
+    protected function kodeSemester(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->kode_semester);
     }
 
     protected function wajib(): Attribute

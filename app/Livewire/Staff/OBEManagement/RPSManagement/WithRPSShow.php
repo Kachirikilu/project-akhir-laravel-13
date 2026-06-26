@@ -3,33 +3,32 @@
 namespace App\Livewire\Staff\OBEManagement\RPSManagement;
 
 use App\Models\Akademik\RPS;
+use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\SubCPMK;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Browsershot\Browsershot;
 
 trait WithRPSShow
 {
     public $detailRPSModal = false;
 
-    public $detailRPSData = [];
+    // public $detailRPSData = [];
+
+    public $prodisRPS = [];
 
     public function showRPS($id)
     {
         $this->selected_id_rps = $id;
 
         try {
-            // 1. Load data RPS dengan relasi yang sangat lengkap
             $rps = RPS::with([
-                'mk_rel.prodis.dp_rel.fk_rel',
-                'dosens',
-                'cpmks.scpmks.dosens',
-                'cpmks.scpmks.refs',
-                'cpmks.refs',
-                'cpmks.cpls',
-                // 'cpls',
-                'refs',
+                'mk_rel.prodis',
             ])->findOrFail($id);
 
-            $this->detailRPSData = $this->formatRPSDetailForShow($rps);
+           $this->prodisRPS = $rps->mk_rel->prodis->sortBy([
+                ['nama_pr', 'asc'],
+                ['strata', 'desc'],
+            ]);
             $this->detailRPSModal = true;
 
             $this->dispatch('fill-modal-rps', rps: $rps);
@@ -40,19 +39,45 @@ trait WithRPSShow
         }
     }
 
-    public function printPDFRPS($id)
+    public function printPDFRPS($rpsId, $prId = null)
     {
-        $rps = RPS::with(['mk_rel', 'dosens', 'cpmks.scpmks', 'refs'])->findOrFail($id);
-        $data = $this->formatRPSDetailForShow($rps);
-        
-        $fileNameSafe = str_replace('/', '-', 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$data['akademik'].'.pdf');
+        $rps = RPS::with([
+            'mk_rel.prodis',
+            'dosens',
+            'cpmks.scpmks.dosens',
+            'cpmks.scpmks.refs',
+            'cpmks.refs',
+            'cpmks.cpls',
+            'refs'
+        ])->findOrFail($rpsId);
 
-        return response()->streamDownload(function () use ($rps) {
-            echo $this->generateRawPDFContent($rps);
+        $prodis = $rps->mk_rel->prodis->sortBy([
+            ['prodi', 'asc'],
+            ['strata', 'asc'],
+        ]);
+        $prodi = null;
+
+        if ($prId) {
+            $prodi = $prodis->find($prId);
+        } 
+        if (!$prodi) {
+            $prodi = $prodis->firstWhere('id', Auth::user()->pr_id);
+        }
+        if (!$prodi) {
+            $prodi = $prodis->first();
+        }
+        if (!$prodi) {
+            abort(404, 'Data Program Studi tidak ditemukan pada RPS ini!');
+        }
+
+        $fileNameSafe = str_replace('/', '-', 'RPS_'.$prodi->kode.'_'.$rps->kode.'_'.$rps->mk_rel->mk.'_'.$rps->akademik.'.pdf');
+
+        return response()->streamDownload(function () use ($rps, $prodi) {
+            echo $this->generateRawPDFContent($rps, $prodi);
         }, $fileNameSafe, ['Content-Type' => 'application/pdf']);
     }
 
-    protected function generateRawPDFContent($rps): string
+    protected function generateRawPDFContent(RPS $rps, Prodi $prodi): string
     {
         $data = $this->formatRPSDetailForShow($rps);
         $logoPath = public_path('images/logo-unsri.png');
@@ -65,7 +90,9 @@ trait WithRPSShow
         }
 
         $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print', [
-            'detailRPSData' => $data,
+            'rps' => $rps,
+            'prodi' => $prodi,
+            // 'detailRPSData' => $data,
             'logoBase64' => $logoBase64,
         ])->render();
 
@@ -81,7 +108,7 @@ trait WithRPSShow
         return $browsershot->pdf();
     }
 
-    private function formatRPSDetailForShow(RPS $rps): array
+    public function formatRPSDetailForShow(RPS $rps): array
     {
         $mk = $rps->mk_rel;
         $prodi = $mk?->prodis->first();
@@ -104,6 +131,7 @@ trait WithRPSShow
         }
         
         $data = [
+            'id' => $rps->id,
             'rps_id' => $rps->id,
             'kode_blok' => $rps->kode_blok ?? null,
             'kode_rps' => $rps->kode ?? null,

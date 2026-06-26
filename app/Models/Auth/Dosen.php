@@ -118,6 +118,29 @@ class Dosen extends Model
             return $this->is_wa_active;
         });
     }
+    protected function noWaFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $phone = $this->no_hp;
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (empty($phone)) {
+                return null;
+            }
+            if (str_starts_with($phone, '0')) {
+                $phone = '62'.substr($phone, 1);
+            }
+
+            $countryCode = '62';
+            $body = substr($phone, 2);
+            $firstThree = substr($body, 0, 3);
+            $rest = substr($body, 3);
+            if ($rest !== false && $rest !== '') {
+                $chunks = str_split($rest, 4);
+                return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
+            }
+            return '+'.$countryCode.'-'.$firstThree;
+        });
+    }
 
     protected static function booted()
     {

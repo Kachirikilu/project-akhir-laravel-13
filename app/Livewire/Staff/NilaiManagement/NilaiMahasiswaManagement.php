@@ -84,7 +84,7 @@ class NilaiMahasiswaManagement extends Component
         })->first();
 
         if (! $user) {
-            foreach (['nilai.history', 'nilai_mahasiswas.history'] as $key) {
+            foreach (['nilai.history', 'nilai_mahasiswa.history'] as $key) {
                 $history = session($key, []);
                 if (isset($history[$nim])) {
                     unset($history[$nim]);
@@ -100,7 +100,7 @@ class NilaiMahasiswaManagement extends Component
         $this->user_id_url = $user->id;
         $this->mahasiswa_id_url = $user->mahasiswa->id;
 
-        $sessionKey = $this->isNilaiMhs ? 'nilai_mahasiswas.history' : 'nilai.history';
+        $sessionKey = $this->isNilaiMhs ? 'nilai_mahasiswa.history' : 'nilai.history';
         $nilaiHistory = session($sessionKey, []);
 
         $existingKey = array_search($mahasiswaId, array_column($nilaiHistory, 'mahasiswa_id'));

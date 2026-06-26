@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Staff\OBEManagement\RPSManagement;
 
-
 use App\Models\Akademik\RPS;
 use App\Models\Kelas\Kelas;
 use Illuminate\Support\Facades\DB;

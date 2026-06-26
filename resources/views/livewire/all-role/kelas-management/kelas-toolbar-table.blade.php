@@ -1,10 +1,10 @@
 @if (Auth::user())
-    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)]">
+    <flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
         @php
             $isTrashed = $x->trashed();
 
-            $showRPSCall = "showRPS($x->rps_id)";
+            $showRPSCall = "showRPS($x->rps_id, $x->pr_id)";
             $editCall = "editKelas($x->id)";
             $deleteCall = "deleteKelas($x->id, $isTrashed)";
             $restoreCall = "restoreKelas($x->id)";
@@ -36,13 +36,17 @@
 
         <flux:menu.item
             @click="
-                $store.kelas?.resetShow();
-
-                    $store.kelas?.setShowRPS(
-                        '{{ $x->rps_id ?? '' }}',
-                    );
-
-                    $flux.modal('rps-detail-modal').show();
+                $store.rps?.resetShow();
+                $store.rps?.setShowRPS(
+                    '{{ $x->rps_id ?? '' }}',
+                    '{{ $x->rps_rel->kode ?? '' }}',
+                    '{{ $x->rps_rel->rps ?? '' }}',
+                    '{{ $x->rps_rel->draf ?? '' }}',
+                    '{{ $x->rps_rel->level_mk ?? '' }}',
+                    '{{ $x->pr_id ?? '' }}',
+                );
+                $store.rps?.setColor('text-green-700 dark:text-green-400');
+                $flux.modal('rps-detail-modal').show();
             "
             wire:click="{{ $showRPSCall }}"
             class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
@@ -59,18 +63,27 @@
 
         <flux:menu.separator />
 
-        <div wire:click="printPDFRPS({{ $x->rps_id }})"
-            class="px-3 py-2 flex items-center justify-between w-full cursor-pointer
-                !text-rose-600 dark:!text-rose-400
-                hover:!bg-rose-100 dark:hover:!bg-rose-900/30 active:!bg-rose-200 dark:active:!bg-rose-900
-                transition-colors select-none rounded-md">
+        <div x-data="{ isWaiting: false }"
+            @click="isWaiting = true; setTimeout(() => isWaiting = false, 1000)"
+            @dblclick="isWaiting = false"
+            wire:dblclick="printPDFRPS({{ $x->rps_id }}, {{ $x->pr_id }})"
+            :class="isWaiting ? 'ring-2 ring-rose-400' : ''"
+            class="px-2 py-1.5 flex items-center justify-between w-full cursor-pointer
+                    !text-rose-600 dark:!text-rose-400
+                    hover:!bg-rose-100 dark:hover:!bg-rose-900/30 
+                    active:!bg-rose-200 dark:active:!bg-rose-900
+                    transition-all duration-300 select-none rounded-md">
+
             <div class="flex items-center">
-                <flux:icon name="printer" class="mr-2 h-4 w-4" />
-                <span>Print PDF RPS</span>
+                <flux:icon name="arrow-down-tray" class="mr-2 h-4 w-4" />
+                <span x-text="isWaiting ? 'Double click...' : 'Export RPS'"></span>
             </div>
+
             <flux:icon wire:loading wire:target="printPDFRPS({{ $x->rps_id }})" name="arrow-path"
                 class="animate-spin h-4 w-4 ml-2" />
         </div>
+
+
 
 
         @if (Auth::user()?->admin || Auth::user()?->dosen)
