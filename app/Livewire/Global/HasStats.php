@@ -13,7 +13,14 @@ trait HasStats
     private function getStatsRps($query, $currentYear, $fiveYearsAgo): array
     {
         $stats['rps-prodi'] = (clone $query)
+            ->whereHas('tim_dosens.pr_rel', function ($q) {
+                $q->where('prodis.id', auth()->user()->pr_id);
+            })->count();
+
+        $stats['rps-prodi-non-aktif'] = (clone $query)
             ->whereHas('mk_rel.prodis', function ($q) {
+                $q->where('prodis.id', auth()->user()->pr_id);
+            })->whereDoesntHave('tim_dosens.pr_rel', function ($q) {
                 $q->where('prodis.id', auth()->user()->pr_id);
             })->count();
 
@@ -57,13 +64,33 @@ trait HasStats
         return $stats;
     }
 
+    private function getStatsTimDosen($query): array
+    {
+        $stats['tim-dosen-rps'] = (clone $query)->whereHas('rps')->count();
+        $stats['tim-dosen-non-rps'] = (clone $query)->whereDoesntHave('rps')->count();
+
+        $stats['tim-dosen-prodi'] = (clone $query)->whereHas('pr_rel', function ($q) {
+            $q->where('prodis.id', auth()->user()->pr_id);
+        })->count();
+
+        $stats['tim-dosen-all'] = (clone $query)->count();
+
+        $stats['tim-dosen-saya'] = (clone $query)->where(function ($q) {
+            $q->whereHas('dosens', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        })->count();
+
+        return $stats;
+    }
+
     /**
      * 4. Mengambil statistik Dosen
      */
     private function getStatsDosen($query): array
     {
-        $stats['dosen-rps'] = (clone $query)->whereHas('dosen.rps')->count();
-        $stats['dosen-non-rps'] = (clone $query)->whereDoesntHave('dosen.rps')->count();
+        $stats['dosen-rps'] = (clone $query)->whereHas('dosen.tim_dosens.rps')->count();
+        $stats['dosen-non-rps'] = (clone $query)->whereDoesntHave('dosen.tim_dosens.rps')->count();
 
         $stats['dosen-prodi'] = (clone $query)->whereHas('dosen.pr_rel', function ($q) {
             $q->where('prodis.id', auth()->user()->pr_id);

@@ -73,39 +73,39 @@
                 };
                 $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
-                    $store.user?.setValueUser(
-                        '{{ $x->email ?? '' }}',
-                        '',
-                        '{{ $x->name ?? '' }}',
-                        '{{ $detail->nip ?? '' }}',
-                        '{{ $detail->nitk ?? '' }}',
-                        '{{ $detail->nidn ?? '' }}',
-                        '{{ $detail->nidk ?? '' }}',
-                        '{{ $detail->nim ?? '' }}',
-                        '{{ $x->nik ?? '' }}',
-                        '{{ $detail->angkatan ?? '' }}',
-                        '{{ $x->status ?? '' }}',
-                        '{{ $x->pr_id ?? '' }}',
-                        '{{ $x->kode_pr ?? '' }}',
-                        '{{ $x->prodi ?? '' }}',
-                        '{{ $detail->pr_rel?->departemen_dp ?? '' }}',
-                        '{{ $detail->pr_rel?->fakultas_fk ?? '' }}',
-                        '{{ $detail->kode_wilayah ?? '' }}',
+                $store.user?.setValueUser(
+                    '{{ $x->email ?? '' }}',
+                    '',
+                    '{{ $x->name ?? '' }}',
+                    '{{ $detail->nip ?? '' }}',
+                    '{{ $detail->nitk ?? '' }}',
+                    '{{ $detail->nidn ?? '' }}',
+                    '{{ $detail->nidk ?? '' }}',
+                    '{{ $detail->nim ?? '' }}',
+                    '{{ $x->nik ?? '' }}',
+                    '{{ $detail->angkatan ?? '' }}',
+                    '{{ $x->status ?? '' }}',
+                    '{{ $x->pr_id ?? '' }}',
+                    '{{ $x->kode_pr ?? '' }}',
+                    '{{ $x->prodi ?? '' }}',
+                    '{{ $detail->pr_rel?->departemen_dp ?? '' }}',
+                    '{{ $detail->pr_rel?->fakultas_fk ?? '' }}',
+                    '{{ $detail->kode_wilayah ?? '' }}',
 
-                        '{{ $x->mahasiswa->count_rps ?? 0 }}',
-                        '{{ $x->mahasiswa->total_sks ?? 0 }}',
-                        '{{ $x->mahasiswa->rekap_mhs ?? 0.00 }}',
-                        '{{ $x->mahasiswa->index_mhs ?? 0.00 }}',
-                        '{{ $x->mahasiswa->mutu_mhs ?? 'E' }}',
+                    '{{ $x->mahasiswa->count_rps ?? 0 }}',
+                    '{{ $x->mahasiswa->total_sks ?? 0 }}',
+                    '{{ $x->mahasiswa->rekap_mhs ?? 0.00 }}',
+                    '{{ $x->mahasiswa->index_mhs ?? 0.00 }}',
+                    '{{ $x->mahasiswa->mutu_mhs ?? 'E' }}',
 
-                        '{{ $x->gender ?? '' }}',
-                        '{{ $x->agama ?? '' }}',
-                        '{{ $x->tmt_lahir ?? '' }}',
-                        '{{ $x->tanggal_lahir ?? '' }}',
+                    '{{ $x->gender ?? '' }}',
+                    '{{ $x->agama ?? '' }}',
+                    '{{ $x->tmt_lahir ?? '' }}',
+                    '{{ $x->tanggal_lahir ?? '' }}',
 
-                        '{{ $x->no_hp_back ?? '' }}',
-                    );
-                    $flux.modal('user-modal').show();
+                    '{{ $x->no_hp_back ?? '' }}',
+                );
+                $flux.modal('user-modal').show();
             "
                     wire:click="{{ $editCall }}"
                     class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">

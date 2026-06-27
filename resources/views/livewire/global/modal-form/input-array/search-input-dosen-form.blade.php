@@ -4,13 +4,15 @@
         search: @entangle($nameSearchString).live,
         items: @entangle($idString),
         itemsAll: @entangle($itemsAllString),
-        pertemuan: @entangle('pertemuan_dosen'),
+        pertemuan: @entangle($itemsPertemuanString),
         parentSelectedId: @entangle($parentIdString ?? null).live,
     
         init() {
             if (!Array.isArray(this.items)) this.items = [];
             if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-            if (typeof this.pertemuan !== 'object' || this.pertemuan === null) this.pertemuan = {};
+            if (!Array.isArray(this.pertemuan)) {
+                this.pertemuan = [];
+            }
     
             this.$watch('itemsAll', (val) => {
                 let found = false;
@@ -55,7 +57,7 @@
                     });
                 }
     
-                this.pertemuan[normalizedId] = '';
+                this.pertemuan.push('');
             }
         },
     
@@ -66,6 +68,7 @@
     
             let currentItemsAll = JSON.parse(JSON.stringify(this.itemsAll));
             let currentItems = [...this.items];
+            let currentPertemuan = [...this.pertemuan];
     
             // Reset semua
             currentItemsAll.forEach(i => {
@@ -83,12 +86,15 @@
     
             let selectedItemAll = currentItemsAll.splice(idx, 1)[0];
             let selectedId = currentItems.splice(idx, 1)[0];
+            let selectedPertemuan = currentPertemuan.splice(idx, 1)[0];
     
             currentItemsAll.unshift(selectedItemAll);
             currentItems.unshift(selectedId);
+            currentPertemuan.unshift(selectedPertemuan);
     
             this.itemsAll = currentItemsAll;
             this.items = currentItems;
+            this.pertemuan = currentPertemuan;
         },
     
         removeItem(index) {
@@ -101,9 +107,7 @@
             this.itemsAll.splice(index, 1);
     
             // 3. Hapus data pertemuan dari objek (agar sinkron ke Livewire)
-            if (this.pertemuan && this.pertemuan[idToRemove] !== undefined) {
-                delete this.pertemuan[idToRemove];
-            }
+            this.pertemuan.splice(index, 1);
     
             // 4. Logika penentuan ketua baru jika yang dihapus adalah ketua
             if (isKetua && this.itemsAll.length > 0) {
@@ -126,10 +130,16 @@
     
         move(index, direction) {
             let to = index + direction;
+
             if (to < 0 || to >= this.items.length) return;
-            const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
+
+            const swap = (arr, a, b) => {
+                [arr[a], arr[b]] = [arr[b], arr[a]];
+            };
+
             swap(this.items, index, to);
             swap(this.itemsAll, index, to);
+            swap(this.pertemuan, index, to);
         },
     
         resetItems() {
@@ -139,6 +149,7 @@
         clearAllItems() {
             this.items = [];
             this.itemsAll = [];
+            this.pertemuan = [];
             this.subItems = [];
         },
     }">
@@ -312,7 +323,7 @@
                             <div class="relative flex items-center">
                                 <flux:icon icon="calendar-days" variant="mini"
                                     class="absolute left-2.5 size-4 text-gray-400" />
-                                <input type="text" x-model="pertemuan[id]"
+                                <input type="text" x-model="pertemuan[index]"
                                     placeholder="Kosongkan jika mengajar di semua pertemuan..."
                                     class="w-full pl-9 pr-3 py-1.5 text-xs border rounded-lg bg-white dark:bg-neutral-900 table-border focus:ring-1 focus:ring-[var(--focus-color)] focus:border-[var(--focus-color)] transition-all">
                             </div>

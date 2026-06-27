@@ -44,6 +44,13 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
+                    'tabFilter' => $stats['tim-dosen'],
+                    'tabString' => 'tim-dosen',
+                    'tabNameString' => 'Tim Dosen',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
                     'tabFilter' => $stats['dosen'],
                     'tabString' => 'dosen',
                     'tabNameString' => 'Dosen',

@@ -71,6 +71,6 @@
     <div class="p-4 relative bg-white rounded-md border-2">
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'showRPS', 'updateRPS'])
 
-        @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-table')
+        @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-show')
     </div>
 </flux:modal>

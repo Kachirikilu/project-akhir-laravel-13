@@ -154,14 +154,14 @@ document.addEventListener("alpine:init", () => {
             this.total_bobot = totalBobot;
         },
 
-        setShowRPS(idRPS, kode, rps, draf, level, idPr) {
+        setShowRPS(idRPS, kode, rps, draf, level, prId) {
             this.resetShow();
             this.rps_id_show = idRPS;
             this.kode_rps_show = kode;
             this.rps_show = rps;
             this.draf_show = draf;
             this.level_mk_show = level;
-            this.pr_id_show = idPr
+            this.pr_id_show = prId
         },
 
         setDeleteRPS(namaRPS, kodeCPLDelete, forceDelete) {

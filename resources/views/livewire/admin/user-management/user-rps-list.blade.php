@@ -30,8 +30,6 @@
             </h3>
         </div>
 
-
-
         {{-- @php
             $nameXString;
             if ($switchTable == 'dosen') {

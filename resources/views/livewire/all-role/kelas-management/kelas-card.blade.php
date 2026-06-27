@@ -66,43 +66,39 @@
         </div>
     </x-slot:search>
 
-            @for ($i = 0; $i < 8; $i++)
+            {{-- @for ($i = 0; $i < 8; $i++)
                 <div wire:loading
                     class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/30 min-h-[320px]">
-                    {{-- Skeleton Hero --}}
                     <div class="flex flex-col gap-3 p-[18px] bg-gray-200/60 dark:bg-zinc-800/60">
                         <div class="flex justify-between items-center">
-                            <div class="h-6 w-20 bg-gray-300 dark:bg-zinc-700 rounded-lg"></div> {{-- Kode Kelas --}}
+                            <div class="h-6 w-20 bg-gray-300 dark:bg-zinc-700 rounded-lg"></div>
                             <div class="h-[30px] w-[30px] bg-gray-300 dark:bg-zinc-700 rounded-lg"></div>
-                            {{-- Menu Button --}}
                         </div>
-                        <div class="h-5 w-4/5 bg-gray-300 dark:bg-zinc-700 rounded mt-1"></div> {{-- Mata Kuliah --}}
+                        <div class="h-5 w-4/5 bg-gray-300 dark:bg-zinc-700 rounded mt-1"></div>
                         <div class="flex gap-2 mt-1">
                             <div class="h-3 w-12 bg-gray-300 dark:bg-zinc-700 rounded"></div>
                             <div class="h-3 w-16 bg-gray-300 dark:bg-zinc-700 rounded"></div>
                         </div>
                     </div>
-                    {{-- Skeleton Body --}}
                     <div class="flex flex-1 flex-col gap-2.5 p-4">
-                        <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Baris RPS --}}
+                        <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div>
                         <div class="grid grid-cols-3 gap-1.5 mt-1">
-                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Smt --}}
-                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- SKS --}}
-                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div> {{-- Strata --}}
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div>
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div>
+                            <div class="h-14 bg-gray-200 dark:bg-zinc-800 rounded-[10px]"></div>
                         </div>
                     </div>
-                    {{-- Skeleton Footer --}}
                     <div class="px-4 pb-4 flex gap-1.5">
                         <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-md"></div>
                         <div class="h-9 w-full bg-gray-200 dark:bg-zinc-800 rounded-md"></div>
                     </div>
                 </div>
-            @endfor
+            @endfor --}}
 
     {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
     @forelse($kelas as $k)
 
-        <div wire:loading.remove wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
+        <div wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
             class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
             {{-- ═══ HERO ═══ --}}

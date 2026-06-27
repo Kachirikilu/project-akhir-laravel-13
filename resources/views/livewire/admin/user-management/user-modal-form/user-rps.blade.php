@@ -20,7 +20,6 @@
 
             </div>
         </div>
-
         {{-- <div>
             @include('livewire.global.table.badge.kode-wilayah-badge', [
                 'xValue' => $jadwal->kode,

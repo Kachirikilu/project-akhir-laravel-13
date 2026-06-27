@@ -8,6 +8,8 @@
                 $typeUpper = 'SCPMK';
             } elseif ($typeXString == 'referensi') {
                 $typeUpper = 'Ref';
+            } elseif ($typeXString == 'tim-dosen') {
+                $typeUpper = 'TimDosen';
             } else {
                 $typeUpper = strtoupper($typeXString);
             }
@@ -41,6 +43,8 @@
             @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table')
         @elseif ($typeXString == 'referensi')
             @include('livewire.staff.obe-management.ref-management.ref-toolbar-table')
+        @elseif ($typeXString == 'tim-dosen')
+            @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-toolbar-table')
         @endif
 
     </flux:menu>

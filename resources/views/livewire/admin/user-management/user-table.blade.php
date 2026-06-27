@@ -93,7 +93,7 @@
                 'headString' => 'Nama',
                 'rowSpan' => 2,
                 'isMain' => 1,
-                'isSticky' => ($withRPS ?? false) ? 0 : 1,
+                'isSticky' => $withRPS ?? false ? 0 : 1,
             ])
             @if ($withCapaian ?? null && $switchTable == 'mahasiswa')
                 <th colspan="{{ $withNilai ?? false ? 4 : 3 }}" class="table-head-sub">
@@ -377,8 +377,10 @@
             @endif
             @if (($withRPS ?? false) && ($switchTable == 'dosen' || $switchTable == 'mahasiswa'))
                 <td class="table-second table-border-x text-center">
-                    <x-button-action
-                        @click="
+
+                    @if (!$user->trashed())
+                        <x-button-action
+                            @click="
                             $store.user?.reset();
 
                             const type = '{{ strtolower($user->role) }}';
@@ -414,11 +416,18 @@
                     
                             $flux.modal('user-rps-modal').show();
                         "
-                        wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="emerald"
-                        wire:navigate>
-                        <flux:icon name="eye" class="w-3.5 h-3.5" />
-                        <span>RPS</span>
-                    </x-button-action>
+                            wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="emerald"
+                            wire:navigate>
+                            <flux:icon name="eye" class="w-3.5 h-3.5" />
+                            <span>RPS</span>
+                        </x-button-action>
+                    @else
+                        <code
+                            class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                            unfound
+                        </code>
+                    @endif
+
                 </td>
                 <td class="table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
                 <td class="table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
@@ -426,7 +435,9 @@
             @endif
 
             @if (!($withRPS ?? false))
-                <td class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">{{ $user->identity1 ?? '-' }}</td>
+                <td
+                    class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">
+                    {{ $user->identity1 ?? '-' }}</td>
                 @if ($switchTable != 'mahasiswa')
                     <td class="table-sub text-center">
                         {{ $user->identity2 ?? '-' }}
@@ -434,8 +445,7 @@
                 @endif
 
                 @if ($switchTable == 'dosen' || $switchTable == '')
-                    <td
-                        class="table-sub text-center">
+                    <td class="table-sub text-center">
                         {{ $user->identity3 ?? '-' }}
                     </td>
                 @endif

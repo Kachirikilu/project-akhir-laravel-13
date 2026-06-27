@@ -37,15 +37,6 @@
                 </p>
             </div>
 
-            <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
-                <p class="text-xs sm:text-sm text-[var(--contrast-second-text)] leading-relaxed">
-                    Pastikan <strong class="text-[var(--focus-color)] font-semibold">Dosen Pengajar</strong> telah
-                    dipilih pada <strong class="text-[var(--focus-color)] font-semibold">Rencana Pembelajaran
-                        Semester</strong> <strong class="text-[var(--contrast-main-text)] font-semibold">(RPS)</strong>.
-                </p>
-            </div>
-
             @include('livewire.global.modal-form.template-pesan')
         </div>
     </div>

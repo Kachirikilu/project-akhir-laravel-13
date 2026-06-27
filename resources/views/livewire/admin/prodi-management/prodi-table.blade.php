@@ -169,7 +169,7 @@
                 {{ $x->prodi ?? ($x->departemen_dp ?? ($x->fakultas_fk ?? '-')) }}</td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
-                <td class="table-second table-border-l">
+                <td class="table-second table-border-l text-center">
                     @if (!$x->trashed())
                         <x-button-action color="blue"
                             href="{{ route('capaian-management', [

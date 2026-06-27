@@ -89,4 +89,16 @@
             'tabNameString' => $tab7Name ?? ucfirst($tab7String ?? null),
         ])
     @endif
+
+    @if ($tab8String ?? null)
+        {{-- Tab 8 --}}
+        @include('livewire.global.search-and-filters.partial.tab-filter', [
+            'xString' => $filterByFunc,
+            'xFilter' => $filterString,
+            'tabFilter' => $totalTab8 ?? null,
+            'tabString' => $tab8String ?? null,
+            'tabHiddenString' => $tabHiddenString8 ?? null,
+            'tabNameString' => $tab8Name ?? ucfirst($tab8String ?? null),
+        ])
+    @endif
 </div>

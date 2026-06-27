@@ -2,12 +2,14 @@
 
 namespace App\Models\ProgramStudi;
 
+use App\Models\Auth\Dosen;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Prodi extends Model
@@ -28,6 +30,12 @@ class Prodi extends Model
         'created_at' => 'date',
         'updated_at' => 'date',
     ];
+
+
+    public function dosens(): HasMany
+    {
+        return $this->hasMany(Dosen::class, 'pr_id', 'id');
+    }
 
     public function dp_rel()
     {
@@ -272,24 +280,40 @@ class Prodi extends Model
             preg_replace('/[^A-Za-z0-9]/', '', $search)
         );
 
-        $searchTerm = '%'.$search.'%';
+        $searchTerm = '%' . $search . '%';
+
+        $strataExpr = "
+            CASE
+                WHEN prodis.strata = 'Sarjana' THEN 'S1'
+                WHEN prodis.strata = 'Magister' THEN 'S2'
+                WHEN prodis.strata = 'Doktor' THEN 'S3'
+                ELSE prodis.strata
+            END
+        ";
 
         return $query->where(function ($q) use (
             $search,
             $searchTerm,
-            $searchNormalized
+            $searchNormalized,
+            $strataExpr
         ) {
 
+            // Nama Prodi & Kode Prodi
             $q->where('prodis.nama_pr', 'like', $searchTerm)
                 ->orWhere('prodis.kode_pr', 'like', $searchTerm);
 
+            // Cari berdasarkan ID
             if (is_numeric($search)) {
                 $q->orWhere('prodis.id', $search);
             }
 
             /*
             |--------------------------------------------------------------------------
-            | S1TKE / S1-TKE / S1 TKE
+            | S1 + Nama Prodi
+            | Contoh:
+            | S1 Teknik Elektro
+            | S1TeknikElektro
+            | S1-Teknik Elektro
             |--------------------------------------------------------------------------
             */
             $q->orWhereRaw("
@@ -297,14 +321,34 @@ class Prodi extends Model
                     REPLACE(
                         UPPER(
                             CONCAT(
-                                CASE
-                                    WHEN prodis.strata = 'Sarjana' THEN 'S1'
-                                    WHEN prodis.strata = 'Magister' THEN 'S2'
-                                    WHEN prodis.strata = 'Doktor' THEN 'S3'
-                                    ELSE prodis.strata
-                                END,
+                                $strataExpr,
+                                prodis.nama_pr
+                            )
+                        ),
+                        '-', ''
+                    ),
+                    ' ',
+                    ''
+                ) LIKE ?
+            ", ['%' . $searchNormalized . '%']);
+
+            /*
+            |--------------------------------------------------------------------------
+            | S1 + Kode Prodi
+            | Contoh:
+            | S1TKE
+            | S1-TKE
+            | S1 TKE
+            |--------------------------------------------------------------------------
+            */
+            $q->orWhereRaw("
+                REPLACE(
+                    REPLACE(
+                        UPPER(
+                            CONCAT(
+                                $strataExpr,
                                 COALESCE(
-                                    NULLIF(prodis.kode_pr,''),
+                                    NULLIF(prodis.kode_pr, ''),
                                     (
                                         SELECT d.kode_dp
                                         FROM departemens d
@@ -328,8 +372,9 @@ class Prodi extends Model
                     ' ',
                     ''
                 ) LIKE ?
-            ", ['%'.$searchNormalized.'%']);
+            ", ['%' . $searchNormalized . '%']);
 
+            // Departemen
             $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
                 $j->withTrashed()
                     ->where(function ($sq) use ($searchTerm) {

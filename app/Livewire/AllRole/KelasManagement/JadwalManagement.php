@@ -48,6 +48,8 @@ class JadwalManagement extends Component
 
     public Kelas $kelas;
 
+    public $tim_dosen;
+
     public $rps_id_url;
 
     public $kode_rps_url;
@@ -166,6 +168,7 @@ class JadwalManagement extends Component
             $this->kelas = $kelas;
             $this->rps_id_url = $this->kelas->rps_id;
             $this->kode_rps_url = $this->kelas->kode_rps;
+            $this->tim_dosen = $this->getTimDosenByKelas($kelas->rps_id, $kelas->pr_id);
 
             $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
             $kelasHistory = session($sessionKey, []);

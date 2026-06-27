@@ -23,8 +23,17 @@ trait WithRPSShow
         try {
             $rps = RPS::with([
                 'mk_rel.prodis',
+                'tim_dosens'
             ])->findOrFail($id);
 
+            // $this->prodisRPS = $rps->tim_dosens
+            //     ->map(fn($tim) => $tim->pr_rel)
+            //     ->filter()
+            //     ->unique('id')
+            //     ->sortBy([
+            //         ['nama_pr', 'asc'],
+            //         ['strata', 'desc'],
+            //     ]);
            $this->prodisRPS = $rps->mk_rel->prodis->sortBy([
                 ['nama_pr', 'asc'],
                 ['strata', 'desc'],
@@ -43,8 +52,9 @@ trait WithRPSShow
     {
         $rps = RPS::with([
             'mk_rel.prodis',
-            'dosens',
-            'cpmks.scpmks.dosens',
+            'tim_dosens',
+            'tim_dosens.dosens',
+            // 'cpmks.scpmks.dosens',
             'cpmks.scpmks.refs',
             'cpmks.refs',
             'cpmks.cpls',
@@ -73,13 +83,13 @@ trait WithRPSShow
         $fileNameSafe = str_replace('/', '-', 'RPS_'.$prodi->kode.'_'.$rps->kode.'_'.$rps->mk_rel->mk.'_'.$rps->akademik.'.pdf');
 
         return response()->streamDownload(function () use ($rps, $prodi) {
-            echo $this->generateRawPDFContent($rps, $prodi);
+            echo $this->generateRPSRawPDFContent($rps, $prodi);
         }, $fileNameSafe, ['Content-Type' => 'application/pdf']);
     }
 
-    protected function generateRawPDFContent(RPS $rps, Prodi $prodi): string
+    protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
     {
-        $data = $this->formatRPSDetailForShow($rps);
+        // $data = $this->formatRPSDetailForShow($rps);
         $logoPath = public_path('images/logo-unsri.png');
         $logoBase64 = '';
 
@@ -89,9 +99,13 @@ trait WithRPSShow
             $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
         }
 
+        $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($prodi->id);
+        $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
+
         $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print', [
             'rps' => $rps,
             'prodi' => $prodi,
+            'tim_dosen' => $tim_dosen,
             // 'detailRPSData' => $data,
             'logoBase64' => $logoBase64,
         ])->render();
@@ -99,6 +113,7 @@ trait WithRPSShow
         $browsershot = Browsershot::html($html)
             ->noSandbox()
             ->format('A4')
+            ->margins(0, 10, 0, 10)
             ->showBackground();
 
         if ($chromePath = env('BROWSERSHOT_CHROME_PATH')) {

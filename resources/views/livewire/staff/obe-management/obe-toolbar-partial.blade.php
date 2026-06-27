@@ -14,6 +14,8 @@
                     Sub-CPMK
                 @elseif ($typeXString == 'ref')
                     Referensi
+                @elseif ($typeXString == 'tim_dosen')
+                    Tim Dosen
                 @elseif ($typeXString == 'dosen')
                     Dosen
                 @else
@@ -266,6 +268,26 @@
                             <div class="flex justify-between items-center w-full">
                                 <span class="mr-7 whitespace-nowrap">Referensi</span>
                                 <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
+                                    class="animate-spin h-4 w-4 ml-2" />
+                            </div>
+                        </flux:menu.item>
+                    @endif
+
+                    @if ($typeXString == 'tim_dosen' || $typeXString == 'all')
+                        <flux:menu.item
+                            @click="
+                                $store.tim_dosen?.setEdit(0);
+                                $store.tim_dosen?.setFlyout({{ $isFlyout ?? false }});
+                                $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400');
+                                $store.tim_dosen?.reset(1);
+                                $flux.modal('tim-dosen-modal').show();
+                                $wire.addTimDosen();
+                            "
+                            class="text-xs sm:text-sm cursor-pointer !text-blue-600 dark:!text-blue-400 hover:!bg-blue-100 dark:hover:!bg-blue-900/30 active:!bg-blue-200 dark:active:!bg-blue-900">
+                            <flux:icon name="user-group" class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
+                            <div class="flex justify-between items-center w-full">
+                                <span class="mr-7 whitespace-nowrap">Tim Dosen</span>
+                                <flux:icon wire:loading wire:target="addTimDosen()" name="arrow-path"
                                     class="animate-spin h-4 w-4 ml-2" />
                             </div>
                         </flux:menu.item>

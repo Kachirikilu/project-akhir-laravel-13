@@ -190,6 +190,28 @@
         </x-slot:search>
 
         {{-- GRID UTAMA KARTU --}}
+        @php
+            // 1. Ambil data dosen dari $tim_dosen (sudah difilter per prodi)
+            $allTimDosen = $tim_dosen->flatMap(function ($tim) {
+                return $tim->dosens->map(function ($dosen) {
+                    return [
+                        'id' => $dosen->id,
+                        'name' => $dosen->name,
+                        'nip' => $dosen->nip,
+                        'is_ketua' => (bool) $dosen->pivot->is_ketua,
+                        'pertemuan_ke' => json_decode($dosen->pivot->pertemuan_ke ?? '[]'),
+                    ];
+                });
+            });
+
+            // 2. Injeksi ke koleksi $sesis agar setiap sesi punya koleksinya sendiri
+            $sesis->each(function ($s, $index) use ($allTimDosen) {
+                $pertemuan = $index + 1;
+                $s->dosens_collection = $allTimDosen->filter(function ($dosen) use ($pertemuan) {
+                    return in_array($pertemuan, $dosen['pertemuan_ke']);
+                });
+            });
+        @endphp
         @foreach ($sesis as $index => $s)
             @php
                 $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
@@ -421,28 +443,29 @@
                                     class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)] block mb-1.5">
                                     Referensi
                                 </span>
-                                    @php
-                                        $referensiList = $s->referensi_sesi ?? collect();
-                                    @endphp
-                                    @forelse($referensiList as $refs)
+                                @php
+                                    $referensiList = $s->referensi_sesi ?? collect();
+                                @endphp
+                                @forelse($referensiList as $refs)
                                     <div class="text-xs text-[var(--contrast-main-text)] flex items-start gap-2">
-                                        <div class="{{ $referensiList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
-                                            
+                                        <div
+                                            class="{{ $referensiList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+
                                             @if ($referensiList->count() > 1)
                                                 <span class="mr-[5px]">{{ $loop->iteration }}.</span>
                                             @endif
                                             <span>{{ $refs->citation }}</span>
-                                            @if($refs->link)
+                                            @if ($refs->link)
                                                 <a href="{{ $refs->link }}" target="_blank"
-                                                class="inline-flex items-center ml-2 hover:opacity-70 transition-opacity {{ $theme['link'] ?? 'text-blue-600' }}">
+                                                    class="inline-flex items-center ml-2 hover:opacity-70 transition-opacity {{ $theme['link'] ?? 'text-blue-600' }}">
                                                     <flux:icon.link variant="micro" />
                                                 </a>
                                             @endif
                                         </div>
                                     </div>
-                                    @empty
-                                        <li class="text-xs text-zinc-400 italic">Tidak ada data dosen</li>
-                                    @endforelse
+                                @empty
+                                    <div class="text-xs text-zinc-400 italic">Tidak ada data Referensi</div>
+                                @endforelse
                             </div>
 
                             <div
@@ -451,31 +474,42 @@
                                     class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)] block mb-1.5">
                                     Dosen Pengajar
                                 </span>
-                                    @php
-                                        $dosenList = $s->dosens_sesi ?? collect();
-                                    @endphp
-                                    @forelse($dosenList as $dosen)
-                                        <div class="text-xs text-[var(--contrast-main-text)] flex items-center gap-2">
-                                            <div class="{{ $dosenList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
-                                                
-                                                @if ($dosenList->count() > 1)
-                                                    <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                                @endif
-                                                
-                                                {{ $dosen->name }}
-                                                
-                                                @if ($dosen->pivot->is_ketua ?? ($dosen->is_ketua ?? false))
-                                                    <span class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
-                                                        KETUA
-                                                    </span>
-                                                @endif
-                                                
-                                                <br>NIP: {{ $dosen->nip }}
-                                            </div>
+                                @php
+                                    $hasSesiDosen = isset($s->dosens_collection) && $s->dosens_collection->isNotEmpty();
+                                    $pengajar_collection = $hasSesiDosen 
+                                        ? $s->dosens_collection 
+                                        : $tim_dosen->flatMap->dosens;
+                                    $pengajar_collection = collect($pengajar_collection)->map(function ($d) {
+                                        return (object) [
+                                            'name'      => $d->name ?? $d['name'] ?? 'Tanpa Nama',
+                                            'nip'       => $d->nip ?? $d['nip'] ?? '-',
+                                            'is_ketua'  => isset($d->pivot) ? (bool)$d->pivot->is_ketua : (bool)($d['is_ketua'] ?? false)
+                                        ];
+                                    });
+                                @endphp
+
+                                @forelse($pengajar_collection as $dosen)
+                                    <div class="text-xs text-[var(--contrast-main-text)] flex items-center gap-2">
+                                        <div class="{{ $pengajar_collection->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+                                            
+                                            @if ($pengajar_collection->count() > 1)
+                                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                            @endif
+
+                                            {{ $dosen->name }}
+
+                                            @if ($dosen->is_ketua)
+                                                <span class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
+                                                    KETUA
+                                                </span>
+                                            @endif
+
+                                            <br>NIP: {{ $dosen->nip }}
                                         </div>
-                                    @empty
-                                        <li class="text-xs text-zinc-400 italic">Tidak ada data dosen</li>
-                                    @endforelse
+                                    </div>
+                                @empty
+                                    <div class="text-xs text-zinc-400 italic">Tidak ada data Dosen</div>
+                                @endforelse
                             </div>
 
                             {{-- Tombol Absensi (Mahasiswa) --}}

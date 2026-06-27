@@ -123,7 +123,7 @@ trait WithUserModal
             $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
             $this->selected_id_user = $user->id;
 
-                $this->pr_id = $user->pr_id;
+            $this->pr_id = $user->pr_id;
             if (! $isRPS) {
                 $this->pr_id_2 = $user->pr_id;
                 $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
@@ -160,7 +160,7 @@ trait WithUserModal
             return;
         }
 
-        $rps = RPS::whereHas('dosens', function ($query) use ($dosen) {
+        $rps = RPS::whereHas('tim_dosens.dosens', function ($query) use ($dosen) {
             $query->where('dosens.id', $dosen->id);
         })->paginate($this->user_rps_modal_page, ['*'], 'user_rps_modal_page');
 
@@ -479,43 +479,33 @@ trait WithUserModal
         $validator->after(function ($validator) use ($data, $role) {
 
             if ($role === 'admin') {
-
                 if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk'] && $data['nip'] === $data['nik']) {
-
                     $validator->errors()->add(
                         'nitk',
                         'NITK tidak boleh memiliki nilai yang sama dengan NIP!'
                     );
-
                 }
 
             } elseif ($role === 'dosen') {
-
                 if (! empty($data['nip']) && ! empty($data['nidn']) && $data['nip'] === $data['nidn'] && $data['nip'] === $data['nik']) {
-
                     $validator->errors()->add(
                         'nidn',
                         'NIDN tidak boleh memiliki nilai yang sama dengan NIP dan NIDK!'
                     );
-
                 }
 
                 if (! empty($data['nip']) && ! empty($data['nidk']) && $data['nip'] === $data['nidk'] && $data['nip'] === $data['nik']) {
-
                     $validator->errors()->add(
                         'nidk',
                         'NIDK tidak boleh memiliki nilai yang sama dengan NIP dan NIDN!'
                     );
-
                 }
 
                 if (! empty($data['nidn']) && ! empty($data['nidk']) && $data['nidn'] === $data['nidk'] && $data['nidn'] === $data['nik']) {
-
                     $validator->errors()->add(
                         'nidk',
                         'NIDK tidak boleh memiliki nilai yang sama dengan NIP dan NIDN!'
                     );
-
                 }
             }
 
@@ -617,7 +607,7 @@ trait WithUserModal
                     'role' => 'owner',
                 ]);
 
-                if (! empty($this->showRPSModal) && $dosen) {
+                if (! empty($this->showTimDosenModal) && $dosen) {
                     if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
                         $this->dosen_id_array = [];
                     }

@@ -57,7 +57,7 @@ trait WithSubCPMKSearchFilters
             'bobot' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.'),
             'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.').'% Bobot',
             'ref' => $this->mapRef($s->refs),
-            'dosen' => $this->mapDosen($s->dosens),
+            // 'dosen' => $this->mapDosen($s->dosens),
         ])->toArray();
     }
 

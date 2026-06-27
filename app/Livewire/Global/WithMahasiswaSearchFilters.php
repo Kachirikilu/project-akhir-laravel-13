@@ -477,8 +477,8 @@ trait WithMahasiswaSearchFilters
                     $matchPr = false;
                     foreach ($basePr as $pr) {
                         $candidates = [
-                            $pr.' '.$mahasiswa->pr_rel->kode_dp,
-                            $pr.' ('.$mahasiswa->pr_rel->kode_dp.')',
+                            $pr.' '.$mahasiswa->pr_rel->kode_pr,
+                            $pr.' ('.$mahasiswa->pr_rel->kode_pr.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {

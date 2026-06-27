@@ -183,9 +183,9 @@ trait WithRefModal
                 },
             ],
             // Validasi Field Baru
-            'judul' => 'required|string|max:1000',
-            'penulis' => 'required|string|max:500',
-            'penerbit' => 'required|string|max:500',
+            'judul' => 'required|string|min:5|max:1000',
+            'penulis' => 'required|string|max:255',
+            'penerbit' => 'required|string|max:255',
             'tahun' => [
                 'required',
                 'numeric',
@@ -248,8 +248,6 @@ trait WithRefModal
                     'tahun' => $validated['tahun'],
                     'link' => $validated['link'],
                 ]);
-
-                dd($ref);
 
                 if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $ref) {
                     if (! isset($this->ref_id_array['rps']) || ! is_array($this->ref_id_array['rps'])) {
@@ -368,7 +366,7 @@ trait WithRefModal
     {
         return [
             'kode_ref_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_ref_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_ref_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_ref_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)
@@ -384,16 +382,17 @@ trait WithRefModal
             'kode_ref.max' => 'Kode Referensi maksimal 20 karakter!',
 
             // Deskripsi & Status
-            'judul.required' => 'Deskripsi Ref wajib diisi!',
-            'judul.max' => 'Deskripsi Ref terlalu panjang (Maksimal 1000 karakter)!',
+            'judul.required' => 'Judul wajib diisi!',
+            'nama_tim.min' => 'Judul terlalu pendek (Minimal 5 karakter)!',
+            'judul.max' => 'Judul terlalu panjang (Maksimal 1000 karakter)!',
 
             // Penulis
             'penulis.required' => 'Nama penulis wajib diisi!',
-            'penulis.max' => 'Nama penulis terlalu panjang (Maksimal 500 karakter)!',
+            'penulis.max' => 'Nama penulis terlalu panjang (Maksimal 255 karakter)!',
 
             // Penerbit
             'penerbit.required' => 'Nama penerbit wajib diisi!',
-            'penerbit.max' => 'Nama penerbit terlalu panjang (Maksimal 500 karakter)!',
+            'penerbit.max' => 'Nama penerbit terlalu panjang (Maksimal 255 karakter)!',
 
             // Tahun
             'tahun.required' => 'Tahun terbit wajib diisi!',

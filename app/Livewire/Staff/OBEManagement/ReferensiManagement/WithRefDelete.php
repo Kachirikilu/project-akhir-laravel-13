@@ -3,7 +3,7 @@
 namespace App\Livewire\Staff\OBEManagement\ReferensiManagement;
 
 use App\Models\Akademik\Referensi;
-use App\Models\Akademik\RPS;
+// use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
 
@@ -59,9 +59,9 @@ trait WithRefDelete
 
             if ($this->isPermanentDelete) {
                 // Safety Check: RPS is_draf = 0
-                $isConnected = RPS::whereHas('refs', function($q) use ($ref) {
-                    $q->where('ref_id', $ref->id);
-                })->where('is_draf', 0)->exists();
+                // $isConnected = RPS::whereHas('refs', function($q) use ($ref) {
+                //     $q->where('ref_id', $ref->id);
+                // })->where('is_draf', 0)->exists();
 
                 $isConnected =
                     $ref->rps()->where('is_draf', 0)->exists()

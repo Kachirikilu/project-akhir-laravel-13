@@ -15,6 +15,7 @@ use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -42,6 +43,7 @@ class SesiManagement extends Component
     use WithSesiModal;
     use WithUserFilters;
     use WithUserSearchFilters;
+    use WithCpmkGrafikShow;
 
     public $search = '';
 
@@ -56,6 +58,8 @@ class SesiManagement extends Component
     public Kelas $kelas;
 
     public KelasJadwal $jadwal;
+
+    public $tim_dosen;
 
     public $jadwal_id_url;
 
@@ -139,6 +143,7 @@ class SesiManagement extends Component
         $this->rps_id_url = $this->jadwal->rps_id;
         $this->kode_rps_url = $this->jadwal->kode_rps;
         $this->switchTable = $switchTable;
+        $this->tim_dosen = $this->getTimDosenByKelas($kelas->rps_id, $kelas->pr_id);
 
         // =====================================
         // MANAJEMEN RIWAYAT/HISTORY SESSION
@@ -176,6 +181,8 @@ class SesiManagement extends Component
 
         session([$sessionKey => $sesiHistory]);
     }
+
+    
 
     public function loadingTable() {}
 
@@ -402,7 +409,7 @@ class SesiManagement extends Component
             $sesis = collect();
             $users = collect();
             $groupsCpmk = collect();
-            $totalBobotPerCpmk = collect();
+            // $totalBobotPerCpmk = collect();
 
             $absensi = [
                 'mhs_poin_absensi' => 0,
@@ -602,7 +609,7 @@ class SesiManagement extends Component
                 'sesis' => $sesis,
                 'users' => $users,
                 'groupsCpmk' => $groupsCpmk ?? null,
-                'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
+                // 'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
                 'absensi' => $absensi,
                 'kelas' => $this->kelas,
 

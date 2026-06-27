@@ -771,7 +771,7 @@ trait WithCPLModal
             'pr_id_array.min' => 'Program Studi minimal berisi satu data!',
 
             'kode_cpl_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_cpl_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_cpl_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_cpl_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPL Bagian 2 (Angka - Kanan)

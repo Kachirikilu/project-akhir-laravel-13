@@ -49,6 +49,17 @@ trait HasSortir
         $this->sortField = $matchedField;
     }
 
+    protected function applyKetuaSort($query)
+    {
+        return $query
+            ->leftJoin('tim_dosen_pivot_dosen', function ($join) {
+                $join->on('tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
+                    ->where('tim_dosen_pivot_dosen.is_ketua', true);
+            })
+            ->leftJoin('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
+            ->orderBy('dosens.name', $this->sortDirection);
+    }
+
     public function applyProdiSort($query, $strata = 'strata', $nama = 'nama_pr')
     {
         return $query->orderByRaw("

@@ -4,6 +4,7 @@ namespace App\Livewire\Staff\OBEManagement\RPSManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
+use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
@@ -73,7 +74,7 @@ trait WithRPSModal
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
         $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
-        $this->updatedDosenNameSearch($this->dosenNameSearch);
+        $this->updatedTimDosenNameSearch($this->timDosenNameSearch);
     }
 
     public function editRPS($id, $key = 'rps')
@@ -94,7 +95,7 @@ trait WithRPSModal
             // 1. Load data RPS dengan relasi yang sangat lengkap
             $rps = RPS::with([
                 'mk_rel',
-                'dosens',
+                'tim_dosens',
                 'cpmks.scpmks',
                 'cpmks.scpmks.refs',
                 'cpmks.refs',
@@ -109,10 +110,11 @@ trait WithRPSModal
             // $this->mk_items = $this->itemsMK($rps->mk_rel);
 
             // 2. Fill Data Dosen
-            $this->dosen_id_array = $rps->dosens->pluck('id')->toArray();
-            $this->dosen_items_array = $rps->dosens->map(function ($d) {
-                return $this->itemsDosen($d);
+            $this->tim_dosen_id_array = $rps->tim_dosens->pluck('id')->toArray();
+            $this->tim_dosen_items_array = $rps->tim_dosens->map(function ($d) {
+                return $this->itemsTimDosen($d);
             })->toArray();
+            $this->tim_dosen_sub_items_array = $this->mapTimDosen($rps->tim_dosens);
 
             // 3. MAPPING CPMK (MENGGUNAKAN FUNGSI mapCPMK ANDA)
             $this->cpmk_id_array = $rps->cpmks->pluck('id')->toArray();
@@ -120,8 +122,6 @@ trait WithRPSModal
                 return $this->itemsCPMK($c);
             })->toArray();
             $this->cpmk_sub_items_array = $this->mapCPMK($rps->cpmks);
-
-            $this->pertemuan_dosen = $this->loadPertemuanDosenFromRps($rps->id, $this->cpmk_sub_items_array, $this->dosen_id_array);
 
             // $totalSubCPMK = 0;
             // foreach ($this->cpmk_sub_items_array as $group) {
@@ -156,7 +156,7 @@ trait WithRPSModal
             $this->updatedCPMKNameSearch($this->cpmkNameSearch);
             // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
             $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
-            $this->updatedDosenNameSearch($this->dosenNameSearch);
+            $this->updatedTimDosenNameSearch($this->timDosenNameSearch);
 
             $this->showRPSModal = true;
 
@@ -241,14 +241,6 @@ trait WithRPSModal
         if (isset($data['ref_id_array']) && is_array($data['ref_id_array'])) {
             $cleanRef = array_values(array_diff(array_unique($data['ref_id_array']), $refFromCpmkScpmk));
         }
-
-        $parsedPertemuan = $this->parsePertemuanDosen(
-            $data['pertemuan_dosen'] ?? [],
-            $data['dosen_id_array'] ?? [],
-            $data['cpmk_sub_items_array'] ?? [],
-            $data['dosen_items_array'] ?? []
-        );
-        $data['pertemuan_dosen'] = $parsedPertemuan['data'];
 
         $data['bobot_uts'] = $data['bobot_uts'] ?? null;
         $data['bobot_uas'] = $data['bobot_uas'] ?? null;
@@ -351,71 +343,26 @@ trait WithRPSModal
             ],
             'bobot_uts' => 'nullable|numeric|min:1|max:60',
             'bobot_uas' => 'nullable|numeric|min:1|max:60',
-            // 'bobot_uts' => [
-            //     // 'nullable',
-            //     'numeric',
-            //     'min:1',
-            //     'max:60',
-            //     function ($attribute, $value, $fail) use ($bobotUTS, $hasUTS, $data) {
-            //         // dd('MASUK CALLBACK UTS', $value);
-            //         if (($data['is_draf'] ?? 0) == 1) {
-            //             return;
-            //         }
-            //         if ($hasUTS) {
-            //             if ($bobotUTS !== null && $bobotUTS !== '') {
-            //                 $fail('Bobot UTS tidak boleh diisi dari luar karena metode UTS sudah ada di dalam Sub-CPMK!');
-            //             }
-            //         } else {
-            //             if ($bobotUTS === null || $bobotUTS === '') {
-            //                 $fail('Bobot UTS wajib diisi karena metode UTS tidak ditemukan di dalam pertemuan Sub-CPMK!');
-            //             }
-            //         }
-            //     },
-            // ],
-            // 'bobot_uas' => [
-            //     // 'nullable',
-            //     'numeric',
-            //     'min:1',
-            //     'max:60',
-            //     function ($attribute, $value, $fail) use ($bobotUAS, $hasUAS, $data) {
-            //         if (($data['is_draf'] ?? 0) == 1) {
-            //             return;
-            //         }
-            //         if ($hasUAS) {
-            //             if ($bobotUAS !== null && $bobotUAS !== '') {
-            //                 $fail('Bobot UAS tidak boleh diisi dari luar karena metode UAS/Evaluasi Akhir sudah ada di dalam Sub-CPMK!');
-            //             }
-            //         } else {
-            //             if ($bobotUAS === null || $bobotUAS === '') {
-            //                 $fail('Bobot UAS wajib diisi karena metode UAS/Evaluasi Akhir tidak ditemukan di dalam pertemuan Sub-CPMK!');
-            //             }
-            //         }
-            //     },
-            // ],
             'ref_id_array' => 'nullable|array',
-            'pertemuan_dosen' => 'nullable|array',
-            'dosen_id_array' => 'required|array|min:1',
-            'dosen_items_array' => [
+            'tim_dosen_id_array' => 'required|array|min:1',
+            'tim_dosen_items_array' => [
                 'array',
-                function ($attribute, $value, $fail) use ($data) {
-                    $hasKetua = collect($value)->contains(function ($item) {
-                        return isset($item['is_ketua']) && ($item['is_ketua'] === 1 || $item['is_ketua'] === '1' || $item['is_ketua'] === true);
-                    });
+                function ($attribute, $value, $fail) {
+                    $validations = collect($value)
+                        ->pluck('validation')
+                        ->filter(fn($item) => !is_null($item))
+                        ->map(fn($item) => (string) $item);
 
-                    if (! $hasKetua && ! collect($data['dosen_id_array'] ?? [])->isEmpty()) {
-                        $fail('Harus ada minimal satu Dosen yang dipilih sebagai Ketua Tim!');
+                    $counts = array_count_values($validations->toArray());
+                    $duplicates = array_filter($counts, fn($count) => $count > 1);
+                    if (!empty($duplicates)) {
+                        $fail('Tidak boleh menggunakan lebih dari satu Tim Dosen dari Program Studi yang sama!');
                     }
                 },
             ],
-            'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesRPS());
-
-        // dd(
-        //     array_key_exists('bobot_uts', $rules),
-        //     $rules['bobot_uts'] ?? null
-        // );
 
         if ($validator->fails()) {
             $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
@@ -435,20 +382,17 @@ trait WithRPSModal
                     if (! $hasDuplicateError && ! isset($formattedErrors['akademik'])) {
                         $formattedErrors['akademik'][] = $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama;
                     }
+                } elseif ($key === 'tim_dosen_items_array') {
+                    $formattedErrors['tim_dosen_id_array'] = array_merge(
+                        $formattedErrors['tim_dosen_id_array'] ?? [], 
+                        $messages
+                    );
                 } else {
                     $formattedErrors[$key] = array_merge($formattedErrors[$key] ?? [], $messages);
                 }
             }
 
-            foreach ($parsedPertemuan['errors'] as $message) {
-                $formattedErrors['dosen_id_array'][] = $message;
-            }
-
             throw ValidationException::withMessages($formattedErrors);
-        }
-
-        if (! empty($parsedPertemuan['errors'])) {
-            throw ValidationException::withMessages(['dosen_id_array' => $parsedPertemuan['errors']]);
         }
 
         $validated = $validator->validated();
@@ -457,9 +401,9 @@ trait WithRPSModal
 
         $validated['ref_id_array'] = $cleanRef;
         $validated['cpmk_id_array'] = array_values(array_unique($data['cpmk_id_array'] ?? []));
-        $validated['dosen_items_array'] = $data['dosen_items_array'] ?? [];
+        $validated['tim_dosen_items_array'] = $data['tim_dosen_items_array'] ?? [];
         $validated['cpmk_sub_items_array'] = $data['cpmk_sub_items_array'] ?? [];
-        $validated['dosen_id_array'] = $data['dosen_id_array'] ?? [];
+        $validated['tim_dosen_id_array'] = array_values(array_unique($data['tim_dosen_id_array'] ?? []));
 
         return $validated;
     }
@@ -477,9 +421,8 @@ trait WithRPSModal
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
-        $data['dosen_id_array'] = $this->dosen_id_array ?? [];
-        $data['dosen_items_array'] = $this->dosen_items_array ?? [];
-        $data['pertemuan_dosen'] = $this->pertemuan_dosen ?? [];
+        $data['tim_dosen_id_array'] = $this->tim_dosen_id_array ?? [];
+        $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
 
         try {
             // 2. Jalankan validasi dan pembersihan duplikat
@@ -501,17 +444,16 @@ trait WithRPSModal
                 $rps->refresh();
 
                 // 1. Sync Dosen
-                if (! empty($validated['dosen_id_array'])) {
-                    $syncDosen = [];
-                    foreach ($validated['dosen_id_array'] as $index => $id) {
-                        $detail = collect($validated['dosen_items_array'])->firstWhere('id', $id);
-                        $syncDosen[(int) $id] = [
-                            'peran' => $detail['peran'] ?? 'Pengajar',
-                            'is_ketua' => (bool) ($detail['is_ketua'] ?? false),
-                            'sort_order' => $index,
-                        ];
+                if (! empty($validated['tim_dosen_id_array'])) {
+                    $timDosenSync = [];
+                    foreach ($validated['tim_dosen_id_array'] as $index => $id) {
+                        if (! empty($id)) {
+                            $timDosenSync[(int) $id] = [
+                                'sort_order' => $index,
+                            ];
+                        }
                     }
-                    $rps->dosens()->sync($syncDosen);
+                    $rps->tim_dosens()->sync($timDosenSync);
                 }
 
                 // 3. Mapping CPMK
@@ -553,8 +495,6 @@ trait WithRPSModal
                     $rps->refs()->sync($refSync);
                 }
 
-                // 6. Sync Dosen Pertemuan ke Pivot Sub-CPMK
-                $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
             // 4. Feedback & Reset
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
@@ -593,12 +533,11 @@ trait WithRPSModal
         // dd($data['mk_id']);
 
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
-        $data['dosen_id_array'] = $this->dosen_id_array ?? [];
-        $data['dosen_items_array'] = $this->dosen_items_array ?? [];
+        $data['tim_dosen_id_array'] = $this->tim_dosen_id_array ?? [];
+        $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
-        $data['pertemuan_dosen'] = array_filter($this->pertemuan_dosen) ?? [];
 
         try {
             $validated = $this->inputModalRPS(true, $data);
@@ -625,16 +564,11 @@ trait WithRPSModal
                 $rps->update($updateData);
 
                 // 2. Sync Dosen dengan Pivot Data
-                $syncDosen = [];
-                foreach ($validated['dosen_id_array'] as $index => $id) {
-                    $detail = collect($validated['dosen_items_array'])->firstWhere('id', $id);
-                    $syncDosen[(int) $id] = [
-                        'peran' => $detail['peran'] ?? 'Pengajar',
-                        'is_ketua' => (bool) ($detail['is_ketua'] ?? false),
-                        'sort_order' => $index,
-                    ];
+                $syncTimDosen = [];
+                foreach ($validated['tim_dosen_id_array'] as $index => $id) {
+                    $syncTimDosen[(int) $id] = ['sort_order' => $index];
                 }
-                $rps->dosens()->sync($syncDosen);
+                $rps->tim_dosens()->sync($syncTimDosen);
 
                 // 3. Sync CPMK
                 $syncCpmk = [];
@@ -657,8 +591,6 @@ trait WithRPSModal
                 }
                 $rps->refs()->sync($syncRef);
 
-                // 6. Sync Dosen Pertemuan ke Pivot Sub-CPMK
-                $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
 
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
@@ -732,12 +664,10 @@ trait WithRPSModal
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
 
             // Dosen Pengampu
-            'dosen_id_array.required' => 'Dosen pengampu wajib dipilih!',
-            'dosen_id_array.min' => 'Minimal harus ada satu Dosen pengampu!',
-            'dosen_items_array.required' => 'Data detail Dosen tidak boleh kosong!',
-            'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
-            'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
-            'dosen_id_array.required' => 'Dosen pengampu wajib diisi!',
+            'tim_dosen_id_array.required' => 'Tim Dosen wajib dipilih!',
+            'tim_dosen_id_array.min' => 'Minimal harus ada satu Tim Dosen!',
+            'tim_dosen_items_array.required' => 'Data detail Tim Dosen tidak boleh kosong!',
+            'tim_dosen_id_array.required' => 'Tim Dosen wajib diisi!',
 
         ];
     }
@@ -767,8 +697,8 @@ trait WithRPSModal
                 'ref_id_array',
             ]),
             5 => $this->getErrorCount([
-                'dosen_id_array',
-                'dosen_items_array',
+                'tim_dosen_id_array',
+                'tim_dosen_items_array',
             ]),
         ];
     }
@@ -791,11 +721,8 @@ trait WithRPSModal
         $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
         $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
 
-        $this->dosen_id_array = [];
-        $this->dosen_items_array = [];
-
-        $this->pertemuan_dosen = [];
-
+        $this->tim_dosen_id_array = [];
+        $this->tim_dosen_items_array = [];
         $this->resetErrorBag();
     }
 }

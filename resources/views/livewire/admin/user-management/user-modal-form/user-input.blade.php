@@ -45,7 +45,7 @@
             @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-lainnya-input')
         </div>
         @if ($withRPS ?? false)
-            <div x-show="step === 5">
+            <div x-show="step === 6">
                 @include('livewire.admin.user-management.user-modal-form.user-rps')
                 <template x-if="$store.user.isEdit && ($store.user?.typeModal == 'dosen' || $store.user?.typeModal == 'mahasiswa')" x-cloak>
                     @include('livewire.staff.obe-management.obe-partial.rps-list', [

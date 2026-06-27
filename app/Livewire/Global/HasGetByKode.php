@@ -7,6 +7,7 @@ use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\RPS;
+use App\Models\Akademik\TimDosen;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 
@@ -196,4 +197,17 @@ trait HasGetByKode
     //             return $kode === $search;
     //         });
     // }
+
+    protected function getTimDosenByKelas($rps_id, $pr_id) {
+        return TimDosen::whereHas('rps', function ($query) use ($rps_id) {
+                $query->where('rps.id', $rps_id);
+            })
+            ->whereHas('pr_rel', function ($query) use ($pr_id) {
+                $query->where('prodis.id', $pr_id);
+            })
+            ->with(['dosens' => function ($query) {
+                $query->withPivot('is_ketua', 'pertemuan_ke');
+            }])
+            ->get() ?? collect();
+    }
 }

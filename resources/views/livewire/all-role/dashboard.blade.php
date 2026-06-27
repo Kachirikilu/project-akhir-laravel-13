@@ -29,7 +29,7 @@
         @php
             $data = [
                 'nama' => Auth::user()->name ?? 'Budi Santoso',
-                'id_identitas' => Auth::user()->identity1,
+                'ID_AKADEMIK' => Auth::user()->identity1,
                 'id_label' => Auth::user()->mahasiswa ? 'NIM' : 'NIP',
                 'ttl' => Auth::user()->tmt_lahir .', '. Auth::user()->tgl_lahir,
                 'gender' => Auth::user()->gender,
@@ -111,7 +111,7 @@
                     <span
                         class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]/65">
                         <flux:icon name="hashtag" class="w-3 h-3" />
-                        {{ $data['id_label'] }}: {{ $data['id_identitas'] }}
+                        {{ $data['id_label'] }}: {{ $data['ID_AKADEMIK'] }}
                     </span>
                 </div>
             </div>

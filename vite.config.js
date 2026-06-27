@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
                     "resources/js/SubCPMK.js",
                     "resources/js/CPL.js",
                     "resources/js/Referensi.js",
+                    "resources/js/TimDosen.js",
                     "resources/js/Kelas.js",
                     "resources/js/KelasJadwal.js",
                     "resources/js/KelasSesi.js",

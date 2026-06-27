@@ -494,7 +494,7 @@ trait WithCPMKModal
         return [
 
             'kode_cpmk_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_cpmk_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_cpmk_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_cpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPMK Bagian 2 (Angka - Kanan)

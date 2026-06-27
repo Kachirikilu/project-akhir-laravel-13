@@ -404,7 +404,7 @@ trait WithRPSSearchFilters
                         $sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $sks.'SKS',
+                        $sks.' SKS',
                         $searchLower
                     );
 

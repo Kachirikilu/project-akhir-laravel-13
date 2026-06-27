@@ -3,7 +3,7 @@
 namespace App\Livewire\Staff\OBEManagement\CPLManagement;
 
 use App\Models\Akademik\CPL;
-use App\Models\Akademik\RPS;
+// use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
 

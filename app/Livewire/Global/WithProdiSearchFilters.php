@@ -148,14 +148,19 @@ trait WithProdiSearchFilters
             $kodeFakultas = $kodeProdi;
 
             if (property_exists($this, 'mkType') || property_exists($this, 'cplType')) {
-                if ($this->mkType >= 2 || $this->cplType >= 2) {
-                    $kodeDepartemen = str($prodi->dp_rel?->kode ?? '')->lower()->trim();
-                }
-                if ($this->mkType >= 3 || $this->cplType >= 3) {
-                    $kodeFakultas = str($prodi->dp_rel?->fk_rel?->kode ?? '')->lower()->trim();
+                if ($prodi) {
+                    $dpKode = $prodi->dp_rel?->kode ?? '';
+                    $fkKode = $prodi->dp_rel?->fk_rel?->kode ?? '';
+
+                    if (($this->mkType ?? 0) >= 2 || ($this->cplType ?? 0) >= 2) {
+                        $kodeDepartemen = str($dpKode)->lower()->trim();
+                    }
+
+                    if (($this->mkType ?? 0) >= 3 || ($this->cplType ?? 0) >= 3) {
+                        $kodeFakultas = str($fkKode)->lower()->trim();
+                    }
                 }
             }
-
             $namaStrata = str($prodi->strata)->lower()->trim();
             $inisialStrata = match ($namaStrata->toString()) {
                 'sarjana' => 's1', 'magister' => 's2', 'doktor' => 's3', default => ''

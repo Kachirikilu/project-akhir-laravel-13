@@ -22,7 +22,7 @@ trait WithRPS
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
             ], 442);
         }
 
@@ -164,7 +164,7 @@ trait WithRPS
     //         return response()->json([
     //             'status' => false,
     //             'head' => '*❌ Autentikasi Gagal!*',
-    //             'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+    //             'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
     //         ], 442);
     //     }
 
@@ -211,7 +211,7 @@ trait WithRPS
     //                 'message' => "Data Program Studi tidak ditemukan pada RPS ini!",
     //             ], 400);
     //         }
-    //         $pdfRawContent = $this->generateRawPdfContent($rps, $prodi);
+    //         $pdfRawContent = $this->generateRPSRawPDFContent($rps, $prodi);
     //         // $data = $this->formatRPSDetailForShow($rps);
     //         $fileNameSafe = str_replace('/', '-', 'RPS_'.$prodi->kode.'_'.$rps->kode.'_'.$rps->mk_rel->mk.'.pdf');
 
@@ -237,7 +237,7 @@ trait WithRPS
         $user = $this->searchUserWhatsApp($sufiksNomor);
 
         if (!$user) {
-            return response()->json(['status' => false, 'head' => '*❌ Autentikasi Gagal!*', 'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`"], 442);
+            return response()->json(['status' => false, 'head' => '*❌ Autentikasi Gagal!*', 'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`"], 442);
         }
 
         $matchedKey = collect($pdfGetRPSKey)->first(fn($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
@@ -281,7 +281,7 @@ trait WithRPS
                 return response()->json(['status' => true, 'head' => '*❌ Gagal!*', 'message' => "Data Program Studi tidak ditemukan pada RPS ini!"], 400);
             }
 
-            $pdfRawContent = $this->generateRawPdfContent($rps, $prodi);
+            $pdfRawContent = $this->generateRPSRawPDFContent($rps, $prodi);
             $fileNameSafe = str_replace(['/', '\\'], '-', "RPS_{$prodi->kode}_{$rps->kode}_{$rps->mk_rel->mk}.pdf");
 
             return response()->json([

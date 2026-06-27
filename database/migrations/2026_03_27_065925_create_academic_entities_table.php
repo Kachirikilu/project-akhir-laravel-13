@@ -25,6 +25,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('tim_dosens', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_tim_dosen')->unique();
+            $table->foreignId('pr_id')->constrained('prodis')->onDelete('cascade');
+            $table->index('pr_id');
+            $table->text('nama_tim');
+            $table->integer('sort_order')->default(0);
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
         Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
             $table->string('kode_cpmk')->unique();
@@ -93,6 +104,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('rps');
+        Schema::dropIfExists('tim_dosens');
         Schema::dropIfExists('cpls');
         Schema::dropIfExists('cpmks');
         Schema::dropIfExists('sub_cpmks');

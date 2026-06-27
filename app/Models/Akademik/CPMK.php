@@ -2,6 +2,7 @@
 
 namespace App\Models\Akademik;
 
+use App\Models\Akademik\RPS;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -127,11 +128,11 @@ class CPMK extends Model
 
         $search = trim($search);
         $searchTerm = '%'.$search.'%';
-        $searchLower = strtolower($search);
-        $searchLikeLower = '%'.$searchLower.'%';
+        // $searchLower = strtolower($search);
+        // $searchLikeLower = '%'.$searchLower.'%';
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLikeLower, $searchClean, $withBobot) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchClean, $withBobot) {
 
             if ($withBobot == false) {
                 // --- 1. PENCARIAN TEKS DASAR ---

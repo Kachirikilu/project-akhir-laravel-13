@@ -144,7 +144,7 @@
         </style>
 
         <div id="printable-area">
-            @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-table')
+            @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-show')
         </div>
     </div>
 </flux:modal>

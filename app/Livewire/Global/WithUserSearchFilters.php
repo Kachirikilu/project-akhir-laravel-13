@@ -378,18 +378,7 @@ trait WithUserSearchFilters
                         );
                     }
 
-                    $matchKodePr = $this->matchKode(
-                        $user->kode_pr,
-                        $searchLower
-                    );
-                    $matchKodeDp = $this->matchKode(
-                        $user->kode_dp,
-                        $searchLower
-                    );
-                    $matchKodeFk = $this->matchKode(
-                        $user->kode_fk,
-                        $searchLower
-                    );
+  
                     $searchNormalized = $this->normalizePhoneNumber($searchLower);
                     $userHPNormalized = $this->normalizePhoneNumber($user->no_hp);
                     $userWANormalized = $this->normalizePhoneNumber($user->no_wa);
@@ -407,6 +396,19 @@ trait WithUserSearchFilters
                         $searchLower
                     );
 
+                  $matchKodePr = $this->matchKode(
+                        $user->kode_pr,
+                        $searchLower
+                    );
+                    $matchKodeDp = $this->matchKode(
+                        $user->kode_dp,
+                        $searchLower
+                    );
+                    $matchKodeFk = $this->matchKode(
+                        $user->kode_fk,
+                        $searchLower
+                    );
+
                     $basePr = [
                         $user->prodi,
                         $user->prodi_pr,
@@ -415,8 +417,8 @@ trait WithUserSearchFilters
                     $matchPr = false;
                     foreach ($basePr as $pr) {
                         $candidates = [
-                            $pr.' '.$user->kode_dp,
-                            $pr.' ('.$user->kode_dp.')',
+                            $pr.' '.$user->kode_pr,
+                            $pr.' ('.$user->kode_pr.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {
@@ -552,17 +554,17 @@ trait WithUserSearchFilters
                         $rps = (int) ($user->count_rps ?? $user->mahasiswa->count_rps ?? 0);
                         $matchRPS = false;
                         if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
-                            $targetSKS = (int) max(
+                            $targetRPS = (int) max(
                                 $matches[1] ?? 0,
                                 $matches[2] ?? 0
                             );
-                            $matchRPS = $rps === $targetSKS;
+                            $matchRPS = $rps === $targetRPS;
                         }
                         $matchRPS = $this->matchCount(
                             $rps,
                             $searchLower, ['rps']
                         ) || $this->containsStrict(
-                            $rps.'RPS',
+                            $rps.' RPS',
                             $searchLower
                         );
 
@@ -579,7 +581,7 @@ trait WithUserSearchFilters
                             $sks,
                             $searchLower, ['sks']
                         ) || $this->containsStrict(
-                            $sks.'SKS',
+                            $sks.' SKS',
                             $searchLower
                         );
 

@@ -9,7 +9,7 @@
 >
     {{-- 🔹 HEADER TAB CONTAINER --}}
     @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'RPS', 2 => 'CPMK', 3 => 'CPL', 4 => 'Referensi', 5 => 'Dosen'],
+        'tabs' => [1 => 'RPS', 2 => 'CPMK', 3 => 'CPL', 4 => 'Referensi', 5 => 'Tim Dosen'],
         'errorsCount' => $this->getRPSErrorSections(),
     ])
 
@@ -32,7 +32,7 @@
         </div>
 
         <div x-show="step === 5">
-            @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-dosen-input')
+            @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-tim-dosen-input')
         </div>
 
     </div>

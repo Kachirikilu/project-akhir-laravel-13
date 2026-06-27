@@ -1,4 +1,4 @@
-<div class="rps-pdf bg-white">
+<div class="rps-pdf space-y-10 mt-10 bg-white">
 
     <style>
         .rps-pdf {
@@ -70,7 +70,7 @@
     </table>
 
     {{-- ================= IDENTITAS ================= --}}
-    <div class="font-bold mt-8 mb-2 ">A. IDENTITAS MATA KULIAH</div>
+    <div class="font-bold mb-2">A. IDENTITAS MATA KULIAH</div>
     <table class="w-full mb-6 text-[10px] rps-table">
         <tr class="font-bold text-center bg-gray-50">
             <td rowspan="2" class="w-1/6">Nama Mata Kuliah</td>
@@ -115,10 +115,12 @@
             </td>
         </tr>
         @php
-            $allDosens = $rps->dosens ?? collect();
+            $tim = $tim_dosen->first();
+            $allDosens = $tim ? $tim->dosens : collect();
+
             $ketua = $allDosens->firstWhere('pivot.is_ketua', 1);
             $instruktur = $allDosens->filter(fn($d) => (int) $d->pivot->is_ketua !== 1);
-            $label = $allDosens->count() === 1 ? 'Dosen Pengampu' : 'Tim Pengajar';
+            $label = $allDosens->count() > 1 ? 'Tim Pengajar' : 'Dosen Pengampu';
         @endphp
         <tr>
             <td rowspan="2" class="font-bold bg-gray-50 text-center">
@@ -127,13 +129,15 @@
             <td rowspan="2" @if ($instruktur->isNotEmpty()) colspan="3" @else colspan="6" @endif>
                 @if ($allDosens->count() === 1)
                     {{ $allDosens->first()->name }}<br>NIP: {{ $allDosens->first()->nip }}
-                @else
+                @elseif ($allDosens->count() > 1)
                     @foreach ($allDosens as $idx => $dosen)
                         <div class="list-indent mb-1">
                             <span class="mr-[5px]">{{ $idx + 1 }}.</span>
                             {{ $dosen->name }}<br>NIP: {{ $dosen->nip }}
                         </div>
                     @endforeach
+                @else
+                    <span class="text-red-600 font-bold italic">Dosen Pengampu belum Didaftarkan!</span>
                 @endif
             </td>
             @if ($instruktur->isNotEmpty())
@@ -199,41 +203,35 @@
 
 
 
-
-
-
-
     {{-- ================= PROGRAM PEMBELAJARAN ================= --}}
-    <div class="font-bold mt-8 mb-2">B. PROGRAM PEMBELAJARAN</div>
+    <div class="font-bold mb-2">B. PROGRAM PEMBELAJARAN</div>
 
     <table class="w-full text-[10px] leading-tight rps-table">
         @php
             $programData = $rps->scpmkAtr;
-            $calculateRowspan = function ($data, $column) {
+
+            $programData = $rps->scpmkAtr->map(function ($row) use ($allDosens) {
+                $row->dosens_collection = $allDosens;
+                return $row;
+            });
+
+            $calculateRowspan = function ($data, $column = null) {
                 $counts = [];
                 $index = 0;
-                while ($index < count($data)) {
-                    $row = $data[$index];
+                $total = count($data);
 
-                    if ($column === 'dosen_id_string') {
-                        $currentValue = $row->dosen_id_string ?? '';
-                    } else {
-                        $val = $row->$column ?? '';
-                        $currentValue =
-                            is_array($val) || $val instanceof \Illuminate\Support\Collection
-                                ? (string) $val->pluck('id')->sort()->implode(',')
-                                : (string) $val;
-                    }
+                while ($index < $total) {
+                    $currentValue =
+                        $column === 'dosen'
+                            ? $data[$index]->dosens_collection->pluck('id')->sort()->implode(',')
+                            : $data[$index]->$column ?? '';
 
                     $step = 0;
-                    while ($index + $step < count($data)) {
-                        $nextRow = $data[$index + $step];
-                        $nextVal = $nextRow->$column ?? '';
-
+                    while ($index + $step < $total) {
                         $nextValue =
-                            is_array($nextVal) || $nextVal instanceof \Illuminate\Support\Collection
-                                ? (string) $nextVal->pluck('id')->sort()->implode(',')
-                                : (string) $nextVal;
+                            $column === 'dosen'
+                                ? $data[$index + $step]->dosens_collection->pluck('id')->sort()->implode(',')
+                                : $data[$index + $step]->$column ?? '';
 
                         if ($nextValue !== $currentValue) {
                             break;
@@ -246,15 +244,54 @@
                 return $counts;
             };
 
-            $dosenList = $programData->map(fn($item) => (string) ($item->dosen_id_string ?? ''))->unique();
-            $isDosenUniform = $dosenList->count() <= 1;
-
             $rowspanCpmk = $calculateRowspan($programData, 'kode_cpmk');
             $rowspanBobot = $calculateRowspan($programData, 'bobot');
-            $rowspanDosen = $calculateRowspan($programData, 'dosen_id_string');
         @endphp
 
+        @php
+            // 1. Persiapkan array pertemuan (1-16)
+            $totalPertemuan = 16;
 
+            // 2. Ambil semua tim dosen dan pecah dosen-dosennya
+            $allTimDosen = $tim_dosen->flatMap(function ($tim) {
+                return $tim->dosens->map(function ($dosen) {
+                    return [
+                        'id' => $dosen->id,
+                        'name' => $dosen->name,
+                        'is_ketua' => $dosen->pivot->is_ketua,
+                        'pertemuan_ke' => json_decode($dosen->pivot->pertemuan_ke ?? '[]'),
+                    ];
+                });
+            });
+
+            // 3. Mapping: Buat array [pertemuan_ke => [list_dosen]]
+            $dosenPerPertemuan = [];
+            for ($i = 1; $i <= $totalPertemuan; $i++) {
+                $dosenPerPertemuan[$i] = $allTimDosen
+                    ->filter(function ($dosen) use ($i) {
+                        return !empty($dosen['pertemuan_ke']) && in_array($i, $dosen['pertemuan_ke']);
+                    })
+                    ->values();
+            }
+
+            $programData = $rps->scpmkAtr->map(function ($row, $index) use ($dosenPerPertemuan) {
+                $pertemuan = $index + 1;
+                $dosens = $dosenPerPertemuan[$pertemuan] ?? collect();
+
+                $row->dosens_collection = $dosens->isEmpty() ? collect() : $dosens;
+                return $row;
+            });
+
+            $isDosenUniform =
+                $programData
+                    ->map(function ($row) {
+                        return $row->dosens_collection->pluck('id')->sort()->implode(',');
+                    })
+                    ->unique()
+                    ->count() <= 1;
+
+            $rowspanDosen = $calculateRowspan($programData, 'dosen');
+        @endphp
 
         <thead class="bg-gray-50 font-bold text-center">
             <tr>
@@ -276,8 +313,12 @@
                 $uasMethods = explode(',', env('UAS_FIELDS', 'UAS'));
                 $examMethods = array_merge($utsMethods, $uasMethods);
                 $examMethods = array_map('trim', $examMethods);
+                $lastBobot = null;
             @endphp
+
             @foreach ($programData as $index => $row)
+
+
                 @php
                     $isExam = in_array(strtoupper($row->metode ?? ''), $examMethods);
                     $isExamKode = in_array(strtoupper($row->kode ?? ''), ['UTS', 'UAS']);
@@ -310,37 +351,42 @@
                     @endif
 
                     {{-- Bobot --}}
-                    @if (isset($rowspanBobot[$index]))
-                        <td class="{{ $textStyle }} text-center font-bold" rowspan="{{ $rowspanBobot[$index] }}">
+                    <td class="{{ $textStyle }} text-center font-bold">
+                        <div class="{{ $row->bobot_normalisasi == $lastBobot ? 'opacity-40' : '' }}">
                             {{ $row->bobot_normalisasi ?? '-' }}%
-                        </td>
-                    @endif
+                        </div>
+                    </td>
 
                     {{-- KOLOM DOSEN --}}
                     @if (!$isDosenUniform && isset($rowspanDosen[$index]))
                         <td class="p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
+
                             @if ($row->dosens_collection->isEmpty())
                                 <span class="italic text-gray-500">Tim Pengajar</span>
                             @else
+                                @php
+                                    $count = $row->dosens_collection->count();
+                                @endphp
+
                                 @foreach ($row->dosens_collection as $dosen)
-                                    @php
-                                        $rowDosCount = false;
-                                        if ($row->dosens_collection->count() > 1) {
-                                            $rowDosCount = true;
-                                        }
-                                    @endphp
-                                    <div class="{{ $rowDosCount ? 'list-indent leading-relaxed' : '' }}">
-                                        @if ($rowDosCount)
+                                    <div class="{{ $count > 1 ? 'list-indent leading-relaxed' : '' }}">
+                                        @if ($count > 1)
                                             <span class="mr-[5px]">{{ $loop->iteration }}.</span>
                                         @endif
-                                        {{ $dosen->name }}
+
+                                        {{ $dosen['name'] }}
+
+                                        @if (isset($dosen['is_ketua']) && $dosen['is_ketua'])
+                                            <span class="font-bold">(Ketua)</span>
+                                        @endif
                                     </div>
                                 @endforeach
                             @endif
+
                         </td>
                     @endif
-
                 </tr>
+                @php $lastBobot = $row->bobot_normalisasi; @endphp
             @endforeach
             <tr>
                 <td colspan="8" class="font-bold p-2">
@@ -354,7 +400,7 @@
 
     <div class="page-break"></div>
 
-    <div class="mt-6">
+    <div>
         <h3 class="font-bold p-1 text-[10px]">Referensi</h3>
         <div class="px-1">
             <ul class="list-none">
@@ -368,7 +414,7 @@
         </div>
     </div>
 
-    <div class="mt-6 max-w-xs">
+    <div class="max-w-xs">
         <div class="font-bold p-1 text-[10px] leading-tight">
             Skala Penilaian
         </div>

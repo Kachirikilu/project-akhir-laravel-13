@@ -918,8 +918,7 @@ trait WithNilaiExcel
             $failCount = count($errors);
             $namaFileAsli = $fileExcel->getClientOriginalName();
 
-            $resMessage = "🟢 *Hasil Impor Nilai Excel via WhatsApp*\n\n".
-                          "📄 File: ```{$namaFileAsli}```\n".
+            $resMessage = "📄 File: ```{$namaFileAsli}```\n".
                           "📊 Total Sheet Diproses: *{$totalSheetsProcessed}* halaman\n\n".
                           "✅ Sukses disimpan: *{$successCount}* mahasiswa\n".
                           "❌ Gagal diproses: *{$failCount}* baris\n";
@@ -928,13 +927,13 @@ trait WithNilaiExcel
                 $resMessage .= "\n*Daftar Eror:*\n".implode("\n", array_slice($errors, 0, 5));
             }
 
-            return ['status' => true, 'message' => $resMessage];
+            return ['status' => true, 'head' => '*🟢 Hasil Impor Nilai Excel via WhatsApp*', 'message' => $resMessage];
 
         } catch (\Throwable $e) {
             Auth::logout();
             Log::error('Gagal memproses excel langsung: '.$e->getMessage());
 
-            return ['status' => true, 'message' => '❌ *Gagal memproses file:* '.$e->getMessage()];
+            return ['status' => true, 'head' => '❌ *Gagal Memproses File!*', 'message' => ''.$e->getMessage()];
         }
     }
 

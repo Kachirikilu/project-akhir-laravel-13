@@ -334,9 +334,7 @@ trait WithCPMKModal
                 $this->cpmk_id_array[] = $newCpmk->id;
                 $this->cpmk_items_array[] = $this->itemsCPMK($newCpmk);
                 $mapped = $this->mapCPMK(collect([$newCpmk]));
-                // $this->cpmk_sub_items_array = array_merge($this->cpmk_sub_items_array, $mapped);
                 $this->pushToCPMKItems($mapped);
-                // dd($this->cpmk_items_array, $this->cpmk_sub_items_array);
             }
 
             $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']}");
@@ -506,7 +504,7 @@ trait WithCPMKModal
         return [
 
             'kode_cpmk_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_cpmk_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_cpmk_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_cpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode CPMK Bagian 2 (Angka - Kanan)

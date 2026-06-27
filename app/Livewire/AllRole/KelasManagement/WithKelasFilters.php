@@ -56,16 +56,17 @@ trait WithKelasFilters
         if (! empty($this->selectedMKId)) {
             $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('mk_id', $this->selectedMKId));
         }
-        if ($this->filterKelas !== '' && !Auth::user()->dosen) {
+        // if ($this->filterKelas !== '' && !Auth::user()->dosen) {
+        // if (!Auth::user()->dosen || (Auth::user()->dosen && $this->filterKelas !== '')) {
             if (! empty($this->selectedDosenId)) {
-                $queryKelas->whereHas('rps_rel.dosens', function ($q) {
+                $queryKelas->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
                     $q->where('dosens.id', $this->selectedDosenId);
                 });
-                $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                    $q->where('dosens.id', $this->selectedDosenId);
-                });
+                // $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                //     $q->where('dosens.id', $this->selectedDosenId);
+                // });
             }
-        }
+        // }
 
         if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
             $search = $this->search;
@@ -89,12 +90,12 @@ trait WithKelasFilters
         if (Auth::user()?->dosen || Auth::user()?->mahasiswa) {
             if ($this->filterKelas === '') {
                 if (Auth::user()?->dosen) {
-                    $queryKelas->whereHas('rps_rel.dosens', function ($q) {
+                    $queryKelas->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
                         $q->where('dosens.id', Auth::user()->dosen->id);
                     });
-                    $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                        $q->where('dosens.id', Auth::user()->dosen->id);
-                    });
+                    // $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                    //     $q->where('dosens.id', Auth::user()->dosen->id);
+                    // });
                 } else {
                     if ($this->filterKelas === '') {
                         $queryKelas->whereHas('jadwals.mahasiswas', function ($q) {

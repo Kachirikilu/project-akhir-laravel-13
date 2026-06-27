@@ -20,6 +20,8 @@ use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 // use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 // use App\Livewire\Staff\OBEManagement\WithRPSDelete;
+use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenModal;
+use App\Livewire\Global\WithTimDosenSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
@@ -69,6 +71,8 @@ class CapaianManagement extends Component
     use WithProdiSearchFilters;
     use WithReferensiSearchFilters;
     use WithRefModal;
+    use WithTimDosenModal;
+    use WithTimDosenSearchFilters;
     use WithRekapExcel;
     use WithRPSDelete;
     use WithRPSFilters;

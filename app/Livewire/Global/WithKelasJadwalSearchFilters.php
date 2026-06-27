@@ -425,7 +425,7 @@ trait WithKelasJadwalSearchFilters
                         $sks,
                         $searchLower, ['sks']
                     ) || $this->containsStrict(
-                        $sks.'SKS',
+                        $sks.' SKS',
                         $searchLower
                     );
 
@@ -470,8 +470,8 @@ trait WithKelasJadwalSearchFilters
                     $matchPr = false;
                     foreach ($basePr as $pr) {
                         $candidates = [
-                            $pr.' '.$j->kelas_rel->pr_rel->kode_dp,
-                            $pr.' ('.$j->kelas_rel->pr_rel->kode_dp.')',
+                            $pr.' '.$j->kelas_rel->pr_rel->kode_pr,
+                            $pr.' ('.$j->kelas_rel->pr_rel->kode_pr.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {

@@ -71,7 +71,7 @@
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-header')
         @endif
 
-        @foreach ($kelas->rps_rel->dosens as $dosen)
+        @foreach ($tim_dosen->flatMap->dosens as $dosen)
             <div class="flex flex-col gap-1">
                 <span
                     class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
@@ -82,21 +82,23 @@
                     <span class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">
                         {{ $dosen->name }}
                     </span>
-                    @if ($dosen->pivot->is_ketua)
-                        <span class="px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
-                    @endif
+             
                 </div>
 
                 <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                     NIP: {{ $dosen->nip }}
                     <strong class="px-2">|</strong>
                     <span class="font-medium text-[var(--contrast-second-text)]">{{ $dosen->pivot->peran }}</span>
+                    @if ($dosen->pivot->is_ketua)
+                        <span class="ml-32px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                    @endif
                 </span>
 
                 <span class="flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
                     <flux:icon.phone variant="micro" />
                     {{ $dosen->no_wa_full }}
                 </span>
+                       
             </div>
         @endforeach
     </div>

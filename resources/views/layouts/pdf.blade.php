@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite(['resources/css/color-template.css', 'resources/css/app.css'])
+
     <style>
         @page {
             size: A4;
-            margin: 1cm 0.25cm;
         }
 
         body {
             -webkit-print-color-adjust: exact;
             background-color: white !important;
+            margin: 0;
+            padding: 0;
         }
 
         table {
@@ -34,14 +36,16 @@
         .page-break {
             page-break-before: always;
         }
+        .page-container {
+            page-break-after: always;
+            break-inside: avoid;
+        }
     </style>
 
 </head>
 
 <body class="bg-white scrollbar-x-large">
-    <div class="p-8">
-        @yield('content')
-    </div>
+    @yield('content')
 </body>
 
 </html>

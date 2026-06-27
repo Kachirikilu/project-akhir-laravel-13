@@ -31,7 +31,7 @@ trait WithExcelNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
             ], 442);
         }
 
@@ -74,7 +74,7 @@ trait WithExcelNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
             ], 442);
         }
         if ($user->mahasiswa) {
@@ -113,7 +113,7 @@ trait WithExcelNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
             ], 442);
         }
 

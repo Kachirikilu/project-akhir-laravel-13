@@ -340,7 +340,7 @@ trait WithCPLSearchFilters
                         $rps,
                         $searchLower, ['rps']
                     ) || $this->containsStrict(
-                        $rps.'RPS',
+                        $rps.' RPS',
                         $searchLower
                     );
 

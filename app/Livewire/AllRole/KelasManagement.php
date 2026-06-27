@@ -246,7 +246,7 @@ class KelasManagement extends Component
 
             if (Auth::user()->dosen) {
                 $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
-                    $mk->whereHas('rps_rel.dosens', function ($q) {
+                    $mk->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
                         $q->where('dosens.id', Auth::user()->dosen->id);
                     });
                         // ->orWhereHas('jadwals.sesis.dosens', function ($q) {

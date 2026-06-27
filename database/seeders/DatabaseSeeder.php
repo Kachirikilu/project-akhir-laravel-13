@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             ProgramStudiSeeder::class,
             MataKuliahSeeder::class,
             UserRoleSeeder::class,
+            TimDosenSeeder::class,
             RPSSeeder::class,
             KelasSeeder::class,
             NilaiSeeder::class,

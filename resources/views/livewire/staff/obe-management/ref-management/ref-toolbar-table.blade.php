@@ -37,7 +37,7 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
                         $store.ref?.setDeleteRef(
-                            '{{ $x->judul ?? '' }}',
+                            '{{ $x->citation ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             {{ $isTrashed ? 1 : 0 }}
                         );
@@ -72,7 +72,7 @@
         <flux:menu.item
             @click="
                         $store.ref?.setDeleteRef(
-                            '{{ $x->judul ?? '' }}',
+                            '{{ $x->citation ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             {{ $isTrashed ? 1 : 0 }}
                         );

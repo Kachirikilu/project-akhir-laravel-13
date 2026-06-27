@@ -3,7 +3,7 @@
     'onlyAdmin' => false,
     'targetLoading' => "
                 filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
-                filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
+                filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByTimDosen, filterByDosen,
                 filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
                 showDeleted, searchMode,
                 saveUserExcel, procesImportUserExcel,
@@ -27,6 +27,7 @@
                 selectCPMKForFilter, resetCPMKFilter,
                 selectSCPMKForFilter, resetSCPMKFilter,
                 selectCPLForFilter, resetCPLFilter,
+                selectTimDosenForFilter, resetTimDosenFilter,
                 selectDosenForFilter, resetDosenFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
                 searchBobotRPS, resetInputBobotRPS,

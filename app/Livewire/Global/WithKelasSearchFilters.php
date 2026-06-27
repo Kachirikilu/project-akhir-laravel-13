@@ -476,8 +476,8 @@ trait WithKelasSearchFilters
                     $matchPr = false;
                     foreach ($basePr as $pr) {
                         $candidates = [
-                            $pr.' '.$k->pr_rel->kode_dp,
-                            $pr.' ('.$k->pr_rel->kode_dp.')',
+                            $pr.' '.$k->pr_rel->kode_pr,
+                            $pr.' ('.$k->pr_rel->kode_pr.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {

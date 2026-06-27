@@ -11,22 +11,48 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Dosen Pengajar (RPS - Dosen)
-        Schema::create('rps_pivot_dosen', function (Blueprint $table) {
+        Schema::create('rps_pivot_tim_dosen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->foreignId('tim_dosen_id')->constrained('tim_dosens')->onDelete('cascade');
             $table->index('rps_id');
+            $table->index('tim_dosen_id');
+            $table->integer('sort_order')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('tim_dosen_pivot_dosen', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tim_dosen_id')->constrained('tim_dosens')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->index('tim_dosen_id');
             $table->index('dosen_id');
             $table->enum('peran', [
                 'Koordinator',
                 'Pengajar',
                 'Asisten'
             ])->default('Pengajar');
+            $table->json('pertemuan_ke')->nullable(); // Pengganti dosen_pivot_scpmk 
             $table->boolean('is_ketua')->default(false);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
+        // Dosen Pengajar (RPS - Dosen)
+        // Schema::create('rps_pivot_dosen', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
+        //     $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+        //     $table->index('rps_id');
+        //     $table->index('dosen_id');
+        //     $table->enum('peran', [
+        //         'Koordinator',
+        //         'Pengajar',
+        //         'Asisten'
+        //     ])->default('Pengajar');
+        //     $table->boolean('is_ketua')->default(false);
+        //     $table->integer('sort_order')->default(0);
+        //     $table->timestamps();
+        // });
 
         // RPS - CPMK
         Schema::create('rps_pivot_cpmk', function (Blueprint $table) {
@@ -48,19 +74,19 @@ return new class extends Migration
         //     $table->timestamps();
         // });
 
-        Schema::create('dosen_pivot_scpmk', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
-            $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
+        // Schema::create('dosen_pivot_scpmk', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
+        //     $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+        //     $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
 
-            $table->index('rps_id');
-            $table->index('dosen_id');
-            $table->index('scpmk_id');
+        //     $table->index('rps_id');
+        //     $table->index('dosen_id');
+        //     $table->index('scpmk_id');
 
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
+        //     $table->integer('sort_order')->default(0);
+        //     $table->timestamps();
+        // });
 
         // CPMK - Sub-CPMK
         Schema::create('cpmk_pivot_scpmk', function (Blueprint $table) {
@@ -126,9 +152,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('rps_pivot_tim_dosen');
+        Schema::dropIfExists('tim_dosen_pivot_dosen');
+
         Schema::dropIfExists('rps_pivot_ref');
         // Schema::dropIfExists('rps_pivot_cpl');
-        Schema::dropIfExists('rps_pivot_dosen');
+        // Schema::dropIfExists('rps_pivot_dosen');
         Schema::dropIfExists('rps_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_scpmk');
         Schema::dropIfExists('cpmk_pivot_cpl');

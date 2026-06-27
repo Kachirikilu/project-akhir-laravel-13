@@ -152,8 +152,9 @@
                 </td> --}}
             @endif
             <td class="table-second table-border-x text-center">
-                <x-button-action
-                    @click="
+                @if (!$c->trashed())
+                    <x-button-action
+                        @click="
                             $store.cpl?.reset();
                             const type = '{{ $c->level_cpl }}';
                             $store.cpl?.setEdit(1);
@@ -172,10 +173,17 @@
                                 );
                             $flux.modal('cpl-rps-modal').show();
                         "
-                    wire:click="editCPL({{ $c->id }}, {{ $c->level_cpl }}, 1)" color="emerald" wire:navigate>
-                    <flux:icon name="eye" class="w-3.5 h-3.5" />
-                    <span>RPS</span>
-                </x-button-action>
+                        wire:click="editCPL({{ $c->id }}, {{ $c->level_cpl }}, 1)" color="emerald"
+                        wire:navigate>
+                        <flux:icon name="eye" class="w-3.5 h-3.5" />
+                        <span>RPS</span>
+                    </x-button-action>
+                @else
+                    <code
+                        class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                        unfound
+                    </code>
+                @endif
             </td>
             @if ($withCapaian ?? null)
                 <td class="table-sub whitespace-nowrap text-center">

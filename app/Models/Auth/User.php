@@ -557,6 +557,7 @@ class User extends Authenticatable
         return $query->where(function ($q) use ($search, $searchTerm, $withTahun) {
 
             if ($withTahun == false) {
+
                 $q->where('email', 'like', $searchTerm);
 
                 if (is_numeric($search)) {
@@ -579,8 +580,22 @@ class User extends Authenticatable
                     });
                 }
 
+                $q->orWhereHas('admin.pr_rel', function ($pr) use ($search) {
+                    $pr->searchProdi($search);
+                });
+
+                $q->orWhereHas('dosen.pr_rel', function ($pr) use ($search) {
+                    $pr->searchProdi($search);
+                });
+
+                $q->orWhereHas('mahasiswa.pr_rel', function ($pr) use ($search) {
+                    $pr->searchProdi($search);
+                });
+
             } else {
-                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm]));
+                $q->whereHas('mahasiswa', function ($mhs) use ($searchTerm) {
+                    $mhs->where('angkatan', 'like', $searchTerm);
+                });
             }
         });
     }

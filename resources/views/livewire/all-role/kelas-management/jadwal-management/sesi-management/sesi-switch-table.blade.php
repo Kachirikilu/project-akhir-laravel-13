@@ -1,6 +1,6 @@
 <!-- Header Section: Judul Saja (Lebih Minimalis) -->
 <div x-data="{ activeTab: @entangle('switchTable') }">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 mb-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mt-2 mb-4">
         <h3 class="text-xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2.5">
             <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
             Sesi Kelas
@@ -70,6 +70,7 @@
                         'xFilter' => $switchTable,
                         'tabFilter' => $stats['mahasiswa'],
                         'tabString' => 'cpmk',
+                        'tabNameString' => 'Capaian Mahasiswa',
                         'icon' => 'academic-cap',
                     ])
                 @endif

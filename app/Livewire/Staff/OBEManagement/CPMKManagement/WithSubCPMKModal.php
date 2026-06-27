@@ -175,7 +175,7 @@ trait WithSubCPMKModal
                     }
 
                     if ($query->exists()) {
-                        $fail("Kode SCPMK '$value' sudah digunakan di Sub-CPMK lain!");
+                        $fail("Kode Sub-CPMK '$value' sudah digunakan di Sub-CPMK lain!");
                     }
                 },
             ],
@@ -494,7 +494,7 @@ trait WithSubCPMKModal
     {
         return [
             'kode_scpmk_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_scpmk_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_scpmk_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_scpmk_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode SCPMK Bagian 2 (Angka - Kanan)

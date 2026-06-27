@@ -121,39 +121,39 @@ class KelasSesi extends Model
         });
     }
 
-    protected function dosensSesi(): Attribute
+    // protected function dosensSesi(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $dosenScpmk = $this->scpmk_atr->dosens_collection;
+    //         $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
+
+    //         if (isset($dosenScpmk) && $dosenScpmk->isNotEmpty()) {
+    //             return $dosenScpmk;
+    //         }
+
+    //         return $rps ? $rps->dosens : collect();
+    //     });
+    // }
+
+    protected function referensiSesi(): Attribute
     {
         return Attribute::get(function () {
-            $dosenScpmk = $this->scpmk_atr->dosens_collection;
+            $scpmk = $this->scpmk_atr;
+            $cpmk = $scpmk->cpmk_rel ?? null;
             $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
-
-            if (isset($dosenScpmk) && $dosenScpmk->isNotEmpty()) {
-                return $dosenScpmk;
+            $referensi = collect();
+            if (isset($scpmk->refs)) {
+                $referensi = $referensi->merge($scpmk->refs);
             }
-
-            return $rps ? $rps->dosens : collect();
+            if ($cpmk && isset($cpmk->refs)) {
+                $referensi = $referensi->merge($cpmk->refs);
+            }
+            if ($rps && isset($rps->refs)) {
+                $referensi = $referensi->merge($rps->refs);
+            }
+            return $referensi->unique('id')->values();
         });
     }
-
-protected function referensiSesi(): Attribute
-{
-    return Attribute::get(function () {
-        $scpmk = $this->scpmk_atr;
-        $cpmk = $scpmk->cpmk_rel ?? null;
-        $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
-        $referensi = collect();
-        if (isset($scpmk->refs)) {
-            $referensi = $referensi->merge($scpmk->refs);
-        }
-        if ($cpmk && isset($cpmk->refs)) {
-            $referensi = $referensi->merge($cpmk->refs);
-        }
-        if ($rps && isset($rps->refs)) {
-            $referensi = $referensi->merge($rps->refs);
-        }
-        return $referensi->unique('id')->values();
-    });
-}
     
 
     public function kehadirans(): HasMany

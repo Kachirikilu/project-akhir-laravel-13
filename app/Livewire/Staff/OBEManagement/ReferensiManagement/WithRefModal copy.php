@@ -366,7 +366,7 @@ trait WithRefModal
     {
         return [
             'kode_ref_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_ref_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_ref_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_ref_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)

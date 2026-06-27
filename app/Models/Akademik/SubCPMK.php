@@ -45,13 +45,13 @@ class SubCPMK extends Model
             ->withPivot('sort_order');
     }
 
-    public function dosens(): BelongsToMany
-    {
-        return $this->belongsToMany(Dosen::class, 'dosen_pivot_scpmk', 'scpmk_id', 'dosen_id')
-            ->withPivot(['rps_id', 'sort_order'])
-            ->withTimestamps()
-            ->orderBy('sort_order');
-    }
+    // public function dosens(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Dosen::class, 'dosen_pivot_scpmk', 'scpmk_id', 'dosen_id')
+    //         ->withPivot(['rps_id', 'sort_order'])
+    //         ->withTimestamps()
+    //         ->orderBy('sort_order');
+    // }
 
     protected function kode(): Attribute
     {

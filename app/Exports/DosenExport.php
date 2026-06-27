@@ -92,13 +92,8 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
             ];
         }
 
-        $rpsDirect = $d->rps;
-
-        $rpsSubIds = $d->scpmks->pluck('pivot.rps_id')->unique()->filter();
-        $rpsSub = RPS::whereIn('id', $rpsSubIds)->get();
-
-        $allRps = $rpsDirect->concat($rpsSub)->unique('id');
-
+        $allRps = $d->tim_dosens->flatMap->rps;
+        $allRps = $d->tim_dosens->flatMap->rps->unique('id');
         $rpsAktif = $allRps->where('is_draf', 0);
         $rpsNonAktif = $allRps->where('is_draf', 1);
 
@@ -123,11 +118,11 @@ class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAu
             $u->prodi ?? '', // J
 
             $rpsAktif->pluck('kode')->implode(' / '), // K
-            $rpsAktif->sum('sks'), // L
+            $rpsAktif->sum('sks') > 0 ? $rpsAktif->sum('sks') : '0', // L
             $rpsAktif->count() > 0 ? $rpsAktif->count() : '0', // M
 
             $rpsNonAktif->pluck('kode')->implode(' / '), // N
-            $rpsNonAktif->sum('sks'), // O
+            $rpsNonAktif->sum('sks') > 0 ? $rpsAktif->sum('sks') : '0', // O
             $rpsNonAktif->count() > 0 ? $rpsNonAktif->count() : '0', // P
 
             // Kelas

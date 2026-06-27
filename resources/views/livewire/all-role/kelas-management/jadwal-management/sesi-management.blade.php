@@ -37,7 +37,7 @@
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-table')
         @elseif ($this->switchTable == 'cpmk')
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <div class="flex justify-end mb-4 no-print">
+                {{-- <div class="flex justify-end mb-4 no-print">
                     <button type="button" onclick="window.print()"
                         class="cursor-pointer text-sm sm:text-md flex items-center gap-2 bg-blue-600 text-white px-12 py-2 rounded shadow hover:bg-blue-700 transition">
                         Cetak/Preview PDF
@@ -46,7 +46,7 @@
 
                 <div id="print-content">
                     @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
-                </div>
+                </div> --}}
 
                 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table') --}}
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-mahasiswa-table')

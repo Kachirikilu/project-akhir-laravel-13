@@ -21,7 +21,7 @@ trait WithVerification
         if (! $identifier) {
             return response()->json([
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Format salah! Silahkan menggunakan: \n`LOGIN [ID_IDENTITAS]`"],
+                'message' => "Format salah! Silahkan menggunakan: \n`LOGIN [ID_AKADEMIK]`"],
                 400);
         }
 
@@ -59,7 +59,7 @@ trait WithVerification
         if (! $user || ! $profile) {
             return response()->json([
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => '`[ID_IDENTITAS]` tidak ditemukan di sistem Data Akademik!'],
+                'message' => '`[ID_AKADEMIK]` tidak ditemukan di sistem Data Akademik!'],
                 444);
         }
 

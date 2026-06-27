@@ -253,7 +253,7 @@ trait WithKelasModal
     {
         return [
             'kode_kelas_1.required' => 'Kode awalan (input kiri) wajib diisi!',
-            'kode_kelas_1.alpha' => 'Kode awalan harus berupa mutu!',
+            'kode_kelas_1.alpha' => 'Kode awalan harus berupa huruf!',
             'kode_kelas_1.max' => 'Kode awalan terlalu panjang!',
 
             // Kode Ref Bagian 2 (Angka - Kanan)

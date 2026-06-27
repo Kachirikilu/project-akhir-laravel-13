@@ -42,7 +42,7 @@ trait WithUserFilters
     //         $queryUser = User::query()->with([
     //             'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
     //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-    //             'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+    //             'dosen.tim_dosens.rps',
     //             'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
     //         ]);
     //     } elseif ($role == 'admin') {
@@ -51,7 +51,7 @@ trait WithUserFilters
     //     } elseif ($role == 'dosen') {
     //         $queryUser = User::query()->with([
     //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-    //             'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+    //             'dosen.tim_dosens.rps',
     //         ]);
     //         $queryUser = User::whereHas('dosen');
     //     } elseif ($role == 'mahasiswa') {
@@ -82,7 +82,7 @@ trait WithUserFilters
     //     }
 
     //     if (! empty($this->selectedRPSId) && $role === 'dosen') {
-    //         $queryUser->whereHas('dosen.rps', function ($q) {
+    //         $queryUser->whereHas('dosen.tim_dosens.rps', function ($q) {
     //             $q->where('rps.id', $this->selectedRPSId);
     //         });
     //     }
@@ -126,7 +126,7 @@ trait WithUserFilters
             $queryUser = User::query()->with([
                 'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
                 'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-                'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+                'dosen.tim_dosens.rps',
                 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
             ]);
         } elseif ($role == 'admin') {
@@ -137,7 +137,7 @@ trait WithUserFilters
             $queryUser = User::query()
                 ->with([
                     'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-                    'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+                    'dosen.tim_dosens.rps',
                 ])
                 ->whereHas('dosen');
         } elseif ($role == 'mahasiswa') {
@@ -168,7 +168,7 @@ trait WithUserFilters
         }
 
         if (! empty($this->selectedRPSId) && $role === 'dosen') {
-            $queryUser->whereHas('dosen.rps', function ($q) {
+            $queryUser->whereHas('dosen.tim_dosens.rps', function ($q) {
                 $q->where('rps.id', $this->selectedRPSId);
             });
         }
@@ -250,9 +250,9 @@ trait WithUserFilters
         if ($this->switchTable === 'dosen') {
             if (! empty($this->filterDosen)) {
                 if ($this->filterDosen == 'dosen-rps') {
-                    $queryUser->whereHas('dosen.rps');
+                    $queryUser->whereHas('dosen.tim_dosens.rps');
                 } elseif ($this->filterDosen == 'dosen-non-rps') {
-                    $queryUser->whereDoesntHave('dosen.rps');
+                    $queryUser->whereDoesntHave('dosen.tim_dosens.rps');
                 }
             }
         }

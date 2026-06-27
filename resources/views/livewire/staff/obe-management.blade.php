@@ -17,29 +17,27 @@
         @switch($switchTable)
             @case('rps')
                 @include('livewire.staff.obe-management.rps-management.rps-table')
-
             @break
-
             @case('cpl')
                 @include('livewire.staff.obe-management.cpl-management.cpl-table')
                 @include('livewire.staff.obe-management.cpl-management.cpl-rps-list')
             @break
-
             @case('cpmk')
                 @include('livewire.staff.obe-management.cpmk-management.cpmk-table')
             @break
-
             @case('sub-cpmk')
                 @include('livewire.staff.obe-management.scpmk-management.scpmk-table')
             @break
-
             @case('referensi')
                 @include('livewire.staff.obe-management.ref-management.ref-table')
             @break
-
+            @case('tim-dosen')
+                @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-table')
+                @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-rps-list')
+            @break
             @case('dosen')
                 @include('livewire.admin.user-management.user-table', ['withRPS' => true])
-    @include('livewire.admin.user-management.user-rps-list')
+                @include('livewire.admin.user-management.user-rps-list')
             @break
         @endswitch
     </div>
@@ -52,6 +50,7 @@
     @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form')
     @include('livewire.staff.obe-management.cpl-management.cpl-modal-form')
     @include('livewire.staff.obe-management.ref-management.ref-modal-form')
+    @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-form')
 
     @include('livewire.admin.user-management.user-modal-form', ['withRPS' => true])
 
@@ -59,6 +58,8 @@
     @include('livewire.staff.obe-management.cpl-management.cpl-modal-delete')
     @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-delete')
     @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-delete')
+    @include('livewire.staff.obe-management.ref-management.ref-modal-delete')
+    @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-delete')
     @include('livewire.admin.user-management.user-modal-delete')
 
 

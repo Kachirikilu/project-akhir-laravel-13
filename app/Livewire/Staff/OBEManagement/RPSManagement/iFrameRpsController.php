@@ -14,9 +14,9 @@ class iFrameRpsController extends Controller
 
     public function preview($rpsId, $prId = null)
     {
-        $rps = RPS::with(['mk_rel', 'dosens', 'cpmks.scpmks', 'refs', 'mk_rel.prodis'])->findOrFail($rpsId);
+        $rps = RPS::with(['mk_rel', 'tim_dosens', 'tim_dosens.dosens', 'cpmks.scpmks', 'refs', 'mk_rel.prodis'])->findOrFail($rpsId);
         if (!$rps->mk_rel || $rps->mk_rel->prodis->isEmpty()) {
-            abort(404, 'Program Studi tidak ditemukan pada mata kuliah ini.');
+            abort(404, 'Program Studi tidak ditemukan pada mata kuliah ini!');
         }
 
         $prodis = $rps->mk_rel->prodis->sortBy([
@@ -39,7 +39,8 @@ class iFrameRpsController extends Controller
             abort(404, 'Data Program Studi tidak ditemukan!');
         }
         $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($selectedPr->id);
+        $tim_dosen = $rps->tim_dosens->where('pr_id', $selectedPr->id);
 
-        return view('staff.obe-management.rps-management.rps-pdf-print', compact('rps', 'prodi'));
+        return view('staff.obe-management.rps-management.rps-pdf-print', compact('rps', 'prodi', 'tim_dosen'));
     }
 }

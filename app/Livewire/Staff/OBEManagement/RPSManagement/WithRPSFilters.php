@@ -44,7 +44,7 @@ trait WithRPSFilters
                 'refs',
                 'cpmks', 'cpmks.cpls', 'cpmks.refs',
                 'cpmks.scpmks', 'cpmks.scpmks.refs',
-                'dosens'
+                'tim_dosens.dosens', 'tim_dosens'
             ]);
 
         if (isset($this->switchTable) && $this->switchTable === 'rps') {
@@ -55,7 +55,7 @@ trait WithRPSFilters
                 });
             }
             if (! empty($prId)) {
-                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));
+                $queryRPS->whereHas('tim_dosens.pr_rel', fn ($q) => $q->where('prodis.id', $prId));
             }
 
             if (! empty($this->selectedCPLId) && $withCPL) {
@@ -63,7 +63,7 @@ trait WithRPSFilters
             }
 
             if (! empty($this->selectedPrId)) {
-                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+                $queryRPS->whereHas('tim_dosens.pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
             // if (! empty($this->selectedDpId)) {
             //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('dp_id', $this->selectedDpId));
@@ -75,7 +75,7 @@ trait WithRPSFilters
                 $queryRPS->where('rps.mk_id', $this->selectedMKId);
             }
             if (! empty($this->selectedDosenId)) {
-                $queryRPS->whereHas('dosens', function ($q) {
+                $queryRPS->whereHas('tim_dosens.dosens', function ($q) {
                     $q->where('dosens.id', $this->selectedDosenId);
                 });
             }
@@ -97,25 +97,40 @@ trait WithRPSFilters
 
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {
-        if (Auth::user()?->dosen) {
-            if ($this->filterRPS === '') {
-                $queryRPS->whereHas('dosens', function ($q) {
-                    $q->where('dosens.id', Auth::user()->dosen->id);
-                });
-            } elseif ($this->filterRPS === 'rps-prodi') {
-                $queryRPS->whereHas('mk_rel.prodis', function ($q) {
-                    $q->where('prodis.id', Auth::user()->pr_id);
-                });
-            }
-        } else {
-            if ($this->filterRPS === '' || $this->filterRPS === 'rps-prodi') {
-                $queryRPS->whereHas('mk_rel.prodis', function ($q) {
-                    $q->where('prodis.id', Auth::user()->pr_id);
-                });
-            }
-        }
+        // if (Auth::user()?->dosen) {
+        //     if ($this->filterRPS === '') {
+        //         $queryRPS->whereHas('tim_dosens.dosens', function ($q) {
+        //             $q->where('dosens.id', Auth::user()->dosen->id);
+        //         });
+        //     } elseif ($this->filterRPS === 'rps-prodi') {
+        //         $queryRPS->whereHas('tim_dosens.pr_rel', function ($q) {
+        //             $q->where('prodis.id', Auth::user()->pr_id);
+        //         });
+        //     }
+        // } else {
+        //     if ($this->filterRPS === '' || $this->filterRPS === 'rps-prodi') {
+        //         $queryRPS->whereHas('tim_dosens.pr_rel', function ($q) {
+        //             $q->where('prodis.id', Auth::user()->pr_id);
+        //         });
+        //     }
+        // }
 
-        if ($this->filterRPS === 'rps-akademik') {
+        if (Auth::user()?->dosen && $this->filterRPS === '') {
+            $queryRPS->whereHas('tim_dosens.dosens', function ($q) {
+                $q->where('dosens.id', Auth::user()->dosen->id);
+            });
+        } elseif ((Auth::user()?->dosen && $this->filterRPS === 'rps-prodi') || (Auth::user()?->admin && ($this->filterRPS === '' || $this->filterRPS === 'rps-prodi'))) {
+            $queryRPS->whereHas('tim_dosens.pr_rel', function ($q) {
+                $q->where('prodis.id', Auth::user()->pr_id);
+            });
+        } elseif ($this->filterRPS == 'rps-prodi-non-aktif') {
+            $queryRPS->whereHas('mk_rel.prodis', function ($q) {
+                $q->where('prodis.id', Auth::user()->pr_id);
+            })
+            ->whereDoesntHave('tim_dosens', function ($q) {
+                $q->where('tim_dosens.pr_id', Auth::user()->pr_id);
+            });
+        } elseif ($this->filterRPS === 'rps-akademik') {
             $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
         } elseif ($this->filterRPS === 'rps-rev-new') {
             $queryRPS->whereYear('revisi', $currentYear);

@@ -5,6 +5,7 @@ namespace App\Models\Auth;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
 use App\Models\Kelas\KelasSesi;
+use App\Models\Akademik\TimDosen;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -43,25 +44,31 @@ class Dosen extends Model
         'status',
     ];
 
-    public function rps(): BelongsToMany
+    public function tim_dosens(): BelongsToMany
     {
-        return $this->belongsToMany(RPS::class, 'rps_pivot_dosen', 'dosen_id', 'rps_id')
-            ->withPivot(['peran', 'is_ketua', 'sort_order'])
-            ->withTimestamps();
+        return $this->belongsToMany(TimDosen::class, 'tim_dosen_pivot_dosen', 'dosen_id', 'tim_dosen_id')
+                    ->withPivot(['peran', 'is_ketua', 'pertemuan_ke']);
     }
 
-    public function scpmks(): BelongsToMany
-    {
-        return $this->belongsToMany(SubCPMK::class, 'dosen_pivot_scpmk', 'dosen_id', 'scpmk_id')
-            ->withPivot(['rps_id', 'sort_order'])
-            ->withTimestamps();
-    }
+    // public function rps(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(RPS::class, 'rps_pivot_dosen', 'dosen_id', 'rps_id')
+    //         ->withPivot(['peran', 'is_ketua', 'sort_order'])
+    //         ->withTimestamps();
+    // }
 
-    public function sesiMengajars(): BelongsToMany
-    {
-        return $this->belongsToMany(KelasSesi::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
-            ->withPivot(['peran', 'is_ketua', 'sort_order']);
-    }
+    // public function scpmks(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(SubCPMK::class, 'dosen_pivot_scpmk', 'dosen_id', 'scpmk_id')
+    //         ->withPivot(['rps_id', 'sort_order'])
+    //         ->withTimestamps();
+    // }
+
+    // public function sesiMengajars(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(KelasSesi::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
+    //         ->withPivot(['peran', 'is_ketua', 'sort_order']);
+    // }
 
     public function user(): BelongsTo
     {

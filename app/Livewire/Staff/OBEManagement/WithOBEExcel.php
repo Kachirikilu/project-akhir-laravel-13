@@ -5,6 +5,7 @@ namespace App\Livewire\Staff\OBEManagement;
 use App\Exports\CPLExport;
 use App\Exports\CPMKExport;
 use App\Exports\DosenExport;
+use App\Exports\TimDosenExport;
 use App\Exports\ReferensiExport;
 use App\Exports\RPSExport;
 use App\Exports\SubCPMKExport;
@@ -13,6 +14,7 @@ use App\Models\Akademik\CPMK;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
+use App\Models\Akademik\TimDosen;
 use App\Models\Auth\User;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -90,7 +92,7 @@ trait WithOBEExcel
                 $sInput .= '_'.$fk->fakultas_fk;
                 $sINPUT .= strtoupper(' '.$fk->fakultas_fk);
             }
-        } elseif ($this->selectedPrId && ($this->switchTable == 'rps' || $this->switchTable == 'cpmk' || $this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi' || $this->switchTable == 'dosen')) {
+        } elseif ($this->selectedPrId && ($this->switchTable == 'rps' || $this->switchTable == 'cpmk' || $this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi' || $this->switchTable == 'tim-dosen' || $this->switchTable == 'dosen')) {
             if ($this->filterStatus !== '' || $this->switchTable !== 'dosen') {
                 if ($this->switchTable != 'rps' || $this->filterRPS != '' || $this->selectedPrId != Auth::user()->pr_id) {
                     $pr = Prodi::find($this->selectedPrId);
@@ -178,6 +180,12 @@ trait WithOBEExcel
                 $TAG = strtoupper($tag);
                 $this->buttonRefFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
                 break;
+            case 'tim-dosen':
+                $queryOBE = $this->inputTimDosenSearch();
+                $tag = 'Tim Dosen';
+                $TAG = strtoupper($tag);
+                $this->buttonTimDosenFilter($queryOBE);
+                break;
             case 'dosen':
                 $queryOBE = $this->inputUserSearch('dosen');
                 $tag = 'Dosen';
@@ -214,6 +222,9 @@ trait WithOBEExcel
                 case 'referensi':
                     $obes = $this->searchOutputRef($queryOBE, $this->search, null, $this->sortField, $this->sortDirection);
                     break;
+                case 'tim-dosen':
+                    $obes = $this->searchOutputTimDosen($queryOBE, $this->search, null, $this->sortField, $this->sortDirection);
+                    break;
                 case 'dosen':
                     $obes = $this->searchOutputUser($queryOBE, $this->search, null, null, $this->sortField, $this->sortDirection, null, 1);
                     break;
@@ -237,6 +248,9 @@ trait WithOBEExcel
                 break;
             case 'referensi':
                 return Excel::download(new ReferensiExport($obes, $title), $fileNameSafe);
+                break;
+            case 'tim-dosen':
+                return Excel::download(new TimDosenExport($obes, $title), $fileNameSafe);
                 break;
             case 'dosen':
                 return Excel::download(new DosenExport($obes, $title), $fileNameSafe);

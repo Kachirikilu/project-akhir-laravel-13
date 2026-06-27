@@ -21,7 +21,7 @@ trait WithKelas
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Autentikasi Gagal!*',
-                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_IDENTITAS]`",
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
             ], 442);
         }
 

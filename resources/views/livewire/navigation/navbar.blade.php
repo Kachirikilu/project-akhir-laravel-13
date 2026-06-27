@@ -356,6 +356,14 @@
                             'active' => $isOBEActive && $currentTable === 'referensi',
                         ],
                         [
+                            'label' => 'Tim Dosen',
+                            'url' => route('obe-management', ['switchTable' => 'tim-dosen']),
+                            'param' => 'tim-dosen',
+                            'icon' => 'user-group',
+                            'color' => 'text-blue-600 dark:text-blue-400',
+                            'active' => $isOBEActive && $currentTable === 'tim-dosen',
+                        ],
+                        [
                             'label' => 'Dosen',
                             'url' => route('obe-management', ['switchTable' => 'dosen']),
                             'param' => 'dosen',
@@ -365,7 +373,7 @@
                         ],
                     ];
 
-                    $isSubMenu = ['rps', 'cpmk', 'sub-cpmk', 'cpl', 'referensi', 'dosen'];
+                    $isSubMenu = ['rps', 'cpmk', 'sub-cpmk', 'cpl', 'referensi', 'tim-dosen', 'dosen'];
                     $openMenuVar = 'openOBEMenu';
                     $isMenuIndukActive = $isOBEActive;
                 @endphp

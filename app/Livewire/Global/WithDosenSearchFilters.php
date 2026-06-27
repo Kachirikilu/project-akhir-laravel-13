@@ -40,7 +40,7 @@ trait WithDosenSearchFilters
     // public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
     public $peran_dosen = [];
 
-    public $pertemuan_dosen = [];
+    public $dosen_pertemuan_array = [];
 
     private function mapDosen($collection)
     {
@@ -53,6 +53,10 @@ trait WithDosenSearchFilters
             'prodi' => $d->pr_rel?->prodi,
             'fakultas' => $d->pr_rel?->fakultasFk,
             'status' => $d->status,
+
+            'peran'        => $d->pivot->peran ?? null,
+            'is_ketua'     => (bool) ($d->pivot?->is_ketua ?? false),
+            'pertemuan_ke' => $d->pivot->pertemuan_ke ?? null,
         ])->toArray();
     }
 
@@ -374,8 +378,8 @@ trait WithDosenSearchFilters
                     $matchPr = false;
                     foreach ($basePr as $pr) {
                         $candidates = [
-                            $pr.' '.$dosen->pr_rel->kode_dp,
-                            $pr.' ('.$dosen->pr_rel->kode_dp.')',
+                            $pr.' '.$dosen->pr_rel->kode_pr,
+                            $pr.' ('.$dosen->pr_rel->kode_pr.')',
                         ];
                         foreach ($candidates as $candidate) {
                             if ($this->containsStrict($candidate, $searchLower)) {

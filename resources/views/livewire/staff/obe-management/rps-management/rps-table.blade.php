@@ -57,6 +57,8 @@
                 'rowSpan' => 2,
             ])
 
+            <th rowspan="2" class="table-head border-x">Show</th>
+
             @if ($withCapaian ?? null)
                 <th colspan="3" class="table-head-sub">
                     Nilai Capaian
@@ -209,6 +211,34 @@
 
             <td class="table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
 
+            <td class="table-second table-border-x text-center">
+                @if (!$r->trashed())
+                    <x-button-action
+                        @click="
+                            $store.rps?.resetShow();
+                            $store.rps?.setShowRPS(
+                                '{{ $r->id ?? '' }}',
+                                '{{ $r->kode ?? '' }}',
+                                '{{ $r->rps ?? '' }}',
+                                '{{ $r->draf ?? '' }}',
+                                '{{ $r->level_mk ?? '' }}',
+                            );
+                            $store.rps?.setColor('text-green-700 dark:text-green-400');
+                            $flux.modal('rps-detail-modal').show();
+                        "
+                        wire:click="showRPS({{ $r->id }})"
+                        color="emerald"
+                        >
+                        <flux:icon name="eye" class="w-3.5 h-3.5" />
+                        <span>RPS</span>
+                    </x-button-action>
+                @else
+                    <code
+                        class="font-mono text-xs bg-[var(--second-table-color)] px-1.5 py-0.5 rounded border table-border text-[var(--contrast-main-text)] italic">
+                        unfound
+                    </code>
+                @endif
+            </td>
 
             @if ($withCapaian ?? null)
                 <td class="table-second table-border-l whitespace-nowrap text-center">
@@ -387,7 +417,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 13 : 17 }}"
+            <td colspan="{{ $withCapaian ?? null ? 14 : 18 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Rencana Pembelajaran Semester (RPS) ditemukan!
             </td>

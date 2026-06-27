@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
@@ -18,19 +17,20 @@
     <div class="relative">
 
         @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'addRPS, editRPS',
+            'wireLoading' => 'addTimDosen, editTimDosen',
             'heightContainer' => '32',
         ])
 
-        @if ($this->showRPSModal)
+        @if ($this->showTimDosenModal)
             @include('livewire.global.modal-form.input-array.search-input-dosen-form', [
-                'alpine' => 'rps',
+                'alpine' => 'tim_dosen',
                 'xResults' => $dosenResults,
                 'selectX' => 'selectDosenArray',
                 'modelString' => 'nama_dosen_search',
             
                 'idString' => 'dosen_id_array',
                 'itemsAllString' => 'dosen_items_array',
+                'itemsPertemuanString' => 'dosen_pertemuan_array',
             
                 'typeXString' => 'name',
                 'typeX2String' => 'nidn',

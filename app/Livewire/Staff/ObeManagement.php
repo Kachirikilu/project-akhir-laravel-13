@@ -20,6 +20,8 @@ use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Global\WithTimDosenSearchFilters;
+use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenDelete;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLDelete;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLFilters;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLModal;
@@ -33,11 +35,14 @@ use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefDelete;
 use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefFilters;
 use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithDosenFilters;
+use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSDelete;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
+use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenModal;
 use App\Livewire\Staff\OBEManagement\WithOBEExcel;
 use App\Models\Akademik\CPL;
+use App\Models\Akademik\TimDosen;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
@@ -57,6 +62,7 @@ class ObeManagement extends Component
     use WithCPLFilters;
     use WithCPLModal;
     use WithCPLSearchFilters;
+    use WithTimDosenDelete;
     use WithCPMKDelete;
     use WithCPMKFilters;
     use WithCPMKModal;
@@ -71,6 +77,7 @@ class ObeManagement extends Component
     use WithProdiSearchFilters;
     use WithRefDelete;
     use WithReferensiSearchFilters;
+    use WithTimDosenSearchFilters;
     use WithRefFilters;
     use WithRefModal;
     use WithRPSDelete;
@@ -85,6 +92,8 @@ class ObeManagement extends Component
     use WithUserFilters;
     use WithUserModal;
     use WithUserSearchFilters;
+    use WithTimDosenFilters;
+    use WithTimDosenModal;
 
     public $switchTable = 'rps';
 
@@ -113,6 +122,7 @@ class ObeManagement extends Component
         'filterSCPMK' => ['except' => ''],
         'filterCPL' => ['except' => ''],
         'filterRef' => ['except' => ''],
+        'filterTimDosen' => ['except' => ''],
         'filterDosen' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
@@ -169,7 +179,7 @@ class ObeManagement extends Component
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filterRPS', 'filterRPSgg', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
+        $this->reset(['search', 'filterRPS', 'filterRPSgg', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef', 'filterTimDosen', 'filterDosen', 'filterStatus']);
         $this->resetPage();
     }
 
@@ -197,23 +207,25 @@ class ObeManagement extends Component
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count_cpl', 5 => 'count-scpmk', 6 => 'total_bobot', 7 => 'created_at', 8 => 'updated_at'],
             'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'referensi' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
+            'tim-dosen' => [1 => 'id', 2 => 'kode', 3 => 'nama_tim', 4 => 'ketua_tim', 5 => 'nip_ketua', 6 => 'count_dosen', 7 => 'count_koordinator', 8 => 'count_pengajar', 9 => 'count_asisten', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
             'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'kode', 4 => 'name', 5 => 'count_rps', 6 => 'total_sks', 7 => 'status', 8 => 'progtam_studi', 9 => 'created_at', 10 => 'updated_at'],
         ];
         $aliases = [
-            'kode' => ['kode', 'name'],
+            'kode' => ['kode', 'name', 'nama_tim'],
             // 'name' => ['name', 'kode'],
-            'deskripsi' => ['deskripsi', 'mk', 'judul'],
+            'deskripsi' => ['deskripsi', 'mk', 'judul', 'name', 'ketua_tim'],
             // 'mk' => ['mk', 'deskripsi', 'judul'],
             // 'judul' => ['judul', 'deskripsi', 'mk'],
             'materi' => ['materi', 'penulis'],
             // 'penulis' => ['penulis', 'materi'],
             // 'count_rps' => ['count_rps', 'count_cpl'],
-            'count_cpl' => ['count_cpl', 'count_rps', 'total_sks'],
+            'count_cpl' => ['count_cpl', 'count_rps', 'total_sks', 'count_dosen', 'count_koordinator', 'count_pengajar', 'count_asisten'],
             // 'akademik' => ['akademik', 'bobot', 'total_bobot'],
             'bobot' => ['bobot', 'total_bobot'],
             // 'total_bobot' => ['total_bobot', 'akademik', 'bobot'],
             'is_draf' => ['is_draf', 'indikator'],
             // 'indikator' => ['indikator', 'is_draf'],
+            'program_studi' => ['program_studi'],
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at'],
         ];
@@ -234,6 +246,7 @@ class ObeManagement extends Component
             'cpmk' => 'filterCPMK',
             'sub-cpmk' => 'filterSCPMK',
             'referensi' => 'filterRef',
+            'tim-dosen' => 'filterTimDosen',
             'dosen' => 'filterDosen',
             'status' => 'filterStatus',
         ];
@@ -246,6 +259,7 @@ class ObeManagement extends Component
 
         $limits = [
             'cpl' => 100,
+            'tim-dosen' => 150,
             'referensi' => 150,
             'rps' => 200,
             'dosen' => 200,
@@ -296,6 +310,7 @@ class ObeManagement extends Component
             $queryCPMK = collect();
             $querySCPMK = collect();
             $queryRef = collect();
+            $queryTimDosen = collect();
             $queryUser = collect();
 
             switch ($this->switchTable) {
@@ -314,6 +329,9 @@ class ObeManagement extends Component
                 case 'referensi':
                     $queryRef = $this->inputRefSearch();
                     break;
+                case 'tim-dosen':
+                    $queryTimDosen = $this->inputTimDosenSearch();
+                    break;
                 case 'dosen':
                     $queryUser = $this->inputUserSearch('dosen');
                     break;
@@ -324,21 +342,40 @@ class ObeManagement extends Component
             $countCPMK = CPMK::query();
             $countSCPMK = SubCPMK::query();
             $countRef = Referensi::query();
+            $countTimDosen = TimDosen::query();
             $countDosen = User::whereHas('dosen');
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
-                $queryRPS->onlyTrashed();
-                $queryCPL->onlyTrashed();
-                $queryCPMK->onlyTrashed();
-                $querySCPMK->onlyTrashed();
-                $queryRef->onlyTrashed();
-                $queryUser->onlyTrashed();
+                switch ($this->switchTable) {
+                    case 'rps':
+                    $queryRPS->onlyTrashed();
+                        break;
+                    case 'cpl':
+                    $queryCPL->onlyTrashed();
+                        break;
+                    case 'cpmk':
+                    $queryCPMK->onlyTrashed();
+                        break;
+                    case 'sub-cpmk':
+                    $querySCPMK->onlyTrashed();
+                        break;
+                    case 'referensi':
+                    $queryRef->onlyTrashed();
+                        break;
+                    case 'tim-dosen':
+                    $queryTimDosen->onlyTrashed();
+                        break;
+                    case 'dosen':
+                    $queryUser->onlyTrashed();
+                        break;
+                }
 
                 $countRPS->onlyTrashed();
                 $countCPL->onlyTrashed();
                 $countCPMK->onlyTrashed();
                 $countSCPMK->onlyTrashed();
                 $countRef->onlyTrashed();
+                $countTimDosen->onlyTrashed();
                 $countDosen->onlyTrashed();
             }
 
@@ -361,6 +398,7 @@ class ObeManagement extends Component
                 'cpmk' => collect(),
                 'scpmk' => collect(),
                 'ref' => collect(),
+                'tim_dosens' => collect(),
                 'users' => collect(),
             ];
 
@@ -380,6 +418,11 @@ class ObeManagement extends Component
                     break;
                 case 'referensi':
                     $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
+                    break;
+                case 'tim-dosen':
+                    $this->addCountRpsTimDosen($queryTimDosen, 'count_rps');
+                    $this->addTotalSksTimDosen($queryTimDosen, 'total_sks');
+                    $this->buttonTimDosenFilter($queryTimDosen);
                     break;
                 case 'dosen':
                     $this->addCountRpsDosen($queryUser, 'count_rps');
@@ -405,6 +448,9 @@ class ObeManagement extends Component
                     case 'referensi':
                         $data['ref'] = $this->searchOutputRef($queryRef, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
                         break;
+                    case 'tim-dosen':
+                        $data['tim_dosens'] = $this->searchOutputTimDosen($queryTimDosen, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                        break;
                     case 'dosen':
                         $data['users'] = $this->searchOutputUser($queryUser, $this->search, null, $this->perPage, $this->sortField, $this->sortDirection, null, 1);
                         break;
@@ -426,6 +472,9 @@ class ObeManagement extends Component
                     case 'referensi':
                         $data['ref'] = $queryRef->paginate($this->perPage);
                         break;
+                    case 'tim-dosen':
+                        $data['tim_dosens'] = $queryTimDosen->paginate($this->perPage);
+                        break;
                     case 'dosen':
                         $data['users'] = $queryUser->paginate($this->perPage);
                         break;
@@ -435,6 +484,7 @@ class ObeManagement extends Component
             $stats = [
                 'rps-saya' => '🏦',
                 'rps-prodi' => '🏦',
+                'rps-prodi-non-aktif' => '❌',
                 'rps-akademik' => '📘',
                 'rps-rev-new' => '✨',
                 'rps-aktif' => '✅',
@@ -462,9 +512,17 @@ class ObeManagement extends Component
                 'ref-6-10-years' => '🔟',
                 'ref-older-10' => '⏳',
 
+                'tim-dosen-rps' => '✅',
+                'tim-dosen-non-rps' => '❌',
+
+                'tim-dosen-saya' => '👥',
+                'tim-dosen-prodi' => '🏛️',
+                'tim-dosen-all' => '👥',
+                'tim-dosen-rps' => '✅',
+                'tim-dosen-non-rps' => '❌',
+
                 'dosen-rps' => '✅',
                 'dosen-non-rps' => '❌',
-
                 'dosen-prodi' => '🏛️',
                 'dosen-all' => '👥',
                 'dosen-aktif' => '🟢',
@@ -476,10 +534,11 @@ class ObeManagement extends Component
             $stats['cpmk'] = (clone $countCPMK)->count();
             $stats['scpmk'] = (clone $countSCPMK)->count();
             $stats['ref'] = (clone $countRef)->count();
+            $stats['tim-dosen'] = (clone $countTimDosen)->count();
             $stats['dosen'] = (clone $countDosen)->count();
 
             if (Auth::user()->dosen) {
-                $stats['rps-saya'] = (clone $countRPS)->whereHas('dosens', function ($q) {
+                $stats['rps-saya'] = (clone $countRPS)->whereHas('tim_dosens.dosens', function ($q) {
                     $q->where('dosens.id', Auth::user()->dosen->id);
                 })->count();
             }
@@ -503,6 +562,9 @@ class ObeManagement extends Component
                 case 'referensi':
                     $stats = array_merge($stats, $this->getStatsReferensi($countRef, $currentYear));
                     break;
+                case 'tim-dosen':
+                    $stats = array_merge($stats, $this->getStatsTimDosen($countTimDosen));
+                    break;
                 case 'dosen':
                     $stats = array_merge($stats, $this->getStatsDosen($countDosen));
                     break;
@@ -516,6 +578,7 @@ class ObeManagement extends Component
                 'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
                 'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
                 'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
+                'tim_dosen_rps_modal_paginator' => $this->tim_dosen_rps_modal_paginator,
                 'user_rps_modal_paginator' => $this->user_rps_modal_paginator,
 
                 'stats' => $stats,
@@ -531,6 +594,7 @@ class ObeManagement extends Component
                 'cpmk' => CPMK::whereRaw('1=0')->paginate($this->perPage),
                 'scpmk' => SubCPMK::whereRaw('1=0')->paginate($this->perPage),
                 'ref' => Referensi::whereRaw('1=0')->paginate($this->perPage),
+                'tim_dosens' => TimDosen::whereRaw('1=0')->paginate($this->perPage),
                 'users' => User::whereRaw('1=0')->whereHas('dosen')->paginate($this->perPage),
             ], [
                 // 'totalRPSSaya' => '-',
@@ -538,12 +602,14 @@ class ObeManagement extends Component
                 'cpmk_rps_modal_paginator' => collect(),
                 'scpmk_rps_modal_paginator' => collect(),
                 'ref_rps_modal_paginator' => collect(),
+                'tim_dosen_rps_items_list' => collect(),
                 'user_rps_modal_paginator' => collect(),
 
                 'stats' => [
                     'rps' => '-',
                     'rps_saya' => '-',
                     'rps-prodi' => '-',
+                    'rps-prodi-non-aktif' => '-',
                     'rps-akademik' => '-',
                     'rps-rev-new' => '-',
                     'rps-aktif' => '-',
@@ -574,6 +640,12 @@ class ObeManagement extends Component
                     'ref-4-5-years' => '-',
                     'ref-6-10-years' => '-',
                     'ref-older-10' => '-',
+
+                    'tim-dosen-saya' => '-',
+                    'tim-dosen-prodi' => '-',
+                    'tim-dosen-all' => '-',
+                    'tim-dosen-rps' => '-',
+                    'tim-dosen-non-rps' => '-',
 
                     'dosen' => '-',
                     'dosen-rps' => '-',

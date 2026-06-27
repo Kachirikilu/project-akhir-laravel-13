@@ -191,9 +191,16 @@ class ProgramStudiManagement extends Component
             // SOFT DELETE
             // =========================
             if ($this->showDeleted && $this->AuthCheck('admin')) {
-                $queryPr->onlyTrashed();
-                $queryDp->onlyTrashed();
+                            if ($this->switchTable === 'fakultas') {
                 $queryFk->onlyTrashed();
+
+            } elseif ($this->switchTable === 'departemen') {
+                $queryDp->onlyTrashed();
+
+            } else {
+                $queryPr->onlyTrashed();
+
+            }
             }
 
             if ($this->switchTable === 'fakultas') {

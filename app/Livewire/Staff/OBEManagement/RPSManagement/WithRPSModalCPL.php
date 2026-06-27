@@ -119,7 +119,7 @@ trait WithRPSModal
             })->toArray();
             $this->cpmk_sub_items_array = $this->mapCPMK($rps->cpmks);
 
-            $this->pertemuan_dosen = $this->loadPertemuanDosenFromRps($rps->id, $this->cpmk_sub_items_array, $this->dosen_id_array);
+            $this->dosen_pertemuan_array = $this->loadPertemuanDosenFromRps($rps->id, $this->cpmk_sub_items_array, $this->dosen_id_array);
 
             // $totalSubCPMK = 0;
             // foreach ($this->cpmk_sub_items_array as $group) {
@@ -220,12 +220,12 @@ trait WithRPSModal
         }
 
         $parsedPertemuan = $this->parsePertemuanDosen(
-            $data['pertemuan_dosen'] ?? [],
+            $data['dosen_pertemuan_array'] ?? [],
             $data['dosen_id_array'] ?? [],
             $data['cpmk_sub_items_array'] ?? [],
             $data['dosen_items_array'] ?? []
         );
-        $data['pertemuan_dosen'] = $parsedPertemuan['data'];
+        $data['dosen_pertemuan_array'] = $parsedPertemuan['data'];
 
         $data['bobot_uts'] = $data['bobot_uts'] ?? null;
         $data['bobot_uas'] = $data['bobot_uas'] ?? null;
@@ -355,7 +355,7 @@ trait WithRPSModal
             ],
             'cpl_id_array' => 'nullable|array',
             'ref_id_array' => 'nullable|array',
-            'pertemuan_dosen' => 'nullable|array',
+            'dosen_pertemuan_array' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
             'dosen_items_array' => [
                 // 'required',
@@ -443,7 +443,7 @@ trait WithRPSModal
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
-        $data['pertemuan_dosen'] = $this->pertemuan_dosen ?? [];
+        $data['dosen_pertemuan_array'] = $this->dosen_pertemuan_array ?? [];
 
         try {
             // 2. Jalankan validasi dan pembersihan duplikat
@@ -518,7 +518,7 @@ trait WithRPSModal
                 }
 
                 // 6. Sync Dosen Pertemuan ke Pivot Sub-CPMK
-                $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
+                $this->syncDosenPertemuanToScpmk($rps, $validated['dosen_pertemuan_array'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
             // 4. Feedback & Reset
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
@@ -562,7 +562,7 @@ trait WithRPSModal
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
         $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
-        $data['pertemuan_dosen'] = array_filter($this->pertemuan_dosen) ?? [];
+        $data['dosen_pertemuan_array'] = array_filter($this->dosen_pertemuan_array) ?? [];
 
         try {
             $validated = $this->inputModalRPS(true, $data);
@@ -622,7 +622,7 @@ trait WithRPSModal
                 $rps->refs()->sync($syncRef);
 
                 // 6. Sync Dosen Pertemuan ke Pivot Sub-CPMK
-                $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
+                $this->syncDosenPertemuanToScpmk($rps, $validated['dosen_pertemuan_array'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
 
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
@@ -759,7 +759,7 @@ trait WithRPSModal
         $this->dosen_id_array = [];
         $this->dosen_items_array = [];
 
-        $this->pertemuan_dosen = [];
+        $this->dosen_pertemuan_array = [];
 
         $this->resetErrorBag();
     }

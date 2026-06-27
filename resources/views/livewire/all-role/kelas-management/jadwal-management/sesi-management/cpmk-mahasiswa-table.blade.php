@@ -1,3 +1,18 @@
+            <div class="flex-shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'nameXString' => 'Export Grafik',
+                    'xString' => "printPDFCpmkGrafik($jadwal_id_url, $rps_id_url)",
+                    'icon' => 'arrow-down-tray',
+                    'isFull' => 1,
+                    'valuePx' => 'px-6',
+                    'valuePy' => 'py-2.5',
+                    'color' => 'rose',
+                    'wireLoading' => 'printPDFCpmkGrafik()',
+                ])
+            </div>
+@include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
+{{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
+
 <x-global.main-layout-table :paginator="$users">
     <x-slot:sortir>
         <div

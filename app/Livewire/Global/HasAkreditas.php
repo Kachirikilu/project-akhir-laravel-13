@@ -302,20 +302,12 @@ trait HasAkreditas
         $queryUser->addSelect('users.*');
 
         return $queryUser->selectSub(function ($query) {
-
-            $query->from('rps_pivot_dosen')
-                ->join(
-                    'dosens',
-                    'rps_pivot_dosen.dosen_id',
-                    '=',
-                    'dosens.id'
-                )
-                ->whereColumn(
-                    'dosens.user_id',
-                    'users.id'
-                )
-                ->selectRaw('COUNT(DISTINCT rps_pivot_dosen.rps_id)');
-
+            $query->from('rps_pivot_tim_dosen')
+                ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
+                ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
+                ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
+                ->whereColumn('dosens.user_id', 'users.id')
+                ->selectRaw('COUNT(DISTINCT rps_pivot_tim_dosen.rps_id)');
         }, $alias);
     }
 
@@ -324,19 +316,41 @@ trait HasAkreditas
         $queryUser->addSelect('users.*');
 
         return $queryUser->selectSub(function ($query) {
-
             $query->fromSub(function ($sub) {
-
-                $sub->from('rps_pivot_dosen')
-                    ->join('dosens', 'rps_pivot_dosen.dosen_id', '=', 'dosens.id')
-                    ->join('rps', 'rps_pivot_dosen.rps_id', '=', 'rps.id')
+                $sub->from('rps_pivot_tim_dosen')
+                    ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
+                    ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
+                    ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
+                    ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
                     ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
                     ->whereColumn('dosens.user_id', 'users.id')
                     ->selectRaw('DISTINCT rps.id, mata_kuliahs.sks_kuliah');
-
             }, 'rps_sks')
-                ->selectRaw('COALESCE(SUM(sks_kuliah), 0)');
+            ->selectRaw('COALESCE(SUM(sks_kuliah), 0)');
+        }, $alias);
+    }
 
+    protected function addCountRpsTimDosen($queryTimDosen, string $alias = 'count_rps')
+    {
+        $queryTimDosen->select('tim_dosens.*');
+
+        return $queryTimDosen->selectSub(function ($query) {
+            $query->from('rps_pivot_tim_dosen')
+                ->selectRaw('COUNT(DISTINCT rps_id)')
+                ->whereColumn(
+                    'rps_pivot_tim_dosen.tim_dosen_id',
+                    'tim_dosens.id'
+                );
+        }, $alias);
+    }
+    protected function addTotalSksTimDosen($queryTimDosen, string $alias = 'total_sks')
+    {
+        return $queryTimDosen->selectSub(function ($query) {
+            $query->from('rps_pivot_tim_dosen')
+                ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
+                ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                ->selectRaw('COALESCE(SUM(DISTINCT mata_kuliahs.sks_kuliah), 0)')
+                ->whereColumn('rps_pivot_tim_dosen.tim_dosen_id', 'tim_dosens.id');
         }, $alias);
     }
 }
