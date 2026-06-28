@@ -25,7 +25,7 @@
     
         syncToTimDosenStore() {
             if (typeof $store.tim_dosen !== 'undefined') {
-                $store.tim_dosen.update(this.subItems || []);
+                {{-- $store.tim_dosen.update(this.subItems || []); --}}
             }
         },
     

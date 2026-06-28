@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\WhatsappController;
 
 use Illuminate\Support\Facades\Log;
+use App\Models\Auth\Mahasiswa;
 
 trait WithDataDiri
 {
@@ -52,12 +53,19 @@ trait WithDataDiri
         if (! $user) {
             return response()->json([
                 'status' => false,
+                'head' => '*❌ Gagal!*',
                 'message' => "Gagal memperbarui token! Nomor WhatsApp [{$noWA}] belum aktif atau belum terdaftar di sistem!",
             ], 404);
         }
 
         $head = '*👤 Informasi Data Diri*';
         if ($user->mahasiswa) {
+        Mahasiswa::where('id', $user->mahasiswa->id)
+                ->update([
+                    'is_wa_active' => true,
+                    'wa_limit' => 50,
+                ]);
+
             $head = '*✅ Update Token Berhasil!*';
         }
         return response()->json([

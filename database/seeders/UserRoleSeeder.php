@@ -35,42 +35,46 @@ class UserRoleSeeder extends Seeder
         DB::transaction(function () use ($faker, $defaultPw, $prodiIds) {
             // Admin Utama
             $adminUser = User::create(['email' => 'muttaqien.wildan12@gmail.com', 'password' => $defaultPw]);
-            $this->createAdminProfile($adminUser, 'Wildan Athif Muttaqien (Admin)', '03041282227066', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createAdminProfile($adminUser, 'Wildan Athif Muttaqien (Admin)', '03041282227066', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
             $this->createPersonalTeamForUser($adminUser, 'Wildan Athif Muttaqien (Admin)');
 
             // Dosen Utama
             $dosenUser = User::create(['email' => 'muttaqien.wildan13@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($dosenUser, 'Wildan Athif Muttaqien (Dosen)', '03041282227064', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createDosenProfile($dosenUser, 'Wildan Athif Muttaqien (Dosen)', '03041282227064', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
             $this->createPersonalTeamForUser($dosenUser, 'Wildan Athif Muttaqien (Dosen)');
 
             // Mahasiswa Utama
             $mhsUser = User::create(['email' => 'muttaqien.wildan14@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)', '03041282227063', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createMahasiswaProfile($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)', '03041282227063', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
             $this->createPersonalTeamForUser($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)');
 
             $mhsUser2 = User::create(['email' => 'iqbal.apriza@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser2, 'Muhammad Iqbal Apriza', '03041282227043', '6281271069292', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createMahasiswaProfile($mhsUser2, 'Muhammad Iqbal Apriza', '03041282227043', '6281271069292', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
             $this->createPersonalTeamForUser($mhsUser2, 'Muhammad Iqbal Apriza');
 
             $mhsUser3 = User::create(['email' => 'andi.kautsar@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser3, 'Andi Muhammad Kautsar', '03041282227065', '6282379370929', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createMahasiswaProfile($mhsUser3, 'Andi Muhammad Kautsar', '03041282227065', '6282379370929', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
             $this->createPersonalTeamForUser($mhsUser3, 'Andi Muhammad Kautsar');
 
             $mhsUser4 = User::create(['email' => 'ghuzam.ganteng@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser4, 'Muhammad Ghuzammir Valcruysen Mizanno', '03041282227096', '6285788756988', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createMahasiswaProfile($mhsUser4, 'Muhammad Ghuzammir Valcruysen Mizanno', '03041282227096', '6285788756988', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
             $this->createPersonalTeamForUser($mhsUser4, 'Muhammad Ghuzammir Valcruysen Mizanno');
 
             $mhsUser5 = User::create(['email' => 'dzakiudin07@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser5, 'Dzaki Udin', '03041282227062', '6285707091624', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createMahasiswaProfile($mhsUser5, 'Dzaki Udin', '03041282227062', '6285707091624', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
             $this->createPersonalTeamForUser($mhsUser5, 'Dzaki Udin');
 
             $mhsUser6 = User::create(['email' => 'aisyah@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($mhsUser6, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0]);
+            $this->createDosenProfile($mhsUser6, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0], 1, 100);
             $this->createPersonalTeamForUser($mhsUser6, 'Aisyah Nada Khalilah');
 
             $mhsUser7 = User::create(['email' => 'afif@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($mhsUser7, 'Afif Budiani', '03011382126114', '6289506506639', 'Laki-laki', 'Islam', $faker, $prodiIds[0]);
+            $this->createDosenProfile($mhsUser7, 'Afif Budiani', '03011382126114', '6289506506639', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
             $this->createPersonalTeamForUser($mhsUser7, 'Afif Budiani');
+
+            $mhsUser5 = User::create(['email' => 'mustofa.ihsan@gmail.com', 'password' => $defaultPw]);
+            $this->createMahasiswaProfile($mhsUser5, 'Mustofa Ihsan', '2230803106', '6283143337282', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
+            $this->createPersonalTeamForUser($mhsUser5, 'Mustofa Ihsan');
         });
 
         // --- 2. DATA DUMMY (Distribusi 10/30/60) ---
@@ -162,7 +166,7 @@ class UserRoleSeeder extends Seeder
         ])->save();
     }
 
-    private function createAdminProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId)
+    private function createAdminProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
     {
         Admin::create([
             'user_id' => $user->id,
@@ -177,8 +181,8 @@ class UserRoleSeeder extends Seeder
             'jenis_kelamin' => $gender,
             'agama' => $agama,
             'no_hp' => $telpon,
-            'is_wa_active' => 0,
-            'wa_limit' => 0,
+            'is_wa_active' => $wa,
+            'wa_limit' => $token,
             // 'no_hp' => $faker->phoneNumber,
             'pangkat' => 'Penata Muda',
             'golongan_awal' => 'III/a',
@@ -191,7 +195,7 @@ class UserRoleSeeder extends Seeder
         $this->seedEducation($user, $faker, ['S1', 'S2']);
     }
 
-    private function createDosenProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId)
+    private function createDosenProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
     {
         Dosen::create([
             'user_id' => $user->id,
@@ -206,8 +210,8 @@ class UserRoleSeeder extends Seeder
             'jenis_kelamin' => $gender,
             'agama' => $agama,
             'no_hp' => $telpon,
-            'is_wa_active' => 0,
-            'wa_limit' => 0,
+            'is_wa_active' => $wa,
+            'wa_limit' => $token,
             // 'no_hp' => $faker->phoneNumber,
             'no_karpeg' => $faker->unique()->numerify('N#########'),
             'pangkat_terakhir' => 'Lektor',
@@ -221,7 +225,7 @@ class UserRoleSeeder extends Seeder
         $this->seedEducation($user, $faker, ['S1', 'S2', 'S3']);
     }
 
-    private function createMahasiswaProfile($user, $name, $nim, $telpon, $gender, $agama, $faker, $prodiId)
+    private function createMahasiswaProfile($user, $name, $nim, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
     {
         Mahasiswa::create([
             'user_id' => $user->id,
@@ -235,8 +239,8 @@ class UserRoleSeeder extends Seeder
             'jenis_kelamin' => $gender,
             'agama' => $agama,
             'no_hp' => $telpon,
-            'is_wa_active' => 0,
-            'wa_limit' => 0,
+            'is_wa_active' => $wa,
+            'wa_limit' => $token,
             // 'no_hp' => $faker->phoneNumber,
             'angkatan' => $faker->numberBetween(2018, 2024),
             'status' => 'Aktif',

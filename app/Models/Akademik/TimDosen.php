@@ -151,10 +151,14 @@ class TimDosen extends Model
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
         return $query->where(function ($q) use ($searchTerm, $searchClean) {
-            $q->where('nama_tim', 'like', $searchTerm)->orWhere('kode_tim_dosen', 'like', $searchClean)
+            $q->where('nama_tim', 'like', $searchTerm)
+            ->orWhere('kode_tim_dosen', 'like', $searchClean)
             ->orWhereHas('dosens', function ($sub) use ($searchTerm) {
-                $sub->where('name', 'like', $searchTerm)
-                    ->orWhere('nip', 'like', $searchTerm);
+                $sub->where(function ($s) use ($searchTerm) {
+                    $s->where('dosens.name', 'like', $searchTerm)
+                        ->orWhere('dosens.nip', 'like', $searchTerm);
+                })
+                ->where('tim_dosen_pivot_dosen.is_ketua', true); 
             })
             ->orWhereHas('pr_rel', function ($mq) use ($searchTerm) {
                 $mq->searchProdi($searchTerm);

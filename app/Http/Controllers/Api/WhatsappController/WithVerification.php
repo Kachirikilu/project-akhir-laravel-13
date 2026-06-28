@@ -28,16 +28,19 @@ trait WithVerification
         $user = User::where(function ($mainQuery) use ($identifier) {
             $mainQuery->where('email', $identifier)
                 ->orWhereHas('mahasiswa', function ($query) use ($identifier) {
-                    $query->where('nim', $identifier);
+                    $query->where('nim', $identifier)
+                        ->orWhere('nik', $identifier);
                 })
                 ->orWhereHas('dosen', function ($query) use ($identifier) {
                     $query->where('nip', $identifier)
                         ->orWhere('nidn', $identifier)
-                        ->orWhere('nidk', $identifier);
+                        ->orWhere('nidk', $identifier)
+                        ->orWhere('nik', $identifier);
                 })
                 ->orWhereHas('admin', function ($query) use ($identifier) {
                     $query->where('nip', $identifier)
-                        ->orWhere('nitk', $identifier);
+                        ->orWhere('nitk', $identifier)
+                        ->orWhere('nik', $identifier);
                 });
         })->first();
 

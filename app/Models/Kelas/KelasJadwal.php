@@ -240,6 +240,8 @@ class KelasJadwal extends Model
                 $wly = 'Indralaya';
             } elseif ($wly == 'PLG') {
                 $wly = 'Palembang';
+            } else {
+                $wly = $this->kode_wilayah;
             }
 
             return "{$lbl} {$wly}";

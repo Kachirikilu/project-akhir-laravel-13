@@ -275,8 +275,27 @@
                     'typeKodeString' => 'kode_pr',
                     'unfoundString' => 'Tidak ada Dosen ditemukan!',
                 ])
-
             </div>
+            {{-- <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative">
+                @include('livewire.global.search-and-filters.secondary-search', [
+                    'inputXFilterString' => 'inputTimDosenFilter',
+                    'xSearchResultsString' => 'timDosenSearchResults',
+                    'iconString' => 'user',
+                    'placeholderString' => 'Filter berdasarkan Dosen...',
+                    'xSearchQueryString' => 'timDosenSearchQuery',
+                    'selectedXId' => $selectedDosenId,
+                    'selectedXName' => $tim_dosen_name,
+                    'resetXFilter' => 'resetTimDosenFilter()',
+                    'xSearchQuery' => $timDosenSearchQuery,
+                    'xSearchResults' => $timDosenSearchResults,
+                    'selectXForFilterString' => 'selectTimDosenForFilter',
+                    'typeXString' => 'tim',
+                    // 'typeX2String' => 'nip',
+                    // 'typeX3String' => '',
+                    // 'typeKodeString' => 'kode_pr',
+                    'unfoundString' => 'Tidak ada Dosen ditemukan!',
+                ])
+            </div> --}}
         @endif
 
 

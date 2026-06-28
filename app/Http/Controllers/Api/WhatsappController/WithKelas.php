@@ -206,7 +206,7 @@ trait WithKelas
                         if ($jadwals->isNotEmpty()) {
                             $teksKelas .= "- *Jadwal:* \n";
                             foreach ($jadwals as $index => $jadwal) {
-                                $teksKelas .= "     • ```{$jadwal->kode_jadwal}```";
+                                $teksKelas .= "     •  ```{$jadwal->kode_jadwal}```";
 
                                 if (isset($jadwal->hari_pelaksanaan)) {
                                     $teksKelas .= " - {$jadwal->hari_pelaksanaan}";
