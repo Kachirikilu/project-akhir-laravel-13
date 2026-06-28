@@ -6,66 +6,95 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Global\HasNilaiAbsensi;
-
+use App\Models\Kelas\Kelas;
+use App\Models\Kelas\KelasJadwal;
+use App\Models\Akademik\RPS;
 use App\Models\Penilaian\NilaiMahasiswa;
+use Carbon\Carbon;
 
 use Spatie\Browsershot\Browsershot;
 
 trait WithCpmkGrafikShow
 {
-    // public $detailRPSData = [];
-
     public $mapping_pertemuan;
 
-    public function printPDFCpmkGrafik($jadwalId, $rpsId)
+    public function printPDFCpmkGrafik($jadwalId)
+    {
+        $data = $this->resolveCpmkGrafikPdf($jadwalId);
+        return response()->streamDownload(fn() => print($data['content']), $data['name'], ['Content-Type' => 'application/pdf']);
+    }
+
+public function resolveAllCpmkGrafikPdf($kelasId)
+{
+    $kelas = Kelas::where('id', $kelasId)->firstOrFail();
+    
+    $jadwals = $kelas->jadwals; 
+    $jumlahJadwal = $jadwals->count();
+    
+    $fileResults = [];
+
+    foreach ($jadwals as $jadwal) {
+        $data = $this->resolveCpmkGrafikPdf($jadwal->id);
+        $fileResults[] = [
+            'name' => $data['name'],
+            'base64' => base64_encode($data['content']),
+            'mime_type' => 'application/pdf'
+        ];
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => "Berhasil generate {$jumlahJadwal} file PDF untuk kelas {$kelas->kode}",
+        'files' => $fileResults
+    ]);
+}
+    protected function resolveCpmkGrafikPdf($jadwalId)
     {
         $queryUser = $this->inputUserSearch('mahasiswa', $jadwalId, null, 1);
+        $jadwal = KelasJadwal::where('id', $jadwalId)->firstOrFail();
+        $rps = $jadwal->kelas_rel->rps_rel;
 
         $this->addNilaiJadwalSubquery($queryUser, $jadwalId, 'mhs_nilai_array', 'nilai_array');
         $this->addNilaiJadwalSubquery($queryUser, $jadwalId, 'mhs_bobot_array', 'bobot_array');
+        
+        $sampleNilai = NilaiMahasiswa::where('rps_id', $rps->id)->first() ?? new NilaiMahasiswa(['rps_id' => $rps->id]);
+        $mappingData = $sampleNilai->mapping_pertemuan ?? [];
+        $users = $queryUser->get();
 
-        $this->addMahasiswaNilaiAkhir($queryUser, $jadwalId, 'mhs_nilai_akhir');
-        $this->addMahasiswaNilaiIndex($queryUser, $jadwalId, 'mhs_nilai_index');
-        $this->addMahasiswaNilaiMutu($queryUser, $jadwalId, 'mhs_nilai_mutu');
+        $groupsCpmk = collect();
+        if (!empty($mappingData)) {
+            $collectionMapping = collect($mappingData);
+            $totalGlobalBobotMentah = $collectionMapping->sum('bobot') ?: 1;
+            $this->mapping_pertemuan = $collectionMapping->map(function ($item) use ($totalGlobalBobotMentah) {
+                $item['bobot'] = (($item['bobot'] ?? 0) / $totalGlobalBobotMentah) * 100;
+                return $item;
+            })->toArray();
+            $groupsCpmk = collect($this->mapping_pertemuan)->groupBy('kode_cpmk');
+        }
 
-                    $sampleNilai = NilaiMahasiswa::where('rps_id', $rpsId)->first();
+        // Logika Tahun Akademik
+        $sesiPertama = $jadwal->sesis->sortBy('tanggal_pelaksanaan')->first();
+        $tahun = $sesiPertama ? Carbon::parse($sesiPertama->tanggal_pelaksanaan)->format('Y') : date('Y');
+        $semester = ($sesiPertama && Carbon::parse($sesiPertama->tanggal_pelaksanaan)->format('n') >= 7) ? 'Ganjil' : 'Genap';
+        $tahunAkademik = "{$semester} {$tahun}";
 
-                    if (! $sampleNilai) {
-                        $sampleNilai = new NilaiMahasiswa;
-                        $sampleNilai->rps_id = $rpsId;
-                    }
-                    $mappingData = $sampleNilai->mapping_pertemuan ?? [];
-                    $users = $queryUser->get();
-                    if (! empty($mappingData)) {
-                        $collectionMapping = collect($mappingData);
+        // Generate Content
+        $pdfContent = $this->generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik);
 
-                        $totalGlobalBobotMentah = $collectionMapping->sum('bobot');
-                        $totalGlobalBobotMentah = $totalGlobalBobotMentah > 0 ? $totalGlobalBobotMentah : 1;
+        $fileName = sprintf("%s_%s_%s_%s.pdf", 
+            str_replace('/', '-', $jadwal->kode), 
+            str_replace(['/', '\\'], '-', $rps->mk), 
+            $rps->kode, 
+            str_replace(' ', '-', $tahunAkademik)
+        );
 
-                        $normalizedMapping = $collectionMapping->map(function ($item) use ($totalGlobalBobotMentah) {
-                            $bobotMentah = $item['bobot'] ?? 0;
-                            $item['bobot'] = ($bobotMentah / $totalGlobalBobotMentah) * 100;
-
-                            return $item;
-                        })->toArray();
-
-                        $this->mapping_pertemuan = $normalizedMapping;
-                        $groupsCpmk = collect($normalizedMapping)->groupBy('kode_cpmk');
-                    } else {
-                        $groupsCpmk = collect();
-                    }
-
-
-        $fileNameSafe = str_replace('/', '-', 'CPMK_Grafik.pdf');
-
-        return response()->streamDownload(function () use ($users, $groupsCpmk) {
-            echo $this->generateCpmkGrafikRawPDFContent($users, $groupsCpmk);
-        }, $fileNameSafe, ['Content-Type' => 'application/pdf']);
+        return ['content' => $pdfContent, 'name' => $fileName, 'jadwal' => $jadwal];
     }
 
-    protected function generateCpmkGrafikRawPDFContent($users, $groupsCpmk): string
+    protected function generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik): string
     {
         $logoPath = public_path('images/logo-unsri.png');
+        $univ = strtoupper(env('UNIVERSITAS'));
         $logoBase64 = '';
 
         if (file_exists($logoPath)) {
@@ -73,13 +102,17 @@ trait WithCpmkGrafikShow
             $dataLogo = file_get_contents($logoPath);
             $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
         }
-        $chunks = $users->chunk(10);
+        $chunk_users = $users->chunk(10);
         $html = view('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
             'users' => $users,
-            'chunks' => $chunks,
+            'chunk_users' => $chunk_users,
+            'jadwal' => $jadwal,
+            'rps' => $rps,
+            'tahun_akademik' => $tahunAkademik,
             'groupsCpmk' => $groupsCpmk ?? null,
             'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
             'mapping_pertemuan' => $this->mapping_pertemuan,
+            'univ' => $univ,
             'logoBase64' => $logoBase64,
         ])->render();
 

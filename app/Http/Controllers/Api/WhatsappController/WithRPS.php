@@ -197,7 +197,7 @@ trait WithRPS
 
     //         if (//nanti ini ambil id pada prodi hasil pencarian getProdiByKode) {
     //             $prodi = $prodis->find(//nanti ini ambil id pada prodi hasil pencarian getProdiByKode);
-    //         } 
+    //         }
     //         if (!$prodi) {
     //             $prodi = $prodis->firstWhere('id', $user->pr_id);
     //         }
@@ -236,11 +236,11 @@ trait WithRPS
         $sufiksNomor = substr($noWA, -9);
         $user = $this->searchUserWhatsApp($sufiksNomor);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['status' => false, 'head' => '*❌ Autentikasi Gagal!*', 'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`"], 442);
         }
 
-        $matchedKey = collect($pdfGetRPSKey)->first(fn($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
+        $matchedKey = collect($pdfGetRPSKey)->first(fn ($key) => Str::startsWith(strtoupper($pesan), strtoupper($key)));
         $inputParams = trim(str_ireplace($matchedKey, '', $pesan));
 
         if (empty($inputParams)) {
@@ -253,45 +253,31 @@ trait WithRPS
 
         // Coba cari RPS
         $rps = $this->getRPSByKode($kodeRPSInput);
-        
-        if (!$rps && isset($parts[1])) {
+
+        if (! $rps && isset($parts[1])) {
             $rps = $this->getRPSByKode($parts[1]);
             $kodePrInput = $kodeRPSInput;
             $kodeRPSInput = $parts[1];
         }
 
-        if (!$rps) {
+        if (! $rps) {
             return response()->json(['status' => true, 'head' => '*❌ Gagal Mencari RPS!*', 'message' => "Berkas RPS dengan kode `{$kodeRPSInput}` tidak ditemukan!"], 404);
         }
 
         try {
-            $prodis = $rps->mk_rel->prodis;
-            $prodi = null;
-
-            if ($kodePrInput) {
-                $foundProdi = $this->getProdiByKode($kodePrInput);
-                if ($foundProdi) {
-                    $prodi = $prodis->firstWhere('id', $foundProdi->id);
-                }
-            }
-            if (!$prodi) $prodi = $prodis->firstWhere('id', $user->pr_id);
-            if (!$prodi) $prodi = $prodis->first();
-
-            if (!$prodi) {
-                return response()->json(['status' => true, 'head' => '*❌ Gagal!*', 'message' => "Data Program Studi tidak ditemukan pada RPS ini!"], 400);
-            }
-
-            $pdfRawContent = $this->generateRPSRawPDFContent($rps, $prodi);
-            $fileNameSafe = str_replace(['/', '\\'], '-', "RPS_{$prodi->kode}_{$rps->kode}_{$rps->mk_rel->mk}.pdf");
-
+            $data = $this->handleRpsPdfExport($rps->id, $kodePrInput, 'json', true);
             return response()->json([
                 'status' => true,
-                'message' => "Berkas RPS *{$rps->mk_rel->mk}* {$prodi->prodi} dengan kode ```{$rps->kode}``` berhasil dibuat!",
-                'file_base64' => base64_encode($pdfRawContent),
-                'file_name' => $fileNameSafe,
+                'message' => "Berkas RPS *{$data['rps']->mk_rel->mk}* {$data['prodi']->prodi} berhasil dibuat!",
+                'file_base64' => base64_encode($data['content']),
+                'file_name' => $data['name'],
             ]);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'head' => '*❌ Gagal Render PDF*', 'message' => 'Terjadi Error: ' . $e->getMessage()], 500);
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Gagal!*',
+                'message' => $e->getMessage(),
+            ], 400);
         }
     }
 

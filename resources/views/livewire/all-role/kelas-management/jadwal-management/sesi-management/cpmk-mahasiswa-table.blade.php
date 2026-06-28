@@ -1,15 +1,4 @@
-            <div class="flex-shrink-0">
-                @include('livewire.global.table.export-button', [
-                    'nameXString' => 'Export Grafik',
-                    'xString' => "printPDFCpmkGrafik($jadwal_id_url, $rps_id_url)",
-                    'icon' => 'arrow-down-tray',
-                    'isFull' => 1,
-                    'valuePx' => 'px-6',
-                    'valuePy' => 'py-2.5',
-                    'color' => 'rose',
-                    'wireLoading' => 'printPDFCpmkGrafik()',
-                ])
-            </div>
+
 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
 
@@ -40,8 +29,18 @@
         </div>
     </x-slot:sortir>
     <x-slot:search>
-        <div class="w-full md:w-96 xl:w-108">
-            <div class="col-start-1 row-start-1 w-full">
+        <div class="w-full md:w-110 xl:w-124">
+        <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
+            <div class="flex-shrink-0">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                    'key' => 'page-control-mahasiswa',
+                    'withB' => 0,
+                    'isSmall' => 1,
+                ])
+            </div>
+
+            <div class="flex-grow max-w-md">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mahasiswa Kelas...',
                     'defaultLive' => 1,
@@ -51,6 +50,7 @@
                     'isBorder' => 2,
                 ])
             </div>
+        </div>
         </div>
     </x-slot:search>
 

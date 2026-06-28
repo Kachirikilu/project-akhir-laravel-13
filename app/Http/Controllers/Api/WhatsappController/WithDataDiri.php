@@ -70,6 +70,6 @@ trait WithDataDiri
                         ($user->mahasiswa ? "\n- Token: {$user->mahasiswa->wa_limit}" : ''),
         ]);
 
-        return response()->json(['status' => false, 'message' => 'Gagal memproses permintaan!'], 500);
+        return response()->json(['status' => false, 'head' => '*❌ Gagal!*', 'message' => 'Gagal memproses permintaan!'], 500);
     }
 }

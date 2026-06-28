@@ -50,41 +50,58 @@ trait WithRPSShow
 
     public function printPDFRPS($rpsId, $prId = null)
     {
-        $rps = RPS::with([
-            'mk_rel.prodis',
-            'tim_dosens',
-            'tim_dosens.dosens',
-            // 'cpmks.scpmks.dosens',
-            'cpmks.scpmks.refs',
-            'cpmks.refs',
-            'cpmks.cpls',
-            'refs'
-        ])->findOrFail($rpsId);
+        try {
+            $data = $this->handleRpsPdfExport($rpsId, $prId, 'stream', false);
+            
+            return response()->streamDownload(function () use ($data) {
+                echo $data['content'];
+            }, $data['name'], ['Content-Type' => 'application/pdf']);
+            
+        } catch (\Exception $e) {
+            abort(404, $e->getMessage());
+        }
+    }
 
-        $prodis = $rps->mk_rel->prodis->sortBy([
-            ['prodi', 'asc'],
-            ['strata', 'asc'],
-        ]);
+    protected function handleRpsPdfExport($rpsId, $prodiIdentifier, $exportType = 'stream', $isKode = false)
+    {
+        $rps = RPS::with([
+                'mk_rel.prodis',
+                'tim_dosens',
+                'tim_dosens.dosens',
+                // 'cpmks.scpmks.dosens',
+                'cpmks.scpmks.refs',
+                'cpmks.refs',
+                'cpmks.cpls',
+                'refs'
+            ])->findOrFail($rpsId);
+        $prodis = $rps->mk_rel->prodis;
         $prodi = null;
 
-        if ($prId) {
-            $prodi = $prodis->find($prId);
-        } 
-        if (!$prodi) {
-            $prodi = $prodis->firstWhere('id', Auth::user()->pr_id);
+        // Logika Pemilihan Prodi yang sama
+        if ($prodiIdentifier) {
+            $found = $isKode ? $this->getProdiByKode($prodiIdentifier) : $prodis->find($prodiIdentifier);
+            if ($found) $prodi = $prodis->firstWhere('id', $found->id);
         }
+        if (!$prodi) $prodi = $prodis->firstWhere('id', Auth::user()->pr_id ?? null);
+        if (!$prodi) $prodi = $prodis->first();
+
         if (!$prodi) {
-            $prodi = $prodis->first();
-        }
-        if (!$prodi) {
-            abort(404, 'Data Program Studi tidak ditemukan pada RPS ini!');
+            throw new \Exception("Data Program Studi tidak ditemukan pada RPS ini!");
         }
 
-        $fileNameSafe = str_replace('/', '-', 'RPS_'.$prodi->kode.'_'.$rps->kode.'_'.$rps->mk_rel->mk.'_'.$rps->akademik.'.pdf');
+        // Generate Raw PDF
+        $pdfRawContent = $this->generateRPSRawPDFContent($rps, $prodi);
+        
+        // Penamaan file yang aman
+        $fileName = "RPS_{$prodi->kode}_{$rps->kode}_{$rps->mk_rel->mk}.pdf";
+        $fileNameSafe = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $fileName);
 
-        return response()->streamDownload(function () use ($rps, $prodi) {
-            echo $this->generateRPSRawPDFContent($rps, $prodi);
-        }, $fileNameSafe, ['Content-Type' => 'application/pdf']);
+        return [
+            'content' => $pdfRawContent,
+            'name' => $fileNameSafe,
+            'rps' => $rps,
+            'prodi' => $prodi
+        ];
     }
 
     protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string

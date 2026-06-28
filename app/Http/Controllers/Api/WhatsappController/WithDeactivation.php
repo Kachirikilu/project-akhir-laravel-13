@@ -52,6 +52,6 @@ trait WithDeactivation
             ]);
         }
 
-        return response()->json(['status' => false, 'message' => 'Gagal memproses penonaktifan.'], 500);
+        return response()->json(['status' => false, 'head' => '*❌ Gagal!*', 'message' => 'Gagal memproses penonaktifan!'], 500);
     }
 }

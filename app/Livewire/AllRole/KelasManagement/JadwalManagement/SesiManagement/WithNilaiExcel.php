@@ -256,7 +256,7 @@ trait WithNilaiExcel
         $zip->close();
 
         if (! file_exists($zipPath)) {
-            throw new \Exception('File ZIP gagal digenerate.');
+            throw new \Exception('File ZIP gagal digenerate!');
         }
 
         $base64Data = base64_encode(file_get_contents($zipPath));
@@ -821,7 +821,7 @@ trait WithNilaiExcel
                 $nilaiAngkaIndex = collect($header1)->search(fn ($v) => Str::lower(trim((string) $v)) === 'nilai angka');
 
                 if ($nilaiRPSIndex === false || $nilaiJadwalKelasIndex === false || $nilaiAngkaIndex === false) {
-                    Log::warning("Sheet '{$sheetName}' dilewati karena struktur header tidak sesuai.");
+                    Log::warning("Sheet '{$sheetName}' dilewati karena struktur header tidak sesuai!");
 
                     continue;
                 }
@@ -912,7 +912,7 @@ trait WithNilaiExcel
             Auth::logout();
 
             if ($totalSheetsProcessed === 0) {
-                throw new \Exception('Tidak ada halaman (sheet) dalam file Excel yang sesuai dengan standar format format nilai.');
+                throw new \Exception('Tidak ada halaman (sheet) dalam file Excel yang sesuai dengan standar format format nilai!');
             }
 
             $failCount = count($errors);

@@ -6,6 +6,8 @@ use App\Exports\MultiNilaiExport;
 use App\Exports\NilaiExport;
 use App\Jobs\SendSesiExpiredNotification;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
+
 use App\Livewire\Global\HasGetByKode;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -15,10 +17,11 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
-trait WithExcelNilai
+trait WithExcelCapaianNilai
 {
     use HasGetByKode;
     use WithNilaiExcel;
+    use WithCpmkGrafikShow;
 
     private function processGateAwayExcelNilai(string $noWA, string $nameWA, string $pesan)
     {
@@ -271,41 +274,134 @@ trait WithExcelNilai
         }
     }
 
-    public function getKelasAndJadwalByKode(
-        $kode = null,
-        $kode_jadwal = null
-    ) {
-        $this->kode = $kode;
-        $this->kode_jadwal = $kode_jadwal;
+    private function processGetCapaianNilai(string $noWA, string $nameWA, string $pesan, array $pdfGetCapaianKey)
+    {
+        Log::info('=== PROSES GET CAPAIAN NILAI ===');
+        Log::info("Nomor dari Node.JS: {$noWA} | Pemicu: {$pesan}");
 
-        $this->kelas = $this->getKelasByKode($kode);
-
-        if (! $this->kelas) {
-            throw new ModelNotFoundException("Kelas dengan kode {$kode} tidak ditemukan!");
+        // 1. Validasi Pengguna & Hak Akses
+        $sufiksNomor = substr($noWA, -9);
+        $user = $this->searchUserWhatsApp($sufiksNomor);
+        if (! $user) {
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Autentikasi Gagal!*',
+                'message' => "Silahkan Verifikasi dengan: \n`LOGIN [ID_AKADEMIK]`",
+            ], 442);
         }
 
-        if (! empty($kode_jadwal)) {
+        if ($user->mahasiswa) {
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Akses Gagal!*',
+                'message' => 'Mahasiswa tidak memiliki akses untuk mengambil File Excel Nilai!',
+            ], 403);
+        }
 
-            $fullKodeJadwal = str_contains($kode_jadwal, $this->kode)
-                ? $kode_jadwal
-                : $this->kode.'-'.$kode_jadwal;
-
-            $this->jadwal = $this->getJadwalByKode($fullKodeJadwal);
-
-            if (! $this->jadwal) {
-                throw new ModelNotFoundException("Jadwal spesifik '{$kode_jadwal}' tidak ditemukan!");
+        // 2. Ekstraksi Parameter Kode dari Teks Pesan
+        // Menghapus trigger kata pemicu untuk menyisakan kodenya saja
+        $cleanMessage = strtoupper(trim($pesan));
+        foreach ($pdfGetCapaianKey as $trigger) {
+            if (str_starts_with($cleanMessage, $trigger)) {
+                $cleanMessage = trim(substr($cleanMessage, strlen($trigger)));
+                break;
             }
+        }
 
-            if ($this->jadwal->kelas_id !== $this->kelas->id) {
-                throw new \Exception("Jadwal '{$kode_jadwal}' tidak cocok dengan Kelas '{$kode}'!");
+        if (empty($cleanMessage)) {
+            return response()->json([
+                'status' => false,
+                'head' => '*⚠️ Parameter Kurang!*',
+                'message' => "Format salah. Gunakan:\n`GET NILAI [KODE_KELAS/KODE_JADWAL]`",
+            ], 400);
+        }
+
+        // 3. Normalisasi & Parsing Logika Kode Kelas / Kode Jadwal
+        $kodeKelas = null;
+        $kodeJadwal = null;
+
+        // 1. Inisialisasi default agar tidak undefined
+        $kodeKelas = trim($cleanMessage);
+        $kodeJadwal = null;
+
+        // 2. Normalisasi: Ubah ke huruf besar, buang spasi, strip (-), dan underscore (_)
+        $targetCode = strtoupper(str_replace([' ', '-', '_'], '', $cleanMessage));
+
+        // 3. ANALISIS STRUKTUR STRING YANG SUDAH BERSIH
+        if (preg_match('/^([A-Z]{3})(\d{3})([A-Z])(IDL|PLG)(\d{2})$/', $targetCode, $matches)) {
+            $kodeKelas = "{$matches[1]}-{$matches[2]}";
+            $kodeJadwal = "{$matches[3]}-{$matches[4]}-{$matches[5]}";
+        }
+
+        // Skenario B: Jika hanya input Kode Kelas Panjang/Pendek (Contoh murni: ABF900)
+        else {
+            if (strlen($targetCode) === 6) {
+                $kodeKelas = substr($targetCode, 0, 3).'-'.substr($targetCode, 3, 3);
+            } else {
+                // Jika format acak lainnya, biarkan ke fallback asli hasil pembersihan atau pesan awal
+                $kodeKelas = $targetCode;
             }
+        }
 
-            $this->jadwal_id = $this->jadwal->id;
-        } else {
-            $this->jadwal = null;
-            $this->jadwal_id = null;
+        // 4. Proses Query Database Menggunakan Method Bawaan Anda
+        try {
+            $this->getKelasAndJadwalByKode($kodeKelas, $kodeJadwal);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Data Tidak Ditemukan!*',
+                'message' => "Kode Jadwal `{$cleanMessage}` tidak terdaftar di sistem!",
+            ], 404);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Gagal Memuat Data!*',
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+        // 5. Eksekusi Export Dokumen & Penentuan Output File (SELALU EXCEL SINGLE)
+        try {
+            $data = $this->resolveCpmkGrafikPdf($jadwalId);
+
+            return response()->json([
+                'status' => true,
+                'message' => "Berkas grafik CPMK Jadwal *{$data['jadwal']->kode}* berhasil dibuat!",
+                'file_base64' => base64_encode($data['content']),
+                'file_name' => $data['name'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'head' => '*❌ Gagal Render PDF*',
+                'message' => 'Terjadi Error: '.$e->getMessage(),
+            ], 500);
         }
     }
+
+public function getKelasAndJadwalByKode($kode = null)
+{
+    // Reset state awal
+    $this->kode = $kode;
+    $this->kelas = null;
+    $this->jadwal = null;
+    $this->jadwal_id = null;
+
+    if (empty($kode)) return;
+
+    // 1. Coba cari apakah $kode tersebut adalah JADWAL
+    // Kita cari jadwal dulu karena jadwal biasanya lebih spesifik (panjang)
+    $this->jadwal = $this->getJadwalByKode($kode);
+
+    if ($this->jadwal) {
+        // Jika jadwal ketemu, otomatis kelasnya pun ketemu
+        $this->jadwal_id = $this->jadwal->id;
+        $this->kelas = $this->jadwal->kelas_rel; // Asumsi relasi ke kelas ada
+        $this->kode = $this->kelas->kode; // Update kode kelas jika perlu
+    } else {
+        // 2. Jika jadwal tidak ketemu, coba cari apakah $kode tersebut adalah KELAS
+        $this->kelas = $this->getKelasByKode($kode);
+    }
+}
 
     // public function getKelasAndJadwalByKode(
     //     $kode = null,

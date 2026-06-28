@@ -103,8 +103,7 @@
                 {{ $header }}
             </thead>
             <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-                wire:target="{{ $targetLoading }}"
-                class="bg-[var(--second-table-color)] table-border divide-y">
+                wire:target="{{ $targetLoading }}" class="bg-[var(--second-table-color)] table-border divide-y">
                 {{ $slot }}
             </tbody>
         </table>

@@ -149,7 +149,6 @@ trait HasGetByKode
         if (! $jadwal) {
             return null;
         }
-
         return $jadwal;
     }
 
@@ -175,6 +174,40 @@ trait HasGetByKode
             ->whereRaw("LOWER(REGEXP_REPLACE({$sqlFullKode}, '[^A-Za-z0-9]', '')) = ?", [$search])
             ->first();
     }
+
+    // protected function getJadwalByKode(?string $kodeJadwal): ?KelasJadwal
+    // {
+    //     $jadwal = $this->findJadwalByKode($kodeJadwal);
+    //     if (! $jadwal) {
+    //         return null;
+    //     }
+
+    //     return $jadwal;
+    // }
+    // protected function findJadwalByKode(?string $kodeJadwal): ?KelasJadwal
+    // {
+    //     if (blank($kodeJadwal)) {
+    //         return null;
+    //     }
+    //     $search = preg_replace(
+    //         '/[^A-Za-z0-9]/',
+    //         '',
+    //         strtolower(trim($kodeJadwal))
+    //     );
+
+    //     return $this->inputJadwalSearch()
+    //         ->get()
+    //         ->first(function ($r) use ($search) {
+    //             $kode = preg_replace(
+    //                 '/[^A-Za-z0-9]/',
+    //                 '',
+    //                 strtolower($r->kode)
+    //             );
+
+    //             return $kode === $search;
+    //         });
+    // }
+
     // protected function findJadwalByKode(?string $kodeJadwal): ?KelasJadwal
     // {
     //     if (blank($kodeJadwal)) {

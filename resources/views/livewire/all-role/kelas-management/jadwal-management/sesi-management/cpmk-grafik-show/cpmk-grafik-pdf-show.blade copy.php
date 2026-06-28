@@ -85,26 +85,7 @@
     $totalMahasiswa = count($daftarNim);
     $calculatedWidth = max($totalMahasiswa * 160, 800);
 @endphp
-    {{-- Logo + nama universitas, fixed di pojok kanan-bawah, terulang tiap halaman --}}
-    <div class="fixed bottom-[0.5cm] right-[0.5cm] z-[999] flex items-center gap-5">
-        <div class="flex flex-col items-end leading-none gap-1">
-                        <span class="text-[8px] font-semibold text-gray-500">
-                {{ $jadwal->kelas_rel->pr_rel->prodi_pr }}
-            </span>
-            <span class="text-[8px] font-semibold text-gray-400">
-                {{ $univ }}
-            </span>
 
-        </div>
-
-        @if ($logoBase64 ?? null)
-            <img src="{{ $logoBase64 }}" class="h-9 object-contain">
-        @else
-            <img src="{{ asset('images/logo-unsri.png') }}" class="h-9 object-contain">
-        @endif
-    </div>
-
-    @yield('content')
 <div class="rps-pdf bg-white">
 @php
     $jumlahSeries = count($finalSeries);
@@ -147,10 +128,10 @@
                                 $keberhasilan = $rataKeberhasilanCpmk[$kodeCpmk] ?? 0;
                             @endphp
                             <div class="flex items-center gap-1.5">
-                                <div class="w-3 h-3 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
+                                <div class="w-2.5 h-2.5 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
                                 <div class="flex flex-col">
                                     <span class="text-[11px] font-bold text-gray-700 dark:text-gray-200 leading-none">{{ $kodeCpmk }}</span>
-                                    <span class="text-[9px] text-gray-500 font-medium leading-none mt-0.5">Bobot: {{ $bobot }}% <span class="mx-1">|</span> Tercapai: {{ $keberhasilan }}%</span>
+                                    <span class="text-[9px] text-gray-500 font-medium leading-none mt-0.5">{{ $bobot }}% | Keberhasilan: {{ $keberhasilan }}%</span>
                                 </div>
                             </div>
                         @endforeach

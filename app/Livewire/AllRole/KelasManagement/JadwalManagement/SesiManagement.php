@@ -609,7 +609,7 @@ class SesiManagement extends Component
                 'sesis' => $sesis,
                 'users' => $users,
                 'groupsCpmk' => $groupsCpmk ?? null,
-                // 'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
+                // 'mapping_pertemuan' => $mapping_pertemuan ?? null,
                 'absensi' => $absensi,
                 'kelas' => $this->kelas,
 
@@ -627,6 +627,8 @@ class SesiManagement extends Component
             return view('livewire.all-role.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => KelasSesi::whereRaw('1 = 0')->paginate($this->perPage),
                 'users' => User::whereRaw('1 = 0')->paginate($this->perPage),
+                'groupsCpmk' => null,
+                // 'mapping_pertemuan' => null,
                 'absensi' => [
                     'mhs_poin_absensi' => '-',
                     'mhs_poin_absensi_percent' => '-',

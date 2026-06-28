@@ -90,7 +90,7 @@
                     <strong class="px-2">|</strong>
                     <span class="font-medium text-[var(--contrast-second-text)]">{{ $dosen->pivot->peran }}</span>
                     @if ($dosen->pivot->is_ketua)
-                        <span class="ml-32px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                        <span class="ml-2 px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
                     @endif
                 </span>
 

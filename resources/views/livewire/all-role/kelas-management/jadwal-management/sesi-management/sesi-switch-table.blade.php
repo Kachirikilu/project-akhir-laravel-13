@@ -22,7 +22,7 @@
                     'withB' => 0,
                 ])
             </div>
-            <div x-show="activeTab === 'mahasiswa' || activeTab === 'cpmk'">
+            <div x-show="activeTab === 'mahasiswa'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
                     'key' => 'page-control-mahasiswa',
@@ -100,7 +100,7 @@
                         'withB' => 0,
                     ])
                 </div>
-                <div x-show="activeTab === 'mahasiswa' || activeTab === 'cpmk'">
+                <div x-show="activeTab === 'mahasiswa'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
                         'key' => 'page-control-mahasiswa',

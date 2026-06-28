@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\WhatsappController\WithDataDiri;
 use App\Http\Controllers\Api\WhatsappController\WithDeactivation;
-use App\Http\Controllers\Api\WhatsappController\WithExcelNilai;
+use App\Http\Controllers\Api\WhatsappController\WithExcelCapaianNilai;
 use App\Http\Controllers\Api\WhatsappController\WithKelas;
 use App\Http\Controllers\Api\WhatsappController\WithRPS;
 use App\Http\Controllers\Api\WhatsappController\WithNilaiMahasiswa;
@@ -19,7 +19,7 @@ class WhatsappController extends Controller
 {
     use WithDataDiri;
     use WithDeactivation;
-    use WithExcelNilai;
+    use WithExcelCapaianNilai;
     use WithKelas;
     use WithRPS;
     use WithNilaiMahasiswa;
@@ -44,6 +44,11 @@ class WhatsappController extends Controller
     public $excelNilaiKey = ['EXCEL NILAI', 'INPUT NILAI', 'UPLOAD NILAI', 'INPUT FILE NILAI', 'FILE NILAI'];
 
     public $excelGetNilaiKey = ['DOWNLOAD NILAI', 'DOWNLOAD EXCEL NILAI', 'GET EXCEL NILAI', 'GET NILAI', 'DOWNLOAD EXCEL NILAI'];
+
+    public $pdfGetCapaianKey = ['DOWNLOAD CAPAIAN', 'DOWNLOAD PDF CAPAIAN', 'GET PDF CAPAIAN', 'GET CAPAIAN', 'DOWNLOAD PDF CAPAIAN', 'PRINT CAPAIAN', 'PRINT PDF CAPAIAN', 'PRINT CAPAIAN PDF',
+                                'DOWNLOAD CPMK', 'DOWNLOAD PDF CPMK', 'GET PDF CPMK', 'GET CPMK', 'DOWNLOAD PDF CPMK', 'PRINT CPMK', 'PRINT PDF CPMK', 'PRINT CPMK PDF',
+                                'DOWNLOAD CPL', 'DOWNLOAD PDF CPL', 'GET PDF CPL', 'GET CPL', 'DOWNLOAD PDF CPL', 'PRINT CPL', 'PRINT PDF CPL', 'PRINT CPL PDF',
+                            ];
 
     public $nilaiMahasiswaKey = ['NILAI', 'NILAI SAYA', 'LIHAT NILAI', 'NILAI SEMESTER'];
 
@@ -107,6 +112,9 @@ class WhatsappController extends Controller
 
         if ($this->isTrigger($pesan, $this->excelGetNilaiKey)) {
             return $this->processGetExcelNilai($noWA, $nameWA, $pesan, $this->excelGetNilaiKey);
+        }
+        if ($this->isTrigger($pesan, $this->pdfGetCapaianKey)) {
+            return $this->processGetCapaianNilai($noWA, $nameWA, $pesan, $this->pdfGetCapaianKey);
         }
         if ($this->isTrigger($pesan, $this->excelNilaiKey)) {
             return $this->processGateAwayExcelNilai($noWA, $nameWA, $pesan);

@@ -58,7 +58,7 @@ trait WithKelas
                 $queryKelas->where('pr_id', $user->pr_id);
             } elseif ($roleClean === 'dosen' && $user->dosen) {
                 $idDosen = $user->dosen->id;
-                $queryKelas->whereHas('rps_rel.dosens', function ($q) use ($idDosen) {
+                $queryKelas->whereHas('rps_rel.tim_dosens.dosens', function ($q) use ($idDosen) {
                     $q->where('dosens.id', $idDosen);
                 });
             } elseif ($roleClean === 'mahasiswa' && $user->mahasiswa) {
@@ -92,7 +92,7 @@ trait WithKelas
             } elseif ($roleClean === 'dosen' && $user->dosen) {
                 $idDosen = $user->dosen->id;
 
-                $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.dosens', function ($query) use ($idDosen) {
+                $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($query) use ($idDosen) {
                     $query->where('dosens.id', $idDosen);
                 });
 
@@ -135,6 +135,26 @@ trait WithKelas
             }
         }
 
+        // $sortKelas = function ($collection) {
+        //     return $collection->sortBy(function ($item) {
+        //         $mk = $item->rps_rel->mk_rel ?? ($item->kelas_rel->rps_rel->mk_rel ?? null);
+
+        //         return [$mk->semester ?? 99, $mk->digit_mk ?? 'ZZZ'];
+        //     });
+        // };
+
+        // $daftarKelas = $sortKelas($daftarKelas);
+
+        $daftarKelas = $daftarKelas->sortBy(function ($item) {
+            $mk = $item->rps_rel->mk_rel ?? ($item->kelas_rel->rps_rel->mk_rel ?? null);
+
+            return [$mk->semester ?? 99, $mk->digit_mk ?? 'ZZZ'];
+        })->groupBy(function ($item) {
+            $mk = $item->rps_rel->mk_rel ?? ($item->kelas_rel->rps_rel->mk_rel ?? null);
+
+            return $mk ? "Semester {$mk->semester}" : 'Lainnya';
+        });
+
         $head = "Halo _{$nameWA}_, berikut hasil pencarian Kelas:";
         $filterTeksX = ! empty($filterTeks) ? ' '.$filterTeks : '';
         $teksKelas = '📅 *Daftar Kelas'.$filterTeksX."*\n- {$user->prodi_pr}\n\n";
@@ -154,33 +174,77 @@ trait WithKelas
         // ==========================================
         // REFAKTOR LOOP FORMATTING BERDASARKAN ROLE
         // ==========================================
-        foreach ($daftarKelas as $item) {
+        foreach ($daftarKelas as $namaSemester => $kumpulanKelas) {
+            // 🌟 INI TANDA PEMBATASNYA
+            $teksKelas .= "\n━━━━━━━━━━━━━━━━━━\n";
+            $teksKelas .= "🔹 *{$namaSemester}*\n";
+            $teksKelas .= "━━━━━━━━━━━━━━━━━━\n\n";
+            foreach ($kumpulanKelas as $item) {
 
-            if ($roleClean === 'admin' || $isDaftarKelasMurni) {
-                $mk = $item->rps_rel->mk ?? 'Mata Kuliah';
-                $sks = $item->rps_rel->mk->sks ?? 2;
-                $kode = $item->kode ?? 'MBG-121104';
-                $kodeRPS = $item->kode_rps;
+                if ($roleClean === 'admin' || $isDaftarKelasMurni) {
+                    $mk = $item->rps_rel->mk ?? 'Mata Kuliah';
+                    $sks = $item->rps_rel->mk->sks ?? 2;
+                    $kode = $item->kode ?? 'MBG-121104';
+                    $kodeRPS = $item->kode_rps;
 
-                $sesis = collect();
-                if ($item->jadwals && ($mulaiTanggal && $selesaiTanggal)) {
-                    foreach ($item->jadwals as $jadwal) {
-                        if ($jadwal->sesis) {
-                            $sesis = $sesis->merge($jadwal->sesis);
+                    $sesis = collect();
+                    if ($item->jadwals && ($mulaiTanggal && $selesaiTanggal)) {
+                        foreach ($item->jadwals as $jadwal) {
+                            if ($jadwal->sesis) {
+                                $sesis = $sesis->merge($jadwal->sesis);
+                            }
                         }
                     }
-                }
 
-                if ($sesis->isEmpty()) {
-                    $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
-                    $teksKelas .= "- Kode: {$kode}\n";
-                    $teksKelas .= "- RPS: ```{$kodeRPS}```\n\n";
-                    $nomor++;
+                    if ($sesis->isEmpty()) {
+                        $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
+                        $teksKelas .= "- Kode: {$kode}\n";
+                        $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
+
+                        $jadwals = $item->jadwals;
+
+                        if ($jadwals->isNotEmpty()) {
+                            $teksKelas .= "- *Jadwal:* \n";
+                            foreach ($jadwals as $index => $jadwal) {
+                                $teksKelas .= "     • ```{$jadwal->kode_jadwal}```";
+
+                                if (isset($jadwal->hari_pelaksanaan)) {
+                                    $teksKelas .= " - {$jadwal->hari_pelaksanaan}";
+                                }
+
+                                $teksKelas .= "\n";
+                            }
+                        } else {
+                            $teksKelas .= "- *Jadwal:* Belum tersedia\n";
+                        }
+
+                        $teksKelas .= "\n";
+
+                        $nomor++;
+                    } else {
+                        foreach ($sesis as $sesi) {
+                            $kodeJadwal = $sesi->jadwal_rel->kode;
+                            $label = $sesi->jadwal_rel->label_extra;
+
+                            $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
+                            $teksKelas .= "- Kelas {$label}\n";
+                            $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
+                            $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
+                            $teksKelas .= $this->formatSesiTeks($sesi);
+                            $nomor++;
+                        }
+                    }
+
                 } else {
-                    foreach ($sesis as $sesi) {
-                        $kodeJadwal = $sesi->jadwal_rel->kode;
-                        $label = $sesi->jadwal_rel->label_extra;
+                    $mk = $item->kelas_rel->rps_rel->mk ?? 'Mata Kuliah';
+                    $sks = $item->kelas_rel->rps_rel->mk->sks ?? 2;
+                    $kodeJadwal = $item->kode ?? 'MBG-121104-X-IDL';
+                    $kodeRPS = $item->kode_rps;
+                    $label = $item->label_extra;
 
+                    $sesis = $item->sesis ?? collect();
+
+                    foreach ($sesis as $sesi) {
                         $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
                         $teksKelas .= "- Kelas {$label}\n";
                         $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
@@ -188,24 +252,6 @@ trait WithKelas
                         $teksKelas .= $this->formatSesiTeks($sesi);
                         $nomor++;
                     }
-                }
-
-            } else {
-                $mk = $item->kelas_rel->rps_rel->mk ?? 'Mata Kuliah';
-                $sks = $item->kelas_rel->rps_rel->mk->sks ?? 2;
-                $kodeJadwal = $item->kode ?? 'MBG-121104-X-IDL';
-                $kodeRPS = $item->kode_rps;
-                $label = $item->label_extra;
-
-                $sesis = $item->sesis ?? collect();
-
-                foreach ($sesis as $sesi) {
-                    $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
-                    $teksKelas .= "- Kelas {$label}\n";
-                    $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
-                    $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
-                    $teksKelas .= $this->formatSesiTeks($sesi);
-                    $nomor++;
                 }
             }
         }
