@@ -55,6 +55,7 @@ return new class extends Migration
                 'Diberhentikan',          // Merah (Masalah/Sanksi)
                 'Meninggal Dunia',        // Merah (Permanen)
             ])->default('Aktif');
+            $table->index('status');
 
             $table->timestamps();
         });
@@ -104,6 +105,7 @@ return new class extends Migration
                 'Diberhentikan',          // Merah (Masalah/Sanksi)
                 'Meninggal Dunia',        // Merah (Permanen)
             ])->default('Aktif');
+            $table->index('status');
 
             $table->timestamps();
         });
@@ -149,6 +151,8 @@ return new class extends Migration
                 'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
                 'Meninggal Dunia',        // Merah (Permanen)
             ])->default('Aktif');
+            $table->index('status');
+
             $table->timestamps();
         });
 

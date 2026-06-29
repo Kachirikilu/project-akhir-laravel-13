@@ -19,7 +19,7 @@ class MataKuliah extends Model
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
 
-    protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'sks_text'];
+    // protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'sks_text'];
 
     protected $casts = [
         'created_at' => 'date',

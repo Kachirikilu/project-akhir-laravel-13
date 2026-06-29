@@ -10,9 +10,9 @@
     <div class="flex h-full w-full flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-32 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
             @if (request()->routeIs('jadwal-mahasiswa'))
-                <livewire:all-role.kelas-management.jadwal-management :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
+                <livewire:all-role.kelas-management.jadwal-management lazy :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-mahasiswa'))
-                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
+                <livewire:all-role.kelas-management.jadwal-management.sesi-management lazy :kode_kelas="request()->route('kode_kelas')"
                     :kode_jadwal_short="request()->route('kode_jadwal_short')" :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
             @endif
         </div>

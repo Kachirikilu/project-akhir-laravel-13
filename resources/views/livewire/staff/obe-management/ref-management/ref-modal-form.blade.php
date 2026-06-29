@@ -18,7 +18,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingRef ? 'updateRef' : 'saveRef' }}($store.ref)"
+            <form x-on:submit.prevent="$store.ref.isEdit ? $wire.updateRef($store.ref) : $wire.saveRef($store.ref)"
                 enctype="multipart/form-data" id="refForm">
 
                 @include('livewire.staff.obe-management.ref-management.ref-modal-form.ref-input')

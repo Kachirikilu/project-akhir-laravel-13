@@ -36,90 +36,6 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    // public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false)
-    // {
-    //     if (! $role) {
-    //         $queryUser = User::query()->with([
-    //             'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
-    //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-    //             'dosen.tim_dosens.rps',
-    //             'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
-    //         ]);
-    //     } elseif ($role == 'admin') {
-    //         $queryUser = User::query()->with(['admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel']);
-    //         $queryUser = User::whereHas('admin');
-    //     } elseif ($role == 'dosen') {
-    //         $queryUser = User::query()->with([
-    //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-    //             'dosen.tim_dosens.rps',
-    //         ]);
-    //         $queryUser = User::whereHas('dosen');
-    //     } elseif ($role == 'mahasiswa') {
-    //         $queryUser = User::query()->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
-    //         $queryUser = User::whereHas('mahasiswa');
-
-    //         if ($jadwalId) {
-    //             $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {
-    //                 $q->where('kj_id', $jadwalId);
-    //             });
-    //         }
-    //     }
-
-    //     if (! empty($prId)) {
-    //         $queryUser->inLocationUser('prodi', $prId);
-    //     }
-
-    //     if ($this->filterStatus !== '') {
-    //         if ($this->selectedPrId) {
-    //             $queryUser->inLocationUser('prodi', $this->selectedPrId);
-    //         }
-    //         if ($this->selectedDpId) {
-    //             $queryUser->inLocationUser('departemen', $this->selectedDpId);
-    //         }
-    //         if ($this->selectedFkId) {
-    //             $queryUser->inLocationUser('fakultas', $this->selectedFkId);
-    //         }
-    //     }
-
-    //     if (! empty($this->selectedRPSId) && $role === 'dosen') {
-    //         $queryUser->whereHas('dosen.tim_dosens.rps', function ($q) {
-    //             $q->where('rps.id', $this->selectedRPSId);
-    //         });
-    //     }
-
-    //     if (!$noFilter) {
-    //         if (! empty($prId)) {
-    //             $this->buttonUserFilter($queryUser, 1);
-    //         } else {
-    //             $this->buttonUserFilter($queryUser);
-    //         }
-    //     }
-
-    //     if ($this->hasProperty('searchMode') && $this->searchMode == 'simple' && $this->filterAngkatan == '') {
-    //         $search = trim($this->search);
-    //         if (! empty($search)) {
-    //             if (! str_contains($search, '%')) {
-    //                 $queryUser->where(function ($q) use ($search) {
-    //                     $q->searchUser($search);
-    //                 });
-    //             }
-    //         }
-    //         if (! empty($this->searchAngkatan) && $role == 'mahasiswa') {
-    //             $queryUser->searchUser($this->searchAngkatan, true);
-    //         }
-    //         $this->sortFieldOrderUser($queryUser);
-    //     }
-
-    //     // filterAngkatan
-
-    //     if (! empty($this->filterAngkatan) && $role === 'mahasiswa') {
-    //         $queryUser->whereHas('mahasiswa', function ($q) {
-    //             $q->where('mahasiswas.angkatan', $this->filterAngkatan);
-    //         });
-    //     }
-
-    //     return $queryUser;
-    // }
     public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false)
     {
         if (! $role) {
@@ -173,7 +89,7 @@ trait WithUserFilters
             });
         }
 
-        if (!$noFilter) {
+        if (! $noFilter) {
             if (! empty($prId)) {
                 $this->buttonUserFilter($queryUser, 1);
             } else {
@@ -204,7 +120,7 @@ trait WithUserFilters
 
         return $queryUser;
     }
-    
+
     protected function generateAngkatanFilter(int $jumlah = 5): array
     {
         $now = Carbon::now();
@@ -400,16 +316,17 @@ trait WithUserFilters
                     '=',
                     'rnm.mahasiswa_id'
                 );
+
             return match ($this->sortField) {
-                'rekap_mhs', 'ipk_mhs', 'mutu_mhs'  => $queryUser->orderBy(
+                'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => $queryUser->orderBy(
                     'rnm.nilai',
                     $this->sortDirection
                 ),
-                'count_rps'  => $queryUser->orderBy(
+                'count_rps' => $queryUser->orderBy(
                     'rnm.count_rps',
                     $this->sortDirection
                 ),
-                'total_sks'  => $queryUser->orderBy(
+                'total_sks' => $queryUser->orderBy(
                     'rnm.total_sks',
                     $this->sortDirection
                 ),

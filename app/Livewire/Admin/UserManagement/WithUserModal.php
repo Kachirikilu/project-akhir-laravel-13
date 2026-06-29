@@ -37,7 +37,7 @@ trait WithUserModal
 
     public $selected_id_user;
 
-    public $pr_id_2;
+    // public $pr_id_2;
 
     public $user_rps_items_list = [];
 
@@ -48,6 +48,29 @@ trait WithUserModal
     protected $user_rps_modal_paginator;
 
     public $isFlyoutUser = false;
+
+    public $user_input = [
+        'role' => '',
+        // 'email' => '',
+        'password' => '',
+        'name' => '',
+        'nip' => '',
+        'nitk' => '',
+        'nidn' => '',
+        'nidk' => '',
+        'nim' => '',
+        'nik' => '',
+        'status' => '',
+        'angkatan' => '',
+        'kode_wilayah' => '',
+        'jenis_kelamin' => '',
+        'agama' => '',
+        'kode_no_hp' => '+62',
+        'no_hp_back' => '',
+        'no_hp' => '',
+        'tanggal_lahir' => '',
+        'tempat_lahir' => '',
+    ];
 
     protected $rules = [
         'email' => 'required|email',
@@ -87,7 +110,13 @@ trait WithUserModal
             $this->showUserModal = true;
             $this->showUserExcelModal = false;
         }
-        $this->showUserRPSModal = false;
+        $colors = [
+            'admin' => 'text-red-700 dark:text-red-400',
+            'dosen' => 'text-lime-700 dark:text-lime-400',
+            'mahasiswa' => 'text-cyan-700 dark:text-cyan-400',
+        ];
+        $color = $colors[$role] ?? 'text-gray-700 dark:text-gray-400';
+        $this->dispatch('prepare-add-user-modal', type: $role, color: $color);
         $this->updatedPrNameSearch($this->prNameSearch);
     }
 
@@ -116,45 +145,130 @@ trait WithUserModal
             $this->showUserRPSModal = false;
         }
         $this->showUserExcelModal = false;
-
         $this->isEditingUser = true;
 
         try {
             $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
             $this->selected_id_user = $user->id;
 
+            // $this->user_input['email'] = $user->email;
+            $this->user_input['name'] = $user->name;
+            $this->user_input['nik'] = $user->nik;
+            $this->user_input['status'] = $user->status;
+            $this->user_input['tempat_lahir'] = $user->tmt_lahir;
+            $this->user_input['tanggal_lahir'] = $user->tanggal_lahir;
+            $this->user_input['agama'] = $user->agama;
+            $this->user_input['jenis_kelamin'] = $user->gender;
+            $this->user_input['role'] = $user->role;
+
+            $formattedPhone = $this->formatNomorHP($user->no_hp);
+            $this->user_input['no_hp_back'] = $formattedPhone['no_hp_back'];
+            $this->user_input['kode_no_hp'] = $formattedPhone['kode_no_hp'];
+
+            $role = strtolower($user->role);
+
+            if ($role == 'admin') {
+                $this->user_input['nip'] = $user->admin->nip ?? null;
+                $this->user_input['nitk'] = $user->admin->nitk ?? null;
+                $this->user_input['kode_wilayah'] = $user->admin->kode_wilayah ?? null;
+            } elseif ($role == 'dosen') {
+                $this->user_input['nip'] = $user->dosen->nip ?? null;
+                $this->user_input['nidn'] = $user->dosen->nidn ?? null;
+                $this->user_input['nidk'] = $user->dosen->nidk ?? null;
+            } elseif ($role == 'mahasiswa') {
+                $this->user_input['nim'] = $user->mahasiswa->nim ?? null;
+                $this->user_input['angkatan'] = $user->mahasiswa->angkatan ?? null;
+                $this->user_input['kode_wilayah'] = $user->mahasiswa->kode_wilayah ?? null;
+            }
+
             $this->pr_id = $user->pr_id;
             if (! $isRPS) {
-                $this->pr_id_2 = $user->pr_id;
-                $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
+                // $this->pr_id_2 = $user->pr_id;
+                // $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
                 $this->prNameSearch = $user->prodi;
+                $this->fetchPr($this->prNameSearch);
+                // $this->updatedPrNameSearch($this->prNameSearch);
             }
 
             if ($user->dosen && $withRPS) {
-                $this->user_rps_id = $user->dosen->id;
+                $this->user_input_rps_id = $user->dosen->id;
                 $this->resetPage('user_rps_modal_page');
                 $this->loadDosenRPSPagination();
             }
 
             if ($user->mahasiswa && $withRPS) {
-                $this->user_rps_id = $user->mahasiswa->id;
+                $this->user_input_rps_id = $user->mahasiswa->id;
                 $this->resetPage('user_rps_modal_page');
                 $this->loadMahasiswaRPSPagination();
             }
 
             $this->roleType = strtolower($user->role);
+
+            // dump($this->pr_id);
+            // $this->syncUserStore($user, $formattedPhone['no_hp_back'] ?? '');
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
         }
     }
 
+//    public function syncUserStore($user, $noHpBack = '')
+//     {
+//         $this->dispatch('sync-user-store',
+//             email: $user->email ?? '',
+//         );
+//     }
+
+    // public function syncUserStore($user, $noHpBack = '')
+    // {
+    //     $detail = $user->admin ?? ($user->dosen ?? $user->mahasiswa);
+    //     $type = strtolower($user->role);
+    //     $colors = [
+    //         'admin' => 'text-red-700 dark:text-red-400',
+    //         'dosen' => 'text-lime-700 dark:text-lime-400',
+    //         'mahasiswa' => 'text-cyan-700 dark:text-cyan-400',
+    //     ];
+    //     $color = $colors[$type] ?? 'text-gray-700 dark:text-gray-400';
+
+    //     $this->dispatch('sync-user-store',
+    //         type: $type,
+    //         color: $color,
+    //         email: $user->email ?? '',
+    //         password: '',
+    //         name: $user->name ?? '',
+    //         nip: $user->admin->nip ?? ($user->dosen->nip ?? ''),
+    //         nitk: $user->admin->nitk ?? '',
+    //         nidn: $user->dosen->nidn ?? '',
+    //         nidk: $user->dosen->nidk ?? '',
+    //         nim: $user->mahasiswa->nim ?? '',
+    //         nik: $user->nik ?? '',
+    //         angkatan: $user->mahasiswa->angkatan ?? '',
+    //         status: $user->status ?? '',
+    //         prId: $user->pr_id ?? '',
+    //         kodePr: $user->kode_pr ?? '',
+    //         prodi: $user->prodi ?? '',
+    //         departemen: $detail?->pr_rel?->departemen_dp ?? '',
+    //         fakultas: $detail?->pr_rel?->fakultas_fk ?? '',
+    //         wilayah: $user->kode_wilayah ?? '',
+    //         rps: $user->mahasiswa?->count_rps ?? 0,
+    //         sks: $user->mahasiswa?->total_sks ?? 0,
+    //         rekap: $user->mahasiswa?->rekap_mhs ?? 0.00,
+    //         index: $user->mahasiswa?->index_mhs ?? 0.00,
+    //         mutu: $user->mahasiswa?->mutu_mhs ?? 'E',
+    //         jk: $user->gender ?? '',
+    //         agama: $user->agama ?? '',
+    //         tmtLahir: $user->tmt_lahir ?? '',
+    //         tglLahir: $user->tanggal_lahir ?? '',
+    //         noHP: $noHpBack ?? ''
+    //     );
+    // }
+
     private function loadDosenRPSPagination()
     {
-        if (empty($this->user_rps_id)) {
+        if (empty($this->user_input_rps_id)) {
             return;
         }
 
-        $dosen = Dosen::find($this->user_rps_id);
+        $dosen = Dosen::find($this->user_input_rps_id);
 
         if (! $dosen) {
             return;
@@ -162,19 +276,19 @@ trait WithUserModal
 
         $rps = RPS::whereHas('tim_dosens.dosens', function ($query) use ($dosen) {
             $query->where('dosens.id', $dosen->id);
-        })->paginate($this->user_rps_modal_page, ['*'], 'user_rps_modal_page');
+        })->paginate($this->user_input_rps_modal_page, ['*'], 'user_rps_modal_page');
 
-        $this->user_rps_items_list = $this->mapRPS($rps);
-        $this->user_rps_modal_paginator = $rps;
+        $this->user_input_rps_items_list = $this->mapRPS($rps);
+        $this->user_input_rps_modal_paginator = $rps;
     }
 
     private function loadMahasiswaRPSPagination()
     {
-        if (empty($this->user_rps_id)) {
+        if (empty($this->user_input_rps_id)) {
             return;
         }
 
-        $mahasiswa = Mahasiswa::find($this->user_rps_id);
+        $mahasiswa = Mahasiswa::find($this->user_input_rps_id);
 
         if (! $mahasiswa) {
             return;
@@ -189,13 +303,13 @@ trait WithUserModal
                     ->distinct();
             })
             ->paginate(
-                $this->user_rps_modal_page,
+                $this->user_input_rps_modal_page,
                 ['*'],
                 'user_rps_modal_page'
             );
 
-        $this->user_rps_items_list = $this->mapRPS($rps);
-        $this->user_rps_modal_paginator = $rps;
+        $this->user_input_rps_items_list = $this->mapRPS($rps);
+        $this->user_input_rps_modal_paginator = $rps;
     }
 
     public function updatedDosenRPSModalPage($page)
@@ -213,7 +327,8 @@ trait WithUserModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        if (empty($data['no_hp_back']) && ! empty($data['no_hp'])) {
+        // dd($data['no_hp_back']);
+        if (empty($data['no_hp_back']) && !empty($data['no_hp'])) {
             $data['kode_no_hp'] = null;
             $noHPLengkap = null;
         } elseif ($data['kode_no_hp'] && $data['no_hp_back']) {
@@ -514,6 +629,55 @@ trait WithUserModal
         return $validator->validate();
     }
 
+    public function formatNomorHP($noHP)
+    {
+        $result = [
+            'kode_no_hp' => '+62',
+            'no_hp_back' => '',
+        ];
+
+        if (blank($noHP)) {
+            return $result;
+        }
+        $noHP = trim($noHP);
+        $countryCodes = [
+            '62',
+            '65',
+            '60',
+            '1',
+            '44',
+            '81',
+            '82',
+            '86',
+        ];
+        if (str_starts_with($noHP, '+')) {
+            $digits = preg_replace('/\D/', '', $noHP);
+            foreach ($countryCodes as $code) {
+                if (str_starts_with($digits, $code)) {
+                    $result['kode_no_hp'] = '+'.$code;
+                    $cleaned = substr($digits, strlen($code));
+                    break;
+                }
+            }
+            $cleaned ??= $digits;
+        } else {
+            $cleaned = preg_replace('/\D/', '', $noHP);
+            if (str_starts_with($cleaned, '0')) {
+                $cleaned = substr($cleaned, 1);
+            } elseif (str_starts_with($cleaned, '62')) {
+                $cleaned = substr($cleaned, 2);
+            }
+        }
+        if (preg_match('/^(\d{1,3})(\d{1,4})?(\d{1,5})?(\d+)?$/', $cleaned, $matches)) {
+            array_shift($matches);
+            $result['no_hp_back'] = implode(' - ', array_filter($matches));
+        } else {
+            $result['no_hp_back'] = $cleaned;
+        }
+
+        return $result;
+    }
+
     private function uniqueRule(string $table, string $column)
     {
         return $this->selected_id_user
@@ -521,12 +685,12 @@ trait WithUserModal
             : Rule::unique($table, $column);
     }
 
-    public function saveUser($data)
+    public function saveUser($dataAlpine)
     {
         if (! $this->AuthCheck()) {
             return;
         }
-
+        $data = array_merge($this->user_input, $dataAlpine);
         $data['pr_id'] = $this->pr_id;
         if (empty($data['status'])) {
             $data['status'] = 'Aktif';
@@ -566,7 +730,7 @@ trait WithUserModal
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
                     'status' => $validated['status'],
-                    'no_hp' => $validated['no_hp'],
+                    'no_hp' => $validated['no_hp'] ?? null,
 
                     'agama' => $validated['agama'],
                     'tempat_lahir' => $validated['tempat_lahir'],
@@ -647,15 +811,18 @@ trait WithUserModal
         }
     }
 
-    public function updateUser($data)
+    public function updateUser($dataAlpine)
     {
         if (! $this->AuthCheck()) {
             return;
         }
-        if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
-            ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
-            $data['pr_id'] = $this->pr_id;
-        }
+        $data = array_merge($this->user_input, $dataAlpine);
+        $data['pr_id'] = $this->pr_id;
+        // if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
+        //     ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
+        //     $data['pr_id'] = $this->pr_id;
+        // }
+
         if (empty($data['status'])) {
             $data['status'] = 'Aktif';
         }
@@ -798,7 +965,7 @@ trait WithUserModal
             'tanggal_lahir.date' => 'Format Tanggal Lahir tidak valid!',
             'agama.required' => 'Agama wajib diisi!',
             'agama.in' => 'Agama yang dipilih tidak sesuai dengan kategori yang diizinkan!',
-            'jenis_kelamin.required' => 'Agama wajib diisi!',
+            'jenis_kelamin.required' => 'Gender wajib diisi!',
             'jenis_kelamin.in' => 'Gender hanya boleh Laki-laki atau Perempuan!',
         ];
     }
@@ -824,6 +991,7 @@ trait WithUserModal
                 'nim',
             ]),
             4 => $this->getErrorCount([
+                'kode_wilayah',
                 'pr_id',
                 'angkatan',
                 'status',
@@ -841,8 +1009,10 @@ trait WithUserModal
         // $keepProdi = false
     ) {
         $fields = [
+            'user_input',
             'selected_id_user',
-            'pr_id', 'pr_id_2', 'prNameSearch',
+            'pr_id', 'prNameSearch',
+            // 'pr_id', 'pr_id_2', 'prNameSearch',
             // 'email', 'password', 'name', 'nip', 'nitk',
             // 'nidn', 'nidk', 'nim', 'angkatan',
             'roleType',

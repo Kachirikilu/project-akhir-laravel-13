@@ -56,7 +56,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $mkType --}}
-            <form x-on:submit.prevent="$wire.{{ $isEditingMK ? 'updateMK' : 'saveMK' }}($store.mk)"
+            <form x-on:submit.prevent="$store.mk.isEdit ? $wire.updateMK($store.mk.getData()) : $wire.saveMK($store.mk.getData())"
                 enctype="multipart/form-data" id="mkForm">
 
                 @include('livewire.staff.mk-management.mk-modal-form.mk-input')

@@ -3,7 +3,6 @@
 namespace App\Models\Akademik;
 
 use App\Models\ProgramStudi\Prodi;
-use App\Models\Akademik\RPS;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,7 +16,7 @@ class CPL extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode'];
+    // protected $appends = ['kode'];
 
     protected $casts = [
         'created_at' => 'date',
@@ -158,11 +157,11 @@ class CPL extends Model
                     if ($kodePart) {
                         $sub->orWhere('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
                     }
-                        $sub->where(function ($low) use ($prefixPart) {
-                            
-                            // 1. CPL Level 1: Prodi
-                            $low->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('cpls.level_cpl', 1)
+                    $sub->where(function ($low) use ($prefixPart) {
+
+                        // 1. CPL Level 1: Prodi
+                        $low->orWhere(function ($q) use ($prefixPart) {
+                            $q->where('cpls.level_cpl', 1)
                                 ->whereHas('prodis', function ($pro) use ($prefixPart) {
                                     $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                                         ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
@@ -172,31 +171,31 @@ class CPL extends Model
                                                 ->orWhereRaw("REPLACE(CONCAT(CASE WHEN prodis.strata = 'Sarjana' THEN 'S1' WHEN prodis.strata = 'Magister' THEN 'S2' WHEN prodis.strata = 'Doktor' THEN 'S3' ELSE '' END, COALESCE(NULLIF(prodis.kode_pr, ''), NULLIF(departemens.kode_dp, ''), NULLIF(fakultas.kode_fk, ''), 'UNI')), '-', '') LIKE ?", [$normalizedPrefix.'%']);
                                         });
                                 });
-                            });
-
-                            // 2. CPL Level 2: Departemen
-                            $low->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('cpls.level_cpl', 2)
-                                ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
-                                    $dp->where('kode_dp', 'LIKE', $prefixPart . '%');
-                                });
-                            });
-
-                            // 3. CPL Level 3: Fakultas
-                            $low->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('cpls.level_cpl', 3)
-                                ->whereHas('prodis.dp_rel.fk_rel', function ($fk) use ($prefixPart) {
-                                    $fk->where('kode_fk', 'LIKE', $prefixPart . '%');
-                                });
-                            });
-
-                            // 4. CPL Level 4: Universitas (UNI)
-                            $low->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('cpls.level_cpl', 4);
-                                if ($prefixPart !== 'UNI') {
-                                }
-                            });
                         });
+
+                        // 2. CPL Level 2: Departemen
+                        $low->orWhere(function ($q) use ($prefixPart) {
+                            $q->where('cpls.level_cpl', 2)
+                                ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
+                                    $dp->where('kode_dp', 'LIKE', $prefixPart.'%');
+                                });
+                        });
+
+                        // 3. CPL Level 3: Fakultas
+                        $low->orWhere(function ($q) use ($prefixPart) {
+                            $q->where('cpls.level_cpl', 3)
+                                ->whereHas('prodis.dp_rel.fk_rel', function ($fk) use ($prefixPart) {
+                                    $fk->where('kode_fk', 'LIKE', $prefixPart.'%');
+                                });
+                        });
+
+                        // 4. CPL Level 4: Universitas (UNI)
+                        $low->orWhere(function ($q) use ($prefixPart) {
+                            $q->where('cpls.level_cpl', 4);
+                            if ($prefixPart !== 'UNI') {
+                            }
+                        });
+                    });
                 });
             }
             $q->orWhere('cpls.kode_cpl', 'like', $searchTerm);

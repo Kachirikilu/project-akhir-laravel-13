@@ -8,17 +8,14 @@ use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
-use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class ProgramStudiManagement extends Component
 {
@@ -26,15 +23,11 @@ class ProgramStudiManagement extends Component
     use HasToast;
     use RekapCapaian;
     use WithDepartemenFilters;
-    use WithDepartemenSearchFilters;
     use WithFakultasFilters;
-    use WithFakultasSearchFilters;
     use WithPagination;
     use WithProdiDelete;
     use WithProdiExcel;
     use WithProdiFilters;
-    use WithProdiModal;
-    use WithProdiSearchFilters;
 
     public $perPage = 8;
 
@@ -52,7 +45,11 @@ class ProgramStudiManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshProdisList',
+    public $selectedDpId;
+
+    public $selectedFkId;
+
+    protected $listeners = ['refresh-table' => 'refreshProdisList', 'refresh-table' => 'refresh-data-prodi',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -71,6 +68,31 @@ class ProgramStudiManagement extends Component
         $this->switchTable = $switchTable;
     }
 
+    #[On('switch-table-updated')]
+    public function updateSwitchTable($switchTable)
+    {
+        $this->switchTable = $switchTable;
+    }
+
+    #[On('selected-dp-id-updated')]
+    public function updateSelectedDpId($selectedDpId)
+    {
+        $this->selectedDpId = $selectedDpId;
+    }
+
+    #[On('selected-fk-id-updated')]
+    public function updateSelectedFkId($selectedFkId)
+    {
+        $this->selectedFkId = $selectedFkId;
+    }
+
+    #[On('refresh-data-pr')]
+    #[On('refresh-table')]
+    public function refreshProdisList()
+    {
+        $this->resetPage();
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -86,11 +108,6 @@ class ProgramStudiManagement extends Component
     public function resetInputFilter()
     {
         $this->reset(['search', 'filterPr']);
-        $this->resetPage();
-    }
-
-    public function refreshProdisList()
-    {
         $this->resetPage();
     }
 
@@ -168,8 +185,8 @@ class ProgramStudiManagement extends Component
     public function render()
     {
         try {
-            $this->inputDpFilter();
-            $this->inputFkFilter();
+            // $this->inputDpFilter();
+            // $this->inputFkFilter();
 
             $queryPr = collect();
             $queryDp = collect();
@@ -191,16 +208,16 @@ class ProgramStudiManagement extends Component
             // SOFT DELETE
             // =========================
             if ($this->showDeleted && $this->AuthCheck('admin')) {
-                            if ($this->switchTable === 'fakultas') {
-                $queryFk->onlyTrashed();
+                if ($this->switchTable === 'fakultas') {
+                    $queryFk->onlyTrashed();
 
-            } elseif ($this->switchTable === 'departemen') {
-                $queryDp->onlyTrashed();
+                } elseif ($this->switchTable === 'departemen') {
+                    $queryDp->onlyTrashed();
 
-            } else {
-                $queryPr->onlyTrashed();
+                } else {
+                    $queryPr->onlyTrashed();
 
-            }
+                }
             }
 
             if ($this->switchTable === 'fakultas') {

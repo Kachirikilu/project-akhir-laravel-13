@@ -280,7 +280,7 @@
                                 {{-- Error Baris --}}
                                 @if (!empty($rowUserErrors[$i]))
                                     <tr>
-                                        <td colspan="14"
+                                        <td colspan="19"
                                             class="px-4 py-1 bg-red-50 dark:bg-red-950/30 text-red-600 text-[10px] border italic">
                                             ⚠️
                                             @foreach ($rowUserErrors[$i] as $fieldErrors)

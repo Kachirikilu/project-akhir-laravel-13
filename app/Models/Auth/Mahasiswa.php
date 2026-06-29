@@ -10,10 +10,10 @@ use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Mahasiswa extends Model
 {
@@ -48,9 +48,9 @@ class Mahasiswa extends Model
         'angkatan' => 'integer',
     ];
 
-    protected $appends = [
-        'status_full',
-    ];
+    // protected $appends = [
+    //     'status_full',
+    // ];
 
     public function user(): BelongsTo
     {
@@ -107,19 +107,21 @@ class Mahasiswa extends Model
     {
         return Attribute::get(fn () => number_format($this->rekap_nilai?->nilai_ipk ?? 0, 2, '.', ''));
     }
+
     protected function mutuMhs(): Attribute
     {
         return Attribute::get(fn () => $this->rekap_nilai?->nilai_mutu ?? 'E');
     }
+
     protected function countRps(): Attribute
     {
         return Attribute::get(fn () => $this->rekap_nilai?->count_rps ?? 0);
     }
+
     protected function totalSks(): Attribute
     {
         return Attribute::get(fn () => $this->rekap_nilai?->total_sks ?? 0);
     }
-
 
     protected function angkatanFull(): Attribute
     {
@@ -157,12 +159,14 @@ class Mahasiswa extends Model
             return $phone;
         });
     }
+
     protected function waAktif(): Attribute
     {
         return Attribute::get(function () {
             return $this->is_wa_active;
         });
     }
+
     protected function noWaFull(): Attribute
     {
         return Attribute::get(function () {
@@ -181,8 +185,10 @@ class Mahasiswa extends Model
             $rest = substr($body, 3);
             if ($rest !== false && $rest !== '') {
                 $chunks = str_split($rest, 4);
+
                 return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
             }
+
             return '+'.$countryCode.'-'.$firstThree;
         });
     }
@@ -197,7 +203,7 @@ class Mahasiswa extends Model
         $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+        return $query->where(function ($q) use ($search, $searchTerm) {
             $fields = ['name', 'nim', 'nik', 'status', 'angkatan', 'kode_wilayah'];
             foreach ($fields as $field) {
                 $q->orWhere("mahasiswas.$field", 'like', $searchTerm);
@@ -206,7 +212,7 @@ class Mahasiswa extends Model
             if (is_numeric($search)) {
                 $q->orWhere('mahasiswas.id', $search);
             }
-            $q->orWhereHas('user', function ($u) use ($searchTerm, $searchLower) {
+            $q->orWhereHas('user', function ($u) use ($searchTerm) {
                 $u->where('email', 'like', $searchTerm);
             });
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {

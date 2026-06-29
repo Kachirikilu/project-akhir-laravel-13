@@ -33,19 +33,19 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = [
-        'profile_photo_url',
-        'name',
-        'role',
-        'identity1',
-        'identity2',
-        'identity3',
-        'nik',
-        'status',
-        'status_full',
-        'kode_wilayah',
-        'wilayah',
-    ];
+    // protected $appends = [
+    //     'profile_photo_url',
+    //     'name',
+    //     'role',
+    //     'identity1',
+    //     'identity2',
+    //     'identity3',
+    //     'nik',
+    //     'status',
+    //     'status_full',
+    //     'kode_wilayah',
+    //     'wilayah',
+    // ];
 
     /**
      * Get the attributes that should be cast.
@@ -126,8 +126,8 @@ class User extends Authenticatable
 
     private function getProfile()
     {
-        return data_get($this, 'admin') 
-            ?? data_get($this, 'dosen') 
+        return data_get($this, 'admin')
+            ?? data_get($this, 'dosen')
             ?? data_get($this, 'mahasiswa');
     }
 
@@ -162,20 +162,32 @@ class User extends Authenticatable
             }
 
             if (array_key_exists('admin', $this->attributes) || isset($this->admin)) {
-                if (data_get($this, 'admin') !== null) return 'Admin';
+                if (data_get($this, 'admin') !== null) {
+                    return 'Admin';
+                }
             }
             if (array_key_exists('dosen', $this->attributes) || isset($this->dosen)) {
-                if (data_get($this, 'dosen') !== null) return 'Dosen';
+                if (data_get($this, 'dosen') !== null) {
+                    return 'Dosen';
+                }
             }
             if (array_key_exists('mahasiswa', $this->attributes) || isset($this->mahasiswa)) {
-                if (data_get($this, 'mahasiswa') !== null) return 'Mahasiswa';
+                if (data_get($this, 'mahasiswa') !== null) {
+                    return 'Mahasiswa';
+                }
             }
 
             $profile = $this->getProfile();
             if ($profile) {
-                if (data_get($profile, 'nim')) return 'Mahasiswa';
-                if (data_get($profile, 'nidn') || data_get($profile, 'nidk')) return 'Dosen';
-                if (data_get($profile, 'nitk') || data_get($profile, 'nip')) return 'Admin';
+                if (data_get($profile, 'nim')) {
+                    return 'Mahasiswa';
+                }
+                if (data_get($profile, 'nidn') || data_get($profile, 'nidk')) {
+                    return 'Dosen';
+                }
+                if (data_get($profile, 'nitk') || data_get($profile, 'nip')) {
+                    return 'Admin';
+                }
             }
 
             return 'User';
@@ -199,9 +211,10 @@ class User extends Authenticatable
     protected function identity1(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->admin, 'nip') 
-                ?? data_get($this->dosen, 'nip') 
+            $value = data_get($this->admin, 'nip')
+                ?? data_get($this->dosen, 'nip')
                 ?? data_get($this->mahasiswa, 'nim');
+
             return empty($value) ? null : $value;
         });
     }
@@ -222,7 +235,7 @@ class User extends Authenticatable
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
-            $value = data_get($this->admin, 'nitk') 
+            $value = data_get($this->admin, 'nitk')
                 ?? data_get($this->dosen, 'nidn');
 
             return empty($value) ? null : $value;
@@ -280,6 +293,7 @@ class User extends Authenticatable
                 if (empty($value)) {
                     return null;
                 }
+
                 return Carbon::parse($value)->format('Y-m-d');
             }
         );
@@ -291,8 +305,9 @@ class User extends Authenticatable
             get: function () {
                 $tanggal = data_get($this, 'tanggal_lahir');
                 if (empty($tanggal)) {
-                    return null; 
+                    return null;
                 }
+
                 return Carbon::parse($tanggal)->translatedFormat('j F Y');
             }
         );
@@ -351,8 +366,10 @@ class User extends Authenticatable
             $rest = substr($body, 3);
             if ($rest !== false && $rest !== '') {
                 $chunks = str_split($rest, 4);
+
                 return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
             }
+
             return '+'.$countryCode.'-'.$firstThree;
         });
     }
@@ -379,7 +396,6 @@ class User extends Authenticatable
         });
     }
 
- 
     protected function status(): Attribute
     {
         return Attribute::get(function () {
@@ -396,6 +412,7 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->getProfile();
+
             return data_get($profile, 'pr_id', 0);
         });
     }
@@ -473,7 +490,7 @@ class User extends Authenticatable
     protected function fakultas(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.fakkultas'); 
+            return data_get($this->getProfile(), 'pr_rel.fakkultas');
         });
     }
 
@@ -580,17 +597,17 @@ class User extends Authenticatable
                     });
                 }
 
-                $q->orWhereHas('admin.pr_rel', function ($pr) use ($search) {
-                    $pr->searchProdi($search);
-                });
+                // $q->orWhereHas('admin.pr_rel', function ($pr) use ($search) {
+                //     $pr->searchProdi($search);
+                // });
 
-                $q->orWhereHas('dosen.pr_rel', function ($pr) use ($search) {
-                    $pr->searchProdi($search);
-                });
+                // $q->orWhereHas('dosen.pr_rel', function ($pr) use ($search) {
+                //     $pr->searchProdi($search);
+                // });
 
-                $q->orWhereHas('mahasiswa.pr_rel', function ($pr) use ($search) {
-                    $pr->searchProdi($search);
-                });
+                // $q->orWhereHas('mahasiswa.pr_rel', function ($pr) use ($search) {
+                //     $pr->searchProdi($search);
+                // });
 
             } else {
                 $q->whereHas('mahasiswa', function ($mhs) use ($searchTerm) {

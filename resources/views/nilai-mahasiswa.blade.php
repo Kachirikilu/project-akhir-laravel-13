@@ -11,9 +11,9 @@
     <div class="flex h-full w-full flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-32 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
             @if(request()->routeIs('nilai-mahasiswa'))
-                <livewire:staff.nilai-management.nilai-mahasiswa-management :isNilaiMhs="true" :nim="Auth::user()->mahasiswa->nim" />
+                <livewire:staff.nilai-management.nilai-mahasiswa-management lazy :isNilaiMhs="true" :nim="Auth::user()->mahasiswa->nim" />
             @elseif (request()->routeIs('rps-mahasiswa'))
-                <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management :isNilaiMhs="true" :nim="Auth::user()->mahasiswa->nim" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
+                <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management lazy :isNilaiMhs="true" :nim="Auth::user()->mahasiswa->nim" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
             @endif
         </div>
     </div>

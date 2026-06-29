@@ -87,16 +87,22 @@ document.addEventListener("alpine:init", () => {
 
             this.deskripsi = deskripsi;
             this.bahan_kajian = bahanKajian;
+        },
 
-            // this.nama_pr_search = namaProdi;
-            // this.pr_id = prId;
-            // this.pr_items = kodePr;
-            // this.pr_items = {
-            //     "kode": kodePr,
-            //     "slot1": namaProdi,
-            //     // "slot2": namaDepartemen,
-            //     // "slot3": namaFakultas,
-            // };
+        getData() {
+            return {
+                type_modal: this.typeModal,
+                nama_mk: this.nama_mk,
+                kode_blok: this.kode_blok,
+                digit_semester: this.digit_semester,
+                digit_mk: this.digit_mk,
+                semester: this.semester,
+                sks_kuliah: this.sks_kuliah,
+                tipe_sks: this.tipe_sks,
+                is_wajib: this.is_wajib,
+                deskripsi: this.deskripsi,
+                bahan_kajian: this.bahan_kajian,
+            };
         },
 
         setDeleteMK(namaMK, kodeMKDelete, forceDelete) {

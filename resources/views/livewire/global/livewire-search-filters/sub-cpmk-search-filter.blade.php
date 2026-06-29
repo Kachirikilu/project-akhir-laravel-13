@@ -1,0 +1,18 @@
+@include('livewire.global.search-and-filters.secondary-search', [
+    'inputXFilterString' => 'inputSCPMKFilter',
+    'xSearchResultsString' => 'scpmkSearchResults',
+    'iconString' => 'academic-cap',
+    'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
+    'xSearchQueryString' => 'scpmkSearchQuery',
+    'selectedXId' => $selectedSCPMKId,
+    'selectedXName' => $scpmk_name,
+    'resetXFilter' => 'resetSCPMKFilter()',
+    'xSearchQuery' => $scpmkSearchQuery,
+    'xSearchResults' => $scpmkSearchResults,
+    'selectXForFilterString' => 'selectSCPMKForFilter',
+    'typeXString' => 'deskripsi',
+    'typeX2String' => 'kode',
+    'typeX3String' => 'metode',
+    'typeX4String' => 'bobot_text',
+    'unfoundString' => 'Tidak ada Sub-CPMK ditemukan!',
+])

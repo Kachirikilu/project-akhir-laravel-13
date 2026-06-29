@@ -13,8 +13,9 @@ class SubCPMK extends Model
     use SoftDeletes;
 
     public static array $UTS_FIELDS = [];
+
     public static array $UAS_FIELDS = [];
-    
+
     protected static function booted()
     {
         self::$UTS_FIELDS = config('app.uts_fields', ['UTS', 'EVALUASI AWAL']);
@@ -25,7 +26,7 @@ class SubCPMK extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode', 'tugas', 'w_tugas', 'w_mandiri'];
+    // protected $appends = ['kode', 'tugas', 'w_tugas', 'w_mandiri'];
 
     protected $casts = [
         'created_at' => 'date',
@@ -107,6 +108,7 @@ class SubCPMK extends Model
             if ($bobot % 1 == 0) {
                 return (int) $bobot;
             }
+
             return number_format($bobot, 2);
         });
     }
@@ -122,7 +124,7 @@ class SubCPMK extends Model
         $searchTerm = '%'.$search.'%';
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean, $withBobot) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchClean, $withBobot) {
 
             if ($withBobot == false) {
                 $q->where('sub_cpmks.kode_scpmk', 'like', $searchTerm)

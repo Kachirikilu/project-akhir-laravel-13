@@ -44,7 +44,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingCPL ? 'updateCPL' : 'saveCPL' }}($store.cpl)"
+            <form x-on:submit.prevent="$store.cpl.isEdit ? $wire.updateCPL($store.cpl) : $wire.saveCPL($store.cpl)"
                 enctype="multipart/form-data" id="cplForm">
 
                 @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input')

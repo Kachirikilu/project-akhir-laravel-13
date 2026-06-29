@@ -39,7 +39,7 @@
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
 
-            <form x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)"
+            <form x-on:submit.prevent="$store.user.isEdit ? $wire.updateUser($store.user) : $wire.saveUser($store.user)"
                 enctype="multipart/form-data" id="userForm">
 
                 @include('livewire.admin.user-management.user-modal-form.user-input')

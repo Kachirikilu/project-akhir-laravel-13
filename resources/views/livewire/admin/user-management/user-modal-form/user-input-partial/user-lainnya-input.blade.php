@@ -16,6 +16,7 @@
             <div class="col-span-3 sm:col-span-2">
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'user',
+                    'isLivewire' => 1,
                     'noLabel' => 1,
                     'modelString' => 'kode_no_hp',
                     'valueString' => '+62',
@@ -26,6 +27,7 @@
             <div class="col-span-9 sm:col-span-10">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'user',
+                    'isLivewire' => 1,
                     'noLabel' => 1,
                     'modelString' => 'no_hp_back',
                     'isNoHP' => 1,
@@ -45,8 +47,8 @@
     </div>
 
     @include('livewire.global.modal-form.input-form', [
-        // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
+        'isLivewire' => 1,
         'modelString' => 'tempat_lahir',
         'iconString' => 'map-pin',
         'placeholder' => 'Contoh: Kota Palembang',
@@ -55,8 +57,8 @@
     ])
 
     @include('livewire.global.modal-form.input-form', [
-        // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
+        'isLivewire' => 1,
         'modelString' => 'tanggal_lahir',
         'iconString' => 'calendar',
         'placeholder' => 'Contoh: Kota Palembang',

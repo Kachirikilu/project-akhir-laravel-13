@@ -7,8 +7,8 @@ use App\Models\Akademik\CPMK;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
-use App\Models\Akademik\TimDosen;
 use App\Models\Akademik\SubCPMK;
+use App\Models\Akademik\TimDosen;
 use App\Models\Auth\Dosen;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Seeder;
@@ -18,7 +18,7 @@ class RPSSeeder extends Seeder
 {
     public function run(): void
     {
-        $targetRps = 16;
+        $targetRps = 1024;
         $batchSize = 256;
 
         // =========================
@@ -559,48 +559,47 @@ class RPSSeeder extends Seeder
             );
         }
 
-
         // =========================
         // TIM DOSEN (NEW STRUCTURE)
         // =========================
-        
+
         // 1. Buat Tim baru untuk RPS ini
-        $prodis = $mk->prodis; 
+        $prodis = $mk->prodis;
         $jumlahTim = rand(1, max(1, $prodis->count()));
         $selectedProdis = $prodis->shuffle()->take($jumlahTim);
 
         foreach ($selectedProdis as $index => $prodi) {
-            
+
             // 2. Buat Tim
-            $namaTim = "Tim " . ($mk->nama_mk) . " " . ($prodi->nama);
-            
+            $namaTim = 'Tim '.($mk->nama_mk).' '.($prodi->nama);
+
             $tim = TimDosen::create([
                 'kode_tim_dosen' => $this->generateUniqueKode(TimDosen::class, 'kode_tim_dosen'),
-                'pr_id'      => $prodi->id,
-                'nama_tim'   => $namaTim,
+                'pr_id' => $prodi->id,
+                'nama_tim' => $namaTim,
                 'sort_order' => $index + 1,
             ]);
 
             // 3. Hubungkan Tim ke RPS
             $rps->tim_dosens()->attach($tim->id, [
-                // 'nama_tim'   => $namaTim, 
+                // 'nama_tim'   => $namaTim,
                 'sort_order' => $index + 1,
                 'created_at' => now(),
             ]);
 
             // 4. Tambahkan Dosen ke Tim tersebut
             $dosens = $prodi->dosens()->inRandomOrder()->take(rand(1, 3))->get();
-            
+
             foreach ($dosens as $i => $dsn) {
                 $pertemuanRange = ($i == 0) ? range(1, 8) : range(9, 16);
 
                 $tim->dosens()->attach($dsn->id, [
-                    'peran'        => $i == 0 ? 'Koordinator' : 'Pengajar',
-                    'is_ketua'     => $i == 0,
+                    'peran' => $i == 0 ? 'Koordinator' : 'Pengajar',
+                    'is_ketua' => $i == 0,
                     'pertemuan_ke' => json_encode($pertemuanRange),
-                    'sort_order'   => $i + 1,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
+                    'sort_order' => $i + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }

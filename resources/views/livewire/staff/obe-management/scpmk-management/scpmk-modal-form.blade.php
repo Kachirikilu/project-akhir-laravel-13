@@ -20,7 +20,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingSCPMK ? 'updateSCPMK' : 'saveSCPMK' }}($store.scpmk)"
+            <form x-on:submit.prevent="$store.scpmk.isEdit ? $wire.updateSCPMK($store.scpmk) : $wire.saveSCPMK($store.scpmk)"
                 enctype="multipart/form-data" id="scpmkForm">
 
                 @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-input')

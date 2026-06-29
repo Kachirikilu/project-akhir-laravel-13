@@ -12,8 +12,6 @@
         'alpine' => 'prodi',
         'nameXString' => 'Nama Program Studi',
         'modelString' => 'nama_pr',
-        // 'typeString' => 'text',
-        // 'colorIcon' => $colorIcon,
         'iconString' => 'academic-cap',
         'placeholder' => 'Masukkan nama Program Studi',
         'message' => $errors->first('nama_pr'),
@@ -77,7 +75,6 @@
                     'modelString' => 'kode_pr',
                     'iconString' => 'hashtag',
                     'placeholder' => 'Masukkan 3 huruf Kode Program Studi',
-                    // 'message' => $errors->first('kode_pr'),
                     'isKode' => 3,
                     'isFocusSelect' => 1,
                 ])

@@ -26,7 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingKelas ? 'updateKelas' : 'saveKelas' }}($store.kelas)"
+            <form x-on:submit.prevent="$store.kelas.isEdit ? $wire.updateKelas($store.kelas) : $wire.saveKelas($store.kelas)"
                 enctype="multipart/form-data" id="kelasForm">
 
                 @include('livewire.all-role.kelas-management.kelas-modal-form.kelas-input')

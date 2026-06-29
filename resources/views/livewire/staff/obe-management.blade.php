@@ -62,5 +62,8 @@
     @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-delete')
     @include('livewire.admin.user-management.user-modal-delete')
 
+    <livewire:admin.user-management.modal-user-management lazy />
+    <livewire:admin.user-management.delete-user-management lazy />
+
 
 </div>

@@ -66,10 +66,10 @@ document.addEventListener("alpine:init", () => {
             this.nama_dp = departemen;
             this.fk_id = idFk;
             this.nama_fk_search = fakultas;
-            this.kode_dp = kodePr;
+            this.kode_dp = kodeDp;
 
             this.nama_fk = fakultas;
-            this.kode_fk = kodePr;
+            this.kode_fk = kodeFk;
 
             this.dp_items = {
                 id: idDp,
@@ -82,6 +82,26 @@ document.addEventListener("alpine:init", () => {
                 id: idFk,
                 kode: kodeFk,
                 slot1: fakultas,
+            };
+        },
+        getData() {
+            return {
+                nama_pr: this.nama_pr,
+                dp_id: this.dp_id,
+                nama_dp_search: this.nama_dp_search,
+                kode_pr: this.kode_pr,
+                strata: this.strata,
+
+                nama_dp: this.nama_dp,
+                fk_id: this.fk_id,
+                nama_fk_search: this.nama_fk_search,
+                kode_dp: this.kode_dp,
+
+                nama_fk: this.nama_fk,
+                kode_fk: this.kode_fk,
+
+                dp_items: this.dp_items,
+                fk_items: this.fk_items,
             };
         },
 

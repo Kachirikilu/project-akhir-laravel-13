@@ -2,7 +2,7 @@
     <h2 class="text-xl sm:text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Mata Kuliah</h2>
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" size="sm"
+            <flux:button variant="primary" icon="plus" size="sm" wire:click="$dispatch('trigger-mk-modal')"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out"
                 wire:target="addMK">
                 Tambah Mata Kuliah
@@ -22,14 +22,12 @@
                         $store.mk?.setColor('text-emerald-700 dark:text-emerald-400');
                         $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
-                        $wire.addMK(1);
+                        $dispatch('open-add-mk-modal', { type: 1 });
                     "
                     class="text-xs sm:text-sm cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 active:!bg-emerald-200 dark:active:!bg-emerald-900">
                     <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7 whitespace-nowrap">Program Studi</span>
-                        <flux:icon wire:loading wire:target="addMK(1)" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -42,14 +40,12 @@
                         $store.mk?.setColor('text-amber-700 dark:text-amber-400');
                         $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
-                        $wire.addMK(2);
+                        $dispatch('open-add-mk-modal', { type: 2 });
                     "
                     class="text-xs sm:text-sm cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30 active:!bg-amber-200 dark:active:!bg-amber-900">
                     <flux:icon name="book-open" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7 whitespace-nowrap">Departemen</span>
-                        <flux:icon wire:loading wire:target="addMK(2)" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -62,14 +58,12 @@
                         $store.mk?.setColor('text-indigo-700 dark:text-indigo-400');
                         $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
-                        $wire.addMK(3);
+                        $dispatch('open-add-mk-modal', { type: 3 });
                     "
                     class="text-xs sm:text-sm cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30 active:!bg-indigo-200 dark:active:!bg-indigo-900">
                     <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7 whitespace-nowrap">Fakultas</span>
-                        <flux:icon wire:loading wire:target="addMK(3)" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -82,14 +76,12 @@
                         $store.mk?.setColor('text-red-700 dark:text-red-400');
                         $store.mk?.reset(1);
                         $flux.modal('mk-modal').show();
-                        $wire.addMK(4);
+                        $dispatch('open-add-mk-modal', { type: 4 });
                     "
                     class="text-xs sm:text-sm cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900">
                     <flux:icon name="globe-alt" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span class="mr-7 whitespace-nowrap">Universitas</span>
-                        <flux:icon wire:loading wire:target="addMK(4)" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
             </flux:menu>

@@ -4,14 +4,10 @@ namespace App\Livewire\Staff;
 
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKExcel;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
-use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -22,16 +18,11 @@ class MataKuliahManagement extends Component
 {
     use HasSortir;
     use HasToast;
-    use WithDepartemenSearchFilters;
-    use WithFakultasSearchFilters;
     use WithMKDelete;
     use WithMKExcel;
     use WithMKFilters;
-    use WithMKModal;
     use WithMKSearchFilters;
     use WithPagination;
-    use WithProdiSearchFilters;
-
 
 
     public $perPage = 8;
@@ -50,7 +41,7 @@ class MataKuliahManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshMKList',
+    protected $listeners = ['refresh-table' => 'refreshMksList', 'refresh-data-mk' => 'refreshMksList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -70,6 +61,37 @@ class MataKuliahManagement extends Component
         $this->switchTable = $switchTable;
     }
 
+    #[On('switch-table-updated')]
+    public function updateSwitchTable($switchTable)
+    {
+        $this->switchTable = $switchTable;
+    }
+
+    #[On('selected-pr-id-updated')]
+    public function updateSelectedPrId($selectedPrId)
+    {
+        $this->selectedPrId = $selectedPrId;
+    }
+
+    #[On('selected-dp-id-updated')]
+    public function updateSelectedDpId($selectedDpId)
+    {
+        $this->selectedDpId = $selectedDpId;
+    }
+
+    #[On('selected-fk-id-updated')]
+    public function updateSelectedFkId($selectedFkId)
+    {
+        $this->selectedFkId = $selectedFkId;
+    }
+
+    #[On('refresh-data-mk')]
+    #[On('refresh-table')]
+    public function refreshMksList()
+    {
+        $this->resetPage();
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -85,11 +107,6 @@ class MataKuliahManagement extends Component
     public function resetInputFilter()
     {
         $this->reset(['search', 'filterMK']);
-        $this->resetPage();
-    }
-
-    public function refreshMKList()
-    {
         $this->resetPage();
     }
 
@@ -130,9 +147,9 @@ class MataKuliahManagement extends Component
 
     public function render()
     {
-        $this->inputPrFilter();
-        $this->inputDpFilter();
-        $this->inputFkFilter();
+        // $this->inputPrFilter();
+        // $this->inputDpFilter();
+        // $this->inputFkFilter();
 
         try {
             $queryMK = $this->inputMKSearch();

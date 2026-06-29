@@ -26,7 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingSesi ? 'updateSesi' : 'saveSesi' }}($store.sesi)"
+            <form x-on:submit.prevent="$store.sesi.isEdit ? $wire.updateSesi($store.sesi) : $wire.saveSesi($store.sesi)"
                 enctype="multipart/form-data" id="sesiForm">
 
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input')

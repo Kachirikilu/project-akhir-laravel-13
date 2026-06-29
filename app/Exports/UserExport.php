@@ -237,7 +237,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->status ?? '', // I
                 $user->prodi ?? '', // J
                 $user->tmt_lahir ?? '', // K
-                $user->tgl_lahir ?? '', // L
+                $user->tanggal_lahir ?? '', // L
                 $user->gender ?? '', // M
                 $user->agama ?? '', // N
                 $user->no_hp ?? '', // O

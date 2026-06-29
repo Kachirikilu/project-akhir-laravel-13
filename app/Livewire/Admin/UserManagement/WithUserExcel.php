@@ -241,7 +241,7 @@ trait WithUserExcel
                         'jenis_kelamin' => $data['jenis kelamin'] ?? $data['gender'] ?? '',
                         'tempat_lahir' => $data['tempat lahir'] ?? $data['tmt lahir'] ?? '',
                         'tanggal_lahir' => $data['tanggal lahir'] ?? $data['tgl lahir'] ?? '',
-                        'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus']) ?? 'IDL'),
+                        'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus'] ?? '')),
                         'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
                         'role' => ucfirst($data['role'] ?? ''),
                     ];

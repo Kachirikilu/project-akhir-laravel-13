@@ -1,9 +1,9 @@
 <div x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
-     @table-switched.window="
+    @table-switched.window="
         activeTable = $event.detail.switchTable;
         window.history.pushState({}, '', $event.detail.targetUrl);
      "
-     @navigate.window="
+    @navigate.window="
         let segment = window.location.pathname.split('/').pop();
         activeTable = (segment === 'mata-kuliah-management' || segment === '') ? '' : segment;
      "
@@ -17,6 +17,8 @@
         @include('livewire.staff.mk-management.mk-table')
     </div>
 
-    @include('livewire.staff.mk-management.mk-modal-form')
-    @include('livewire.staff.mk-management.mk-modal-delete')
+    <livewire:staff.mk-management.modal-mk-management lazy />
+    <livewire:staff.mk-management.delete-mk-management lazy />
+    {{-- @include('livewire.staff.mk-management.mk-modal-form')
+    @include('livewire.staff.mk-management.mk-modal-delete') --}}
 </div>

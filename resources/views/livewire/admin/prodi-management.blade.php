@@ -30,8 +30,10 @@
         ])
     </div>
 
-    @include('livewire.admin.prodi-management.prodi-modal-form')
-    @include('livewire.admin.prodi-management.prodi-modal-delete')
+    <livewire:admin.prodi-management.modal-prodi-management lazy />
+    <livewire:admin.prodi-management.delete-prodi-management lazy />
+    {{-- @include('livewire.admin.prodi-management.prodi-modal-form')
+    @include('livewire.admin.prodi-management.prodi-modal-delete') --}}
 </div>
 
 {{-- <script defer>

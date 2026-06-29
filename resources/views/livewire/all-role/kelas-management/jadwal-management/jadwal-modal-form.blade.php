@@ -26,8 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form
-                x-on:submit.prevent="$wire.{{ $isEditingJadwal ? 'updateJadwal' : 'saveJadwal' }}($store.jadwal, {{ $kelas->id }})"
+            <form x-on:submit.prevent="$store.jawdal.isEdit ? $wire.updateJadwal($store.jawdal, {{ $kelas->id }}) : $wire.saveJadwal($store.jawdal, {{ $kelas->id }})"
                 enctype="multipart/form-data" id="jadwalForm">
 
                 @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form.jadwal-input')

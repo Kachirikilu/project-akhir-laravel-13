@@ -1,19 +1,25 @@
+@php
+    $alpineState = $alpine ?? 'config';
+    $isLivewireState = $isLivewire ?? null;
+    $modelLivewire = "{$alpineState}_input.{$modelString}";
+@endphp
+
 <div x-data="{
     itemsAll: @if ($pathString ?? null) @entangle($pathString).live
-            @else
-                null @endif
+    @else
+        null @endif,
+    @if ($isLivewireState) valueInput: @entangle($modelLivewire).live, @endif
 }"
-    x-effect="
-        if($store.{{ $alpine ?? 'config' }}?.isEdit === 0){
-            @if ($valueString ?? null)
-                $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $valueString }}';
-            @else
-                $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
-            @endif
-        }
-    
-    "
->
+    @if ($isLivewireState) x-effect="
+            if ($store.{{ $alpineState }}?.isEdit === 0) {
+                $store.{{ $alpineState }}.{{ $modelString }} =
+                    valueInput !== '' && valueInput != null
+                        ? valueInput
+                        : '{{ $valueString ?? '' }}';
+            } else {
+                $store.{{ $alpineState }}.{{ $modelString }} = valueInput;
+            }
+        " @endif>
 
     @include('livewire.global.modal-form.partial.label')
 
@@ -39,17 +45,12 @@
                 "
 
             @elseif($modelString ?? null)
-
-                @if ($valueString ?? null)
-                    value="{{ $valueString }}"
-                @else
                     x-bind:value="
                     $store.{{ $alpine }}
                     ?.{{ $modelString }}
                 " @endif
-            @endif
-        placeholder="{{ $placeholder ?? '--' }}"
-        class="text-xs sm:text-sm 
+            placeholder="{{ $placeholder ?? '--' }}"
+            class="text-xs sm:text-sm 
                 focus:ring-2 focus:ring-[var(--hover-table-color)] outline-none
                 bg-[var(--second-table-color)]
                 table-border

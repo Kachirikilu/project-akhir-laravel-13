@@ -10,10 +10,8 @@
     {{-- 📧 Departemen Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        // 'colorIcon' => $colorIcon,
         'nameXString' => 'Nama Departemen',
         'modelString' => 'nama_dp',
-        // 'typeString' => 'text',
         'iconString' => 'book-open',
         'placeholder' => 'Masukkan nama Departemen',
         'message' => $errors->first('nama_dp'),

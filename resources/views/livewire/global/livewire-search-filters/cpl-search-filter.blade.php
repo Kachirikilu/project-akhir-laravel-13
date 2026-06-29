@@ -1,0 +1,16 @@
+@include('livewire.global.search-and-filters.secondary-search', [
+    'inputXFilterString' => 'inputCPLFilter',
+    'xSearchResultsString' => 'cplSearchResults',
+    'iconString' => 'document-text',
+    'placeholderString' => 'Filter berdasarkan CPL...',
+    'xSearchQueryString' => 'cplSearchQuery',
+    'selectedXId' => $selectedCPLId,
+    'selectedXName' => $cpl_name,
+    'resetXFilter' => 'resetCPLFilter()',
+    'xSearchQuery' => $cplSearchQuery,
+    'xSearchResults' => $cplSearchResults,
+    'selectXForFilterString' => 'selectCPLForFilter',
+    'typeXString' => 'deskripsi',
+    'typeX2String' => 'kode',
+    'unfoundString' => 'Tidak ada CPL ditemukan!',
+])

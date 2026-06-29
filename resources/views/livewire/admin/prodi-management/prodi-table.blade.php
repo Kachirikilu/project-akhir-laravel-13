@@ -17,7 +17,6 @@
                 'isSticky' => 1,
             ])
 
-
             @php
                 if ($this->switchTable === 'fakultas') {
                     $mainHead = 'fakultas';
@@ -130,7 +129,7 @@
 
             <td class="table-main-sticky text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-prodi-modal')">
                         @switch($x->tingkatan_prodi)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">
@@ -157,11 +156,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
-                        'x' => $x,
-                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
-                        'nameXString' => $xNameString,
-                    ])
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table')
                 </flux:dropdown>
             </td>
 
@@ -210,16 +205,12 @@
                 {{ $index_x ?? '0.00' }}</td>
             <td class="table-sub table-border-x whitespace-nowrap text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-prodi-modal')">
                         @include('livewire.global.table.badge.nilai-mutu-badge', [
                             'xValue' => $akreditas_x ?? 'E',
                         ])
                     </button>
-                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
-                        'x' => $x,
-                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
-                        'nameXString' => $xNameString,
-                    ])
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table')
                 </flux:dropdown>
             </td>
 
@@ -237,7 +228,7 @@
             @if ($switchTable === '' || $switchTable === 'prodi')
                 <td class="table-second table-border-l text-center">
                     <flux:dropdown>
-                        <button class="cursor-pointer">
+                        <button class="cursor-pointer" wire:click="$dispatch('trigger-prodi-modal')">
                             @switch($x->strata)
                                 @case('Sarjana')
                                     <flux:badge icon="academic-cap" color="sky" size="sm">Sarjana</flux:badge>
@@ -268,15 +259,11 @@
 
             <td class="table-main text-center {{ $switchTable == 'fakultas' ? 'table-border-r' : 'table-border-x' }}">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-prodi-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
-                        'x' => $x,
-                        'typeXString' => empty($switchTable) ? 'prodi' : $switchTable,
-                        'nameXString' => $xNameString,
-                    ])
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table')
 
                 </flux:dropdown>
             </td>

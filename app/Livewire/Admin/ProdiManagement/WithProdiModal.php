@@ -2,19 +2,19 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\ProgramStudi\Fakultas;
+use App\Livewire\Global\HasToast;
 use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
-use App\Livewire\Global\HasToast;
+use Illuminate\Validation\ValidationException;
 
 trait WithProdiModal
 {
     use HasToast;
-    
+
     public $selected_id_pr;
 
     public $showProdiModal = false;
@@ -35,20 +35,20 @@ trait WithProdiModal
         'nama_fk' => 'required|string|max:255|unique:fakultas,nama_fk',
     ];
 
-    public function addProdi($prodi)
+    public function addProdi($type)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingPr = false;
-        $this->prodiType = $prodi;
+        $this->prodiType = $type;
         $this->showProdiModal = true;
-        if ($prodi === 'prodi') {
+        if ($type === 'prodi') {
             $this->updatedDpNameSearch($this->dpNameSearch);
-        } elseif ($prodi === 'departemen') {
+        } elseif ($type === 'departemen') {
             $this->updatedFkNameSearch($this->fkNameSearch);
         }
     }
@@ -56,7 +56,7 @@ trait WithProdiModal
     public function editProdi($id, $type)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         $this->selected_id_pr = $id;
@@ -119,12 +119,12 @@ trait WithProdiModal
     {
         $this->resetErrorBag();
         $this->resetValidation();
-        $data = $this->prepareData($data);
-        
+
         $prodis = [];
 
         /* ===================== PROGRAM STUDI ===================== */
         if ($this->prodiType === 'prodi') {
+
             $kodePr = $data['kode_pr'] ?? null;
             if (! empty($kodePr) && ! empty($data['dp_id'])) {
                 $departemen = DB::table('departemens')->find($data['dp_id']);
@@ -134,47 +134,34 @@ trait WithProdiModal
                     $fakultas = DB::table('fakultas')->find($departemen->fk_id);
                     $kodeDp = $fakultas->kode_fk;
                 }
-
+                if ($kodePr === $kodeDp) {
+                    $data['kode_pr'] = null;
+                }
             }
+
             $prodis = [
                 'nama_pr' => [
                     'required', 'string', 'max:255',
-                    // --- UNIQUE KELOMPOK 1: KOmbinasi nama_pr + strata ---
-                    Rule::unique('prodis', 'nama_pr')
-                        ->where(function ($query) use ($data) {
-                            return $query->where('strata', $data['strata'] ?? null);
-                        })
-                        ->ignore($isEditingPr ? $this->selected_id_pr : null, 'id'),
+                    $this->uniqueRule('prodis', 'nama_pr', $isEditingPr ? $this->selected_id_pr : null),
                 ],
                 'kode_pr' => [
                     'nullable', 'string', 'min:3', 'max:3',
-                    function ($attribute, $value, $fail) use ($data, $isEditingPr) {
+                    function ($attribute, $value, $fail) use ($data) {
                         if (empty($value)) {
-                            return;
-                        }
-
-                        if (empty($data['dp_id'])) {
-                            $fail('Isi terlebih dahulu Departemen!');
                             return;
                         }
 
                         $departemen = DB::table('departemens')->find($data['dp_id']);
                         $fakultasId = $departemen ? $departemen->fk_id : null;
-                        $currentProdiId = $isEditingPr ? $this->selected_id_pr : null;
-
-                        $otherPr = DB::table('prodis')
-                            ->where('kode_pr', $value)
-                            ->where('strata', $data['strata'] ?? null)
-                            ->when($currentProdiId, function ($q) use ($currentProdiId) {
-                                return $q->where('id', '!=', $currentProdiId);
-                            })
-                            ->exists();
 
                         $otherDp = DB::table('departemens')->where('kode_dp', $value)->where('id', '!=', $data['dp_id'])->exists();
                         $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $fakultasId)->exists();
+                        $otherPr = DB::table('prodis')->where('kode_pr', $value)->where('dp_id', '!=', $data['dp_id'])->exists();
 
-                        if ($otherDp || $otherFk || $otherPr) {
-                            $fail('Kode Program Studi dengan Strata ini sudah digunakan oleh instansi di luar silsilah Anda!');
+                        if (empty($data['dp_id'])) {
+                            $fail('Isi terlebih dahulu Departemen!');
+                        } elseif ($otherDp || $otherFk || $otherPr) {
+                            $fail('Kode Program Studi ini sudah digunakan oleh instansi di luar silsilah Anda!');
                         }
                     },
                 ],
@@ -184,10 +171,6 @@ trait WithProdiModal
                     Rule::in(['Sarjana', 'Magister', 'Doktor']),
                 ],
             ];
-
-                if ($kodePr === $kodeDp) {
-                    $data['kode_pr'] = null;
-                }
         }
 
         /* ===================== JURUSAN ===================== */
@@ -310,17 +293,17 @@ trait WithProdiModal
     private function formatStrata(string $strata): string
     {
         return match ($strata) {
-            'Sarjana'  => 'S1',
+            'Sarjana' => 'S1',
             'Magister' => 'S2',
-            'Doktor'   => 'S3',
-            default    => $strata,
+            'Doktor' => 'S3',
+            default => $strata,
         };
     }
 
     public function saveProdi($data)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         $data['dp_id'] = $this->dp_id;
@@ -333,12 +316,13 @@ trait WithProdiModal
         try {
 
             $validated = $this->inputModalProdi(false, $data);
+            $validated = $this->prepareData($validated);
             $message = '';
 
             DB::transaction(function () use ($validated, $message) {
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['strata']);
-                    $message = "Program Studi " .  $strata . ' ' . $validated['nama_pr'];
+                    $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
                     Prodi::create([
                         'nama_pr' => $validated['nama_pr'],
                         'strata' => $validated['strata'],
@@ -346,14 +330,14 @@ trait WithProdiModal
                         'kode_pr' => $validated['kode_pr'],
                     ]);
                 } elseif ($this->prodiType === 'departemen') {
-                    $message = "Departemen " . $validated['nama_dp'];
+                    $message = 'Departemen '.$validated['nama_dp'];
                     Departemen::create([
                         'nama_dp' => $validated['nama_dp'],
                         'fk_id' => $validated['fk_id'],
                         'kode_dp' => $validated['kode_dp'],
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
-                    $message = "Fakultas " . $validated['nama_fk'];
+                    $message = 'Fakultas '.$validated['nama_fk'];
                     Fakultas::create([
                         'nama_fk' => $validated['nama_fk'],
                         'kode_fk' => $validated['kode_fk'],
@@ -363,7 +347,7 @@ trait WithProdiModal
 
             $this->toast(message: $message);
             $this->resetInputProdi();
-                 
+
             $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
 
@@ -380,7 +364,7 @@ trait WithProdiModal
     public function updateProdi($data)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         if ((empty($data['dp_id']) && $this->dp_id !== $this->dp_id_2) ||
             ($this->dp_id == $this->dp_id_2) || ($this->dp_id !== $this->dp_id_2)) {
@@ -397,12 +381,13 @@ trait WithProdiModal
 
         try {
             $validated = $this->inputModalProdi(true, $data);
+            $validated = $this->prepareData($validated);
             $message = '';
 
             DB::transaction(function () use ($validated, &$message) {
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['strata']);
-                    $message = "Program Studi " .  $strata . ' ' . $validated['nama_pr'];
+                    $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
                     Prodi::findOrFail($this->selected_id_pr)->update([
                         'nama_pr' => $validated['nama_pr'],
                         'strata' => $validated['strata'],
@@ -410,21 +395,20 @@ trait WithProdiModal
                         'kode_pr' => $validated['kode_pr'],
                     ]);
                 } elseif ($this->prodiType === 'departemen') {
-                    $message = "Departemen " . $validated['nama_dp'];
+                    $message = 'Departemen '.$validated['nama_dp'];
                     Departemen::findOrFail($this->selected_id_pr)->update([
                         'nama_dp' => $validated['nama_dp'],
                         'fk_id' => $validated['fk_id'],
                         'kode_dp' => $validated['kode_dp'],
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
-                    $message = "Fakultas " . $validated['nama_fk'];
+                    $message = 'Fakultas '.$validated['nama_fk'];
                     Fakultas::findOrFail($this->selected_id_pr)->update([
                         'nama_fk' => $validated['nama_fk'],
                         'kode_fk' => $validated['kode_fk'],
                     ]);
                 }
             });
-
 
             $this->toast(message: $message, type: 'update');
             $this->resetInputProdi();

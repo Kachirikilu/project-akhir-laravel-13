@@ -6,7 +6,7 @@ document.addEventListener("alpine:init", () => {
         isForceDelete: 0,
         colorIcon: "",
 
-        email_delete: "",
+        label_id1_delete: "",
         role_delete: "",
 
         setType(val) {
@@ -62,6 +62,15 @@ document.addEventListener("alpine:init", () => {
         no_hp: "",
 
         pr_id_show: "",
+
+        setValueUserLite(email) {
+            this.email = email;
+        },
+        getData() {
+            return {
+                email: this.email,
+            };
+        },
 
         setValueUser(
             email,
@@ -128,9 +137,11 @@ document.addEventListener("alpine:init", () => {
             this.tempat_lahir = tmtLahir;
             this.tanggal_lahir = tglLahir;
 
-            let cleaned = noHP.replace(/\D/g, '').slice(0, 12);
+            let cleaned = noHP.replace(/\D/g, "").slice(0, 12);
             let formatted = cleaned.match(/(\d{1,3})(\d{1,4})?(\d{1,5})?/);
-            this.no_hp_back = formatted ? formatted.slice(1).filter(Boolean).join(' - ') : cleaned;
+            this.no_hp_back = formatted
+                ? formatted.slice(1).filter(Boolean).join(" - ")
+                : cleaned;
         },
         setValueUserRPS(
             name,
@@ -159,7 +170,7 @@ document.addEventListener("alpine:init", () => {
             this.pr_id_show = prId;
         },
         setDeleteUser(email, role, forceDelete) {
-            this.email_delete = email;
+            this.label_id1_delete = email;
             this.role_delete = role;
             this.isForceDelete = forceDelete;
         },
@@ -191,7 +202,7 @@ document.addEventListener("alpine:init", () => {
                 this.kode_wilayah = "";
 
                 // Delete
-                this.email_delete = "";
+                this.label_id1_delete = "";
                 this.role_delete = "";
                 this.showEdit = 0;
 
@@ -210,6 +221,19 @@ document.addEventListener("alpine:init", () => {
 
                 this.no_hp_back = "";
                 this.no_hp = "";
+            }
+            if (isAdd == 0) {
+                this.typeModal = "";
+                this.isEdit = 0;
+                this.isForceDelete = 0;
+                this.colorIcon = "";
+                this.colorIconBg = "";
+            }
+        },
+
+        resetLite(isAdd = 0) {
+            if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
+                this.email = "";
             }
             if (isAdd == 0) {
                 this.typeModal = "";

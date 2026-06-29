@@ -18,7 +18,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingTimDosen ? 'updateTimDosen' : 'saveTimDosen' }}($store.tim_dosen)"
+            <form x-on:submit.prevent="$store.tim_dosen.isEdit ? $wire.updateTimDosen($store.tim_dosen) : $wire.saveTimDosen($store.tim_dosen)"
                 enctype="multipart/form-data" id="timDosenForm">
 
                 @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-form.tim-dosen-input')

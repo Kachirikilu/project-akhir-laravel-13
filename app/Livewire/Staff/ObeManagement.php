@@ -111,6 +111,20 @@ class ObeManagement extends Component
 
     public $sortDirection = 'asc';
 
+    protected $listeners = [
+        'refresh-table'       => 'refreshObesList',
+        'refresh-data-obe'    => 'refreshObesList',
+        'refresh-data-rps'    => 'refreshObesList',
+        'refresh-data-cpl'    => 'refreshObesList',
+        'refresh-data-cpmk'   => 'refreshObesList',
+        'refresh-data-scpmk'  => 'refreshObesList',
+        'refresh-data-ref'    => 'refreshObesList',
+        'refresh-data-tim-dosen' => 'refreshObesList',
+        'refresh-data-user'   => 'refreshObesList',
+        'loadDraft'           => 'loadDraft',
+        'saveToDraft'         => 'saveToDraft',
+    ];
+
     protected $queryString = [
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
@@ -161,6 +175,44 @@ class ObeManagement extends Component
             'cpmk' => [],
             'scpmk' => [],
         ];
+    }
+
+    #[On('switch-table-updated')]
+    public function updateSwitchTable($switchTable)
+    {
+        $this->switchTable = $switchTable;
+    }
+
+    #[On('selected-pr-id-updated')]
+    public function updateSelectedPrId($selectedPrId)
+    {
+        $this->selectedPrId = $selectedPrId;
+    }
+
+    #[On('selected-dp-id-updated')]
+    public function updateSelectedDpId($selectedDpId)
+    {
+        $this->selectedDpId = $selectedDpId;
+    }
+
+    #[On('selected-fk-id-updated')]
+    public function updateSelectedFkId($selectedFkId)
+    {
+        $this->selectedFkId = $selectedFkId;
+    }
+
+    #[On('refresh-data-obe')]
+    #[On('refresh-data-rps')]
+    #[On('refresh-data-cpl')]
+    #[On('refresh-data-cpmk')]
+    #[On('refresh-data-scpmk')]
+    #[On('refresh-data-ref')]
+    #[On('refresh-data-tim-dosen')]
+    #[On('refresh-data-user')]
+    #[On('refresh-table')]
+    public function refreshObesList()
+    {
+        $this->resetPage();
     }
 
     public function updatingSearch()
@@ -291,17 +343,6 @@ class ObeManagement extends Component
         // $this->updatedMKNameSearch($this->mkNameSearch);
         // $this->updatedPrNameSearch($this->prNameSearch);
         try {
-            // =========================
-            // FILTER INPUT
-            // =========================
-            $this->inputPrFilter();
-            $this->inputMKFilter();
-            $this->inputRPSFilter();
-            $this->inputCPLFilter();
-            $this->inputCPMKFilter();
-            $this->inputSCPMKFilter();
-            $this->inputDosenFilter();
-            $this->inputFkFilter();
             // =========================
             // QUERY BASE
             // =========================

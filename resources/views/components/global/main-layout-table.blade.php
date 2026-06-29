@@ -38,31 +38,6 @@
     ",
 ])
 
-{{-- @php
-    $padingKolom = 'px-6 py-4 text-sm';
-
-    $border = 'table-border';
-
-    $headKolom =
-        "bg-[var(--main-table-color)] text-[var(--contrast-main-text)] uppercase text-xs $border $padingKolom";
-
-    $mainKolom =
-        "bg-[var(--main-table-trans)] text-[var(--contrast-main-text)] border-x $border $padingKolom";
-
-    $secondKolom =
-        "bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] $padingKolom";
-
-    $headSubKolom =
-        "bg-[var(--main-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase $border $padingKolom";
-
-    $subKolom =
-        "bg-[var(--sub-table-trans)] text-[var(--contrast-second-text)] $border $padingKolom";
-
-    $borderX = "$border border-x";
-    $borderR = "$border border-r";
-    $borderL = "$border border-l";
-@endphp --}}
-
 @if (isset($leftHead) || isset($rightHead))
     <div
         class="pb-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-1 mb-4">
@@ -108,19 +83,6 @@
             </tbody>
         </table>
     </div>
-
-
-    {{-- <div class="scrollbar-medium overflow-auto max-h-[1000px] relative">
-        <table class="min-w-full border-separate border-spacing-0">
-            <thead class="sticky top-0 z-30 bg-[var(--main-table-color)]">
-                {{ $header }}
-            </thead>
-            <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-                wire:target="{{ $targetLoading }}" class="bg-[var(--second-table-color)]">
-                {{ $slot }}
-            </tbody>
-        </table>
-    </div> --}}
 
     @if (isset($footer))
         {{ $footer }}

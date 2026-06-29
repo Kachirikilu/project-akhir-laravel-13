@@ -2,7 +2,6 @@
 
 namespace App\Models\Akademik;
 
-use App\Models\Akademik\RPS;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,7 +16,7 @@ class CPMK extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode'];
+    // protected $appends = ['kode'];
 
     protected $casts = [
         'created_at' => 'date',
@@ -106,6 +105,7 @@ class CPMK extends Model
         return $this->belongsToMany(CPL::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
             ->withPivot('sort_order');
     }
+
     public function scpmks(): BelongsToMany
     {
         return $this->belongsToMany(SubCPMK::class, 'cpmk_pivot_scpmk', 'cpmk_id', 'scpmk_id')
@@ -118,7 +118,6 @@ class CPMK extends Model
         return $this->belongsToMany(Referensi::class, 'cpmk_pivot_ref', 'cpmk_id', 'ref_id')
             ->withPivot('sort_order');
     }
-
 
     public function scopeSearchCPMK($query, $search, $withBobot = false)
     {
@@ -191,9 +190,9 @@ class CPMK extends Model
     //                     });
     //             });
 
-    //             $q->orWhereRaw("(SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ') 
-    //         FROM cpls 
-    //         INNER JOIN cpmk_pivot_cpl ON cpls.id = cpmk_pivot_cpl.cpl_id 
+    //             $q->orWhereRaw("(SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ')
+    //         FROM cpls
+    //         INNER JOIN cpmk_pivot_cpl ON cpls.id = cpmk_pivot_cpl.cpl_id
     //         WHERE cpmk_pivot_cpl.cpmk_id = cpmks.id) LIKE ?", [$searchTerm]);
 
     //             if (is_numeric($search)) {

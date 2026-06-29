@@ -10,6 +10,7 @@
     <template x-if="$store.user?.typeModal !== 'dosen'" x-cloak>
         @include('livewire.global.modal-form.select-form', [
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Kode Wilayah',
             'modelString' => 'kode_wilayah',
             'xOptions' => ['IDL (Kampus Indralaya)', 'PLG (Kampus Bukit)'],
@@ -22,6 +23,7 @@
 
     @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'user',
+        'isLivewire' => 1,
         'xResults' => $prResults,
         'selectX' => 'selectPr',
         'modelString' => 'nama_pr',
@@ -40,11 +42,14 @@
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchPr',
     ])
+    {{-- <livewire:global.input-search.prodi-search-input /> --}}
+
 
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
         {{-- 📧 Status Input --}}
         @include('livewire.global.modal-form.select-form', [
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Status',
             'modelString' => 'status',
             'xOptions' => [
@@ -57,8 +62,6 @@
                 'Diberhentikan', // Merah (Masalah/Sanksi)
                 'Meninggal Dunia', // Merah (Permanen)
             ],
-            // 'typeString' => 'text',
-            // 'colorIcon' => $colorIcon,
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
@@ -66,9 +69,9 @@
         ])
     </template>
     <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-        {{-- 📧 Status Input --}}
         @include('livewire.global.modal-form.select-form', [
             'alpine' => 'user',
+            'isLivewire' => 1,
             'modelString' => 'status',
             'xOptions' => [
                 'Aktif', // Hijau (Produktif)
@@ -81,8 +84,6 @@
                 'Diberhentikan', // Merah (Masalah/Sanksi)
                 'Meninggal Dunia', // Merah (Permanen)
             ],
-            // 'typeString' => 'text',
-            // 'colorIcon' => $colorIcon,
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
@@ -91,8 +92,8 @@
     </template>
     <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Tahun Angkatan',
             'modelString' => 'angkatan',
             'numberOnly' => 1,
@@ -103,9 +104,9 @@
         ])
     </template>
     <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-        {{-- 📧 Status Input --}}
         @include('livewire.global.modal-form.select-form', [
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Status',
             'modelString' => 'status',
             'xOptions' => [
@@ -119,8 +120,6 @@
                 'Hilang', // Merah (Tanpa Kabar/Ghaib)
                 'Meninggal Dunia', // Merah (Permanen)
             ],
-            // 'typeString' => 'text',
-            // 'colorIcon' => $colorIcon,
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),

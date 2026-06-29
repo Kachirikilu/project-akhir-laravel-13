@@ -1,9 +1,14 @@
-<div x-data="{
-    @if ($isLivewire ?? false) @if (isset($itemsString))
-            valueInput: @entangle($modelString . '.' . $itemsString).live,
-        @else
-            valueInput: @entangle($modelString).live, @endif
+@php
+    $alpineState = $alpine ?? 'config';
+    $isLivewireState = $isLivewire ?? null;
+    $modelLivewire = "{$alpineState}_input.{$modelString}";
+@endphp
 
+<div x-data="{
+    @if ($isLivewireState) @if (isset($itemsString))
+            valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
+        @else
+            valueInput: @entangle($modelLivewire).live, @endif
     @endif
 
     showPassword: false,
@@ -22,7 +27,7 @@
                 '{{ $typeString ?? 'text' }}' @endif
 }"
     x-effect="
-    const store = $store.{{ $alpine ?? 'config' }};
+    const store = $store.{{ $alpineState }};
 
     if (!store) return;
 
@@ -52,22 +57,22 @@
 
     if (store.isEdit === 0) {
 
-        @if ($isLivewire ?? false)
+        @if ($isLivewireState)
             @if (isset($itemsString))
                 setNestedValue(
                     store,
                     '{{ $modelString . '.' . $itemsString }}',
                     ''
                 );
-@else
-store.{{ $modelString }} = '';
+                @else
+                store.{{ $modelString }} = '';
             @endif
         @endif
 
         return;
     }
 
-    @if ($isLivewire ?? false)
+    @if ($isLivewireState)
 
         @if (isset($itemsString))
             setNestedValue(
@@ -75,8 +80,8 @@ store.{{ $modelString }} = '';
                 '{{ $modelString . '.' . $itemsString }}',
                 valueInput ?? ''
             );
-@else
-store.{{ $modelString }} = valueInput ?? '';
+        @else
+            store.{{ $modelString }} = valueInput ?? '';
         @endif
 
     @endif
@@ -90,23 +95,23 @@ store.{{ $modelString }} = valueInput ?? '';
         {{-- Icon Samping Kiri --}}
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString }}" variant="mini"
-                x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
+                x-bind:class="$store.{{ $alpineState }}?.colorIcon" />
         </div>
 
         <input @if ($isReadonly ?? null) readonly @endif
-            @if ($isLivewire ?? false) @if (isset($itemsString))
-                    wire:model.live="{{ $modelString . '.' . $itemsString }}"
+            @if ($isLivewireState) @if (isset($itemsString))
+                    wire:model="{{ $modelLivewire.'.'.$itemsString }}"
                 @else
-                    wire:model.live="{{ $modelString }}" @endif
+                    wire:model="{{ $modelLivewire }}" @endif
             @endif
 
         @if (isset($itemsString)) x-model="valueInput"
         @else
-            x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}" @endif
+            x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
 
 
         name="{{ $modelString }}"
-        x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
+        x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
         :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
         class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $isReadonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
@@ -114,18 +119,13 @@ store.{{ $modelString }} = valueInput ?? '';
         @if (($isDate ?? false) === 'year') inputmode="numeric"
                 oninput="
                     this.value = this.value.replace(/[^0-9]/g, '').slice(0,4);
-
                     let val = parseInt(this.value);
-
                     let min = {{ $minValue ?? 1900 }};
                     let max = {{ $maxValue ?? 9999 }};
-
                     if (!isNaN(val)) {
-
                         if (val < min) {
                             this.value = min;
                         }
-
                         if (val > max) {
                             this.value = max;
                         }
@@ -133,16 +133,13 @@ store.{{ $modelString }} = valueInput ?? '';
                 "
             {{-- KODE ONLY --}}
             @elseif (!empty($isKode) && $isKode > 0)
-
                 maxLength="{{ $isKode }}"
-
                 oninput="
                     this.value = this.value
                         .replace(/[^a-zA-Z]/g, '')
                         .toUpperCase()
                         .slice(0, {{ $isKode }})
                 "
-
             {{-- Nomor Telepon --}}
             @elseif (isset($isNoHP) && $isNoHP)
                 inputmode="numeric"
@@ -167,33 +164,24 @@ store.{{ $modelString }} = valueInput ?? '';
 
                 oninput="
                     let val = this.value.replace(/,/g, '.');
-
                     val = val.replace(/[^0-9.]/g, '');
-
                     let parts = val.split('.');
-
                     if (parts.length > 2) {
                         val = parts[0] + '.' + parts.slice(1).join('');
                         parts = val.split('.');
                     }
-
                     parts[0] = parts[0].slice(0, {{ $maxLength ?? 255 }});
-
                     if (parts.length > 1) {
                         parts[1] = parts[1].slice(0, 2);
                     }
-
                     val = parts.join('.');
-
                     @if ($maxValue ?? null)
                         let numVal = parseFloat(val);
                         let maxVal = {{ $maxValue }};
-
                         if (!isNaN(numVal) && numVal > maxVal) {
                             val = maxVal.toString();
                         } @endif
-
-        this.value = val;
+            this.value = val;
         "
     @elseif (isset($numberOnly) && $numberOnly)
         inputmode="numeric"
@@ -233,7 +221,7 @@ store.{{ $modelString }} = valueInput ?? '';
 
                 {{-- Icon Mata Terbuka --}}
                 <template x-if="!showPassword">
-                    <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon"
+                    <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
                         class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                 </template>
 

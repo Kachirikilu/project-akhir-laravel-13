@@ -1,0 +1,16 @@
+@include('livewire.global.search-and-filters.secondary-search', [
+    'inputXFilterString' => 'inputFkFilter',
+    'xSearchResultsString' => 'fkSearchResults',
+    'iconString' => 'building-library',
+    'placeholderString' => 'Filter berdasarkan Fakultas...',
+    'xSearchQueryString' => 'fkSearchQuery',
+    'selectedXId' => $selectedFkId,
+    'selectedXName' => $fk_name,
+    'resetXFilter' => 'resetFkFilter()',
+    'xSearchQuery' => $fkSearchQuery,
+    'xSearchResults' => $fkSearchResults,
+    'selectXForFilterString' => 'selectFkForFilter',
+    'typeXString' => 'fakultas',
+    'typeX2String' => 'kode_text',
+    'unfoundString' => 'Tidak ada Fakultas ditemukan!',
+])

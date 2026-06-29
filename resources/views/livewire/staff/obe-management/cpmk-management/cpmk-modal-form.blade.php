@@ -20,7 +20,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingCPMK ? 'updateCPMK' : 'saveCPMK' }}($store.cpmk)"
+            <form x-on:submit.prevent="$store.cpmk.isEdit ? $wire.updateCPMK($store.cpmk) : $wire.saveCPMK($store.cpmk)"
                 enctype="multipart/form-data" id="cpmkForm">
 
                 @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-input')

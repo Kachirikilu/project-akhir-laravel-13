@@ -8,8 +8,8 @@
 
     {{-- 📧 Email Input --}}
     @include('livewire.global.modal-form.input-form', [
-        // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
+        // 'isLivewire' => 1,
         'modelString' => 'email',
         'typeString' => 'email',
         'iconString' => 'envelope',
@@ -21,8 +21,8 @@
     <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>
         <template x-if="$store.user?.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.input-form', [
-                // 'colorIcon' => $colorIcon,
                 'alpine' => 'user',
+                'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'iconString' => 'lock-closed',
@@ -34,8 +34,8 @@
     <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
         <template x-if="$store.user?.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.input-form', [
-                // 'colorIcon' => $colorIcon,
                 'alpine' => 'user',
+                'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'iconString' => 'lock-closed',
@@ -44,11 +44,11 @@
             ])
         </template>
     </template>
-    
+
     <template x-if="$store.user?.isEdit == 1" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'modelString' => 'password',
             'typeString' => 'password',
             'iconString' => 'lock-closed',

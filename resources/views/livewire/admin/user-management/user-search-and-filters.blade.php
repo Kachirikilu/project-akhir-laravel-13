@@ -71,65 +71,17 @@
                 </div>
 
                 <div class="order-3 sm:order-2 sm:col-span-3 relative">
-                    @include('livewire.global.search-and-filters.secondary-search', [
-                        'inputXFilterString' => 'inputPrFilter',
-                        'xSearchResultsString' => 'prSearchResults',
-                        'iconString' => 'academic-cap',
-                        'placeholderString' => 'Filter berdasarkan Program Studi...',
-                        'xSearchQueryString' => 'prSearchQuery',
-                        'selectedXId' => $selectedPrId,
-                        'selectedXName' => $pr_name,
-                        'resetXFilter' => 'resetPrFilter()',
-                        'xSearchQuery' => $prSearchQuery,
-                        'xSearchResults' => $prSearchResults,
-                        'selectXForFilterString' => 'selectPrForFilter',
-                        'typeXString' => 'prodi',
-                        'typeX2String' => 'departemen',
-                        'typeX3String' => 'fakultas',
-                        'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-                    ])
+                    <livewire:global.search-filters.prodi-search-filter lazy />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
-
                 <div class="sm:col-span-4 relative">
-                    @include('livewire.global.search-and-filters.secondary-search', [
-                        'inputXFilterString' => 'inputDpFilter',
-                        'xSearchResultsString' => 'dpSearchResults',
-                        'iconString' => 'book-open',
-                        'placeholderString' => 'Filter berdasarkan Departemen...',
-                        'xSearchQueryString' => 'dpSearchQuery',
-                        'selectedXId' => $selectedDpId,
-                        'selectedXName' => $dp_name,
-                        'resetXFilter' => 'resetDpFilter()',
-                        'xSearchQuery' => $dpSearchQuery,
-                        'xSearchResults' => $dpSearchResults,
-                        'selectXForFilterString' => 'selectDpForFilter',
-                        'typeXString' => 'departemen',
-                        'typeX2String' => 'kode_text',
-                        'typeX3String' => 'fakultas',
-                        'unfoundString' => 'Tidak ada Departemen ditemukan!',
-                    ])
+                    <livewire:global.search-filters.departemen-search-filter lazy />
                 </div>
 
                 <div class="sm:col-span-4 relative">
-                    @include('livewire.global.search-and-filters.secondary-search', [
-                        'inputXFilterString' => 'inputFkFilter',
-                        'xSearchResultsString' => 'fkSearchResults',
-                        'iconString' => 'building-library',
-                        'placeholderString' => 'Filter berdasarkan Fakultas...',
-                        'xSearchQueryString' => 'fkSearchQuery',
-                        'selectedXId' => $selectedFkId,
-                        'selectedXName' => $fk_name,
-                        'resetXFilter' => 'resetFkFilter()',
-                        'xSearchQuery' => $fkSearchQuery,
-                        'xSearchResults' => $fkSearchResults,
-                        'selectXForFilterString' => 'selectFkForFilter',
-                        'typeXString' => 'fakultas',
-                        'typeX2String' => 'kode_text',
-                        'unfoundString' => 'Tidak ada Fakultas ditemukan!',
-                    ])
+                    <livewire:global.search-filters.fakultas-search-filter lazy />
                 </div>
             </div>
         </div>

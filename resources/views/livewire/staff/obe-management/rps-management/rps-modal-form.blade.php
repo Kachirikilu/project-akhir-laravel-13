@@ -20,7 +20,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingRPS ? 'updateRPS' : 'saveRPS' }}($store.rps)"
+            <form x-on:submit.prevent="$store.rps.isEdit ? $wire.updateRPS($store.rps) : $wire.saveRPS($store.rps)"
                 enctype="multipart/form-data" id="rpsForm">
 
                 @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-input')

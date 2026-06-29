@@ -9,10 +9,8 @@
     {{-- 📧 Fakultas Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        // 'colorIcon' => $colorIcon,
         'nameXString' => 'Nama Fakultas',
         'modelString' => 'nama_fk',
-        // 'typeString' => 'text',
         'iconString' => 'building-library',
         'placeholder' => 'Masukkan nama Fakultas',
         'message' => $errors->first('nama_fk')

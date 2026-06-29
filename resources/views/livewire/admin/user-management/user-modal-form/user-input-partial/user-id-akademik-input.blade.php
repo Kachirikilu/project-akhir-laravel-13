@@ -8,8 +8,8 @@
 
     <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Nomor Induk Pegawai (NIP)',
             'modelString' => 'nip',
             'numberOnly' => 1,
@@ -21,8 +21,8 @@
     </template>
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Nomor Induk Tenaga Kerja (NITK)',
             'modelString' => 'nitk',
             'numberOnly' => 1,
@@ -35,8 +35,8 @@
     </template>
     <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Nomor Induk Dosen Nasional (NIDN)',
             'modelString' => 'nidn',
             'numberOnly' => 1,
@@ -49,8 +49,8 @@
     </template>
     <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Nomor Induk Dosen Khusus (NIDK)',
             'modelString' => 'nidk',
             'numberOnly' => 1,
@@ -63,8 +63,8 @@
     </template>
     <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
         @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
+            'isLivewire' => 1,
             'nameXString' => 'Nomor Induk Mahasiswa (NIM)',
             'modelString' => 'nim',
             'numberOnly' => 1,

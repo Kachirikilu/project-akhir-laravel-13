@@ -8,8 +8,8 @@
 
     {{-- 👤 Nama Input --}}
     @include('livewire.global.modal-form.input-form', [
-        // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
+        'isLivewire' => 1,
         'nameXString' => 'Full Name',
         'modelString' => 'name',
         'iconString' => 'user-circle',
@@ -20,6 +20,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
+        'isLivewire' => 1,
         'nameXString' => 'Nomor Induk Kependudukan (NIK)',
         'modelString' => 'nik',
         'numberOnly' => 1,
@@ -31,6 +32,7 @@
 
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
+        'isLivewire' => 1,
         'modelString' => 'jenis_kelamin',
         'xOptions' => ['Laki-laki', 'Perempuan'],
         'iconString' => 'users',
@@ -40,6 +42,7 @@
     
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
+        'isLivewire' => 1,
         'modelString' => 'agama',
         'xOptions' => ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'],
         'iconString' => 'bookmark',

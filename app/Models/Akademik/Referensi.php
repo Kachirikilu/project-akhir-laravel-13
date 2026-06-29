@@ -1,21 +1,21 @@
 <?php
 
-
 namespace App\Models\Akademik;
 
-use App\Models\Akademik\RPS;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Referensi extends Model
 {
     use SoftDeletes;
 
     protected $table = 'referensis';
+
     protected $guarded = ['id'];
-    protected $appends = ['kode', 'penulis_tahun'];
+
+    // protected $appends = ['kode', 'penulis_tahun'];
     protected $casts = [
         'created_at' => 'date',
         'updated_at' => 'date',
@@ -27,33 +27,35 @@ class Referensi extends Model
             return preg_replace('/([A-Za-z])([0-9])/', '$1-$2', $this->kode_ref);
         });
     }
+
     protected function penulisTahun(): Attribute
     {
         return Attribute::get(function () {
             $penulis = $this->penulis ?? 'Anonim';
             $tahun = $this->tahun ?? '----';
+
             return "{$penulis} ({$tahun})";
         });
     }
-    
 
     protected function citation(): Attribute
     {
         return Attribute::get(function () {
-        $parts = [];
-        if (!empty($this->penulis)) {
-            $parts[] = $this->penulis;
-        }
-        if (!empty($this->tahun)) {
-            $parts[] = "({$this->tahun})";
-        }
-        if (!empty($this->judul)) {
-            $parts[] = trim($this->judul) . '.';
-        }
-        if (!empty($this->penerbit)) {
-            $parts[] = trim($this->penerbit) . '.';
-        }
-        return trim(implode(' ', $parts));
+            $parts = [];
+            if (! empty($this->penulis)) {
+                $parts[] = $this->penulis;
+            }
+            if (! empty($this->tahun)) {
+                $parts[] = "({$this->tahun})";
+            }
+            if (! empty($this->judul)) {
+                $parts[] = trim($this->judul).'.';
+            }
+            if (! empty($this->penerbit)) {
+                $parts[] = trim($this->penerbit).'.';
+            }
+
+            return trim(implode(' ', $parts));
         });
     }
 
@@ -63,6 +65,7 @@ class Referensi extends Model
             if (! $this->created_at) {
                 return null;
             }
+
             return $this->created_at->translatedFormat('D, d M Y');
         });
     }
@@ -73,6 +76,7 @@ class Referensi extends Model
             if (! $this->updated_at) {
                 return null;
             }
+
             return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
@@ -80,38 +84,39 @@ class Referensi extends Model
     public function rps(): BelongsToMany
     {
         return $this->belongsToMany(RPS::class, 'rps_pivot_ref', 'ref_id', 'rps_id')
-                    ->withPivot('sort_order');
+            ->withPivot('sort_order');
     }
+
     public function cpmks(): BelongsToMany
     {
         return $this->belongsToMany(CPMK::class, 'cpmk_pivot_ref', 'ref_id', 'cpmk_id')
-                    ->withPivot('sort_order');
+            ->withPivot('sort_order');
     }
+
     public function scpmks(): BelongsToMany
     {
         return $this->belongsToMany(SubCPMK::class, 'scpmk_pivot_ref', 'ref_id', 'scpmk_id')
-                    ->withPivot('sort_order');
+            ->withPivot('sort_order');
     }
 
-    
-public function scopeSearchRef($query, $search)
-{
-    if (empty(trim($search))) {
-        return $query;
-    }
+    public function scopeSearchRef($query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
 
-    $searchTerm = '%' . trim($search) . '%';
+        $searchTerm = '%'.trim($search).'%';
 
-    return $query->where(function ($q) use ($searchTerm, $search) {
-        // 1. Pencarian kolom standar tetap dipertahankan untuk performa
-        $q->where('kode_ref', 'like', $searchTerm)
-          ->orWhere('judul', 'like', $searchTerm)
-          ->orWhere('penulis', 'like', $searchTerm)
-          ->orWhere('penerbit', 'like', $searchTerm)
-          ->orWhere('tahun', 'like', $searchTerm);
+        return $query->where(function ($q) use ($searchTerm, $search) {
+            // 1. Pencarian kolom standar tetap dipertahankan untuk performa
+            $q->where('kode_ref', 'like', $searchTerm)
+                ->orWhere('judul', 'like', $searchTerm)
+                ->orWhere('penulis', 'like', $searchTerm)
+                ->orWhere('penerbit', 'like', $searchTerm)
+                ->orWhere('tahun', 'like', $searchTerm);
 
-        // 2. Pencarian "Virtual" (Meniru logic Accessor Citation)
-        $q->orWhereRaw("
+            // 2. Pencarian "Virtual" (Meniru logic Accessor Citation)
+            $q->orWhereRaw("
             CONCAT_WS(' ', 
                 penulis, 
                 IF(tahun IS NOT NULL AND tahun != '', CONCAT('(', tahun, ')'), NULL), 
@@ -119,11 +124,11 @@ public function scopeSearchRef($query, $search)
                 IF(penerbit IS NOT NULL AND penerbit != '', CONCAT(TRIM(penerbit), '.'), NULL)
             ) LIKE ?", [$searchTerm]);
 
-        if (is_numeric($search)) {
-            $q->orWhere('id', $search);
-        }
-    });
-}
+            if (is_numeric($search)) {
+                $q->orWhere('id', $search);
+            }
+        });
+    }
 
     // public function scopeSearchRef($query, $search)
     // {

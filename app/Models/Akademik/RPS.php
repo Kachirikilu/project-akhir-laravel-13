@@ -2,8 +2,6 @@
 
 namespace App\Models\Akademik;
 
-use App\Models\Auth\Dosen;
-use App\Models\Akademik\TimDosen;
 use App\Models\Kelas\Kelas;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -21,7 +19,7 @@ class RPS extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode', 'mk', 'level_mk', 'revisi_day', 'count_scpmk'];
+    // protected $appends = ['kode', 'mk', 'level_mk', 'revisi_day', 'count_scpmk'];
 
     protected $casts = [
         'revisi' => 'date',
@@ -59,18 +57,18 @@ class RPS extends Model
             ->orderBy('sort_order');
     }
 
-public function tim_dosens(): BelongsToMany
-{
-    return $this->belongsToMany(
+    public function tim_dosens(): BelongsToMany
+    {
+        return $this->belongsToMany(
             TimDosen::class,
             'rps_pivot_tim_dosen',
             'rps_id',
             'tim_dosen_id'
         )
-        ->withPivot('sort_order')
-        ->withTimestamps()
-        ->orderByPivot('sort_order');
-}
+            ->withPivot('sort_order')
+            ->withTimestamps()
+            ->orderByPivot('sort_order');
+    }
 
     public function kelas()
     {
@@ -101,12 +99,14 @@ public function tim_dosens(): BelongsToMany
         if ($this->cpmks->isEmpty()) {
             return collect();
         }
+
         return $this->cpmks->flatMap(function ($cpmk) {
             return $cpmk->scpmks->map(function ($scpmk) use ($cpmk) {
-                if (!isset($scpmk->cpmk_list)) {
+                if (! isset($scpmk->cpmk_list)) {
                     $scpmk->cpmk_list = collect();
                 }
                 $scpmk->cpmk_list->push($cpmk);
+
                 return $scpmk;
             });
         })->values();
@@ -117,8 +117,8 @@ public function tim_dosens(): BelongsToMany
         return Attribute::get(function () {
             $allScpmk = $this->all_scpmk;
 
-            $hasUts = $allScpmk->contains(fn($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true));
-            $hasUas = $allScpmk->contains(fn($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true));
+            $hasUts = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true));
+            $hasUas = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true));
 
             $program = collect();
             $scpmkIndex = 0;
@@ -130,7 +130,7 @@ public function tim_dosens(): BelongsToMany
             // })->filter(fn($d) => (int)($d->pivot->rps_id ?? 0) === (int)$this->id)
             // ->pluck('id')->unique()->toArray();
 
-            // $timDosens = $this->tim_dosens; 
+            // $timDosens = $this->tim_dosens;
 
             // $dosenMaster = $timDosens->flatMap(function($tim) {
             //     return $tim->dosens->map(function($dosen) use ($tim) {
@@ -141,47 +141,48 @@ public function tim_dosens(): BelongsToMany
             //     });
             // });
 
-
             for ($p = 1; $p <= 16; $p++) {
 
-                $isAssignedToMeeting = function($dosen, $pertemuanKe) use ($p) {
-                    if (is_null($pertemuanKe)) return true;
+                $isAssignedToMeeting = function ($dosen, $pertemuanKe) use ($p) {
+                    if (is_null($pertemuanKe)) {
+                        return true;
+                    }
                     $pertemuanArr = is_array($pertemuanKe) ? $pertemuanKe : json_decode($pertemuanKe, true);
+
                     return in_array($p, $pertemuanArr ?? []);
                 };
 
-                if ($p == 8 && !$hasUts) {
-                        $item = (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => (float)$this->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
-                    } elseif ($p == 16 && !$hasUas) {
-                        $item = (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => (float)$this->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                if ($p == 8 && ! $hasUts) {
+                    $item = (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => (float) $this->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
+                } elseif ($p == 16 && ! $hasUas) {
+                    $item = (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => (float) $this->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                } else {
+                    $rawItem = $allScpmk->get($scpmkIndex);
+                    if ($rawItem) {
+                        $item = clone $rawItem;
+                        $scpmkIndex++;
                     } else {
-                        $rawItem = $allScpmk->get($scpmkIndex);
-                        if ($rawItem) {
-                            $item = clone $rawItem;
-                            $scpmkIndex++;
-                        } else {
-                            $item = (object) ['kode' => '-', 'kode_cpmk' => '-', 'deskripsi' => 'Materi belum ditentukan', 'bobot' => 0];
-                        }
+                        $item = (object) ['kode' => '-', 'kode_cpmk' => '-', 'deskripsi' => 'Materi belum ditentukan', 'bobot' => 0];
                     }
+                }
 
-                    if (!isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
-                        $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
-                    }
+                if (! isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
+                    $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
+                }
 
-                    // $dosenDiPertemuanIni = $dosenMaster->filter(function($dosen) use ($isAssignedToMeeting) {
-                    //     return $isAssignedToMeeting($dosen, $dosen->pertemuan_ke);
-                    // });
-                    // $semuaDosenTim = $dosenMaster->groupBy('tim_id');
-                    // $dosenDitemukan = false;
-                    // $item->dosens_collection = $dosenDiPertemuanIni->filter(function($dosen) use ($dosenDiPertemuanIni, $semuaDosenTim, &$dosenDitemukan) {
-                    //     $anggotaSatuTim = $semuaDosenTim->get($dosen->tim_id);
-                    //     if ($dosenDiPertemuanIni->where('tim_id', $dosen->tim_id)->count() === $anggotaSatuTim->count()) {
-                    //         return false;
-                    //     }
-                    //     $dosenDitemukan = true;
-                    //     return true;
-                    // });
-
+                // $dosenDiPertemuanIni = $dosenMaster->filter(function($dosen) use ($isAssignedToMeeting) {
+                //     return $isAssignedToMeeting($dosen, $dosen->pertemuan_ke);
+                // });
+                // $semuaDosenTim = $dosenMaster->groupBy('tim_id');
+                // $dosenDitemukan = false;
+                // $item->dosens_collection = $dosenDiPertemuanIni->filter(function($dosen) use ($dosenDiPertemuanIni, $semuaDosenTim, &$dosenDitemukan) {
+                //     $anggotaSatuTim = $semuaDosenTim->get($dosen->tim_id);
+                //     if ($dosenDiPertemuanIni->where('tim_id', $dosen->tim_id)->count() === $anggotaSatuTim->count()) {
+                //         return false;
+                //     }
+                //     $dosenDitemukan = true;
+                //     return true;
+                // });
 
                 // if ($item instanceof \App\Models\Akademik\SubCPMK && !empty($item->materi)) {
 
@@ -210,7 +211,7 @@ public function tim_dosens(): BelongsToMany
                 //     } else {
                 //         $dosen->is_ketua = $pivotIsKetua;
                 //     }
-                    
+
                 //     return $dosen;
                 // });
 
@@ -223,13 +224,14 @@ public function tim_dosens(): BelongsToMany
                 $program->push($item);
             }
 
-          $totalInput = $program->sum(fn($i) => (float)($i->bobot ?? 0));
+            $totalInput = $program->sum(fn ($i) => (float) ($i->bobot ?? 0));
             if ($totalInput > 0) {
                 $program->transform(function ($item) use ($totalInput) {
-                    $item->bobot_normalisasi = round(((float)($item->bobot ?? 0) / $totalInput) * 100, 2);
+                    $item->bobot_normalisasi = round(((float) ($item->bobot ?? 0) / $totalInput) * 100, 2);
+
                     return $item;
                 });
-                $totalNormalisasi = $program->sum(fn($i) => (float)$i->bobot_normalisasi);
+                $totalNormalisasi = $program->sum(fn ($i) => (float) $i->bobot_normalisasi);
                 $diff = round(100 - $totalNormalisasi, 2);
                 if ($diff != 0 && $last = $program->last()) {
                     $last->bobot_normalisasi = round($last->bobot_normalisasi + $diff, 2);
@@ -247,6 +249,7 @@ public function tim_dosens(): BelongsToMany
         $refsSubCpmk = $this->cpmks->flatMap(function ($cpmk) {
             return $cpmk->scpmks->flatMap->refs;
         });
+
         return $refsRps
             ->concat($refsCpmk)
             ->concat($refsSubCpmk)
@@ -296,7 +299,7 @@ public function tim_dosens(): BelongsToMany
             }
             $kodeBlok = $this->kode_blok;
             $gg = $this->mk_rel?->kode_semester;
- 
+
             return "{$kodeBlok}-{$gg}-{$kodeMK}";
         });
     }
@@ -496,12 +499,12 @@ public function tim_dosens(): BelongsToMany
             $yearPart = substr($yearPart, -2);
         }
 
-        return $query->where(function ($q) use ($yearPart, $semesterPart, $mkPart, $searchLower, $search, $searchTerm, $withBobot) {
+        return $query->where(function ($q) use ($yearPart, $semesterPart, $mkPart, $search, $withBobot) {
             $mkPartClean = $mkPart ? preg_replace('/[^A-Za-z0-9]/', '', $mkPart) : null;
 
             if ($withBobot == false) {
 
-                $q->where(function ($group) use ($yearPart, $semesterPart, $mkPartClean, $searchTerm, $searchLower) {
+                $q->where(function ($group) use ($yearPart, $semesterPart, $mkPartClean) {
 
                     // A. Filter Tahun (Mencari di kolom akademik)
                     if ($yearPart !== null) {
