@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\UserManagement;
 use App\Livewire\Global\HasToast;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 
 trait WithUserDelete
 {
@@ -113,6 +114,7 @@ trait WithUserDelete
         }
     }
 
+    #[On('restore-user')]
     public function restoreUser($id)
     {
         if (! $this->AuthCheck()) {

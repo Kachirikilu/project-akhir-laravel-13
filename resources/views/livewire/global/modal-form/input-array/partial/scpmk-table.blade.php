@@ -94,13 +94,15 @@
                                                     sub.indikator,
                                                     sub.metode,
                                                     sub.tugas,
-                                                    sub.waktu_tugas,
-                                                    sub.waktu_mandiri,
+                                                    sub.w_tugas,
+                                                    sub.w_mandiri,
                                                     sub.bobot,
                                                 );
                                                 $flux.modal('scpmk-modal').show();
+                                                $dispatch('open-edit-scpmk-modal', { id: sub.id, parent: '{{ $withParent ?? '' }}' });
                                             "
-                                            wire:click="editSCPMK(sub.id)">
+                                                {{-- wire:click="editSCPMK(sub.id)" --}}
+                                            >
 
                                             <div
                                                 class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yellow-50 dark:group-hover:bg-yellow-900/30 transition-colors">

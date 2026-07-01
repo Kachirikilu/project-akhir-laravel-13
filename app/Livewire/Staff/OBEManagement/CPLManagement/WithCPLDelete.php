@@ -6,6 +6,7 @@ use App\Models\Akademik\CPL;
 // use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithCPLDelete
 {
@@ -94,6 +95,7 @@ trait WithCPLDelete
     /**
      * RESTORE CPL
      */
+    #[On('restore-cpl')]
     public function restoreCPL($id)
     {
         if (! $this->AuthCheck('staff')) {

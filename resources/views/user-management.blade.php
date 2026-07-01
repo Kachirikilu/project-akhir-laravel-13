@@ -4,4 +4,8 @@
             <livewire:admin.user-management lazy :switch-table="request()->route('switchTable') ?? ''" />
         </div>
     </div>
+
+    <livewire:admin.user-management.modal-user-management lazy />
+    <livewire:admin.user-management.excel-user-management lazy />
+    <livewire:admin.user-management.delete-user-management lazy />
 </x-layouts::app>

@@ -210,7 +210,7 @@
         {{-- 🔹 PRODI --}}
         <div x-show="activeTab !== 'referensi' && (activeTab !== 'dosen' || activeFilterDosen !== '')"
             class="sm:col-span-3 relative">
-            <livewire:global.search-filters.prodi-search-filter lazy />
+            <livewire:global.search-filters.prodi-search-filter lazy wire:key="prodi-search-filter-static" />
         </div>
 
         {{-- 🔹 MK --}}
@@ -218,13 +218,13 @@
             x-bind:class="activeTab === 'tim-dosen' ? 'sm:col-span-3' :
                 '{{ Auth::user()->admin || $this->filterRPS !== '' ? 'sm:col-span-3' : 'sm:col-span-7 ' }}'"
             class="relative" {{-- class="{{ Auth::user()->admin || $this->filterRPS !== '' ? 'sm:col-span-3' : ($switchTable == 'tim-dosen' ? 'sm:col-span-3' : 'sm:col-span-7') }} relative" --}}>
-            <livewire:global.search-filters.mk-search-filter lazy />
+            <livewire:global.search-filters.mk-search-filter lazy wire:key="mk-search-filter-static" />
         </div>
 
         @if (Auth::user()->admin || $this->filterRPS !== '')
             {{-- 🔹 Dosen --}}
             <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative">
-                <livewire:global.search-filters.dosen-search-filter lazy />
+                <livewire:global.search-filters.dosen-search-filter lazy wire:key="dosen-search-filter-static" />
             </div>
             {{-- <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative">
                 <livewire:global.search-filters.dosen-search-filter lazy />
@@ -235,27 +235,27 @@
         {{-- 🔹 RPS --}}
         <div x-show="activeTab !== 'rps'" x-bind:class="activeTab === 'tim-dosen' ? 'sm:col-span-4' : 'sm:col-span-3'"
             class="relative">
-            <livewire:global.search-filters.rps-search-filter lazy />
+            <livewire:global.search-filters.rps-search-filter lazy wire:key="rps-search-filter-static" />
         </div>
 
         {{-- 🔹 CPL --}}
         <div x-show="activeTab == 'cpmk'" class="sm:col-span-4 relative">
-            <livewire:global.search-filters.cpl-search-filter lazy />
+            <livewire:global.search-filters.cpl-search-filter lazy wire:key="cpl-search-filter-static" />
         </div>
 
         {{-- 🔹 CPMK --}}
         <div x-show="activeTab == 'sub-cpmk' || activeTab == 'cpl' || activeTab == 'referensi'"
             x-bind:class="activeTab == 'referensi' ? 'sm:col-span-3' : 'sm:col-span-4'" class="relative">
-            <livewire:global.search-filters.cpmk-search-filter lazy />
+            <livewire:global.search-filters.cpmk-search-filter lazy wire:key="cpmk-search-filter-static" />
         </div>
 
         {{-- 🔹 Sub-CPMK --}}
         <div x-show="activeTab == 'referensi'" class="sm:col-span-4 relative">
-            <livewire:global.search-filters.sub-cpmk-search-filter lazy />
+            <livewire:global.search-filters.sub-cpmk-search-filter lazy wire:key="spmk-search-filter-static" />
         </div>
 
         <div x-show="activeTab == 'dosen'" class="sm:col-span-4 relative">
-            <livewire:global.search-filters.fakultas-search-filter lazy />
+            <livewire:global.search-filters.fakultas-search-filter lazy wire:key="ref-search-filter-static" />
         </div>
 
     </div>

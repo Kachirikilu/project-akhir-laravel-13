@@ -18,6 +18,11 @@
                         x-text="'NIM: ' + ($store.user?.nim ?? '03041282227063')"></p>
                 </template>
 
+                {{-- <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide">{{ $user_input['name'] }}
+                </h3>
+                <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5">
+                    {{ $user_input['nip'] ?? $user_input['nim'] }}</p> --}}
+
             </div>
         </div>
         {{-- <div>
@@ -35,8 +40,7 @@
 
         <div class="space-y-3">
 
-            <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-
+            @if ($roleType == 'mahasiswa')
                 <div class="grid grid-cols-3 gap-3">
                     <div
                         class="p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
@@ -64,7 +68,7 @@
                     </div>
 
                 </div>
-            </template>
+            @endif
 
             <div class="grid grid-cols-2 gap-3">
 

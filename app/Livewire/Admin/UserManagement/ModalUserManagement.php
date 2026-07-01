@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -10,8 +11,13 @@ use Livewire\Component;
 class ModalUserManagement extends Component
 {
     use HasToast;
+    use WithRPSSearchFilters;
     use WithProdiSearchFilters;
     use WithUserModal;
+
+    public $withRPS;
+
+         public $parent;
 
     // public $userIdModal;
     #[On('trigger-user-modal')]
@@ -20,8 +26,9 @@ class ModalUserManagement extends Component
     }
 
     #[On('open-add-user-modal')]
-    public function handleAddUser($role)
+    public function handleAddUser($role, $parent = null)
     {
+        $this->parent = $parent;
         $this->addUser($role);
         // $this->fetchPr();
     }
@@ -31,13 +38,21 @@ class ModalUserManagement extends Component
     // $this->fetchPr();
 
     #[On('open-edit-user-modal')]
-    public function handleEditUser($id, $withRPS = false, $isRPS = false)
+    public function handleEditUser($id, $withRPS = false, $isRPS = false, $parent = null)
     {
+        $this->parent = $parent;
+        $this->withRPS = $withRPS;
         $this->editUser($id, $withRPS, $isRPS);
     }
 
+    public function loadingRPSList() {}
+
     public function render()
     {
-        return view('livewire.admin.user-management.modal-user-management');
+        if ($this->withRPS == true) {
+            return view('livewire.admin.user-management.modal-user-management', ['user_rps_modal_paginator' => $this->user_rps_modal_paginator]);
+        } else {
+            return view('livewire.admin.user-management.modal-user-management');
+        }
     }
 }

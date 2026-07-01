@@ -20,13 +20,13 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'citation',
                 'rowSpan' => 2,
-                'isBorderR' => 1
+                'isBorderR' => 1,
             ])
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'judul',
                 'rowSpan' => 2,
-                'isBorderR' => 1
+                'isBorderR' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'penulis',
@@ -78,11 +78,13 @@
                         </flux:badge>
                     </button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $r,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'Referensi',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.obe-management.referensi-management.toolbar-referensi-management lazy
+                            :id="$r->id" :kode="$r->kode" :kode_ref="$r->kode_ref" :citation="$r->citation" :judul="$r->judul"
+                            :penulis="$r->penulis" :penerbit="$r->penerbit" :tahun="$r->tahun" :link="$r->link" :isTrashed="$r->trashed()"
+                            wire:key="toolbar-scpmk-{{ $r->id }}-1" />
+                    </flux:menu>
                 </flux:dropdown>
             </td>
             <td class="table-second table-border-r min-w-100">{{ $r->citation ?? '-' }}</td>
@@ -105,15 +107,17 @@
 
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
+                    <flux:button class="cursor-pointer" variant="ghost"
+                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $r,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'Referensi',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.obe-management.referensi-management.toolbar-referensi-management lazy
+                            :id="$r->id" :kode="$r->kode" :kode_ref="$r->kode_ref" :citation="$r->citation" :judul="$r->judul"
+                            :penulis="$r->penulis" :penerbit="$r->penerbit" :tahun="$r->tahun" :link="$r->link" :isTrashed="$r->trashed()"
+                            wire:key="toolbar-scpmk-{{ $r->id }}-2" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>

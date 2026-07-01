@@ -328,13 +328,8 @@ trait WithCPMKModal
                 }
             });
 
-            if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpmk) {
-                $newCpmk = CPMK::with(['scpmks', 'refs'])
-                    ->find($cpmk->id);
-                $this->cpmk_id_array[] = $newCpmk->id;
-                $this->cpmk_items_array[] = $this->itemsCPMK($newCpmk);
-                $mapped = $this->mapCPMK(collect([$newCpmk]));
-                $this->pushToCPMKItems($mapped);
+            if ($this->parent == 'rps' && $cpmk) {
+                $this->dispatch('cpmk-created-rps', id: $cpmk->id);
             }
 
             $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']}");

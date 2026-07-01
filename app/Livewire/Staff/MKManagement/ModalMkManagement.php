@@ -23,15 +23,15 @@ class ModalMkManagement extends Component
     }
 
     #[On('open-add-mk-modal')]
-    public function handleAddMK($type = 1)
+    public function handleAddMK($tingkatan = 1)
     {
-        $this->addMK($type);
+        $this->addMK($tingkatan);
     }
 
     #[On('open-edit-mk-modal')]
-    public function handleEditMK($id, $type = false)
+    public function handleEditMK($id, $tingkatan = false)
     {
-        $this->editMK($id, $type);
+        $this->editMK($id, $tingkatan);
     }
 
     public function render()

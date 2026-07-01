@@ -1,26 +1,28 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Capaian Pembelajaran Mata Kuliah</h4>
 
-        @if (!$this->showCPMKModal || $this->isEditingCPMK == false)
-            @if (!$this->showSCPMKModal || $this->isEditingSCPMK == false)
+        @if ($parent !== 'cpmk')
+            @if ($parent !== 'scpmk')
                 @include('livewire.staff.obe-management.obe-toolbar', [
                     'typeXString' => 'cpmk-scpmk',
                     'isFlyout' => 1,
                     'isSmall' => 1,
+                    'parent' => 'rps',
                 ])
             @else
                 @include('livewire.staff.obe-management.obe-toolbar', [
                     'typeXString' => 'cpmk',
                     'isFlyout' => 1,
                     'isSmall' => 1,
+                    'parent' => 'rps',
                 ])
             @endif
         @endif
+
     </div>
 
     <div class="relative">
@@ -46,6 +48,7 @@
                     'typeXString' => 'deskripsi',
                     'typeX2String' => 'count_scpmk',
                     'typeX3String' => 'total_bobot',
+                    'withParent' => 'rps',
                 
                     'nameXString' => 'Capaian Pembelajaran Mata Kuliah (CPMK)',
                     'nameSearchString' => 'cpmkNameSearch',

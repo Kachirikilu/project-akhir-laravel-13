@@ -6,6 +6,7 @@ use App\Models\Akademik\RPS;
 use App\Models\Kelas\Kelas;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithRPSDelete
 {
@@ -87,6 +88,7 @@ trait WithRPSDelete
     /**
      * RESTORE RPS
      */
+    #[On('restore-rps')]
     public function restoreRPS($id)
     {
         if (! $this->AuthCheck('staff')) {

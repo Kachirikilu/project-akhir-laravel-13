@@ -145,40 +145,44 @@
             <td class="table-second text-center">{{ $mk->id }}</td>
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
+                    <button class="cursor-pointer">
                         @include('livewire.global.table.badge.level-mk-badge', [
                             'xValue' => $mk->digit_mk,
                             'sortir' => $mk->level_mk,
                         ])
                     </button>
 
-                    @include('livewire.staff.mk-management.mk-toolbar-table', [
-                        'x' => $mk,
-                        'typeXString' => $mk->level_mk,
-                        'editString' => 'editMK',
-                        'nameXString' => 'Mata Kuliah',
-                        'confirmDeleteString' => 'deleteMK',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
+                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
+                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
+                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
+                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-1" />
+                    </flux:menu>
+
 
                 </flux:dropdown>
             </td>
 
             <td class="table-main-sticky text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
+                    <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
                             'xValue' => $mk->kode,
                             'sortir' => $mk->semester,
                         ])
                     </button>
 
-                    @include('livewire.staff.mk-management.mk-toolbar-table', [
-                        'x' => $mk,
-                        'typeXString' => $mk->level_mk,
-                        'editString' => 'editMK',
-                        'nameXString' => 'Mata Kuliah',
-                        'confirmDeleteString' => 'deleteMK',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
+                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
+                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
+                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
+                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-2" />
+                    </flux:menu>
+
 
                 </flux:dropdown>
             </td>
@@ -209,37 +213,40 @@
 
             <td class="table-second table-border-l text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
+                    <button class="cursor-pointer">
                         @include('livewire.global.table.badge.wajib-badge', [
                             'xValue' => $mk->wajib_text,
                             'sortir' => $mk->wajib,
                         ])
                     </button>
 
-                    @include('livewire.staff.mk-management.mk-toolbar-table', [
-                        'x' => $mk,
-                        'typeXString' => $mk->level_mk,
-                        'editString' => 'editMK',
-                        'nameXString' => 'Mata Kuliah',
-                        'confirmDeleteString' => 'deleteMK',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
+                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
+                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
+                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
+                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-3" />
+                    </flux:menu>
+
 
                 </flux:dropdown>
             </td>
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.mk-management.mk-toolbar-table', [
-                        'x' => $mk,
-                        'typeXString' => $mk->level_mk,
-                        'editString' => 'editMK',
-                        'nameXString' => 'Mata Kuliah',
-                        'confirmDeleteString' => 'deleteMK',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
+                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
+                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
+                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
+                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-4" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>

@@ -11,18 +11,13 @@
     @include('livewire.admin.user-management.user-toolbar')
 
 
-    <livewire:admin.user-management.switch-table-user-management lazy />
+    {{-- <livewire:admin.user-management.switch-table-user-management lazy /> --}}
 
-    {{-- @include('livewire.admin.user-management.user-switch-table') --}}
+    @include('livewire.admin.user-management.user-switch-table')
     @include('livewire.admin.user-management.user-search-and-filters')
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @include('livewire.admin.user-management.user-table')
     </div>
-
-
-    <livewire:admin.user-management.modal-user-management lazy />
-    <livewire:admin.user-management.excel-user-management lazy />
-    <livewire:admin.user-management.delete-user-management lazy />
 
     {{-- @include('livewire.admin.user-management.user-modal-form') --}}
     {{-- @include('livewire.admin.user-management.user-excel-modal-form') --}}

@@ -28,6 +28,7 @@
                 'iconString' => 'lock-closed',
                 'placeholder' => 'Default: NIP',
                 'message' => $errors->first('password'),
+                'isRequired' => 0,
             ])
         </template>
     </template>
@@ -41,6 +42,7 @@
                 'iconString' => 'lock-closed',
                 'placeholder' => 'Default: NIM',
                 'message' => $errors->first('password'),
+                'isRequired' => 0,
             ])
         </template>
     </template>

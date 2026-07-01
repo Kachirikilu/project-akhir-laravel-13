@@ -635,10 +635,14 @@ trait WithCPLModal
                     $cpl->prodis()->attach($targetIds);
                 }
 
-                if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $cpl) {
-                    $cpl->load('prodis');
-                    $this->cpl_id_array[] = $cpl->id;
-                    $this->cpl_items_array[] = $this->itemsCPL($cpl, strtoupper($fullKodeCpl));
+                // if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $cpl) {
+                //     $cpl->load('prodis');
+                //     $this->cpl_id_array[] = $cpl->id;
+                //     $this->cpl_items_array[] = $this->itemsCPL($cpl, strtoupper($fullKodeCpl));
+                // }
+
+                if ($this->parent == 'cpmk' && $cpl) {
+                    $this->dispatch('cpl-created-cpmk', id: $cpl->id);
                 }
 
                 // if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $cpl) {

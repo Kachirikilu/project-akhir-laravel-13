@@ -2,28 +2,28 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithUserSearchFilters;
-
 use App\Models\Auth\User;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class UserManagement extends Component
 {
     use HasSortir;
     use HasStats;
     use HasToast;
+    use WithUserExcel;
     use WithPagination;
-
+    use WithUserDelete;
     use WithUserFilters;
     use WithUserSearchFilters;
-    use WithUserDelete;
 
     public $perPage = 8;
 
@@ -139,9 +139,46 @@ class UserManagement extends Component
         $this->resetPage();
     }
 
+    public function updatedSwitchTable()
+    {
+        $this->dispatch('switch-table-updated', switchTable: $this->switchTable);
+    }
 
+    private function syncSortField($table, $sortField)
+    {
+        $columns = [
+            '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+            'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'kampus', 9 => 'status', 10 => 'created_at', 11 => 'updated_at'],
+            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'kampus', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+        ];
+        $aliases = [
+            'name' => ['name'],
+            'email' => ['email'],
+            'program_studi' => ['program_studi'],
+            'kampus' => ['kampus'],
+            'status' => ['status'],
+            'admin_id' => ['admin_id', 'dosen_id', 'mahasiswa_id'],
+            'nik' => ['nik'],
+            'identity1' => ['identity1', 'nip', 'nim'],
+            'identity2' => ['identity2', 'nitk', 'nidn', 'nik'],
+            'identity3' => ['identity3', 'nidk', 'nik'],
+            'created_at' => ['created_at'],
+            'updated_at' => ['updated_at'],
+        ];
 
+        // $this->sortField($table, $sortField, $columns, $aliases);
+    }
 
+    public function switchingTable($table)
+    {
+        $this->switchTable = $table;
+        $this->syncSortField($table, $this->sortField);
+        $this->resetPage();
+
+        $targetPath = '/user-management'.($table ? '/'.$table : '');
+        $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    }
 
     public function sortBy($field)
     {
@@ -158,10 +195,25 @@ class UserManagement extends Component
     {
         try {
             $queryUser = $this->inputUserSearch($this->switchTable);
+            $countUser = User::query();
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryUser->onlyTrashed();
+                $countUser->onlyTrashed();
             }
+
+            $stats = [
+                'user-prodi' => '🏛️',
+                'user-opsi' => '⚙️',
+                'user-aktif' => '🟢',
+                'user-non-aktif' => '🔴',
+                'user' => '👥',
+                'admin' => '🛡️',
+                'dosen' => '👨‍🏫',
+                'mahasiswa' => '🧑‍🎓',
+            ];
+
+            $stats = array_merge($stats, $this->getStatsUser($countUser));
 
             if ($this->searchMode == 'full') {
                 $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
@@ -171,17 +223,7 @@ class UserManagement extends Component
 
             return view('livewire.admin.user-management', [
                 'users' => $users,
-                'stats' => [
-                    'user-prodi' => '-',
-                    'user-opsi' => '-',
-                    'user-aktif' => '-',
-                    'user-non-aktif' => '-',
-
-                    'user' => '-',
-                    'admin' => '-',
-                    'dosen' => '-',
-                    'mahasiswa' => '-',
-                ],
+                'stats' => $stats,
             ]);
 
         } catch (QueryException $e) {

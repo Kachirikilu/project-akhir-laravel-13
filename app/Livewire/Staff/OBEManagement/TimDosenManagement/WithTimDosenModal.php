@@ -4,8 +4,8 @@ namespace App\Livewire\Staff\OBEManagement\TimDosenManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
-use App\Models\Akademik\TimDosen;
 use App\Models\Akademik\RPS;
+use App\Models\Akademik\TimDosen;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -37,7 +37,7 @@ trait WithTimDosenModal
 
     public $isFlyoutTimDosen = false;
 
-    public $pr_id_2;
+    // public $dosen_input = [];
 
     public function updatedShowTimDosenModal($value)
     {
@@ -85,7 +85,6 @@ trait WithTimDosenModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-
         $this->selected_id_tim_dosen = $id;
         $this->isEditingTimDosen = true;
         $this->showEditTimDosen = true;
@@ -98,7 +97,6 @@ trait WithTimDosenModal
             $this->showTimDosenRPSModal = false;
         }
 
-
         // $this->showTimDosenModal = true;
         // $this->dispatch('refresh-component');
         try {
@@ -108,7 +106,6 @@ trait WithTimDosenModal
 
             if (! $isRPS) {
                 $this->pr_id = $tim_dosen->pr_id;
-                $this->pr_id_2 = $tim_dosen->pr_id;
                 $this->pr_items = $this->itemsPr($tim_dosen->pr_rel);
                 $this->prNameSearch = $tim_dosen->prodi;
 
@@ -120,10 +117,11 @@ trait WithTimDosenModal
                 $this->dosen_pertemuan_array = $dosens->map(function ($dosen) {
                     $rawData = $dosen->pivot->pertemuan_ke;
                     $numbers = is_string($rawData) ? json_decode($rawData, true) : $rawData;
-                    
-                    if (!is_array($numbers)) {
+
+                    if (! is_array($numbers)) {
                         $numbers = [];
                     }
+
                     return $this->formatPertemuanTimDosen($numbers);
                 })->values()->toArray();
 
@@ -135,7 +133,6 @@ trait WithTimDosenModal
             $this->tim_dosen_rps_modal_paginator = null;
             $this->resetPage('tim_dosen_rps_modal_page');
             $this->loadTimDosenRPSPagination();
-
 
             $this->dispatch('fill-modal-tim_dosen', tim_dosen: $tim_dosen);
             $this->dispatch('refresh-component');
@@ -180,9 +177,11 @@ trait WithTimDosenModal
 
     private function formatPertemuanTimDosen(array $numbers): string
     {
-        if (empty($numbers)) return '';
+        if (empty($numbers)) {
+            return '';
+        }
         sort($numbers);
-        
+
         $ranges = [];
         $start = $numbers[0];
         $end = $numbers[0];
@@ -209,6 +208,7 @@ trait WithTimDosenModal
             $validNumbers = [];
             if (empty($item)) {
                 $results[] = [];
+
                 continue;
             }
             $parts = explode(',', $item);
@@ -216,16 +216,21 @@ trait WithTimDosenModal
                 $part = trim($part);
                 if (str_contains($part, '-')) {
                     [$start, $end] = explode('-', $part);
-                    for ($i = (int)$start; $i <= (int)$end; $i++) {
-                        if ($i >= 1 && $i <= 16) $validNumbers[] = $i;
+                    for ($i = (int) $start; $i <= (int) $end; $i++) {
+                        if ($i >= 1 && $i <= 16) {
+                            $validNumbers[] = $i;
+                        }
                     }
                 } else {
-                    $num = (int)$part;
-                    if ($num >= 1 && $num <= 16) $validNumbers[] = $num;
+                    $num = (int) $part;
+                    if ($num >= 1 && $num <= 16) {
+                        $validNumbers[] = $num;
+                    }
                 }
             }
             $results[] = array_values(array_unique($validNumbers));
         }
+
         return $results;
     }
 
@@ -282,8 +287,6 @@ trait WithTimDosenModal
             'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
         ];
 
-
-
         $validator = Validator::make($data, $rules, $this->validationMessagesTimDosen());
 
         if ($validator->fails()) {
@@ -327,14 +330,13 @@ trait WithTimDosenModal
         $data['dosen_pertemuan_array'] = $this->dosen_pertemuan_array ?? [];
         // $data['dosen_pertemuan_array'] = array_filter($this->dosen_pertemuan_array) ?? [];
 
-
         try {
             $validated = $this->inputModalTimDosen(false, $data);
 
             DB::transaction(function () use ($validated) {
                 $tim_dosen = TimDosen::create([
                     'kode_tim_dosen' => strtoupper($validated['kode_tim_dosen']),
-                    'pr_id'    => $validated['pr_id'],
+                    'pr_id' => $validated['pr_id'],
                     'nama_tim' => $validated['nama_tim'],
                 ]);
 
@@ -346,10 +348,10 @@ trait WithTimDosenModal
                         $pertemuan = $validated['dosen_pertemuan_array'][$index] ?? [];
 
                         $syncDosen[(int) $id] = [
-                            'peran'        => $detail['peran'] ?? 'Pengajar',
-                            'is_ketua'     => (bool) ($detail['is_ketua'] ?? false),
+                            'peran' => $detail['peran'] ?? 'Pengajar',
+                            'is_ketua' => (bool) ($detail['is_ketua'] ?? false),
                             'pertemuan_ke' => json_encode(array_values($pertemuan)),
-                            'sort_order'   => $index,
+                            'sort_order' => $index,
                         ];
                     }
 
@@ -357,14 +359,17 @@ trait WithTimDosenModal
                 } else {
                     $tim_dosen->dosens()->detach();
                 }
-                
-                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $tim_dosen) {
-                    $newTimDosen = TimDosen::with(['dosens'])
-                        ->find($tim_dosen->id);
-                    $this->tim_dosen_id_array[] = $newTimDosen->id;
-                    $this->tim_dosen_items_array[] = $this->itemsTimDosen($newTimDosen);
-                    $mapped = $this->mapTimDosen(collect([$newTimDosen]));
-                    $this->pushToTimDosenItems($mapped);
+
+                // if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $tim_dosen) {
+                //     $newTimDosen = TimDosen::with(['dosens'])
+                //         ->find($tim_dosen->id);
+                //     $this->tim_dosen_id_array[] = $newTimDosen->id;
+                //     $this->tim_dosen_items_array[] = $this->itemsTimDosen($newTimDosen);
+                //     $mapped = $this->mapTimDosen(collect([$newTimDosen]));
+                //     $this->pushToTimDosenItems($mapped);
+                // }
+                if ($this->parent == 'rps' && $tim_dosen) {
+                    $this->dispatch('tim-dosen-created-rps', id: $tim_dosen->id);
                 }
             });
 
@@ -387,10 +392,11 @@ trait WithTimDosenModal
             return;
         }
 
-        if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
-            ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
-            $data['pr_id'] = $this->pr_id;
-        }
+        // if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
+        //     ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
+        //     $data['pr_id'] = $this->pr_id;
+        // }
+        $data['pr_id'] = $this->pr_id;
 
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
@@ -403,7 +409,7 @@ trait WithTimDosenModal
                 $tim_dosen = TimDosen::findOrFail($this->selected_id_tim_dosen);
                 $tim_dosen->update([
                     'kode_tim_dosen' => strtoupper($validated['kode_tim_dosen']),
-                    'pr_id'    => $validated['pr_id'],
+                    'pr_id' => $validated['pr_id'],
                     'nama_tim' => $validated['nama_tim'],
                 ]);
 
@@ -414,10 +420,10 @@ trait WithTimDosenModal
                     $pertemuan = $validated['dosen_pertemuan_array'][$index] ?? [];
 
                     $syncDosen[(int) $id] = [
-                        'peran'        => $detail['peran'] ?? 'Pengajar',
-                        'is_ketua'     => (bool) ($detail['is_ketua'] ?? false),
+                        'peran' => $detail['peran'] ?? 'Pengajar',
+                        'is_ketua' => (bool) ($detail['is_ketua'] ?? false),
                         'pertemuan_ke' => json_encode(array_values($pertemuan)),
-                        'sort_order'   => $index,
+                        'sort_order' => $index,
                     ];
                 }
                 $tim_dosen->dosens()->attach($syncDosen);
@@ -436,10 +442,10 @@ trait WithTimDosenModal
             $this->dispatch('refresh-data-tim-dosen');
 
         } catch (ValidationException $e) {
-            $this->toast(text: 'Validasi Gagal: ' . collect($e->errors())->first()[0], variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: 'Gagal memperbarui: ' . $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data-tim-dosen');
             $this->showTimDosenModal = false;
         }
@@ -501,7 +507,7 @@ trait WithTimDosenModal
     {
         $fields = [
             'selected_id_tim_dosen',
-            'pr_id', 'pr_id_2', 'prNameSearch',
+            'pr_id', 'prNameSearch',
         ];
         $this->reset($fields);
 

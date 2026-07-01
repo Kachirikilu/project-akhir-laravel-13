@@ -1,4 +1,4 @@
-<flux:modal name="user-rps-modal" wire:model.live="showUserRPSModal" flyout
+<flux:modal name="user-rps-modal" wire:model.live="showUserRPSModal" flyout wire:key="user-rps-modal" 
     class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     {{-- Loading Overlay --}}
@@ -30,15 +30,7 @@
             </h3>
         </div>
 
-        {{-- @php
-            $nameXString;
-            if ($switchTable == 'dosen') {
-                $nameXString = 'Dosen';
-            } elseif ($switchTable == 'mahasiswa') {
-                $nameXString = 'Mahasiswa';
-            }
-        @endphp --}}
-        {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
+      
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             @include('livewire.admin.user-management.user-modal-form.user-rps')
 

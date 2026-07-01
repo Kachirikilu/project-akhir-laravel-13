@@ -1,88 +1,94 @@
-    @if (!$isTrashed)
-        {{-- Tombol Edit --}}
-        <flux:menu.item
-            @click="
-                $store.cpmk?.reset();
-                $store.cpmk?.setFlyout(false);
+@if (Auth::user()?->admin || Auth::user()?->dosen)
+    <flux:menu
+        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+        @php
+            $isTrashed = $c->trashed();
+        @endphp
 
-                $store.cpmk?.setEdit(1);
-
-                $store.cpmk?.setColor('text-violet-700 dark:text-violet-400');
-
-                $store.cpmk?.setValueCPMK(
-                    '{{ $x->kode_cpmk ?? '' }}',
-                    '{{ $x->deskripsi_cpl ?? '' }}',
-                );
-
-                $flux.modal('cpmk-modal').show();
-            "
-            wire:click="{{ $editCall }}"
-            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-            <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-
-            <div class="flex justify-between items-center w-full">
-                <span>Edit {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
+        @include('livewire.global.table.text-copy', [
+            'xType' => $c->kode,
+            'typeXString' => 'Kode CPMK',
+        ])
 
         <flux:menu.separator />
 
-        <flux:menu.item
-            @click="
-                    {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
+        @if (!$isTrashed)
+            {{-- Tombol Edit --}}
+            <flux:menu.item
+                @click="
+                    $store.cpmk?.reset();
+                    $store.cpmk?.setFlyout(false);
 
-                        $store.cpmk?.setDeleteCPMK(
-                            '{{ $x->deskripsi_cpl ?? '' }}',
-                            '{{ $x->kode ?? '' }}',
-                            {{ $isTrashed ? 1 : 0 }}
-                        );
-                        $flux.modal('cpmk-delete').show();
+                    $store.cpmk?.setEdit(1);
+
+                    $store.cpmk?.setColor('text-violet-700 dark:text-violet-400');
+
+                    $store.cpmk?.setValueCPMK(
+                        '{{ $c->kode_cpmk ?? '' }}',
+                        '{{ $c->deskripsi_cpl ?? '' }}',
+                    );
+
+                    $flux.modal('cpmk-modal').show();
+                    $dispatch('open-edit-cpmk-modal', { id: {{ $c->id }} });
                 "
-            wire:click="{{ $deleteCall }}"
-            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-            <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Hapus {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
-    @else
-        {{-- Tombol Restore --}}
-        <flux:menu.item wire:click="{{ $restoreCall }}"
-            class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-            <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+                <div class="flex justify-between items-center w-full">
+                    <span>Edit CPMK</span>
+                </div>
+            </flux:menu.item>
 
-            <div class="flex justify-between items-center w-full">
-                <span>Restore {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
+            <flux:menu.separator />
 
-        <flux:menu.separator />
-
-        {{-- Tombol Delete Permanent --}}
-        <flux:menu.item
-            @click="
-                        $store.cpmk?.setDeleteCPMK(
-                            '{{ $x->deskripsi_cpl ?? '' }}',
-                            '{{ $x->kode ?? '' }}',
-                            {{ $isTrashed ? 1 : 0 }}
-                        );
-                        $flux.modal('cpmk-delete').show();
+            <flux:menu.item
+                @click="
+                    $store.cpmk?.setDeleteCPMK(
+                        '{{ $c->deskripsi_cpl ?? '' }}',
+                        '{{ $c->kode ?? '' }}',
+                        {{ $isTrashed ? 1 : 0 }}
+                    );
+                    $flux.modal('cpmk-delete').show();
+                    $dispatch('open-delete-cpmk-modal', { id: {{ $c->id }} });
                 "
-            wire:click="{{ $deleteCall }}"
-            class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-            <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
-                <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
-    @endif
+                <div class="flex justify-between items-center w-full">
+                    <span>Hapus CPMK</span>
+                </div>
+            </flux:menu.item>
+        @else
+            {{-- Tombol Restore --}}
+            <flux:menu.item wire:click="restoreCPMK({{ $c->id }})"
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
+                <div class="flex justify-between items-center w-full">
+                    <span>Restore CPMK</span>
+                </div>
+            </flux:menu.item>
+
+            <flux:menu.separator />
+
+            {{-- Tombol Delete Permanent --}}
+            <flux:menu.item
+                @click="
+                    $store.cpmk?.setDeleteCPMK(
+                        '{{ $c->deskripsi_cpl ?? '' }}',
+                        '{{ $c->kode ?? '' }}',
+                        {{ $isTrashed ? 1 : 0 }}
+                    );
+                    $flux.modal('cpmk-delete').show();
+                    $dispatch('open-delete-cpmk-modal', { id: {{ $c->id }}, isTrash: {{ $isTrashed }} } );
+                "
+                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+
+                <div class="flex justify-between items-center w-full">
+                    <span>Hapus Permanen CPMK</span>
+                </div>
+            </flux:menu.item>
+        @endif
+    </flux:menu>
+@endif

@@ -185,6 +185,14 @@ trait WithOBEExcel
                 $tag = 'Tim Dosen';
                 $TAG = strtoupper($tag);
                 $this->buttonTimDosenFilter($queryOBE);
+                $this->addCountRpsTimDosen(
+                    $queryOBE,
+                    'count_rps'
+                );
+                $this->addTotalSksTimDosen(
+                    $queryOBE,
+                    'total_sks'
+                );
                 break;
             case 'dosen':
                 $queryOBE = $this->inputUserSearch('dosen');

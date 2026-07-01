@@ -22,7 +22,8 @@
             class="p-2 rounded-md cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
             role="button"
             tabindex="0"
-            title="Salin Kode">
+x
+title="Salin Kode">
 
             <flux:icon 
                 x-show="!copied" 

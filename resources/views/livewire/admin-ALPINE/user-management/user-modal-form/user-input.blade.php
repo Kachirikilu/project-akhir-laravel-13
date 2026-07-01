@@ -45,7 +45,9 @@
             @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-lainnya-input')
         </div>
         @if ($withRPS ?? false)
-            <div x-show="step === 6">
+        <div x-show="step === 6" 
+            x-init="$store.user.count_rps = {{ $user_input['count_rps'] ?? 0 }}; 
+                    $store.user.total_sks = {{ $user_input['total_sks'] ?? 0 }};">
                 @include('livewire.admin.user-management.user-modal-form.user-rps')
                 <template x-if="$store.user.isEdit && ($store.user?.typeModal == 'dosen' || $store.user?.typeModal == 'mahasiswa')" x-cloak>
                     @include('livewire.staff.obe-management.obe-partial.rps-list', [

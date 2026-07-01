@@ -76,10 +76,10 @@ trait WithUserModal
         'email' => 'required|email',
         'password' => 'nullable|min:8',
         'name' => 'required|string|max:255',
-        'nip' => 'nullable|string|max:20',
-        'nitk' => 'nullable|string|max:20',
-        'nidn' => 'nullable|string|max:20',
-        'nidk' => 'nullable|string|max:20',
+        'nip' => 'nullable|string|min:8|max:20',
+        'nitk' => 'nullable|string|min:8|max:20',
+        'nidn' => 'nullable|string|min:8|max:20',
+        'nidk' => 'nullable|string|min:8|max:20',
         'nim' => 'required|string|max:20',
         'angkatan' => 'required|integer',
         'pr_id' => 'required|integer|exists:prodis,id',
@@ -189,20 +189,22 @@ trait WithUserModal
                 $this->fetchPr($this->prNameSearch);
                 // $this->updatedPrNameSearch($this->prNameSearch);
             }
-
-            if ($user->dosen && $withRPS) {
-                $this->user_input_rps_id = $user->dosen->id;
-                $this->resetPage('user_rps_modal_page');
-                $this->loadDosenRPSPagination();
-            }
-
-            if ($user->mahasiswa && $withRPS) {
-                $this->user_input_rps_id = $user->mahasiswa->id;
-                $this->resetPage('user_rps_modal_page');
-                $this->loadMahasiswaRPSPagination();
-            }
-
             $this->roleType = strtolower($user->role);
+
+            if ($withRPS) {
+                // if ($user->dosen) {
+                //     $this->user_rps_id = $user->dosen->id;
+                //     // $this->loadDosenRPSPagination();
+                // }
+                // if ($user->mahasiswa) {
+                //     $this->user_rps_id = $user->mahasiswa->id;
+                //     // $this->loadMahasiswaRPSPagination();
+                // }
+                $this->user_rps_id = $user->role_id;
+                $this->resetPage('user_rps_modal_page');
+                $this->loadUserRPSPagination();
+            }
+
 
             // dump($this->pr_id);
             // $this->syncUserStore($user, $formattedPhone['no_hp_back'] ?? '');
@@ -211,12 +213,12 @@ trait WithUserModal
         }
     }
 
-//    public function syncUserStore($user, $noHpBack = '')
-//     {
-//         $this->dispatch('sync-user-store',
-//             email: $user->email ?? '',
-//         );
-//     }
+    //    public function syncUserStore($user, $noHpBack = '')
+    //     {
+    //         $this->dispatch('sync-user-store',
+    //             email: $user->email ?? '',
+    //         );
+    //     }
 
     // public function syncUserStore($user, $noHpBack = '')
     // {
@@ -262,13 +264,62 @@ trait WithUserModal
     //     );
     // }
 
-    private function loadDosenRPSPagination()
+    private function loadUserRPSPagination()
     {
-        if (empty($this->user_input_rps_id)) {
+        if (empty($this->user_rps_id)) {
             return;
         }
 
-        $dosen = Dosen::find($this->user_input_rps_id);
+        $role = strtolower($this->roleType);
+        $rpsQuery = RPS::query();
+
+        if ($role === 'dosen') {
+            $dosen = Dosen::find($this->user_rps_id);
+            if (! $dosen) {
+                return;
+            }
+
+            $rpsQuery->whereHas('tim_dosens.dosens', function ($query) use ($dosen) {
+                $query->where('dosens.id', $dosen->id);
+            });
+
+        } elseif ($role === 'mahasiswa') {
+            $mahasiswa = Mahasiswa::find($this->user_rps_id);
+            if (! $mahasiswa) {
+                return;
+            }
+
+            $rpsQuery->whereIn('id', function ($query) use ($mahasiswa) {
+                $query->select('rps_id')
+                    ->from('nilai_mahasiswa')
+                    ->where('mahasiswa_id', $mahasiswa->id)
+                    ->whereNotNull('rps_id')
+                    ->distinct();
+            });
+        } else {
+            // Handle jika role tidak valid
+            return;
+        }
+
+        // Eksekusi pagination
+        $rps = $rpsQuery->paginate(
+            $this->user_rps_modal_page,
+            ['*'],
+            'user_rps_modal_page'
+        );
+
+        // Update state komponen
+        $this->user_rps_items_list = $this->mapRPS($rps);
+        $this->user_rps_modal_paginator = $rps;
+    }
+
+    private function loadDosenRPSPagination()
+    {
+        if (empty($this->user_rps_id)) {
+            return;
+        }
+
+        $dosen = Dosen::find($this->user_rps_id);
 
         if (! $dosen) {
             return;
@@ -276,50 +327,47 @@ trait WithUserModal
 
         $rps = RPS::whereHas('tim_dosens.dosens', function ($query) use ($dosen) {
             $query->where('dosens.id', $dosen->id);
-        })->paginate($this->user_input_rps_modal_page, ['*'], 'user_rps_modal_page');
+        })->paginate($this->user_rps_modal_page, ['*'], 'user_rps_modal_page');
 
-        $this->user_input_rps_items_list = $this->mapRPS($rps);
-        $this->user_input_rps_modal_paginator = $rps;
+        $this->user_rps_items_list = $this->mapRPS($rps);
+        $this->user_rps_modal_paginator = $rps;
     }
 
-    private function loadMahasiswaRPSPagination()
+    // private function loadMahasiswaRPSPagination()
+    // {
+    //     if (empty($this->user_rps_id)) {
+    //         return;
+    //     }
+
+    //     $mahasiswa = Mahasiswa::find($this->user_rps_id);
+
+    //     if (! $mahasiswa) {
+    //         return;
+    //     }
+
+    //     $rps = RPS::query()
+    //         ->whereIn('id', function ($query) use ($mahasiswa) {
+    //             $query->select('rps_id')
+    //                 ->from('nilai_mahasiswa')
+    //                 ->where('mahasiswa_id', $mahasiswa->id)
+    //                 ->whereNotNull('rps_id')
+    //                 ->distinct();
+    //         })
+    //         ->paginate(
+    //             $this->user_rps_modal_page,
+    //             ['*'],
+    //             'user_rps_modal_page'
+    //         );
+
+    //     $this->user_rps_items_list = $this->mapRPS($rps);
+    //     $this->user_rps_modal_paginator = $rps;
+    // }
+
+    public function updatedUserRPSModalPage($page)
     {
-        if (empty($this->user_input_rps_id)) {
-            return;
-        }
-
-        $mahasiswa = Mahasiswa::find($this->user_input_rps_id);
-
-        if (! $mahasiswa) {
-            return;
-        }
-
-        $rps = RPS::query()
-            ->whereIn('id', function ($query) use ($mahasiswa) {
-                $query->select('rps_id')
-                    ->from('nilai_mahasiswa')
-                    ->where('mahasiswa_id', $mahasiswa->id)
-                    ->whereNotNull('rps_id')
-                    ->distinct();
-            })
-            ->paginate(
-                $this->user_input_rps_modal_page,
-                ['*'],
-                'user_rps_modal_page'
-            );
-
-        $this->user_input_rps_items_list = $this->mapRPS($rps);
-        $this->user_input_rps_modal_paginator = $rps;
-    }
-
-    public function updatedDosenRPSModalPage($page)
-    {
-        $this->loadDosenRPSPagination();
-    }
-
-    public function updatedMahasiswaRPSModalPage($page)
-    {
-        $this->loadMahasiswaRPSPagination();
+        $this->loadUserRPSPagination();
+        // $this->loadDosenRPSPagination();
+        // $this->loadMahasiswaRPSPagination();
     }
 
     private function inputModalUser($isEditingUser, $data, $role)
@@ -328,7 +376,7 @@ trait WithUserModal
         $this->resetValidation();
 
         // dd($data['no_hp_back']);
-        if (empty($data['no_hp_back']) && !empty($data['no_hp'])) {
+        if (empty($data['no_hp_back']) && ! empty($data['no_hp'])) {
             $data['kode_no_hp'] = null;
             $noHPLengkap = null;
         } elseif ($data['kode_no_hp'] && $data['no_hp_back']) {
@@ -357,11 +405,11 @@ trait WithUserModal
             ],
             'password' => $isEditingUser ? 'nullable|min:8' : 'required|min:8',
             'name' => 'required|string|max:255',
-            'nip' => 'nullable|string|max:20',
-            'nitk' => 'nullable|string|max:20',
-            'nidn' => 'nullable|string|max:20',
-            'nidk' => 'nullable|string|max:20',
-            'nim' => 'nullable|string|max:20',
+            'nip' => 'nullable|string|min:8|max:20',
+            'nitk' => 'nullable|string|min:8|max:20',
+            'nidn' => 'nullable|string|min:8|max:20',
+            'nidk' => 'nullable|string|min:8|max:20',
+            'nim' => 'nullable|string|min:8|max:20',
             'nik' => 'required|string|min:12|max:16',
         ];
 
@@ -696,10 +744,11 @@ trait WithUserModal
             $data['status'] = 'Aktif';
         }
 
+        $role = strtolower($this->roleType);
         try {
-            $validated = $this->inputModalUser(false, $data, $this->roleType);
+            $validated = $this->inputModalUser(false, $data, $role);
 
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $role) {
 
                 // 1. Buat User Baru
                 $user = User::create([
@@ -707,9 +756,9 @@ trait WithUserModal
                     'password' => Hash::make($validated['password']),
                 ]);
 
-                if ($this->roleType !== 'mahasiswa') {
+                if ($role !== 'mahasiswa') {
                     $identity1Input = $validated['nip'];
-                    if ($this->roleType == 'admin') {
+                    if ($role == 'admin') {
                         $identity2Input = ($validated['nitk'] ?? null) ?: null;
                     } else {
                         $identity2Input = ($validated['nidn'] ?? null) ?: null;
@@ -718,8 +767,8 @@ trait WithUserModal
                     $identity1Input = $validated['nim'];
                 }
 
-                if ($this->roleType !== 'dosen') {
-                    $kodeWly = $validated['kode_wilayah'];
+                if ($role !== 'dosen') {
+                    $kodeWly = $validated['kode_wilayah'] ?? null;
                 }
 
                 $dosen = null;
@@ -738,19 +787,19 @@ trait WithUserModal
                     'jenis_kelamin' => $validated['jenis_kelamin'],
                 ];
 
-                if ($this->roleType === 'admin') {
+                if ($role === 'admin') {
                     Admin::create(array_merge($data, [
                         'nip' => $identity1Input,
                         'nitk' => $identity2Input,
                         'kode_wilayah' => $kodeWly,
                     ]));
-                } elseif ($this->roleType === 'dosen') {
+                } elseif ($role === 'dosen') {
                     $dosen = Dosen::create(array_merge($data, [
                         'nip' => $identity1Input,
                         'nidn' => $identity2Input,
                         'nidk' => ($validated['nidk'] ?? null) ?: null,
                     ]));
-                } elseif ($this->roleType === 'mahasiswa') {
+                } elseif ($role === 'mahasiswa') {
                     Mahasiswa::create(array_merge($data, [
                         'nim' => $identity1Input,
                         'angkatan' => $validated['angkatan'],
@@ -771,25 +820,29 @@ trait WithUserModal
                     'role' => 'owner',
                 ]);
 
-                if (! empty($this->showTimDosenModal) && $dosen) {
-                    if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
-                        $this->dosen_id_array = [];
-                    }
-                    if (! isset($this->dosen_items_array) || ! is_array($this->dosen_items_array)) {
-                        $this->dosen_items_array = [];
-                    }
-                    if (! in_array($dosen->id, $this->dosen_id_array)) {
-                        $this->dosen_id_array[] = $dosen->id;
-                        $this->dosen_items_array[] = $this->itemsDosen($dosen);
-                    }
+                // if (! empty($this->showTimDosenModal) && $dosen) {
+                //     if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
+                //         $this->dosen_id_array = [];
+                //     }
+                //     if (! isset($this->dosen_items_array) || ! is_array($this->dosen_items_array)) {
+                //         $this->dosen_items_array = [];
+                //     }
+                //     if (! in_array($dosen->id, $this->dosen_id_array)) {
+                //         $this->dosen_id_array[] = $dosen->id;
+                //         $this->dosen_items_array[] = $this->itemsDosen($dosen);
+                //     }
 
-                    $isKetua = collect($this->dosen_items_array)
-                        ->contains(fn ($item) => $item['is_ketua'] === true);
-                    if (! $isKetua && count($this->dosen_items_array) > 0) {
-                        $lastIndex = array_key_last($this->dosen_items_array);
-                        $this->dosen_items_array[$lastIndex]['is_ketua'] = true;
-                        $this->dosen_items_array[$lastIndex]['peran'] = 'Koordinator';
-                    }
+                //     $isKetua = collect($this->dosen_items_array)
+                //         ->contains(fn ($item) => $item['is_ketua'] === true);
+                //     if (! $isKetua && count($this->dosen_items_array) > 0) {
+                //         $lastIndex = array_key_last($this->dosen_items_array);
+                //         $this->dosen_items_array[$lastIndex]['is_ketua'] = true;
+                //         $this->dosen_items_array[$lastIndex]['peran'] = 'Koordinator';
+                //     }
+                // }
+
+                if ($this->parent == 'tim_dosen' && $dosen) {
+                    $this->dispatch('dosen-created-tim-dosen', id: $dosen->id);
                 }
 
             });
@@ -826,11 +879,11 @@ trait WithUserModal
         if (empty($data['status'])) {
             $data['status'] = 'Aktif';
         }
-
+        $role = strtolower($this->roleType);
         try {
-            $validated = $this->inputModalUser(true, $data, $this->roleType);
+            $validated = $this->inputModalUser(true, $data, $role);
 
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $role) {
 
                 $user = User::findOrFail($this->selected_id_user);
                 $user->update(['email' => $validated['email']]);
@@ -839,9 +892,9 @@ trait WithUserModal
                     $user->update(['password' => Hash::make($validated['password'])]);
                 }
 
-                if ($this->roleType !== 'mahasiswa') {
+                if ($role !== 'mahasiswa') {
                     $identity1Input = $validated['nip'];
-                    if ($this->roleType == 'admin') {
+                    if ($role == 'admin') {
                         $identity2Input = ($validated['nitk'] ?? null) ?: null;
                     } else {
                         $identity2Input = ($validated['nidn'] ?? null) ?: null;
@@ -850,11 +903,11 @@ trait WithUserModal
                     $identity1Input = $validated['nim'];
                 }
 
-                if ($this->roleType !== 'dosen') {
+                if ($role !== 'dosen') {
                     $kodeWly = $validated['kode_wilayah'];
                 }
 
-                $model = match ($this->roleType) {
+                $model = match ($role) {
                     'admin' => $user->admin,
                     'dosen' => $user->dosen,
                     'mahasiswa' => $user->mahasiswa,
@@ -873,19 +926,19 @@ trait WithUserModal
                     'jenis_kelamin' => $validated['jenis_kelamin'],
                 ];
 
-                if ($this->roleType === 'admin') {
+                if ($role === 'admin') {
                     $data += [
                         'nip' => $identity1Input,
                         'nitk' => $identity2Input,
                         'kode_wilayah' => $kodeWly,
                     ];
-                } elseif ($this->roleType === 'dosen') {
+                } elseif ($role === 'dosen') {
                     $data += [
                         'nip' => $identity1Input,
                         'nidn' => $identity2Input,
                         'nidk' => ($validated['nidk'] ?? null) ?: null,
                     ];
-                } elseif ($this->roleType === 'mahasiswa') {
+                } elseif ($role === 'mahasiswa') {
                     $data += [
                         'nim' => $identity1Input,
                         'angkatan' => $validated['angkatan'],
@@ -928,15 +981,20 @@ trait WithUserModal
             'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
             'nip.required' => 'NIP wajib diisi untuk Admin dan Dosen!',
             'nip.unique' => 'NIP ini sudah terdaftar!',
+            'nip.min' => 'NIP minimal 8 karakter!',
             'nip.max' => 'NIP maksimal 20 karakter!',
             'nitk.unique' => 'NITK ini sudah terdaftar!',
+            'nitk.min' => 'NITK minimal 8 karakter!',
             'nitk.max' => 'NITK maksimal 20 karakter!',
             'nidn.unique' => 'NIDN ini sudah terdaftar!',
+            'nidn.min' => 'NIDN minimal 8 karakter!',
             'nidn.max' => 'NIDN maksimal 20 karakter!',
             'nidk.unique' => 'NIDK ini sudah terdaftar!',
+            'nidk.min' => 'NIDK minimal 8 karakter!',
             'nidk.max' => 'NIDK maksimal 20 karakter!',
             'nim.required' => 'NIM wajib diisi untuk Mahasiswa!',
             'nim.unique' => 'NIM ini sudah terdaftar!',
+            'nim.min' => 'NIM minimal 8 karakter!',
             'nim.max' => 'NIM maksimal 20 karakter!',
             'nik.required' => 'NIK wajib diisi!',
             'nik.unique' => 'NIK ini sudah terdaftar!',

@@ -6,6 +6,7 @@ use App\Models\Akademik\Referensi;
 // use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithRefDelete
 {
@@ -96,6 +97,7 @@ trait WithRefDelete
     /**
      * RESTORE REFERENSI
      */
+    #[On('restore-ref')]
     public function restoreRef($id)
     {
         if (! $this->AuthCheck('staff')) {

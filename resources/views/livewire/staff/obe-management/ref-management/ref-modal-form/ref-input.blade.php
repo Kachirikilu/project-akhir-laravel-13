@@ -1,3 +1,4 @@
+<div>
 <div x-data="{ step: 1, isOpen: false }"
     x-effect="
         if ($wire.showRefModal && !isOpen) {
@@ -155,3 +156,6 @@
         ])
     </template>
 </div>
+</div>
+
+

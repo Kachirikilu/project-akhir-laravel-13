@@ -63,12 +63,23 @@ document.addEventListener("alpine:init", () => {
 
         pr_id_show: "",
 
-        setValueUserLite(email) {
+        setValueUserLite(email, rps, sks, rekap, index, mutu) {
             this.email = email;
+
+            this.count_rps = rps;
+            this.total_sks = sks;
+            this.rekap_mhs = rekap;
+            this.index_mhs = index;
+            this.mutu_mhs = mutu;
         },
         getData() {
             return {
                 email: this.email,
+                // count_rps: this.count_rps,
+                // total_sks: this.total_sks,
+                // rekap_mhs: this.rekap_mhs,
+                // index_mhs: this.index_mhs,
+                // mutu_mhs: this.mutu_mhs,
             };
         },
 

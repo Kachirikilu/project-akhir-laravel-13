@@ -119,10 +119,12 @@
                         </flux:badge>
                     </button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $d,
-                        'typeXString' => $switchTable,
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.obe-management.tim-dosen-management.toolbar-tim-dosen-management lazy :id="$d->id"
+                            :kode="$d->kode" :kode_tim_dosen="$d->kode_tim_dosen" :tim="$d->tim" :isTrashed="$d->trashed()"
+                            wire:key="toolbar-tim-dosen-{{ $d->id }}-2" />
+                    </flux:menu>
                 </flux:dropdown>
             </td>
             <td class="table-second-sticky table-border-r whitespace-nowrap">{{ $d->tim ?? '-' }}</td>
@@ -145,17 +147,17 @@
 
                             $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400', 'bg-blue-50 dark:bg-blue-950/40');
 
-                                $store.tim_dosen?.setValueTimDosenRPS(
-                                    '{{ $d->tim ?? '' }}',
-                                    '{{ $d->ketua ?? '' }}',
-                                    '{{ $d->nip ?? '' }}',
-                                    '{{ $d->prodi ?? '' }}',
-                                    '{{ $d->count_koordinator ?? '' }}',
-                                    '{{ $d->count_pengajar ?? '' }}',
-                                    '{{ $d->count_asisten ?? '' }}',
-                                    '{{ $d->count_rps ?? '' }}',
-                                    '{{ $d->total_sks ?? '' }}',
-                                );
+                            $store.tim_dosen?.setValueTimDosenRPS(
+                                '{{ $d->tim ?? '' }}',
+                                '{{ $d->ketua ?? '' }}',
+                                '{{ $d->nip ?? '' }}',
+                                '{{ $d->prodi ?? '' }}',
+                                '{{ $d->count_koordinator ?? '' }}',
+                                '{{ $d->count_pengajar ?? '' }}',
+                                '{{ $d->count_asisten ?? '' }}',
+                                '{{ $d->count_rps ?? '' }}',
+                                '{{ $d->total_sks ?? '' }}',
+                            );
                     
                             $flux.modal('tim-dosen-rps-modal').show();
                         "
@@ -182,11 +184,12 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $d,
-                        'typeXString' => $switchTable,
-                    ])
-
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.obe-management.tim-dosen-management.toolbar-tim-dosen-management lazy :id="$d->id"
+                            :kode="$d->kode" :kode_tim_dosen="$d->kode_tim_dosen" :tim="$d->tim" :isTrashed="$d->trashed()"
+                            wire:key="toolbar-tim-dosen-{{ $d->id }}-2" />
+                    </flux:menu>
                 </flux:dropdown>
             </td>
 

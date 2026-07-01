@@ -25,16 +25,28 @@ trait WithReferensiSearchFilters
 
     public $ref_items = [];
 
-    public $refNameSearch = [];
+    public $refNameSearch = [
+            'rps' => [],
+            'cpmk' => [],
+            'scpmk' => [],
+        ];
 
     public $refResults = [];
 
     public $selectedRefId = [];
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
-    public $ref_id_array = [];
+    public $ref_id_array = [
+            'rps' => [],
+            'cpmk' => [],
+            'scpmk' => [],
+        ];
 
-    public $ref_items_array = [];
+    public $ref_items_array = [
+            'rps' => [],
+            'cpmk' => [],
+            'scpmk' => [],
+        ];
 
     private function mapRef($collection)
     {

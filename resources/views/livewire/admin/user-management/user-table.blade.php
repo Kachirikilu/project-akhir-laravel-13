@@ -203,7 +203,7 @@
             <td class="table-second text-center">
                 <flux:dropdown>
 
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
+                    <button class="cursor-pointer">
                         @switch($user->role)
                             @case('Admin')
                                 <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
@@ -222,7 +222,12 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table')
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:admin.user-management.toolbar-user-management lazy :id="$user->id" :email="$user->email"
+                            :label_id1="$user->label_id1" :identity1="$user->identity1" :role="$user->role" :isTrashed="$user->trashed()"
+                            wire:key="toolbar-user-{{ $user->id }}-1" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>
@@ -233,7 +238,8 @@
 
             <td class="table-second">{{ $user->email }}</td>
 
-            <td class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">
+            <td
+                class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">
                 {{ $user->identity1 ?? '-' }}</td>
             @if ($switchTable != 'mahasiswa')
                 <td class="table-sub text-center">
@@ -255,28 +261,37 @@
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
                 <td class="table-second text-center">
                     <flux:dropdown>
-                        <button class="cursor-pointer focus:outline-none" wire:click="$dispatch('trigger-user-modal')">
+                        <button class="cursor-pointer focus:outline-none">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
                                 'xValue' => $user->wilayah,
                                 'sortir' => $user->kode_wilayah,
                             ])
                         </button>
 
-                        @include('livewire.admin.user-management.user-toolbar-table', [
-                            'nameXString' => $user->role,
-                        ])
+                        <flux:menu
+                            class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                            <livewire:admin.user-management.toolbar-user-management lazy :id="$user->id"
+                                :email="$user->email" :label_id1="$user->label_id1" :identity1="$user->identity1"
+                                :role="$user->role" :isTrashed="$user->trashed()" wire:key="toolbar-user-{{ $user->id }}-2" />
+                        </flux:menu>
                     </flux:dropdown>
                 </td>
             @endif
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
+                    <button class="cursor-pointer">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
                         ])
                     </button>
-                    @include('livewire.admin.user-management.user-toolbar-table')
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:admin.user-management.toolbar-user-management lazy :id="$user->id"
+                            :email="$user->email" :label_id1="$user->label_id1" :identity1="$user->identity1"
+                            :deskripsi_rps="$user->deskripsi_rps" :mk_id="$user->mk_id" :kode_mk="$user->kode_mk" :mk="$user->mk"
+                            :role="$user->role" :isTrashed="$user->trashed()" wire:key="toolbar-user-{{ $user->id }}-3" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>
@@ -286,11 +301,16 @@
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
+                    <flux:button class="cursor-pointer" variant="ghost"
+                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table')
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:admin.user-management.toolbar-user-management lazy :id="$user->id"
+                            :email="$user->email" :label_id1="$user->label_id1" :identity1="$user->identity1"
+                            :role="$user->role" :isTrashed="$user->trashed()" wire:key="toolbar-user-{{ $user->id }}-3" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>

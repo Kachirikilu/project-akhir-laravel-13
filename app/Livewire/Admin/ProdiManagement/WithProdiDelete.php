@@ -10,6 +10,7 @@ use App\Models\Kelas\Kelas;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use Livewire\Attributes\On;
 
 trait WithProdiDelete
 {
@@ -151,6 +152,7 @@ trait WithProdiDelete
         }
     }
 
+    #[On('restore-prodi')]
     public function restoreProdi($id, $type)
     {
         if (! $this->AuthCheck()) {

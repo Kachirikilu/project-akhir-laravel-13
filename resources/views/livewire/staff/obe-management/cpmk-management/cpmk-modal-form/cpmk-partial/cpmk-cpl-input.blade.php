@@ -6,11 +6,12 @@
             Input Capaian Pembelajaran Lulusan
         </h4>
 
-        @if (!$this->showCPLModal || $this->isEditingCPL == false)
+        @if ($parent !== 'cpl')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'cpl',
                 'isFlyout' => 1,
                 'isSmall' => 1,
+                'parent' => 'cpmk'
             ])
         @endif
     </div>

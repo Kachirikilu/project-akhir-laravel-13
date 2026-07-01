@@ -343,7 +343,7 @@
                             {{ $row->deskripsi }}
                         </td>
                     @else
-                        <td class="{{ $textStyle }}">{{ $row->kode ?? '-' }}<br>Metode: {{ $row->metode }}</td>
+                        <td class="{{ $textStyle }}">{{ $row->kode ?? '-' }}<br>Metode: {{ $row->metode ?? '-' }}</td>
                         <td class="{{ $textStyle }}">{{ $row->materi ?? '-' }}</td>
                         <td class="{{ $textStyle }}">{{ $row->metodologi ?? '-' }}</td>
                         <td class="{{ $textStyle }}">{{ $row->tugas ?? '-' }}</td>

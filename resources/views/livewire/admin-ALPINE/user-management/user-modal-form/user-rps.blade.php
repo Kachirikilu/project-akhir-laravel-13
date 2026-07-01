@@ -18,6 +18,10 @@
                         x-text="'NIM: ' + ($store.user?.nim ?? '03041282227063')"></p>
                 </template>
 
+                {{-- <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide">{{ $user_input['name'] }}
+                </h3>
+                <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5">
+                    {{ $user_input['nip'] ?? $user_input['nim'] }}</p> --}}
             </div>
         </div>
         {{-- <div>

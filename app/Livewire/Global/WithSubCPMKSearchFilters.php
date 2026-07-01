@@ -38,6 +38,61 @@ trait WithSubCPMKSearchFilters
 
     public $scpmk_sub_items_array = [];
 
+    protected function refreshUpdatedSubCPMKInArrays(SubCPMK $scpmk)
+    {
+        if (method_exists($this, 'mapSCPMK')) {
+            $mappedSCPMK = collect($this->mapSCPMK(collect([$scpmk])))->first();
+        } else {
+            $mappedSCPMK = null;
+        }
+
+        if (method_exists($this, 'itemsSCPMK')) {
+            $itemSCPMK = $this->itemsSCPMK($scpmk);
+        } else {
+            $itemSCPMK = null;
+        }
+
+        if ($mappedSCPMK) {
+            foreach ($this->scpmk_sub_items_array ?? [] as $groupIndex => $group) {
+                if (! isset($group['scpmk']) || ! is_array($group['scpmk'])) {
+                    continue;
+                }
+
+                foreach ($group['scpmk'] as $subIndex => $sub) {
+                    if (isset($sub['id']) && $sub['id'] == $scpmk->id) {
+                        $this->scpmk_sub_items_array[$groupIndex]['scpmk'][$subIndex] = $mappedSCPMK;
+                    }
+                }
+            }
+
+            foreach ($this->cpmk_sub_items_array ?? [] as $groupIndex => $group) {
+                if (! isset($group['scpmk']) || ! is_array($group['scpmk'])) {
+                    continue;
+                }
+
+                foreach ($group['scpmk'] as $subIndex => $sub) {
+                    if (isset($sub['id']) && $sub['id'] == $scpmk->id) {
+                        $this->cpmk_sub_items_array[$groupIndex]['scpmk'][$subIndex] = $mappedSCPMK;
+                    }
+                }
+            }
+        }
+
+        if ($itemSCPMK) {
+            foreach ($this->scpmk_items_array ?? [] as $index => $item) {
+                if (isset($item['id']) && $item['id'] == $scpmk->id) {
+                    $this->scpmk_items_array[$index] = $itemSCPMK;
+                }
+            }
+
+            foreach ($this->cpmk_items_array ?? [] as $index => $item) {
+                if (isset($item['id']) && $item['id'] == $scpmk->id) {
+                    $this->cpmk_items_array[$index] = $itemSCPMK;
+                }
+            }
+        }
+    }
+
     private function mapSCPMK($collection)
     {
         return $collection->map(fn ($s) => [

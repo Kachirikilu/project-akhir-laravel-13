@@ -1,6 +1,6 @@
 @php
     $pageTitle = __('OBE Management');
-    
+
     if (request()->route('switchTable') == 'rps') {
         $pageTitle = __('RPS Management');
     } elseif (request()->route('switchTable') == 'cpl') {
@@ -22,4 +22,21 @@
             <livewire:staff.obe-management lazy :switch-table="request()->route('switchTable') ?? 'rps'" />
         </div>
     </div>
+
+    <livewire:staff.obe-management.rps-management.modal-rps-management lazy />
+
+    <livewire:staff.obe-management.cpl-management.modal-cpl-management lazy />
+    <livewire:staff.obe-management.cpmk-management.modal-cpmk-management lazy />
+    <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management lazy />
+    <livewire:staff.obe-management.referensi-management.modal-referensi-management lazy />
+    <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management lazy />
+    <livewire:admin.user-management.modal-user-management lazy />
+
+    <livewire:staff.obe-management.rps-management.delete-rps-management lazy />
+    <livewire:staff.obe-management.cpl-management.delete-cpl-management lazy />
+    <livewire:staff.obe-management.cpmk-management.delete-cpmk-management lazy />
+    <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management lazy />
+    <livewire:staff.obe-management.referensi-management.delete-referensi-management lazy />
+    <livewire:staff.obe-management.tim-dosen-management.delete-tim-dosen-management lazy />
+    <livewire:admin.user-management.delete-user-management lazy />
 </x-layouts::app>

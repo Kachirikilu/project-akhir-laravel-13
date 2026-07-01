@@ -7,6 +7,7 @@ use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\SubCPMK;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Browsershot\Browsershot;
+use Livewire\Attributes\On;
 
 trait WithRPSShow
 {
@@ -25,6 +26,8 @@ trait WithRPSShow
                 'mk_rel.prodis',
                 'tim_dosens'
             ])->findOrFail($id);
+
+
 
             // $this->prodisRPS = $rps->tim_dosens
             //     ->map(fn($tim) => $tim->pr_rel)
@@ -48,10 +51,11 @@ trait WithRPSShow
         }
     }
 
-    public function printPDFRPS($rpsId, $prId = null)
+    #[On('print-rps-pdf')]
+    public function printPDFRPS($id, $prId = null)
     {
         try {
-            $data = $this->handleRpsPdfExport($rpsId, $prId, 'stream', false);
+            $data = $this->handleRpsPdfExport($id, $prId, 'stream', false);
             
             return response()->streamDownload(function () use ($data) {
                 echo $data['content'];

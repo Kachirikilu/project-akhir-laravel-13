@@ -6,11 +6,12 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Sub Capaian Pembelajaran Mata Kuliah</h4>
 
-        @if (!$this->showSCPMKModal || $this->isEditingSCPMK == false)
+        @if ($parent !== 'scpmk')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'scpmk',
                 'isFlyout' => 1,
                 'isSmall' => 1,
+                'parent' => 'cpmk'
             ])
         @endif
 
@@ -39,6 +40,7 @@
                     'typeXString' => 'deskripsi',
                     'typeX2String' => 'metode',
                     'typeX3String' => 'bobot',
+                    'withParent' => 'cpmk',
                 
                     'nameXString' => 'Sub Capaian Pempebalajaran Mata Kuliah (Sub-CPMK)',
                     'nameSearchString' => 'scpmkNameSearch',

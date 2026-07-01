@@ -5,6 +5,7 @@ namespace App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasis
 use App\Models\Penilaian\NilaiMahasiswa;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithNilaiDelete
 {    
@@ -69,6 +70,7 @@ trait WithNilaiDelete
         }
     }
 
+    #[On('restore-nilai')]
     public function restoreNilai($id)
     {
         if (! $this->AuthCheck()) {

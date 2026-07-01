@@ -89,13 +89,6 @@ trait WithTimDosenFilters
     
     public function sortFieldOrderTimDosen($queryTimDosen)
     {
-        $queryTimDosen->withCount([
-            'dosens',
-            'dosens as count_koordinator' => fn($q) => $q->where('peran', 'Koordinator'),
-            'dosens as count_pengajar'    => fn($q) => $q->where('peran', 'Pengajar'),
-            'dosens as count_asisten'     => fn($q) => $q->where('peran', 'Asisten'),
-        ]);
-
         $queryTimDosen->select('tim_dosens.*');
 
         match ($this->sortField) {
@@ -104,11 +97,33 @@ trait WithTimDosenFilters
             
             'ketua_tim', 'nama_ketua' => $this->applyKetuaSort($queryTimDosen, 'name'),
             'nip_ketua'               => $this->applyKetuaSort($queryTimDosen, 'nip'),
+            
+            'count_dosen' => $queryTimDosen->orderByRaw("(
+                SELECT count(*) 
+                FROM tim_dosen_pivot_dosen 
+                WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id
+            ) " . $this->sortDirection),
 
-            'count_dosen'       => $queryTimDosen->orderBy('dosens_count', $this->sortDirection),
-            'count_koordinator' => $queryTimDosen->orderBy('count_koordinator', $this->sortDirection),
-            'count_pengajar'    => $queryTimDosen->orderBy('count_pengajar', $this->sortDirection),
-            'count_asisten'     => $queryTimDosen->orderBy('count_asisten', $this->sortDirection),
+            'count_koordinator' => $queryTimDosen->orderByRaw("(
+                SELECT count(*) 
+                FROM tim_dosen_pivot_dosen 
+                WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
+                AND tim_dosen_pivot_dosen.peran = 'Koordinator'
+            ) " . $this->sortDirection),
+
+            'count_pengajar' => $queryTimDosen->orderByRaw("(
+                SELECT count(*) 
+                FROM tim_dosen_pivot_dosen 
+                WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
+                AND tim_dosen_pivot_dosen.peran = 'Pengajar'
+            ) " . $this->sortDirection),
+
+            'count_asisten' => $queryTimDosen->orderByRaw("(
+                SELECT count(*) 
+                FROM tim_dosen_pivot_dosen 
+                WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
+                AND tim_dosen_pivot_dosen.peran = 'Asisten'
+            ) " . $this->sortDirection),
 
             'count_rps' => $queryTimDosen->orderBy('count_rps', $this->sortDirection),
             'total_sks' => $queryTimDosen->orderBy('total_sks', $this->sortDirection),

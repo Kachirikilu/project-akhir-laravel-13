@@ -1,16 +1,17 @@
-@php
-    $alpineState = $alpine ?? 'config';
-    $isLivewireState = $isLivewire ?? null;
-    $modelLivewire = "{$alpineState}_input.{$modelString}";
-@endphp
+<div>
+    @php
+        $alpineState = $alpine ?? 'config';
+        $isLivewireState = $isLivewire ?? null;
+        $modelLivewire = "{$alpineState}_input.{$modelString}";
+    @endphp
 
-<div x-data="{
-    itemsAll: @if ($pathString ?? null) @entangle($pathString).live
+    <div x-data="{
+        itemsAll: @if ($pathString ?? null) @entangle($pathString).live
     @else
         null @endif,
-    @if ($isLivewireState) valueInput: @entangle($modelLivewire).live, @endif
-}"
-    @if ($isLivewireState) x-effect="
+        @if ($isLivewireState) valueInput: @entangle($modelLivewire).live, @endif
+    }"
+        @if ($isLivewireState) x-effect="
             if ($store.{{ $alpineState }}?.isEdit === 0) {
                 $store.{{ $alpineState }}.{{ $modelString }} =
                     valueInput !== '' && valueInput != null
@@ -21,18 +22,18 @@
             }
         " @endif>
 
-    @include('livewire.global.modal-form.partial.label')
+        @include('livewire.global.modal-form.partial.label')
 
-    <div class="relative {{ $noLabel ?? false ? '' : 'mt-1' }}">
+        <div class="relative {{ $noLabel ?? false ? '' : 'mt-1' }}">
 
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString ?? 'variable' }}" variant="mini"
-                x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
-        </div>
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <flux:icon icon="{{ $iconString ?? 'variable' }}" variant="mini"
+                    x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
+            </div>
 
 
-        <input type="text" readonly {{-- LIVEWIRE ENTANGLE --}}
-            @if ($pathString ?? null) x-bind:value="
+            <input type="text" readonly {{-- LIVEWIRE ENTANGLE --}}
+                @if ($pathString ?? null) x-bind:value="
                     itemsAll?.{{ $modelString }}
                 "
 
@@ -49,8 +50,8 @@
                     $store.{{ $alpine }}
                     ?.{{ $modelString }}
                 " @endif
-            placeholder="{{ $placeholder ?? '--' }}"
-            class="text-xs sm:text-sm 
+                placeholder="{{ $placeholder ?? '--' }}"
+                class="text-xs sm:text-sm 
                 focus:ring-2 focus:ring-[var(--hover-table-color)] outline-none
                 bg-[var(--second-table-color)]
                 table-border
@@ -65,5 +66,6 @@
                 font-bold
             ">
 
+        </div>
     </div>
 </div>

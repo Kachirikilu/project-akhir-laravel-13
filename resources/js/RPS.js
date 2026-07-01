@@ -6,6 +6,11 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
+        items: '',
+        add(item) {
+           this.items = item
+        },
+
         isEdit: 0,
         showEdit: 0,
         isForceDelete: 0,

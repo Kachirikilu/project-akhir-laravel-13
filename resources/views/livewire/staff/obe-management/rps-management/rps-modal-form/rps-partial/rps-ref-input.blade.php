@@ -6,11 +6,12 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Referensi RPS</h4>
 
-        @if (!$this->showRefModal || $this->isEditingRef == false)
+        @if ($parent !== 'ref')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'ref',
                 'isFlyout' => 1,
                 'isSmall' => 1,
+                'parent' => 'rps',
             ])
         @endif
     </div>

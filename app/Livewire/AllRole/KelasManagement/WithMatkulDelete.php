@@ -4,6 +4,7 @@ namespace App\Livewire\AllRole\KelasManagement;
 
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\On;
 
 trait WithMatkulDelete
 {
@@ -72,6 +73,7 @@ trait WithMatkulDelete
     /**
      * RESTORE MATA KULIAH
      */
+    #[On('restore-mk')]
     public function restoreMK($id)
     {
         try {

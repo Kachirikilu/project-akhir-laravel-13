@@ -17,8 +17,7 @@
         @include('livewire.staff.mk-management.mk-table')
     </div>
 
-    <livewire:staff.mk-management.modal-mk-management lazy />
-    <livewire:staff.mk-management.delete-mk-management lazy />
+
     {{-- @include('livewire.staff.mk-management.mk-modal-form')
     @include('livewire.staff.mk-management.mk-modal-delete') --}}
 </div>

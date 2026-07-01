@@ -5,6 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 
 trait WithKelasDelete
 {
@@ -108,6 +109,7 @@ trait WithKelasDelete
         }
     }
 
+    #[On('restore-kelas')]
     public function restoreKelas($id)
     {
         if (! $this->AuthCheck()) {

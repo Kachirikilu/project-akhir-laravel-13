@@ -6,6 +6,7 @@ use App\Models\Akademik\SubCPMK;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithSubCPMKDelete
 {
@@ -93,6 +94,7 @@ trait WithSubCPMKDelete
     /**
      * RESTORE SUB-CPMK
      */
+    #[On('restore-scpmk')]
     public function restoreSCPMK($id)
     {
         if (! $this->AuthCheck('staff')) {

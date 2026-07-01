@@ -4,4 +4,7 @@
             <livewire:staff.mata-kuliah-management lazy :switch-table="request()->route('switchTable') ?? ''" />
         </div>
     </div>
+
+    <livewire:staff.mk-management.modal-mk-management lazy />
+    <livewire:staff.mk-management.delete-mk-management lazy />
 </x-layouts::app>

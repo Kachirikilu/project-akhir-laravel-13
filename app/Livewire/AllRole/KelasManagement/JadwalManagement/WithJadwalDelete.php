@@ -101,6 +101,7 @@ trait WithJadwalDelete
         }
     }
 
+    #[On('restore-jadwal')]
     public function restoreJadwal($id)
     {
         if (! $this->AuthCheck()) {

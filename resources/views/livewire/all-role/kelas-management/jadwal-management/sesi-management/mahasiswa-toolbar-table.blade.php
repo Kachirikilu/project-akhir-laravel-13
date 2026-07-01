@@ -1,5 +1,5 @@
     <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
 
         @php
             $mahasiswaId = $x->mahasiswa?->id ?? 0;

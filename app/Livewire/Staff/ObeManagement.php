@@ -49,6 +49,7 @@ use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -110,6 +111,15 @@ class ObeManagement extends Component
     public $sortField = 'kode';
 
     public $sortDirection = 'asc';
+
+    public $selectedPrId;
+    public $selectedFkId;
+    public $selectedMKId;
+    public $selectedRPSId;
+    public $selectedCPLId;
+    public $selectedCPMKId;
+    public $selectedSCPMKId;
+    public $selectedDosenId;
 
     protected $listeners = [
         'refresh-table'       => 'refreshObesList',
@@ -188,17 +198,40 @@ class ObeManagement extends Component
     {
         $this->selectedPrId = $selectedPrId;
     }
-
-    #[On('selected-dp-id-updated')]
-    public function updateSelectedDpId($selectedDpId)
-    {
-        $this->selectedDpId = $selectedDpId;
-    }
-
     #[On('selected-fk-id-updated')]
     public function updateSelectedFkId($selectedFkId)
     {
         $this->selectedFkId = $selectedFkId;
+    }
+    #[On('selected-mk-id-updated')]
+    public function updateSelectedMKId($selectedMKId)
+    {
+        $this->selectedMKId = $selectedMKId;
+    }
+    #[On('selected-rps-id-updated')]
+    public function updateSelectedRPSId($selectedRPSId)
+    {
+        $this->selectedRPSId = $selectedRPSId;
+    }
+    #[On('selected-cpl-id-updated')]
+    public function updateSelectedCPLId($selectedCPLId)
+    {
+        $this->selectedCPLId = $selectedCPLId;
+    }
+    #[On('selected-cpmk-id-updated')]
+    public function updateSelectedCPMKId($selectedCPMKId)
+    {
+        $this->selectedCPMKId = $selectedCPMKId;
+    }
+    #[On('selected-scpmk-id-updated')]
+    public function updateSelectedSCPMKId($selectedSCPMKId)
+    {
+        $this->selectedSCPMKId = $selectedSCPMKId;
+    }
+    #[On('selected-dosen-id-updated')]
+    public function updateSelectedDosenId($selectedDosenId)
+    {
+        $this->selectedDosenId = $selectedDosenId;
     }
 
     #[On('refresh-data-obe')]
@@ -260,7 +293,7 @@ class ObeManagement extends Component
             'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'referensi' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
             'tim-dosen' => [1 => 'id', 2 => 'kode', 3 => 'nama_tim', 4 => 'ketua_tim', 5 => 'nip_ketua', 6 => 'count_dosen', 7 => 'count_koordinator', 8 => 'count_pengajar', 9 => 'count_asisten', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
-            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'kode', 4 => 'name', 5 => 'count_rps', 6 => 'total_sks', 7 => 'status', 8 => 'progtam_studi', 9 => 'created_at', 10 => 'updated_at'],
+            'dosen' => [1 => 'kode', 2 => 'name', 3 => 'count_rps', 4 => 'total_sks', 5 => 'status', 6 => 'program_studi'],
         ];
         $aliases = [
             'kode' => ['kode', 'name', 'nama_tim'],

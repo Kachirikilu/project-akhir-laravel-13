@@ -6,6 +6,7 @@ use App\Models\Akademik\TimDosen;
 // use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithTimDosenDelete
 {
@@ -88,6 +89,7 @@ trait WithTimDosenDelete
     /**
      * RESTORE REFERENSI
      */
+    #[On('restore-tim-dsoen')]
     public function restoreTimDosen($id)
     {
         if (! $this->AuthCheck('staff')) {

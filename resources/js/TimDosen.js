@@ -38,18 +38,20 @@ document.addEventListener("alpine:init", () => {
         pr_items: "",
 
 
-        setValueTimDosen(kode, tim, prId, kodePr, prodi, departemen, fakultas) {
+        setValueTimDosen(kode, tim
+            // , prId, kodePr, prodi, departemen, fakultas
+        ) {
             this.nama_tim = tim;
 
-            this.pr_id = prId;
-            this.nama_pr_search = prodi;
-            this.pr_items = {
-                id: prId,
-                kode: kodePr,
-                slot1: prodi,
-                slot2: departemen,
-                slot3: fakultas,
-            };
+            // this.pr_id = prId;
+            // this.nama_pr_search = prodi;
+            // this.pr_items = {
+            //     id: prId,
+            //     kode: kodePr,
+            //     slot1: prodi,
+            //     slot2: departemen,
+            //     slot3: fakultas,
+            // };
 
             if (kode) {
                 const mutu = kode.match(/[a-zA-Z]+/g);

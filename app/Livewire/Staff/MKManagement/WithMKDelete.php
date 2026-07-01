@@ -5,6 +5,7 @@ namespace App\Livewire\Staff\MKManagement;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithMKDelete
 {
@@ -86,6 +87,7 @@ trait WithMKDelete
     /**
      * RESTORE MATA KULIAH
      */
+    #[On('restore-mk')]
     public function restoreMK($id)
     {
         if (! $this->AuthCheck('staff')) {

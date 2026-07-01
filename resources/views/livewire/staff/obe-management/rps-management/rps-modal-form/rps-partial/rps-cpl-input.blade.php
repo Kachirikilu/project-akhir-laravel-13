@@ -1,16 +1,16 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Capaian Pembelajaran Lulusan</h4>
 
-        @if (!$this->showCPLModal || $this->isEditingCPL == false)
+        @if ($parent !== 'cpl')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'cpl',
                 'isFlyout' => 1,
                 'isSmall' => 1,
+                'parent' => 'rps',
             ])
         @endif
     </div>

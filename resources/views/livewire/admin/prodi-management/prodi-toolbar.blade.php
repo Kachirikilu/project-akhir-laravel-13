@@ -2,7 +2,7 @@
     <h2 class="text-xl sm:text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Program Studi</h2>
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" size="sm" wire:click="$dispatch('trigger-prodi-modal')"
+            <flux:button variant="primary" icon="plus" size="sm"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out"
                 wire:target="addProdi">
                 Tambah Program Studi

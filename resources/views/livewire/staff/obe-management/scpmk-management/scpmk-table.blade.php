@@ -153,11 +153,7 @@
                         </flux:badge>
                     </button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $sc,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'Sub-CPMK',
-                    ])
+                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
                 </flux:dropdown>
             </td>
 
@@ -176,11 +172,7 @@
                                 'xValue' => $sc->mutu_scpmk_pr ?? 'E',
                             ])
                         </button>
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
-                            'x' => $sc,
-                            'typeXString' => $switchTable,
-                            'nameXString' => 'Sub-CPMK',
-                        ])
+                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
                     </flux:dropdown>
                 </td>
             @endif
@@ -193,11 +185,7 @@
                         ])
                     </button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $sc,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'Sub-CPMK',
-                    ])
+                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
                 </flux:dropdown>
 
             <td class="table-sub min-w-48">{{ $sc->materi ?? '-' }}</td>
@@ -215,15 +203,17 @@
             @endif
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
+                    <flux:button class="cursor-pointer" variant="ghost"
+                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $sc,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'Sub-CPMK',
-                    ])
+                    <flux:menu
+                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+                        <livewire:staff.obe-management.cpmk-management.toolbar-sub-cpmk-management lazy :id="$sc->id"
+                            :kode="$sc->kode" :kode_scpmk="$sc->kode_scpmk" :deskripsi="$sc->deskripsi" :materi="$sc->materi" :metodologi="$sc->metodologi"
+                            :indikator="$sc->indikator" :metode="$sc->metode" :deskripsi_tugas="$sc->deskripsi_tugas" :waktu_tugas="$sc->waktu_tugas" :waktu_mandiri="$sc->waktu_mandiri"
+                            :bobot="$sc->bobot" :isTrashed="$sc->trashed()" wire:key="toolbar-scpmk-{{ $sc->id }}-4" />
+                    </flux:menu>
 
                 </flux:dropdown>
             </td>

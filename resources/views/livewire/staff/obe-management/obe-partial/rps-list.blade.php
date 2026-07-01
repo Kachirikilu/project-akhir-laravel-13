@@ -203,14 +203,14 @@
                                                 </button>
 
                                                 @if (!($noModalRPS ?? null))
-                                                    @unless (
+                                                    {{-- @unless (
                                                         $this->showRPSModal &&
                                                             !(
                                                                 ($this->isEditingCPMK && !$this->isFlyoutCPMK) ||
                                                                 ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) ||
                                                                 ($this->isEditingCPL && !$this->isFlyoutCPL) ||
                                                                 ($this->isEditingRef && !$this->isFlyoutRef)
-                                                            ))
+                                                            )) --}}
                                                         {{-- Action Link: Edit --}}
                                                         <button type="button"
                                                             class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
@@ -246,7 +246,7 @@
                                                                 wire:target="editRPS({{ $r['id'] }})"
                                                                 name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                         </button>
-                                                    @endunless
+                                                    {{-- @endunless --}}
                                                 @endif
                                             </div>
 

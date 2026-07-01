@@ -14,11 +14,11 @@ class DeleteSubCpmkManagement extends Component
     #[On('open-delete-scpmk-modal')]
     public function handleDeleteSubCPMK($id, $isTrash = false)
     {
-        $this->deleteSubCPMK($id, $isTrash);
+        $this->deleteSCPMK($id, $isTrash);
     }
     
     public function render()
     {
-        return view('livewire.staff.obe-management.scpmk-management.delete-scpmk-management');
+        return view('livewire.staff.obe-management.scpmk-management.delete-sub-cpmk-management');
     }
 }

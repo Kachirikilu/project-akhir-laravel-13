@@ -5,11 +5,12 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Tim Dosen Pengajar</h4>
 
-        @if (!$this->showTimDosenModal || $this->isEditingTimDosen == false)
+        @if ($parent !== 'tim_dosen')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'tim_dosen',
                 'isFlyout' => 1,
                 'isSmall' => 1,
+                'parent' => 'rps',
             ])
         @endif
     </div>

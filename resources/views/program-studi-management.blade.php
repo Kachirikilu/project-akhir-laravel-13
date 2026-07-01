@@ -20,4 +20,7 @@
             @endif
         </div>
     </div>
+
+    <livewire:admin.prodi-management.modal-prodi-management lazy />
+    <livewire:admin.prodi-management.delete-prodi-management lazy />
 </x-layouts::app>

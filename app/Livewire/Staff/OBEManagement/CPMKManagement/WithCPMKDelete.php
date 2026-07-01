@@ -6,6 +6,7 @@ use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
+use Livewire\Attributes\On;
 
 trait WithCPMKDelete
 {
@@ -91,6 +92,7 @@ trait WithCPMKDelete
     /**
      * RESTORE CPMK
      */
+    #[On('restore-cpmk')]
     public function restoreCPMK($id)
     {
         if (! $this->AuthCheck('staff')) {

@@ -1,18 +1,18 @@
 @if (Auth::user()?->admin || Auth::user()?->dosen)
     <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
 
         @php
-            $isTrashed = $x->trashed();
+            $isTrashed = $mk->trashed();
 
-            // $editCall = "editMK($x->id, $typeXString)";
-            // $deleteCall = "deleteMK($x->id, $isTrashed)";
-            // $restoreCall = "restoreMK($x->id)";
+            // $editCall = "editMK($mk->id, $mk->level_mk)";
+            // $deleteCall = "deleteMK($mk->id, $isTrashed)";
+            // $restoreCall = "restoreMK($mk->id)";
 
         @endphp
 
         @include('livewire.global.table.text-copy', [
-            'xType' => $x->kode,
+            'xType' => $mk->kode,
             'typeXString' => 'Kode MK',
         ])
 
@@ -24,7 +24,7 @@
                 @click="
                 $store.mk?.reset();
 
-                const type = '{{ $typeXString }}';
+                const type = {{ $mk->level_mk }};
 
                 $store.mk?.setType(type);
                 $store.mk?.setEdit(1);
@@ -51,7 +51,7 @@
                         '{{ $mk->bahan_kajian ?? '' }}',
                     );
                     $flux.modal('mk-modal').show();
-                    $dispatch('open-edit-mk-modal', { id: {{ $x->id }}, type: '{{ $typeXString }}' });
+                    $dispatch('open-edit-mk-modal', { id: {{ $mk->id }}, tingkatan: {{ $mk->level_mk }} });
             "
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -66,11 +66,11 @@
             <flux:menu.item
                 @click="
                         $store.mk?.setDeleteMK(
-                            '{{ $x->mk ?? '' }}',
-                            '{{ $x->kode ?? '' }}'
+                            '{{ $mk->mk ?? '' }}',
+                            '{{ $mk->kode ?? '' }}'
                         );
                         $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $x->id }} });
+                    $dispatch('open-delete-mk-modal', { id: {{ $mk->id }} });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
@@ -81,7 +81,7 @@
             </flux:menu.item>
         @else
             {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="restoreMK({{ $x->id }})"
+            <flux:menu.item wire:click="restoreMK({{ $mk->id }})"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
@@ -96,12 +96,12 @@
             <flux:menu.item
                 @click="
                     $store.mk?.setDeleteMK(
-                            '{{ $x->mk ?? '' }}',
-                            '{{ $x->kode ?? '' }}',
+                            '{{ $mk->mk ?? '' }}',
+                            '{{ $mk->kode ?? '' }}',
                             '{{ $isTrashed }}'
                         );
                         $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $x->id }}, isTrash: {{ $isTrashed }} });
+                    $dispatch('open-delete-mk-modal', { id: {{ $mk->id }}, isTrash: {{ $isTrashed }} });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />

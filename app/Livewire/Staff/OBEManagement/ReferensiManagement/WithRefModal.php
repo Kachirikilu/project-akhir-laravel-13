@@ -249,42 +249,50 @@ trait WithRefModal
                     'link' => $validated['link'],
                 ]);
 
-                if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $ref) {
-                    if (! isset($this->ref_id_array['rps']) || ! is_array($this->ref_id_array['rps'])) {
-                        $this->ref_id_array['rps'] = [];
-                    }
-                    if (! isset($this->ref_items_array['rps']) || ! is_array($this->ref_items_array['rps'])) {
-                        $this->ref_items_array['rps'] = [];
-                    }
-                    if (! in_array($ref->id, $this->ref_id_array['rps'])) {
-                        $this->ref_id_array['rps'][] = $ref->id;
-                        $this->ref_items_array['rps'][] = $this->itemsRef($ref);
-                    }
+                // if (property_exists($this, 'showRPSModal') && $this->showRPSModal && $ref) {
+                //     if (! isset($this->ref_id_array['rps']) || ! is_array($this->ref_id_array['rps'])) {
+                //         $this->ref_id_array['rps'] = [];
+                //     }
+                //     if (! isset($this->ref_items_array['rps']) || ! is_array($this->ref_items_array['rps'])) {
+                //         $this->ref_items_array['rps'] = [];
+                //     }
+                //     if (! in_array($ref->id, $this->ref_id_array['rps'])) {
+                //         $this->ref_id_array['rps'][] = $ref->id;
+                //         $this->ref_items_array['rps'][] = $this->itemsRef($ref);
+                //     }
+                // }
+
+                // if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $ref) {
+                //     if (! isset($this->ref_id_array['cpmk']) || ! is_array($this->ref_id_array['cpmk'])) {
+                //         $this->ref_id_array['cpmk'] = [];
+                //     }
+                //     if (! isset($this->ref_items_array['cpmk']) || ! is_array($this->ref_items_array['cpmk'])) {
+                //         $this->ref_items_array['cpmk'] = [];
+                //     }
+                //     if (! in_array($ref->id, $this->ref_id_array['cpmk'])) {
+                //         $this->ref_id_array['cpmk'][] = $ref->id;
+                //         $this->ref_items_array['cpmk'][] = $this->itemsRef($ref);
+                //     }
+                // }
+                // if (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal && $ref) {
+                //     if (! isset($this->ref_id_array['scpmk']) || ! is_array($this->ref_id_array['scpmk'])) {
+                //         $this->ref_id_array['scpmk'] = [];
+                //     }
+                //     if (! isset($this->ref_items_array['scpmk']) || ! is_array($this->ref_items_array['scpmk'])) {
+                //         $this->ref_items_array['scpmk'] = [];
+                //     }
+                //     if (! in_array($ref->id, $this->ref_id_array['scpmk'])) {
+                //         $this->ref_id_array['scpmk'][] = $ref->id;
+                //         $this->ref_items_array['scpmk'][] = $this->itemsRef($ref);
+                //     }
+                // }
+
+                // 1. Definisikan mapping berdasarkan 'parent'
+                if ($ref && in_array($this->parent, ['rps', 'cpmk', 'scpmk'])) {
+                    $key = $this->parent;
+                    $this->dispatch('ref-created-'.$key, id: $ref->id);
                 }
-                if (property_exists($this, 'showCPMKModal') && $this->showCPMKModal && $ref) {
-                    if (! isset($this->ref_id_array['cpmk']) || ! is_array($this->ref_id_array['cpmk'])) {
-                        $this->ref_id_array['cpmk'] = [];
-                    }
-                    if (! isset($this->ref_items_array['cpmk']) || ! is_array($this->ref_items_array['cpmk'])) {
-                        $this->ref_items_array['cpmk'] = [];
-                    }
-                    if (! in_array($ref->id, $this->ref_id_array['cpmk'])) {
-                        $this->ref_id_array['cpmk'][] = $ref->id;
-                        $this->ref_items_array['cpmk'][] = $this->itemsRef($ref);
-                    }
-                }
-                if (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal && $ref) {
-                    if (! isset($this->ref_id_array['scpmk']) || ! is_array($this->ref_id_array['scpmk'])) {
-                        $this->ref_id_array['scpmk'] = [];
-                    }
-                    if (! isset($this->ref_items_array['scpmk']) || ! is_array($this->ref_items_array['scpmk'])) {
-                        $this->ref_items_array['scpmk'] = [];
-                    }
-                    if (! in_array($ref->id, $this->ref_id_array['scpmk'])) {
-                        $this->ref_id_array['scpmk'][] = $ref->id;
-                        $this->ref_items_array['scpmk'][] = $this->itemsRef($ref);
-                    }
-                }
+
             });
 
             $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']}");
