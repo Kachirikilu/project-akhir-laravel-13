@@ -29,27 +29,8 @@ class ModalRpsManagement extends Component
     use WithSubCPMKSearchFilters;
     use WithTimDosenSearchFilters;
 
-    public $showCPLModal;
-
-    public $showCPMKModal;
-
-    public $showSCPMKModal;
-
-    public $showRefModal;
-
-    public $showTimDosenModal;
-
-    public $isEditingCPL;
-
-    public $isEditingCPMK;
-
-    public $isEditingSCPMK;
-
-    public $isEditingRef;
-
-    public $isEditingTimDosen;
-
     public $parent;
+    public $isFlyout;
 
     // public function mount()
     // {
@@ -81,9 +62,10 @@ class ModalRpsManagement extends Component
     }
 
     #[On('open-edit-rps-modal')]
-    public function handleEditRPS($id, $parent = null)
+    public function handleEditRPS($id, $parent = null, $isFlyout = false)
     {
         $this->parent = $parent;
+        $this->isFlyout = $isFlyout;
         $this->editRPS($id);
     }
 

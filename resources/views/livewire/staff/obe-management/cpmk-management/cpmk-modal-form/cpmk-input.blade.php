@@ -44,6 +44,8 @@
                     'rps_items_list' => $cpmk_rps_items_list,
                     'rps_modal_paginator' => $cpmk_rps_modal_paginator,
                     'nameXString' => 'CPMK',
+                    'parent' => 'cpmk',
+                    'isFlyout' => true,
                 ])
             </template>
         </div>

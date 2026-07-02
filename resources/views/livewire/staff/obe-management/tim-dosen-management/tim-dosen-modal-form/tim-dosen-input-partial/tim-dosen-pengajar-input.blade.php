@@ -10,7 +10,7 @@
                 'typeXString' => 'dosen',
                 'isFlyout' => 1,
                 'isSmall' => 1,
-                'parent' => 'tim_dosen'
+                'parent' => 'tim-dosen'
             ])
         @endif
     </div>

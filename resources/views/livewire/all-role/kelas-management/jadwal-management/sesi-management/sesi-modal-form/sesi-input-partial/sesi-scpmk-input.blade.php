@@ -76,7 +76,7 @@
                     'numberOnly' => 1,
                     'maxLength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default: ' . $kelas->sks * 60 . ' menit',
+                    'placeholder' => 'Default: ' . $sks * 60 . ' menit',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_tugas'),
                 ])
@@ -89,7 +89,7 @@
                     'numberOnly' => 1,
                     'maxLength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default: ' . $kelas->sks * 60 . ' menit',
+                    'placeholder' => 'Default: ' . $sks * 60 . ' menit',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_mandiri'),
                 ])

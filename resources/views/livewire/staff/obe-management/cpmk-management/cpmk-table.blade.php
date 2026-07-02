@@ -114,13 +114,7 @@
                         <flux:badge icon="academic-cap" color="violet" size="sm">{{ $c->kode ?? '---' }}
                         </flux:badge>
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpmk-management.toolbar-cpmk-management lazy :id="$c->id"
-                            :kode="$c->kode" :kode_cpmk="$c->kode_cpmk" :deskripsi_cpl="$c->deskripsi_cpl" :isTrashed="$c->trashed()"
-                            wire:key="toolbar-cpmk-{{ $c->id }}-3" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -141,12 +135,7 @@
                                 'xValue' => $c->mutu_cpmk_pr ?? 'E',
                             ])
                         </button>
-                        <flux:menu
-                            class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                            <livewire:staff.obe-management.cpmk-management.toolbar-cpmk-management lazy
-                                :id="$c->id" :kode="$c->kode" :kode_cpmk="$c->kode_cpmk" :deskripsi_cpl="$c->deskripsi_cpl"
-                                :isTrashed="$c->trashed()" wire:key="toolbar-cpmk-{{ $c->id }}-3" />
-                        </flux:menu>
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </td>
             @endif
@@ -163,14 +152,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpmk-management.toolbar-cpmk-management lazy :id="$c->id"
-                            :kode="$c->kode" :kode_cpmk="$c->kode_cpmk" :deskripsi_cpl="$c->deskripsi_cpl" :isTrashed="$c->trashed()"
-                            wire:key="toolbar-cpmk-{{ $c->id }}-3" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
 

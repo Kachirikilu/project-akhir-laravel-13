@@ -154,14 +154,18 @@ trait WithProdiModal
                         $departemen = DB::table('departemens')->find($data['dp_id']);
                         $fakultasId = $departemen ? $departemen->fk_id : null;
 
-                        $otherDp = DB::table('departemens')->where('kode_dp', $value)->where('id', '!=', $data['dp_id'])->exists();
-                        $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $fakultasId)->exists();
-                        $otherPr = DB::table('prodis')->where('kode_pr', $value)->where('dp_id', '!=', $data['dp_id'])->exists();
+                        $otherDp = DB::table('departemens')->where('kode_dp', $value)->exists(); 
+                        $otherFk = DB::table('fakultas')->where('kode_fk', $value)->exists();
+                        
+                        $otherPr = DB::table('prodis')
+                            ->where('kode_pr', $value)
+                            ->where('id', '!=', $this->selected_id_pr)
+                            ->exists();
 
                         if (empty($data['dp_id'])) {
                             $fail('Isi terlebih dahulu Departemen!');
                         } elseif ($otherDp || $otherFk || $otherPr) {
-                            $fail('Kode Program Studi ini sudah digunakan oleh instansi di luar silsilah Anda!');
+                            $fail('Kode Program Studi ini sudah digunakan oleh instansi lain!');
                         }
                     },
                 ],

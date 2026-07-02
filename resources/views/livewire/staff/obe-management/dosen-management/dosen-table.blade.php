@@ -2,7 +2,7 @@
 
     <x-slot:header>
         <tr>
-
+            <th rowspan="2" class="table-head ">Role</th>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'headString' => $switchTable == 'dosen' ? 'NIP / NIDN' : 'NIM',
@@ -55,16 +55,22 @@
 
 
     @forelse($users as $user)
-        @php
-            $detail = $user->admin ?? ($user->dosen ?? $user->mahasiswa);
-        @endphp
-
-        <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
+        <tr wire:key="dosen-rps-{{ $user->dosen->id }}" data-dosen-rps-id="{{ $user->dosen->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
+            <td class="table-second text-center">
+                <flux:dropdown>
+                    <button class="cursor-pointer">
+                        <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
+                    </button>
+                    @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
+                        'key' => 1,
+                    ])
+                </flux:dropdown>
+            </td>
             {{-- Role --}}
-            <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }} /
-                {{ $user->identity2 ?? '-' }}</td>
+            <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }} /
+                {{ $user->dosen->nidn ?? '-' }}</td>
 
             <td class="table-second whitespace-nowrap">
                 {{ $user->name ?? '-' }}</td>
@@ -73,42 +79,23 @@
                 @if (!$user->trashed())
                     <x-button-action
                         @click="
-                            $store.user?.reset();
-
-                            const type = '{{ strtolower($user->role) }}';
-
-                            $store.user?.setType(type);
-                            $store.user?.setEdit(1);
-
-                            const colors = {
-                                dosen: 'text-lime-700 dark:text-lime-400',
-                                mahasiswa: 'text-cyan-700 dark:text-cyan-400',
-                            };
-                            const colors2 = {
-                                dosen: 'bg-lime-50 dark:bg-lime-950/40',
-                                mahasiswa: 'bg-cyan-50 dark:bg-cyan-950/40',
-                            };
-                            $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400', colors2[type] ?? 'bg-gray-50 dark:bg-gray-950/40');
-
-                                $store.user?.setValueUserRPS (
-                                    '{{ $user->name ?? '' }}',
-                                    '{{ $user->dosen->nip ?? '' }}',
-                                    '{{ $user->mahasiswa->nim ?? '' }}',
-                                    '{{ $user->mahasiswa->angkatan ?? '' }}',
-                                    '{{ $user->mahasiswa->count_rps ?? ($user->count_rps ?? 0) }}',
-                                    '{{ $user->mahasiswa->total_sks ?? ($user->total_sks ?? 0) }}',
-
-                                    '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
-                                    '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
-                                    '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
-                                    '{{ $user->pr_id ?? '' }}',
-                                );
-                    
-                            $flux.modal('user-rps-modal').show();
-                            $dispatch('open-edit-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 });
+                    $store.user?.reset();
+                    const type = '{{ strtolower($user->role) }}';
+                    $store.user?.setType(type);
+                    $store.user?.setEdit(1);
+                    $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                    $flux.modal('user-rps-modal').show();
+                    $store.user?.setValueUserRPS(
+                            '{{ $user->dosen->name ?? '' }}',
+                            'NIP',
+                            '{{ $user->dosen->nip ?? '' }}',
+                            '{{ $user->count_rps ?? '' }}',
+                            '{{ $user->total_sks ?? '' }}'
+                        );
+                    {{-- $dispatch('open-edit-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 }); --}}
+                    $dispatch('open-list-rps-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 });
                         "
-                        color="emerald"
-                        wire:navigate>
+                        color="emerald" wire:navigate>
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
                     </x-button-action>
@@ -120,8 +107,8 @@
                 @endif
 
             </td>
-            <td class="table-sub text-center">{{ $user->mahasiswa->count_rps ?? $user->count_rps }} RPS</td>
-            <td class="table-sub table-border-r text-center">{{ $user->mahasiswa->total_sks ?? $user->total_sks }}
+            <td class="table-sub text-center">{{ $user->count_rps }} RPS</td>
+            <td class="table-sub table-border-r text-center">{{ $user->total_sks }}
                 SKS</td>
 
             <td class="table-second text-center">
@@ -131,13 +118,11 @@
                             'xValue' => $user->status,
                         ])
                     </button>
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.dosen-management.toolbar-dosen-management lazy :id="$user->id"
-                            :email="$user->email" :label_id1="$user->label_id1" :identity1="$user->identity1"
-                            :role="$user->role" :count_rps="$user->count_rps" :total_sks="$user->total_sks" :isTrashed="$user->trashed()" wire:key="toolbar-dosen-{{ $user->id }}-1" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
+                        'key' => 2,
+                    ])
                 </flux:dropdown>
+
             </td>
 
             <td class="table-second min-w-48">
@@ -148,14 +133,9 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.dosen-management.toolbar-dosen-management lazy :id="$user->id"
-                            :email="$user->email" :label_id1="$user->label_id1" :identity1="$user->identity1"
-                            :role="$user->role" :count_rps="$user->count_rps" :total_sks="$user->total_sks" :isTrashed="$user->trashed()" wire:key="toolbar-dosen-{{ $user->id }}-2" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
+                        'key' => 3,
+                    ])
                 </flux:dropdown>
             </td>
         </tr>

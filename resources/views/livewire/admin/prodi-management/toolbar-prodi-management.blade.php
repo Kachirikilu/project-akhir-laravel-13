@@ -1,6 +1,6 @@
 <div>
     @php
-        $typeXString = empty($switchTable) ? 'prodi' : $switchTable;
+        $typeXString = empty($data['switchTable']) ? 'prodi' : $data['switchTable'];
 
         $typeX2String = $typeXString;
         if ($typeX2String == '' || $typeX2String == 'prodi') {
@@ -10,7 +10,7 @@
 
 
     @include('livewire.global.table.text-copy', [
-        'xType' => $kode,
+        'xType' => $data['kode'],
         'typeXString' => 'Kode ' . $typeX2String,
     ])
     @if (Auth::user()?->admin)
@@ -19,7 +19,7 @@
 
         <flux:menu.separator />
 
-        @if (!$isTrashed)
+        @if (!$data['isTrashed'])
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
@@ -36,18 +36,18 @@
                     $store.prodi?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
                     $store.prodi?.setValueProdi(
-                        '{{ $prodi ?? '' }}',
-                        '{{ $strata ?? '' }}',
-                        '{{ $dp_id ?? '' }}',
-                        '{{ $departemen_dp ?? '' }}',
-                        '{{ $fk_id ?? '' }}',
-                        '{{ $fakultas_fk ?? '' }}',
-                        '{{ $kode_short ?? '' }}',
-                        '{{ $kode_dp ?? '' }}',
-                        '{{ $kode_fk ?? '' }}'
+                        '{{ $data['prodi'] ?? '' }}',
+                        '{{ $data['strata'] ?? '' }}',
+                        '{{ $data['dp_id'] ?? '' }}',
+                        '{{ $data['departemen_dp'] ?? '' }}',
+                        '{{ $data['fk_id'] ?? '' }}',
+                        '{{ $data['fakultas_fk'] ?? '' }}',
+                        '{{ $data['kode_short'] ?? '' }}',
+                        '{{ $data['kode_dp'] ?? '' }}',
+                        '{{ $data['kode_fk'] ?? '' }}'
                     );
                     $flux.modal('prodi-modal').show();
-                    $dispatch('open-edit-prodi-modal', { id: {{ $id }}, type: '{{ $typeXString }}' });
+                    $dispatch('open-edit-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $typeXString }}' });
                 "
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -63,14 +63,14 @@
             <flux:menu.item
                 @click="
                     $store.prodi?.setDeleteProdi(
-                        '{{ $prodi ?? '' }}',
-                        '{{ $departemen ?? '' }}',
-                        '{{ $fakultas ?? '' }}',
-                        '{{ $kode ?? '' }}',
-                        '{{ $typeXString ?? '' }}'
+                        '{{ $data['prodi'] ?? '' }}',
+                        '{{ $data['departemen'] ?? '' }}',
+                        '{{ $data['fakultas'] ?? '' }}',
+                        '{{ $data['kode'] ?? '' }}',
+                        '{{ $data['typeXString'] ?? '' }}'
                     );
                     $flux.modal('prodi-delete').show();
-                    $dispatch('open-delete-prodi-modal', { id: {{ $id }}, type: '{{ $typeXString }}' });
+                    $dispatch('open-delete-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $typeXString }}' });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
@@ -81,7 +81,7 @@
             </flux:menu.item>
         @else
             {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="$dispatch('restore-prodi', { id: {{ $id }}, type: '{{ $typeXString }}' })"
+            <flux:menu.item wire:click="$dispatch('restore-prodi', { id: {{ $data['id'] }}, type: '{{ $typeXString }}' })"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
@@ -96,15 +96,15 @@
             <flux:menu.item
                 @click="
                     $store.prodi?.setDeleteProdi(
-                        '{{ $prodi ?? '' }}',
-                        '{{ $departemen ?? '' }}',
-                        '{{ $fakultas ?? '' }}',
-                        '{{ $kode ?? '' }}',
-                        '{{ $typeXString ?? '' }}',
-                        '{{ $isTrashed }}'
+                        '{{ $data['prodi'] ?? '' }}',
+                        '{{ $data['departemen'] ?? '' }}',
+                        '{{ $data['fakultas'] ?? '' }}',
+                        '{{ $data['kode'] ?? '' }}',
+                        '{{ $data['typeXString'] ?? '' }}',
+                        '{{ $data['isTrashed'] }}'
                     );
                     $flux.modal('prodi-delete').show();
-                    $dispatch('open-delete-prodi-modal', { id: {{ $id }}, type: '{{ $typeXString }}', isTrash: {{ $isTrashed }} });
+                    $dispatch('open-delete-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $data['typeXString'] }}', isTrash: {{ $data['isTrashed'] }} });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />

@@ -1,69 +1,43 @@
-@if (Auth::user())
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-
-        @php
-            $isTrashed = $x->trashed();
-
-            $editCall = "editSesi($x->id)";
-            $deleteCall = "deleteSesi($x->id, $isTrashed)";
-            $restoreCall = "restoreSesi($x->id)";
-        @endphp
-
-        @include('livewire.global.table.text-copy', [
-            'xType' => $copyText ?? $x->kode,
-            'typeXString' => $copyName ?? 'Kode Sesi',
-        ])
-
-        @if (Auth::user()?->admin || Auth::user()?->dosen)
-
-            <flux:menu.separator />
-
-            @if (!$isTrashed)
-                {{-- Tombol Edit --}}
-                <flux:menu.item
-                    @click="
-                    $store.sesi?.reset();
-                    $store.sesi?.setEdit(1);
-
-                    $store.sesi?.setColor('text-amber-700 dark:text-amber-400');
-
-                    $store.sesi?.setValueSesi(
-
-                        '{{ $x->jam_mulai ?? '' }}',
-                        '{{ $x->jam_berakhir ?? '' }}',
-
-                        '{{ $x->pertemuan_ke ?? '' }}',
-                        '{{ $x->tanggal_fix ?? '' }}',
-
-                        '{{ $x->deskripsi ?? '' }}',
-                        '{{ $x->materi ?? '' }}',
-                        '{{ $x->metodologi ?? '' }}',
-                        '{{ $x->indikator ?? '' }}',
-                        '{{ $x->tugas ?? '' }}',
-                        '{{ $x->w_tugas ?? '' }}',
-                        '{{ $x->w_mandiri ?? '' }}',
-                        '{{ $kelas->sks ?? '' }}',
-
-                        '{{ $x->sent ?? '' }}',
-                    );
-
-                    $flux.modal('sesi-modal').show();
-                "
-                    wire:click="{{ $editCall }}"
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-
-                    <div class="flex justify-between items-center w-full">
-                        <span>Edit {{ $nameXString ?? 'Data' }}</span>
-                        <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
-                    </div>
-                </flux:menu.item>
-
-            @endif
-
-        @endif
-
-    </flux:menu>
-@endif
+<flux:menu
+    class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+    @if (Auth::user()->admin || Auth::user()->dosen)
+        <livewire:all-role.kelas-management.jadwal-management.sesi-management.toolbar-sesi-management lazy
+            :data="[
+                'id' => $s->id,
+                'kode' => $s->kode,
+                'jam_mulai' => $s->jam_mulai,
+                'jam_berakhir' => $s->jam_berakhir,
+                'pertemuan_ke' => $s->pertemuan_ke,
+                'tanggal_fix' => $s->tanggal_fix,
+                'deskripsi' => $s->deskripsi,
+                'materi' => $s->materi,
+                'metodologi' => $s->metodologi,
+                'indikator' => $s->indikator,
+                'tugas' => $s->tugas,
+                'w_tugas' => $s->w_tugas,
+                'w_mandiri' => $s->w_mandiri,
+                'sks' => $kelas->sks,
+                'sent' => $s->sent,
+                'isTrashed' => $s->trashed(),
+            ]" wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
+    @elseif (Auth::user()->mahasiswa)
+        <livewire:all-role.kelas-management.jadwal-management.sesi-management.toolbar-sesi-management lazy
+            :data="[
+                'id' => $s->id,
+                'kode' => $s->kode,
+                'kode_jadwal' => $jadwal->kode,
+                'kode_scpmk' => $s->kode_scpmk,
+                'keterangan' => $kehadiran_mhs->keterangan ?? null,
+                'pertemuan_ke' => $s->pertemuan_ke,
+                'waktu_pelaksanaan' => $s->waktu_pelaksanaan,
+                'waktu_berakhir' => $s->waktu_berakhir,
+                'waktu_telat' => $s->waktu_telat,
+                'waktu_dispensasi' => $s->waktu_dispensasi,
+                'sks' => $kelas->sks,
+                'mhs_status' => $kehadiran_mhs->status ?? 0,
+                'mhs_waktu_presensi' => $kehadiran_mhs?->waktu_presensi?->format('H:i') ?? 0,
+                'mhs_keterangan' => $kehadiran_mhs->keterangan ?? 0,
+                'isTrashed' => $s->trashed(),
+            ]" wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
+    @endif
+</flux:menu>

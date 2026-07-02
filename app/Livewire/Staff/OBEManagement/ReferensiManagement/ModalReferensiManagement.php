@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\OBEManagement\ReferensiManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use Livewire\Attributes\On;
@@ -11,19 +12,28 @@ use Livewire\Component;
 class ModalReferensiManagement extends Component
 {
     use WithRPSSearchFilters;
+    use WithRPSShow;
     use WithReferensiSearchFilters;
     use HasToast;
     use WithRefModal;
 
-    public $showRPSModal;
-    public $isEditingCPMK;
-    public $isFlyoutCPMK;
-    public $isEditingSCPMK;
-    public $isFlyoutSCPMK;
-    public $isEditingCPL;
-    public $isFlyoutCPL;
+    // public $showRPSModal;
+    // public $isEditingCPMK;
+    // public $isFlyoutCPMK;
+    // public $isEditingSCPMK;
+    // public $isFlyoutSCPMK;
+    // public $isEditingCPL;
+    // public $isFlyoutCPL;
 
     public $parent;
+
+    #[On('refresh-data-rps-ref')]
+    public function handleRefreshReferensi()
+    {
+        if ($this->selected_id_ref) {
+            $this->editRef($this->selected_id_ref);
+        }
+    }
 
     #[On('trigger-ref-modal')]
     public function handleTriggerRef()

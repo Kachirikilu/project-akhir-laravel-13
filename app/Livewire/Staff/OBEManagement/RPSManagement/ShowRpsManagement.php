@@ -32,13 +32,13 @@ class ShowRpsManagement extends Component
 
     // public $isEditingTimDosen;
 
-    public $parent;
+    // public $parent;
 
     #[On('open-show-rps-modal')]
-    public function handleShowRPS($id, $parent = null)
+    public function handleShowRPS($id, $prId = null)
     {
-        $this->parent = $parent;
-        $this->showRPS($id);
+        // $this->parent = $parent;
+        $this->showRPS($id, $prId);
     }
 
     public function render()

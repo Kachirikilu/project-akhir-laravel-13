@@ -159,6 +159,24 @@ document.addEventListener("alpine:init", () => {
             this.total_bobot = totalBobot;
         },
 
+        getDataRPS() {
+            return {
+                digit_akademik: this.digit_akademik,
+                deskripsi: this.deskripsi,
+                mk_id: this.mk_id,
+                nama_mk_search: this.nama_mk_search,
+                mk_items: this.mk_items,
+                akademik: this.akademik,
+                akademik_1: this.akademik_1,
+                akademik_2: this.akademik_2,
+                is_draf: this.is_draf,
+                count_scpmk: this.count_scpmk,
+                bobot_uts: this.bobot_uts,
+                bobot_uas: this.bobot_uas,
+                total_bobot: this.total_bobot,
+            };
+        },
+
         setShowRPS(idRPS, kode, rps, draf, level, prId) {
             this.resetShow();
             this.rps_id_show = idRPS;

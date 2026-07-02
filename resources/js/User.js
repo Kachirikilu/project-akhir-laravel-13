@@ -61,10 +61,15 @@ document.addEventListener("alpine:init", () => {
         no_hp_back: "",
         no_hp: "",
 
+        label_id1: "",
+        identity1: "",
+
         pr_id_show: "",
 
-        setValueUserLite(email, rps, sks, rekap, index, mutu) {
+        setValueUserLite(email, label1, id1, rps, sks, rekap, index, mutu) {
             this.email = email;
+            this.label_id1 = label1;
+            this.identity1 = id1;
 
             this.count_rps = rps;
             this.total_sks = sks;
@@ -72,7 +77,7 @@ document.addEventListener("alpine:init", () => {
             this.index_mhs = index;
             this.mutu_mhs = mutu;
         },
-        getData() {
+        getDataUser() {
             return {
                 email: this.email,
                 // count_rps: this.count_rps,
@@ -156,21 +161,21 @@ document.addEventListener("alpine:init", () => {
         },
         setValueUserRPS(
             name,
-            nip,
-            nim,
-            angkatan,
+            label1,
+            id1,
             rps,
             sks,
 
             rekap,
             index,
             mutu,
+
+            angkatan,
             prId,
         ) {
             this.name = name;
-            this.nip = nip;
-            this.nim = nim;
-            this.angkatan = angkatan;
+            this.label_id1 = label1;
+            this.identity1 = id1;
 
             this.count_rps = rps;
             this.total_sks = sks;
@@ -178,8 +183,36 @@ document.addEventListener("alpine:init", () => {
             this.rekap_mhs = rekap;
             this.index_mhs = index;
             this.mutu_mhs = mutu;
+
+            this.angkatan = angkatan;
             this.pr_id_show = prId;
         },
+        // setValueUserRPS(
+        //     name,
+        //     nip,
+        //     nim,
+        //     angkatan,
+        //     rps,
+        //     sks,
+
+        //     rekap,
+        //     index,
+        //     mutu,
+        //     prId,
+        // ) {
+        //     this.name = name;
+        //     this.nip = nip;
+        //     this.nim = nim;
+        //     this.angkatan = angkatan;
+
+        //     this.count_rps = rps;
+        //     this.total_sks = sks;
+
+        //     this.rekap_mhs = rekap;
+        //     this.index_mhs = index;
+        //     this.mutu_mhs = mutu;
+        //     this.pr_id_show = prId;
+        // },
         setDeleteUser(email, role, forceDelete) {
             this.label_id1_delete = email;
             this.role_delete = role;
@@ -204,6 +237,9 @@ document.addEventListener("alpine:init", () => {
                 this.nik = "";
                 this.angkatan = "";
                 this.status = "";
+
+                this.label_id1 = "";
+                this.identity1 = "";
 
                 // Prodi
                 this.pr_id = "";

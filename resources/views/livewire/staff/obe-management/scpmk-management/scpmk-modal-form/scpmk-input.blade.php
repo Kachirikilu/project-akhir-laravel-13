@@ -42,6 +42,8 @@
                     'rps_modal_paginator' => $scpmk_rps_modal_paginator,
                     'nameXString' => 'Sub-CPMK',
                     'wireLoading' => 'SCPMK',
+                    'parent' => 'scpmk',
+                    'isFlyout' => true,
                 ])
             </template>
         </div>

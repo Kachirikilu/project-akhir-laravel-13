@@ -1,19 +1,20 @@
-<flux:modal name="jadwal-left" wire:model="showJadwalLeft"
+<div>
+<flux:modal name="left-jadwal" wire:model="showJadwalLeft" wire:key="left-jadwal-modal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">Konfirmasi Keluar Kelas</flux:heading>
-            <flux:subheading>
-                Apakah Anda yakin ingin keluar dari kelas
-                <strong class="text-red-700 dark:text-red-400">
-                    ***{{ $jadwal->label_extra ?? '' }}***
-                </strong> dengan
-                <strong class="text-red-700 dark:text-red-400">
-                    ***Kode Kelas {{ $kelas->kode ?? '' }}***
-                </strong>?
-                Tindakan ini tidak dapat dibatalkan!
-            </flux:subheading>
+                <flux:subheading x-data>
+                    Apakah Anda yakin ingin keluar dari kelas
+                    <strong class="text-red-700 dark:text-red-400">
+                        <span x-text="'***' + ($store.jadwal.label_extra || '') + '***'"></span>
+                    </strong> dengan
+                    <strong class="text-red-700 dark:text-red-400">
+                        Kode Kelas <span x-text="($store.jadwal.kode_kelas || '')"></span>
+                    </strong>?
+                    Tindakan ini tidak dapat dibatalkan!
+                </flux:subheading>
         </div>
 
         <div class="flex gap-2">
@@ -42,3 +43,4 @@
     </div>
 
 </flux:modal>
+</div>

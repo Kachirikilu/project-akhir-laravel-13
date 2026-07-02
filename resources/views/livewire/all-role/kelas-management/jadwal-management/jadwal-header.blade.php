@@ -118,8 +118,9 @@
                 );
                 $store.rps?.setColor('text-green-700 dark:text-green-400');
                 $flux.modal('rps-detail-modal').show();
+                $dispatch('open-show-rps-modal', { id: {{ $kelas->rps_id }}, prId: {{ $kelas->pr_id }} });
             "
-            wire:click="showRPS({{ $kelas->rps_id }}, {{ $kelas->pr_id }})" icon="eye" size="sm"
+            icon="eye" size="sm"
             class="!cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
             <span>Show RPS</span>
         </flux:button>
@@ -131,6 +132,7 @@
                 'icon' => 'arrow-down-tray',
                 'isFull' => 1,
                 'valuePx' => 'px-4',
+                'valuePy' => 'py-4',
                 'isTextMd' => 0,
                 'isNoPb' => 1,
                 'color' => 'rose',
@@ -161,8 +163,9 @@
                     '{{ $x->rps_rel?->draf_full ?? '' }}',
                 );
                 $flux.modal('kelas-modal').show();
+                $dispatch('open-edit-kelas-modal', { id: {{ $kelas->id }} });
             "
-                wire:click="editKelas({{ $kelas->id }})" icon="pencil-square" size="sm"
+                icon="pencil-square" size="sm"
                 class="!cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                 <span>Edit Kelas</span>
             </flux:button>
@@ -187,8 +190,9 @@
                         '{{ $jadwal->password ?? '' }}',
                     );
                     $flux.modal('jadwal-modal').show();
+                    $dispatch('open-edit-jadwal-modal', { id: {{ $jadwal_id_url }}, kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' });
                 "
-                    wire:click="editJadwal({{ $jadwal_id_url }})" icon="pencil-square" size="sm"
+                    icon="pencil-square" size="sm"
                     class="!cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                     <span>Edit Jadwal</span>
                 </flux:button>
@@ -196,11 +200,12 @@
 
             <flux:button
                 @click="
-                $store.sesi?.reset();
-                $store.sesi?.setEdit(0);
-                $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 active:file:bg-green-800 dark:file:bg-green-500 dark:hover:file:bg-green-600 dark:active:file:bg-green-700');
-                $flux.modal('nilai-excel-modal').show();
-            "
+                    $store.sesi?.reset();
+                    $store.sesi?.setEdit(0);
+                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 active:file:bg-green-800 dark:file:bg-green-500 dark:hover:file:bg-green-600 dark:active:file:bg-green-700');
+                    $flux.modal('nilai-excel-modal').show();
+                    $dispatch('open-excel-sesi-modal');
+                "
                 icon="printer" size="sm"
                 class="!cursor-pointer px-4 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                 <span>Import Nilai</span>
@@ -211,8 +216,10 @@
                     'nameXString' => 'Export Nilai ' . ($jadwal->kode_jadwal ?? $kelas->kode),
                     'xString' => 'exportNilaiExcel()',
                     'valuePx' => 'px-4',
+                    'valuePy' => 'py-4',
                     'isTextMd' => 0,
                     'isNoPb' => 1,
+                    'isFull' => 1,
                 ])
             </div>
         @endif

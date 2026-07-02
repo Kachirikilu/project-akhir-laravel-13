@@ -32,24 +32,12 @@
             </div>
 
 
-            <input type="text" readonly {{-- LIVEWIRE ENTANGLE --}}
-                @if ($pathString ?? null) x-bind:value="
-                    itemsAll?.{{ $modelString }}
-                "
-
-            {{-- ALPINE VARIABLE --}}
-            @elseif($storeString ?? null)
-
-                x-bind:value="
-                    {{ $storeString }}
-                    ?.{{ $modelString }}
-                "
-
-            @elseif($modelString ?? null)
-                    x-bind:value="
-                    $store.{{ $alpine }}
-                    ?.{{ $modelString }}
-                " @endif
+            <input type="text" @focus="$el.select()" readonly
+                @if ($pathString ?? null) x-bind:value="itemsAll?.{{ $modelString }} || '{{ $valueString ?? '' }}'"
+                @elseif($storeString ?? null)
+                    x-bind:value="{{ $storeString }}?.{{ $modelString }} || '{{ $valueString ?? '' }}'"
+                @elseif($modelString ?? null)
+                    x-bind:value="$store.{{ $alpine }}?.{{ $modelString }} || '{{ $valueString ?? '' }}'" @endif
                 placeholder="{{ $placeholder ?? '--' }}"
                 class="text-xs sm:text-sm 
                 focus:ring-2 focus:ring-[var(--hover-table-color)] outline-none

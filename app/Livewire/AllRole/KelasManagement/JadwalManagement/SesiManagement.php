@@ -3,7 +3,7 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiAbsenModal;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiAbsensiModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
@@ -35,7 +35,7 @@ class SesiManagement extends Component
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
     use WithMahasiswaSearchFilters;
-    use WithNilaiAbsenModal;
+    use WithNilaiAbsensiModal;
     use WithNilaiExcel;
     use WithPagination;
     use WithRPSShow;
@@ -83,7 +83,8 @@ class SesiManagement extends Component
 
     public $mapping_pertemuan;
 
-    protected $listeners = ['refresh-table' => '$refresh'];
+    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-sesi' => 'refreshSesiList', 'refresh-data-jadwal' => 'refreshSesiList',
+        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -94,6 +95,15 @@ class SesiManagement extends Component
         'sortDirection' => ['except' => 'asc'],
         'showDeleted' => ['except' => false],
     ];
+
+    #[On('refresh-data-sesi')]
+    #[On('refresh-data-jadwal')]
+    #[On('refresh-table')]
+    public function refreshSesiList()
+    {
+        $this->resetPage();
+    }
+
 
     public function mount(
         $isJadwalMhs = false,

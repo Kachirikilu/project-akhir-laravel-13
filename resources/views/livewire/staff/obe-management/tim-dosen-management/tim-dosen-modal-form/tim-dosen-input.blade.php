@@ -29,6 +29,8 @@
                     'rps_modal_paginator' => $tim_dosen_rps_modal_paginator,
                     'nameXString' => 'Tim Dosen',
                     'wireLoading' => 'editTimDosen',
+                    'parent' => 'tim-dosen',
+                    'isFlyout' => true,
                 ])
             </template>
         </div>

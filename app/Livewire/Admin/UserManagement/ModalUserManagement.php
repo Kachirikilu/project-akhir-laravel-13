@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use Livewire\Attributes\On;
@@ -11,13 +12,22 @@ use Livewire\Component;
 class ModalUserManagement extends Component
 {
     use HasToast;
+    use WithRPSShow;
     use WithRPSSearchFilters;
     use WithProdiSearchFilters;
     use WithUserModal;
 
     public $withRPS;
 
-         public $parent;
+    public $parent;
+
+    #[On('refresh-data-rps-user')]
+    public function handleRefreshUser()
+    {
+        if ($this->selected_id_user) {
+            $this->editUser($this->selected_id_user, 1);
+        }
+    }
 
     // public $userIdModal;
     #[On('trigger-user-modal')]

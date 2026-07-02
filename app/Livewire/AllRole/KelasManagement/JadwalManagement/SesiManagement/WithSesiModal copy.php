@@ -53,7 +53,7 @@ trait WithSesiModal
         $this->showEditSesi = false;
     }
 
-    public function absenSesi($data)
+    public function absensiSesi($data)
     {
         if (! $this->AuthCheck('mahasiswa')) {
             return;

@@ -2,20 +2,14 @@
 
 namespace App\Livewire\AllRole\KelasManagement;
 
-use App\Livewire\Global\HasSortir;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalModal;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalDelete;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
-use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithKelasJadwalSearchFilters;
-use App\Livewire\Global\WithMahasiswaSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasGetByKode;
+use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -23,20 +17,13 @@ use Livewire\WithPagination;
 
 class JadwalManagement extends Component
 {
+    use HasGetByKode;
     use HasSortir;
     use HasToast;
-    use HasGetByKode;
-    use WithJadwalFilters;
-    use WithJadwalModal;
-    use WithJadwalDelete;
-    use WithNilaiExcel;
-    use WithKelasJadwalSearchFilters;
-    use WithKelasModal;
-    use WithMahasiswaSearchFilters;
-    use WithPagination;
-    use WithProdiSearchFilters;
-    use WithRPSSearchFilters;
     use WithRPSShow;
+    use WithNilaiExcel;
+    use WithJadwalFilters;
+    use WithPagination;
 
     public $search = '';
 
@@ -66,7 +53,8 @@ class JadwalManagement extends Component
 
     public $switchTable = 'jadwal-card';
 
-    protected $listeners = ['refresh-table' => '$refresh'];
+    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-jadwal' => 'refreshJadwalList', 'refresh-data-kelas' => 'refreshJadwalList',
+        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -74,73 +62,16 @@ class JadwalManagement extends Component
         'perPage' => ['except' => 8],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
-    // public function mount($isJadwalMhs = false, $kode = null, $switchTable = 'jadwal-card')
-    // {
-    //     if ($kode !== null || ! $isJadwalMhs) {
-    //         $this->kode_kelas_url = $kode;
-    //         $this->kelas = Kelas::where('kode_kelas', $kode)
-    //             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode])
-    //             ->firstOrFail();
-    //     } else {
-    //         $this->isJadwalMhs = $isJadwalMhs;
-    //     }
-    //     $this->switchTable = $switchTable;
-    // }
-
-    // public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
-    // {
-    //     $this->isJadwalMhs = $isJadwalMhs;
-    //     $this->switchTable = $switchTable;
-
-    //     if (! $this->isJadwalMhs && $kode_kelas !== null) {
-    //         $this->kode_kelas_url = $kode_kelas;
-            
-    //         $kelas = Kelas::where('kode_kelas', $kode_kelas)
-    //             ->orWhereRaw("REPLACE(kode_kelas, '-', '') = REPLACE(?, '-', '')", [$kode_kelas])
-    //             ->first(); 
-
-    //         if (! $kelas) {
-    //             foreach (['kelas.history', 'kelas_mahasiswa.history'] as $key) {
-    //                 $history = session($key, []);
-                    
-    //                 if (isset($history[$kode_kelas])) {
-    //                     unset($history[$kode_kelas]);
-    //                     session([$key => $history]);
-    //                 }
-    //             }
-
-    //             abort(404, "Kelas dengan Kode $kode_kelas tidak ditemukan!");
-    //         }
-
-    //         $this->kelas = $kelas;
-    //         $this->rps_id_url = $this->kelas->rps_id;
-    //         $this->kode_rps_url = $this->kelas->kode_rps;
-
-    //         $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
-    //         $kelasHistory = session($sessionKey, []);
-    //         $currentKode = $kelas->kode; 
-
-    //         $existingKey = array_search($kelas->id, array_column($kelasHistory, 'kelas_id'));
-    //         if ($existingKey !== false) {
-    //             $actualKeys = array_keys($kelasHistory);
-    //             unset($kelasHistory[$actualKeys[$existingKey]]);
-    //         }
-    //         unset($kelasHistory[$currentKode]);
-    //         $kelasHistory[$currentKode] = [
-    //             'kelas_id' => $kelas->id,
-    //             'kode_kelas' => $currentKode,
-    //             'url' => url()->current(), 
-    //         ];
-
-    //         $kelasHistory = array_slice($kelasHistory, -3, null, true);
-    //         uasort($kelasHistory, fn ($a, $b) => strcmp($a['kode_kelas'], $b['kode_kelas']));
-
-    //         session([$sessionKey => $kelasHistory]);
-    //     }
-    // }
+    #[On('refresh-data-kelas')]
+    #[On('refresh-data-jadwal')]
+    #[On('refresh-table')]
+    public function refreshJadwalList()
+    {
+        $this->resetPage();
+    }
 
     public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
     {
@@ -192,7 +123,6 @@ class JadwalManagement extends Component
             session([$sessionKey => $kelasHistory]);
         }
     }
-
 
     public function loadingTable() {}
 

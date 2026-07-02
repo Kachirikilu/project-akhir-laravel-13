@@ -3,9 +3,10 @@
 namespace App\Livewire\Staff\OBEManagement\TimDosenManagement;
 
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Auth\Dosen;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -13,30 +14,37 @@ use Livewire\Component;
 class ModalTimDosenManagement extends Component
 {
     use HasToast;
-    use WithRPSSearchFilters;
-    use WithProdiSearchFilters;
     use WithDosenSearchFilters;
+    use WithProdiSearchFilters;
+    use WithRPSSearchFilters;
+    use WithRPSShow;
     use WithTimDosenModal;
 
-    public $showUserModal;
-    public $isEditingUser;
+    // public $showUserModal;
+    // public $isEditingUser;
 
-    public $showRPSModal;
-    public $isEditingCPMK;
-    public $isFlyoutCPMK;
-    public $isEditingSCPMK;
-    public $isFlyoutSCPMK;
-    public $isEditingCPL;
-    public $isFlyoutCPL;
-    public $isEditingRef;
-    public $isFlyoutRef;
+    // public $showRPSModal;
+    // public $isEditingCPMK;
+    // public $isFlyoutCPMK;
+    // public $isEditingSCPMK;
+    // public $isFlyoutSCPMK;
+    // public $isEditingCPL;
+    // public $isFlyoutCPL;
+    // public $isEditingRef;
+    // public $isFlyoutRef;
 
     public $parent;
 
-    #[On('trigger-tim-dosen-modal')]
-    public function handleTriggerTimDosen()
+    #[On('refresh-data-rps-tim-dosen')]
+    public function handleRefreshTimDosen()
     {
+        if ($this->selected_id_tim_dosen) {
+            $this->editTimDosen($this->selected_id_tim_dosen);
+        }
     }
+
+    #[On('trigger-tim-dosen-modal')]
+    public function handleTriggerTimDosen() {}
 
     #[On('open-add-tim-dosen-modal')]
     public function handleAddTimDosen($parent = null)

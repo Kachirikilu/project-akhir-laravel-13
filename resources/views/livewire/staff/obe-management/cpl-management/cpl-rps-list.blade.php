@@ -1,5 +1,5 @@
-<flux:modal name="cpl-rps-modal" wire:model.live="showCPLRPSModal" flyout wire:key="cpl-rps-modal-flyout" 
-    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+<flux:modal name="cpl-rps-modal" wire:model.live="showCPLRPSModal" flyout wire:key="cpl-rps-modal-flyout"
+    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveCPL, updateCPL">
@@ -22,7 +22,6 @@
                 </flux:badge>
             </h3>
         </div>
-
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
             @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-rps')

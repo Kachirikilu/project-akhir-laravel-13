@@ -33,7 +33,7 @@
                     'sortFieldString' => 'password',
                     'isCenter' => 1,
                     'rowSpan' => 2,
-                    'isBorderR' => 1
+                    'isBorderR' => 1,
                 ])
             @else
                 <th rowspan="2" class="table-head table-border-r">Password</th>
@@ -151,14 +151,9 @@
                             'sortir' => $j->kode_wilayah,
                         ])
                     </button>
-
                     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
-                        'x' => $j,
-                        'editString' => 'editJadwal',
-                        'nameXString' => 'Jadwal',
-                        'confirmDeleteString' => 'deleteJadwal',
+                        'key' => 1,
                     ])
-
                 </flux:dropdown>
             </td>
 
@@ -168,7 +163,7 @@
                 @if (!$j->trashed())
                     @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
                         <x-button-action color="amber"
-                            href="{{ route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
+                            href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
                             <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
                             <span>Lihat Kelas
                         </x-button-action>
@@ -182,19 +177,19 @@
                                 @click="
                                     $store.jadwal?.setEdit(0);
                                     $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                                    $flux.modal('jadwal-join').show();
+                                    $flux.modal('join-jadwal').show();
                                     $store.jadwal?.setValueJoinJadwal(
                                         '{{ $j->id ?? '' }}',
                                         '{{ $j->kode ?? '' }}',
                                         '{{ $j->kode_kelas ?? '' }}',
                                         '{{ $j->label_extra ?? '' }}',
                                     );
+                                    $dispatch('open-join-jadwal-modal');
                                 ">
                                 <flux:icon name="user-plus" class="w-3.5 h-3.5" />
                                 <span>Join</span>
                             </x-button-action>
                         @else
-                            <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
                                 <x-button-action color="blue"
                                     @click="
                                         $store.jadwal?.setEdit(0);
@@ -202,11 +197,11 @@
                                         $store.jadwal?.setValueJoinJadwal(
                                             '{{ $j->id ?? '' }}',
                                         );
+                                        $dispatch('join-jadwal-function', { data: $store.jadwal.getDataJoinJadwal() });
                                     ">
                                     <flux:icon name="user-plus" class="w-3.5 h-3.5" />
                                     <span>Join</span>
                                 </x-button-action>
-                            </form>
                         @endif
                     @endif
                 @else
@@ -271,13 +266,8 @@
                     ])
                 </button>
 
-                @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                    'x' => $j,
-                    'editString' => 'editKelas',
-                    'nameXString' => 'Kelas',
-                    'confirmDeleteString' => 'deleteKelas',
-                    'copyName' => 'Kode MK',
-                    'copyText' => $j->kode_mk ?? '',
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
+                    'key' => 2,
                 ])
 
             </flux:dropdown>
@@ -295,13 +285,8 @@
                     ])
                 </button>
 
-                @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                    'x' => $j,
-                    'editString' => 'editKelas',
-                    'nameXString' => 'Kelas',
-                    'confirmDeleteString' => 'deleteKelas',
-                    'copyName' => 'Kode MK',
-                    'copyText' => $j->kode_mk ?? '',
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
+                    'key' => 3,
                 ])
 
             </flux:dropdown>
@@ -315,14 +300,9 @@
                 <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                     inset="top bottom">
                 </flux:button>
-
                 @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', [
-                    'x' => $j,
-                    'editString' => 'editJadwal',
-                    'nameXString' => 'Jadwal',
-                    'confirmDeleteString' => 'deleteJadwal',
+                    'key' => 4,
                 ])
-
             </flux:dropdown>
         </td>
 

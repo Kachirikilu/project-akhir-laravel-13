@@ -12,7 +12,7 @@ trait WithRPSShow
 
     public $detailRPSData = [];
 
-    public function showRPS($id)
+    public function showRPS($id, $prId = null)
     {
         $this->selected_id_rps = $id;
 

@@ -89,7 +89,7 @@ document.addEventListener("alpine:init", () => {
             this.bahan_kajian = bahanKajian;
         },
 
-        getData() {
+        getDataMK() {
             return {
                 type_modal: this.typeModal,
                 nama_mk: this.nama_mk,

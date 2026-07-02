@@ -85,89 +85,22 @@
     </div>
 
     <div class="sm:col-span-4 relative">
-        @include('livewire.global.search-and-filters.secondary-search', [
-            'inputXFilterString' => 'inputDosenFilter',
-            'xSearchResultsString' => 'dosenSearchResults',
-            'iconString' => 'user',
-            'placeholderString' => 'Filter berdasarkan Dosen...',
-            'xSearchQueryString' => 'dosenSearchQuery',
-            'selectedXId' => $selectedDosenId,
-            'selectedXName' => $dosen_name,
-            'resetXFilter' => 'resetDosenFilter()',
-            'xSearchQuery' => $dosenSearchQuery,
-            'xSearchResults' => $dosenSearchResults,
-            'selectXForFilterString' => 'selectDosenForFilter',
-            'typeXString' => 'name',
-            'typeX2String' => 'nip_full',
-            'typeX3String' => 'status',
-            'typeKodeString' => 'kode_pr',
-            'unfoundString' => 'Tidak ada Dosen ditemukan!',
-        ])
+            <livewire:global.search-filters.dosen-search-filter lazy wire:key="dosen-search-filter" />
     </div>
 
     <div x-show="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-universitas'" 
          class="sm:col-span-6 lg:col-span-3 relative">
-        @include('livewire.global.search-and-filters.secondary-search', [
-            'inputXFilterString' => 'inputPrFilter',
-            'xSearchResultsString' => 'prSearchResults',
-            'iconString' => 'academic-cap',
-            'placeholderString' => 'Filter berdasarkan Program Studi...',
-            'xSearchQueryString' => 'prSearchQuery',
-            'selectedXId' => $selectedPrId,
-            'selectedXName' => $pr_name,
-            'resetXFilter' => 'resetPrFilter()',
-            'xSearchQuery' => $prSearchQuery,
-            'xSearchResults' => $prSearchResults,
-            'selectXForFilterString' => 'selectPrForFilter',
-            'typeXString' => 'prodi',
-            'typeX2String' => 'departemen',
-            'typeX3String' => 'fakultas',
-            'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-        ])
+            <livewire:global.search-filters.prodi-search-filter lazy wire:key="pr-search-filter" />
     </div>
 
     <div class="relative text-left"
          :class="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-universitas' ? 'sm:col-span-6 lg:col-span-4' : 'sm:col-span-5'">
-        @include('livewire.global.search-and-filters.secondary-search', [
-            'inputXFilterString' => 'inputMKFilter',
-            'xSearchResultsString' => 'mkSearchResults',
-            'iconString' => 'rectangle-stack',
-            'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
-            'xSearchQueryString' => 'mkSearchQuery',
-            'selectedXId' => $selectedMKId,
-            'selectedXName' => $mk_name,
-            'resetXFilter' => 'resetMKFilter()',
-            'xSearchQuery' => $mkSearchQuery,
-            'xSearchResults' => $mkSearchResults,
-            'selectXForFilterString' => 'selectMKForFilter',
-            'typeXString' => 'mk',
-            'typeX2String' => 'sks_full',
-            'typeX3String' => 'semester_text',
-            'typeX4String' => 'wajib_text',
-            'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
-        ])
+            <livewire:global.search-filters.mk-search-filter lazy wire:key="mk-search-filter" />
     </div>
 
     <div class="relative text-left"
          :class="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-universitas' ? 'sm:col-span-12 lg:col-span-5' : 'sm:col-span-7'">
-        @include('livewire.global.search-and-filters.secondary-search', [
-            'inputXFilterString' => 'inputRPSFilter',
-            'xSearchResultsString' => 'rpsSearchResults',
-            'iconString' => 'clipboard-document-list',
-            'placeholderString' => 'Filter berdasarkan RPS...',
-            'xSearchQueryString' => 'rpsSearchQuery',
-            'selectedXId' => $selectedRPSId,
-            'selectedXName' => $rps_name,
-            'resetXFilter' => 'resetRPSFilter()',
-            'xSearchQuery' => $rpsSearchQuery,
-            'xSearchResults' => $rpsSearchResults,
-            'selectXForFilterString' => 'selectRPSForFilter',
-            'typeXString' => 'rps_with_kode',
-            'typeX2String' => 'sks_full',
-            'typeX3String' => 'wajib_text',
-            'typeX4String' => 'draf_full',
-            'unfoundString' => 'Tidak ada RPS ditemukan!',
-        ])
+            <livewire:global.search-filters.rps-search-filter lazy wire:key="rps-search-filter" />
     </div>
 </div>
 

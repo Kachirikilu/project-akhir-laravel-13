@@ -199,18 +199,9 @@
                             'sortir' => $r->level_mk,
                         ])
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                            :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk" :deskripsi_rps="$r->deskripsi_rps"
-                            :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk" :akademik="$r->akademik" :count_scpmk="$r->count_scpmk"
-                            :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas" :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester"
-                            :isTrashed="$r->trashed()" wire:key="toolbar-rps-{{ $r->id }}-1" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
-
 
             <td class="table-second whitespace-nowrap text-center">{{ $r->akademik ?? '-' }}</td>
 
@@ -254,15 +245,7 @@
                                 'xValue' => $r->mutu_rps_pr ?? 'E',
                             ])
                         </button>
-                        <flux:menu
-                            class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                            <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                                :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk"
-                                :deskripsi_rps="$r->deskripsi_rps" :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk"
-                                :akademik="$r->akademik" :count_scpmk="$r->count_scpmk" :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas"
-                                :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester" :isTrashed="$r->trashed()"
-                                wire:key="toolbar-rps-{{ $r->id }}-2" />
-                        </flux:menu>
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </td>
             @endif
@@ -276,13 +259,7 @@
                             'noIcon' => 1,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                        'x' => $r,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'RPS',
-                        'copyName' => 'Kode MK',
-                        'copyText' => $r->kode_mk ?? '',
-                    ])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
             <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
@@ -297,13 +274,7 @@
                             'sortir' => $r->wajib,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                        'x' => $r,
-                        'typeXString' => $switchTable,
-                        'nameXString' => 'RPS',
-                        'copyName' => 'Kode MK',
-                        'copyText' => $r->kode_mk ?? '',
-                    ])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 4])
                 </flux:dropdown>
             </td>
 
@@ -335,15 +306,7 @@
                             @endif
                         </button>
 
-                        <flux:menu
-                            class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                            <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                                :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk"
-                                :deskripsi_rps="$r->deskripsi_rps" :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk"
-                                :akademik="$r->akademik" :count_scpmk="$r->count_scpmk" :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas"
-                                :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester" :isTrashed="$r->trashed()"
-                                wire:key="toolbar-rps-{{ $r->id }}-3" />
-                        </flux:menu>
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 5])
                     </flux:dropdown>
                 </td>
 
@@ -370,15 +333,7 @@
                             @endif
                         </button>
 
-                        <flux:menu
-                            class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                            <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                                :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk"
-                                :deskripsi_rps="$r->deskripsi_rps" :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk"
-                                :akademik="$r->akademik" :count_scpmk="$r->count_scpmk" :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas"
-                                :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester" :isTrashed="$r->trashed()"
-                                wire:key="toolbar-rps-{{ $r->id }}-4" />
-                        </flux:menu>
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 6])
                     </flux:dropdown>
 
                 </td>
@@ -397,19 +352,10 @@
                             </flux:badge>
                         @endif
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                            :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk"
-                            :deskripsi_rps="$r->deskripsi_rps" :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk"
-                            :akademik="$r->akademik" :count_scpmk="$r->count_scpmk" :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas"
-                            :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester" :isTrashed="$r->trashed()"
-                            wire:key="toolbar-rps-{{ $r->id }}-5" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 7])
                 </flux:dropdown>
             </td>
-            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? '-' }}</td>
+            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? 'Tidak ada Revisi' }}</td>
 
 
             <td class="table-main text-center">
@@ -417,17 +363,7 @@
                     <flux:button class="cursor-pointer" variant="ghost"
                         size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :id="$r->id"
-                            :kode="$r->kode" :rps="$r->rps" :draf="$r->draf" :level_mk="$r->level_mk"
-                            :deskripsi_rps="$r->deskripsi_rps" :mk_id="$r->mk_id" :kode_mk="$r->kode_mk" :mk="$r->mk"
-                            :akademik="$r->akademik" :count_scpmk="$r->count_scpmk" :bobot_uts="$r->bobot_uts" :bobot_uas="$r->bobot_uas"
-                            :total_bobot="$r->total_bobot" :kode_semester="$r->kode_semester" :isTrashed="$r->trashed()"
-                            wire:key="toolbar-rps-{{ $r->id }}-6" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 8])
                 </flux:dropdown>
             </td>
 

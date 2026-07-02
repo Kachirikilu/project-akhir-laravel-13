@@ -64,19 +64,17 @@
 
                                 <flux:menu.item
                                     @click="
-                                $store.jadwal?.setEdit(0);
-                                $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
-                                $store.jadwal?.reset(1);
-                                $flux.modal('jadwal-modal').show();
-                                $wire.addJadwal();
-                            "
+                                        $store.jadwal?.setEdit(0);
+                                        $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+                                        $store.jadwal?.reset(1);
+                                        $flux.modal('jadwal-modal').show();
+                                        $dispatch('open-add-jadwal-modal', { kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' })
+                                    "
                                     class="text-xs sm:text-sm cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30 active:!bg-amber-200 dark:active:!bg-amber-900">
                                     <flux:icon name="calendar-days"
                                         class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                                     <div class="flex justify-between items-center w-full">
                                         <span class="mr-7 whitespace-nowrap">Jadwal Perkuliahan</span>
-                                        <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
-                                            class="animate-spin h-4 w-4 ml-2" />
                                     </div>
                                 </flux:menu.item>
                             </flux:menu>

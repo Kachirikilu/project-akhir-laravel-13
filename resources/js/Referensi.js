@@ -55,6 +55,20 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        getDataRef() {
+            return {
+                kode_ref: this.kode_ref,
+                judul: this.judul,
+                penulis: this.penulis,
+                penerbit: this.penerbit,
+                tahun: this.tahun,
+                link: this.link,
+                kode_ref: this.kode_ref,
+                kode_ref_1: this.kode_ref_1,
+                kode_ref_2: this.kode_ref_2,
+            };
+        },
+
         setDeleteRef(namaRef, kodeRefDelete, forceDelete) {
             this.ref_delete = namaRef;
             this.kode_ref_delete = kodeRefDelete;

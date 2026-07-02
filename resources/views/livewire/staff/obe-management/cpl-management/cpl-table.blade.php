@@ -106,15 +106,7 @@
                         <flux:badge icon="beaker" color="sky" size="sm">{{ $c->kode ?? '---' }}
                         </flux:badge>
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpl-management.toolbar-cpl-management lazy :id="$c->id"
-                            :kode="$c->kode" :kode_cpl="$c->kode_cpl" :level_cpl="$c->level_cpl" :deskripsi="$c->deskripsi"
-                            :rekap_cpl_pr="$c->rekap_cpl_pr ?? null" :index_cpl_pr="$c->index_cpl_pr ?? null" :mutu_cpl_pr="$c->mutu_cpl_pr ?? null" 
-                            :isTrashed="$c->trashed()"
-                            wire:key="toolbar-cpl-{{ $c->id }}-1" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -134,14 +126,7 @@
                                 'xValue' => $c->mutu_cpl_pr ?? 'E',
                             ])
                         </button>
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpl-management.toolbar-cpl-management lazy :id="$c->id"
-                            :kode="$c->kode" :kode_cpl="$c->kode_cpl" :level_cpl="$c->level_cpl" :deskripsi="$c->deskripsi"
-                            :rekap_cpl_pr="$c->rekap_cpl_pr ?? null" :index_cpl_pr="$c->index_cpl_pr ?? null" :mutu_cpl_pr="$c->mutu_cpl_pr ?? null" 
-                            :isTrashed="$c->trashed()"
-                            wire:key="toolbar-cpl-{{ $c->id }}-2" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </td>
 
@@ -178,8 +163,9 @@
                                     '{{ $c->mutu_cpl_pr ?? 'E' }}',
                                 );
                             $flux.modal('cpl-rps-modal').show();
+                            $dispatch('open-list-rps-cpl-modal', { id: {{ $c->id }}, tingkatan: {{ $c->level_cpl }}, isRPS: 1 });
                         "
-                        wire:click="editCPL({{ $c->id }}, {{ $c->level_cpl }}, 1)" color="emerald"
+                        color="emerald"
                         >
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
@@ -202,16 +188,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpl-management.toolbar-cpl-management lazy :id="$c->id"
-                            :kode="$c->kode" :kode_cpl="$c->kode_cpl" :level_cpl="$c->level_cpl" :deskripsi="$c->deskripsi"
-                            :rekap_cpl_pr="$c->rekap_cpl_pr ?? null" :index_cpl_pr="$c->index_cpl_pr ?? null" :mutu_cpl_pr="$c->mutu_cpl_pr ?? null" 
-                            :isTrashed="$c->trashed()"
-                            wire:key="toolbar-cpl-{{ $c->id }}-3" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
 

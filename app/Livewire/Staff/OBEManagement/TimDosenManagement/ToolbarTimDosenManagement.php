@@ -2,29 +2,17 @@
 
 namespace App\Livewire\Staff\OBEManagement\TimDosenManagement;
 
-use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\Reactive;
 
 class ToolbarTimDosenManagement extends Component
 {
-    public $id;
-    public $kode;
-    public $kode_tim_dosen;
-    public $tim;
-    public $isTrashed;
-
-    public function mount($id, $kode, $kode_tim_dosen, $tim, $isTrashed) 
-    {
-        $this->id = $id;
-        $this->kode = $kode;
-        $this->kode_tim_dosen = $kode_tim_dosen;
-        $this->tim = $tim;
-        $this->isTrashed = $isTrashed;
-    }
+    #[Reactive]
+    public $data;
 
     public function placeholder()
     {
-        return view('livewire.global.livewire-toolbars.skeleton-toolbar');
+        return view('livewire.global.livewire-skeletons.toolbar-skeleton');
     }
 
     public function render()

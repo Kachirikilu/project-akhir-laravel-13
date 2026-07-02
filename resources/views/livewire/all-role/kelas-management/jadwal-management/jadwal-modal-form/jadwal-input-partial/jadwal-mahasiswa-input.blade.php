@@ -44,6 +44,7 @@
                 'fetchString' => 'fetchMahasiswa',
                 'iconString' => 'academic-cap',
                 'wireLoading' => 'fetchMahasiswa',
+                'isRequired' => 0,
             ])
         @endif
     </div>

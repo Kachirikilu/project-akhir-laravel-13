@@ -28,20 +28,21 @@ trait WithRPSModal
 
     public $mk_id_2;
 
-    public $isFlyoutRPS = false;
+    // public $isFlyoutRPS = false;
 
     public function updatedShowRPSModal($value)
     {
         if (! $value) {
-            $this->isFlyoutRPS = false;
+            // $this->isFlyoutRPS = false;
             $this->isEditingRPS = false;
-        } else {
-            $this->isFlyoutRPS =
-                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
-                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
-                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
-                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
+        // else {
+        //     $this->isFlyoutRPS =
+        //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+        //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+        //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+        //         (property_exists($this, 'showRefModal') && $this->showRefModal);
+        // }
     }
 
     public function addRPS($key = 'rps')
@@ -606,6 +607,11 @@ trait WithRPSModal
             if ($this->detailRPSModal == true) {
                 $this->detailRPSModal = false;
                 $this->showRPS($this->selected_id_rps);
+            }
+            if ($this->parent) {
+                $this->dispatch('refresh-data-rps-'.$this->parent);
+            } else {
+                $this->dispatch('refresh-data-rps-no-parent');
             }
 
             $this->resetInputRPS();

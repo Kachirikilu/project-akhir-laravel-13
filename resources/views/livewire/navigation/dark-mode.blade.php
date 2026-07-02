@@ -2,7 +2,6 @@
     x-data="{
         isAuto: false,
 
-        // default OFF
         colorMenuOpen: false,
 
         get isDark() {

@@ -96,7 +96,7 @@
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}
     {{ $full ? $colorClassFull : '' }}
-    {{ $colorClass }} border transition-colors transition-all duration-200 ease-in-out {{ $valuePy ?? '' }} py-4.5 {{ $buttonWidthClass }}"
+    {{ $colorClass }} border transition-colors transition-all duration-200 ease-in-out {{ $valuePy ?? 'py-4.5' }} {{ $buttonWidthClass }}"
         x-bind:class="confirmExport
             ?
             '{{ $colorClassActive }}' :

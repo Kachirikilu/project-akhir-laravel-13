@@ -16,7 +16,7 @@
         'message' => $errors->first('hari_pelaksanaan'),
     ])
 
-    <div x-data x-init="$store.jadwal.sks_menit = {{ $kelas->sks * 50 }};" class="grid sm:grid-cols-4 gap-1">
+    <div x-data x-init="$store.jadwal.sks_menit = {{ $sks * 50 }};" class="grid sm:grid-cols-4 gap-1">
         <div class="sm:col-span-2">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
@@ -30,7 +30,7 @@
         <div class="sm:col-span-2 mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
-                'nameXString' => 'Jam Berakhir (Default: +' . $kelas->sks * 50 . ' Menit)',
+                'nameXString' => 'Jam Berakhir (Default: +' . $sks * 50 . ' Menit)',
                 'modelString' => 'jam_berakhir',
                 'iconString' => 'clock',
                 'isTime' => 1,
@@ -67,6 +67,7 @@
         <div class="sm:col-span-2  mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
+                // 'isLivewire' => 1,
                 'nameXString' => 'Tanggal Berakhir (Default: +6 Bulan)',
                 'modelString' => 'tanggal_berakhir',
                 'iconString' => 'calendar-days',

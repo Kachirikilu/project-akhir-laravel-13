@@ -39,19 +39,8 @@ document.addEventListener("alpine:init", () => {
 
 
         setValueTimDosen(kode, tim
-            // , prId, kodePr, prodi, departemen, fakultas
         ) {
             this.nama_tim = tim;
-
-            // this.pr_id = prId;
-            // this.nama_pr_search = prodi;
-            // this.pr_items = {
-            //     id: prId,
-            //     kode: kodePr,
-            //     slot1: prodi,
-            //     slot2: departemen,
-            //     slot3: fakultas,
-            // };
 
             if (kode) {
                 const mutu = kode.match(/[a-zA-Z]+/g);
@@ -62,6 +51,15 @@ document.addEventListener("alpine:init", () => {
                 this.kode_tim_dosen_1 = "";
                 this.kode_tim_dosen_2 = "";
             }
+        },
+
+        getDataTimDosen() {
+            return {
+                nama_tim: this.nama_tim,
+                kode_tim_dosen: this.kode_tim_dosen,
+                kode_tim_dosen_1: this.kode_tim_dosen_1,
+                kode_tim_dosen_2: this.kode_tim_dosen_2,
+            };
         },
 
         setValueTimDosenRPS(

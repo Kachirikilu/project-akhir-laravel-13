@@ -1,7 +1,7 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
     class="max-w-md w-full">
 
-    <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
+    <form x-on:submit.prevent="$wire.absensiSesi($store.sesi)" id="sesiForm">
         <div class="flex flex-col gap-5">
 
             {{-- Header Modal --}}
@@ -117,10 +117,10 @@
                     <flux:button variant="ghost" class="flex-1 justify-center">Batal</flux:button>
                 </flux:modal.close>
                 <flux:button type="submit" variant="primary" icon="check-circle" wire:loading.attr="disabled"
-                    wire:target="absenSesi"
+                    wire:target="absensiSesi"
                     class="flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] text-white border-none">
-                    <span wire:loading.remove wire:target="absenSesi">Absen</span>
-                    <span wire:loading wire:target="absenSesi">Memproses...</span>
+                    <span wire:loading.remove wire:target="absensiSesi">Absen</span>
+                    <span wire:loading wire:target="absensiSesi">Memproses...</span>
                 </flux:button>
             </div>
         </div>

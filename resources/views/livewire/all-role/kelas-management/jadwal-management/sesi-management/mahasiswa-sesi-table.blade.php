@@ -185,11 +185,7 @@
 
 
     @forelse($users as $user)
-        @php
-            $detail = $user->admin ?? ($user->dosen ?? $user->mahasiswa);
-        @endphp
-
-        <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
+        <tr wire:key="mahasiswa-sesi-{{ $user->mahasiswa->id }}" data-mahasiswa-sesi-id="{{ $user->mahasiswa->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
             <td class="table-main text-center">{{ $user->role_id }}</td>
@@ -201,8 +197,8 @@
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
                     @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 1]
                     )
                 </flux:dropdown>
             </td>
@@ -241,10 +237,9 @@
                                 -
                             @endif
                         </button>
-
                         @include(
-                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                            ['x' => $user]
+                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                            ['key' => 2]
                         )
                     </flux:dropdown>
                 </td>
@@ -314,8 +309,8 @@
                                 ])
                             </button>
                             @include(
-                                'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                                ['x' => $user]
+                                'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                                ['key' => 3]
                             )
                         </flux:dropdown>
                     @else
@@ -324,7 +319,7 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $detail->angkatan ?? 'YYYY' }}</td>
+            <td class="table-second table-border-r text-center">{{ $mahasiswa->angkatan ?? 'YYYY' }}</td>
 
             <td class="table-second text-center">
                 <flux:dropdown>
@@ -336,8 +331,8 @@
                     </button>
 
                     @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 4]
                     )
                 </flux:dropdown>
             </td>
@@ -349,8 +344,8 @@
                         ])
                     </button>
                     @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 5]
                     )
                 </flux:dropdown>
             </td>
@@ -364,8 +359,8 @@
                         inset="top bottom">
                     </flux:button>
                     @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 6]
                     )
                 </flux:dropdown>
             </td>

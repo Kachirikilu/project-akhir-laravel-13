@@ -1,5 +1,5 @@
 <flux:modal name="sesi-modal" wire:model="showSesiModal" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
-    class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+    class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveSesi, updateSesi">
@@ -26,7 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$store.sesi.isEdit ? $wire.updateSesi($store.sesi) : $wire.saveSesi($store.sesi)"
+            <form x-on:submit.prevent="$store.sesi.isEdit ? $wire.updateSesi($store.sesi.getDataSesi()) : $wire.saveSesi($store.sesi.getDataSesi())"
                 enctype="multipart/form-data" id="sesiForm">
 
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input')

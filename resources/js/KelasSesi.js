@@ -72,6 +72,8 @@ document.addEventListener("alpine:init", () => {
         w_telat: "",
         w_dispensasi: "",
 
+        kode_jadwal: "",
+
         sks: "",
         sks_menit: 0,
         sent: 1,
@@ -113,6 +115,7 @@ document.addEventListener("alpine:init", () => {
         },
         setValueAbsenSesi(
             sesiId,
+            kodeJadwal,
             pertemuanKe,
             scpmk,
             keterangan,
@@ -122,6 +125,7 @@ document.addEventListener("alpine:init", () => {
             wDispensasi,
         ) {
             this.sesi_id = sesiId;
+            this.kode_jadwal = kodeJadwal;
             this.pertemuan_ke = pertemuanKe;
             this.kode_scpmk = scpmk;
             this.keterangan = keterangan;
@@ -135,6 +139,38 @@ document.addEventListener("alpine:init", () => {
             if (opsiTersedia.length > 0) {
                 this.absen = opsiTersedia[0].label;
             }
+        },
+
+        getDataSesi() {
+            return {
+                jam_mulai: this.jam_mulai,
+                jam_berakhir: this.jam_berakhir,
+                pertemuan_ke: this.pertemuan_ke,
+                pertemuan_ke_name: this.pertemuan_ke_name,
+                tanggal: this.tanggal,
+                deskripsi: this.deskripsi,
+                materi: this.materi,
+                metodologi: this.metodologi,
+                indikator: this.indikator,
+                deskripsi_tugas: this.deskripsi_tugas,
+                waktu_tugas: this.waktu_tugas,
+                waktu_mandiri: this.waktu_mandiri,
+                sks: this.sks,
+                sent: this.sent,
+            };
+        },
+        getDataAbsensiSesi() {
+            return {
+                sesi_id: this.sesi_id,
+                absen: this.absen,
+                keterangan: this.keterangan,
+                // pertemuan_ke: this.pertemuan_ke,
+                // kode_scpmk: this.kode_scpmk,
+                // w_pelaksanaan: this.w_pelaksanaan,
+                // w_berakhir: this.w_berakhir,
+                // w_telat: this.w_telat,
+                // w_dispensasi: this.w_dispensasi,
+            };
         },
 
         getWaktuLokal() {
@@ -279,6 +315,8 @@ document.addEventListener("alpine:init", () => {
                 this.w_berakhir = "";
                 this.w_telat = "";
                 this.w_dispensasi = "";
+
+                this.kode_jadwal = "";
 
                 this.nama = "";
                 this.nim = "";

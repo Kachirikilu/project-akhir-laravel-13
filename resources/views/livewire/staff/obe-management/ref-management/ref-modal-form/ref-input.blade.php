@@ -144,6 +144,8 @@
                     'rps_modal_paginator' => $ref_rps_modal_paginator,
                     'nameXString' => 'Referensi',
                     'wireLoading' => 'editRef',
+                    'parent' => 'ref',
+                    'isFlyout' => true,
                 ])
             </template>
         </div>

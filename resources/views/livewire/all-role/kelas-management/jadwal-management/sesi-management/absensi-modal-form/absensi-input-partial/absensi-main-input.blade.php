@@ -15,7 +15,7 @@
         ])
 
         <div class="space-y-4">
-            @forelse(array_slice($list_absensi_array, $indexStart, $indexLenght, true) as $index => $item)
+            @forelse(array_slice($sesi_input['list_absensi_array'], $indexStart, $indexLenght, true) as $index => $item)
                 <div
                     class="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 flex flex-col">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-2">

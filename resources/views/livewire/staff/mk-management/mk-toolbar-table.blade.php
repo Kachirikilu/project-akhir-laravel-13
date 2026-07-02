@@ -1,117 +1,22 @@
-@if (Auth::user()?->admin || Auth::user()?->dosen)
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-
-        @php
-            $isTrashed = $mk->trashed();
-
-            // $editCall = "editMK($mk->id, $mk->level_mk)";
-            // $deleteCall = "deleteMK($mk->id, $isTrashed)";
-            // $restoreCall = "restoreMK($mk->id)";
-
-        @endphp
-
-        @include('livewire.global.table.text-copy', [
-            'xType' => $mk->kode,
-            'typeXString' => 'Kode MK',
-        ])
-
-        <flux:menu.separator />
-
-        @if (!$isTrashed)
-            {{-- Tombol Edit --}}
-            <flux:menu.item
-                @click="
-                $store.mk?.reset();
-
-                const type = {{ $mk->level_mk }};
-
-                $store.mk?.setType(type);
-                $store.mk?.setEdit(1);
-
-                const colors = {
-                    '1': 'text-emerald-700 dark:text-emerald-400',
-                    '2': 'text-amber-700 dark:text-amber-400',
-                    '3': 'text-indigo-700 dark:text-indigo-400',
-                    '4': 'text-red-700 dark:text-red-400'
-                };
-                $store.mk?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
-
-                    $store.mk?.setValueMK(
-                        '{{ $mk->level_mk ?? '' }}',
-                        '{{ $mk->mk ?? '' }}',
-                        '{{ $mk->kode_blok ?? '' }}',
-                        '{{ $mk->digit_semester ?? '' }}',
-                        '{{ $mk->digit_mk ?? '' }}',
-                        '{{ $mk->semester ?? '' }}',
-                        '{{ $mk->sks ?? '' }}',
-                        '{{ $mk->tipe_sks ?? '' }}',
-                        '{{ $mk->wajib ?? '' }}',
-                        '{{ $mk->deskripsi ?? '' }}',
-                        '{{ $mk->bahan_kajian ?? '' }}',
-                    );
-                    $flux.modal('mk-modal').show();
-                    $dispatch('open-edit-mk-modal', { id: {{ $mk->id }}, tingkatan: {{ $mk->level_mk }} });
-            "
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Edit {{ $nameXString ?? 'Data' }}</span>
-                </div>
-            </flux:menu.item>
-
-            <flux:menu.separator />
-
-            <flux:menu.item
-                @click="
-                        $store.mk?.setDeleteMK(
-                            '{{ $mk->mk ?? '' }}',
-                            '{{ $mk->kode ?? '' }}'
-                        );
-                        $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $mk->id }} });
-                "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus {{ $nameXString ?? 'Data' }}</span>
-                </div>
-            </flux:menu.item>
-        @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="restoreMK({{ $mk->id }})"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore {{ $nameXString ?? 'Data' }}</span>
-                </div>
-            </flux:menu.item>
-
-            <flux:menu.separator />
-
-            {{-- Tombol Delete Permanent --}}
-            <flux:menu.item
-                @click="
-                    $store.mk?.setDeleteMK(
-                            '{{ $mk->mk ?? '' }}',
-                            '{{ $mk->kode ?? '' }}',
-                            '{{ $isTrashed }}'
-                        );
-                        $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $mk->id }}, isTrash: {{ $isTrashed }} });
-                "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
-
-                </div>
-            </flux:menu.item>
-        @endif
-
-    </flux:menu>
-@endif
+<flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+    <livewire:staff.mk-management.toolbar-mk-management 
+        lazy 
+        :data="[
+            'id'              => $mk->id,
+            'kode'            => $mk->kode,
+            'level_mk'        => $mk->level_mk,
+            'kode_blok'       => $mk->kode_blok,
+            'digit_semester'  => $mk->digit_semester,
+            'digit_mk'        => $mk->digit_mk,
+            'mk'              => $mk->mk,
+            'semester'        => $mk->semester,
+            'sks'             => $mk->sks,
+            'tipe_sks'        => $mk->tipe_sks,
+            'wajib'           => $mk->wajib,
+            'deskripsi'       => $mk->deskripsi,
+            'bahan_kajian'    => $mk->bahan_kajian,
+            'isTrashed'       => $mk->trashed(),
+        ]"
+        wire:key="toolbar-mk-{{ $mk->id }}-{{ $key }}" 
+    />
+</flux:menu>

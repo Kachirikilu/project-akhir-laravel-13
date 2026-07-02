@@ -47,7 +47,7 @@ trait WithUserModal
 
     protected $user_rps_modal_paginator;
 
-    public $isFlyoutUser = false;
+    // public $isFlyoutUser = false;
 
     public $user_input = [
         'role' => '',
@@ -841,7 +841,7 @@ trait WithUserModal
                 //     }
                 // }
 
-                if ($this->parent == 'tim_dosen' && $dosen) {
+                if (($this->parent == 'tim-dosen' || $this->parent == 'tim_dosen') && $dosen) {
                     $this->dispatch('dosen-created-tim-dosen', id: $dosen->id);
                 }
 
@@ -948,8 +948,15 @@ trait WithUserModal
 
                 $model->update($data);
             });
+            $roleType = ucfirst($role);
+            $labelIdentity1;
+            if ($role == 'admin' || $role == 'dosen') {
+                $labelIdentity1 = "NIP {$validated['nip']}";
+            } elseif ($role == 'mahasiswa') {
+                $labelIdentity1 = "NIM {$validated['nim']}";
+            }
 
-            $this->toast(message: ucfirst($this->roleType), type: 'update', isAkun: true);
+            $this->toast(message: "{$roleType} {$labelIdentity1} dengan Email {$validated['email']}", type: 'update', isAkun: true);
             $this->dispatch('refresh-data-user');
 
             $this->showUserModal = false;

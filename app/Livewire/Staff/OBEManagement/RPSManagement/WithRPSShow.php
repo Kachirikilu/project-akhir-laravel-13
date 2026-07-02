@@ -17,9 +17,12 @@ trait WithRPSShow
 
     public $prodisRPS = [];
 
-    public function showRPS($id)
+    // public $pr_id_rps_show;
+
+    public function showRPS($id, $prId = null)
     {
         $this->selected_id_rps = $id;
+        $userPrId = auth()->user()->pr_id;
 
         try {
             $rps = RPS::with([
@@ -27,22 +30,25 @@ trait WithRPSShow
                 'tim_dosens'
             ])->findOrFail($id);
 
+            $this->prodisRPS = $rps->mk_rel->prodis->sort(function ($a, $b) use ($prId, $userPrId) {
+                $getPriority = function ($prodiId) use ($prId, $userPrId) {
+                    if ($userPrId && $prodiId == $userPrId) return 0;
+                    if ($prId && $prodiId == $prId) return 1;
+                    return 2;
+                };
 
+                $aPriority = $getPriority($a->id);
+                $bPriority = $getPriority($b->id);
+                if ($aPriority !== $bPriority) {
+                    return $aPriority <=> $bPriority;
+                }
+                if ($a->nama_pr !== $b->nama_pr) {
+                    return strcmp($a->nama_pr, $b->nama_pr);
+                }
+                return $b->strata <=> $a->strata;
+            });
 
-            // $this->prodisRPS = $rps->tim_dosens
-            //     ->map(fn($tim) => $tim->pr_rel)
-            //     ->filter()
-            //     ->unique('id')
-            //     ->sortBy([
-            //         ['nama_pr', 'asc'],
-            //         ['strata', 'desc'],
-            //     ]);
-           $this->prodisRPS = $rps->mk_rel->prodis->sortBy([
-                ['nama_pr', 'asc'],
-                ['strata', 'desc'],
-            ]);
             $this->detailRPSModal = true;
-
             $this->dispatch('fill-modal-rps', rps: $rps);
             $this->dispatch('refresh-component');
 

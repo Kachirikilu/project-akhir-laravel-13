@@ -45,11 +45,20 @@ document.addEventListener("alpine:init", () => {
 
         kapasitas: "",
         restart_sesi: 0,
+        restart_absensi: 0,
 
         sks_menit: 0,
         sesi_sent: 0,
         sesi_sent_edit: 'keep',
 
+        digit_tahun: '',
+        digit_tahun_old: '',
+
+        sesi_1: '', sesi_2: '', sesi_3: '', sesi_4: '',
+        sesi_5: '', sesi_6: '', sesi_7: '', sesi_8: '',
+        sesi_9: '', sesi_10: '', sesi_11: '', sesi_12: '',
+        sesi_13: '', sesi_14: '', sesi_15: '', sesi_16: '',
+        
         setValueJadwal(
             label,
             wilayah,
@@ -71,15 +80,62 @@ document.addEventListener("alpine:init", () => {
             this.jam_berakhir = jamBerakhir?.slice(0, 5) || "";
 
             this.tanggal_mulai_fix = toWeekFormat(tanggalMulai);
+            // this.tanggal_mulai = toWeekFormat(tanggalMulai);
             // this.tanggal_berakhir = toWeekFormat(tanggalBerakhir);
 
             this.kapasitas = kapasitas;
             this.password = password;
         },
 
+        getDataJadwal() {
+            // 1. Ambil data dasar
+            let data = {
+                label_kelas: this.label_kelas,
+                kode_wilayah: this.kode_wilayah,
+                kode_kelas: this.kode_kelas,
+                hari_pelaksanaan: this.hari_pelaksanaan,
+                digit_tahun: this.digit_tahun,
+                digit_tahun_old: this.digit_tahun_old,
+                jam_mulai: this.jam_mulai,
+                jam_berakhir: this.jam_berakhir,
+                tanggal_mulai: this.tanggal_mulai,
+                tanggal_mulai_fix: this.tanggal_mulai_fix,
+                tanggal_berakhir: this.tanggal_berakhir,
+                kapasitas: this.kapasitas,
+                password: this.password,
+                restart_sesi: this.restart_sesi,
+                restart_absensi: this.restart_absensi,
+                sesi_sent: this.sesi_sent,
+                sesi_sent_edit: this.sesi_sent_edit,
+                base_sesi_1: this.base_sesi_1,
+            };
+
+            for (let i = 1; i <= 16; i++) {
+                let sesiKey = `sesi_${i}`;
+                if (this[sesiKey] !== undefined) {
+                    data[sesiKey] = this[sesiKey];
+                }
+            }
+
+            return data;
+        },
+
         setValueJoinJadwal(id, kode, kodeKelas, labelExtra) {
             this.jadwal_id = id;
             this.kode = kode;
+            this.kode_kelas = kodeKelas;
+            this.label_extra = labelExtra;
+        },
+
+        getDataJoinJadwal() {
+            let data = {
+                jadwal_id: this.jadwal_id,
+                password: this.password,
+            };
+            return data;
+        },
+
+        setValueLeftJadwal(kodeKelas, labelExtra) {
             this.kode_kelas = kodeKelas;
             this.label_extra = labelExtra;
         },
@@ -93,6 +149,7 @@ document.addEventListener("alpine:init", () => {
         reset(isAdd = 0) {
             if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
                 this.restart_sesi = 0;
+                this.restart_absensi = 0;
 
                 this.jadwal_id = "";
                 this.kode = "";
@@ -101,6 +158,9 @@ document.addEventListener("alpine:init", () => {
 
                 this.kode_wilayah = "";
                 this.label_kelas = "";
+
+                this.digit_tahun = "";
+                this.digit_tahun_old = "";
 
                 this.password = "";
 

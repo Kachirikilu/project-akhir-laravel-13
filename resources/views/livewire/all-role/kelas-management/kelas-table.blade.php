@@ -184,14 +184,7 @@
                             'sortir' => $k->rps_rel?->mk_rel?->level_mk,
                         ])
                     </button>
-
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                    ])
-
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -203,22 +196,15 @@
                             'sortir' => $k->semester,
                         ])
                     </button>
-
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                        'copyName' => 'Kode RPS',
-                        'copyText' => $k->kode_rps ?? '',
-                    ])
-
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
-            <td class="table-second table-border-x text-center">
+            <td class="table-second table-border-x text-center whitespace-nowrap">
                 @if (!$k->trashed())
-                    <x-button-action color="emerald" href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
-                        <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
+                    <x-button-action color="emerald"
+                        href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
+                        <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
+                        <span>Lihat Kelas
                     </x-button-action>
                 @else
                     <code
@@ -290,16 +276,7 @@
                             'sortir' => $k->rps_rel?->mk_rel?->level_mk,
                         ])
                     </button>
-
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                        'copyName' => 'Kode MK',
-                        'copyText' => $k->kode_mk ?? '',
-                    ])
-
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
             <td class="table-second min-w-42">{{ $k->mk ?? '-' }}</td>
@@ -315,16 +292,7 @@
                             'sortir' => $k->wajib,
                         ])
                     </button>
-
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                        'copyName' => 'Kode MK',
-                        'copyText' => $k->kode_mk ?? '',
-                    ])
-
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 4])
                 </flux:dropdown>
             </td>
 
@@ -333,14 +301,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                    ])
-
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 5])
                 </flux:dropdown>
             </td>
 

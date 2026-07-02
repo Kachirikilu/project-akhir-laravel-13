@@ -164,6 +164,17 @@ class KelasSesi extends Model
     public function totalAbsensi(): Attribute
     {
         return Attribute::get(function () {
+            $activeStudentIds = $this->jadwal_rel->mahasiswas()->pluck('mahasiswas.id');
+
+            return $this->kehadirans()
+                ->whereIn('mahasiswa_id', $activeStudentIds)
+                ->whereIn('status', ['Hadir', 'Terlambat', 'Dispensasi'])
+                ->count();
+        });
+    }
+    public function totalAbsensiAll(): Attribute
+    {
+        return Attribute::get(function () {
             return $this->kehadirans
                 ->whereIn('status', ['Hadir', 'Terlambat', 'Dispensasi'])
                 ->count();

@@ -168,10 +168,11 @@
                                                             '{{ $r['level_mk'] ?? '' }}',
                                                             '{{ $pr_id ?? $prodi->id ?? '' }}'
                                                         );
-                                                         $store.rps?.setColor('text-green-700 dark:text-green-400');
+                                                        $store.rps?.setColor('text-green-700 dark:text-green-400');
                                                         $flux.modal('rps-detail-modal').show();
+                                                        $dispatch('open-show-rps-modal', { id: {{ $r['id'] }} });
                                                     "
-                                                    wire:click="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})"
+                                                    {{-- wire:click="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})" --}}
                                                     >
                                                     <div
                                                         class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30 transition-colors">
@@ -215,27 +216,29 @@
                                                         <button type="button"
                                                             class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
                                                             @click="
-                                                        $store.rps?.reset();
-                                                        $store.rps?.setEdit(1);
-                                                        $store.rps?.setFlyout(true);
-                                                        $store.rps?.setColor('text-green-700 dark:text-green-400');
-                                                        $store.rps?.setValueRPS(
-                                                            '{{ $r['kode_blok'] ?? '' }}',
-                                                            '{{ $r['deskripsi'] ?? '' }}',
-                                                            '{{ $r['mk_id'] ?? '' }}',
-                                                            '{{ $r['kode_mk'] ?? '' }}',
-                                                            '{{ $r['mk'] ?? '' }}',
-                                                            '{{ $r['akademik'] ?? '' }}',
-                                                            '{{ $r['draf'] ?? '' }}',
-                                                            '{{ $r['count_scpmk'] }}',
-                                                            '{{ $r['bobot_uts'] }}',
-                                                            '{{ $r['bobot_uas'] }}',
-                                                            '{{ $r['total_bobot'] }}',
-                                                            '{{ $r['kode_semester'] ?? '' }}',
-                                                        );
-                                                        $flux.modal('rps-modal').show();
-                                                    "
-                                                            wire:click="editRPS('{{ $r['id'] }}')">
+                                                                $store.rps?.reset();
+                                                                $store.rps?.setEdit(1);
+                                                                $store.rps?.setFlyout(true);
+                                                                $store.rps?.setColor('text-green-700 dark:text-green-400');
+                                                                $store.rps?.setValueRPS(
+                                                                    '{{ $r['kode_blok'] ?? '' }}',
+                                                                    '{{ $r['deskripsi'] ?? '' }}',
+                                                                    '{{ $r['mk_id'] ?? '' }}',
+                                                                    '{{ $r['kode_mk'] ?? '' }}',
+                                                                    '{{ $r['mk'] ?? '' }}',
+                                                                    '{{ $r['akademik'] ?? '' }}',
+                                                                    '{{ $r['draf'] ?? '' }}',
+                                                                    '{{ $r['count_scpmk'] }}',
+                                                                    '{{ $r['bobot_uts'] }}',
+                                                                    '{{ $r['bobot_uas'] }}',
+                                                                    '{{ $r['total_bobot'] }}',
+                                                                    '{{ $r['kode_semester'] ?? '' }}',
+                                                                );
+                                                                $flux.modal('rps-modal').show();
+                                                                $dispatch('open-edit-rps-modal', { id: {{ $r['id'] }}, parent: '{{ $parent ?? '' }}', isFlyout: '{{ $isFlyout ?? '' }}' });
+                                                            "
+                                                            {{-- wire:click="editRPS('{{ $r['id'] }}') --}}
+                                                        ">
                                                             <div
                                                                 class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
                                                                 <flux:icon name="pencil-square" variant="micro"

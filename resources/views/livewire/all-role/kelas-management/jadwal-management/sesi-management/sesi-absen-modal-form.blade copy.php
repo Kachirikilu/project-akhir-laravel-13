@@ -1,7 +1,7 @@
 <flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
     class="w-full md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
-    <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
+    <form x-on:submit.prevent="$wire.absensiSesi($store.sesi)" id="sesiForm">
         <div class="py-4 space-y-4">
 
             <div class="flex items-center gap-3.5 pb-2">
@@ -105,15 +105,15 @@
 
             <div class="flex justify-end pt-2">
 
-                <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="absenSesi"
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="absensiSesi"
                     class="cursor-pointer w-full sm:w-auto
                         bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90
                         shadow-sm text-white border-none transition-all duration-200">
 
-                    <span wire:loading.remove wire:target="absenSesi" class="text-white">
+                    <span wire:loading.remove wire:target="absensiSesi" class="text-white">
                         Absen
                     </span>
-                    <span wire:loading wire:target="absenSesi" class="text-white">
+                    <span wire:loading wire:target="absensiSesi" class="text-white">
                         Memproses...
                     </span>
                 </flux:button>

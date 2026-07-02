@@ -35,22 +35,23 @@ trait WithTimDosenModal
 
     protected $tim_dosen_rps_modal_paginator;
 
-    public $isFlyoutTimDosen = false;
+    // public $isFlyoutTimDosen = false;
 
     // public $dosen_input = [];
 
     public function updatedShowTimDosenModal($value)
     {
         if (! $value) {
-            $this->isFlyoutTimDosen = false;
+            // $this->isFlyoutTimDosen = false;
             $this->isEditingTimDosen = false;
-        } else {
-            $this->isFlyoutTimDosen =
-                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
-                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
-                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
-                (property_exists($this, 'showCPLModal') && $this->showCPLModal);
-        }
+        } 
+        // else {
+        //     $this->isFlyoutTimDosen =
+        //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+        //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+        //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+        //         (property_exists($this, 'showCPLModal') && $this->showCPLModal);
+        // }
     }
 
     public function addTimDosen()
@@ -436,7 +437,7 @@ trait WithTimDosenModal
                 }
             });
 
-            $this->toast(message: "Tim Dosen {$validated['nama_tim']}", type: 'update');
+            $this->toast(message: "Tim Dosen {$validated['nama_tim']} dengan Kode {$validated['kode_tim_dosen_1']}-{$validated['kode_tim_dosen_1']}", type: 'update');
             $this->resetInputTimDosen();
             $this->showTimDosenModal = false;
             $this->dispatch('refresh-data-tim-dosen');

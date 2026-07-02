@@ -19,8 +19,11 @@ use App\Livewire\Global\HasToast;
 // use App\Models\Kelas\Kelas;
 use App\Models\Auth\User;
 use App\Models\ProgramStudi\Prodi;
+use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+
+
 use Livewire\WithPagination;
 
 class DashboardManagement extends Component

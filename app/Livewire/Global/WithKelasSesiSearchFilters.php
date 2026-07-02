@@ -337,6 +337,15 @@ trait WithKelasSesiSearchFilters
                         $searchLower, ['mahasiswa', 'mhs', 'maha', 'absen', 'abs', 'absensi']
                     );
 
+                    $absensiAll = ($s->total_absensi_all ?? 0).' / '.($s->count_mahasiswa ?? 0);
+                    $matchAbsensiAll = $this->containsStrict(
+                        $absensi,
+                        $searchLower
+                    ) || $this->matchOnlyCount(
+                        $s->total_absensi_all ?? null,
+                        $searchLower, ['mahasiswa', 'mhs', 'maha', 'absen', 'abs', 'absensi', 'absensi terdata', 'terdata']
+                    );
+
                     $matchBobot = false;
                     if ($isNumericSearch) {
                         $matchBobot = $this->compareNumber(
@@ -405,6 +414,7 @@ trait WithKelasSesiSearchFilters
                         || $matchTanggal
                         || $matchJam
                         || $matchAbsensi
+                        || $matchAbsensiAll
 
                         || $matchBobot
                         || $matchTugas
@@ -428,6 +438,7 @@ trait WithKelasSesiSearchFilters
                 'hari_pelaksanaan' => fn ($s) => $s->hari,
                 'jam_pelaksanaan' => fn ($s) => $s->jam_pelaksanaan,
                 'total_absensi', 'absensi' => fn ($s) => $s->total_absensi,
+                'total_absensi_all', 'absensi_all' => fn ($s) => $s->total_absensi_all,
                 'tanggal_pelaksanaan' => fn ($s) => $s->tanggal_pelaksanaan,
 
                 'bobot_normalisasi', 'bobot' => fn ($s) => $s->bobot_normalisasi,

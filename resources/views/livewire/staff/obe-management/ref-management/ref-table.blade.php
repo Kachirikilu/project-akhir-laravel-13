@@ -77,14 +77,7 @@
                         <flux:badge icon="book-open" color="orange" size="sm">{{ $r->kode ?? '---' }}
                         </flux:badge>
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.referensi-management.toolbar-referensi-management lazy
-                            :id="$r->id" :kode="$r->kode" :kode_ref="$r->kode_ref" :citation="$r->citation" :judul="$r->judul"
-                            :penulis="$r->penulis" :penerbit="$r->penerbit" :tahun="$r->tahun" :link="$r->link" :isTrashed="$r->trashed()"
-                            wire:key="toolbar-scpmk-{{ $r->id }}-1" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
             <td class="table-second table-border-r min-w-100">{{ $r->citation ?? '-' }}</td>
@@ -110,15 +103,7 @@
                     <flux:button class="cursor-pointer" variant="ghost"
                         size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.referensi-management.toolbar-referensi-management lazy
-                            :id="$r->id" :kode="$r->kode" :kode_ref="$r->kode_ref" :citation="$r->citation" :judul="$r->judul"
-                            :penulis="$r->penulis" :penerbit="$r->penerbit" :tahun="$r->tahun" :link="$r->link" :isTrashed="$r->trashed()"
-                            wire:key="toolbar-scpmk-{{ $r->id }}-2" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
 

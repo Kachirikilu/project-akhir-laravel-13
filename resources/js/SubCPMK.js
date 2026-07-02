@@ -71,6 +71,24 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        getDataSCPMK() {
+            return {
+                kode_scpmk: this.kode_scpmk,
+                deskripsi: this.deskripsi,
+                materi: this.materi,
+                metodologi: this.metodologi,
+                indikator: this.indikator,
+                metode: this.metode,
+                deskripsi_tugas: this.deskripsi_tugas,
+                waktu_tugas: this.waktu_tugas,
+                waktu_mandiri: this.waktu_mandiri,
+                bobot: this.bobot,
+                kode_scpmk: this.kode_scpmk,
+                kode_scpmk_1: this.kode_scpmk_1,
+                kode_scpmk_2: this.kode_scpmk_2,
+            };
+        },
+
         setDeleteSCPMK(namaSCPMK, kodeSCPMKDelete, forceDelete) {
             this.scpmk_delete = namaSCPMK;
             this.kode_scpmk_delete = kodeSCPMKDelete;

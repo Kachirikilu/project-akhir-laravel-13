@@ -1,5 +1,5 @@
 <flux:modal name="kelas-modal" wire:model="showKelasModal" x-data @refresh-data-kelas.window="$store.kelas.reset()"
-    class="w-fullmd:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+    class="w-fullmd:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveKelas, updateKelas">
@@ -26,7 +26,7 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-            <form x-on:submit.prevent="$store.kelas.isEdit ? $wire.updateKelas($store.kelas) : $wire.saveKelas($store.kelas)"
+            <form x-on:submit.prevent="$store.kelas.isEdit ? $wire.updateKelas($store.kelas.getDataKelas()) : $wire.saveKelas($store.kelas.getDataKelas())"
                 enctype="multipart/form-data" id="kelasForm">
 
                 @include('livewire.all-role.kelas-management.kelas-modal-form.kelas-input')

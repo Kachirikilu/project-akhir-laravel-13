@@ -64,12 +64,14 @@
 
     @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa'])
 
-    @include('livewire.admin.user-management.user-table', [
+    @include('livewire.staff.nilai-management.mahasiswa-nilai-table')
+
+    {{-- @include('livewire.admin.user-management.user-table', [
         'withRPS' => 1,
         'withNilai' => 1,
         'withCapaian' => 1,
         'withProdi' => 1,
-    ])
+    ]) --}}
 
 
     {{-- <div wire:loading.class="opacity-50" wire:target="switchingTable">

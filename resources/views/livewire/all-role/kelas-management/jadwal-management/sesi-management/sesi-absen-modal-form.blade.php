@@ -1,7 +1,7 @@
-<flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
+<flux:modal name="absensi-sesi-modal" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
     class="max-w-lg w-full">
 
-    <form x-on:submit.prevent="$wire.absenSesi($store.sesi)" id="sesiForm">
+    <form x-on:submit.prevent="$wire.absensiSesi($store.sesi)" id="sesiForm">
         <div class="flex flex-col gap-5">
 
             {{-- Header Modal --}}
@@ -11,7 +11,9 @@
                         <flux:icon name="academic-cap" class="w-5 h-5 text-emerald-500" />
                     </div>
                     <div>
-                        <flux:heading size="lg">Absen Kelas {{ $jadwal->kode }}</flux:heading>
+                        <flux:heading size="lg" x-data>
+                            Absen Kelas <span x-text="$store.sesi.jadwal_kode"></span>
+                        </flux:heading>
                         <flux:text class="text-xs sm:text-sm text-[var(--contrast-third-text)]">
                             <span
                                 x-text="'Pertemuan ' + $store.sesi.pertemuan_ke + ' — ' +  $store.sesi.kode_scpmk"></span>
@@ -135,13 +137,14 @@
             {{-- Footer Aksi --}}
             <div class="flex items-center gap-2 pt-1">
                 <flux:modal.close>
-                    <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">Batal</flux:button>
+                    <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">Batal
+                    </flux:button>
                 </flux:modal.close>
                 <flux:button type="submit" variant="primary" icon="check-circle" wire:loading.attr="disabled"
-                    wire:target="absenSesi"
+                    wire:target="absensiSesi"
                     class="cursor-pointer flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 text-white border-none transition-all ">
-                    <span wire:loading.remove wire:target="absenSesi">Absen</span>
-                    <span wire:loading wire:target="absenSesi">Memproses...</span>
+                    <span wire:loading.remove wire:target="absensiSesi">Absen</span>
+                    <span wire:loading wire:target="absensiSesi">Memproses...</span>
                 </flux:button>
             </div>
         </div>

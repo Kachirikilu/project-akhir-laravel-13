@@ -31,7 +31,7 @@ class DosenSearchFilter extends Component
 
     public function placeholder()
     {
-        return view('livewire.global.livewire-search-filters.skeleton-search-filter');
+        return view('livewire.global.livewire-skeletons.search-filter-skeleton');
     }
 
     public function render()

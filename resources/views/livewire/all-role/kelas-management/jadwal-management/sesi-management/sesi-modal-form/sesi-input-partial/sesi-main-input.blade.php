@@ -5,7 +5,7 @@
         Input Sesi Kelas</h4>
 
 
-    <div x-data x-init="$store.sesi.sks_menit = {{ $kelas->sks * 50 }};" class="grid sm:grid-cols-4 gap-1">
+    <div x-data x-init="$store.sesi.sks_menit = {{ $sks * 50 }};" class="grid sm:grid-cols-4 gap-1">
         <div class="sm:col-span-2">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'sesi',
@@ -19,7 +19,7 @@
         <div class="sm:col-span-2 mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'sesi',
-                'nameXString' => 'Jam Berakhir (Default: +' . $kelas->sks * 50 . ' Menit)',
+                'nameXString' => 'Jam Berakhir (Default: +' . $sks * 50 . ' Menit)',
                 'modelString' => 'jam_berakhir',
                 'iconString' => 'clock',
                 'isTime' => 1,

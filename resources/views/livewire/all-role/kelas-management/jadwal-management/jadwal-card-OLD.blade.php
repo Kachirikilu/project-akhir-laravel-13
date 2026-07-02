@@ -140,7 +140,7 @@
                                     @click="
                                     $store.jadwal?.setEdit(0);
                                     $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                                    $flux.modal('jadwal-join').show();
+                                    $flux.modal('join-jadwal').show();
                                     $store.jadwal?.setValueJoinJadwal(
                                         '{{ $j->id ?? '' }}',
                                         '{{ $j->kode ?? '' }}',

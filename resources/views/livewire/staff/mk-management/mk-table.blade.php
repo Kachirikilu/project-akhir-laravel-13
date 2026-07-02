@@ -151,17 +151,7 @@
                             'sortir' => $mk->level_mk,
                         ])
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
-                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
-                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
-                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
-                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-1" />
-                    </flux:menu>
-
-
+                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -173,17 +163,7 @@
                             'sortir' => $mk->semester,
                         ])
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
-                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
-                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
-                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
-                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-2" />
-                    </flux:menu>
-
-
+                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
 
@@ -219,17 +199,7 @@
                             'sortir' => $mk->wajib,
                         ])
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
-                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
-                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
-                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
-                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-3" />
-                    </flux:menu>
-
-
+                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
 
@@ -238,16 +208,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.mk-management.toolbar-mk-management lazy :id="$mk->id"
-                            :kode="$mk->kode" :level_mk="$mk->level_mk" :kode_blok="$mk->kode_blok" :digit_semester="$mk->digit_semester"
-                            :digit_mk="$mk->digit_mk" :mk="$mk->mk" :semester="$mk->semester" :sks="$mk->sks"
-                            :tipe_sks="$mk->tipe_sks" :wajib="$mk->wajib" :deskripsi="$mk->deskripsi" :bahan_kajian="$mk->bahan_kajian"
-                            :isTrashed="$mk->trashed()" wire:key="toolbar-mk-{{ $mk->id }}-4" />
-                    </flux:menu>
-
+                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 4])
                 </flux:dropdown>
             </td>
 

@@ -118,13 +118,7 @@
                         <flux:badge icon="user-group" color="blue" size="sm">{{ $d->kode }}
                         </flux:badge>
                     </button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.tim-dosen-management.toolbar-tim-dosen-management lazy :id="$d->id"
-                            :kode="$d->kode" :kode_tim_dosen="$d->kode_tim_dosen" :tim="$d->tim" :isTrashed="$d->trashed()"
-                            wire:key="toolbar-tim-dosen-{{ $d->id }}-2" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
             <td class="table-second-sticky table-border-r whitespace-nowrap">{{ $d->tim ?? '-' }}</td>
@@ -142,26 +136,25 @@
                     <x-button-action
                         @click="
                             $store.tim_dosen?.reset();
-
                             $store.tim_dosen?.setEdit(1);
-
-                            $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400', 'bg-blue-50 dark:bg-blue-950/40');
-
-                            $store.tim_dosen?.setValueTimDosenRPS(
-                                '{{ $d->tim ?? '' }}',
-                                '{{ $d->ketua ?? '' }}',
-                                '{{ $d->nip ?? '' }}',
-                                '{{ $d->prodi ?? '' }}',
-                                '{{ $d->count_koordinator ?? '' }}',
-                                '{{ $d->count_pengajar ?? '' }}',
-                                '{{ $d->count_asisten ?? '' }}',
-                                '{{ $d->count_rps ?? '' }}',
-                                '{{ $d->total_sks ?? '' }}',
-                            );
-                    
+                            $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400');
                             $flux.modal('tim-dosen-rps-modal').show();
+                            $store.tim_dosen?.setValueTimDosenRPS(
+                                    '{{ $d->tim ?? '' }}',
+                                    '{{ $d->ketua ?? '' }}',
+                                    '{{ $d->nip ?? '' }}',
+                                    '{{ $d->prodi ?? '' }}',
+
+                                    '{{ $d->count_koordinator ?? '' }}',
+                                    '{{ $d->count_pengajar ?? '' }}',
+                                    '{{ $d->count_asisten ?? '' }}',
+
+                                    '{{ $d->count_rps ?? '' }}',
+                                    '{{ $d->total_sks ?? '' }}'
+                                );
+                            $dispatch('open-list-rps-tim-dosen-modal', { id: {{ $d->id }}, withRPS: 1, isRPS: 1 });
                         "
-                        wire:click="editTimDosen({{ $d->id }}, 1)" color="emerald" wire:navigate>
+                        color="emerald" wire:navigate>
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
                     </x-button-action>
@@ -183,13 +176,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.tim-dosen-management.toolbar-tim-dosen-management lazy :id="$d->id"
-                            :kode="$d->kode" :kode_tim_dosen="$d->kode_tim_dosen" :tim="$d->tim" :isTrashed="$d->trashed()"
-                            wire:key="toolbar-tim-dosen-{{ $d->id }}-2" />
-                    </flux:menu>
+                    @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
 

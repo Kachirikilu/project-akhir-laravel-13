@@ -21,15 +21,13 @@
                             $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
                             $store.kelas?.reset(1);
                             $flux.modal('kelas-modal').show();
-                            $wire.addKelas();
+                            $dispatch('open-add-kelas-modal');
                         "
                         class="text-xs sm:text-sm cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 active:!bg-emerald-200 dark:active:!bg-emerald-900">
                         <flux:icon name="rectangle-group"
                             class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span class="mr-7 whitespace-nowrap">Kelas Perkuliahan</span>
-                            <flux:icon wire:loading wire:target="addKelas()" name="arrow-path"
-                                class="animate-spin h-4 w-4 ml-2" />
                         </div>
                     </flux:menu.item>
 

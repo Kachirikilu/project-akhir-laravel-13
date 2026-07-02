@@ -12,9 +12,16 @@
             @if (request()->routeIs('jadwal-mahasiswa'))
                 <livewire:all-role.kelas-management.jadwal-management lazy :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-mahasiswa'))
-                <livewire:all-role.kelas-management.jadwal-management.sesi-management lazy :kode_kelas="request()->route('kode_kelas')"
+                <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
                     :kode_jadwal_short="request()->route('kode_jadwal_short')" :isJadwalMhs="true" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
             @endif
         </div>
     </div>
+
+    @if (Auth::user()->mahasiswa)
+        @if (request()->routeIs('sesi-mahasiswa'))
+            <livewire:all-role.kelas-management.jadwal-management.left-jadwal-management />
+            <livewire:all-role.kelas-management.jadwal-management.sesi-management.absensi-sesi-management />
+        @endif
+    @endif
 </x-layouts::app>

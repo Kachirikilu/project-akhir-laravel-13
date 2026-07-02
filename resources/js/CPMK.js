@@ -64,6 +64,15 @@ document.addEventListener("alpine:init", () => {
                 this.kode_cpmk_2 = "";
             }
         },
+        getDataCPMK() {
+            return {
+                kode_cpmk: this.kode_cpmk,
+                deskripsi: this.deskripsi,
+                kode_cpmk: this.kode_cpmk,
+                kode_cpmk_1: this.kode_cpmk_1,
+                kode_cpmk_2: this.kode_cpmk_2,
+            };
+        },
 
         setCountSCPMK(val) {
             this.count_scpmk = val;

@@ -17,12 +17,12 @@
         @switch($switchTable)
             @case('rps')
                 @include('livewire.staff.obe-management.rps-management.rps-table')
-                <livewire:staff.obe-management.rps-management.show-rps-management lazy />
             @break
 
             @case('cpl')
                 @include('livewire.staff.obe-management.cpl-management.cpl-table')
-                @include('livewire.staff.obe-management.cpl-management.cpl-rps-list')
+                {{-- @include('livewire.staff.obe-management.cpl-management.cpl-rps-list') --}}
+                {{-- <livewire:staff.obe-management.cpl-management.list-rps-cpl-management lazy /> --}}
             @break
 
             @case('cpmk')
@@ -39,12 +39,12 @@
 
             @case('tim-dosen')
                 @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-table')
-                @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-rps-list')
+                {{-- @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-rps-list') --}}
             @break
 
             @case('dosen')
                 @include('livewire.staff.obe-management.dosen-management.dosen-table')
-                @include('livewire.admin.user-management.user-rps-list')
+                {{-- @include('livewire.admin.user-management.user-rps-list') --}}
                 {{-- @include('livewire.admin.user-management.user-table', ['withRPS' => true]) --}}
             @break
         @endswitch

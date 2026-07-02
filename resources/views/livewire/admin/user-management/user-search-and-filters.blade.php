@@ -71,17 +71,17 @@
                 </div>
 
                 <div class="order-3 sm:order-2 sm:col-span-3 relative">
-                    <livewire:global.search-filters.prodi-search-filter lazy />
+                    <livewire:global.search-filters.prodi-search-filter lazy wire:key="pr-search-filter" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
                 <div class="sm:col-span-4 relative">
-                    <livewire:global.search-filters.departemen-search-filter lazy />
+                    <livewire:global.search-filters.departemen-search-filter lazy wire:key="dp-search-filter" />
                 </div>
 
                 <div class="sm:col-span-4 relative">
-                    <livewire:global.search-filters.fakultas-search-filter lazy />
+                    <livewire:global.search-filters.fakultas-search-filter lazy wire:key="fk-search-filter" />
                 </div>
             </div>
         </div>

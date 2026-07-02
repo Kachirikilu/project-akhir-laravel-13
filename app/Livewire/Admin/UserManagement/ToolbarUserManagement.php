@@ -2,33 +2,34 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Attributes\Reactive;
 
 class ToolbarUserManagement extends Component
 {
-    public $id;
-    public $email;
-    public $label_id1;
-    public $identity1;
-    public $role;
-    public $isTrashed;
+    #[Reactive]
+    public $data;
+    // public $id;
+    // #[Reactive]
+    // public $email;
+    // public $label_id1;
+    // #[Reactive]
+    // public $identity1;
+    // public $role;
+    // public $withRPS;
+    // public $isTrashed;
 
-    public function mount($id, $email, $label_id1, $identity1, $role, $isTrashed) 
-    {
-        $this->id = $id;
-        $this->email = $email;
-        $this->label_id1 = $label_id1;
-        $this->identity1 = $identity1;
-        $this->role = $role;
-        $this->isTrashed = $isTrashed;
-    }
+    // #[On('refresh-data-user')]
+    // #[On('refresh-table')]
+    // public function refreshUsersList()
+    // {
+    //     $this->dispatch('$refresh')->self();
+    // }
 
     public function placeholder()
     {
-        return view('livewire.global.livewire-toolbars.skeleton-toolbar');
+        return view('livewire.global.livewire-skeletons.toolbar-skeleton');
     }
-
 
     public function render()
     {

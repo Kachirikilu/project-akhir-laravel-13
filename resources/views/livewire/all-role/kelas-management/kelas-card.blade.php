@@ -66,7 +66,7 @@
         </div>
     </x-slot:search>
 
-            {{-- @for ($i = 0; $i < 8; $i++)
+    {{-- @for ($i = 0; $i < 8; $i++)
                 <div wire:loading
                     class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/30 min-h-[320px]">
                     <div class="flex flex-col gap-3 p-[18px] bg-gray-200/60 dark:bg-zinc-800/60">
@@ -97,7 +97,6 @@
 
     {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
     @forelse($kelas as $k)
-
         <div wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
             class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
@@ -116,12 +115,7 @@
                                 <flux:icon name="academic-cap" class="w-3 h-3" />
                                 {{ $k->kode }}
                             </button>
-                            @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                                'x' => $k,
-                                'editString' => 'editKelas',
-                                'nameXString' => 'Kelas',
-                                'confirmDeleteString' => 'deleteKelas',
-                            ])
+                     @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 1])
                         </flux:dropdown>
                         @if (Auth::user()->admin || Auth::user()->dosen)
                             <span class="text-xs text-white/60 font-mono">ID:
@@ -135,12 +129,7 @@
                             class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                             <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                         </button>
-                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                            'x' => $k,
-                            'editString' => 'editKelas',
-                            'nameXString' => 'Kelas',
-                            'confirmDeleteString' => 'deleteKelas',
-                        ])
+                     @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </div>
 
@@ -182,14 +171,7 @@
                             </button>
                         </span>
                     </div>
-                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
-                        'x' => $k,
-                        'editString' => 'editKelas',
-                        'nameXString' => 'Kelas',
-                        'confirmDeleteString' => 'deleteKelas',
-                        'copyName' => 'Kode RPS',
-                        'copyText' => $k->kode_rps ?? '',
-                    ])
+                    @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3])
                 </flux:dropdown>
 
                 {{-- Stat boxes --}}
@@ -234,21 +216,21 @@
                     @click="
                         $store.rps?.resetShow();
                         $store.rps?.setShowRPS(
-                            '{{ $x->rps_id ?? '' }}',
-                            '{{ $x->rps_rel->kode ?? '' }}',
-                            '{{ $x->rps_rel->rps ?? '' }}',
-                            '{{ $x->rps_rel->draf ?? '' }}',
-                            '{{ $x->rps_rel->level_mk ?? '' }}',
+                                '{{ $k->rps_id ?? '' }}',
+                                '{{ $k->rps_rel->kode ?? '' }}',
+                                '{{ $k->rps_rel->rps ?? '' }}',
+                                '{{ $k->rps_rel->draf ?? '' }}',
+                                '{{ $k->rps_rel->level_mk ?? '' }}',
+                                '{{ $k->pr_id ?? '' }}',
                         );
                         $store.rps?.setColor('text-green-700 dark:text-green-400');
                         $flux.modal('rps-detail-modal').show();
+                        $dispatch('open-show-rps-modal', { id: {{ $k->rps_id }}, prId: {{ $k->pr_id }} });
                     "
-                    wire:click="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})">
-                    <flux:icon wire:loading.remove wire:target="showRPS({{ $k->rps_id }})"
+                    {{-- wire:click="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})" --}}>
+                    <flux:icon
                         name="clipboard-document-list" class="w-3.5 h-3.5" />
-                    <span wire:loading.remove wire:target="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})">Lihat RPS</span>
-                    <flux:icon wire:loading wire:target="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
+                    <span>Lihat RPS</span>
                 </button>
 
                 <button

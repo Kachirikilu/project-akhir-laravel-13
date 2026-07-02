@@ -16,7 +16,7 @@
                         <th class="pb-3 px-4 min-w-32">Deskripsi Tugas</th>
                         <th class="pb-3 px-4 text-center">Waktu Tugas</th>
                         <th class="pb-3 px-4 text-center">Waktu Mandiri</th>
-                        @unless (($this->showSCPMKModal || $this->isEditingSCPMK) && ($this->isFlyoutRPS || $this->isFlyoutCPMK))
+                        @unless ($parent == 'cpmk')
                             <th class="pb-3 px-4 text-center">Edit</th>
                         @endunless
                     </tr>
@@ -71,7 +71,7 @@
                             <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
                                 x-text="sub.w_mandiri || '-'"></td>
 
-                            @unless (($this->showSCPMKModal || $this->isEditingSCPMK) && ($this->isFlyoutRPS || $this->isFlyoutCPMK))
+                            @unless ($parent == 'cpmk')
                                 <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
 
                                     {{-- 3. Tombol Aksi (Minimalist Style) --}}

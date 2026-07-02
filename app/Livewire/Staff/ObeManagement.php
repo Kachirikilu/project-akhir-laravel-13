@@ -2,9 +2,6 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Admin\UserManagement\WithUserDelete;
-use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
@@ -22,24 +19,16 @@ use App\Livewire\Global\WithSubCPMKSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithTimDosenSearchFilters;
 use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenDelete;
-use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLDelete;
 use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLFilters;
-use App\Livewire\Staff\OBEManagement\CPLManagement\WithCPLModal;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKDelete;
 use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKFilters;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithCPMKModal;
 use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKDelete;
 use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKFilters;
-use App\Livewire\Staff\OBEManagement\CPMKManagement\WithSubCPMKModal;
-use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefDelete;
 use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefFilters;
 use App\Livewire\Staff\OBEManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithDosenFilters;
 use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSDelete;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
-use App\Livewire\Staff\OBEManagement\TimDosenManagement\WithTimDosenModal;
+use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Staff\OBEManagement\WithOBEExcel;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\TimDosen;
@@ -59,14 +48,10 @@ class ObeManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use WithCPLDelete;
     use WithCPLFilters;
-    use WithCPLModal;
     use WithCPLSearchFilters;
     use WithTimDosenDelete;
-    use WithCPMKDelete;
     use WithCPMKFilters;
-    use WithCPMKModal;
     use WithCPMKSearchFilters;
     use WithDepartemenSearchFilters;
     use WithDosenFilters;
@@ -76,25 +61,18 @@ class ObeManagement extends Component
     use WithOBEExcel;
     use WithPagination;
     use WithProdiSearchFilters;
-    use WithRefDelete;
     use WithReferensiSearchFilters;
     use WithTimDosenSearchFilters;
     use WithRefFilters;
     use WithRefModal;
-    use WithRPSDelete;
     use WithRPSFilters;
-    use WithRPSModal;
     use WithRPSSearchFilters;
     use WithSubCPMKDelete;
     use WithSubCPMKFilters;
-    use WithSubCPMKModal;
     use WithSubCPMKSearchFilters;
-    use WithUserDelete;
     use WithUserFilters;
-    use WithUserModal;
     use WithUserSearchFilters;
     use WithTimDosenFilters;
-    use WithTimDosenModal;
 
     public $switchTable = 'rps';
 
@@ -648,13 +626,6 @@ class ObeManagement extends Component
             // TOTAL (NO GET)
             // =========================
             return view('livewire.staff.obe-management', array_merge($data, [
-                'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
-                'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
-                'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
-                'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
-                'tim_dosen_rps_modal_paginator' => $this->tim_dosen_rps_modal_paginator,
-                'user_rps_modal_paginator' => $this->user_rps_modal_paginator,
-
                 'stats' => $stats,
             ]));
         } catch (QueryException $e) {
@@ -671,14 +642,6 @@ class ObeManagement extends Component
                 'tim_dosens' => TimDosen::whereRaw('1=0')->paginate($this->perPage),
                 'users' => User::whereRaw('1=0')->whereHas('dosen')->paginate($this->perPage),
             ], [
-                // 'totalRPSSaya' => '-',
-                'cpl_rps_modal_paginator' => collect(),
-                'cpmk_rps_modal_paginator' => collect(),
-                'scpmk_rps_modal_paginator' => collect(),
-                'ref_rps_modal_paginator' => collect(),
-                'tim_dosen_rps_items_list' => collect(),
-                'user_rps_modal_paginator' => collect(),
-
                 'stats' => [
                     'rps' => '-',
                     'rps_saya' => '-',

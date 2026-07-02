@@ -1,5 +1,5 @@
 
-@include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-table')
+@include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-grafik-sesi-table')
 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
 
 <x-global.main-layout-table :paginator="$users">
@@ -204,10 +204,7 @@
                     <button class="cursor-pointer">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
-                    @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
-                    )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -248,10 +245,7 @@
                                     'xValue' => $user->mhs_nilai_mutu ?? 'E',
                                 ])
                             </button>
-                            @include(
-                                'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                                ['x' => $user]
-                            )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 2])
                         </flux:dropdown>
                     @else
                         -
@@ -325,10 +319,7 @@
                         ])
                     </button>
 
-                    @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
-                    )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
             <td class="table-second text-center">
@@ -338,10 +329,7 @@
                             'xValue' => $user->status,
                         ])
                     </button>
-                    @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
-                    )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 4])
                 </flux:dropdown>
             </td>
 
@@ -353,10 +341,7 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-                    @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-toolbar-table',
-                        ['x' => $user]
-                    )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 5])
                 </flux:dropdown>
             </td>
 

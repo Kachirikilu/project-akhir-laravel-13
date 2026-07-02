@@ -5,6 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 
 trait WithJadwalDelete
 {
@@ -14,7 +15,7 @@ trait WithJadwalDelete
 
     public $jadwalIdToDelete;
 
-    public $jadwalEmailToDelete;
+    public $jadwalNameToDelete;
 
     public $isPermanentDelete = false;
 
@@ -32,7 +33,7 @@ trait WithJadwalDelete
         }
 
         $this->jadwalIdToDelete = $id;
-        $this->jadwalEmailToDelete = $jadwal->email;
+        $this->jadwalNameToDelete = $jadwal->kode;
         $this->isPermanentDelete = $isTrashed;
         $this->showJadwalDelete = true;
     }
@@ -80,7 +81,7 @@ trait WithJadwalDelete
             // $this->dispatch('refresh-layout-sidebar');
 
             $this->showJadwalDelete = false;
-            $this->toast(message: $this->jadwalEmailToDelete, type: $type);
+            $this->toast(message: $this->jadwalNameToDelete, type: $type);
             $this->cleanupDeleteStateJadwal();
 
             if (method_exists($this, 'resetPage')) {
@@ -124,7 +125,7 @@ trait WithJadwalDelete
     private function cleanupDeleteStateJadwal()
     {
         $this->jadwalIdToDelete = null;
-        $this->jadwalEmailToDelete = null;
+        $this->jadwalNameToDelete = null;
         $this->isPermanentDelete = false;
         $this->showJadwalDelete = false;
     }

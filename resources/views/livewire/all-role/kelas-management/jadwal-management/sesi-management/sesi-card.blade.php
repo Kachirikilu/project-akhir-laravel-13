@@ -50,10 +50,16 @@
     |--------------------------------------------------------------------------
     */
     $alpineVersion = md5(
-        json_encode([
-            'ids' => collect($sesis)->pluck('id')->values(),
-            'updated' => now()->timestamp,
-        ]),
+        json_encode(
+            $sesis
+                ->map(
+                    fn($s) => [
+                        'id' => $s->id,
+                        'updated_at' => optional($s->updated_at)->timestamp,
+                    ],
+                )
+                ->values(),
+        ),
     );
 @endphp
 <div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
@@ -191,7 +197,6 @@
 
         {{-- GRID UTAMA KARTU --}}
         @php
-            // 1. Ambil data dosen dari $tim_dosen (sudah difilter per prodi)
             $allTimDosen = $tim_dosen->flatMap(function ($tim) {
                 return $tim->dosens->map(function ($dosen) {
                     return [
@@ -204,7 +209,6 @@
                 });
             });
 
-            // 2. Injeksi ke koleksi $sesis agar setiap sesi punya koleksinya sendiri
             $sesis->each(function ($s, $index) use ($allTimDosen) {
                 $pertemuan = $index + 1;
                 $s->dosens_collection = $allTimDosen->filter(function ($dosen) use ($pertemuan) {
@@ -220,7 +224,8 @@
                     : null;
             @endphp
 
-            <template x-if="itemVisibilityMap[{{ $s->id }}]?.visible">
+            {{-- <template x-if="itemVisibilityMap[{{ $s->id }}]?.visible"> --}}
+            <div x-show="itemVisibilityMap[{{ $s->id }}]?.visible" x-transition>
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? {{ $index }})"
                     @click="expanded = !expanded" {{-- TAMBAHKAN h-full DAN flex-shrink-0 DI BAWAH INI --}}
@@ -243,14 +248,7 @@
                                     </button>
                                     @include(
                                         'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                        [
-                                            'x' => $s,
-                                            'editString' => 'editSesi',
-                                            'nameXString' => 'Sesi',
-                                            'confirmDeleteString' => 'deleteSesi',
-                                            'copyName' => 'Kode Sub-CPMK',
-                                            'copyText' => $s->kode_scpmk ?? '',
-                                        ]
+                                        ['key' => 1]
                                     )
                                 </flux:dropdown>
 
@@ -264,14 +262,7 @@
                                     </button>
                                     @include(
                                         'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                        [
-                                            'x' => $s,
-                                            'editString' => 'editSesi',
-                                            'nameXString' => 'Sesi',
-                                            'confirmDeleteString' => 'deleteSesi',
-                                            'copyName' => 'Kode Sub-CPMK',
-                                            'copyText' => $s->kode_scpmk ?? '',
-                                        ]
+                                        ['key' => 2]
                                     )
                                 </flux:dropdown>
 
@@ -290,14 +281,7 @@
                                 </button>
                                 @include(
                                     'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                    [
-                                        'x' => $s,
-                                        'editString' => 'editSesi',
-                                        'nameXString' => 'Sesi',
-                                        'confirmDeleteString' => 'deleteSesi',
-                                        'copyName' => 'Kode Sub-CPMK',
-                                        'copyText' => $s->kode_scpmk ?? '',
-                                    ]
+                                    ['key' => 3]
                                 )
                             </flux:dropdown>
                         </div>
@@ -366,17 +350,9 @@
                                             'variant' => '',
                                         ])
                                     </button>
-
                                     @include(
                                         'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                        [
-                                            'x' => $s,
-                                            'editString' => 'editSesi',
-                                            'nameXString' => 'Sesi',
-                                            'confirmDeleteString' => 'deleteSesi',
-                                            'copyName' => 'Kode Sub-CPMK',
-                                            'copyText' => $s->kode_scpmk ?? '',
-                                        ]
+                                        ['key' => 4]
                                     )
                                 </flux:dropdown>
                             </div>
@@ -398,14 +374,7 @@
                                         </button>
                                         @include(
                                             'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                            [
-                                                'x' => $s,
-                                                'editString' => 'editSesi',
-                                                'nameXString' => 'Sesi',
-                                                'confirmDeleteString' => 'deleteSesi',
-                                                'copyName' => 'Kode Sub-CPMK',
-                                                'copyText' => $s->kode_scpmk ?? '',
-                                            ]
+                                            ['key' => 5]
                                         )
                                     </flux:dropdown>
                                 </div>
@@ -476,22 +445,25 @@
                                 </span>
                                 @php
                                     $hasSesiDosen = isset($s->dosens_collection) && $s->dosens_collection->isNotEmpty();
-                                    $pengajar_collection = $hasSesiDosen 
-                                        ? $s->dosens_collection 
+                                    $pengajar_collection = $hasSesiDosen
+                                        ? $s->dosens_collection
                                         : $tim_dosen->flatMap->dosens;
                                     $pengajar_collection = collect($pengajar_collection)->map(function ($d) {
                                         return (object) [
-                                            'name'      => $d->name ?? $d['name'] ?? 'Tanpa Nama',
-                                            'nip'       => $d->nip ?? $d['nip'] ?? '-',
-                                            'is_ketua'  => isset($d->pivot) ? (bool)$d->pivot->is_ketua : (bool)($d['is_ketua'] ?? false)
+                                            'name' => $d->name ?? ($d['name'] ?? 'Tanpa Nama'),
+                                            'nip' => $d->nip ?? ($d['nip'] ?? '-'),
+                                            'is_ketua' => isset($d->pivot)
+                                                ? (bool) $d->pivot->is_ketua
+                                                : (bool) ($d['is_ketua'] ?? false),
                                         ];
                                     });
                                 @endphp
 
                                 @forelse($pengajar_collection as $dosen)
                                     <div class="text-xs text-[var(--contrast-main-text)] flex items-center gap-2">
-                                        <div class="{{ $pengajar_collection->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
-                                            
+                                        <div
+                                            class="{{ $pengajar_collection->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+
                                             @if ($pengajar_collection->count() > 1)
                                                 <span class="mr-[5px]">{{ $loop->iteration }}.</span>
                                             @endif
@@ -499,7 +471,8 @@
                                             {{ $dosen->name }}
 
                                             @if ($dosen->is_ketua)
-                                                <span class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
+                                                <span
+                                                    class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
                                                     KETUA
                                                 </span>
                                             @endif
@@ -533,12 +506,15 @@
                                             @click="
                                                 $store.sesi?.setEdit(0);
                                                 $store.sesi?.setColor('text-blue-700 dark:text-blue-400');
-                                                $flux.modal('sesi-absen').show();
+                                                $flux.modal('absensi-sesi-modal').show();
                                                 $store.sesi?.setValueAbsenSesi(
-                                                    '{{ $s->id ?? '' }}', '{{ $s->pertemuan_ke ?? '' }}', '{{ $s->kode_scpmk }}', '{{ $kehadiran_mhs->keterangan ?? null }}',
+                                                    '{{ $s->id ?? '' }}', '{{ $jadwal->kode }}', '{{ $s->pertemuan_ke ?? '' }}', '{{ $s->kode_scpmk }}',
+                                                    '{{ $kehadiran_mhs->keterangan ?? null }}',
                                                     '{{ $s->waktu_pelaksanaan ?? '' }}', '{{ $s->waktu_berakhir ?? '' }}',
                                                     '{{ $s->waktu_telat ?? '' }}', '{{ $s->waktu_dispensasi ?? '' }}'
                                                 );
+                                                $flux.modal('absensi-sesi-modal').show();
+                                                $dispatch('open-absensi-sesi-modal');
                                             ">
                                             <flux:icon name="user-plus" class="w-3.5 h-3.5" />
                                             <span>Absensi</span>
@@ -577,7 +553,8 @@
                                         </div>
                                     @endif
                                 @else
-                                    <flux:badge color="zinc" size="sm" class="opacity-70">Belum Presensi
+                                    <flux:badge color="zinc" size="sm" class="font-mono opacity-70 px-4">Belum
+                                        Presensi
                                     </flux:badge>
                                 @endif
                             @endif
@@ -598,7 +575,9 @@
                     @endif
 
                 </div>
-            </template>
+            </div>
+
+            {{-- </template> --}}
         @endforeach
 
         {{-- EMPTY STATE ANCHOR --}}

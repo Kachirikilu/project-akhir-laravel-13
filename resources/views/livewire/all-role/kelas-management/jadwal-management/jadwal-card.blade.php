@@ -65,15 +65,7 @@
                                 <flux:icon name="academic-cap" class="w-3 h-3" />
                                 {{ $j->kode }}
                             </button>
-                            @include(
-                                'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
-                                [
-                                    'x' => $j,
-                                    'editString' => 'editJadwal',
-                                    'nameXString' => 'Jadwal',
-                                    'confirmDeleteString' => 'deleteJadwal',
-                                ]
-                            )
+                            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', ['key' => 1])
                         </flux:dropdown>
                         @if (Auth::user()->admin || Auth::user()->dosen)
                             <span class="text-xs text-white/60 font-mono">ID:
@@ -87,15 +79,7 @@
                             class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                             <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                         </button>
-                        @include(
-                            'livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table',
-                            [
-                                'x' => $j,
-                                'editString' => 'editJadwal',
-                                'nameXString' => 'Jadwal',
-                                'confirmDeleteString' => 'deleteJadwal',
-                            ]
-                        )
+                        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar-table', ['key' => 2])
                     </flux:dropdown>
 
                 </div>
@@ -212,14 +196,15 @@
                         @if (!$j->trashed()) @click="
                             $store.jadwal?.setEdit(0);
                             $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                            $flux.modal('jadwal-join').show();
+                            $flux.modal('join-jadwal').show();
                             $store.jadwal?.setValueJoinJadwal(
                                 '{{ $j->id ?? '' }}',
                                 '{{ $j->kode ?? '' }}',
                                 '{{ $j->kode_kelas ?? '' }}',
                                 '{{ $j->label_extra ?? '' }}',
                             );
-                " @endif>
+                            $dispatch('open-join-jadwal-modal');
+                        " @endif>
                         <flux:icon name="user-plus" class="w-3.5 h-3.5 {{ $j->trashed() ? 'opacity-40' : '' }}" />
                         <span>Join Kelas</span>
                     </button>
@@ -232,18 +217,17 @@
                             <span>Join Kelas</span>
                         </button>
                     @else
-                        <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal)" id="jadwalForm">
                             <button
                                 class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                                 @click="
                                     $store.jadwal?.setEdit(0);
                                     $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
                                     $store.jadwal?.setValueJoinJadwal('{{ $j->id ?? '' }}');
+                                    $dispatch('join-jadwal-function', { data: $store.jadwal.getDataJoinJadwal() });
                                 ">
                                 <flux:icon name="user-plus" class="w-3.5 h-3.5" />
                                 <span>Join Kelas</span>
                             </button>
-                        </form>
                     @endif
                 @endif
             </div>

@@ -1,6 +1,6 @@
 <div>
     <flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
-        class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+        class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
         {{-- Loading Overlay --}}
         <div wire:loading wire:target="saveProdi, updateProdi">
@@ -46,7 +46,7 @@
 
             {{-- 2. Konten & Form --}}
             <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-                <form x-on:submit.prevent="$store.prodi.isEdit ? $wire.updateProdi($store.prodi.getData()) : $wire.saveProdi($store.prodi.getData())"
+                <form x-on:submit.prevent="$store.prodi.isEdit ? $wire.updateProdi($store.prodi.getDataProdi()) : $wire.saveProdi($store.prodi.getDataProdi())"
                     enctype="multipart/form-data" id="prodiForm">
 
                     <template x-if="$store.prodi?.typeModal == 'prodi'" x-cloak>

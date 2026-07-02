@@ -1,19 +1,19 @@
 <div>
     @include('livewire.global.table.text-copy', [
-        'xType' => $kode,
+        'xType' => $data['kode'],
         'typeXString' => 'Kode MK',
     ])
     
     @if (Auth::user()?->admin || Auth::user()?->dosen)
             <flux:menu.separator />
 
-            @if (!$isTrashed)
+            @if (!$data['isTrashed'])
                 {{-- Tombol Edit --}}
                 <flux:menu.item
                     @click="
                 $store.mk?.reset();
 
-                const type = {{ $level_mk }};
+                const type = {{ $data['level_mk'] }};
 
                 $store.mk?.setType(type);
                 $store.mk?.setEdit(1);
@@ -27,20 +27,20 @@
                 $store.mk?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
                     $store.mk?.setValueMK(
-                        '{{ $level_mk ?? '' }}',
-                        '{{ $mk ?? '' }}',
-                        '{{ $kode_blok ?? '' }}',
-                        '{{ $digit_semester ?? '' }}',
-                        '{{ $digit_mk ?? '' }}',
-                        '{{ $semester ?? '' }}',
-                        '{{ $sks ?? '' }}',
-                        '{{ $tipe_sks ?? '' }}',
-                        '{{ $wajib ?? '' }}',
-                        '{{ $deskripsi ?? '' }}',
-                        '{{ $bahan_kajian ?? '' }}',
+                        '{{ $data['level_mk'] ?? '' }}',
+                        '{{ $data['mk'] ?? '' }}',
+                        '{{ $data['kode_blok'] ?? '' }}',
+                        '{{ $data['digit_semester'] ?? '' }}',
+                        '{{ $data['digit_mk'] ?? '' }}',
+                        '{{ $data['semester'] ?? '' }}',
+                        '{{ $data['sks'] ?? '' }}',
+                        '{{ $data['tipe_sks'] ?? '' }}',
+                        '{{ $data['wajib'] ?? '' }}',
+                        '{{ $data['deskripsi'] ?? '' }}',
+                        '{{ $data['bahan_kajian'] ?? '' }}',
                     );
                     $flux.modal('mk-modal').show();
-                    $dispatch('open-edit-mk-modal', { id: {{ $id }}, tingkatan: {{ $level_mk }} });
+                    $dispatch('open-edit-mk-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_mk'] }} });
             "
                     class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -55,11 +55,11 @@
                 <flux:menu.item
                     @click="
                         $store.mk?.setDeleteMK(
-                            '{{ $mk ?? '' }}',
-                            '{{ $kode ?? '' }}'
+                            '{{ $data['mk'] ?? '' }}',
+                            '{{ $data['kode'] ?? '' }}'
                         );
                         $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $id }} });
+                    $dispatch('open-delete-mk-modal', { id: {{ $data['id'] }} });
                 "
                     class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                     <flux:icon name="trash" class="mr-2 h-4 w-4" />
@@ -70,7 +70,7 @@
                 </flux:menu.item>
             @else
                 {{-- Tombol Restore --}}
-                <flux:menu.item wire:click="$dispatch('restore-mk', { id: {{ $id }} })"
+                <flux:menu.item wire:click="$dispatch('restore-mk', { id: {{ $data['id'] }} })"
                     class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
@@ -85,12 +85,12 @@
                 <flux:menu.item
                     @click="
                     $store.mk?.setDeleteMK(
-                            '{{ $mk ?? '' }}',
-                            '{{ $kode ?? '' }}',
-                            '{{ $isTrashed }}'
+                            '{{ $data['mk'] ?? '' }}',
+                            '{{ $data['kode'] ?? '' }}',
+                            '{{ $data['isTrashed'] }}'
                         );
                         $flux.modal('mk-delete').show();
-                    $dispatch('open-delete-mk-modal', { id: {{ $id }}, isTrash: {{ $isTrashed }} });
+                    $dispatch('open-delete-mk-modal', { id: {{ $data['id'] }}, isTrash: {{ $data['isTrashed'] }} });
                 "
                     class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                     <flux:icon name="trash" class="mr-2 h-4 w-4" />

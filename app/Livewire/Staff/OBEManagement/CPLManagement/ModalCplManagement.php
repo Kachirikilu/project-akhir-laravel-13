@@ -7,6 +7,7 @@ use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -14,29 +15,23 @@ class ModalCplManagement extends Component
 {
     use HasToast;
     use WithCPLModal;
+    use WithRPSShow;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
     use WithProdiSearchFilters;
     use WithRPSSearchFilters;
 
-    // public $isEditingRPS;
-    public $showCPMKModal;
-
-    public $showRPSModal;
-
-    public $isEditingCPMK;
-
-    public $isFlyoutCPMK;
-
-    public $isEditingSCPMK;
-
-    public $isFlyoutSCPMK;
-
-    public $isEditingRef;
-
-    public $isFlyoutRef;
-
     public $parent;
+
+    public $tingkatan;
+
+    #[On('refresh-data-rps-cpl')]
+    public function handleRefreshCPL()
+    {
+        if ($this->selected_id_cpl) {
+            $this->editCPL($this->selected_id_cpl, $this->tingkatan);
+        }
+    }
 
     #[On('trigger-cpl-modal')]
     public function handleTriggerCPL() {}
@@ -52,6 +47,7 @@ class ModalCplManagement extends Component
     public function handleEditCPL($id, $tingkatan = 1, $isRPS = false, $parent = null)
     {
         $this->parent = $parent;
+        $this->tingkatan = $tingkatan;
         $this->editCPL($id, $tingkatan, $isRPS);
     }
 

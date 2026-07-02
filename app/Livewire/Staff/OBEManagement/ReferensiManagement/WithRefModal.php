@@ -33,20 +33,21 @@ trait WithRefModal
 
     protected $ref_rps_modal_paginator;
 
-    public $isFlyoutRef = false;
+    // public $isFlyoutRef = false;
 
     public function updatedShowRefModal($value)
     {
         if (! $value) {
-            $this->isFlyoutRef = false;
+            // $this->isFlyoutRef = false;
             $this->isEditingRef = false;
-        } else {
-            $this->isFlyoutRef =
-                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
-                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
-                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
-                (property_exists($this, 'showCPLModal') && $this->showCPLModal);
         }
+        // else {
+        //     $this->isFlyoutRef =
+        //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+        //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+        //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+        //         (property_exists($this, 'showCPLModal') && $this->showCPLModal);
+        // }
     }
 
     public function addRef()

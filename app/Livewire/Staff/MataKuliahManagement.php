@@ -5,7 +5,6 @@ namespace App\Livewire\Staff;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithMKSearchFilters;
-use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKExcel;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Models\Akademik\MataKuliah;
@@ -13,12 +12,12 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class MataKuliahManagement extends Component
 {
     use HasSortir;
     use HasToast;
-    use WithMKDelete;
     use WithMKExcel;
     use WithMKFilters;
     use WithMKSearchFilters;
@@ -40,6 +39,10 @@ class MataKuliahManagement extends Component
     public $sortDirection = 'asc';
 
     public $showDeleted = false;
+
+    public $selectedPrId;
+    public $selectedDpId;
+    public $selectedFkId;
 
     protected $listeners = ['refresh-table' => 'refreshMksList', 'refresh-data-mk' => 'refreshMksList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];

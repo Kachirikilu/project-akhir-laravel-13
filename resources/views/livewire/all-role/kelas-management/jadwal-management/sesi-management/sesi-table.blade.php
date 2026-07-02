@@ -56,7 +56,7 @@
                 'isSticky' => 1,
             ])
 
-            <th colspan="4" class="table-head-sub">
+            <th colspan="5" class="table-head-sub">
                 Informasi Sesi Kelas
             </th>
 
@@ -100,6 +100,11 @@
                 'isCenter' => 1,
             ])
 
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'total_absensi_all',
+                'headString' => 'Absensi Terdata',
+                'isCenter' => 1,
+            ])
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'tanggal_pelaksanaan',
@@ -158,7 +163,18 @@
     </x-slot:header>
 
 
+    @php
+        $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
+    @endphp
+
     @forelse($sesis as $s)
+            @php
+                $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
+                $kehadiran_mhs = Auth::user()->mahasiswa
+                    ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
+                    : null;
+            @endphp
+
         <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
@@ -173,19 +189,10 @@
                             'xValue' => $s->metode,
                         ])
                     </button>
-
                     @include(
                         'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                        [
-                            'x' => $s,
-                            'editString' => 'editSesi',
-                            'nameXString' => 'Sesi',
-                            'confirmDeleteString' => 'deleteSesi',
-                            'copyName' => 'Kode Sub-CPMK',
-                            'copyText' => $s->kode_scpmk ?? '',
-                        ]
+                        ['key' => 1]
                     )
-
                 </flux:dropdown>
             </td>
 
@@ -195,6 +202,7 @@
             <td class="table-sub text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
             <td class="table-sub text-center whitespace-nowrap">
                 {{ $s->total_absensi . ' / ' . ($s->count_mahasiswa ?? 0) }}</td>
+            <td class="table-sub text-center whitespace-nowrap">{{ $s->total_absensi_all ?? 0 }}</td>
             <td class="table-second text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
             <td class="table-main text-center whitespace-nowrap">
@@ -203,18 +211,7 @@
                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $s->kode_scpmk ?? '---' }}
                         </flux:badge>
                     </button>
-
-                    @include(
-                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                        [
-                            'x' => $s,
-                            'editString' => 'editSesi',
-                            'nameXString' => 'Sesi',
-                            'confirmDeleteString' => 'deleteSesi',
-                            'copyName' => 'Kode Sub-CPMK',
-                            'copyText' => $s->kode_scpmk ?? '',
-                        ]
-                    )
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
             <td class="table-sub table-border-r text-center whitespace-nowrap">
@@ -237,17 +234,9 @@
                         <flux:badge icon="academic-cap" color="sky" size="sm">{{ $s->kode_cpmk ?? '---' }}
                         </flux:badge>
                     </button>
-
                     @include(
                         'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                        [
-                            'x' => $s,
-                            'editString' => 'editSesi',
-                            'nameXString' => 'Sesi',
-                            'confirmDeleteString' => 'deleteSesi',
-                            'copyName' => 'Kode CPMK',
-                            'copyText' => $s->kode_cpmk ?? '',
-                        ]
+                        ['key' => 3]
                     )
                 </flux:dropdown>
             </td>
@@ -258,30 +247,19 @@
                         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                             inset="top bottom">
                         </flux:button>
-
                         @include(
                             'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                            [
-                                'x' => $s,
-                                'editString' => 'editSesi',
-                                'nameXString' => 'Sesi',
-                                'confirmDeleteString' => 'deleteSesi',
-                                'copyName' => 'Kode Sub-CPMK',
-                                'copyText' => $s->kode_scpmk ?? '',
-                            ]
+                            ['key' => 4]
                         )
-
                     </flux:dropdown>
                 </td>
             @endif
-
-
             {{-- <td class="table-second whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
             <td class="table-second whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
     @empty
         <tr>
-            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '16' : '15' }}"
+            <td colspan="{{ Auth::user()->admin || Auth::user()->dosen ? '17' : '15' }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Sesi Pertemuan Kelas ditemukan!
             </td>

@@ -84,7 +84,7 @@ document.addEventListener("alpine:init", () => {
                 slot1: fakultas,
             };
         },
-        getData() {
+        getDataProdi() {
             return {
                 nama_pr: this.nama_pr,
                 dp_id: this.dp_id,

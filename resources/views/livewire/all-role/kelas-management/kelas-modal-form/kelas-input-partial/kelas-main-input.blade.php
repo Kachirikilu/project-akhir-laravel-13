@@ -1,39 +1,43 @@
-<div
-    class="form-container">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Input Kelas Perkuliahan</h4>
 
     <div>
         @include('livewire.global.modal-form.partial.label', [
-            'nameXString' => 'Kode Kelas',
+            'nameXString' => 'Kode Kelas'. ($isJadwal ? ' (Terkunci)' : ''),
+            'isRequired' => !$isJadwal,
         ])
         <div class="grid grid-cols-6 gap-1 sm:gap-2 items-end" x-data="{}"
             x-effect="$store.kelas.kode_kelas = ($store.kelas.kode_kelas_1 || '') + ($store.kelas.kode_kelas_2 || '')">
 
-            <div class="col-span-3">
-                @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'kelas',
-                    'noLabel' => 1,
-                    'modelString' => 'kode_kelas_1',
-                    'iconString' => 'document-text',
-                    'placeholder' => 'Masukkan mutu Kode Kelas...',
-                    'isKode' => 4,
-                    'isFocusSelect' => 1,
-                ])
-            </div>
-            <div class="col-span-3">
-                @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'kelas',
-                    'noLabel' => 1,
-                    'modelString' => 'kode_kelas_2',
-                    'numberOnly' => 1,
-                    'maxLength' => 6,
-                    'iconString' => 'variable',
-                    'placeholder' => 'Contoh: 121104',
-                    'isFocusSelect' => 1,
-                ])
-            </div>
+            {{-- @if (!$isJadwal) --}}
+                <div class="col-span-3">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'kelas',
+                        'noLabel' => 1,
+                        'modelString' => 'kode_kelas_1',
+                        'iconString' => 'document-text',
+                        'placeholder' => 'Masukkan mutu Kode Kelas...',
+                        'isKode' => 4,
+                        'isReadonly' => $isJadwal,
+                        'isFocusSelect' => 1,
+                    ])
+                </div>
+                <div class="col-span-3">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'kelas',
+                        'noLabel' => 1,
+                        'modelString' => 'kode_kelas_2',
+                        'numberOnly' => 1,
+                        'maxLength' => 6,
+                        'iconString' => 'variable',
+                        'placeholder' => 'Contoh: 121104',
+                        'isReadonly' => $isJadwal,
+                        'isFocusSelect' => 1,
+                    ])
+                </div>
+            {{-- @endif --}}
 
         </div>
         @error('kode_kelas')

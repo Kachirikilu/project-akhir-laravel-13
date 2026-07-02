@@ -34,20 +34,21 @@ trait WithCPMKModal
 
     protected $cpmk_rps_modal_paginator;
 
-    public $isFlyoutCPMK = false;
+    // public $isFlyoutCPMK = false;
 
     public function updatedShowCPMKModal($value)
     {
         if (! $value) {
-            $this->isFlyoutCPMK = false;
+            // $this->isFlyoutCPMK = false;
             $this->isEditingCPMK = false;
-        } else {
-            $this->isFlyoutCPMK =
-                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
-                (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
-                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
-                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
+        // else {
+        //     $this->isFlyoutCPMK =
+        //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+        //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
+        //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+        //         (property_exists($this, 'showRefModal') && $this->showRefModal);
+        // }
     }
 
     public function addCPMK($key = 'cpmk')

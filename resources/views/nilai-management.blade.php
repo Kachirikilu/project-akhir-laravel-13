@@ -14,9 +14,9 @@
             @if(request()->routeIs('nilai-management'))
                 <livewire:staff.nilai-management lazy />
             @elseif (request()->routeIs('nilai-mahasiswa-management'))
-                <livewire:staff.nilai-management.nilai-mahasiswa-management lazy :nim="request()->route('nim')" />
+                <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" />
             @elseif (request()->routeIs('rps-mahasiswa-management'))
-                <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management lazy :nim="request()->route('nim')" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
+                <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management :nim="request()->route('nim')" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
             @endif
         </div>
     </div>

@@ -8,12 +8,14 @@ use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 // use App\Models\Kelas\KelasMahasiswa;
 use App\Models\Kelas\KelasSesi;
+use App\Models\Kelas\MahasiswaKehadiran;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\On;
 
 trait WithJadwalModal
 {
@@ -32,39 +34,59 @@ trait WithJadwalModal
 
     public $showJadwalLeft = false;
 
-    public $sesi_1;
+    // public $sesi_1;
 
-    public $sesi_2;
+    // public $sesi_2;
 
-    public $sesi_3;
+    // public $sesi_3;
 
-    public $sesi_4;
+    // public $sesi_4;
 
-    public $sesi_5;
+    // public $sesi_5;
 
-    public $sesi_6;
+    // public $sesi_6;
 
-    public $sesi_7;
+    // public $sesi_7;
 
-    public $sesi_8;
+    // public $sesi_8;
 
-    public $sesi_9;
+    // public $sesi_9;
 
-    public $sesi_10;
+    // public $sesi_10;
 
-    public $sesi_11;
+    // public $sesi_11;
 
-    public $sesi_12;
+    // public $sesi_12;
 
-    public $sesi_13;
+    // public $sesi_13;
 
-    public $sesi_14;
+    // public $sesi_14;
 
-    public $sesi_15;
+    // public $sesi_15;
 
-    public $sesi_16;
+    // public $sesi_16;
 
-    public $tanggal_berakhir;
+    // public $tanggal_berakhir;
+
+    public $jadwal_input = [
+        'sesi_1' => '',
+        'sesi_2' => '',
+        'sesi_3' => '',
+        'sesi_4' => '',
+        'sesi_5' => '',
+        'sesi_6' => '',
+        'sesi_7' => '',
+        'sesi_8' => '',
+        'sesi_9' => '',
+        'sesi_10' => '',
+        'sesi_11' => '',
+        'sesi_12' => '',
+        'sesi_13' => '',
+        'sesi_14' => '',
+        'sesi_15' => '',
+        'sesi_16' => '',
+        'tanggal_berakhir' => '',
+    ];
 
     public function addJadwal()
     {
@@ -85,6 +107,7 @@ trait WithJadwalModal
         $this->updatedMahasiswaNameSearch($this->mahasiswaNameSearch);
     }
 
+    #[On('join-jadwal-function')]
     public function joinJadwal($data)
     {
         if (! $this->AuthCheck('mahasiswa')) {
@@ -153,16 +176,21 @@ trait WithJadwalModal
                 return;
             }
             $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $this->jadwal_id)->first();
-
             if ($jadwal->mahasiswas()->detach($mahasiswa_id)) {
-                $history = session('jadwal.history', []);
-                $compositeKey =
-                    $jadwal->kelas_rel->kode.'_'.$jadwal->kode_jadwal;
-                unset($history[$compositeKey]);
-                session(['jadwal.history' => $history]);
+                $compositeKey = $jadwal->kode;
+                $historyJadwal = session('jadwal.history', []);
+                if (array_key_exists($compositeKey, $historyJadwal)) {
+                    unset($historyJadwal[$compositeKey]);
+                    session(['jadwal.history' => $historyJadwal]);
+                }
+                $historyMhs = session('jadwal_mahasiswa.history', []);
+                if (array_key_exists($compositeKey, $historyMhs)) {
+                    unset($historyMhs[$compositeKey]);
+                    session(['jadwal_mahasiswa.history' => $historyMhs]);
+                }
+
                 $this->toast(message: "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}", type: 'left');
                 $this->redirect(route('jadwal-management', $jadwal->kode_kelas));
-
             } else {
                 $this->toast(message: "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}", type: 'left', variant: 'danger');
 
@@ -209,23 +237,16 @@ trait WithJadwalModal
                 $this->{'sesi_'.$i} = null;
             }
 
-            $this->tanggal_berakhir = $jadwal->tanggal_berakhir ?? null;
+            $this->jadwal_input['tanggal_berakhir'] = $jadwal->tanggal_berakhir ?? null;
 
-            // ======================================
-            // FILL SESI
-            // ======================================
             foreach ($jadwal->sesis as $sesi) {
-
                 $index = $sesi->pertemuan_ke;
-
                 if ($index < 1 || $index > 16) {
                     continue;
                 }
-
-                $this->{'sesi_'.$index} =
-                    Carbon::parse(
-                        $sesi->tanggal
-                    )->format('Y-m-d');
+                $this->jadwal_input['sesi_'.$index] = Carbon::parse(
+                    $sesi->tanggal
+                )->format('Y-m-d');
             }
 
             $this->dispatch(
@@ -272,6 +293,7 @@ trait WithJadwalModal
                 $data['base_sesi_1']
             )->format('Y-m-d');
         }
+        // dd($data);
 
         if (! empty($data['tanggal_berakhir'])) {
             [$yearPart, $weekPart] = explode(
@@ -283,9 +305,10 @@ trait WithJadwalModal
             $data['tanggal_berakhir'] = Carbon::now()
                 ->setISODate($year, $week, 7)
                 ->format('Y-m-d');
+
         } else {
             if ($this->isEditingJadwal == true) {
-                $data['tanggal_berakhir'] = $this->tanggal_berakhir;
+                $data['tanggal_berakhir'] = $this->jadwal_input['tanggal_berakhir'];
             } else {
                 $data['tanggal_berakhir'] = Carbon::parse(
                     $data['tanggal_mulai']
@@ -300,7 +323,7 @@ trait WithJadwalModal
         $rules = [
             'kode_wilayah' => 'required|in:IDL,PLG',
             'label_kelas' => 'required|string|max:5',
-            'password' => 'nullable|string|max:14',
+            'password' => 'nullable|string|min:4|max:14',
             'hari_pelaksanaan' => [
                 'required',
                 Rule::in([
@@ -537,12 +560,15 @@ trait WithJadwalModal
             return;
         }
 
+        // dd($data);
+
         $data['mahasiswa_id_array'] =
             $this->mahasiswa_id_array ?? [];
 
         for ($i = 1; $i <= 16; $i++) {
-            if (empty($data['sesi_'.$i])) {
-                $data['sesi_'.$i] = $this->{'sesi_'.$i};
+            $sesiKey = 'sesi_'.$i;
+            if (empty($data[$sesiKey])) {
+                $data[$sesiKey] = $this->jadwal_input[$sesiKey] ?? null;
             }
         }
 
@@ -560,10 +586,10 @@ trait WithJadwalModal
         $isRestartSesi = filter_var($data['restart_sesi'] ?? false, FILTER_VALIDATE_BOOLEAN) || ($data['restart_sesi'] ?? 0) == 1;
 
         try {
-
             $validated = $this->inputModalJadwal(true, $data, $kelasId);
-
-            DB::transaction(function () use ($validated, $data, $isRestartSesi) {
+            $kodeKelas = '';
+            $kodeJadwal = '';
+            DB::transaction(function () use ($validated, $data, $isRestartSesi, &$kodeKelas, &$kodeJadwal) {
 
                 $jadwal = KelasJadwal::findOrFail(
                     $this->selected_jadwal_id
@@ -572,6 +598,7 @@ trait WithJadwalModal
                 // =========================================
                 // UPDATE JADWAL
                 // =========================================
+
                 $jadwal->update([
                     'password' => $validated['password'] ?? null,
                     'kode_wilayah' => $validated['kode_wilayah'],
@@ -583,6 +610,19 @@ trait WithJadwalModal
                     'jam_berakhir' => $validated['jam_berakhir'],
                     'kapasitas' => $validated['kapasitas'],
                 ]);
+
+                $kodeKelas = $jadwal->kelas_rel->kode;
+                $kodeJadwal = $jadwal->kode_jadwal;
+
+                $resetAbsen = $data['restart_absensi'] ?? false;
+
+                if ($resetAbsen) {
+                    $activeStudentIds = $jadwal->mahasiswas()->pluck('mahasiswas.id');
+                    $sesiIds = $jadwal->sesis()->pluck('id');
+                    MahasiswaKehadiran::whereIn('sesi_id', $sesiIds)
+                        ->whereNotIn('mahasiswa_id', $activeStudentIds)
+                        ->delete();
+                }
 
                 // =========================================
                 // UPDATE OR CREATE SESI 1 - 16
@@ -600,7 +640,7 @@ trait WithJadwalModal
                     $sesiLama = KelasSesi::where('kj_id', $jadwal->id)
                         ->where('pertemuan_ke', $i)
                         ->first();
-                        
+
                     if ($sesiSent === 'active') {
                         $customSent = 0;
                     } elseif ($sesiSent === 'inactive') {
@@ -643,12 +683,15 @@ trait WithJadwalModal
                 $jadwal->mahasiswas()->sync($validated['mahasiswa_id_array'] ?? []);
             });
 
-            $this->resetInputJadwal();
-            $this->dispatch('refresh-data-jadwal');
-            $this->showJadwalModal = false;
-
             $this->toast(message: "Jadwal {$validated['label_kelas']} {$validated['kode_wilayah']}", type: 'update');
 
+            if ($data['digit_tahun'] !== $data['digit_tahun_old']) {
+                return $this->redirect(route('sesi-management', [$kodeKelas, $kodeJadwal]), navigate: true);
+            } else {
+                $this->resetInputJadwal();
+                $this->dispatch('refresh-data-jadwal');
+                $this->showJadwalModal = false;
+            }
         } catch (ValidationException $e) {
 
             $this->toast(
@@ -688,6 +731,9 @@ trait WithJadwalModal
             'jam_berakhir.required' => 'Jam berakhir wajib diisi!',
             'jam_berakhir.date_format' => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
             'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
+
+            'password.min' => 'Password Kelas minimal 4 karakter!',
+            'password.max' => 'Password Kelas maksimal 14 karakter!',
 
             'kapasitas.required' => 'Kapasitas wajib diisi!',
             'kapasitas.integer' => 'Kapasitas harus berupa angka!',
@@ -742,6 +788,7 @@ trait WithJadwalModal
     {
         $fields = [
             'selected_jadwal_id',
+            'jadwal_input',
         ];
 
         $this->mahasiswaNameSearch = '';

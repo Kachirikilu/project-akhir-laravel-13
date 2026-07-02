@@ -54,6 +54,8 @@
                         'rps_modal_paginator' => $user_rps_modal_paginator,
                         'nameXString' => 'Dosen',
                         'wireLoading' => 'editUser',
+                        'parent' => 'user',
+                        'isFlyout' => true,
                     ])
                 </template>
             </div>

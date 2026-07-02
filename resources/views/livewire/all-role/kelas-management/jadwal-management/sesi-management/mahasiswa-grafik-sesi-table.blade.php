@@ -163,7 +163,10 @@
             initChart() {
                 if (this.chart) this.chart.destroy();
         
-                let isDark = document.documentElement.classList.contains('dark');
+                const isDark = () =>
+                    document.documentElement.classList.contains('dark');
+        
+        
                 let options = {
                     series: {{ json_encode($finalSeries) }},
                     chart: {
@@ -189,38 +192,54 @@
                             fontSize: '10px',
                             fontWeight: '700',
                             colors: ['#e4e4e7']
-                            {{-- colors: [isDark ? '#e4e4e7' : '#18181b'] --}}
+                            {{-- colors: [isDark() ? '#e4e4e7' : '#18181b'] --}}
                         }
                     },
                     xaxis: {
                         categories: {{ json_encode($daftarNim) }},
                         labels: {
                             style: {
-                                colors: isDark ? '#a1a1aa' : '#3f3f46',
+                                colors: isDark() ? '#a1a1aa' : '#3f3f46',
                                 fontSize: '11px',
                                 fontWeight: 'bold'
                             }
                         },
-                        axisBorder: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' },
-                        axisTicks: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' }
+                        axisBorder: {
+                            show: true,
+                            color: isDark() ? '#3f3f46' : '#9ca3af'
+                        },
+                        axisTicks: {
+                            show: true,
+                            color: isDark() ? '#3f3f46' : '#9ca3af'
+                        }
                     },
                     yaxis: {
-                        max: 100,
                         min: 0,
+                        max: 100,
                         tickAmount: 5,
+        
                         labels: {
                             style: {
-                                colors: isDark ? '#a1a1aa' : '#3f3f46',
+                                colors: isDark() ? '#a1a1aa' : '#3f3f46',
                                 fontSize: '10px'
                             }
                         },
-                        axisBorder: { show: true, color: isDark ? '#3f3f46' : '#9ca3af' }
+        
+                        axisBorder: {
+                            show: true,
+                            color: isDark() ? '#3f3f46' : '#9ca3af'
+                        }
                     },
                     grid: {
                         show: true,
-                        borderColor: isDark ? '#3f3f46' : '#e4e4e7',
+                        borderColor: isDark() ? '#3f3f46' : '#e4e4e7',
                         strokeDashArray: 0,
                         xaxis: { lines: { show: true } }
+                    },
+                    legend: {
+                        labels: {
+                            colors: isDark() ? '#e4e4e7' : '#18181b'
+                        }
                     },
                     annotations: {
                         yaxis: [{
@@ -242,19 +261,61 @@
                 const observer = new MutationObserver((mutations) => {
                     mutations.forEach((mutation) => {
                         if (mutation.attributeName === 'class') {
-                            // Update warna chart saat dark mode berubah
                             this.chart.updateOptions({
-                                xaxis: { labels: { style: { colors: isDark() ? '#a1a1aa' : '#3f3f46' } } },
-                                yaxis: { labels: { style: { colors: isDark() ? '#a1a1aa' : '#3f3f46' } } },
-                                dataLabels: { style: { colors: [isDark() ? '#e4e4e7' : '#18181b'] } }
-                            });
+                                xaxis: {
+                                    categories: {{ json_encode($daftarNim) }},
+                                    labels: {
+                                        style: {
+                                            colors: isDark() ? '#a1a1aa' : '#3f3f46',
+                                            fontSize: '11px',
+                                            fontWeight: 'bold'
+                                        }
+                                    },
+                                    axisBorder: {
+                                        show: true,
+                                        color: isDark() ? '#3f3f46' : '#9ca3af'
+                                    },
+                                    axisTicks: {
+                                        show: true,
+                                        color: isDark() ? '#3f3f46' : '#9ca3af'
+                                    }
+                                },
+        
+                                yaxis: {
+                                    min: 0,
+                                    max: 100,
+                                    tickAmount: 5,
+        
+                                    labels: {
+                                        style: {
+                                            colors: isDark() ? '#a1a1aa' : '#3f3f46',
+                                            fontSize: '10px'
+                                        }
+                                    },
+        
+                                    axisBorder: {
+                                        show: true,
+                                        color: isDark() ? '#3f3f46' : '#9ca3af'
+                                    }
+                                },
+        
+                                grid: {
+                                    borderColor: isDark() ? '#3f3f46' : '#e4e4e7'
+                                }
+                            }, false, false);
                         }
                     });
                 });
         
                 observer.observe(document.documentElement, { attributes: true });
             }
-        }" x-init="$nextTick(() => initChart())"
+        }" x-init="(async () => {
+            while (typeof window.ApexCharts === 'undefined') {
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+        
+            initChart();
+        })();"
             x-effect="
                 $wire.$watch('finalSeries', () => initChart());
                 $wire.$watch('daftarNim', () => initChart());
@@ -264,4 +325,3 @@
 
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

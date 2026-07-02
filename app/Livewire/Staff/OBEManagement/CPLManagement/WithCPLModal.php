@@ -38,21 +38,22 @@ trait WithCPLModal
 
     protected $cpl_rps_modal_paginator;
 
-    public $isFlyoutCPL = false;
+    // public $isFlyoutCPL = false;
 
     public $cplType = '';
 
     public function updatedShowCPLModal($value)
     {
         if (! $value) {
-            $this->isFlyoutCPL = false;
+            // $this->isFlyoutCPL = false;
             $this->isEditingCPL = false;
-        } else {
-            $this->isFlyoutCPL =
-                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
-                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
-                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
+        // else {
+        //     $this->isFlyoutCPL =
+        //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+        //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+        //         (property_exists($this, 'showRefModal') && $this->showRefModal);
+        // }
     }
 
     public function addCPL($tingkatan)
@@ -218,6 +219,7 @@ trait WithCPLModal
     {
         $this->loadCPLRPSPagination();
     }
+
 
     // private function inputModalCPL($isEditingCPL, $data)
     // {

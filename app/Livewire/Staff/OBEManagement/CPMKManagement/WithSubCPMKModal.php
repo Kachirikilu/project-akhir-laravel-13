@@ -34,20 +34,21 @@ trait WithSubCPMKModal
 
     protected $scpmk_rps_modal_paginator;
 
-    public $isFlyoutSCPMK = false;
+    // public $isFlyoutSCPMK = false;
 
     public function updatedShowSCPMKModal($value)
     {
         if (! $value) {
-            $this->isFlyoutSCPMK = false;
+            // $this->isFlyoutSCPMK = false;
             $this->isEditingSCPMK = false;
-        } else {
-            $this->isFlyoutSCPMK =
-                (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
-                (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
-                (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
-                (property_exists($this, 'showRefModal') && $this->showRefModal);
         }
+        // else {
+        //     $this->isFlyoutSCPMK =
+        //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
+        //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
+        //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
+        //         (property_exists($this, 'showRefModal') && $this->showRefModal);
+        // }
     }
 
     public function addSCPMK($key = 'scpmk')
@@ -426,7 +427,7 @@ trait WithSubCPMKModal
                 }
             });
 
-            $this->toast(message: 'Sub-CPMK Berhasil diperbarui', type: 'update');
+            $this->toast(message: "Sub-CPMK {$validated['kode_scpmk_1']}-{$validated['kode_scpmk_1']}", type: 'update');
             $this->showSCPMKModal = false;
             $this->dispatch('refresh-data-scpmk');
 

@@ -1,6 +1,6 @@
 <div>
     @include('livewire.global.table.text-copy', [
-        'xType' => $kode,
+        'xType' => $data['kode'],
         'typeXString' => 'Kode CPL',
     ])
 
@@ -8,12 +8,12 @@
 
         <flux:menu.separator />
 
-        @if (!$isTrashed)
+        @if (!$data['isTrashed'])
             {{-- Tombol Detail --}}
             <flux:menu.item
                 @click="
                     $store.cpl?.reset();
-                    const type = '{{ $level_cpl }}';
+                    const type = '{{ $data['level_cpl'] }}';
                     $store.cpl?.setEdit(1);
                     const colors = {
                         '1': 'text-emerald-700 dark:text-emerald-400',
@@ -23,14 +23,16 @@
                     };
                     $store.cpl?.setColor(colors[type] ?? 'text-sky-700 dark:text-sky-400');
                         $store.cpl?.setValueCPLRPS (
-                            '{{ $kode ?? '' }}',
-                            '{{ $rekap_cpl_pr ?? 0 }}',
-                            '{{ $index_cpl_pr ?? 0 }}',
-                            '{{ $mutu_cpl_pr ?? 'E' }}',
+                            '{{ $data['kode'] ?? '' }}',
+                            '{{ $data['rekap_cpl_pr'] ?? 0 }}',
+                            '{{ $data['index_cpl_pr'] ?? 0 }}',
+                            '{{ $data['mutu_cpl_pr'] ?? 'E' }}',
                         );
                     $flux.modal('cpl-rps-modal').show();
+                    $dispatch('open-list-rps-cpl-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_cpl'] }}, isRPS: 1 });
                 "
-                wire:click="editCPL({{ $id }}, {{ $level_cpl }}, 1)" color="emerald"
+                {{-- wire:click="editCPL({{ $id }}, {{ $level_cpl }}, 1)" --}}
+                color="emerald"
                 class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
                 <flux:icon name="eye" class="mr-2 h-4 w-4" />
 
@@ -47,7 +49,7 @@
                     $store.cpl?.reset();
                     $store.cpl?.setFlyout(false);
 
-                    const type = '{{ $level_cpl }}';
+                    const type = '{{ $data['level_cpl'] }}';
 
                     $store.cpl?.setEdit(1);
 
@@ -61,13 +63,13 @@
                     $store.cpl?.setColor(colors[type] ?? 'text-sky-700 dark:text-sky-400');
 
                     $store.cpl?.setValueCPL(
-                        '{{ $level_cpl ?? '' }}',
-                        '{{ $kode_cpl ?? '' }}',
-                        '{{ $deskripsi ?? '' }}',
+                        '{{ $data['level_cpl'] ?? '' }}',
+                        '{{ $data['kode_cpl'] ?? '' }}',
+                        '{{ $data['deskripsi'] ?? '' }}',
                     );
 
                     $flux.modal('cpl-modal').show();
-                    $dispatch('open-edit-cpl-modal', { id: {{ $id }}, tingkatan: {{ $level_cpl }} });
+                    $dispatch('open-edit-cpl-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_cpl'] }} });
                 "
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -82,12 +84,12 @@
             <flux:menu.item
                 @click="
                     $store.cpl?.setDeleteCPL(
-                        '{{ $mk ?? '' }}',
-                        '{{ $kode ?? '' }}',
-                        {{ $isTrashed ? 1 : 0 }}
+                        '{{ $data['mk'] ?? '' }}',
+                        '{{ $data['kode'] ?? '' }}',
+                        {{ $data['isTrashed'] ? 1 : 0 }}
                     );
                     $flux.modal('cpl-delete').show();
-                    $dispatch('open-delete-cpl-modal', { id: {{ $id }} });
+                    $dispatch('open-delete-cpl-modal', { id: {{ $data['id'] }} });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
@@ -98,7 +100,7 @@
             </flux:menu.item>
         @else
             {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="$dispatch('restore-cpl', { id: {{ $id }} })"
+            <flux:menu.item wire:click="$dispatch('restore-cpl', { id: {{ $data['id'] }} })"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
@@ -113,12 +115,12 @@
             <flux:menu.item
                 @click="
                         $store.cpl?.setDeleteCPL(
-                            '{{ $deskripsi ?? '' }}',
-                            '{{ $kode ?? '' }}',
-                            {{ $isTrashed ? 1 : 0 }}
+                            '{{ $data['deskripsi'] ?? '' }}',
+                            '{{ $data['kode'] ?? '' }}',
+                            {{ $data['isTrashed'] ? 1 : 0 }}
                         );
                         $flux.modal('cpl-delete').show();
-                    $dispatch('open-delete-cpl-modal', { id: {{ $id }}, isTrash: {{ $isTrashed }} } );
+                    $dispatch('open-delete-cpl-modal', { id: {{ $data['id'] }}, isTrash: {{ $data['isTrashed'] }} } );
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />

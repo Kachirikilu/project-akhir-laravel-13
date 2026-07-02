@@ -5,10 +5,18 @@
 
 
     <template x-if="$store.jadwal.isEdit == 1">
-        <div class="p-2">
+        <div class="pt-2">
             <flux:checkbox x-model.number="$store.jadwal.restart_sesi" :value="1"
                 label="Restart setiap Sesi ke Kondisi Awal"
-                description="Mereset perhitungan setiap sesi perkuliahan yang telah dikustom." class="cursor-pointer" />
+                description="Mereset perubahan setiap sesi perkuliahan yang telah dikustom." class="cursor-pointer" />
+        </div>
+
+    </template>
+    <template x-if="$store.jadwal.isEdit == 1">
+        <div class="pb-2">
+            <flux:checkbox x-model.number="$store.jadwal.restart_absensi" :value="0"
+                label="Hapus semua Absensi Terdata"
+                description="Kecuali data absensi Mahasiswa yang masih terhubung di kelas." class="cursor-pointer" />
         </div>
     </template>
 

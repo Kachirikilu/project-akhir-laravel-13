@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\OBEManagement\CPMKManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Models\Akademik\Referensi;
@@ -12,25 +13,20 @@ use Livewire\Component;
 class ModalSubCpmkManagement extends Component
 {
     use HasToast;
+    use WithRPSShow;
     use WithReferensiSearchFilters;
     use WithRPSSearchFilters;
     use WithSubCPMKModal;
 
-    public $showRefModal;
-
-    public $isEditingRef;
-
-    public $isEditingCPL;
-
-    public $showRPSModal;
-
-    public $isFlyoutCPMK;
-
-    public $isFlyoutCPL;
-
-    public $isFlyoutRef;
-
     public $parent;
+
+    #[On('refresh-data-rps-scpmk')]
+    public function handleRefreshSCPMK()
+    {
+        if ($this->selected_id_scpmk) {
+            $this->editSCPMK($this->selected_id_scpmk);
+        }
+    }
 
     #[On('trigger-scpmk-modal')]
     public function handleTriggerSCPMK() {}

@@ -15,7 +15,7 @@ trait WithKelasDelete
 
     public $kelasIdToDelete;
 
-    public $kelasEmailToDelete;
+    public $kelasNameToDelete;
 
     public $isPermanentDelete = false;
 
@@ -40,7 +40,7 @@ trait WithKelasDelete
         }
 
         $this->kelasIdToDelete = $id;
-        $this->kelasEmailToDelete = $kelas->email;
+        $this->kelasNameToDelete = $kelas->kode;
         $this->isPermanentDelete = $isTrashed;
         $this->showKelasDelete = true;
     }
@@ -88,7 +88,7 @@ trait WithKelasDelete
             // $this->dispatch('refresh-layout-sidebar');
 
             $this->showKelasDelete = false;
-            $this->toast(message: $this->kelasEmailToDelete, type: $type);
+            $this->toast(message: $this->kelasNameToDelete, type: $type);
             $this->cleanupDeleteStateKelas();
 
             if (method_exists($this, 'resetPage')) {
@@ -132,7 +132,7 @@ trait WithKelasDelete
     private function cleanupDeleteStateKelas()
     {
         $this->kelasIdToDelete = null;
-        $this->kelasEmailToDelete = null;
+        $this->kelasNameToDelete = null;
         $this->isPermanentDelete = false;
         $this->showKelasDelete = false;
     }

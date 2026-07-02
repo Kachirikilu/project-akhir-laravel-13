@@ -84,6 +84,23 @@ document.addEventListener("alpine:init", () => {
             };
         },
 
+        getDataKelas() {
+            return {
+                kode_kelas: this.kode_kelas,
+                nama_kelas: this.nama_kelas,
+                deskripsi: this.deskripsi,
+                kode_kelas: this.kode_kelas,
+                kode_kelas_1: this.kode_kelas_1,
+                kode_kelas_2: this.kode_kelas_2,
+                pr_id: this.pr_id,
+                nama_pr_search: this.nama_pr_search,
+                pr_items: this.pr_items,
+                rps_id: this.rps_id,
+                nama_rps_search: this.nama_rps_search,
+                rps_items: this.rps_items,
+            };
+        },
+
         setDeleteKelas(namaKelas, kodeKelasDelete, forceDelete) {
             this.nama_kelas_delete = namaKelas;
             this.kode_kelas_delete = kodeKelasDelete;

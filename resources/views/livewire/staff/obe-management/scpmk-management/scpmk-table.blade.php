@@ -153,7 +153,7 @@
                         </flux:badge>
                     </button>
 
-                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
+                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', ['key' => 1])
                 </flux:dropdown>
             </td>
 
@@ -172,7 +172,7 @@
                                 'xValue' => $sc->mutu_scpmk_pr ?? 'E',
                             ])
                         </button>
-                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
+                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </td>
             @endif
@@ -185,7 +185,7 @@
                         ])
                     </button>
 
-                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table')
+                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', ['key' => 3])
                 </flux:dropdown>
 
             <td class="table-sub min-w-48">{{ $sc->materi ?? '-' }}</td>
@@ -206,15 +206,7 @@
                     <flux:button class="cursor-pointer" variant="ghost"
                         size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
-
-                    <flux:menu
-                        class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-                        <livewire:staff.obe-management.cpmk-management.toolbar-sub-cpmk-management lazy :id="$sc->id"
-                            :kode="$sc->kode" :kode_scpmk="$sc->kode_scpmk" :deskripsi="$sc->deskripsi" :materi="$sc->materi" :metodologi="$sc->metodologi"
-                            :indikator="$sc->indikator" :metode="$sc->metode" :deskripsi_tugas="$sc->deskripsi_tugas" :waktu_tugas="$sc->waktu_tugas" :waktu_mandiri="$sc->waktu_mandiri"
-                            :bobot="$sc->bobot" :isTrashed="$sc->trashed()" wire:key="toolbar-scpmk-{{ $sc->id }}-4" />
-                    </flux:menu>
-
+                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', ['key' => 4])
                 </flux:dropdown>
             </td>
 

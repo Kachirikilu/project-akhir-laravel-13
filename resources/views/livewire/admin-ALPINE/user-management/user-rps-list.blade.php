@@ -1,5 +1,5 @@
 <flux:modal name="user-rps-modal" wire:model.live="showUserRPSModal" flyout
-    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+    class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser">

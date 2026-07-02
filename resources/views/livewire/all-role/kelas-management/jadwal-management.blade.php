@@ -18,18 +18,17 @@
         ])
     @endif
 
-    @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
+    {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
         'alpineKey' => 'jadwal?.rps_id_show',
         'isEdit' => 0,
-    ])
+    ]) --}}
 
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar')
 
     @if  (Auth::user()->admin || Auth::user()->dosen)
-        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-excel-modal-form')
-
+        {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-excel-modal-form') --}}
     @elseif (Auth::user()->mahasiswa)
-        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-join-modal-form')
+        {{-- @include('livewire.all-role.kelas-management.jadwal-management.join-jadwal-modal-form') --}}
     @endif
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
@@ -40,9 +39,9 @@
         @endif
     </div>
 
-    @if (Auth::user()->admin || Auth::user()->dosen)
+    {{-- @if (Auth::user()->admin || Auth::user()->dosen)
         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form')
         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-delete')
         @include('livewire.all-role.kelas-management.kelas-modal-form')
-    @endif
+    @endif --}}
 </div>

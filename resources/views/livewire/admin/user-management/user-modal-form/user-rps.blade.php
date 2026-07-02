@@ -8,20 +8,11 @@
             </div>
             <div>
                 <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide"
-                    x-text="$store.user?.name ?? 'Wildan Athif Muttaqien'"></h3>
-                <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-                    <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5"
-                        x-text="'NIP: ' + ($store.user?.nip ?? '03041282227063')"></p>
-                </template>
-                <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                    <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5"
-                        x-text="'NIM: ' + ($store.user?.nim ?? '03041282227063')"></p>
-                </template>
-
-                {{-- <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide">{{ $user_input['name'] }}
+                    x-text="$store.user?.name ? $store.user?.name : 'Wildan Athif Muttaqien'">
                 </h3>
-                <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5">
-                    {{ $user_input['nip'] ?? $user_input['nim'] }}</p> --}}
+                <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5"
+                    x-text="$store.user?.label_id1 + ': ' + ($store.user?.identity1 ?? '03041282227063')"></p>
+
 
             </div>
         </div>

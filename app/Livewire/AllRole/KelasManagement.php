@@ -3,22 +3,12 @@
 namespace App\Livewire\AllRole;
 
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
-use App\Livewire\AllRole\KelasManagement\WithKelasModal;
-use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithDosenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithKelasSearchFilters;
-// use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
-use App\Livewire\Global\WithMKSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -26,22 +16,9 @@ class KelasManagement extends Component
 {
     use HasSortir;
     use HasToast;
-    use WithDepartemenSearchFilters;
-    use WithDosenSearchFilters;
-    use WithFakultasSearchFilters;
 
-    // use WithKelasDelete;
     use WithKelasFilters;
-    use WithKelasModal;
-    use WithKelasDelete;
-    use WithKelasSearchFilters;
-    use WithMKSearchFilters;
     use WithPagination;
-    use WithProdiSearchFilters;
-    use WithRPSSearchFilters;
-    use WithRPSShow;
-
-
 
     public $perPage = 8;
 
@@ -61,7 +38,15 @@ class KelasManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshKelasList',
+    public $selectedPrId;
+
+    public $selectedMKId;
+
+    public $selectedDosenId;
+
+    public $selectedRPSId;
+
+    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-kelas' => 'refreshKelasList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -73,7 +58,7 @@ class KelasManagement extends Component
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
-        'showDeleted' =>  ['except' => false],
+        'showDeleted' => ['except' => false],
     ];
 
     public function mount($switchTable = '', $switchTable2 = 'kelas-card')
@@ -100,6 +85,35 @@ class KelasManagement extends Component
         $this->resetPage();
     }
 
+    #[On('switch-table-updated')]
+    public function updateSwitchTable($switchTable)
+    {
+        $this->switchTable = $switchTable;
+    }
+
+    #[On('selected-pr-id-updated')]
+    public function updateSelectedPrId($selectedPrId)
+    {
+        $this->selectedPrId = $selectedPrId;
+    }
+    #[On('selected-mk-id-updated')]
+    public function updateSelectedMKId($selectedMKId)
+    {
+        $this->selectedMKId = $selectedMKId;
+    }
+    #[On('selected-rps-id-updated')]
+    public function updateSelectedRPSId($selectedRPSId)
+    {
+        $this->selectedRPSId = $selectedRPSId;
+    }
+    #[On('selected-dosen-id-updated')]
+    public function updateSelectedDosenId($selectedDosenId)
+    {
+        $this->selectedDosenId = $selectedDosenId;
+    }
+
+    #[On('refresh-data-kelas')]
+    #[On('refresh-table')]
     public function refreshKelasList()
     {
         $this->resetPage();
@@ -162,7 +176,6 @@ class KelasManagement extends Component
         $this->dispatch('table-switched', switchTable2: $this->switchTable2, switchTable: $this->switchTable, targetUrl: $targetPath);
     }
 
-
     private function buildTargetPath($table, $table2)
     {
         $path = '/kelas-management';
@@ -183,12 +196,6 @@ class KelasManagement extends Component
     public function render()
     {
         try {
-            $this->inputPrFilter();
-            $this->inputDpFilter();
-            $this->inputFkFilter();
-            $this->inputRPSFilter();
-            $this->inputMKFilter();
-            $this->inputDosenFilter();
             // =========================
             // QUERY UTAMA (TABLE)
             // =========================
@@ -249,9 +256,9 @@ class KelasManagement extends Component
                     $mk->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
                         $q->where('dosens.id', Auth::user()->dosen->id);
                     });
-                        // ->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                        //     $q->where('dosens.id', Auth::user()->dosen->id);
-                        // });
+                    // ->orWhereHas('jadwals.sesis.dosens', function ($q) {
+                    //     $q->where('dosens.id', Auth::user()->dosen->id);
+                    // });
                 })->count();
             } elseif (Auth::user()->mahasiswa) {
                 $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {

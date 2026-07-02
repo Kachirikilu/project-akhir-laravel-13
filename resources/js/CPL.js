@@ -54,6 +54,17 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        getDataCPL() {
+            return {
+                typeModal: this.typeModal,
+                kode_cpl: this.kode_cpl,
+                deskripsi: this.deskripsi,
+                kode_cpl: this.kode_cpl,
+                kode_cpl_1: this.kode_cpl_1,
+                kode_cpl_2: this.kode_cpl_2,
+            };
+        },
+
         setValueCPLRPS(
             kode,
             rekap,
