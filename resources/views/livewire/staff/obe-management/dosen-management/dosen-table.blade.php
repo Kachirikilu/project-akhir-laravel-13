@@ -79,21 +79,22 @@
                 @if (!$user->trashed())
                     <x-button-action
                         @click="
-                    $store.user?.reset();
-                    const type = '{{ strtolower($user->role) }}';
-                    $store.user?.setType(type);
-                    $store.user?.setEdit(1);
-                    $store.user?.setColor('text-lime-700 dark:text-lime-400');
-                    $flux.modal('user-rps-modal').show();
-                    $store.user?.setValueUserRPS(
-                            '{{ $user->dosen->name ?? '' }}',
-                            'NIP',
-                            '{{ $user->dosen->nip ?? '' }}',
-                            '{{ $user->count_rps ?? '' }}',
-                            '{{ $user->total_sks ?? '' }}'
-                        );
-                    {{-- $dispatch('open-edit-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 }); --}}
-                    $dispatch('open-list-rps-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 });
+                            $store.rps?.reset();
+                            const type = '{{ strtolower($user->role) }}';
+                            $store.user?.setType(type);
+                            $store.user?.setEdit(1);
+                            $store.user?.setColor('text-lime-700 dark:text-lime-400', 'bg-lime-50 dark:bg-lime-950/40');
+                            $store.user?.setValueUserRPS(
+                                '{{ $user->dosen->name ?? '' }}',
+                                'NIP',
+                                '{{ $user->dosen->nip ?? '' }}',
+                                '{{ $user->dosen->pr_rel->prodi ?? '' }}',
+                                '{{ $user->count_rps ?? '' }}',
+                                '{{ $user->total_sks ?? '' }}',
+                            );
+                            $flux.modal('user-rps-modal').show();
+                            {{-- $dispatch('open-edit-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 }); --}}
+                            $dispatch('open-list-rps-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 });
                         "
                         color="emerald" wire:navigate>
                         <flux:icon name="eye" class="w-3.5 h-3.5" />

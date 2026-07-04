@@ -1,5 +1,4 @@
 <x-global.main-layout-table :paginator="$users">
-
     <x-slot:sortir>
         <div
             class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
@@ -185,6 +184,8 @@
 
 
     @forelse($users as $user)
+        {{-- @php dd($user); @endphp --}}
+
         <tr wire:key="mahasiswa-sesi-{{ $user->mahasiswa->id }}" data-mahasiswa-sesi-id="{{ $user->mahasiswa->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
@@ -245,42 +246,42 @@
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_masuk ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_dispensasi ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-second table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_terlambat ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_terlambat ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_izin ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_izin ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-sub text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_sakit ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_sakit ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
                 </td>
                 <td class="table-second table-border-r text-center whitespace-nowrap">
                     @if ($isMahasiswa)
-                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $stats['sesi'] }} Sesi
+                        {{ $user->mhs_tidak_masuk ?? 0 }} / {{ $stats['sesi'] ?? 16 }} Sesi
                     @else
                         -
                     @endif
@@ -319,7 +320,7 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-r text-center">{{ $mahasiswa->angkatan ?? 'YYYY' }}</td>
+            <td class="table-second table-border-r text-center">{{ $user->mahasiswa->angkatan ?? 'YYYY' }}</td>
 
             <td class="table-second text-center">
                 <flux:dropdown>

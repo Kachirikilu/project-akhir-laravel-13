@@ -40,6 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('nilai-management/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
         Route::view('nilai-management/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
     });
+    Route::middleware(['is_dosen'])->group(function () {
+        Route::view('program-studi/{switchTable?}', 'program-studi-dosen')->name('program-studi-dosen');
+    });
 
     Route::middleware(['is_mahasiswa'])->group(function () {
         Route::view('jadwal-kelas/{switchTable?}', 'jadwal-mahasiswa')->name('jadwal-mahasiswa');

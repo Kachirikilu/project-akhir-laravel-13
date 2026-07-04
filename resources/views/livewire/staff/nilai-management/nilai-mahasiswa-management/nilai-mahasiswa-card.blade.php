@@ -235,6 +235,9 @@
 
         {{-- GRID UTAMA KARTU --}}
         @foreach ($periodes as $index => $p)
+            @if (empty($p->ganjil_genap) || empty($p->akademik))
+                @continue
+            @endif
             @php $currentId = $p->id ?? $index; @endphp
             <template x-if="itemVisibilityMap[{{ $currentId }}]?.visible">
                 <div wire:key="kelas-periode-card-{{ $currentId }}"
@@ -322,7 +325,6 @@
                             <span>Lihat Detail Nilai</span>
                         </button>
                     </div>
-
                 </div>
             </template>
         @endforeach

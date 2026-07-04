@@ -18,12 +18,12 @@ trait WithCPLFilters
             'prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel',
             'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
-        if ($this->switchTable === 'cpl') {
+        if ($this->switchTable === 'cpl' || $this->switchTable === 'capaian') {
 
             if (! empty($prId)) {
                 $queryCPL->where(function ($q) use ($prId) {
-                    $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $prId)
-                        ->orWhereRelation('prodis', 'prodis.id', $prId);
+                    // $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $prId)
+                    $q->whereRelation('prodis', 'prodis.id', $prId);
                 });
             }
             if (! empty($this->selectedPrId)) {

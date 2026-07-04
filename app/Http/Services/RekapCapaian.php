@@ -176,7 +176,7 @@ trait RekapCapaian
         if ($prId === null) {
             if (! empty($runningProdiIds) || ! empty($runningProdiIdsInDB)) {
                 $this->toast(
-                    text: 'Gagal! Tidak bisa merekap seluruh Program Studi karena masih ada proses rekap prodi yang sedang berjalan!',
+                    text: 'Gagal! Tidak bisa merekap seluruh Program Studi karena masih ada proses rekap Program Studi yang sedang berjalan!',
                     variant: 'warning',
                     duration: 12000
                 );

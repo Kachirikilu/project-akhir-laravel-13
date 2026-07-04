@@ -29,7 +29,7 @@ trait RekapCapaian
 
         if ($isJobRunning) {
             $this->toast(
-                text: 'Gagal! Proses rekap capaian sebelumnya masih berjalan di latar belakang. Silakan tunggu hingga selesai.', 
+                text: 'Gagal! Proses Rekap Capaian sebelumnya masih berjalan di latar belakang. Silakan tunggu hingga selesai.', 
                 variant: 'warning', 
                 duration: 12000
             );

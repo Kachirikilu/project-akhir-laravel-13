@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('kode_pr')->nullable();
             $table->string('nama_pr');
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
+            $table->tinyInteger('target_sks')->unsigned()->default(144);
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['strata', 'nama_pr']);

@@ -9,49 +9,49 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['rps'],
+                    'tabFilter' => $stats['rps'] ?? null,
                     'tabString' => 'rps',
                     'tabNameString' => 'RPS',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['cpl'],
+                    'tabFilter' => $stats['cpl'] ?? null,
                     'tabString' => 'cpl',
                     'tabNameString' => 'CPL',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['cpmk'],
+                    'tabFilter' => $stats['cpmk'] ?? null,
                     'tabString' => 'cpmk',
                     'tabNameString' => 'CPMK',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['scpmk'],
+                    'tabFilter' => $stats['scpmk'] ?? null,
                     'tabString' => 'sub-cpmk',
                     'tabNameString' => 'Sub-CPMK',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['ref'],
+                    'tabFilter' => $stats['ref'] ?? null,
                     'tabString' => 'referensi',
                     'tabNameString' => 'Referensi',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['tim-dosen'],
+                    'tabFilter' => $stats['tim-dosen'] ?? null,
                     'tabString' => 'tim-dosen',
                     'tabNameString' => 'Tim Dosen',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['dosen'],
+                    'tabFilter' => $stats['dosen'] ?? null,
                     'tabString' => 'dosen',
                     'tabNameString' => 'Dosen',
                 ])

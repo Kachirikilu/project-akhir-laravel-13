@@ -146,7 +146,6 @@ trait WithKelasFilters
                 $q->whereRaw('mata_kuliahs.semester % 2 = 0');
             });
         }
-
     }
 
     public function filterByKelas($kelas)

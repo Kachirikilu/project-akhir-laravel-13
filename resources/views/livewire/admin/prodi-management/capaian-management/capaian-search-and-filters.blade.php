@@ -15,9 +15,9 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByStatus',
                     'filterString' => 'filterStatus',
-                    'totalTab' => $stats['mahasiswa'],
-                    'totalTab1' => $stats['mahasiswa-aktif'],
-                    'totalTab2' => $stats['mahasiswa-non-aktif'],
+                    'totalTab' => $stats['mahasiswa'] ?? null,
+                    'totalTab1' => $stats['mahasiswa-aktif'] ?? null,
+                    'totalTab2' => $stats['mahasiswa-non-aktif'] ?? null,
                     'tab1String' => 'mahasiswa-aktif',
                     'tab2String' => 'mahasiswa-non-aktif',
                     'tabName' => 'Semua Status',
@@ -34,8 +34,6 @@
             </div>
         </div>
     </div>
-
-
 
 
 
@@ -62,66 +60,18 @@
 
         {{-- 🔹 RPS --}}
         <div x-show="activeTab !== 'rps' && activeTab !== 'mahasiswa'" class="sm:col-span-3 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputRPSFilter',
-                'xSearchResultsString' => 'rpsSearchResults',
-                'iconString' => 'clipboard-document-list',
-                'placeholderString' => 'Filter berdasarkan RPS...',
-                'xSearchQueryString' => 'rpsSearchQuery',
-                'selectedXId' => $selectedRPSId,
-                'selectedXName' => $rps_name,
-                'resetXFilter' => 'resetRPSFilter()',
-                'xSearchQuery' => $rpsSearchQuery,
-                'xSearchResults' => $rpsSearchResults,
-                'selectXForFilterString' => 'selectRPSForFilter',
-                'typeXString' => 'rps_with_kode',
-                'typeX2String' => 'sks_full',
-                'typeX3String' => 'wajib_text',
-                'typeX4String' => 'draf_full',
-                'unfoundString' => 'Tidak ada RPS ditemukan!',
-            ])
+            <livewire:global.search-filters.rps-search-filter lazy wire:key="rps-search-filter" />
         </div>
 
         <div x-show="activeTab == 'sub-cpmk' || activeTab == 'cpl'"
             class="sm:col-span-7 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputCPMKFilter',
-                'xSearchResultsString' => 'cpmkSearchResults',
-                'iconString' => 'academic-cap',
-                'placeholderString' => 'Filter berdasarkan CPMK...',
-                'xSearchQueryString' => 'cpmkSearchQuery',
-                'selectedXId' => $selectedCPMKId,
-                'selectedXName' => $cpmk_name,
-                'resetXFilter' => 'resetCPMKFilter()',
-                'xSearchQuery' => $cpmkSearchQuery,
-                'xSearchResults' => $cpmkSearchResults,
-                'selectXForFilterString' => 'selectCPMKForFilter',
-                'typeXString' => 'deskripsi',
-                'typeX2String' => 'kode',
-                'typeX3String' => 'total_bobot_text',
-                'typeX4String' => 'total_pertemuan',
-                'unfoundString' => 'Tidak ada CPMK ditemukan!',
-            ])
+            <livewire:global.search-filters.cpmk-search-filter lazy wire:key="cpmk-search-filter" />
+
         </div>
 
         <div x-show="activeTab == 'rps' || activeTab == 'cpmk'"
              x-bind:class="activeTab == 'rps' ? 'sm:col-span-3' : 'sm:col-span-7'" class="relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputCPLFilter',
-                'xSearchResultsString' => 'cplSearchResults',
-                'iconString' => 'document-text',
-                'placeholderString' => 'Filter berdasarkan CPL...',
-                'xSearchQueryString' => 'cplSearchQuery',
-                'selectedXId' => $selectedCPLId,
-                'selectedXName' => $cpl_name,
-                'resetXFilter' => 'resetCPLFilter()',
-                'xSearchQuery' => $cplSearchQuery,
-                'xSearchResults' => $cplSearchResults,
-                'selectXForFilterString' => 'selectCPLForFilter',
-                'typeXString' => 'deskripsi',
-                'typeX2String' => 'kode',
-                'unfoundString' => 'Tidak ada CPL ditemukan!',
-            ])
+            <livewire:global.search-filters.cpl-search-filter lazy wire:key="cpl-search-filter" />
         </div>
 
 

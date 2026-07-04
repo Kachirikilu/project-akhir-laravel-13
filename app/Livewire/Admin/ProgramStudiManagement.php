@@ -3,6 +3,9 @@
 namespace App\Livewire\Admin;
 
 use App\Http\Services\RekapCapaian;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
@@ -10,6 +13,7 @@ use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasStats;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -21,7 +25,11 @@ class ProgramStudiManagement extends Component
 {
     use HasSortir;
     use HasToast;
+    use HasStats;
     use RekapCapaian;
+    use WithProdiSearchFilters;
+    use WithDepartemenSearchFilters;
+    use WithFakultasSearchFilters;
     use WithDepartemenFilters;
     use WithFakultasFilters;
     use WithPagination;
@@ -49,8 +57,13 @@ class ProgramStudiManagement extends Component
 
     public $selectedFkId;
 
-    protected $listeners = ['refresh-table' => 'refreshProdisList', 'refresh-table' => 'refresh-data-prodi',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshProdisList',
+        'refresh-data-prodi' => 'refreshDataProdisList',
+        'refresh-stats-prodi' => 'refreshStatsProdisList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -93,6 +106,12 @@ class ProgramStudiManagement extends Component
         $this->resetPage();
     }
 
+    #[On('refresh-stats-pr')]
+    public function refreshStatsProdisList()
+    {
+        $this->clearProdiStatsCache();
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -125,7 +144,7 @@ class ProgramStudiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            '' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'akreditas_pr', 7 => 'departemen', 8 => 'fakultas', 9 => 'strata', 10 => 'created_at', 11 => 'updated_at'],
+            '' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'count_mk', 6 => 'count_rps_aktif', 6 => 'count_rps_draf', 7 => 'akreditas_pr', 8 => 'departemen', 9 => 'fakultas', 10 => 'strata', 11 => 'created_at', 12 => 'updated_at'],
             'departemen' => [1 => 'id', 2 => 'kode', 3 => 'departemen', 4 => 'rekap_dp', 5 => 'index_dp', 6 => 'akreditas_dp', 7 => 'fakultas', 8 => 'created_at', 9 => 'updated_at'],
             'fakultas' => [1 => 'id', 2 => 'kode', 3 => 'fakultas', 4 => 'rekap_fk', 5 => 'index_fk', 6 => 'akreditas_fk', 7 => 'created_at', 8 => 'updated_at'],
         ];
@@ -134,14 +153,14 @@ class ProgramStudiManagement extends Component
             'program_studi' => ['departemen', 'fakultas'],
 
             'rekap_pr' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
-            'rekap_dp' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
-            'rekap_fk' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
+            // 'rekap_dp' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
+            // 'rekap_fk' => ['rekap_pr', 'rekap_dp', 'rekap_fk'],
             'index_pr' => ['index_pr', 'index_dp', 'index_fk'],
-            'index_dp' => ['index_pr', 'index_dp', 'index_fk'],
-            'index_fk' => ['index_pr', 'index_dp', 'index_fk'],
+            // 'index_dp' => ['index_pr', 'index_dp', 'index_fk'],
+            // 'index_fk' => ['index_pr', 'index_dp', 'index_fk'],
             'akreditas_pr' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
-            'akreditas_dp' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
-            'akreditas_fk' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+            // 'akreditas_dp' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+            // 'akreditas_fk' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
 
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at'],
@@ -182,6 +201,11 @@ class ProgramStudiManagement extends Component
         }
     }
 
+    // public function placeholder()
+    // {
+    //     return view('livewire.global.livewire-skeletons.table-placeholder');
+    // }
+
     public function render()
     {
         try {
@@ -219,19 +243,22 @@ class ProgramStudiManagement extends Component
 
                 }
             }
+            $stats = $this->getStatsProdi($this->showDeleted);
+
 
             if ($this->switchTable === 'fakultas') {
-                $this->addRekapFakultas($queryFk, 'rekap_fk');
-                $this->addIndexFakultas($queryFk, 'index_fk');
-                $this->addAkreditasFakultas($queryFk, 'akreditas_fk');
+                $this->addRekapFakultasFk($queryFk, 'rekap_fk');
+                $this->addIndexFakultasFk($queryFk, 'index_fk');
+                $this->addAkreditasFakultasFk($queryFk, 'akreditas_fk');
             } elseif ($this->switchTable === 'departemen') {
-                $this->addRekapDepartemen($queryDp, 'rekap_dp');
-                $this->addIndexDepartemen($queryDp, 'index_dp');
-                $this->addAkreditasDepartemen($queryDp, 'akreditas_dp');
+                $this->addRekapDepartemenDp($queryDp, 'rekap_dp');
+                $this->addIndexDepartemenDp($queryDp, 'index_dp');
+                $this->addAkreditasDepartemenDp($queryDp, 'akreditas_dp');
             } else {
-                $this->addRekapProdi($queryPr, 'rekap_pr');
-                $this->addIndexProdi($queryPr, 'index_pr');
-                $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+                $this->addRekapProdiPr($queryPr, 'rekap_pr');
+                $this->addIndexProdiPr($queryPr, 'index_pr');
+                $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+                $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
                 $this->buttonStrataFilter($queryPr);
             }
 
@@ -274,14 +301,7 @@ class ProgramStudiManagement extends Component
                 'departemens' => $departemens,
                 'fakultas' => $fakultas,
 
-                'stats' => [
-                    'prodi' => $countPr->count(),
-                    'sarjana' => (clone $countPr)->where('strata', 'Sarjana')->count(),
-                    'magister' => (clone $countPr)->where('strata', 'Magister')->count(),
-                    'doktor' => (clone $countPr)->where('strata', 'Doktor')->count(),
-                    'departemen' => (clone $countDp)->count(),
-                    'fakultas' => (clone $countFk)->count(),
-                ],
+                'stats' => $stats,
             ]);
 
         } catch (QueryException $e) {

@@ -86,14 +86,34 @@
     </div>
 
 
-    {{-- 📧 Nama Strata Input --}}
-    @include('livewire.global.modal-form.select-form', [
-        'alpine' => 'prodi',
-        'nameXString' => 'Nama Strata',
-        'modelString' => 'strata',
-        'xOptions' => ['Sarjana', 'Magister', 'Doktor'],
-        'iconString' => 'bookmark-square',
-        'placeholder' => 'Pilih Strata...',
-        'message' => $errors->first('strata'),
-    ])
+    <div class="grid grid-cols-10 sm:grid-cols-8 gap-2 sm:gap-4">
+        <div class="col-span-7 sm:col-span-5">
+            {{-- 📧 Nama Strata Input --}}
+            @include('livewire.global.modal-form.select-form', [
+                'alpine' => 'prodi',
+                'nameXString' => 'Nama Strata',
+                'modelString' => 'strata',
+                'xOptions' => ['Sarjana', 'Magister', 'Doktor'],
+                'iconString' => 'bookmark-square',
+                'placeholder' => 'Pilih Strata...',
+                'message' => $errors->first('strata'),
+            ])
+        </div>
+        <div class="col-span-3">
+            @include('livewire.global.modal-form.input-form', [
+                'alpine' => 'prodi',
+                'nameXString' => 'Target SKS',
+                'modelString' => 'target_sks',
+                'numberOnly' => 1,
+                'maxValue' => 255,
+                'noZero' => 1,
+                'iconString' => 'scale',
+                'placeholder' => 'Default 144 SKS',
+                'isRequired' => 0,
+                'message' => $errors->first('target_sks'),
+                'isFocusSelect' => 1,
+            ])
+        </div>
+    </div>
+
 </div>

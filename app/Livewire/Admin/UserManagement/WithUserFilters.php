@@ -121,42 +121,6 @@ trait WithUserFilters
         return $queryUser;
     }
 
-    protected function generateAngkatanFilter(int $jumlah = 5): array
-    {
-        $now = Carbon::now();
-
-        $tahunTerbaru =
-            $now->month >= 6
-                ? $now->year
-                : $now->year - 1;
-
-        return collect(range(0, $jumlah - 1))
-            ->map(fn ($i) => $tahunTerbaru - $i)
-            ->values()
-            ->toArray();
-    }
-
-    protected function loadTotalAngkatan($query): void
-    {
-        $this->angkatanFilter =
-            $this->generateAngkatanFilter();
-
-        $this->totalSeluruhAngkatan =
-            (clone $query)->count();
-
-        $this->totalAngkatan = [];
-
-        foreach ($this->angkatanFilter as $angkatan) {
-
-            $this->totalAngkatan[$angkatan] =
-                (clone $query)
-                    ->whereHas('mahasiswa', function ($q) use ($angkatan) {
-                        $q->where('angkatan', $angkatan);
-                    })
-                    ->count();
-        }
-    }
-
     public function buttonUserFilter($queryUser, $havePr = null)
     {
         // $queryUser->when(in_array($this->switchTable, ['admin', 'dosen', 'mahasiswa']), function ($q) {
@@ -217,6 +181,40 @@ trait WithUserFilters
         }
 
         return $queryUser;
+    }
+
+    protected function loadTotalAngkatan($query): void
+    {
+        $this->angkatanFilter =
+            $this->generateAngkatanFilter();
+
+        $this->totalSeluruhAngkatan =
+            (clone $query)->count();
+
+        $this->totalAngkatan = [];
+
+        foreach ($this->angkatanFilter as $angkatan) {
+
+            $this->totalAngkatan[$angkatan] =
+                (clone $query)
+                    ->whereHas('mahasiswa', function ($q) use ($angkatan) {
+                        $q->where('angkatan', $angkatan);
+                    })
+                    ->count();
+        }
+    }
+    protected function generateAngkatanFilter(int $jumlah = 5): array
+    {
+        $now = Carbon::now();
+        $tahunTerbaru =
+            $now->month >= 6
+                ? $now->year
+                : $now->year - 1;
+
+        return collect(range(0, $jumlah - 1))
+            ->map(fn ($i) => $tahunTerbaru - $i)
+            ->values()
+            ->toArray();
     }
 
     public function filterByUser($role)

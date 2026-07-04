@@ -1,6 +1,6 @@
 <div
     class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
-    <div
+    {{-- <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
         <div class="flex items-center gap-3">
             <div :class="[$store.user?.colorIcon, $store.user?.colorIconBg]" class="p-2.5 rounded-lg">
@@ -16,12 +16,47 @@
 
             </div>
         </div>
-        {{-- <div>
-            @include('livewire.global.table.badge.kode-wilayah-badge', [
-                'xValue' => $jadwal->kode,
-                'sortir' => $jadwal->kode_wilayah,
-            ])
-        </div> --}}
+  
+    </div> --}}
+
+    <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
+
+
+        <div class="flex items-start gap-3 min-w-0 flex-1">
+            <div
+                class="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-lg shrink-0 mt-0.5">
+                <flux:icon icon="user" variant="mini" class="w-5 h-5" />
+            </div>
+
+            <div class="min-w-0 flex-1">
+                <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide leading-tight break-words"
+                    x-text="$store.user?.name ? $store.user?.name : 'Wildan Athif Muttaqien'"></h3>
+
+                <div class="text-xs text-[var(--contrast-second-text)] mt-1">
+                    <span class="font-mono font-medium"
+                        x-text="$store.user?.label_id1 + ': ' + ($store.user?.identity1 ?? '03041282227063')"></span>
+                </div>
+
+                <div
+                    class="mt-1 text-xs text-[var(--contrast-second-text)] flex items-start gap-1.5 font-semibold min-w-0">
+                    <flux:icon icon="academic-cap" variant="mini" class="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <span class="break-words leading-relaxed" x-text="$store.user?.prodi"></span>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- @if ($roleType == 'mahasiswa') --}}
+            <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-100/60 dark:border-white/10 dark:bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-zinc-600 dark:text-white/70">
+                    <flux:icon name="academic-cap" class="w-3.5 h-3.5 opacity-80" />
+                    Angkatan <span x-text="$store.user?.angkatan_mhs"></span>
+                </span>
+            </div>
+        {{-- @endif --}}
+
     </div>
 
     <div>
@@ -31,7 +66,7 @@
 
         <div class="space-y-3">
 
-            @if ($roleType == 'mahasiswa')
+        <template x-if="$store.user?.label_id1 == 'NIM'">
                 <div class="grid grid-cols-3 gap-3">
                     <div
                         class="p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
@@ -59,7 +94,7 @@
                     </div>
 
                 </div>
-            @endif
+        </template>
 
             <div class="grid grid-cols-2 gap-3">
 

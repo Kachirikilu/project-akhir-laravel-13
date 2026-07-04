@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
@@ -60,55 +59,85 @@
                                 </flux:badge>
                                 <template x-if="item.metode">
                                     <div class="flex items-center">
+                                        <!-- Teori -->
                                         <div x-show="item.metode === 'Teori'">
                                             <flux:badge icon="book-open" color="emerald" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}">Teori</flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                Teori
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Praktik & Responsi -->
                                         <div x-show="['Praktik', 'Responsi'].includes(item.metode)">
                                             <flux:badge icon="beaker" color="cyan" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                <span x-text="item.metode"></span>
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Tugas & Logbook -->
                                         <div x-show="['Tugas', 'Logbook'].includes(item.metode)">
                                             <flux:badge icon="pencil-square" color="blue" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                <span x-text="item.metode"></span>
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- UTS, Evaluasi Awal, & Kuis -->
                                         <div x-show="['UTS', 'Evaluasi Awal', 'Kuis'].includes(item.metode)">
                                             <flux:badge icon="clipboard-document-check" color="amber" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                <span x-text="item.metode"></span>
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- UAS, Evaluasi Akhir, & Laporan Akhir -->
                                         <div x-show="['UAS', 'Evaluasi Akhir', 'Laporan Akhir'].includes(item.metode)">
                                             <flux:badge icon="document-check" color="orange" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                <span x-text="item.metode"></span>
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Hasil Proyek, Hasil Projek, & Portofolio -->
                                         <div
                                             x-show="['Hasil Proyek', 'Hasil Projek', 'Portofolio'].includes(item.metode)">
                                             <flux:badge icon="light-bulb" color="indigo" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                <span x-text="item.metode"></span>
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Kerja Praktek -->
                                         <div x-show="item.metode === 'Kerja Praktek'">
                                             <flux:badge icon="briefcase" color="violet" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}">Kerja Praktek</flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                Kerja Praktek
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Skripsi -->
                                         <div x-show="item.metode === 'Skripsi'">
                                             <flux:badge icon="academic-cap" color="fuchsia" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}">Skripsi</flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                Skripsi
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Aktivitas Partisipasif -->
                                         <div x-show="item.metode === 'Aktivitas Partisipasif'">
                                             <flux:badge icon="user-group" color="rose" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}">Aktivitas Partisipasif</flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                Aktivitas Partisipasif
+                                            </flux:badge>
                                         </div>
 
+                                        <!-- Mandiri -->
                                         <div x-show="item.metode === 'Mandiri'">
                                             <flux:badge icon="user" color="slate" size="sm"
-                                                variant="{{ $variant ?? 'pill' }}">Mandiri</flux:badge>
+                                                variant="{{ $variant ?? 'pill' }}">
+                                                Mandiri
+                                            </flux:badge>
                                         </div>
 
                                         <div
@@ -137,7 +166,7 @@
                                             'nameXString' => 'Nilai',
                                             'floatOnly' => 1,
                                             'maxValue' => 100,
-                                            'readonly' => (Auth::user()->admin || Auth::user()->dosen) ? 0 : 1,
+                                            'readonly' => Auth::user()->admin || Auth::user()->dosen ? 0 : 1,
                                             'iconString' => 'chart-bar',
                                             'placeholder' => 'Masukkan Nilai...',
                                             'isRequired' => 0,

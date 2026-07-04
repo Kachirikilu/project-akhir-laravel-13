@@ -74,6 +74,7 @@ trait WithTimDosenDelete
             $this->toast(message: $this->timDosenNamaToDelete, type: $type);
             $this->cleanupDeleteStateTimDosen();
             $this->dispatch('refresh-data-tim-dosen'); 
+            $this->dispatch('refresh-stats-tim-dosen');
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -89,7 +90,7 @@ trait WithTimDosenDelete
     /**
      * RESTORE REFERENSI
      */
-    #[On('restore-tim-dsoen')]
+    #[On('restore-tim-dosen')]
     public function restoreTimDosen($id)
     {
         if (! $this->AuthCheck('staff')) {
@@ -102,6 +103,7 @@ trait WithTimDosenDelete
 
             $this->toast(message: 'Tim Dosen '.$timDosen->tim, type: 'recycle');
             $this->dispatch('refresh-data-tim-dosen');
+            $this->dispatch('refresh-stats-tim-dosen');
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-tim-dosen');

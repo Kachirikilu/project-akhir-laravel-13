@@ -73,7 +73,8 @@
 {{-- Header Section --}}
 <div class="mb-8">
     {{-- Container Utama --}}
-    <div class="flex flex-col lg:flex-col xl:flex-row xl:items-center xl:justify-between mb-2 lg:mb-6 gap-4 min-w-0 w-full">
+    <div
+        class="flex flex-col lg:flex-col xl:flex-row xl:items-center xl:justify-between mb-2 lg:mb-6 gap-4 min-w-0 w-full">
 
         {{-- Sisi Kiri: Profil Mahasiswa --}}
         <div class="flex items-center gap-2 sm:gap-4 min-w-0 w-full">
@@ -86,7 +87,7 @@
 
             <div class="min-w-0 flex-1">
                 <h2
-                    class="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex flex-wrap items-center gap-2 min-w-0">
+                    class="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex flex-wrap items-center gap-4 min-w-0">
                     <span class="break-words">{{ $mahasiswa->name ?? 'Wildan Athif Muttaqien' }}</span>
                     @if ($ganjil_genap || $akademik)
                         <span
@@ -146,78 +147,126 @@
 
         </div>
     </div>
-    {{-- Grid Informasi Utama Mahasiswa --}}
+    {{--
+    ============================================================
+    GRID INFORMASI UTAMA MAHASISWA — Versi Donut Mini
+    Kolom 1 & 3 pakai donut ring (ada rasio persentase).
+    Kolom 2 & 4 pakai donut tanpa ring (hanya angka di tengah).
+    ============================================================
+--}}
+
+    @php
+        $isIps = ($alpine ?? '') === 'nilai';
+
+        // SKS
+        $targetSks = $mahasiswa->pr_rel->target_sks ?? 144;
+        $sksValue = (int) ($totalSks ?? 0);
+        $sksDisplay = $sksValue . ' / ' . $targetSks;
+        $sksSub = $isIps ? 'Kredit terdaftar KHS' : 'Terakumulasi di transkrip';
+
+        // MK
+        $mkValue = (int) ($matakuliahLulusCount ?? 0);
+        $mkDisplay = $mkValue . ' MK';
+        $mkSub = $isIps ? 'Registrasi KRS semester ini' : 'Rencana Pembelajaran Semester';
+
+        // IPK / IPS
+        $ipValue = is_numeric($calculatedIndex) ? (float) $calculatedIndex : 0;
+        $ipDisplay = is_numeric($calculatedIndex)
+            ? number_format($calculatedIndex, 2) . ' / 4.00'
+            : $calculatedIndex . ' / 4.00';
+        $ipLabel = $isIps ? 'IP Semester (IPS)' : 'IPK Akumulatif';
+        $ipSub = $isIps ? 'Indeks Prestasi Semester Aktif' : 'Skala Penilaian Kurikulum OBE';
+
+        // Predikat Mutu — tidak ada rasio, tampilkan huruf di tengah
+        $mutuDisplay = $mutuMhs ?? 'E';
+        $mutuLabel = $isIps ? 'Mutu Semester' : 'Predikat Mutu';
+        $mutuSub = 'Bobot Standar Akademik';
+        // Warna accent predikat
+        $mutuAccent = match (strtoupper($mutuDisplay)) {
+            'A', 'A+' => '#10b981',           // 4.0
+            'A-', 'B+', 'B' => '#1d6fb8',     // 3.0 - 3.7
+            'B-', 'C+', 'C' => '#f59e0b',     // 2.0 - 2.7
+            'D' => '#ef4444',                 // 1.0 (D)
+            default => '#991b1b',             // E (Merah Gelap)
+        };
+
+        $mutuSoftBg =
+            'rgba(' .
+            implode(
+                ',',
+                match (strtoupper($mutuDisplay)) {
+                    'A', 'A+' => [16, 185, 129],
+                    'A-', 'B+', 'B' => [29, 111, 184],
+                    'B-', 'C+', 'C' => [245, 158, 11],
+                    'D' => [239, 68, 68],
+                    default => [153, 27, 27],
+                },
+            ) .
+            ',0.12)';
+    @endphp
+
     <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
+        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
 
-        {{-- 1. SKS GRID --}}
-        <div class="flex flex-col gap-1">
-            <span
-                class="text-xs sm:text-sm uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-                {{ $alpine === 'nilai' ? 'SKS Semester' : 'SKS Ditempuh' }}
-            </span>
-            <div class="flex items-baseline gap-1">
-                <span class="text-2xl font-black text-[var(--focus-color)] leading-none">
-                    {{ $totalSks }}
-                </span>
-                <span
-                    class="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--contrast-main-text)] opacity-50">
-                    Kredit
-                </span>
-            </div>
-            <span class="text-xs sm:text-sm text-emerald-500 flex items-center gap-1.5 mt-0.5">
-                <span
-                    class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-500">
-                    <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                </span>
-                {{ $alpine === 'nilai' ? 'Kredit Terdaftar KHS' : 'Terakumulasi di Transkrip' }}
-            </span>
-        </div>
+        {{-- 1. SKS — ada rasio, donut penuh --}}
+        @include('livewire.global.statistik.donut-mini-stats', [
+            'icon' => 'rectangle-stack',
+            'title' => $isIps ? 'SKS Semester' : 'SKS Ditempuh',
+            'sub' => $sksSub,
+            'value' => $sksValue,
+            'max' => $targetSks,
+            'display' => $sksDisplay,
+            'accent' => '#10b981',
+            'softBg' => 'rgba(16,185,129,0.12)',
+            'textColor' => '#10b981',
+            'size' => 64,
+            'pctSize' => 'text-sm',
+        ])
 
-        {{-- 2. MATA KULIAH LULUS --}}
-        <div class="flex flex-col gap-1">
-            <span
-                class="text-xs sm:text-sm uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-                {{ $alpine === 'nilai' ? 'Mata Kuliah Diambil' : 'Mata Kuliah Lulus' }}
-            </span>
-            <span class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">
-                {{ $matakuliahLulusCount }} <span class="text-xs sm:text-sm font-normal opacity-70">Mata Kuliah</span>
-            </span>
-            <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] opacity-70">
-                {{ $alpine === 'nilai' ? 'Registrasi KRS Semester Ini' : 'Rencana Pembelajaran Semester' }}
-            </span>
-        </div>
+        {{-- 2. MATA KULIAH — tidak ada rasio, angka saja di tengah --}}
+        @include('livewire.global.statistik.donut-mini-stats', [
+            'icon' => 'book-open',
+            'title' => $isIps ? 'Mata Kuliah Diambil' : 'Mata Kuliah Lulus',
+            'sub' => $mkSub,
+            'value' => $mkValue,
+            'max' => 0, // max=0 → ring tidak tampil, hanya angka di tengah
+            'display' => $mkDisplay,
+            'accent' => 'var(--focus-color)',
+            'softBg' => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
+            'textColor' => 'var(--focus-color)',
+            'size' => 64,
+            'pctSize' => 'text-sm',
+        ])
 
-        {{-- 3. IPK / IP SEMESTER --}}
-        <div class="flex flex-col gap-1">
-            <span
-                class="text-xs sm:text-sm uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-                {{ $alpine === 'nilai' ? 'IP Semester (IPS)' : 'IPK Akumulatif' }}
-            </span>
-            <span class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">
-                {{ is_numeric($calculatedIndex) ? number_format($calculatedIndex, 2) : $calculatedIndex }}<span
-                    class="text-xs sm:text-sm font-normal opacity-70">/ 4.00</span>
-            </span>
-            <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] opacity-70">
-                {{ $alpine === 'nilai' ? 'Indeks Prestasi Semester Aktif' : 'Skala Penilaian Kurikulum OBE' }}
-            </span>
-        </div>
+        {{-- 3. IPK / IPS — ada rasio /4.00 --}}
+        @include('livewire.global.statistik.donut-mini-stats', [
+            'icon' => 'trophy',
+            'title' => $ipLabel,
+            'sub' => $ipSub,
+            'value' => $ipValue,
+            'max' => 4,
+            'display' => $ipDisplay,
+            'accent' => 'var(--focus-color)',
+            'softBg' => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
+            'textColor' => 'var(--focus-color)',
+            'size' => 64,
+            'pctSize' => 'text-sm',
+        ])
 
-        {{-- 4. PREDIKAT MUTU --}}
-        <div class="flex flex-col gap-1">
-            <span
-                class="text-xs sm:text-sm uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-                {{ $alpine === 'nilai' ? 'Mutu Semester' : 'Predikat Mutu' }}
-            </span>
-            <span class="text-md sm:text-lg font-black leading-none {{ $colorClass }}">
-                {{ $mutuMhs }}
-            </span>
-            <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] opacity-70">
-                Bobot Standar Akademik
-            </span>
-        </div>
+        {{-- 4. PREDIKAT MUTU — tidak ada rasio, huruf di tengah --}}
+        @include('livewire.global.statistik.donut-mini-stats', [
+            'icon' => 'academic-cap',
+            'title' => $mutuLabel,
+            'sub' => $mutuSub,
+            'value' => $ipValue,
+            'max' => 4,
+            'display' => $mutuDisplay,
+            'accent' => $mutuAccent,
+            'softBg' => $mutuSoftBg,
+            'textColor' => $mutuAccent,
+            'size' => 64,
+            'pctSize' => 'text-sm',
+        ])
 
     </div>
 </div>

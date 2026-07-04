@@ -21,7 +21,7 @@ trait WithJadwalDelete
 
     public function deleteJadwal($id, $isTrashed = false)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
@@ -40,7 +40,7 @@ trait WithJadwalDelete
 
     public function destroyJadwal()
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
@@ -105,7 +105,7 @@ trait WithJadwalDelete
     #[On('restore-jadwal')]
     public function restoreJadwal($id)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 

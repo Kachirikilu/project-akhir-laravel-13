@@ -192,6 +192,7 @@ trait WithKelasModal
             $this->resetInputKelas();
 
             $this->dispatch('refresh-data-kelas');
+            $this->dispatch('refresh-stats-kelas');
             $this->showKelasModal = false;
 
         } catch (ValidationException $e) {

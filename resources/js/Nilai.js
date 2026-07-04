@@ -98,6 +98,28 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        getDataNilai() {
+            const data = {
+                nilai_mahasiswa_id: this.nilai_mahasiswa_id,
+                nama: this.nama,
+                nim: this.nim,
+                kode_rps: this.kode_rps,
+                mk: this.mk,
+                sks: this.sks,
+            };
+
+            for (let i = 1; i <= 16; i++) {
+                data[`nilai_${i}`] = this[`nilai_${i}`];
+                data[`bobot_${i}`] = this[`bobot_${i}`];
+                data[`cpmk_${i}`] = this[`cpmk_${i}`];
+                data[`scpmk_${i}`] = this[`scpmk_${i}`];
+                data[`metode_${i}`] = this[`metode_${i}`];
+                data[`bobot_persen_${i}`] = this[`bobot_persen_${i}`];
+            }
+
+            return data;
+        },
+
         setDeleteNilai(name, nim, rps, mk, forceDelete) {
             this.name_delete = name;
             this.nim_delete = nim;

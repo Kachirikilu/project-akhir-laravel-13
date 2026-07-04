@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="join-jadwal" wire:model.live="showJadwalJoin" wire:key="join-jadwal-modal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
+    <flux:modal name="join-jadwal-modal" wire:model.live="showJadwalJoin" wire:key="join-jadwal-modal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
         class="w-full md:w-lg max-w-lg !bg-[var(--second-pop-up-color)] !text-[var(--contrast-main-text)]">
 
         <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal.getDataJoinJadwal())" id="jadwalForm">

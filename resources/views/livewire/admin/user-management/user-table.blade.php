@@ -23,6 +23,25 @@
                         'icon' => 'calendar-days',
                     ])
                 @endforeach
+
+                {{-- @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByAngkatan',
+                    'xFilter' => 'filterAngkatan',
+                    'tabFilter' => $stats['total-seluruh-angkatan'] ?? 0,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua',
+                    'icon' => 'users',
+                ])
+                @foreach ($stats['angkatan_list'] ?? [] as $angkatan)
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'filterByAngkatan',
+                        'xFilter' => 'filterAngkatan',
+                        'tabFilter' => $stats['angkatan'][$angkatan] ?? 0,
+                        'tabString' => $angkatan,
+                        'tabNameString' => $angkatan,
+                        'icon' => 'calendar-days',
+                    ])
+                @endforeach --}}
             </div>
         </x-slot:sortir>
     @endif

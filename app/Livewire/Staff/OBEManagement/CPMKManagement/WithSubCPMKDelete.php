@@ -78,7 +78,8 @@ trait WithSubCPMKDelete
 
             $this->toast(message: $this->scpmkNamaToDelete, type: $type);
             $this->cleanupDeleteStateSCPMK();
-            $this->dispatch('refresh-data-scpmk'); 
+            $this->dispatch('refresh-data-scpmk');
+            $this->dispatch('refresh-stats-scpmk'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -107,6 +108,7 @@ trait WithSubCPMKDelete
 
             $this->toast(message: 'Sub-CPMK '.$sub->kode, type: 'recycle');
             $this->dispatch('refresh-data-scpmk');
+            $this->dispatch('refresh-stats-scpmk'); 
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-scpmk');

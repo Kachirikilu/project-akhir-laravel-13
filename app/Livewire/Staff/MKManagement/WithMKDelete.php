@@ -71,7 +71,8 @@ trait WithMKDelete
             $this->toast(message: 'Mata Kuliah ' . $this->mkNamaToDelete, type: $type);
 
             $this->cleanupDeleteStateMK();
-            $this->dispatch('refresh-data-mk'); 
+            $this->dispatch('refresh-data-mk');
+            $this->dispatch('refresh-stats-mk'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -98,6 +99,7 @@ trait WithMKDelete
             $mk->restore();
 
             $this->dispatch('refresh-data-mk');
+            $this->dispatch('refresh-stats-mk'); 
             $this->toast(message: 'Mata Kuliah '. $mk->mk, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {

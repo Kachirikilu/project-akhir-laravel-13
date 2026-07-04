@@ -70,7 +70,7 @@
                         JSON.parse('{{ json_encode($x->kode_scpmk_array ?? []) }}'),
                         JSON.parse('{{ json_encode($x->metode_array ?? []) }}'),
                     );
-                    $flux.modal('nilai-modal').show();
+                    $flux.modal('rps-mahasiswa-modal').show();
                 "
                 {{-- wire:click="{{ $editCall }}" --}}
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
@@ -95,7 +95,7 @@
                             '{{ $x->kode_rps ?? '' }}',
                             '{{ $x->mk ?? '' }}',
                         );
-                        $flux.modal('nilai-delete').show();
+                        $flux.modal('rps-mahasiswa-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
@@ -136,7 +136,7 @@
                             '{{ $x->mk ?? '' }}',
                             1
                         );
-                        $flux.modal('nilai-delete').show();
+                        $flux.modal('rps-mahasiswa-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">

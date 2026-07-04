@@ -19,7 +19,7 @@ trait WithRekapExcel
 {
     public function exportRekapExcel()
     {
-        $prodi = $this->prodi->prodi;
+        $prodi = $this->prodi->prodi ?? null;
         $univ = $prodi.'_'.env('UNIVERSITAS');
         $UNIV = strtoupper($prodi.' '.env('UNIVERSITAS'));
 
@@ -143,15 +143,16 @@ trait WithRekapExcel
 
         switch ($this->switchTable) {
             case 'rps':
-                $queryOBE = $this->inputRPSSearch($prId, null, 1);
+                $queryOBE = $this->inputRPSSearch(null, null, 1);
                 $tag = 'Capaian RPS';
                 $TAG = 'CAPAIAN RENCANA PEMBELAJARAN SEMESTER';
                 $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                 $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                 $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                $this->buttonRPSFilter($queryOBE, $currentYear, $fiveYearsAgo->year);
+                $this->buttonRPSFilter($queryOBE, $currentYear, $fiveYearsAgo->year, $prId);
                 break;
             case 'cpl':
+            case 'capaian':
                 $queryOBE = $this->inputCPLSearch($prId);
                 $tag = 'CPL';
                 $TAG = 'CAPAIAN PEMBELAJARAN LULUSAN';
@@ -178,6 +179,7 @@ trait WithRekapExcel
                 $this->buttonCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'sub-cpmk':
+            case 'sub-capaian':
                 $queryOBE = $this->inputSCPMKSearch($prId);
                 $tag = 'Capaian Sub-CPMK';
                 $TAG = 'SUB CAPAIAN PEMBELAJARAN MATA KULIAH';
@@ -217,12 +219,14 @@ trait WithRekapExcel
                     $obes = $this->searchOutputRPS($queryOBE, $this->search, $this->searchBobotRPS, null, $this->sortField, $this->sortDirection);
                     break;
                 case 'cpl':
+                case 'capaian':
                     $obes = $this->searchOutputCPL($queryOBE, $this->search, null, $this->sortField, $this->sortDirection);
                     break;
                 case 'cpmk':
                     $obes = $this->searchOutputCPMK($queryOBE, $this->search, $this->searchBobotCPMK, null, $this->sortField, $this->sortDirection);
                     break;
                 case 'sub-cpmk':
+                case 'sub-capaian':
                     $obes = $this->searchOutputSCPMK($queryOBE, $this->search, $this->searchBobotSCPMK, null, $this->sortField, $this->sortDirection);
                     break;
                 case 'mahasiswa':
@@ -238,12 +242,14 @@ trait WithRekapExcel
                 return Excel::download(new RPSExport($obes, $title, 1), $fileNameSafe);
                 break;
             case 'cpl':
+            case 'capaian':
                 return Excel::download(new CPLExport($obes, $title, 1), $fileName);
                 break;
             case 'cpmk':
                 return Excel::download(new CPMKExport($obes, $title, 1), $fileNameSafe);
                 break;
             case 'sub-cpmk':
+            case 'sub-capaian':
                 return Excel::download(new SubCPMKExport($obes, $title, 1), $fileNameSafe);
                 break;
             case 'mahasiswa':

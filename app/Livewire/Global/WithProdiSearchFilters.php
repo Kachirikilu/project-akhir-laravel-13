@@ -461,6 +461,91 @@ trait WithProdiSearchFilters
                         $searchLower
                     );
 
+                    $mk = (int) ($pr->count_mk ?? 0);
+                    $matchMK = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetMK = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchMK = $mk === $targetMK;
+                    }
+                    $matchMK = $this->matchCount(
+                        $mk,
+                        $searchLower, ['mk']
+                    ) || $this->containsStrict(
+                        $mk.' MK',
+                        $searchLower
+                    );
+
+                    $rps = (int) ($pr->count_rps ?? 0);
+                    $matchRPS = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetRPS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchRPS = $rps === $targetRPS;
+                    }
+                    $matchRPS = $this->matchCount(
+                        $rps,
+                        $searchLower, ['rps']
+                    ) || $this->containsStrict(
+                        $rps.' RPS',
+                        $searchLower
+                    );
+
+                    $rpsAktif = (int) ($pr->count_rps_aktif ?? 0);
+                    $matchRPSAktif = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetRPS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchRPSAktif = $rpsAktif === $targetRPS;
+                    }
+                    $matchRPSAktif = $this->matchCount(
+                        $rpsAktif,
+                        $searchLower, ['rps aktif']
+                    ) || $this->containsStrict(
+                        $rpsAktif.' RPS Aktif',
+                        $searchLower
+                    );
+
+                    $rpsDraf = (int) ($pr->count_rps_draf ?? 0);
+                    $matchRPSDraf = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetRPS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchRPSDraf = $rpsDraf === $targetRPS;
+                    }
+                    $matchRPSDraf = $this->matchCount(
+                        $rpsDraf,
+                        $searchLower, ['rps draf']
+                    ) || $this->containsStrict(
+                        $rpsDraf.' RPS Draf',
+                        $searchLower
+                    );
+
+                    $sks = (int) ($pr->target_sks ?? 0);
+                    $matchSKS = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetSKS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
+                        );
+                        $matchSKS = $sks === $targetSKS;
+                    }
+                    $matchSKS = $this->matchCount(
+                        $sks,
+                        $searchLower, ['sks', 'target', 'target sks', 'sks_target']
+                    ) || $this->containsStrict(
+                        $sks.' SKS',
+                        $searchLower
+                    );
+
                     $matchCreatedAt = $this->matchDateField(
                         $pr->created_at,
                         $searchLower,
@@ -476,6 +561,8 @@ trait WithProdiSearchFilters
                     switch ($mode) {
                         case 'id':
                             return $matchID;
+                        case 'sks':
+                            return $matchSKS;
                     }
 
                     return
@@ -488,9 +575,16 @@ trait WithProdiSearchFilters
                         || $matchDp
                         || $matchFk
 
+                        || $matchSKS
+
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
                         || $matchNilaiMutu
+
+                        || $matchMK
+                        || $matchRPS
+                        || $matchRPSAktif
+                        || $matchRPSDraf
 
                         || $matchCreatedAt
                         || $matchUpdatedAt;
@@ -505,6 +599,7 @@ trait WithProdiSearchFilters
                 'prodi', 'program_studi' => fn ($pr) => $pr->prodi,
                 'departemen' => fn ($pr) => $pr->departemen,
                 'fakultas' => fn ($pr) => $pr->fakultas,
+                'target_sks' => fn ($pr) => $pr->target_sks,
                 'strata' => fn ($pr) => $pr->strata,
 
                 'rekap_pr',
@@ -516,6 +611,12 @@ trait WithProdiSearchFilters
                 'akreditas_pr',
                 'akreditas_dp',
                 'akreditas_fk' => fn ($pr) => (float) ($pr->rekap_pr ?? $pr->rekap_dp ?? $pr->rekap_fk ?? 0),
+
+                'count_mk' => fn ($pr) => $pr->count_mk ?? 0,
+                'count_rps' => fn ($pr) => $pr->count_rps ?? 0,
+                'count_rps_aktif' => fn ($pr) => $pr->count_rps_aktif ?? 0,
+                'count_rps_draf' => fn ($pr) => $pr->count_rps_draf ?? 0,
+
 
                 'created_at' => fn ($pr) => $pr->created_at,
                 'updated_at' => fn ($pr) => $pr->updated_at,

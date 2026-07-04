@@ -80,6 +80,7 @@ trait WithCPLDelete
             $this->toast(message: $this->cplNamaToDelete, type: $type);
             $this->cleanupDeleteStateCPL();
             $this->dispatch('refresh-data-cpl'); 
+            $this->dispatch('refresh-stats-cpl'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -108,7 +109,7 @@ trait WithCPLDelete
 
             $this->toast(message: 'CPL '.$cpl->kode, type: 'recycle');
             $this->dispatch('refresh-data-cpl');
-
+            $this->dispatch('refresh-stats-cpl'); 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-cpl');
             $this->toast(text: $e->getMessage(), variant: 'danger');

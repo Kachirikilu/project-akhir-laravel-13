@@ -33,7 +33,7 @@ trait WithDepartemenFilters
         return $queryDp;
     }
 
-    protected function addRekapDepartemen(
+    protected function addRekapDepartemenDp(
         $queryDp,
         string $alias = 'rekap_dp'
     ) {
@@ -67,7 +67,7 @@ trait WithDepartemenFilters
         return $queryDp;
     }
 
-    protected function addIndexDepartemen(
+    protected function addIndexDepartemenDp(
         $queryDp,
         string $alias = 'index_dp'
     ) {
@@ -105,7 +105,7 @@ trait WithDepartemenFilters
         return $queryDp;
     }
 
-    protected function addAkreditasDepartemen(
+    protected function addAkreditasDepartemenDp(
         $queryDp,
         string $alias = 'akreditas_dp'
     ) {

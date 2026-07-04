@@ -54,8 +54,13 @@ class UserManagement extends Component
     // public $prNameSearch;
     // public $itemsPr;
 
-    protected $listeners = ['refresh-table' => 'refreshUsersList', 'refresh-table' => 'refresh-data-user',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshUsersList',
+        'refresh-data-user' => 'refreshUsersList',
+        'refresh-stats-user' => 'refreshStatsUsersList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft',
+    ];
 
     public $showDeleted = false;
 
@@ -119,6 +124,16 @@ class UserManagement extends Component
     public function refreshUsersList()
     {
         $this->resetPage();
+    }
+
+    #[On('refresh-stats-user')]
+    public function refreshStatsUsersList()
+    {
+        $this->clearObeStatsCache();
+        $this->clearDosenStatsCache();
+        $this->clearUserStatsCache();
+        $this->clearObeProdiStatsCache();
+        $this->clearMahasiswaProdiStatsCache();
     }
 
     public function resetInputFilter()
@@ -191,16 +206,15 @@ class UserManagement extends Component
         $this->resetPage();
     }
 
+    // public function placeholder()
+    // {
+    //     return view('livewire.global.livewire-skeletons.table-placeholder');
+    // }
+
     public function render()
     {
         try {
             $queryUser = $this->inputUserSearch($this->switchTable);
-            $countUser = User::query();
-
-            if ($this->showDeleted && $this->AuthCheck('admin')) {
-                $queryUser->onlyTrashed();
-                $countUser->onlyTrashed();
-            }
 
             $stats = [
                 'user-prodi' => '🏛️',
@@ -212,8 +226,11 @@ class UserManagement extends Component
                 'dosen' => '👨‍🏫',
                 'mahasiswa' => '🧑‍🎓',
             ];
-
-            $stats = array_merge($stats, $this->getStatsUser($countUser));
+            
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
+                $queryUser->onlyTrashed();
+            }
+            $stats = array_merge($stats, $this->getStatsUser($this->showDeleted));
 
             if ($this->searchMode == 'full') {
                 $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);

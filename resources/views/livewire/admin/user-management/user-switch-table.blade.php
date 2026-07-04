@@ -9,7 +9,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['user'],
+                    'tabFilter' => $stats['user'] ?? null,
                     'tabString' => '',
                     'tabNameString' => 'Semua Pengguna',
                 ])
@@ -17,21 +17,21 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['admin'],
+                    'tabFilter' => $stats['admin'] ?? null,
                     'tabString' => 'admin',
                 ])
 
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['dosen'],
+                    'tabFilter' => $stats['dosen'] ?? null,
                     'tabString' => 'dosen',
                 ])
 
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mahasiswa'],
+                    'tabFilter' => $stats['mahasiswa'] ?? null,
                     'tabString' => 'mahasiswa',
                 ])
             </div>

@@ -12,7 +12,7 @@
                     '{{ $kelas->kode ?? '' }}',
                     '{{ $jadwal->label_extra ?? '' }}',
                 );
-                $flux.modal('left-jadwal').show();
+                $flux.modal('left-jadwal-modal').show();
                 $dispatch('open-left-jadwal-modal', { jadwal_id: {{ $jadwal->id }} });
             "
             variant="ghost"

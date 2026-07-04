@@ -19,7 +19,7 @@
 
     {{-- Grid Informasi Utama Kelas --}}
     <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
+        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-10 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
         <div class="flex flex-col gap-1">
             <span
                 class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode

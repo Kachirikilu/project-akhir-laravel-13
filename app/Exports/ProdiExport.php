@@ -90,12 +90,14 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 [
                     'ID', 'Kode PR', 'Program Studi',
                     'Nilai Capaian Program Studi', '', '',
+                    'Mata Kuliah & Rencana Pembelajaran Semester', '', '', '',
                     'Departemen', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
                     'Nilai', 'Index', 'Akreditas',
+                    'Jumlah MK', 'Jumlah RPS', 'Jumlah RPS Aktif', 'Jumlah RPS Draf',
                     'Kode DP', 'Nama Departemen',
                     'Kode FK', 'Nama Fakultas',
                 ],
@@ -147,6 +149,11 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 $pr->rekap_pr ?? 0,
                 $pr->index_pr ?? 0,
                 $pr->akreditas_pr ?? 0,
+                $pr->count_mk ?? 0,
+                $pr->count_rps ?? 0,
+                $pr->count_rps_aktif ?? 0,
+                $pr->count_rps_draf ?? 0,
+
                 $pr->kode_dp ?? '', // G
                 $pr->departemen_dp ?? '', // H
                 $pr->kode_fk ?? '', // I
@@ -174,16 +181,24 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             $sheet->mergeCells("{$col}4:{$col}5");
         }
 
-        $sheet->mergeCells('D4:F4');
-        $sheet->mergeCells('G4:H4');
-        $sheet->mergeCells('I4:J4');
+        if ($this->switchTable == '' || $this->switchTable == 'prodi') {
+            $sheet->mergeCells('D4:F4');
+            $sheet->mergeCells('G4:J4');
+            $sheet->mergeCells('K4:L4');
+            $sheet->mergeCells('M4:N4');
+        } else {
+            $sheet->mergeCells('D4:F4');
+            $sheet->mergeCells('G4:H4');
+            $sheet->mergeCells('I4:J4');
+        }
+
 
         if ($this->switchTable == 'fakultas') {
             $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'J'];
         } elseif ($this->switchTable == 'departemen') {
             $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'I'];
         } else {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'I'];
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M'];
         }
 
         $highestRow = $sheet->getHighestRow();

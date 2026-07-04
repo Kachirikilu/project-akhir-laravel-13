@@ -36,6 +36,9 @@
                 <th colspan="4" class="table-head-sub table-border-x">
                     Nilai Capaian
                 </th>
+                <th colspan="4" class="table-head-sub table-border-x">
+                    Mata Kuliah & RPS
+                </th>
             @endif
 
             @if ($switchTable === '' || $switchTable === 'prodi')
@@ -117,6 +120,31 @@
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
+
+            @if ($switchTable === '' || $switchTable === 'prodi')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_mk',
+                    'headString' => 'Mata Kuliah',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'target_sks',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps_aktif',
+                    'headString' => 'RPS Aktif',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps_draf',
+                    'headString' => 'RPS Draf',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+            @endif
+                    
 
         </tr>
     </x-slot:header>
@@ -215,6 +243,17 @@
             </td>
 
             @if ($switchTable === '' || $switchTable === 'prodi')
+                <td class="table-second whitespace-nowrap text-center">
+                    {{ $x->count_mk ?? 0 }}</td>
+                <td class="table-sub table-border-r whitespace-nowrap text-center">
+                    {{ $x->target_sks ?? 144 }}</td>
+                <td class="table-second whitespace-nowrap text-center">
+                    {{ $x->count_rps_aktif ?? 0 }}</td>
+                <td class="table-sub table-border-r whitespace-nowrap text-center">
+                    {{ $x->count_rps_draf ?? 0 }}</td>
+            @endif
+
+            @if ($switchTable === '' || $switchTable === 'prodi')
                 <td class="table-second whitespace-nowrap">
                     {{ $x->departemen . ' (' . $x->kode_dp . ')' }}
                 </td>
@@ -269,7 +308,7 @@
                 <td colspan="{{ match ($switchTable) {
                     'fakultas' => 9,
                     'departemen' => 10,
-                    default => 13,
+                    default => 17,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data {{ $xNameString }} ditemukan!

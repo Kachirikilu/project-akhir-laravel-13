@@ -140,7 +140,7 @@
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.nilai-management.nilai-toolbar-table', ['key' => 1])
 
                 </flux:dropdown>
             </td>
@@ -178,7 +178,7 @@
                             'xValue' => $user->mahasiswa->mutu_mhs ?? 'E',
                         ])
                     </button>
-                    @include('livewire.admin.user-management.user-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.nilai-management.nilai-toolbar-table', ['key' => 2])
                 </flux:dropdown>
             </td>
 
@@ -187,42 +187,32 @@
                 @if (!$user->trashed())
                     <x-button-action
                         @click="
-                            $store.user?.reset();
-
+                            $store.rps?.resetShow();
                             const type = '{{ strtolower($user->role) }}';
-
                             $store.user?.setType(type);
                             $store.user?.setEdit(1);
+                            $store.user?.setColor('text-cyan-700 dark:text-cyan-400', 'bg-cyan-50 dark:bg-cyan-950/40');
+                            $store.user?.setValueUserRPS (
+                                '{{ $user->name ?? '' }}',
+                                '{{ $user->label_id1 ?? '' }}',
+                                '{{ $user->mahasiswa->nim ?? '' }}',
 
-                            const colors = {
-                                admin: 'text-red-700 dark:text-red-400',
-                                dosen: 'text-lime-700 dark:text-lime-400',
-                                mahasiswa: 'text-cyan-700 dark:text-cyan-400',
-                            };
-                            const colors2 = {
-                                admin: 'bg-red-50 dark:bg-red-950/40',
-                                dosen: 'bg-lime-50 dark:bg-lime-950/40',
-                                mahasiswa: 'bg-cyan-50 dark:bg-cyan-950/40',
-                            };
-                            $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400', colors2[type] ?? 'bg-gray-50 dark:bg-gray-950/40');
+                                '{{ $user->mahasiswa->pr_rel->prodi ?? '' }}',
 
-                                $store.user?.setValueUserRPS (
-                                    '{{ $user->name ?? '' }}',
-                                    '{{ $user->dosen->nip ?? '' }}',
-                                    '{{ $user->mahasiswa->nim ?? '' }}',
-                                    '{{ $user->mahasiswa->angkatan ?? '' }}',
-                                    '{{ $user->mahasiswa->count_rps ?? ($user->count_rps ?? 0) }}',
-                                    '{{ $user->mahasiswa->total_sks ?? ($user->total_sks ?? 0) }}',
+                                '{{ $user->mahasiswa->count_rps ?? ($user->count_rps ?? 0) }}',
+                                '{{ $user->mahasiswa->total_sks ?? ($user->total_sks ?? 0) }}',
 
-                                    '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
-                                    '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
-                                    '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
-                                    '{{ $user->pr_id ?? '' }}',
-                                );
-                    
+                                '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
+                                '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
+                                '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
+
+                                '{{ $user->mahasiswa->angkatan ?? 'YYYY' }}',
+                                {{-- '{{ $user->pr_id ?? '' }}', --}}
+                            );
                             $flux.modal('user-rps-modal').show();
+                            $dispatch('open-list-rps-user-modal', { id: {{ $user->id }}, withRPS: 1, isRPS: 1 });
                         "
-                        wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="emerald"
+                        color="emerald"
                         wire:navigate>
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
@@ -251,7 +241,7 @@
                         ])
                     </button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.nilai-management.nilai-toolbar-table', ['key' => 3])
                 </flux:dropdown>
             </td>
 
@@ -262,7 +252,7 @@
                             'xValue' => $user->status,
                         ])
                     </button>
-                    @include('livewire.admin.user-management.user-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.nilai-management.nilai-toolbar-table', ['key' => 4])
 
                 </flux:dropdown>
             </td>
@@ -276,7 +266,7 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.admin.user-management.user-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.nilai-management.nilai-toolbar-table', ['key' => 5])
 
                 </flux:dropdown>
             </td>

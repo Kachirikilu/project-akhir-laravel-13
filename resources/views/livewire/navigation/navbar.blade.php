@@ -71,18 +71,18 @@
                     'label' => 'User Management',
                     'roles' => ['admin'],
                 ],
-                // [
-                //     'type' => 'link',
-                //     'icon' => 'academic-cap',
-                //     'route' => 'program-studi-management',
-                //     'label' => 'Study Program',
-                //     'roles' => ['admin'],
-                // ],
                 [
                     'type' => 'dropdown-prodi',
                     'icon' => 'academic-cap',
                     'label' => 'Study Program',
                     'roles' => ['admin'],
+                ],
+                [
+                    'type' => 'link',
+                    'icon' => 'academic-cap',
+                    'route' => 'program-studi-dosen',
+                    'label' => 'Study Program',
+                    'roles' => ['dosen'],
                 ],
                 [
                     'type' => 'link',

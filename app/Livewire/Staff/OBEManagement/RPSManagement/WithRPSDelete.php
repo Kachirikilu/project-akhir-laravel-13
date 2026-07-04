@@ -70,9 +70,10 @@ trait WithRPSDelete
                 $rps->delete();
             }
 
-            $this->toast(message: $this->rpsNamaToDelete, type: $type);
+            $this->toast(message: 'RPS '.$this->rpsKodeToDelete, type: $type);
             $this->cleanupDeleteStateRPS();
             $this->dispatch('refresh-data-rps'); 
+            $this->dispatch('refresh-stats-rps');
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -99,9 +100,9 @@ trait WithRPSDelete
             $rps = RPS::withTrashed()->findOrFail($id);
             $rps->restore();
 
-            $this->toast(message: $rps->rps, type: 'recycle');
+            $this->toast(message: 'RPS '.$rps->kode, type: 'recycle');
             $this->dispatch('refresh-data-rps');
-
+            $this->dispatch('refresh-stats-rps');
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-rps');
             $this->toast(text: $e->getMessage(), variant: 'danger');

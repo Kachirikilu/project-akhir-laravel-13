@@ -377,6 +377,7 @@ trait WithTimDosenModal
             $this->toast(message: "Tim Dosen {$validated['nama_tim']}");
             $this->resetInputTimDosen();
             $this->dispatch('refresh-data-tim-dosen');
+            $this->dispatch('refresh-stats-tim-dosen');
             $this->showTimDosenModal = false;
 
         } catch (ValidationException $e) {

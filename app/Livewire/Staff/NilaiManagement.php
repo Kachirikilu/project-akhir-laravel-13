@@ -13,13 +13,14 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithRPSSearchFilters;
+// use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
+// use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSModal;
 use App\Models\Akademik\CPL;
 use App\Models\Auth\User;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 class NilaiManagement extends Component
@@ -29,17 +30,15 @@ class NilaiManagement extends Component
     use HasStats;
     use HasToast;
     use RekapCapaian;
-    use WithDepartemenSearchFilters;
-    use WithFakultasSearchFilters;
+    // use WithDepartemenSearchFilters;
+    // use WithFakultasSearchFilters;
     use WithNilaiMahasiswaExcel;
     use WithPagination;
     use WithProdiSearchFilters;
-    use WithRPSModal;
-    use WithRPSSearchFilters;
-    use WithUserDelete;
+    // use WithRPSModal;
+    // use WithRPSSearchFilters;
     use WithUserDelete;
     use WithUserFilters;
-    use WithUserModal;
     use WithUserModal;
     use WithUserSearchFilters;
 
@@ -59,8 +58,20 @@ class NilaiManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshUsersList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    public $selectedPrId;
+
+    public $selectedDpId;
+
+    public $selectedFkId;
+
+    protected $listeners = [
+        'refresh-table' => 'refreshUsersList',
+        'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
+        'refresh-stats-user' => 'refreshStatsUserList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft',
+        'refresh-stats-user'  => 'refreshStatsUserList',
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -74,10 +85,38 @@ class NilaiManagement extends Component
         'showDeleted' => ['except' => false],
     ];
 
-    // public function mount($switchTable = '')
-    // {
-    //     $this->switchTable = $switchTable;
-    // }
+
+    #[On('selected-pr-id-updated')]
+    public function updateSelectedPrId($selectedPrId)
+    {
+        $this->selectedPrId = $selectedPrId;
+    }
+
+    #[On('selected-dp-id-updated')]
+    public function updateSelectedDpId($selectedDpId)
+    {
+        $this->selectedDpId = $selectedDpId;
+    }
+
+    #[On('selected-fk-id-updated')]
+    public function updateSelectedFkId($selectedFkId)
+    {
+        $this->selectedFkId = $selectedFkId;
+    }
+
+    #[On('refresh-data-rps-mahasiswa')]
+    #[On('refresh-table')]
+    public function refreshNilaisList()
+    {
+        $this->resetPage();
+    }
+    #[On('refresh-stats-user')]
+    public function refreshStatsUserList()
+    {
+        $this->clearUserStatsCache();
+        $this->clearMahasiswaStatsCache();
+    }
+
 
     public function updatingSearch()
     {
@@ -116,87 +155,18 @@ class NilaiManagement extends Component
         $this->resetPage();
     }
 
-    // private function syncSortField($table, $sortField)
+    // public function placeholder()
     // {
-    //     $columns = [
-    //         'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'mutu_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
-    //         'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'mutu_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps'],
-    //         'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'mutu_cpmk_pr', 7 => 'count_cpl'],
-    //         'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'mutu_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator'],
-    //         'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'index_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
-    //     ];
-
-    //     $aliases = [
-    //         'rekap_rps_pr' => ['rekap_cpl_pr', 'rekap_cpmk_pr', 'rekap_scpmk_pr', 'rekap_mhs'],
-    //         'index_rps_pr' => ['index_cpl_pr', 'index_cpmk_pr', 'index_scpmk_pr', 'index_mhs'],
-    //         'mutu_rps_pr' => ['mutu_cpl_pr', 'mutu_cpmk_pr', 'mutu_scpmk_pr', 'mutu_mhs'],
-
-    //         'kode' => ['kode', 'name'],
-    //         // 'name' => ['name', 'kode'],
-    //         'deskripsi' => ['deskripsi', 'mk'],
-    //         // 'mk' => ['mk', 'deskripsi'],
-    //         'materi' => ['materi'],
-    //         // 'count_rps' => ['count_rps', 'count_cpl'],
-    //         'count_cpl' => ['count_cpl', 'count_rps', 'total_sks'],
-    //         // 'akademik' => ['akademik', 'total_bobot'],
-    //         // 'total_bobot' => ['total_bobot', 'akademik'],
-    //         'is_draf' => ['is_draf', 'indikator'],
-    //         // 'indikator' => ['indikator', 'is_draf'],
-    //         'created_at' => ['created_at'],
-    //         'updated_at' => ['updated_at'],
-    //     ];
-
-    //     $this->sortField($table, $sortField, $columns, $aliases);
-    // }
-
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-    //     $this->dispatch('table-switched', switchTable: $table);
-    //     $this->syncSortField($table, $this->sortField);
-    //     $this->resetPage();
-
-    //     $allFilters = [
-    //         'rps' => 'filterRPS',
-    //         'cpl' => 'filterCPL',
-    //         'cpmk' => 'filterCPMK',
-    //         'sub-cpmk' => 'filterSCPMK',
-    //         'mahasiswa' => 'filterUser',
-    //     ];
-
-    //     foreach ($allFilters as $tableParam => $filterVariable) {
-    //         if ($tableParam !== $this->switchTable) {
-    //             $this->$filterVariable = '';
-    //         }
-    //     }
-
-    //     $limits = [
-    //         'cpl' => 100,
-    //         'rps' => 200,
-    //         'mahasiswa' => 200,
-    //         'cpmk' => 300,
-    //         'sub-cpmk' => 500,
-    //     ];
-
-    //     if (isset($limits[$table])) {
-    //         $this->perPage = min((int) $this->perPage, $limits[$table]);
-    //     }
-
-    //     // $targetPath = '/program-studi-management/kode/'.($table ? '/'.$table : '');
-    //     $suffix = ($table && $table !== 'cpl') ? "/{$table}" : '';
-
-    //     $targetPath = "/program-studi-management/kode/{$this->kode_pr_url}{$suffix}";
-
-    //     $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    //     return view('livewire.global.livewire-skeletons.table-placeholder');
     // }
 
     public function render()
     {
 
         try {
-            $this->inputPrFilter();
-            $this->inputDpFilter();
-            $this->inputFkFilter();
+            // $this->inputPrFilter();
+            // $this->inputDpFilter();
+            // $this->inputFkFilter();
             
             $queryUser = $this->inputUserSearch('mahasiswa');
 
@@ -222,11 +192,10 @@ class NilaiManagement extends Component
                 'mahasiswa-non-aktif' => '🔴',
             ];
 
-            $stats = array_merge($stats, $this->getStatsMahasiswa($countMahasiswa, 1));
+            $stats = array_merge($stats, $this->getStatsMahasiswa($this->showDeleted));
 
             return view('livewire.staff.nilai-management', [
                 'users' => $users,
-                'user_rps_modal_paginator' => $this->user_rps_modal_paginator,
                 'stats' => $stats,
             ]);
 
@@ -237,8 +206,6 @@ class NilaiManagement extends Component
 
             return view('livewire.staff.nilai-management', [
                 'users' => User::whereRaw('1=0')->whereHas('mahasiswa')->paginate($this->perPage),
-                'mahasiswa_rps_modal_paginator' => collect(),
-
                 'stats' => [
                     'mahasiswa-prodi' => '-',
                     'mahasiswa-opsi' => '-',

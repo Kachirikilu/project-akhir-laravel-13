@@ -82,6 +82,7 @@ trait WithRefDelete
             $this->toast(message: $this->refNamaToDelete, type: $type);
             $this->cleanupDeleteStateRef();
             $this->dispatch('refresh-data-ref'); 
+            $this->dispatch('refresh-stats-ref');
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -110,6 +111,7 @@ trait WithRefDelete
 
             $this->toast(message: 'Referensi '.$ref->judul, type: 'recycle');
             $this->dispatch('refresh-data-ref');
+            $this->dispatch('refresh-stats-ref');
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-ref');

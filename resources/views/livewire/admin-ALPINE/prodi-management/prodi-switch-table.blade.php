@@ -9,7 +9,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['prodi'],
+                    'tabFilter' => $stats['prodi'] ?? null,
                     'tabString' => '',
                     'tabNameString' => 'Program Studi',
                 ])
@@ -17,14 +17,14 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['departemen'],
+                    'tabFilter' => $stats['departemen'] ?? null,
                     'tabString' => 'departemen',
                 ])
                 {{-- Tab Fakultas --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['fakultas'],
+                    'tabFilter' => $stats['fakultas'] ?? null,
                     'tabString' => 'fakultas',
                 ])
             </div>

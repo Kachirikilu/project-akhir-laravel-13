@@ -6,6 +6,7 @@
             'email'     => $user->email,
             'name'      => $user->dosen->name,
             'identity1' => $user->dosen->nip,
+            'prodi'  => $user->dosen->pr_rel->prodi ?? '',
             'label_id1' => 'NIP',
             'role'      => $user->role,
             'count_rps' => $user->count_rps,

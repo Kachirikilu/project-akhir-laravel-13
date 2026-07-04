@@ -851,6 +851,7 @@ trait WithUserModal
             $this->resetInputUser();
 
             $this->dispatch('refresh-data-user');
+            $this->dispatch('refresh-stats-user');
             $this->showUserModal = false;
             $this->showUserRPSModal = false;
         } catch (ValidationException $e) {

@@ -42,6 +42,8 @@ document.addEventListener("alpine:init", () => {
         nama_fk: "",
         kodeFk: "",
 
+        target_sks: "",
+
         // Items
         departemenItems: "",
         fakultasItems: "",
@@ -56,6 +58,7 @@ document.addEventListener("alpine:init", () => {
             kodePr,
             kodeDp,
             kodeFk,
+            sks,
         ) {
             this.nama_pr = prodi;
             this.dp_id = idDp;
@@ -70,6 +73,8 @@ document.addEventListener("alpine:init", () => {
 
             this.nama_fk = fakultas;
             this.kode_fk = kodeFk;
+
+            this.target_sks = sks;
 
             this.dp_items = {
                 id: idDp,
@@ -102,6 +107,8 @@ document.addEventListener("alpine:init", () => {
 
                 dp_items: this.dp_items,
                 fk_items: this.fk_items,
+
+                target_sks: this.target_sks,
             };
         },
 
@@ -143,6 +150,8 @@ document.addEventListener("alpine:init", () => {
 
                 this.dp_items = "";
                 this.fk_items = "";
+
+                this.target_sks = "";
 
                 this.nama_pr_delete = "";
                 this.nama_dp_delete = "";

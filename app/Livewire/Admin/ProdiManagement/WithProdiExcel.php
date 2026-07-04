@@ -53,17 +53,18 @@ trait WithProdiExcel
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
         if ($this->switchTable === 'fakultas') {
-            $this->addRekapFakultas($queryPr, 'rekap_fk');
-            $this->addIndexFakultas($queryPr, 'index_fk');
-            $this->addAkreditasFakultas($queryPr, 'akreditas_fk');
+            $this->addRekapFakultasFk($queryPr, 'rekap_fk');
+            $this->addIndexFakultasFk($queryPr, 'index_fk');
+            $this->addAkreditasFakultasFk($queryPr, 'akreditas_fk');
         } elseif ($this->switchTable === 'departemen') {
-            $this->addRekapDepartemen($queryPr, 'rekap_dp');
-            $this->addIndexDepartemen($queryPr, 'index_dp');
-            $this->addAkreditasDepartemen($queryPr, 'akreditas_dp');
+            $this->addRekapDepartemenDp($queryPr, 'rekap_dp');
+            $this->addIndexDepartemenDp($queryPr, 'index_dp');
+            $this->addAkreditasDepartemenDp($queryPr, 'akreditas_dp');
         } else {
-            $this->addRekapProdi($queryPr, 'rekap_pr');
-            $this->addIndexProdi($queryPr, 'index_pr');
-            $this->addAkreditasProdi($queryPr, 'akreditas_pr');
+            $this->addRekapProdiPr($queryPr, 'rekap_pr');
+            $this->addIndexProdiPr($queryPr, 'index_pr');
+            $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+            $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
             $this->buttonStrataFilter($queryPr);
         }
 

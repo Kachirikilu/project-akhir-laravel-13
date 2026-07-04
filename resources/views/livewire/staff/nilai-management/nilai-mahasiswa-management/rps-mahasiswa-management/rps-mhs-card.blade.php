@@ -41,21 +41,25 @@
     | Hash ini berubah setiap data berubah
     */
     $alpineVersion = md5(
-        json_encode([
-            'ids' => collect($nilais)->pluck('id')->values(),
-            'nilai' => collect($nilais)->pluck('nilai')->values(),
-            'updated' => now()->timestamp,
-        ]),
+        json_encode(
+            $nilais
+                ->map(
+                    fn($n) => [
+                        'id' => $n->id,
+                        'updated_at' => optional($n->updated_at)->timestamp,
+                    ],
+                )
+                ->values(),
+        ),
     );
 @endphp
-
-<div wire:key="nilai-wrapper-{{ $alpineVersion }}" x-data="{
+<div wire:key="rps-mahasiswa-wrapper-{{ $alpineVersion }}" x-data="{
     rawItems: [],
     currentPage: 1,
     perPage: 8,
     sortField: '',
     sortDirection: 'asc',
-    isRealtime: true,
+    {{-- isRealtime: true, --}}
 
     get filteredAndSortedIds() {
         let query = (this.$store.nilai?.search || '').toLowerCase().trim();
@@ -158,43 +162,27 @@
         return map;
     },
 
-    get totalFilteredItems() { return this.filteredAndSortedIds.length; },
-    get totalPages() { return Math.ceil(this.totalFilteredItems / this.perPage) || 1; },
-
+    get totalFilteredItems() {
+        return this.filteredAndSortedIds.length;
+    },
+    get totalPages() {
+        return Math.ceil(this.totalFilteredItems / this.perPage) || 1;
+    },
     init() {
-        this.$watch('$store.nilai.search', () => {
-            this.currentPage = 1;
-        });
-
-        this.$watch('$store.nilai.sortField', () => {
-            this.currentPage = 1;
-        });
-
-        this.$watch('$store.nilai.sortDirection', () => {
-            this.currentPage = 1;
-        });
-
-        this.$watch('$store.nilai.perPage', (val) => {
+        this.$watch('$store.sesi.search', () => { this.currentPage = 1; });
+        this.$watch('$store.sesi.perPage', (val) => {
             this.perPage = val || 8;
             this.currentPage = 1;
         });
     }
-}"
-    x-effect="
-        rawItems = {{ $jsonFreshData }};
-        if ($store.nilai?.search || sortField) {
-            $nextTick(() => {
-                currentPage = currentPage;
-            });
-        }
-    "
-    class="w-full">
+}" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
 
     <x-global.main-layout-card>
 
         {{-- Slot Sortir --}}
         <x-slot:sortir>
-            <div class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+            <div
+                class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'digit_mk',
                     'headString' => 'No MK',
@@ -234,10 +222,10 @@
 
         {{-- CONTAINER UTAMA WAJIB MEMILIKI CLASS flex ATAU grid UNTUK MENDUKUNG CSS ORDER --}}
         @foreach ($nilais as $index => $n)
-            @php $currentId = $n->id ?? $index; @endphp
-            <template x-if="itemVisibilityMap[{{ $currentId }}]?.visible">
-                <div wire:key="rps-mahasiswa-{{ $n->id }}" data-rps-mahasiswa-id="{{ $n->id }}"
-                    :style="'order: ' + itemVisibilityMap[{{ $currentId }}]?.order"
+            <div x-show="itemVisibilityMap[{{ $n->id }}]?.visible" x-transition
+                :style="'order:' + (itemVisibilityMap[{{ $n->id }}]?.order ?? {{ $index }})">
+
+                <div wire:key="rps-mahasiswa-{{ $n->id }}"
                     class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
                     {{-- ═══ HERO ═══ --}}
@@ -254,10 +242,7 @@
                                     @include(
                                         'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
                                         [
-                                            'x' => $n,
-                                            'nameXString' => 'Nilai',
-                                            'copyName' => 'Kode RPS',
-                                            'copyText' => $n->kode_rps ?? '',
+                                            'key' => 1,
                                         ]
                                     )
                                 </flux:dropdown>
@@ -276,10 +261,7 @@
                                 @include(
                                     'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
                                     [
-                                        'x' => $n,
-                                        'nameXString' => 'Nilai',
-                                        'copyName' => 'Kode RPS',
-                                        'copyText' => $n->kode_rps ?? '',
+                                        'key' => 2,
                                     ]
                                 )
                             </flux:dropdown>
@@ -325,10 +307,7 @@
                             @include(
                                 'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
                                 [
-                                    'x' => $n,
-                                    'nameXString' => 'Nilai',
-                                    'copyName' => 'Kode RPS',
-                                    'copyText' => $n->kode_rps ?? '',
+                                    'key' => 3,
                                 ]
                             )
                         </flux:dropdown>
@@ -364,20 +343,27 @@
                                 : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
                             {{ $n->trashed() ? 'disabled' : '' }}
                             @if (!$n->trashed()) @click="
-                                    $store.nilai?.reset();
-                                    $store.nilai?.setEdit(1);
-                                    $store.nilai?.setColor('text-cyan-700 dark:text-cyan-400');
-                                    $store.nilai?.setValueNilai(
-                                        '{{ $n->id ?? '' }}', '{{ $mahasiswa->name ?? '' }}', '{{ $mahasiswa->nim ?? '' }}',
-                                        '{{ $n->kode_rps ?? '' }}', '{{ $n->mk ?? '' }}', '{{ $n->sks ?? '' }}',
-                                        JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
-                                        JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
-                                        JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
-                                        JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
-                                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}')
-                                    );
-                                    $flux.modal('nilai-modal').show();
-                                " @endif>
+                                $store.nilai?.reset();
+                                $store.nilai?.setEdit(1);
+                                $store.nilai?.setColor('text-cyan-700 dark:text-cyan-400');
+                                $store.nilai?.setValueNilai(
+                                    '{{ $n->id ?? '' }}',
+                                    '{{ $mahasiswa->name ?? '' }}',
+                                    '{{ $mahasiswa->nim ?? '' }}',
+
+                                    '{{ $n->kode_rps ?? '' }}',
+                                    '{{ $n->mk ?? '' }}',
+                                    '{{ $n->sks ?? '' }}',
+
+                                    JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
+                                    JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
+                                    JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
+                                    JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
+                                    JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
+                                );
+                                $flux.modal('rps-mahasiswa-modal').show();
+                                $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });
+                            " @endif>
                             @if (Auth::user()->admin || Auth::user()->dosen)
                                 <flux:icon name="pencil-square"
                                     class="w-3.5 h-3.5 {{ $n->trashed() ? 'opacity-40' : '' }}" />
@@ -391,31 +377,30 @@
                         <button
                             class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                             @click="
-                                    $store.rps?.resetShow();
-                                    $store.rps?.setShowRPS(
-                                        '{{ $n->rps_id ?? '' }}',
-                                        '{{ $n->rps_rel->kode ?? '' }}',
-                                        '{{ $n->rps_rel->rps ?? '' }}',
-                                        '{{ $n->rps_rel->draf ?? '' }}',
-                                        '{{ $n->rps_rel->level_mk ?? '' }}',
-                                        '{{ $mahasiswa->pr_rel->id ?? '' }}',
-                                    );
-                                    $store.rps?.setColor('text-green-700 dark:text-green-400');
-                                    $flux.modal('rps-detail-modal').show();
-                                "
-                            wire:click="showRPS({{ $n->rps_rel->id ?? 0 }})">
+                                $store.rps?.resetShow();
+                                $store.rps?.setShowRPS(
+                                    '{{ $n->rps_id ?? '' }}',
+                                    '{{ $n->rps_rel->kode ?? '' }}',
+                                    '{{ $n->rps_rel->rps ?? '' }}',
+                                    '{{ $n->rps_rel->draf ?? '' }}',
+                                    '{{ $n->rps_rel->level_mk ?? '' }}',
+                                    '{{ $mahasiswa->pr_id ?? '' }}',
+                                );
+                                $store.rps?.setColor('text-green-700 dark:text-green-400');
+                                $flux.modal('rps-detail-modal').show();
+                                $dispatch('open-show-rps-modal', { id: {{ $n->rps_id }}, prId: {{ $mahasiswa->pr_id }} });
+                            ">
                             <flux:icon name="clipboard-document-list" class="w-3.5 h-3.5" />
                             <span>Lihat RPS</span>
                         </button>
                     </div>
 
                 </div>
-            </template>
+            </div>
+            {{-- </template> --}}
         @endforeach
 
         {{-- EMPTY STATE ANCHOR --}}
-
-
         <x-slot:emptys>
             <div x-show="totalFilteredItems === 0"
                 class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">

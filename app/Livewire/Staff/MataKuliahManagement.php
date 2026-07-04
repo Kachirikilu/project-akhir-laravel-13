@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\HasSortir;
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKExcel;
@@ -18,6 +19,7 @@ class MataKuliahManagement extends Component
 {
     use HasSortir;
     use HasToast;
+    use HasStats;
     use WithMKExcel;
     use WithMKFilters;
     use WithMKSearchFilters;
@@ -44,8 +46,13 @@ class MataKuliahManagement extends Component
     public $selectedDpId;
     public $selectedFkId;
 
-    protected $listeners = ['refresh-table' => 'refreshMksList', 'refresh-data-mk' => 'refreshMksList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshMKsList',
+        'refresh-data-mk' => 'refreshMKsList',
+        'refresh-stats-mk' => 'refreshStatsMKsList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -90,9 +97,15 @@ class MataKuliahManagement extends Component
 
     #[On('refresh-data-mk')]
     #[On('refresh-table')]
-    public function refreshMksList()
+    public function refreshMKsList()
     {
         $this->resetPage();
+    }
+
+    #[On('refresh-stats-mk')]
+    public function refreshStatsMKsList()
+    {
+        $this->clearMkStatsCache();
     }
 
     public function updatingSearch()
@@ -148,6 +161,11 @@ class MataKuliahManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
+    // public function placeholder()
+    // {
+    //     return view('livewire.global.livewire-skeletons.table-placeholder');
+    // }
+
     public function render()
     {
         // $this->inputPrFilter();
@@ -156,36 +174,35 @@ class MataKuliahManagement extends Component
 
         try {
             $queryMK = $this->inputMKSearch();
-            $countMK = MataKuliah::query();
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryMK->onlyTrashed();
-                $countMK->onlyTrashed();
             }
+            $stats = $this->getStatsMK($this->showDeleted);
 
             // =========================
             // STATS GLOBAL (FULL DATA)
             // =========================
-            $totalMK = (clone $countMK)->count();
-            $totalTatapMuka = (clone $countMK)->where('tipe_sks', 1)->count();
-            $totalPraktikum = (clone $countMK)->where('tipe_sks', 2)->count();
-            $totalPraktek = (clone $countMK)->where('tipe_sks', 3)->count();
-            $totalSimulasi = (clone $countMK)->where('tipe_sks', 4)->count();
+            // $totalMK = (clone $countMK)->count();
+            // $totalTatapMuka = (clone $countMK)->where('tipe_sks', 1)->count();
+            // $totalPraktikum = (clone $countMK)->where('tipe_sks', 2)->count();
+            // $totalPraktek = (clone $countMK)->where('tipe_sks', 3)->count();
+            // $totalSimulasi = (clone $countMK)->where('tipe_sks', 4)->count();
 
-            // =========================
-            // STATS PER TAB
-            // =========================
-            $tabQuery = clone $countMK;
-            $this->buttonMKSwitch($tabQuery);
+            // // =========================
+            // // STATS PER TAB
+            // // =========================
+            // $tabQuery = clone $countMK;
+            // $this->buttonMKSwitch($tabQuery);
 
-            $totalMKProdi = (clone $tabQuery)->whereHas('prodis', function ($q) {
-                $q->where('prodis.id', Auth::user()->pr_id);
-            })->count();
-            $totalMKOpsi = (clone $tabQuery)->count();
+            // $totalMKProdi = (clone $tabQuery)->whereHas('prodis', function ($q) {
+            //     $q->where('prodis.id', Auth::user()->pr_id);
+            // })->count();
+            // $totalMKOpsi = (clone $tabQuery)->count();
 
-            $totalWajib = (clone $tabQuery)->where('is_wajib', true)->count();
-            $totalPilihan = (clone $tabQuery)->where('is_wajib', false)->count();
-            $totalUni = (clone $tabQuery)->where('level_mk', 4)->count();
+            // $totalWajib = (clone $tabQuery)->where('is_wajib', true)->count();
+            // $totalPilihan = (clone $tabQuery)->where('is_wajib', false)->count();
+            // $totalUni = (clone $tabQuery)->where('level_mk', 4)->count();
 
             // =========================
             // QUERY FINAL TABLE
@@ -201,20 +218,20 @@ class MataKuliahManagement extends Component
 
             return view('livewire.staff.mk-management', [
                 'mks' => $mks,
+                'stats' => $stats,
+                // 'stats' => [
+                //     'mk' => $totalMK,
+                //     'mk-tp' => $totalTatapMuka,
+                //     'mk-pr' => $totalPraktikum,
+                //     'mk-pl' => $totalPraktek,
+                //     'mk-sm' => $totalSimulasi,
 
-                'stats' => [
-                    'mk' => $totalMK,
-                    'mk-tp' => $totalTatapMuka,
-                    'mk-pr' => $totalPraktikum,
-                    'mk-pl' => $totalPraktek,
-                    'mk-sm' => $totalSimulasi,
-
-                    'mk-prodi' => $totalMKProdi,
-                    'mk-opsi' => $totalMKOpsi,
-                    'mk-wajib' => $totalWajib,
-                    'mk-pilihan' => $totalPilihan,
-                    'mk-uni' => $totalUni,
-                ],
+                //     'mk-prodi' => $totalMKProdi,
+                //     'mk-opsi' => $totalMKOpsi,
+                //     'mk-wajib' => $totalWajib,
+                //     'mk-pilihan' => $totalPilihan,
+                //     'mk-uni' => $totalUni,
+                // ],
             ]);
 
         } catch (QueryException $e) {

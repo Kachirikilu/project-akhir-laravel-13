@@ -1,5 +1,5 @@
 <div>
-<flux:modal name="left-jadwal" wire:model="showJadwalLeft" wire:key="left-jadwal-modal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
+<flux:modal name="left-jadwal-modal" wire:model="showJadwalLeft" wire:key="left-jadwal-modal" x-data @refresh-data-jadwal.window="$store.jadwal?.reset()"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <div class="space-y-6">

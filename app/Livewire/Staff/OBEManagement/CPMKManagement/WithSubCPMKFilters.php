@@ -28,7 +28,7 @@ trait WithSubCPMKFilters
     {
         $querySCPMK = SubCPMK::query()->with(['cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
-        if ($this->switchTable === 'sub-cpmk') {
+        if ($this->switchTable === 'sub-cpmk' || $this->switchTable === 'scpmk' || $this->switchTable === 'sub-capaian') {
 
             if (! empty($prId)) {
                 $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));

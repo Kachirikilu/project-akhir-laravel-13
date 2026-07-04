@@ -1,4 +1,4 @@
-<div class="">
+<div>
     @include('livewire.global.table.text-copy', [
         'xType' => $data['kode'],
         'typeXString' => 'Kode RPS',

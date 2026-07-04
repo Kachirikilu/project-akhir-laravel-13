@@ -78,11 +78,11 @@
         @include('livewire.admin.user-management.user-table')
     </div> --}}
 
-    @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1])
-    @include('livewire.staff.obe-management.rps-management.rps-show-modal')
+    {{-- @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1]) --}}
+    {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal') --}}
 
-    @if (Auth::user()->admin)
+    {{-- @if (Auth::user()->admin)
         @include('livewire.admin.user-management.user-modal-form')
         @include('livewire.admin.user-management.user-modal-delete')
-    @endif
+    @endif --}}
 </div>

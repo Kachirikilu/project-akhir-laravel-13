@@ -12,6 +12,7 @@
             'id' => $x->id,
             'dp_id' => $x->dp_id,
             'fk_id' => $x->fk_id,
+            'target_sks' => $x->target_sks,
             'strata' => $x->strata,
             'kode' => $x->kode,
             'kode_short' => $x->kode_short,

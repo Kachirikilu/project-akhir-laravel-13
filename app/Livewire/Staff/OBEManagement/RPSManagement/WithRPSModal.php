@@ -509,6 +509,7 @@ trait WithRPSModal
 
             $this->resetInputRPS();
             $this->dispatch('refresh-data-rps');
+            $this->dispatch('refresh-stats-rps');
             $this->showRPSModal = false;
 
         } catch (ValidationException $e) {

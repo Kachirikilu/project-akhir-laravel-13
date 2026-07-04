@@ -7,6 +7,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
@@ -24,6 +25,7 @@ class JadwalManagement extends Component
     use WithNilaiExcel;
     use WithJadwalFilters;
     use WithPagination;
+    use WithKelasJadwalSearchFilters;
 
     public $search = '';
 

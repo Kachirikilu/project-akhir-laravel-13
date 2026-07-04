@@ -414,8 +414,8 @@
                                     '{{ $user->pr_id ?? '' }}',
                                 );
                     
-                            $flux.modal('user-rps-modal').show();
-                        "
+                                    $flux.modal('user-rps-modal').show();
+                                "
                             wire:click="editUser({{ $user->id }}, {{ $withRPS ?? false }}, 1)" color="emerald"
                             wire:navigate>
                             <flux:icon name="eye" class="w-3.5 h-3.5" />

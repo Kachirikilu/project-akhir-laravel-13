@@ -7,9 +7,9 @@
 
         <flux:menu.separator />
 
-
-        <flux:menu.item
-            @click="
+        @if (!$data['isTrashed'])
+            <flux:menu.item
+                @click="
                 $store.tim_dosen?.reset();
                 $store.tim_dosen?.setEdit(1);
                 $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400');
@@ -29,17 +29,16 @@
                     );
                 $dispatch('open-list-rps-tim-dosen-modal', { id: {{ $data['id'] }}, withRPS: 1, isRPS: 1 });
             "
-            class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 active:!bg-cyan-200 dark:hover:!bg-yellow-900/30 active:!bg-cyan-200 dark:active:!bg-yellow-900 transition-colors">
-            <flux:icon name="eye" class="mr-2 h-4 w-4" />
+                class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 active:!bg-cyan-200 dark:hover:!bg-yellow-900/30 active:!bg-cyan-200 dark:active:!bg-yellow-900 transition-colors">
+                <flux:icon name="eye" class="mr-2 h-4 w-4" />
 
-            <div class="flex justify-between items-center w-full">
-                <span>Show RPS</span>
-            </div>
-        </flux:menu.item>
+                <div class="flex justify-between items-center w-full">
+                    <span>Show RPS</span>
+                </div>
+            </flux:menu.item>
+            
+            <flux:menu.separator />
 
-        <flux:menu.separator />
-
-        @if (!$data['isTrashed'])
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="

@@ -302,6 +302,7 @@ trait WithMKModal
 
             $this->resetInputMK();
             $this->dispatch('refresh-data-mk');
+            $this->dispatch('refresh-stats-mk'); 
 
             $this->showMKModal = false;
             $this->toast(message: "Mata Kuliah {$validated['nama_mk']}");
@@ -418,7 +419,7 @@ trait WithMKModal
             // SKS
             'sks_kuliah.required' => 'SKS Mata Kuliah wajib diisi!',
             'sks_kuliah.integer' => 'SKS harus berupa angka!',
-            'sks_kuliah.min' => 'SKS minimal adalah 1!',
+            'sks_kuliah.min' => 'SKS minimal adalah 1 SKS!',
 
             // Tipe SKS & Status Wajib
             'tipe_sks.required' => 'Tipe SKS wajib dipilih!',

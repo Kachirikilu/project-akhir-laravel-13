@@ -300,6 +300,8 @@ trait WithRefModal
             $this->resetInputRef();
 
             $this->dispatch('refresh-data-ref');
+            $this->dispatch('refresh-stats-ref');
+
             $this->showRefModal = false;
 
         } catch (ValidationException $e) {

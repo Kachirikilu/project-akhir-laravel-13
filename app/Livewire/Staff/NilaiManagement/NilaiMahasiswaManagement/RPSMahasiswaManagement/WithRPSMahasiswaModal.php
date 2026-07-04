@@ -8,7 +8,7 @@ use App\Models\Penilaian\NilaiMahasiswa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-trait WithNilaiModal
+trait WithRPSMahasiswaModal
 {
     use HasErrorCount;
     use HasToast;
@@ -32,13 +32,11 @@ trait WithNilaiModal
 
             return;
         }
-
         /*
         |--------------------------------------------------------------------------
         | 1. Ambil Data
         |--------------------------------------------------------------------------
         */
-
         $nilai_mahasiswa = NilaiMahasiswa::find($selectedIdNilai);
 
         if (! $nilai_mahasiswa) {
@@ -50,13 +48,11 @@ trait WithNilaiModal
 
             return;
         }
-
         /*
         |--------------------------------------------------------------------------
         | 2. Validasi Dinamis
         |--------------------------------------------------------------------------
         */
-
         $rules = [];
         $messages = [];
 
@@ -152,12 +148,12 @@ trait WithNilaiModal
 
             DB::commit();
 
-            $this->dispatch('refresh-data-nilai');
+            $this->dispatch('refresh-data-rps-mahasiswa');
             $this->resetInputNilaiMahasiswa();
             $this->showEditNilai = false;
 
             $this->toast(
-                message: 'Nilai Mahasiswa berhasil diperbarui!',
+                message: 'Nilai Mahasiswa',
                 type: 'update'
             );
 

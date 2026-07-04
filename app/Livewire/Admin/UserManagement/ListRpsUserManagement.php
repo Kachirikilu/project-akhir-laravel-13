@@ -19,6 +19,14 @@ class ListRpsUserManagement extends Component
 
     public $withRPS;
 
+    public $noModalRPS;
+
+    public function mount($noModalRPS = false)
+    {
+        $this->noModalRPS = $noModalRPS;
+    }
+
+
     #[On('refresh-data-rps-user-rps')]
     public function handleRefreshShowUser()
     {

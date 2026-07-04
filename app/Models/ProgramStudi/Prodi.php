@@ -300,7 +300,8 @@ class Prodi extends Model
 
             // Nama Prodi & Kode Prodi
             $q->where('prodis.nama_pr', 'like', $searchTerm)
-                ->orWhere('prodis.kode_pr', 'like', $searchTerm);
+                ->orWhere('prodis.kode_pr', 'like', $searchTerm)
+                ->orWhere('prodis.target_sks', 'like', $searchTerm);
 
             // Cari berdasarkan ID
             if (is_numeric($search)) {

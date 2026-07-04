@@ -95,7 +95,7 @@ trait WithRPSFilters
         return $queryRPS;
     }
 
-    public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
+    public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear, $prId = null)
     {
         // if (Auth::user()?->dosen) {
         //     if ($this->filterRPS === '') {
@@ -131,15 +131,50 @@ trait WithRPSFilters
                 $q->where('tim_dosens.pr_id', Auth::user()->pr_id);
             });
         } elseif ($this->filterRPS === 'rps-akademik') {
-            $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
+            if (! empty($prId)) {
+                $queryRPS->where('akademik', 'like', '%'.$currentYear.'%')
+                    ->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                        $q->where('prodis.id', $prId);
+                    });
+            } else {
+                $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
+            }
         } elseif ($this->filterRPS === 'rps-rev-new') {
-            $queryRPS->whereYear('revisi', $currentYear);
+            if (! empty($prId)) {
+                $queryRPS->whereYear('revisi', $currentYear)
+                    ->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                        $q->where('prodis.id', $prId);
+                    });
+            } else {
+                $queryRPS->whereYear('revisi', $currentYear);
+            }
         } elseif ($this->filterRPS === 'rps-aktif') {
-            $queryRPS->where('is_draf', false);
+            if (! empty($prId)) {
+                $queryRPS->where('is_draf', false)
+                    ->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                        $q->where('prodis.id', $prId);
+                    });
+            } else {
+                $queryRPS->where('is_draf', false);
+            }
         } elseif ($this->filterRPS === 'rps-draf') {
-            $queryRPS->where('is_draf', true);
+            if (! empty($prId)) {
+                $queryRPS->where('is_draf', true)
+                    ->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                        $q->where('prodis.id', $prId);
+                    });
+            } else {
+                $queryRPS->where('is_draf', true);
+            }
         } elseif ($this->filterRPS === 'rps-older-5') {
-            $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
+            if (! empty($prId)) {
+                $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear])
+                    ->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                        $q->where('prodis.id', $prId);
+                    });
+            } else {
+                $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
+            }
         }
 
         $this->totalGanjilRPS = (clone $queryRPS)->whereHas('mk_rel', function ($q) {

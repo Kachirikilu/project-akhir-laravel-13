@@ -5,7 +5,7 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Dosen Pengajar</h4>
 
-        @if (Auth::user()->admin || $parent !== 'user')
+        @if (Auth::user()->admin && $parent !== 'user')
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'dosen',
                 'isFlyout' => 1,

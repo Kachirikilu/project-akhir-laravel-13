@@ -277,6 +277,7 @@ trait WithSubCPMKModal
             $this->toast(message: "Sub-CPMK {$validated['kode_scpmk_1']}-{$validated['kode_scpmk_2']} berhasil disimpan!");
             $this->resetInputSCPMK();
             $this->dispatch('refresh-data-scpmk');
+            $this->dispatch('refresh-stats-scpmk'); 
             $this->showSCPMKModal = false;
 
         } catch (ValidationException $e) {

@@ -16,8 +16,8 @@
                         'xString' => 'printPDFRPS($store.rps?.rps_id_show, $store.rps?.pr_id_show)',
                         'icon' => 'arrow-down-tray',
                         'isFull' => 1,
-                        'valuePx' => 'px-6',
-                        'valuePy' => 'py-2.5',
+                        'valuePx' => 'px-8',
+                        'valuePy' => 'py-4.5',
                         'color' => 'rose',
                         'wireLoading' => 'printPDFRPS()',
                     ])

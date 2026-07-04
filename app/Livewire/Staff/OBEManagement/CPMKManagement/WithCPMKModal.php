@@ -337,6 +337,7 @@ trait WithCPMKModal
             $this->resetInputCPMK();
 
             $this->dispatch('refresh-data-cpmk');
+            $this->dispatch('refresh-stats-cpmk'); 
             $this->showCPMKModal = false;
 
         } catch (ValidationException $e) {

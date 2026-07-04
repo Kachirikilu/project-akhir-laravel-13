@@ -3,8 +3,10 @@
 namespace App\Livewire\AllRole;
 
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
+use App\Livewire\Global\WithKelasSearchFilters;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasStats;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,8 @@ class KelasManagement extends Component
 {
     use HasSortir;
     use HasToast;
-
+    use HasStats;
+    use WithKelasSearchFilters;
     use WithKelasFilters;
     use WithPagination;
 
@@ -118,6 +121,11 @@ class KelasManagement extends Component
     {
         $this->resetPage();
     }
+    #[On('refresh-stats-kelas')]
+    public function refreshStatsKelasList()
+    {
+        $this->clearKelasStatsCache();
+    }
 
     public function sortBy($field)
     {
@@ -201,104 +209,10 @@ class KelasManagement extends Component
             // =========================
             $queryKelas = $this->inputKelasSearch();
 
-            // =========================
-            // QUERY COUNT (TERPISAH 🔥)
-            // =========================
-            $countKelas = Kelas::query();
-
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryKelas->onlyTrashed();
-                $countKelas->onlyTrashed();
             }
-
-            // =========================
-            // MAP TAB
-            // =========================
-            $mapTipe = [
-                'tatap-muka' => 1,
-                'praktikum' => 2,
-                'praktek-lapangan' => 3,
-                'simulasi' => 4,
-            ];
-
-            $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
-
-            // =========================
-            // STATS GLOBAL (FULL DATA)
-            // =========================
-            $totalKelas = (clone $countKelas)->count();
-            $totalTatapMuka = (clone $countKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.tipe_sks', 1);
-            })->count();
-            $totalPraktikum = (clone $countKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.tipe_sks', 2);
-            })->count();
-            $totalPraktek = (clone $countKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.tipe_sks', 3);
-            })->count();
-            $totalSimulasi = (clone $countKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.tipe_sks', 4);
-            })->count();
-
-            // =========================
-            // STATS PER TAB
-            // =========================
-            $tabQuery = clone $countKelas;
-
-            if ($currentTabTipe) {
-                $tabQuery->whereHas('rps_rel.mk_rel', function ($q) use ($currentTabTipe) {
-                    $q->where('mata_kuliahs.tipe_sks', $currentTabTipe);
-                });
-            }
-
-            if (Auth::user()->dosen) {
-                $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
-                    $mk->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
-                        $q->where('dosens.id', Auth::user()->dosen->id);
-                    });
-                    // ->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                    //     $q->where('dosens.id', Auth::user()->dosen->id);
-                    // });
-                })->count();
-            } elseif (Auth::user()->mahasiswa) {
-                $totalKelasSaya = (clone $tabQuery)->where(function ($mk) {
-                    $mk->whereHas('jadwals.mahasiswas', function ($q) {
-                        $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
-                    });
-                })->count();
-            }
-
-            $totalKelasProdi = (clone $tabQuery)->where(function ($mk) {
-                $mk->whereHas('pr_rel', function ($q) {
-                    $q->where('prodis.id', Auth::user()->pr_id);
-                });
-            })->count();
-
-            $totalWajib = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.is_wajib', true);
-            })->count();
-            $totalPilihan = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.is_wajib', false);
-            })->count();
-            $totalUni = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.level_mk', 4);
-            })->count();
-
-            // $totalGanjilKelas = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
-            //     $q->whereRaw('mata_kuliahs.semester % 2 = 1');
-            // })->count();
-            // $totalGenapKelas = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
-            //     $q->whereRaw('mata_kuliahs.semester % 2 = 0');
-            // })->count();
-
-            // =========================
-            // QUERY FINAL TABLE
-            // =========================
-            if ($currentTabTipe) {
-                $queryKelas->whereHas('rps_rel.mk_rel', function ($q) use ($currentTabTipe) {
-                    $q->where('mata_kuliahs.tipe_sks', $currentTabTipe);
-                });
-            }
+            $stats = $this->getStatsKelas($this->showDeleted);
 
             $this->buttonKelasFilter($queryKelas);
 
@@ -310,21 +224,22 @@ class KelasManagement extends Component
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,
+                'stats' => $stats ?? null,
 
-                'stats' => [
-                    'kelas-saya' => $totalKelasSaya ?? 0,
-                    'kelas-prodi' => $totalKelasProdi,
+                // 'stats' => [
+                //     'kelas-saya' => $totalKelasSaya ?? 0,
+                //     'kelas-prodi' => $totalKelasProdi,
 
-                    'kelas' => $totalKelas,
-                    'kelas-tp' => $totalTatapMuka,
-                    'kelas-pr' => $totalPraktikum,
-                    'kelas-pl' => $totalPraktek,
-                    'kelas-sm' => $totalSimulasi,
+                //     'kelas' => $totalKelas,
+                //     'kelas-tp' => $totalTatapMuka,
+                //     'kelas-pr' => $totalPraktikum,
+                //     'kelas-pl' => $totalPraktek,
+                //     'kelas-sm' => $totalSimulasi,
 
-                    'kelas-wajib' => $totalWajib,
-                    'kelas-pilihan' => $totalPilihan,
-                    'kelas-uni' => $totalUni,
-                ],
+                //     'kelas-wajib' => $totalWajib,
+                //     'kelas-pilihan' => $totalPilihan,
+                //     'kelas-uni' => $totalUni,
+                // ],
             ]);
 
         } catch (QueryException $e) {

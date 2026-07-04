@@ -216,6 +216,7 @@
                 });
             });
         @endphp
+
         @foreach ($sesis as $index => $s)
             @php
                 $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
@@ -228,7 +229,7 @@
             <div x-show="itemVisibilityMap[{{ $s->id }}]?.visible" x-transition>
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? {{ $index }})"
-                    @click="expanded = !expanded" {{-- TAMBAHKAN h-full DAN flex-shrink-0 DI BAWAH INI --}}
+                    @click="expanded = !expanded"
                     class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/40' : '' }}">
 
                     {{-- ═══ HERO ═══ --}}

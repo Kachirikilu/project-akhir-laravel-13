@@ -36,6 +36,7 @@ document.addEventListener("alpine:init", () => {
         nim: "",
         nik: "",
         angkatan: "",
+        angkatan_mhs: "",
         status: "",
 
         // Prodi
@@ -163,6 +164,9 @@ document.addEventListener("alpine:init", () => {
             name,
             label1,
             id1,
+
+            prodi,
+
             rps,
             sks,
 
@@ -171,11 +175,12 @@ document.addEventListener("alpine:init", () => {
             mutu,
 
             angkatan,
-            prId,
         ) {
             this.name = name;
             this.label_id1 = label1;
             this.identity1 = id1;
+
+            this.prodi = prodi;
 
             this.count_rps = rps;
             this.total_sks = sks;
@@ -184,9 +189,11 @@ document.addEventListener("alpine:init", () => {
             this.index_mhs = index;
             this.mutu_mhs = mutu;
 
-            this.angkatan = angkatan;
-            this.pr_id_show = prId;
+            this.angkatan_mhs = angkatan;
+            // this.pr_id_show = prId;
         },
+
+    
         // setValueUserRPS(
         //     name,
         //     nip,
@@ -236,6 +243,7 @@ document.addEventListener("alpine:init", () => {
                 this.nim = "";
                 this.nik = "";
                 this.angkatan = "";
+                this.angkatan_mhs = "";
                 this.status = "";
 
                 this.label_id1 = "";

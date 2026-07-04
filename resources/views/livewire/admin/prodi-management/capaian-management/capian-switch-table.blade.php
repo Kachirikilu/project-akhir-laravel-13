@@ -9,35 +9,35 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['cpl'],
+                    'tabFilter' => $stats['cpl'] ?? null,
                     'tabString' => 'cpl',
                     'tabNameString' => 'Capaian ' . $kode_pr_url,
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['rps'],
+                    'tabFilter' => $stats['rps'] ?? null,
                     'tabString' => 'rps',
                     'tabNameString' => 'RPS',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['cpmk'],
+                    'tabFilter' => $stats['cpmk'] ?? null,
                     'tabString' => 'cpmk',
                     'tabNameString' => 'CPMK',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['scpmk'],
+                    'tabFilter' => $stats['scpmk'] ?? null,
                     'tabString' => 'sub-cpmk',
                     'tabNameString' => 'Sub-CPMK',
                 ])
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mahasiswa'],
+                    'tabFilter' => $stats['mahasiswa'] ?? null,
                     'tabString' => 'mahasiswa',
                     'tabNameString' => 'Mahasiswa',
                 ])

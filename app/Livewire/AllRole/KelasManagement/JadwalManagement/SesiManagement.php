@@ -3,16 +3,13 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiAbsensiModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiModal;
 use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
-use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
@@ -34,13 +31,10 @@ class SesiManagement extends Component
     use HasToast;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
-    use WithMahasiswaSearchFilters;
-    use WithNilaiAbsensiModal;
     use WithNilaiExcel;
     use WithPagination;
     use WithRPSShow;
     use WithSesiFilters;
-    use WithSesiModal;
     use WithUserFilters;
     use WithUserSearchFilters;
     use WithCpmkGrafikShow;
@@ -450,6 +444,7 @@ class SesiManagement extends Component
                 case 'mahasiswa':
                     if ($this->searchMode == 'full') {
                         $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                        // dd($users);
                     } else {
                         $users = $queryUser->paginate($this->perPage);
                     }
@@ -490,12 +485,14 @@ class SesiManagement extends Component
                     break;
             }
 
+
             /**
              * =========================
              * SUMMARY
              * =========================
              */
-            $totalSesiKelas = $countSesi->count() ?: 0;
+            $totalSesiKelas = 16;
+            //  $countSesi->count() ?: 0;
 
             $summaryQuery = User::query()
                 ->whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {

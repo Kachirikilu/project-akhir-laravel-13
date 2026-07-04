@@ -86,20 +86,20 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                        $store.kelas?.reset();
-                        $store.kelas?.setEdit(1);
+                    $store.kelas?.reset();
+                    $store.kelas?.setEdit(1);
 
-                        $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+                    $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
 
-                        $store.kelas?.setValueKelas(
-                            '{{ $data['kode'] ?? '' }}',
-                            '{{ $data['kelas'] ?? '' }}',
-                            '{{ $data['deskripsi_kelas'] ?? '' }}',
-                        );
+                    $store.kelas?.setValueKelas(
+                        '{{ $data['kode'] ?? '' }}',
+                        '{{ $data['kelas'] ?? '' }}',
+                        '{{ $data['deskripsi_kelas'] ?? '' }}',
+                    );
 
-                        $flux.modal('kelas-modal').show();
-                        $dispatch('open-edit-kelas-modal', { id: {{ $data['id'] }} });
-                    "
+                    $flux.modal('kelas-modal').show();
+                    $dispatch('open-edit-kelas-modal', { id: {{ $data['id'] }} });
+                "
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
@@ -112,13 +112,13 @@
 
             <flux:menu.item
                 @click="
-                        $store.kelas?.setDeleteKelas(
-                            '{{ $data['kelas'] ?? '' }}',
-                            '{{ $data['kode'] ?? '' }}'
-                        );
-                        $flux.modal('kelas-delete').show();
-                        $dispatch('open-delete-kelas-modal', { id: {{ $data['id'] }} });
-                    "
+                    $store.kelas?.setDeleteKelas(
+                        '{{ $data['kelas'] ?? '' }}',
+                        '{{ $data['kode'] ?? '' }}'
+                    );
+                    $flux.modal('kelas-delete').show();
+                    $dispatch('open-delete-kelas-modal', { id: {{ $data['id'] }} });
+                "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 

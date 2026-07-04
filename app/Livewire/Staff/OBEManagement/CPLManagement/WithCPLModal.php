@@ -677,6 +677,7 @@ trait WithCPLModal
             $this->resetInputCPL();
 
             $this->dispatch('refresh-data-cpl');
+            $this->dispatch('refresh-stats-cpl'); 
             $this->showCPLModal = false;
             $this->showRPSCPLModal = false;
 

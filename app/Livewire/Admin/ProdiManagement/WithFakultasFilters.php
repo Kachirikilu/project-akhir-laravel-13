@@ -34,7 +34,7 @@ trait WithFakultasFilters
         return $queryFk;
     }
 
-    protected function addRekapFakultas(
+    protected function addRekapFakultasFk(
         $queryFk,
         string $alias = 'rekap_fk'
     ) {
@@ -74,7 +74,7 @@ trait WithFakultasFilters
         return $queryFk;
     }
 
-    protected function addIndexFakultas(
+    protected function addIndexFakultasFk(
         $queryFk,
         string $alias = 'index_fk'
     ) {
@@ -118,7 +118,7 @@ trait WithFakultasFilters
         return $queryFk;
     }
 
-    protected function addAkreditasFakultas(
+    protected function addAkreditasFakultasFk(
         $queryFk,
         string $alias = 'akreditas_fk'
     ) {

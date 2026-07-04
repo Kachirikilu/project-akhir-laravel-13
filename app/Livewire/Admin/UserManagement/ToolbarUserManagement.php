@@ -9,22 +9,6 @@ class ToolbarUserManagement extends Component
 {
     #[Reactive]
     public $data;
-    // public $id;
-    // #[Reactive]
-    // public $email;
-    // public $label_id1;
-    // #[Reactive]
-    // public $identity1;
-    // public $role;
-    // public $withRPS;
-    // public $isTrashed;
-
-    // #[On('refresh-data-user')]
-    // #[On('refresh-table')]
-    // public function refreshUsersList()
-    // {
-    //     $this->dispatch('$refresh')->self();
-    // }
 
     public function placeholder()
     {

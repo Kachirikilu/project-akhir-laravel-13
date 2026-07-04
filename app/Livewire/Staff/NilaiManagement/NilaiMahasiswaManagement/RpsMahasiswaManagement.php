@@ -4,8 +4,8 @@ namespace App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithNilaiSearchFilters;
-use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithNilaiDelete;
-use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithNilaiModal;
+use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithRPSMahasiswaDelete;
+use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithRPSMahasiswaModal;
 use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RPSMahasiswaManagement\WithRPSMahasiswaFilters;
 // use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\WithNilaiMahasiswaFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
@@ -27,8 +27,8 @@ class RpsMahasiswaManagement extends Component
     use HasToast;
 
     use RekapCapaian;
-    use WithNilaiDelete;
-    use WithNilaiModal;
+    use WithRPSMahasiswaDelete;
+    use WithRPSMahasiswaModal;
     // use WithNilaiMahasiswaFilters;
     use WithNilaiSearchFilters;
     use WithNilaiMahasiswaExcel;
@@ -71,7 +71,7 @@ class RpsMahasiswaManagement extends Component
 
     public $akademik_fix_url;
 
-    protected $listeners = ['refresh-table' => 'refreshNilaisList',
+    protected $listeners = ['refresh-table' => 'refreshUsersList', 'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -158,6 +158,14 @@ class RpsMahasiswaManagement extends Component
         session([$sessionKey => $rpsHistory]);
     }
 
+    #[On('refresh-data-rps-mahasiswa')]
+    #[On('refresh-table')]
+    public function refreshNilaisList()
+    {
+        $this->resetPage();
+    }
+
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -170,19 +178,9 @@ class RpsMahasiswaManagement extends Component
         $this->resetPage();
     }
 
-    public function refreshNilaisList()
-    {
-        $this->resetPage();
-    }
-
     public function resetInputFilter()
     {
         $this->reset(['search', 'filterNilai']);
-        $this->resetPage();
-    }
-
-    public function refreshNilaiList()
-    {
         $this->resetPage();
     }
 

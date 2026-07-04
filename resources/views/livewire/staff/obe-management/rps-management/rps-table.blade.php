@@ -355,7 +355,7 @@
                     @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 7])
                 </flux:dropdown>
             </td>
-            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? 'Tidak ada Revisi' }}</td>
+            <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? 'Tidak ada Revisi  ' }}</td>
 
 
             <td class="table-main text-center">

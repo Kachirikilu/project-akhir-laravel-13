@@ -10,7 +10,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['kelas'],
+                    'tabFilter' => $stats['kelas'] ?? null,
                     'tabString' => '',
                     'tabNameString' => 'Semua Kelas',
                 ])
@@ -18,7 +18,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['kelas-tp'],
+                    'tabFilter' => $stats['kelas-tp'] ?? null,
                     'tabString' => 'tatap-muka',
                     'tabNameString' => 'Tatap Muka',
                 ])
@@ -26,7 +26,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['kelas-pr'],
+                    'tabFilter' => $stats['kelas-pr'] ?? null,
                     'tabString' => 'praktikum',
                     'tabNameString' => 'Praktikum',
                 ])
@@ -34,7 +34,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['kelas-pl'],
+                    'tabFilter' => $stats['kelas-pl'] ?? null,
                     'tabString' => 'praktek-lapangan',
                     'tabNameString' => 'Praktek Lapangan',
                 ])
@@ -42,7 +42,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['kelas-sm'],
+                    'tabFilter' => $stats['kelas-sm'] ?? null,
                     'tabString' => 'simulasi',
                     'tabNameString' => 'Simulasi',
                 ])

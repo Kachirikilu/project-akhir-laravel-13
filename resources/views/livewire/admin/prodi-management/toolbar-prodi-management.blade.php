@@ -44,7 +44,8 @@
                         '{{ $data['fakultas_fk'] ?? '' }}',
                         '{{ $data['kode_short'] ?? '' }}',
                         '{{ $data['kode_dp'] ?? '' }}',
-                        '{{ $data['kode_fk'] ?? '' }}'
+                        '{{ $data['kode_fk'] ?? '' }}',
+                        '{{ $data['target_sks'] ?? '' }}'
                     );
                     $flux.modal('prodi-modal').show();
                     $dispatch('open-edit-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $typeXString }}' });

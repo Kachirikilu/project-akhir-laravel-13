@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Livewire\Global\HasToast;
 use Livewire\Attributes\On;
 
-trait WithNilaiDelete
+trait WithRPSMahasiswaDelete
 {    
     use HasToast;
-    public $showNilaiDelete = false;
+    public $showRPSMahasiswaDelete = false;
     public $nilaiIdToDelete;
-    public $nilaiEmailToDelete;
+    public $nilaiNameToDelete;
     public $isPermanentDelete = false;
 
     public function deleteNilai($id, $isTrashed = false)
@@ -29,9 +29,9 @@ trait WithNilaiDelete
         }
 
         $this->nilaiIdToDelete = $id;
-        $this->nilaiEmailToDelete = $nilai->email;
+        $this->nilaiNameToDelete = $nilai->mahasiswa_rel?->name;
         $this->isPermanentDelete = $isTrashed;
-        $this->showNilaiDelete = true;
+        $this->showRPSMahasiswaDelete = true;
     }
 
     public function destroyNilai()
@@ -54,9 +54,9 @@ trait WithNilaiDelete
                 $nilai->delete();
             }
 
-            $this->dispatch('refresh-data-nilai'); 
-            $this->showNilaiDelete = false;
-            $this->toast(message: $this->nilaiEmailToDelete, type: $type);
+            $this->dispatch('refresh-data-rps-mahasiswa'); 
+            $this->showRPSMahasiswaDelete = false;
+            $this->toast(message: 'Nilai ' .$this->nilaiNameToDelete, type: $type);
             $this->cleanupDeleteStateNilai();
             
             if (method_exists($this, 'resetPage')) {
@@ -64,13 +64,13 @@ trait WithNilaiDelete
             }
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data-nilai');
-            $this->showNilaiDelete = false;
+            $this->dispatch('refresh-data-rps-mahasiswa');
+            $this->showRPSMahasiswaDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    #[On('restore-nilai')]
+    #[On('restore-rps-mahasiswa')]
     public function restoreNilai($id)
     {
         if (! $this->AuthCheck()) {
@@ -81,11 +81,11 @@ trait WithNilaiDelete
             $nilai = NilaiMahasiswa::withTrashed()->findOrFail($id);
             $nilai->restore();
 
-            $this->dispatch('refresh-data-nilai');
-            $this->toast(message: $nilai->email, type: 'recycle');
+            $this->dispatch('refresh-data-rps-mahasiswa');
+            $this->toast(message: 'Nilai ' .$nilai->mahasiswa_rel?->name, type: 'recycle');
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data-nilai');
+            $this->dispatch('refresh-data-rps-mahasiswa');
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
@@ -93,8 +93,8 @@ trait WithNilaiDelete
     private function cleanupDeleteStateNilai()
     {
         $this->nilaiIdToDelete = null;
-        $this->nilaiEmailToDelete = null;
+        $this->nilaiNameToDelete = null;
         $this->isPermanentDelete = false;
-        $this->showNilaiDelete = false;
+        $this->showRPSMahasiswaDelete = false;
     }
 }

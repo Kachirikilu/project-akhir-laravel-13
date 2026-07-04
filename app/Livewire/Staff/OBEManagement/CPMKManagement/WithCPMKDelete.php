@@ -77,6 +77,7 @@ trait WithCPMKDelete
             $this->toast(message: $this->cpmkNamaToDelete, type: $type);
             $this->cleanupDeleteStateCPMK();
             $this->dispatch('refresh-data-cpmk'); 
+            $this->dispatch('refresh-stats-cpmk'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -105,6 +106,7 @@ trait WithCPMKDelete
 
             $this->toast(message: 'CPMK '.$cpmk->kode, type: 'recycle');
             $this->dispatch('refresh-data-cpmk');
+            $this->dispatch('refresh-stats-cpmk'); 
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-cpmk');

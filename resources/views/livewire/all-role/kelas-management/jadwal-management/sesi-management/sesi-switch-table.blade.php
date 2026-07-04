@@ -41,7 +41,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['sesi'],
+                    'tabFilter' => $stats['sesi'] ?? null,
                     'tabString' => 'sesi-card',
                     'tabNameString' => 'Pertemuan',
                     'icon' => 'academic-cap',
@@ -50,7 +50,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['sesi'],
+                    'tabFilter' => $stats['sesi'] ?? null,
                     'tabString' => 'sesi-table',
                     'tabNameString' => 'Tabel Pertemuan',
                     'icon' => 'table-cells',
@@ -59,7 +59,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mahasiswa'],
+                    'tabFilter' => $stats['mahasiswa'] ?? null,
                     'tabString' => 'mahasiswa',
                     'icon' => 'users',
                 ])
@@ -68,7 +68,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable,
-                        'tabFilter' => $stats['mahasiswa'],
+                        'tabFilter' => $stats['mahasiswa'] ?? null,
                         'tabString' => 'cpmk',
                         'tabNameString' => 'Capaian Mahasiswa',
                         'icon' => 'academic-cap',

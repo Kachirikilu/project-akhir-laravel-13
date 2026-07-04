@@ -70,6 +70,7 @@ trait WithUserDelete
             }
 
             $this->dispatch('refresh-data-user');
+            $this->dispatch('refresh-stats-user');
             $this->showUserDelete = false;
             $this->toast(message: $this->userEmailToDelete, type: $type, isAkun: true);
             $this->cleanupDeleteStateUser();
@@ -126,6 +127,7 @@ trait WithUserDelete
             $user->restore();
 
             $this->dispatch('refresh-data-user');
+            $this->dispatch('refresh-stats-user');
             $this->toast(message: $user->email, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {

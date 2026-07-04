@@ -108,6 +108,7 @@ trait WithProdiDelete
             // }
 
             $this->dispatch('refresh-data-pr');
+            $this->dispatch('refresh-stats-pr');
             $this->showProdiDelete = false;
             $this->toast(message: $this->prodiNamaToDelete, type: $type);
             $this->cleanupDeleteStateProdi();
@@ -165,6 +166,7 @@ trait WithProdiDelete
             $data->restore();
 
             $this->dispatch('refresh-data-pr');
+            $this->dispatch('refresh-stats-pr');
             $this->showProdiDelete = false;
             $this->toast(message: $message, type: 'recycle');
 

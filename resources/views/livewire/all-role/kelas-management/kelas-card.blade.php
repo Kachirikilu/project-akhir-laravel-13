@@ -227,7 +227,6 @@
                         $flux.modal('rps-detail-modal').show();
                         $dispatch('open-show-rps-modal', { id: {{ $k->rps_id }}, prId: {{ $k->pr_id }} });
                     "
-                    {{-- wire:click="showRPS({{ $k->rps_id }}, {{ $k->pr_id }})" --}}>
                     <flux:icon
                         name="clipboard-document-list" class="w-3.5 h-3.5" />
                     <span>Lihat RPS</span>

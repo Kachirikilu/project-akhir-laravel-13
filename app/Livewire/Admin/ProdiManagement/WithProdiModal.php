@@ -121,6 +121,10 @@ trait WithProdiModal
         $this->resetValidation();
 
         $prodis = [];
+        $data['target_sks'] = (int) $data['target_sks'];
+        if ($data['target_sks'] == null || $data['target_sks'] == 0) {
+            $data['target_sks'] = 144;
+        }
 
         /* ===================== PROGRAM STUDI ===================== */
         if ($this->prodiType === 'prodi') {
@@ -144,6 +148,7 @@ trait WithProdiModal
                     'required', 'string', 'max:255',
                     $this->uniqueRule('prodis', 'nama_pr', $isEditingPr ? $this->selected_id_pr : null),
                 ],
+                'target_sks' => ['integer', 'min:36', 'max:255'],
                 'kode_pr' => [
                     'nullable', 'string', 'min:3', 'max:3',
                     function ($attribute, $value, $fail) use ($data) {
@@ -329,6 +334,7 @@ trait WithProdiModal
                     $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
                     Prodi::create([
                         'nama_pr' => $validated['nama_pr'],
+                        'target_sks' => $validated['target_sks'],
                         'strata' => $validated['strata'],
                         'dp_id' => $validated['dp_id'],
                         'kode_pr' => $validated['kode_pr'],
@@ -353,6 +359,7 @@ trait WithProdiModal
             $this->resetInputProdi();
 
             $this->dispatch('refresh-data-pr');
+            $this->dispatch('refresh-stats-pr');
             $this->showProdiModal = false;
 
         } catch (ValidationException $e) {
@@ -394,6 +401,7 @@ trait WithProdiModal
                     $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
                     Prodi::findOrFail($this->selected_id_pr)->update([
                         'nama_pr' => $validated['nama_pr'],
+                        'target_sks' => $validated['target_sks'],
                         'strata' => $validated['strata'],
                         'dp_id' => $validated['dp_id'],
                         'kode_pr' => $validated['kode_pr'],
@@ -437,6 +445,9 @@ trait WithProdiModal
             'nama_pr.required' => 'Nama Program Studi wajib diisi!',
             'nama_pr.max' => 'Nama Program Studi tidak boleh lebih dari 255 karakter!',
             'nama_pr.unique' => 'Nama Program Studi sudah ada di database!',
+            'target_sks.interger' => 'Target SKS harus berupa angka!',
+            'target_sks.min' => 'Target SKS minimal adalah 36 SKS!',
+            'target_sks.max' => 'Target SKS maksimal adalah 255 SKS!',
             'strata.required' => 'Nama Strata wajib diisi!',
             'strata.in' => 'Nama Strata yang dipilih tidak sesuai dengan kategori yang diizinkan!',
             'kode_pr.min' => 'Kode Program Studi tidak boleh kurang dari 3 karakter!',

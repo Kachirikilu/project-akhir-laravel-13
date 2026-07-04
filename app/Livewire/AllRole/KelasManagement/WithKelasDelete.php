@@ -21,7 +21,7 @@ trait WithKelasDelete
 
     public function deleteKelas($id, $isTrashed = false)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
@@ -47,7 +47,7 @@ trait WithKelasDelete
 
     public function destroyKelas()
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
@@ -85,6 +85,7 @@ trait WithKelasDelete
             // }
 
             $this->dispatch('refresh-data-kelas');
+            $this->dispatch('refresh-stats-kelas');
             // $this->dispatch('refresh-layout-sidebar');
 
             $this->showKelasDelete = false;
@@ -112,7 +113,7 @@ trait WithKelasDelete
     #[On('restore-kelas')]
     public function restoreKelas($id)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return;
         }
 
@@ -121,7 +122,8 @@ trait WithKelasDelete
             $kelas->restore();
 
             $this->dispatch('refresh-data-kelas');
-            $this->toast(message: $kelas->email, type: 'recycle');
+            $this->dispatch('refresh-stats-kelas');
+            $this->toast(message: $kelas->kode, type: 'recycle');
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data-kelas');

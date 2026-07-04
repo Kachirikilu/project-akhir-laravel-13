@@ -22,7 +22,7 @@
                 @click="
                 $store.jadwal?.setEdit(0);
                 $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                $flux.modal('join-jadwal').show();
+                $flux.modal('join-jadwal-modal').show();
                 $store.jadwal?.setValueJoinJadwal(
                     '{{ $data['id'] ?? '' }}',
                     '{{ $data['kode'] ?? '' }}',

@@ -267,24 +267,46 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->kode);
     }
 
+    // protected function kodeBlok(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $ta1 = (int) substr($this->akademik, 1, 4);
+    //         $suffixTahun1 = match (true) {
+    //             $ta1 >= 3000 => $ta1,
+    //             $ta1 >= 2100 => substr((string) $ta1, -3),
+    //             $ta1 >= 2000 => substr((string) $ta1, -2),
+    //             default => (string) $ta1,
+    //         };
+
+    //         $ta2 = (int) substr($this->akademik, 5, 8);
+    //         $suffixTahun2 = match (true) {
+    //             $ta2 >= 3000 => $ta2,
+    //             $ta2 >= 2100 => substr((string) $ta2, -3),
+    //             $ta2 >= 2000 => substr((string) $ta2, -2),
+    //             default => (string) $ta2,
+    //         };
+
+    //         return "{$suffixTahun1}{$suffixTahun2}";
+    //     });
+    // }
+
     protected function kodeBlok(): Attribute
     {
         return Attribute::get(function () {
-            $ta1 = (int) substr($this->akademik, 1, 4);
-            $suffixTahun1 = match (true) {
-                $ta1 >= 3000 => $ta1,
-                $ta1 >= 2100 => substr((string) $ta1, -3),
-                $ta1 >= 2000 => substr((string) $ta1, -2),
-                default => (string) $ta1,
+            $formatTahun = function ($ta) {
+                return match (true) {
+                    $ta >= 3000 => (string) $ta,
+                    $ta >= 2100 => substr((string) $ta, -3),
+                    $ta >= 2000 => str_pad(substr((string) $ta, -2), 2, '0', STR_PAD_LEFT),
+                    default     => (string) $ta,
+                };
             };
 
-            $ta2 = (int) substr($this->akademik, 5, 8);
-            $suffixTahun2 = match (true) {
-                $ta2 >= 3000 => $ta2,
-                $ta2 >= 2100 => substr((string) $ta2, -3),
-                $ta2 >= 2000 => substr((string) $ta2, -2),
-                default => (string) $ta2,
-            };
+            $ta1 = (int) substr($this->akademik, 0, 4);
+            $ta2 = (int) substr($this->akademik, 5, 4);
+
+            $suffixTahun1 = $formatTahun($ta1);
+            $suffixTahun2 = $formatTahun($ta2);
 
             return "{$suffixTahun1}{$suffixTahun2}";
         });

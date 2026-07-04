@@ -40,7 +40,49 @@ trait WithProdiFilters
         return $queryPr;
     }
 
-    protected function addRekapProdi(
+    protected function addMataKuliahProdiPr(
+        $queryPr,
+        string $aliasMk = 'count_mk',
+        string $aliasRps = 'count_rps',
+        string $aliasRpsAktif = 'count_rps_aktif',
+        string $aliasRpsDraf = 'count_rps_draf',
+    ) {
+        $queryPr->selectSub(function ($query) {
+            $query->from('prodi_pivot_mk')
+                ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+                ->selectRaw('COUNT(*)');
+        }, $aliasMk);
+
+        $queryPr->selectSub(function ($query) {
+            $query->from('rps')
+                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+                ->selectRaw('COUNT(rps.id)');
+        }, $aliasRps);
+
+        $queryPr->selectSub(function ($query) {
+            $query->from('rps')
+                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+                ->where('rps.is_draf', 0)
+                ->selectRaw('COUNT(rps.id)');
+        }, $aliasRpsAktif);
+
+        $queryPr->selectSub(function ($query) {
+            $query->from('rps')
+                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+                ->where('rps.is_draf', 1)
+                ->selectRaw('COUNT(rps.id)');
+        }, $aliasRpsDraf);
+
+        return $queryPr;
+    }
+
+    protected function addRekapProdiPr(
         $queryPr,
         string $alias = 'rekap_pr'
     ) {
@@ -66,7 +108,7 @@ trait WithProdiFilters
         return $queryPr;
     }
 
-    protected function addIndexProdi(
+    protected function addIndexProdiPr(
         $queryPr,
         string $alias = 'index_pr'
     ) {
@@ -96,7 +138,7 @@ trait WithProdiFilters
         return $queryPr;
     }
 
-    protected function addAkreditasProdi(
+    protected function addAkreditasProdiPr(
         $queryPr,
         string $alias = 'akreditas_pr'
     ) {
@@ -155,8 +197,14 @@ trait WithProdiFilters
             'fakultas' => $queryPr->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                 ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
                 ->orderBy('fakultas.nama_fk', $this->sortDirection),
+            'target_sks' => $queryPr->orderBy('prodis.target_sks', $this->sortDirection),
             'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
             'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('rekap_pr', $this->sortDirection),
+            'count_mk' => $queryPr->orderBy('count_mk', $this->sortDirection),
+            'count_rps' => $queryPr->orderBy('count_rps', $this->sortDirection),
+            'count_rps_aktif' => $queryPr->orderBy('count_rps_aktif', $this->sortDirection),
+            'count_rps_draf' => $queryPr->orderBy('count_rps_draf', $this->sortDirection),
+
             'kode' => $this->applyProdiKodeSort($queryPr),
             'created_at' => $queryPr->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryPr->orderBy('updated_at', $this->sortDirection),
