@@ -89,14 +89,14 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode PR', 'Program Studi',
-                    'Nilai Capaian Program Studi', '', '',
+                    'Nilai Capaian Program Studi', '', '', '',
                     'Mata Kuliah & Rencana Pembelajaran Semester', '', '', '',
                     'Departemen', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
-                    'Nilai', 'Index', 'Akreditas',
+                    'Nilai', 'Index', 'Akreditas', 'Target SKS',
                     'Jumlah MK', 'Jumlah RPS', 'Jumlah RPS Aktif', 'Jumlah RPS Draf',
                     'Kode DP', 'Nama Departemen',
                     'Kode FK', 'Nama Fakultas',
@@ -149,6 +149,7 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 $pr->rekap_pr ?? 0,
                 $pr->index_pr ?? 0,
                 $pr->akreditas_pr ?? 0,
+                $pr->target_sks ?? 0,
                 $pr->count_mk ?? 0,
                 $pr->count_rps ?? 0,
                 $pr->count_rps_aktif ?? 0,
@@ -182,10 +183,10 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
         }
 
         if ($this->switchTable == '' || $this->switchTable == 'prodi') {
-            $sheet->mergeCells('D4:F4');
-            $sheet->mergeCells('G4:J4');
-            $sheet->mergeCells('K4:L4');
-            $sheet->mergeCells('M4:N4');
+            $sheet->mergeCells('D4:G4');
+            $sheet->mergeCells('H4:K4');
+            $sheet->mergeCells('L4:M4');
+            $sheet->mergeCells('N4:O4');
         } else {
             $sheet->mergeCells('D4:F4');
             $sheet->mergeCells('G4:H4');
@@ -198,7 +199,7 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
         } elseif ($this->switchTable == 'departemen') {
             $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'I'];
         } else {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M'];
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'N'];
         }
 
         $highestRow = $sheet->getHighestRow();

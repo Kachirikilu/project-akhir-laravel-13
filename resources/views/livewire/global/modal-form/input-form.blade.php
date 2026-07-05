@@ -3,6 +3,7 @@
         $alpineState = $alpine ?? 'config';
         $isLivewireState = $isLivewire ?? null;
         $modelLivewire = "{$alpineState}_input.{$modelString}";
+        $isBlur = $isLivewireBlur ?? false;
     @endphp
 
     <div x-data="{
@@ -85,8 +86,8 @@ store.{{ $modelString }} = '';
 store.{{ $modelString }} = valueInput ?? '';
         @endif
 
-    @endif
-"
+            @endif
+        "
         wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
 
         @include('livewire.global.modal-form.partial.label')
@@ -99,20 +100,29 @@ store.{{ $modelString }} = valueInput ?? '';
                     x-bind:class="$store.{{ $alpineState }}?.colorIcon" />
             </div>
 
-            <input @if ($isReadonly ?? null) readonly @endif
-                @if ($isLivewireState) @if (isset($itemsString))
+        <input
+            @if ($isReadonly ?? null) readonly @endif
+
+            @if ($isLivewireState)
+                @if (isset($itemsString))
                     wire:model="{{ $modelLivewire . '.' . $itemsString }}"
+                @elseif ($isBlur)
+                    wire:model.live.blur="{{ $modelLivewire }}"
                 @else
-                    wire:model="{{ $modelLivewire }}" @endif
+                    wire:model="{{ $modelLivewire }}"
                 @endif
+            @endif
 
-            @if (isset($itemsString)) x-model="valueInput"
-        @else
-            x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
-
+            @if (!$isLivewireState)
+                @if (isset($itemsString))
+                    x-model="valueInput"
+                @else
+                    x-model="$store.{{ $alpineState }}.{{ $modelString }}"
+                @endif
+            @endif
 
             name="{{ $modelString }}"
-            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : ''" {{-- Tipe input dinamis --}}
+            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : '{{ $value ?? ''  }}'" {{-- Tipe input dinamis --}}
             :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
             class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $isReadonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
@@ -143,21 +153,48 @@ store.{{ $modelString }} = valueInput ?? '';
                 "
             {{-- Nomor Telepon --}}
             @elseif (isset($isNoHP) && $isNoHP)
+                type="text"
                 inputmode="numeric"
-                maxLength="18"
-                oninput="
-                let val = this.value.replace(/\D/g, '');
-                val = val.slice(0, 12);
-                
-                let matches = [];
-                if (val.length > 0) matches.push(val.substring(0, 3));
-                if (val.length > 3) matches.push(val.substring(3, 7));
-                if (val.length > 7) matches.push(val.substring(7, 12));
-                
-                this.value = matches.join(' - ');
-                this.dispatchEvent(new Event('input'));
-            "
-            
+                maxlength="18"
+                x-data="{
+                    format(el) {
+                        // 1. Simpan posisi kursor awal (berapa jumlah angka di kiri kursor)
+                        let selectionStart = el.selectionStart;
+                        let val = el.value;
+                        let numbersBeforeCursor = val.substring(0, selectionStart).replace(/\D/g, '').length;
+
+                        // 2. Format nilai
+                        let clean = val.replace(/\D/g, '');
+                        let parts = [];
+                        if (clean.length > 0) parts.push(clean.substring(0, 3));
+                        if (clean.length > 3) parts.push(clean.substring(3, 7));
+                        if (clean.length > 7) parts.push(clean.substring(7, 12));
+                        
+                        let formatted = parts.join(' - ');
+                        el.value = formatted;
+
+                        // 3. Kembalikan kursor ke posisi yang benar berdasarkan jumlah angka
+                        let newCursorPos = 0;
+                        let count = 0;
+                        for (let i = 0; i < formatted.length; i++) {
+                            if (/\d/.test(formatted[i])) count++;
+                            if (count === numbersBeforeCursor) {
+                                newCursorPos = i + 1;
+                                break;
+                            }
+                        }
+                        el.setSelectionRange(newCursorPos, newCursorPos);
+                    }
+                }"
+                x-init="format($el)"
+                x-on:input="format($el)"
+                x-on:keydown.backspace="
+                    // Jika kursor pas di depan separator, geser sedikit agar hapus angka yang benar
+                    let pos = $el.selectionStart;
+                    if ($el.value.substring(pos - 3, pos) === ' - ') {
+                        $el.setSelectionRange(pos - 2, pos - 2);
+                    }
+                "
             {{-- Number/ FLOAT ONLY --}}
             @elseif (isset($floatOnly) && $floatOnly)
 

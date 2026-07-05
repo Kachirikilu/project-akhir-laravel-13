@@ -145,7 +145,7 @@
             <td class="table-second text-center">{{ $mk->id }}</td>
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
                         @include('livewire.global.table.badge.level-mk-badge', [
                             'xValue' => $mk->digit_mk,
                             'sortir' => $mk->level_mk,
@@ -155,7 +155,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="table-main-sticky text-center">
+            <td class="table-main-sticky text-center" wire:click="$dispatch('trigger-mk-modal')">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @include('livewire.global.table.badge.semester-badge', [
@@ -193,7 +193,7 @@
 
             <td class="table-second table-border-l text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
                         @include('livewire.global.table.badge.wajib-badge', [
                             'xValue' => $mk->wajib_text,
                             'sortir' => $mk->wajib,
@@ -205,7 +205,7 @@
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
                     @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 4])

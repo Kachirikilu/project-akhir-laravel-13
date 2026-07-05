@@ -147,7 +147,7 @@ new #[Title('Profile Settings')] class extends Component {
                     @endif
 
                     <div class="grid gap-2">
-                        <input type="file" wire:model.live="photo" id="photo" accept="image/*"
+                        <input type="file" wire:model="photo" id="photo" accept="image/*"
                             class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700" />
 
                         @error('photo')

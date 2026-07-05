@@ -60,7 +60,7 @@
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
                     </button>
                     @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
@@ -114,7 +114,7 @@
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
                         ])
@@ -131,7 +131,7 @@
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
                     @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [

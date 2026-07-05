@@ -95,9 +95,9 @@ store.{{ $modelString }} = valueInput ?? '';
 
         <input @if ($isReadonly ?? null) readonly @endif
             @if ($isLivewire ?? false) @if (isset($itemsString))
-                    wire:model.live="{{ $modelString . '.' . $itemsString }}"
+                    wire:model="{{ $modelString . '.' . $itemsString }}"
                 @else
-                    wire:model.live="{{ $modelString }}" @endif
+                    wire:model="{{ $modelString }}" @endif
             @endif
 
         @if (isset($itemsString)) x-model="valueInput"

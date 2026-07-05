@@ -11,6 +11,7 @@ use App\Models\Akademik\SubCPMK;
 use App\Models\Akademik\TimDosen;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
+use App\Models\Kelas\KelasJadwal;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -39,9 +40,9 @@ trait HasStats
     private function getStatsObeProdi(bool $isTrash = false, $prodiId = null): array
     {
         // 1. Ambil versi saat ini (default ke 1 jika belum pernah diset)
-        $version = Cache::get('stats_obe_version', 1);
+        $version = Cache::get('stats_obe_version_pr', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
-        $cacheKey = "stats_obe_pr_{$version}_" . ($prodiId ?? 'all') . $suffix;
+        $cacheKey = "stats_obe_pr_{$version}_".($prodiId ?? 'all').$suffix;
 
         return Cache::remember($cacheKey, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prodiId) {
             $relations = [
@@ -53,10 +54,13 @@ trait HasStats
             ];
 
             $applyFilter = function ($query, $modelKey) use ($isTrash, $prodiId, $relations) {
-                if ($isTrash) $query->onlyTrashed();
+                if ($isTrash) {
+                    $query->onlyTrashed();
+                }
                 if ($prodiId !== null) {
                     $query->whereHas($relations[$modelKey], fn ($q) => $q->where('prodis.id', $prodiId));
                 }
+
                 return $query;
             };
 
@@ -69,49 +73,63 @@ trait HasStats
             ];
         });
     }
+
     public function clearObeProdiStatsCache($prodiId = null)
     {
         $this->clearCacheProdiStats('obe', $prodiId, 'OBE');
     }
-
 
     // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS
     // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS
     // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS
     private function getStatsRpsProdi(bool $isTrash = false, $prodiId = null): array
     {
-        $version = Cache::get('stats_rps_version', 1);
+        $version = Cache::get('stats_rps_version_pr', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
-        $cacheKey = "stats_rps_pr_{$version}_" . ($prodiId ?? 'all') . $suffix;
-        
+        $prId = $prodiId ?? (Auth::user()->pr_id ?? 'all');
+        $userId = Auth::id();
+
+        // 1. Definisikan semua Key dengan $version
+        $keyGlobal = "stats_rps_global_pr_{$version}{$suffix}";
+        $keyProdi = "stats_rps_prodi_pr_{$version}_{$prId}{$suffix}";
+        $keyUser = "stats_rps_user_pr_{$version}_{$userId}{$suffix}";
+
         $currentYear = now()->year;
         $fiveYearsAgoYear = now()->subYears(5)->year;
 
-        return Cache::remember($cacheKey, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $currentYear, $fiveYearsAgoYear, $prodiId) {
+        // 2. Global Stats
+        $globalStats = Cache::remember($keyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $currentYear, $fiveYearsAgoYear, $prId) {
             $queryRPS = RPS::query();
-            if ($isTrash) $queryRPS->onlyTrashed();
-            
-            if ($prodiId !== null) {
-                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prodiId));
+            if ($isTrash) {
+                $queryRPS->onlyTrashed();
+            }
+
+            // Filter prodi jika perlu di sini (sesuai kebutuhan global Anda)
+            if ($prId !== 'all') {
+                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId));
             }
 
             return [
                 'rps-akademik' => (clone $queryRPS)->where('akademik', 'like', "%$currentYear%")->count(),
-                'rps-rev-new'  => (clone $queryRPS)->whereYear('revisi', $currentYear)->count(),
-                'rps-aktif'    => (clone $queryRPS)->where('is_draf', false)->count(),
-                'rps-draf'     => (clone $queryRPS)->where('is_draf', true)->count(),
-                'rps-older-5'  => (clone $queryRPS)->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear])->count(),
+                'rps-rev-new' => (clone $queryRPS)->whereYear('revisi', $currentYear)->count(),
+                'rps-aktif' => (clone $queryRPS)->where('is_draf', false)->count(),
+                'rps-draf' => (clone $queryRPS)->where('is_draf', true)->count(),
+                'rps-older-5' => (clone $queryRPS)->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear])->count(),
             ];
         });
 
-        $prodiStats = Cache::remember('stats_rps_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+        // 3. Prodi Stats (Sekarang menggunakan key yang menyertakan $version)
+        $prodiStats = Cache::remember($keyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $queryRPS = RPS::query();
             if ($isTrash) {
                 $queryRPS->onlyTrashed();
             }
 
             return [
-                'rps-prodi' => (clone $queryRPS)->whereHas('tim_dosens.pr_rel', function ($q) use ($prId) {
+                'rps-prodi' => (clone $queryRPS)->whereHas('mk_rel.prodis', function ($q) use ($prId) {
+                    $q->where('prodis.id', $prId);
+                })->count(),
+                'rps-prodi-aktif' => (clone $queryRPS)->whereHas('tim_dosens.pr_rel', function ($q) use ($prId) {
                     $q->where('prodis.id', $prId);
                 })->count(),
                 'rps-prodi-non-aktif' => (clone $queryRPS)->whereHas('mk_rel.prodis', function ($q) use ($prId) {
@@ -122,37 +140,41 @@ trait HasStats
             ];
         });
 
+        // 4. User Stats
+        $userStats = [];
         if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            $userStats = Cache::remember('stats_rps_user_pr_'.$userId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+            $userStats = Cache::remember($keyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
                 $queryRPS = RPS::query();
                 if ($isTrash) {
                     $queryRPS->onlyTrashed();
                 }
 
                 return [
-                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', function ($q) use ($userId) {
-                        $q->where('users.id', $userId);
-                    })->count(),
+                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
                 ];
             });
-        } else {
-            $userStats = [];
         }
 
         return array_merge($globalStats, $prodiStats, $userStats);
     }
-    public function clearRpsProdiStatsCache($prodiId = null)
+
+    public function clearRpsProdiStatsCache($prId = null)
     {
-        $this->clearCacheProdiStats('rps', $prodiId, 'Rencana Pembelajaran Semester');
+        $currentVersion = Cache::get('stats_rps_version', 1);
+        Cache::forever('stats_rps_version_pr', $currentVersion + 1);
+        Cache::forget('stats_rps_global_pr_'.$currentVersion.'_normal');
+        Cache::forget('stats_rps_global_pr_'.$currentVersion.'_trash');
+        if ($prId) {
+            $this->toast(text: 'Data statistik Rencana Pembelajaran Semester untuk Program Studi ini diperbarui!', type: 'info', variant: 'info');
+        }
     }
 
     private function getStatsKurikulumProdi(string $prefix, bool $isTrash = false, $prodiId = null): array
     {
         $version = Cache::get("stats_{$prefix}_version", 1);
         $suffix = $isTrash ? '_trash' : '_normal';
-        
-        $cacheKey = "stats_{$prefix}_pr_{$version}_" . ($prodiId ?? 'all') . $suffix;
+
+        $cacheKey = "stats_{$prefix}_pr_{$version}_".($prodiId ?? 'all').$suffix;
         $modelMap = ['cpl' => CPL::class, 'cpmk' => CPMK::class, 'scpmk' => SubCPMK::class];
         $modelClass = $modelMap[$prefix];
 
@@ -164,7 +186,9 @@ trait HasStats
 
         return Cache::remember($cacheKey, now()->addMinutes($this->cacheDurationMinutes), function () use ($modelClass, $prefix, $isTrash, $prodiId, $relationMap) {
             $query = $modelClass::query();
-            if ($isTrash) $query->onlyTrashed();
+            if ($isTrash) {
+                $query->onlyTrashed();
+            }
 
             if ($prodiId !== null) {
                 $query->whereHas($relationMap[$prefix], fn ($q) => $q->where('prodis.id', $prodiId));
@@ -180,14 +204,17 @@ trait HasStats
             return $stats;
         });
     }
+
     public function clearCplProdiStatsCache($prodiId = null)
     {
         $this->clearCacheProdiStats('cpl', $prodiId, 'Capaian Pembelajaran Lulusan');
     }
+
     public function clearCpmkProdiStatsCache($prodiId = null)
     {
         $this->clearCacheProdiStats('cpmk', $prodiId, 'Capaian Pembelajaran Mata Kuliah');
     }
+
     public function clearScpmkProdiStatsCache($prodiId = null)
     {
         $this->clearCacheProdiStats('scpmk', $prodiId, 'Sub-CPMK');
@@ -200,27 +227,32 @@ trait HasStats
     // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa
     private function getStatsMahasiswaProdi(bool $isTrash = false, $prodiId = null): array
     {
-        $version = Cache::get('stats_mhs_version', 1);
+        $version = Cache::get('stats_mhs_version_pr', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
-        $cacheKey = "stats_mhs_pr_{$version}_" . ($prodiId ?? 'all') . $suffix;
+        $cacheKey = "stats_mhs_pr_{$version}_".($prodiId ?? 'all').$suffix;
 
         return Cache::remember($cacheKey, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prodiId) {
             $query = User::query();
-            if ($isTrash) $query->onlyTrashed();
+            if ($isTrash) {
+                $query->onlyTrashed();
+            }
             if ($prodiId !== null) {
                 $query->whereHas('mahasiswa.pr_rel', fn ($q) => $q->where('prodis.id', $prodiId));
             }
 
             return [
-                'mahasiswa-aktif' => (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', 'aktif'))->count(),
-                'mahasiswa-non-aktif' => (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', '!=', 'aktif'))->count(),
+                'mahasiswa-aktif' => $aktif = (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', 'aktif'))->count(),
+                'mahasiswa-non-aktif' => $nonAktif = (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', 'non-aktif'))->count(),
+                'mahasiswa-total' => $aktif + $nonAktif,
             ];
         });
     }
+
     public function clearMahasiswaProdiStatsCache($prodiId = null)
     {
         $this->clearCacheProdiStats('mhs', $prodiId, 'Mahasiswa');
     }
+
     private function clearCacheProdiStats($prefix, $prodiId, $label)
     {
         if ($prodiId !== null) {
@@ -241,10 +273,18 @@ trait HasStats
     // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas
     private function getStatsKelas(bool $isTrash = false): array
     {
-        $suffix = $isTrash ? '_trash' : '_normal';
+        $version = Cache::get('stats_kelas_version', 1);
         $prId = Auth::user()->pr_id ?? 'all';
+        $suffix = $isTrash ? '_trash' : '_normal';
+        $userId = Auth::id();
 
-        $globalStats = Cache::remember('stats_kelas'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
+        // SEMUA KEY HARUS MEMAKAI $version
+        $keyGlobal = "stats_kelas_global_{$version}{$suffix}";
+        $keyProdi = "stats_kelas_pr_{$version}_{$prId}{$suffix}";
+        $keyUser = "stats_kelas_user_{$userId}_{$version}{$suffix}";
+
+        // 1. Global Stats
+        $globalStats = Cache::remember($keyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
             $queryKelas = Kelas::query();
             if ($isTrash) {
                 $queryKelas->onlyTrashed();
@@ -252,54 +292,117 @@ trait HasStats
 
             return [
                 'kelas' => (clone $queryKelas)->count(),
-                'kelas-tp' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                    $q->where('tipe_sks', 1);
-                })->count(),
-
-                'kelas-pr' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                    $q->where('tipe_sks', 2);
-                })->count(),
-
-                'kelas-pl' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                    $q->where('tipe_sks', 3);
-                })->count(),
-
-                'kelas-sm' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', function ($q) {
-                    $q->where('tipe_sks', 4);
-                })->count(),
+                'kelas-tp' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 1))->count(),
+                'kelas-pr' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 2))->count(),
+                'kelas-pl' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 3))->count(),
+                'kelas-sm' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 4))->count(),
             ];
         });
-        $prodiStats = Cache::remember('stats_kelas_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+
+        // 2. Prodi Stats
+        $prodiStats = Cache::remember($keyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $queryKelas = Kelas::query();
             if ($isTrash) {
                 $queryKelas->onlyTrashed();
             }
+            if ($prId !== 'all') {
+                $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $prId));
+            }
 
-            $tabQuery = clone $queryKelas;
-            // $this->buttonMKSwitch($tabQuery);
-
-            return [
-                'kelas-prodi' => (clone $tabQuery)->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $prId))->count(),
-                'kelas-opsi' => (clone $tabQuery)->count(),
-                'kelas-wajib' => (clone $tabQuery)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', true))->count(),
-                'kelas-pilihan' => (clone $tabQuery)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', false))->count(),
-                'kelas-uni' => (clone $tabQuery)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 4))->count(),
-            ];
+            return ['kelas-prodi' => (clone $queryKelas)->count()];
         });
-        if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            $userStats = Cache::remember('stats_kelas_user_'.$userId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+
+        // 3. User Stats
+        $userStats = [];
+        if (Auth::check()) {
+            $userStats = Cache::remember($keyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+                $today = now()->format('Y-m-d');
+
                 $queryKelas = Kelas::query();
                 if ($isTrash) {
                     $queryKelas->onlyTrashed();
                 }
 
+                $queryJadwal = KelasJadwal::query()
+                    ->whereHas('sesis', fn ($q) => $q->whereDate('tanggal', $today))
+                    ->whereHas('kelas_rel', function ($q) use ($isTrash) {
+                        if ($isTrash) {
+                            $q->onlyTrashed();
+                        }
+                    });
+
+                if (Auth::user()->dosen) {
+                    $queryBase = (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
+                } elseif (Auth::user()->mahasiswa) {
+                    $queryBase = (clone $queryKelas)->whereHas('jadwals.mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryJadwal->whereHas('mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
+                } else {
+                    return [
+                        'kelas-saya' => 0,
+                        'jadwal-saya-hari-ini' => 0,
+                        'jadwal-sks-saya-hari-ini' => 0,
+                        'kelas-sks-saya' => 0,
+                    ];
+                }
+
+                $totalSksHariIni = (clone $queryJadwal)
+                    ->with('kelas_rel.rps_rel.mk_rel')
+                    ->get()
+                    ->sum(fn ($jadwal) => $jadwal->kelas_rel?->rps_rel?->mk_rel?->sks_kuliah ?? 0);
+
+                $totalSksSaya = (clone $queryBase)
+                    ->with('rps_rel.mk_rel')
+                    ->get()
+                    ->unique('rps_rel.mk_rel.id')
+                    ->sum('rps_rel.mk_rel.sks_kuliah');
+
                 return [
-                    'kelas-saya' => (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
+                    'kelas-saya' => (clone $queryBase)->count(),
+                    'jadwal-saya-hari-ini' => (clone $queryJadwal)->count(),
+                    'jadwal-sks-saya-hari-ini' => $totalSksHariIni,
+                    'kelas-sks-saya' => $totalSksSaya,
                 ];
             });
-        } else {
-            $userStats = [];
+        }        $userStats = [];
+        if (Auth::check()) {
+            $userStats = Cache::remember($keyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+                $today = now()->format('Y-m-d');
+
+                $queryKelas = Kelas::query();
+                if ($isTrash) {
+                    $queryKelas->onlyTrashed();
+                }
+
+                $queryJadwal = KelasJadwal::query()
+                    ->whereHas('sesis', fn ($q) => $q->whereDate('tanggal', $today))
+                    ->whereHas('kelas_rel', function ($q) use ($isTrash) {
+                        if ($isTrash) {
+                            $q->onlyTrashed();
+                        }
+                    });
+
+                if (Auth::user()->dosen) {
+                    $queryBase = (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
+                } elseif (Auth::user()->mahasiswa) {
+                    $queryBase = (clone $queryKelas)->whereHas('jadwals.mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryJadwal->whereHas('mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
+                } else {
+                    return ['kelas-saya' => 0, 'jadwal-saya-hari-ini' => 0, 'jadwal-sks-saya-hari-ini' => 0];
+                }
+
+                $totalSksHariIni = (clone $queryJadwal)
+                    ->with('kelas_rel.rps_rel.mk_rel')
+                    ->get()
+                    ->sum(fn ($jadwal) => $jadwal->kelas_rel?->rps_rel?->mk_rel?->sks_kuliah ?? 0);
+
+                return [
+                    'kelas-saya' => (clone $queryBase)->count(),
+                    'jadwal-saya-hari-ini' => (clone $queryJadwal)->count(),
+                    'jadwal-sks-saya-hari-ini' => $totalSksHariIni,
+                ];
+            });
         }
 
         return array_merge($globalStats, $prodiStats, $userStats);
@@ -307,17 +410,10 @@ trait HasStats
 
     public function clearKelasStatsCache()
     {
-        Cache::forget('stats_kelas_normal');
-        Cache::forget('stats_kelas_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_kelas_prodi_'.$prId.'_normal');
-        Cache::forget('stats_kelas_prodi_'.$prId.'_trash');
-        if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            Cache::forget('stats_kelas_user_'.$userId.'_normal');
-            Cache::forget('stats_kelas_user_'.$userId.'_trash');
-        }
-        $this->toast(text: 'Data statistik Kelas diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_kelas_version', 1);
+        Cache::forever('stats_kelas_version', $currentVersion + 1);
+
+        $this->toast(text: 'Data statistik Kelas telah diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas
     // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas
@@ -355,12 +451,21 @@ trait HasStats
     // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS
     private function getStatsRps(bool $isTrash = false): array
     {
+        $version = Cache::get('stats_rps_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
-        $prId = Auth::user()->pr_id ?? 'all';
+
+        $user = Auth::user();
+        $prId = $user ? ($user->pr_id ?? 'all') : 'all';
+        $userId = Auth::id();
+
+        $cacheKeyGlobal = "stats_rps_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_rps_prodi_{$version}_{$prId}{$suffix}";
+        $cacheKeyUser = "stats_rps_user_{$version}_{$userId}{$suffix}";
+
         $currentYear = now()->year;
         $fiveYearsAgoYear = now()->subYears(5)->year;
 
-        $globalStats = Cache::remember('stats_rps'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $currentYear, $fiveYearsAgoYear) {
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $currentYear, $fiveYearsAgoYear) {
             $queryRPS = RPS::query();
             if ($isTrash) {
                 $queryRPS->onlyTrashed();
@@ -375,40 +480,32 @@ trait HasStats
             ];
         });
 
-        $prodiStats = Cache::remember('stats_rps_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $queryRPS = RPS::query();
             if ($isTrash) {
                 $queryRPS->onlyTrashed();
             }
 
             return [
-                'rps-prodi' => (clone $queryRPS)->whereHas('tim_dosens.pr_rel', function ($q) use ($prId) {
-                    $q->where('prodis.id', $prId);
-                })->count(),
-                'rps-prodi-non-aktif' => (clone $queryRPS)->whereHas('mk_rel.prodis', function ($q) use ($prId) {
-                    $q->where('prodis.id', $prId);
-                })->whereDoesntHave('tim_dosens.pr_rel', function ($q) use ($prId) {
-                    $q->where('prodis.id', $prId);
-                })->count(),
+                'rps-prodi' => (clone $queryRPS)->whereHas('tim_dosens.pr_rel', fn ($q) => $q->where('prodis.id', $prId))->count(),
+                'rps-prodi-non-aktif' => (clone $queryRPS)->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $prId))
+                    ->whereDoesntHave('tim_dosens.pr_rel', fn ($q) => $q->where('prodis.id', $prId))->count(),
             ];
         });
 
+        $userStats = [];
         if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            $userStats = Cache::remember('stats_rps_user_'.$userId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+            $userStats = Cache::remember($cacheKeyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
                 $queryRPS = RPS::query();
                 if ($isTrash) {
                     $queryRPS->onlyTrashed();
                 }
 
                 return [
-                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', function ($q) use ($userId) {
-                        $q->where('users.id', $userId);
-                    })->count(),
+                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
+                    'rps-saya-aktif' => (clone $queryRPS)->where('is_draf', false)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
                 ];
             });
-        } else {
-            $userStats = [];
         }
 
         return array_merge($globalStats, $prodiStats, $userStats);
@@ -416,17 +513,14 @@ trait HasStats
 
     public function clearRpsStatsCache()
     {
-        Cache::forget('stats_rps_normal');
-        Cache::forget('stats_rps_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_rps_prodi_'.$prId.'_normal');
-        Cache::forget('stats_rps_prodi_'.$prId.'_trash');
-        if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            Cache::forget('stats_rps_user_'.$userId.'_normal');
-            Cache::forget('stats_rps_user_'.$userId.'_trash');
-        }
-        $this->toast(text: 'Data statistik Rencana Pembelajaran Semester diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_rps_version', 1);
+        Cache::forever('stats_rps_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Rencana Pembelajaran Semester diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
 
     // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL
@@ -455,8 +549,6 @@ trait HasStats
         });
     }
 
-    // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL
-    // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL
     public function clearCplStatsCache()
     {
         Cache::forget('stats_cpl_normal');
@@ -464,8 +556,6 @@ trait HasStats
         $this->toast(text: 'Data statistik Capaian Pembelajaran Lulusan diperbarui!', type: 'info', variant: 'info');
     }
 
-    // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK
-    // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK // Statistik CPMK CPMK CPMK
     public function clearCpmkStatsCache()
     {
         Cache::forget('stats_cpmk_normal');
@@ -473,8 +563,6 @@ trait HasStats
         $this->toast(text: 'Data statistik Capaian Pembelajaran Mata Kuliah diperbarui!', type: 'info', variant: 'info');
     }
 
-    // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK
-    // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK
     public function clearScpmkStatsCache()
     {
         Cache::forget('stats_scpmk_normal');
@@ -511,9 +599,6 @@ trait HasStats
     {
         Cache::forget('stats_ref_normal');
         Cache::forget('stats_ref_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_ref_prodi_'.$prId.'_normal');
-        Cache::forget('stats_ref_prodi_'.$prId.'_trash');
         $this->toast(text: 'Data statistik Referensi diperbarui!', type: 'info', variant: 'info');
     }
 
@@ -521,11 +606,16 @@ trait HasStats
     // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen
     private function getStatsTimDosen(bool $isTrash = false): array
     {
+        $version = Cache::get('stats_tim_dosen_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
         $prId = Auth::user()->pr_id ?? 'all';
         $userId = Auth::id();
 
-        $globalStats = Cache::remember('stats_tim_dosen'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+        $cacheKeyGlobal = "stats_tim_dosen_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_tim_dosen_prodi_{$version}_{$prId}{$suffix}";
+        $cacheKeyUser = "stats_tim_dosen_user_{$version}_{$userId}{$suffix}";
+
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
             $query = TimDosen::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -536,10 +626,21 @@ trait HasStats
                 'tim-dosen-non-rps' => (clone $query)->whereDoesntHave('rps')->count(),
                 'tim-dosen-all' => (clone $query)->count(),
                 'tim-dosen-saya' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('user_id', $userId))->count(),
+                'tim-dosen-saya-aktif' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('user_id', $userId))
+                    ->whereHas('rps', fn ($q) => $q->where('is_draf', false))->count(),
+                'tim-dosen-saya-ketua' => (clone $query)->whereHas('dosens', function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                        ->where('tim_dosen_pivot_dosen.is_ketua', true);
+                })->count(),
+                'tim-dosen-saya-ketua-aktif' => (clone $query)->whereHas('dosens', function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                        ->where('tim_dosen_pivot_dosen.is_ketua', true);
+                })->whereHas('rps', fn ($q) => $q->where('is_draf', false))->count(),
+
             ];
         });
-        // Stats Prodi
-        $prodiStats = Cache::remember('stats_tim_dosen_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $query = TimDosen::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -550,9 +651,9 @@ trait HasStats
             ];
         });
 
+        $userStats = [];
         if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            $userStats = Cache::remember('stats_tim_dosen_user_'.$userId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+            $userStats = Cache::remember($cacheKeyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
                 $query = TimDosen::query();
                 if ($isTrash) {
                     $query->onlyTrashed();
@@ -562,8 +663,6 @@ trait HasStats
                     'tim-dosen-saya' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('user_id', $userId))->count(),
                 ];
             });
-        } else {
-            $userStats = [];
         }
 
         return array_merge($globalStats, $prodiStats, $userStats);
@@ -571,27 +670,30 @@ trait HasStats
 
     public function clearTimDosenStatsCache()
     {
-        Cache::forget('stats_tim_dosen_normal');
-        Cache::forget('stats_tim_dosen_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_tim_dosen_prodi_'.$prId.'_normal');
-        Cache::forget('stats_tim_dosen_prodi_'.$prId.'_trash');
-        if (Auth::user()->dosen) {
-            $userId = Auth::id();
-            Cache::forget('stats_tim_dosen_user_'.$userId.'_normal');
-            Cache::forget('stats_tim_dosen_user_'.$userId.'_trash');
-        }
-        $this->toast(text: 'Data statistik Tim Dosen diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_tim_dosen_version', 1);
+        Cache::forever('stats_tim_dosen_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Tim Dosen telah diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
 
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
     private function getStatsDosen(bool $isTrash = false): array
     {
+        // Mengambil versi saat ini. Jika belum ada, gunakan 1.
+        $version = Cache::get('stats_dosen_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
         $prId = Auth::user()->pr_id ?? 'all';
 
-        $globalStats = Cache::remember('stats_dosen'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
+        // Key cache dengan menyertakan $version
+        $cacheKeyGlobal = "stats_dosen_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_dosen_prodi_{$version}_{$prId}{$suffix}";
+
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
             $query = User::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -602,11 +704,11 @@ trait HasStats
                 'dosen-non-rps' => (clone $query)->whereDoesntHave('dosen.tim_dosens.rps')->count(),
                 'dosen-all' => (clone $query)->whereHas('dosen')->count(),
                 'dosen-aktif' => (clone $query)->whereHas('dosen', fn ($q) => $q->where('status', 'aktif'))->count(),
-                'dosen-non-aktif' => (clone $query)->whereHas('dosen', fn ($q) => $q->where('status', '!=', 'aktif'))->count(),
+                'dosen-non-aktif' => (clone $query)->whereHas('dosen', fn ($q) => $q->where('status', 'non-aktif'))->count(),
             ];
         });
 
-        $prodiStats = Cache::remember('stats_dosen_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $query = User::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -614,6 +716,10 @@ trait HasStats
 
             return [
                 'dosen-prodi' => (clone $query)->whereHas('dosen.pr_rel', fn ($q) => $q->where('prodis.id', $prId))->count(),
+                'dosen-prodi-aktif' => (clone $query)
+                    ->whereHas('dosen', fn ($q) => $q->where('status', 'Aktif'))
+                    ->whereHas('dosen.pr_rel', fn ($q) => $q->where('prodis.id', $prId))
+                    ->count(),
             ];
         });
 
@@ -622,25 +728,32 @@ trait HasStats
 
     public function clearDosenStatsCache()
     {
-        Cache::forget('stats_dosen_normal');
-        Cache::forget('stats_dosen_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_dosen_prodi_'.$prId.'_normal');
-        Cache::forget('stats_dosen_prodi_'.$prId.'_trash');
-        $this->toast(text: 'Data statistik Dosen diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_dosen_version', 1);
+        Cache::forever('stats_dosen_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Dosen telah diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
-
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
 
     // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa
     // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa
-   private function getStatsMahasiswa(bool $isTrash = false): array
+    private function getStatsMahasiswa(bool $isTrash = false): array
     {
+        // Mengambil versi saat ini. Jika belum ada, gunakan 1.
+        $version = Cache::get('stats_mhs_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
         $prId = Auth::user()->pr_id ?? 'all';
 
-        $globalStats = Cache::remember('stats_mhs'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
+        // Key cache dengan menyertakan $version
+        $cacheKeyGlobal = "stats_mhs_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_mhs_prodi_{$version}_{$prId}{$suffix}";
+
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
             $query = User::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -648,15 +761,12 @@ trait HasStats
 
             return [
                 'mahasiswa-opsi' => (clone $query)->whereHas('mahasiswa')->count(),
-                'mahasiswa-aktif' => (clone $query)->whereHas('mahasiswa', function ($q) {
-                    $q->where('status', 'aktif');
-                })->count(),
-                'mahasiswa-non-aktif' => (clone $query)->whereHas('mahasiswa', function ($q) {
-                    $q->where('status', '!=', 'aktif');
-                })->count(),
+                'mahasiswa-aktif' => (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', 'aktif'))->count(),
+                'mahasiswa-non-aktif' => (clone $query)->whereHas('mahasiswa', fn ($q) => $q->where('status', 'non-aktif'))->count(),
             ];
         });
-        $prodiStats = Cache::remember('stats_mhs_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $query = User::query();
             if ($isTrash) {
                 $query->onlyTrashed();
@@ -666,16 +776,20 @@ trait HasStats
                 'mahasiswa-prodi' => (clone $query)->whereHas('mahasiswa.pr_rel', fn ($q) => $q->where('prodis.id', $prId))->count(),
             ];
         });
+
         return array_merge($globalStats, $prodiStats);
     }
+
     public function clearMahasiswaStatsCache()
     {
-        Cache::forget('stats_mhs_normal');
-        Cache::forget('stats_mhs_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_mhs_prodi_'.$prId.'_normal');
-        Cache::forget('stats_mhs_prodi_'.$prId.'_trash');
-        $this->toast(text: 'Data statistik Mahasiswa diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_mhs_version', 1);
+        Cache::forever('stats_mhs_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Mahasiswa telah diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
 
     // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa
@@ -685,12 +799,19 @@ trait HasStats
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
-    private function getStatsMK(bool $isTrash = false): array
+    private function getStatsMk(bool $isTrash = false): array
     {
+        // Mengambil versi saat ini. Jika belum ada, gunakan 1.
+        $version = Cache::get('stats_mk_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
         $prId = Auth::user()->pr_id ?? 'all';
+        $userId = Auth::id();
 
-        $globalStats = Cache::remember('stats_mk'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
+        $cacheKeyGlobal = "stats_mk_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_mk_prodi_{$version}_{$prId}{$suffix}";
+        $cacheKeyUser = "stats_mk_user_{$version}_{$userId}{$suffix}";
+
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
             $queryMK = MataKuliah::query();
             if ($isTrash) {
                 $queryMK->onlyTrashed();
@@ -704,14 +825,14 @@ trait HasStats
                 'mk-sm' => (clone $queryMK)->where('tipe_sks', 4)->count(),
             ];
         });
-        $prodiStats = Cache::remember('stats_mk_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $queryMK = MataKuliah::query();
             if ($isTrash) {
                 $queryMK->onlyTrashed();
             }
 
             $tabQuery = clone $queryMK;
-            $this->buttonMKSwitch($tabQuery);
 
             return [
                 'mk-prodi' => (clone $tabQuery)->whereHas('prodis', fn ($q) => $q->where('prodis.id', $prId))->count(),
@@ -722,17 +843,43 @@ trait HasStats
             ];
         });
 
-        return array_merge($globalStats, $prodiStats);
+        $userStats = [];
+        if (Auth::user()->dosen) {
+            $userStats = Cache::remember($cacheKeyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
+                $queryMK = MataKuliah::whereHas('rps.tim_dosens.dosens.user', function ($q) use ($userId) {
+                    $q->where('users.id', $userId);
+                });
+                if ($isTrash) {
+                    $queryMK->onlyTrashed();
+                }
+                $mkSaya = $queryMK->get();
+                $currentMonth = now()->month;
+                $isGanjil = ($currentMonth >= 9 || $currentMonth <= 2);
+                $mkSemesterSaya = $mkSaya->filter(function ($mk) use ($isGanjil) {
+                    return $isGanjil ? ($mk->semester % 2 != 0) : ($mk->semester % 2 == 0);
+                });
+
+                return [
+                    'mk-saya' => $mkSaya->count(),
+                    'mk-sks-saya' => $mkSaya->sum('sks'),
+                    'mk-sks-semester-saya' => $mkSemesterSaya->sum('sks'),
+                ];
+            });
+        }
+
+        return array_merge($globalStats, $prodiStats, $userStats);
     }
 
     public function clearMkStatsCache()
     {
-        Cache::forget('stats_mk_normal');
-        Cache::forget('stats_mk_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_mk_prodi_'.$prId.'_normal');
-        Cache::forget('stats_mk_prodi_'.$prId.'_trash');
-        $this->toast(text: 'Data statistik Mata Kuliah diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_mk_version', 1);
+        Cache::forever('stats_mk_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Mata Kuliah telah diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
@@ -783,10 +930,16 @@ trait HasStats
     // Statistik Pengguna (User) // Statistik Pengguna (User) // Statistik Pengguna (User) // Statistik Pengguna (User) // Statistik Pengguna (User)
     private function getStatsUser(bool $isTrash = false): array
     {
+        // Mengambil versi saat ini. Jika belum ada, gunakan 1.
+        $version = Cache::get('stats_user_version', 1);
         $suffix = $isTrash ? '_trash' : '_normal';
         $prId = Auth::user()->pr_id ?? 'all';
 
-        $globalStats = Cache::remember('stats_user'.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
+        // Key cache menggunakan $version
+        $cacheKeyGlobal = "stats_user_global_{$version}{$suffix}";
+        $cacheKeyProdi = "stats_user_prodi_{$version}_{$prId}{$suffix}";
+
+        $globalStats = Cache::remember($cacheKeyGlobal, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash) {
             $queryUser = User::query();
             if ($isTrash) {
                 $queryUser->onlyTrashed();
@@ -795,21 +948,22 @@ trait HasStats
             return [
                 'user-opsi' => (clone $queryUser)->count(),
                 'user-aktif' => (clone $queryUser)->where(fn ($q) => $q->whereHas('admin', fn ($s) => $s->where('status', 'Aktif'))->orWhereHas('dosen', fn ($s) => $s->where('status', 'Aktif'))->orWhereHas('mahasiswa', fn ($s) => $s->where('status', 'Aktif')))->count(),
-                'user-non-aktif' => (clone $queryUser)->where(fn ($q) => $q->whereHas('admin', fn ($s) => $s->where('status', '!=', 'Aktif'))->orWhereHas('dosen', fn ($s) => $s->where('status', '!=', 'Aktif'))->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif')))->count(),
+                'user-non-aktif' => (clone $queryUser)->where(fn ($q) => $q->whereHas('admin', fn ($s) => $s->where('status', 'Non-Aktif'))->orWhereHas('dosen', fn ($s) => $s->where('status', 'Non-Aktif'))->orWhereHas('mahasiswa', fn ($s) => $s->where('status', 'Non-Aktif')))->count(),
                 'user' => (clone $queryUser)->count(),
                 'admin' => (clone $queryUser)->whereHas('admin')->count(),
                 'dosen' => (clone $queryUser)->whereHas('dosen')->count(),
                 'mahasiswa' => (clone $queryUser)->whereHas('mahasiswa')->count(),
             ];
         });
-        $prodiStats = Cache::remember('stats_user_prodi_'.$prId.$suffix, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
+
+        $prodiStats = Cache::remember($cacheKeyProdi, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $prId) {
             $queryUser = User::query();
             if ($isTrash) {
                 $queryUser->onlyTrashed();
             }
 
             return [
-                'user-prodi' => $queryUser->where(function ($q) use ($prId) {
+                'user-prodi' => (clone $queryUser)->where(function ($q) use ($prId) {
                     $q->whereHas('admin.pr_rel', fn ($s) => $s->where('prodis.id', $prId))
                         ->orWhereHas('dosen.pr_rel', fn ($s) => $s->where('prodis.id', $prId))
                         ->orWhereHas('mahasiswa.pr_rel', fn ($s) => $s->where('prodis.id', $prId));
@@ -822,12 +976,14 @@ trait HasStats
 
     public function clearUserStatsCache()
     {
-        Cache::forget('stats_user_normal');
-        Cache::forget('stats_user_trash');
-        $prId = Auth::user()->pr_id;
-        Cache::forget('stats_user_prodi_'.$prId.'_normal');
-        Cache::forget('stats_user_prodi_'.$prId.'_trash');
-        $this->toast(text: 'Data statistik Pengguna diperbarui!', type: 'info', variant: 'info');
+        $currentVersion = Cache::get('stats_user_version', 1);
+        Cache::forever('stats_user_version', $currentVersion + 1);
+
+        $this->toast(
+            text: 'Data statistik Pengguna telah diperbarui!',
+            type: 'info',
+            variant: 'info'
+        );
     }
     // private function getStatsUser(bool $isTrash = false): array
     // {
@@ -859,9 +1015,9 @@ trait HasStats
     //         })->count();
 
     //         $stats['user-non-aktif'] = (clone $queryUser)->where(function ($q) {
-    //             $q->whereHas('admin', fn ($s) => $s->where('status', '!=', 'Aktif'))
-    //                 ->orWhereHas('dosen', fn ($s) => $s->where('status', '!=', 'Aktif'))
-    //                 ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', '!=', 'Aktif'));
+    //             $q->whereHas('admin', fn ($s) => $s->where('status', 'Non-Aktif'))
+    //                 ->orWhereHas('dosen', fn ($s) => $s->where('status', 'Non-Aktif'))
+    //                 ->orWhereHas('mahasiswa', fn ($s) => $s->where('status', 'Non-Aktif'));
     //         })->count();
 
     //         $stats['user'] = (clone $queryUser)->count();

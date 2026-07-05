@@ -58,8 +58,12 @@ trait WithMKFilters
 
     public function buttonMKFilter($queryMK)
     {
-        if ($this->filterMK === '') {
-            $totalMKSaya = $queryMK->whereHas('prodis', function ($q) {
+        if ($this->filterMK === '' && Auth::user()->dosen) {
+            $queryMK->whereHas('rps.tim_dosens.dosens.user', function ($q) {
+                $q->where('users.id', Auth::id());
+            });
+        } elseif (($this->filterMK === '' && Auth::user()->admin) || ($this->filterMK === 'mk-prodi' && Auth::user()->dosen)) {
+            $queryMK->whereHas('prodis', function ($q) {
                 $q->where('prodis.id', Auth::user()->pr_id);
             });
         } elseif ($this->filterMK === 'mk-wajib') {

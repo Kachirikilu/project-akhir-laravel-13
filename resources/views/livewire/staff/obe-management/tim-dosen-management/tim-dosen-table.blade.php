@@ -114,7 +114,7 @@
 
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-tim-dosen-modal')">
                         <flux:badge icon="user-group" color="blue" size="sm">{{ $d->kode }}
                         </flux:badge>
                     </button>
@@ -173,7 +173,7 @@
 
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-tim-dosen-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
                     @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-toolbar-table', ['key' => 2])

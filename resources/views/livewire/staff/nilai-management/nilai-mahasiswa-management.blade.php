@@ -9,6 +9,10 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
     
+    @if (Auth::user()->admin || Auth::user()->dosen)
+        @include('livewire.global.header.tag-user')
+    @endif
+    
     @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header', [
         'alpine' => 'periode',
         'noBackUrl' => $isNilaiMhs ? 1 : 0,

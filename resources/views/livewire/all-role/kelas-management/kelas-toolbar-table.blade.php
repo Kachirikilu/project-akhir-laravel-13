@@ -6,12 +6,12 @@
             'pr_id'          => $k->pr_id,
             'rps_id'         => $k->rps_id,
             'kode'           => $k->kode,
-            'kode_rps'       => $k->rps_rel->kode,
-            'level_mk'       => $k->rps_rel->level_mk,
-            'rps'            => $k->rps_rel->rps,
+            'kode_rps'       => $k->rps_rel->kode ?? null,
+            'level_mk'       => $k->rps_rel->level_mk ?? null,
+            'rps'            => $k->rps_rel->rps ?? null,
             'kelas'          => $k->kelas,
             'deskripsi_kelas'=> $k->deskripsi_kelas,
-            'draf'           => $k->rps_rel->draf,
+            'draf'           => $k->rps_rel->draf ?? null,
             'isTrashed'      => $k->trashed(),
         ]"
         wire:key="toolbar-kelas-{{ $k->id }}-{{ $key }}" 

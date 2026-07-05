@@ -253,9 +253,9 @@ class CapaianManagement extends Component
         }
 
         $aggQuery = Prodi::query()->where('prodis.id', $prodi->id);
-        $this->addRekapProdiPr($aggQuery, 'rekap_pr');
-        $this->addIndexProdiPr($aggQuery, 'index_pr');
-        $this->addAkreditasProdiPr($aggQuery, 'akreditas_pr');
+        // $this->addRekapProdiPr($aggQuery, 'rekap_pr');
+        // $this->addIndexProdiPr($aggQuery, 'index_pr');
+        // $this->addAkreditasProdiPr($aggQuery, 'akreditas_pr');
         $this->addMataKuliahProdiPr($aggQuery, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
 
         $agg = $aggQuery->first();
@@ -325,6 +325,7 @@ class CapaianManagement extends Component
         $this->prodi_data['akreditas_pr'] = $prodi->akreditas_pr ?? null;
         $this->prodi_data['rekap_pr'] = $prodi->rekap_pr ?? null;
         $this->prodi_data['index_pr'] = $prodi->index_pr ?? null;
+        $this->prodi_data['akreditas_pr'] = $prodi->akreditas_pr ?? null;
         $this->prodi_data['count_mk'] = $prodi->count_mk ?? null;
         $this->prodi_data['count_rps_aktif'] = $prodi->count_rps_aktif ?? null;
 

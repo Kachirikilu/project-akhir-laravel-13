@@ -29,7 +29,7 @@
     $statsCards = [
         [
             'title'     => $isStaff ? 'Total Poin Absensi' : 'Poin Absensi Saya',
-            'sub'       => $isStaff ? 'Poin seluruh sesi' : 'Total poin kehadiran',
+            'sub'       => $isStaff ? 'Poin seluruh sesi' : 'Total Poin Kehadiran',
             'value'     => $poinPct,
             'max'       => 100,
             'display'   => $poinPct . '%',
@@ -40,7 +40,7 @@
         ],
         [
             'title'     => 'Masuk',
-            'sub'       => $isStaff ? 'Akumulasi seluruh sesi' : 'Kehadiran saya',
+            'sub'       => $isStaff ? 'Akumulasi Seluruh Sesi' : 'Kehadiran Saya',
             'value'     => $masuk,
             'max'       => $denom,
             'display'   => $masuk . '/' . $denom,
@@ -51,7 +51,7 @@
         ],
         [
             'title'     => 'Izin / Sakit',
-            'sub'       => $isStaff ? 'Akumulasi seluruh sesi' : 'Izin & sakit saya',
+            'sub'       => $isStaff ? 'Akumulasi Seluruh Sesi' : 'Izin & Sakit Saya',
             'value'     => $izinSakit,
             'max'       => $denom,
             'display'   => $izinSakit . '/' . $denom,
@@ -62,7 +62,7 @@
         ],
         [
             'title'     => 'Tidak Hadir',
-            'sub'       => $isStaff ? 'Akumulasi seluruh sesi' : 'Ketidakhadiran saya',
+            'sub'       => $isStaff ? 'Akumulasi Seluruh Sesi' : 'Ketidakhadiran Saya',
             'value'     => $tidakHdr,
             'max'       => $denom,
             'display'   => $tidakHdr . '/' . $denom,

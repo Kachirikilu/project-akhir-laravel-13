@@ -24,8 +24,8 @@
     <livewire:staff.obe-management.rps-management.show-rps-management lazy />
     @if (Auth::user()->admin || Auth::user()->dosen)
         @if (request()->routeIs('kelas-management'))
-            <livewire:all-role.kelas-management.modal-kelas-management lazy />
-            <livewire:all-role.kelas-management.delete-kelas-management lazy />
+            <livewire:all-role.kelas-management.modal-kelas-management />
+            <livewire:all-role.kelas-management.delete-kelas-management />
         @elseif (request()->routeIs('jadwal-management'))
             <livewire:all-role.kelas-management.modal-kelas-management :isJadwal="1" />
             <livewire:all-role.kelas-management.jadwal-management.modal-jadwal-management />

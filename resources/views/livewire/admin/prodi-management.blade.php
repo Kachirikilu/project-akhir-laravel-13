@@ -8,6 +8,8 @@
         activeTable = (segment === 'program-studi-management' || segment === '') ? '' : segment;
      " class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
      
+    @include('livewire.global.header.tag-user')
+
     @include('livewire.admin.prodi-management.prodi-toolbar')
     @include('livewire.admin.prodi-management.prodi-switch-table')
 

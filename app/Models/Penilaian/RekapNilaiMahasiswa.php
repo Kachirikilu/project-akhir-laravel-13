@@ -57,9 +57,9 @@ class RekapNilaiMahasiswa extends Model
             $nilai = $this->nilai;
 
             return match (true) {
-                $nilai >= 85 => 'A',
-                $nilai >= 80 => 'A-',
-                $nilai >= 75 => 'B+',
+                $nilai >= 85 => 'A', // 4.00
+                $nilai >= 80 => 'A-', // 3.70
+                $nilai >= 75 => 'B+', // seterusnya
                 $nilai >= 70 => 'B',
                 $nilai >= 65 => 'B-',
                 $nilai >= 60 => 'C+',

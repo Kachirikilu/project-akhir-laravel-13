@@ -306,6 +306,7 @@ trait WithSesiModal
 
             $this->resetInputSesi();
             $this->dispatch('refresh-data-sesi');
+            $this->dispatch('refresh-stats-kelas');
             $this->showSesiModal = false;
 
             $this->toast(message: "Sesi Pertemuan Ke-{$data['pertemuan_ke']}", type: 'update');

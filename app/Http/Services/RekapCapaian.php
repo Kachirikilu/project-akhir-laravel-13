@@ -3,7 +3,6 @@
 namespace App\Http\Services;
 
 use App\Jobs\ProcessRekapCapaian;
-use App\Livewire\Global\HasToast;
 use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Penilaian\NilaiMahasiswa;
@@ -15,11 +14,12 @@ use App\Models\Penilaian\RekapNilaiMahasiswa;
 use App\Models\Penilaian\RekapRPSProdi;
 use App\Models\Penilaian\RekapSubCPMKMahasiswa;
 use App\Models\Penilaian\RekapSubCPMKProdi;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
 
 trait RekapCapaian
 {
@@ -67,7 +67,6 @@ trait RekapCapaian
     //     }
     // }
 
-    
     public function generateRekapCapaianQueue(?int $prId = null)
     {
         set_time_limit(0);
@@ -90,6 +89,11 @@ trait RekapCapaian
                     $this->generateRekapCPMKProdi($id);
                     $this->generateRekapCPLProdi($id);
 
+                    // Baru
+                    $this->generateRekapProdi($id);
+                    $this->generateRekapDepartemen($id);
+                    $this->generateRekapFakultas($id);
+
                     unset($id);
                     gc_collect_cycles();
                 }
@@ -107,10 +111,14 @@ trait RekapCapaian
             $this->generateRekapCPMKProdi($prId);
             $this->generateRekapCPLProdi($prId);
 
+            // Baru
+            $this->generateRekapProdi($prId);
+            $this->generateRekapDepartemen($prId);
+            $this->generateRekapFakultas($prId);
+
             gc_collect_cycles();
         }
     }
-
 
     private function cleanupGlobalListeners()
     {
@@ -121,8 +129,34 @@ trait RekapCapaian
         RekapCPMKProdi::flushEventListeners();
         RekapCPLProdi::flushEventListeners();
         Mahasiswa::flushEventListeners();
+        Prodi::flushEventListeners();
+        Departemen::flushEventListeners();
+        Fakultas::flushEventListeners();
         gc_collect_cycles();
     }
+
+private function generateRekapProdi($prId)
+{
+    $nilaiRata = RekapCPLProdi::where('pr_id', $prId)->avg('nilai');
+    Prodi::where('id', $prId)->update(['nilai_pr' => $nilaiRata ?? 0]);
+}
+
+private function generateRekapDepartemen($prId)
+{
+    $prodi = Prodi::find($prId);
+    if (! $prodi || ! $prodi->dp_id) return;
+    $nilaiRata = Prodi::where('dp_id', $prodi->dp_id)->avg('nilai_pr');
+    Departemen::where('id', $prodi->dp_id)->update(['nilai_dp' => $nilaiRata ?? 0]);
+}
+
+private function generateRekapFakultas($prId)
+{
+    $prodi = Prodi::with('dp_rel')->find($prId);
+    if (! $prodi || ! $prodi->dp_rel || ! $prodi->dp_rel->fk_id) return;
+    $fkId = $prodi->dp_rel->fk_id;
+    $nilaiRata = Departemen::where('fk_id', $fkId)->avg('nilai_dp');
+    Fakultas::where('id', $fkId)->update(['nilai_fk' => $nilaiRata ?? 0]);
+}
 
     public function generateRekapCapaian($prId = null, $cooldown = null)
     {
@@ -210,7 +244,7 @@ trait RekapCapaian
                     ? ceil($sisaWaktu / 3600).' jam'
                     : ceil($sisaWaktu / 60).' menit';
 
-                $messagePr = "seluruh Program Studi";
+                $messagePr = 'seluruh Program Studi';
                 if ($prId) {
                     $messagePr = "Program Studi $prName";
                 }
@@ -271,6 +305,7 @@ trait RekapCapaian
                             'total_sks' => 0,
                         ]
                     );
+
                     continue;
                 }
 
@@ -284,7 +319,7 @@ trait RekapCapaian
 
                 // 3. Hitung Jumlah RPS dan Total SKS
                 $jumlahRps = $nilaiUnik->pluck('rps_id')->filter()->count();
-                
+
                 $totalSks = $nilaiUnik->sum(function ($item) {
                     return $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
                 });
@@ -293,11 +328,10 @@ trait RekapCapaian
                 $totalBobotSks = $nilaiUnik->sum(function ($item) {
                     $sks = $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
                     // Memanggil $item->nilai_index langsung memicu logika match ($this->nilai_mutu) di model
-                    $indexMataKuliah = (float) ($item->nilai_index ?? 0.00); 
-                    
+                    $indexMataKuliah = (float) ($item->nilai_index ?? 0.00);
+
                     return $sks * $indexMataKuliah;
                 });
-
 
                 $ipk = $totalSks > 0 ? round($totalBobotSks / $totalSks, 2) : 0.00;
                 // 5. Simpan ke database rekap
@@ -407,7 +441,6 @@ trait RekapCapaian
     public function generateRekapCPLProdi(?int $prId = null): void
     {
         if ($prId === null) {
-            // Gabungkan loop Prodi menggunakan chunkById agar hemat RAM
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
                     $this->generateRekapCPLProdi($prodi->id);
@@ -481,7 +514,9 @@ trait RekapCapaian
                         }
                     }
                 }
-            });
+                unset($nilais);
+                gc_collect_cycles();
+            }, 'id');
 
         foreach ($hasil as $cplId => $data) {
             $nilaiAkhir =

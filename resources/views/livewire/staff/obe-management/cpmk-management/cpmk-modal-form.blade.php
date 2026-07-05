@@ -1,4 +1,4 @@
-<flux:modal {{-- :flyout="$isFlyoutCPMK" wire:key="cpmk-modal-{{ $isFlyoutCPMK }}" --}} name="cpmk-modal" wire:model.live="showCPMKModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutCPMK" wire:key="cpmk-modal-{{ $isFlyoutCPMK }}" --}} name="cpmk-modal" wire:model="showCPMKModal" x-data
     @refresh-data-cpmk.window="$store.cpmk.reset()"
     class="w-full md:w-[90vw] max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

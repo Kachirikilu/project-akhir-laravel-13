@@ -351,26 +351,32 @@ class User extends Authenticatable
     protected function noWaFull(): Attribute
     {
         return Attribute::get(function () {
-            $phone = $this->no_hp;
-            $phone = preg_replace('/[^0-9]/', '', $phone);
-            if (empty($phone)) {
-                return null;
-            }
+            $phone = preg_replace('/[^0-9]/', '', $this->no_hp);
+            
+            if (empty($phone)) return null;
+
             if (str_starts_with($phone, '0')) {
-                $phone = '62'.substr($phone, 1);
+                $phone = '62' . substr($phone, 1);
+            } elseif (!str_starts_with($phone, '62')) {
+                $phone = '62' . $phone;
             }
-
             $countryCode = '62';
-            $body = substr($phone, 2);
-            $firstThree = substr($body, 0, 3);
-            $rest = substr($body, 3);
-            if ($rest !== false && $rest !== '') {
-                $chunks = str_split($rest, 4);
-
-                return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
+            $body = substr($phone, 2); 
+            
+            $firstPart = substr($body, 0, 3);
+            $secondPart = substr($body, 3, 4);
+            $thirdPart = substr($body, 7);
+            $result = '+' . $countryCode . '-' . $firstPart;
+            
+            if ($secondPart !== false && $secondPart !== '') {
+                $result .= '-' . $secondPart;
+            }
+            
+            if ($thirdPart !== false && $thirdPart !== '') {
+                $result .= '-' . $thirdPart;
             }
 
-            return '+'.$countryCode.'-'.$firstThree;
+            return $result;
         });
     }
 
@@ -455,21 +461,21 @@ class User extends Authenticatable
     protected function kodeDp(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.kode_dp');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.kode');
         });
     }
 
     protected function departemen(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.departemen');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.departemen');
         });
     }
 
     protected function departemenDp(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.departemen_dp');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.departemen_dp');
         });
     }
 
@@ -483,21 +489,21 @@ class User extends Authenticatable
     protected function kodeFk(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.kode_fk');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.fk_rel.kode_fk');
         });
     }
 
     protected function fakultas(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.fakkultas');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.fk_rel.fakultas');
         });
     }
 
     protected function fakultasFk(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'pr_rel.fakkultas_fk');
+            return data_get($this->getProfile(), 'pr_rel.dp_rel.fk_rel.fakultas_fk');
         });
     }
 

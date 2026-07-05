@@ -10,6 +10,9 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
+    @if (Auth::user()->admin || Auth::user()->dosen)
+        @include('livewire.global.header.tag-user')
+    @endif
     {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
         'alpineKey' => 'nilai?.rps_id_show',
         'isEdit' => 0,

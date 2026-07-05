@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="scpmk-modal" wire:model.live="showSCPMKModal" x-data :flyout="!!$parent"
+    <flux:modal name="scpmk-modal" wire:model="showSCPMKModal" x-data :flyout="!!$parent"
         wire:key="scpmk-modal-{{ $parent }}" @refresh-data-scpmk.window="$store.scpmk.reset()"
         class="w-full md:w-[90vw] max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
         <div class="flex flex-col h-full relative">

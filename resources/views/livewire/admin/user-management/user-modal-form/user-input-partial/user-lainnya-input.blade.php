@@ -38,8 +38,6 @@
                     'isFocusSelect' => 1,
                 ])
             </div>
-
-
         </div>
         @error('no_hp')
             <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $errors->first('no_hp') }}</span>

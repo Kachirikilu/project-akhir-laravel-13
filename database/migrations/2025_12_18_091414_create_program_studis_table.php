@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('kode_fk')->unique();
             $table->string('nama_fk');
+            $table->decimal('nilai_fk', 5, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->index('fk_id');
             $table->string('kode_dp')->nullable();
             $table->string('nama_dp');
+            $table->decimal('nilai_dp', 5, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -32,6 +34,7 @@ return new class extends Migration
             $table->string('nama_pr');
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
             $table->tinyInteger('target_sks')->unsigned()->default(144);
+            $table->decimal('nilai_pr', 5, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['strata', 'nama_pr']);

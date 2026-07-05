@@ -50,7 +50,7 @@ trait WithMKExcel
 
         $sInput = '';
         $sINPUT = '';
-        if ($this->filterMK !== '' && $this->filterMK !== 'mk_universitas') {
+        if ($this->filterMK !== '' && $this->filterMK !== 'mk-saya' && $this->filterMK !== 'mk-prodi' && $this->filterMK !== 'mk_universitas') {
             if ($this->selectedFkId) {
                 $fk = Fakultas::find($this->selectedFkId);
                 $sInput = $fk->fakultas_fk.' ';
@@ -66,7 +66,11 @@ trait WithMKExcel
             }
         }
 
-        if ($this->filterMK == '') {
+        if ($this->filterMK == '' && Auth::user()->dosen) {
+            $name = Auth::user()->name;
+            $sInput = 'Dosen '.$name.'_';
+            $sINPUT = strtoupper($name.' ');
+        } elseif (($this->filterMK == '' && Auth::user()->admin) || ($this->filterMK == 'mk-prodi' && Auth::user()->dosen)) {
             $pr = Auth::user()->prodi;
             $pr_pr = Auth::user()->prodi_pr;
             $sInput = $pr.'_';

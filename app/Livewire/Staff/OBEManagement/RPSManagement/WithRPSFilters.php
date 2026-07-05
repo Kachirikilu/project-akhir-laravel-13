@@ -120,7 +120,7 @@ trait WithRPSFilters
                 $q->where('dosens.id', Auth::user()->dosen->id);
             });
         } elseif ((Auth::user()?->dosen && $this->filterRPS === 'rps-prodi') || (Auth::user()?->admin && ($this->filterRPS === '' || $this->filterRPS === 'rps-prodi'))) {
-            $queryRPS->whereHas('tim_dosens.pr_rel', function ($q) {
+            $queryRPS->whereHas('mk_rel.prodis', function ($q) {
                 $q->where('prodis.id', Auth::user()->pr_id);
             });
         } elseif ($this->filterRPS == 'rps-prodi-non-aktif') {

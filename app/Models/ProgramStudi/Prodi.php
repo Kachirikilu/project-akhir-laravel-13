@@ -2,9 +2,9 @@
 
 namespace App\Models\ProgramStudi;
 
-use App\Models\Auth\Dosen;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\MataKuliah;
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +22,7 @@ class Prodi extends Model
         'kode_pr',
         'nama_pr',
         'strata',
+        'nilai_pr',
     ];
 
     protected $appends = ['kode', 'prodi', 'departemen', 'fakultas'];
@@ -31,7 +32,6 @@ class Prodi extends Model
         'updated_at' => 'date',
     ];
 
-
     public function dosens(): HasMany
     {
         return $this->hasMany(Dosen::class, 'pr_id', 'id');
@@ -40,6 +40,54 @@ class Prodi extends Model
     public function dp_rel()
     {
         return $this->belongsTo(Departemen::class, 'dp_id')->withTrashed();
+    }
+
+    protected function rekapPr(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => number_format($this->nilai_pr ?? 0, 2)
+        );
+    }
+    protected function indexPr(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $nilai = $this->nilai_pr ?? 0;
+                $index = match (true) {
+                    $nilai >= 85 => 4.00,
+                    $nilai >= 80 => 3.70,
+                    $nilai >= 75 => 3.30,
+                    $nilai >= 70 => 3.00,
+                    $nilai >= 65 => 2.70,
+                    $nilai >= 60 => 2.30,
+                    $nilai >= 55 => 2.00,
+                    $nilai >= 40 => 1.00,
+                    default => 0.00,
+                };
+
+                return number_format($index, 2);
+            }
+        );
+    }
+    protected function akreditasPr(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $nilai = $this->nilai_pr ?? 0;
+
+                return match (true) {
+                    $nilai >= 85 => 'A',
+                    $nilai >= 80 => 'A-',
+                    $nilai >= 75 => 'B+',
+                    $nilai >= 70 => 'B',
+                    $nilai >= 65 => 'B-',
+                    $nilai >= 60 => 'C+',
+                    $nilai >= 55 => 'C',
+                    $nilai >= 40 => 'D',
+                    default => 'E',
+                };
+            }
+        );
     }
 
     public function cpls()
@@ -280,7 +328,7 @@ class Prodi extends Model
             preg_replace('/[^A-Za-z0-9]/', '', $search)
         );
 
-        $searchTerm = '%' . $search . '%';
+        $searchTerm = '%'.$search.'%';
 
         $strataExpr = "
             CASE
@@ -331,7 +379,7 @@ class Prodi extends Model
                     ' ',
                     ''
                 ) LIKE ?
-            ", ['%' . $searchNormalized . '%']);
+            ", ['%'.$searchNormalized.'%']);
 
             /*
             |--------------------------------------------------------------------------
@@ -373,7 +421,7 @@ class Prodi extends Model
                     ' ',
                     ''
                 ) LIKE ?
-            ", ['%' . $searchNormalized . '%']);
+            ", ['%'.$searchNormalized.'%']);
 
             // Departemen
             $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {

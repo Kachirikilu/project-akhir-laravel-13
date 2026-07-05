@@ -19,7 +19,7 @@
 
             @if (isset($isSelect) && $isSelect)
 
-                <select wire:model.live="{{ $wireModel }}" {{ isset($isReadonly) && $isReadonly ? 'disabled' : '' }}
+                <select wire:model="{{ $wireModel }}" {{ isset($isReadonly) && $isReadonly ? 'disabled' : '' }}
                     class="{{ $bgClass }} col-start-1 row-start-1 w-full h-full border-0 rounded-none px-3 py-2 text-xs sm:text-sm outline-none">
 
                     @foreach ($xOptions ?? [] as $option)

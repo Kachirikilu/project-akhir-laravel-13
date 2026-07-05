@@ -9,6 +9,8 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
         activeTable = (segment === 'capaian-management' || segment === '') ? '' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
+    
+    @include('livewire.global.header.tag-user')
 
     <div class="mb-6">
         {{-- @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar', [

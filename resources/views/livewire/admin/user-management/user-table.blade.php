@@ -222,7 +222,7 @@
             <td class="table-second text-center">
                 <flux:dropdown>
 
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         @switch($user->role)
                             @case('Admin')
                                 <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
@@ -272,7 +272,7 @@
             @if ($switchTable == 'admin' || $switchTable == 'mahasiswa')
                 <td class="table-second text-center">
                     <flux:dropdown>
-                        <button class="cursor-pointer focus:outline-none">
+                        <button class="cursor-pointer focus:outline-none" wire:click="$dispatch('trigger-user-modal')">
                             @include('livewire.global.table.badge.kode-wilayah-badge', [
                                 'xValue' => $user->wilayah,
                                 'sortir' => $user->kode_wilayah,
@@ -285,7 +285,7 @@
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
                         ])
@@ -299,7 +299,7 @@
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
                     @include('livewire.admin.user-management.user-toolbar-table', ['key' => 4])

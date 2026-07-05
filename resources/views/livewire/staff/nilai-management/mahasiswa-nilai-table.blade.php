@@ -136,7 +136,7 @@
             <td class="table-second text-center">
                 <flux:dropdown>
 
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
 
@@ -173,7 +173,7 @@
                 {{ $user->mahasiswa->ipk_mhs ?? '0.00' }}</td>
             <td class="table-sub table-border-l whitespace-nowrap text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         @include('livewire.global.table.badge.nilai-mutu-badge', [
                             'xValue' => $user->mahasiswa->mutu_mhs ?? 'E',
                         ])
@@ -234,7 +234,7 @@
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer focus:outline-none">
+                    <button class="cursor-pointer focus:outline-none" wire:click="$dispatch('trigger-user-modal')">
                         @include('livewire.global.table.badge.kode-wilayah-badge', [
                             'xValue' => $user->wilayah,
                             'sortir' => $user->kode_wilayah,
@@ -247,7 +247,7 @@
 
             <td class="table-second text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                         @include('livewire.global.table.badge.status-user-badge', [
                             'xValue' => $user->status,
                         ])
@@ -262,7 +262,7 @@
 
             <td class="table-main text-center table-border-x">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
 

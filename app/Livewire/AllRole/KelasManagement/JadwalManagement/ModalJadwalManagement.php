@@ -2,6 +2,7 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use Livewire\Attributes\On;
@@ -9,6 +10,7 @@ use Livewire\Component;
 
 class ModalJadwalManagement extends Component
 {
+    use HasStats;
     use HasToast;
     use WithJadwalModal;
     use WithMahasiswaSearchFilters;

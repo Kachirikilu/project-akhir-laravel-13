@@ -7,6 +7,7 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -15,12 +16,14 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class JadwalManagement extends Component
 {
     use HasGetByKode;
     use HasSortir;
     use HasToast;
+    use HasStats;
     use WithRPSShow;
     use WithNilaiExcel;
     use WithJadwalFilters;
@@ -55,8 +58,14 @@ class JadwalManagement extends Component
 
     public $switchTable = 'jadwal-card';
 
-    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-jadwal' => 'refreshJadwalList', 'refresh-data-kelas' => 'refreshJadwalList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshKelasList',
+        'refresh-data-jadwal' => 'refreshJadwalList',
+        'refresh-data-kelas' => 'refreshJadwalList',
+        'refresh-stats-kelas' => 'refreshStatsKelasList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -73,6 +82,11 @@ class JadwalManagement extends Component
     public function refreshJadwalList()
     {
         $this->resetPage();
+    }
+    #[On('refresh-stats-kelas')]
+    public function refreshStatsKelasList()
+    {
+        $this->clearKelasStatsCache();
     }
 
     public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')

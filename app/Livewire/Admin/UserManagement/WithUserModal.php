@@ -959,6 +959,7 @@ trait WithUserModal
 
             $this->toast(message: "{$roleType} {$labelIdentity1} dengan Email {$validated['email']}", type: 'update', isAkun: true);
             $this->dispatch('refresh-data-user');
+            $this->dispatch('refresh-stats-user');
 
             $this->showUserModal = false;
             $this->showUserRPSModal = false;

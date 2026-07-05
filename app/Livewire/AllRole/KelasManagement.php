@@ -49,8 +49,13 @@ class KelasManagement extends Component
 
     public $selectedRPSId;
 
-    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-kelas' => 'refreshKelasList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshKelasList',
+        'refresh-data-kelas' => 'refreshKelasList',
+        'refresh-stats-kelas' => 'refreshStatsKelasList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -221,6 +226,8 @@ class KelasManagement extends Component
             } else {
                 $kelas = $queryKelas->paginate($this->perPage);
             }
+
+            // dd($kelas);
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,

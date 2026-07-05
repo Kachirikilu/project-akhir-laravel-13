@@ -1,8 +1,12 @@
 @php
-    $pct = $max > 0 ? min(100, round(($value / $max) * 100)) : 0;
+    $rawPct = $max > 0 ? min(100, ($value / $max) * 100) : 0;
+    $pct = (float) number_format($rawPct, 1, '.', '');
+    if (floor($pct) == $pct) {
+        $pct = (int) $pct;
+    }
     $radius = 36;
     $circumference = 2 * M_PI * $radius;
-    $offset = $circumference - ($pct / 100) * $circumference;
+    $offset = $circumference - ($rawPct / 100) * $circumference;
 @endphp
 
 <div

@@ -52,7 +52,7 @@
 
         <input
             @if($isLivewire ?? false)
-                wire:model.live="{{ $modelString }}"
+                wire:model="{{ $modelString }}"
             @endif
             x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
             name="{{ $modelString }}"

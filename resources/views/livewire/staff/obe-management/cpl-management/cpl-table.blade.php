@@ -102,7 +102,7 @@
 
             <td class="table-main-sticky text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
+                    <button class="cursor-pointer" wire:click="$dispatch('trigger-cpl-modal')">
                         <flux:badge icon="beaker" color="sky" size="sm">{{ $c->kode ?? '---' }}
                         </flux:badge>
                     </button>
@@ -121,7 +121,7 @@
                     {{ $c->index_cpl_pr ?? '0.00' }}</td>
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
-                        <button class="cursor-pointer">
+                        <button class="cursor-pointer" wire:click="$dispatch('trigger-cpl-modal')">
                             @include('livewire.global.table.badge.nilai-mutu-badge', [
                                 'xValue' => $c->mutu_cpl_pr ?? 'E',
                             ])
@@ -185,7 +185,7 @@
                 {{ $c->count_rps ?? '-' }} RPS</td>
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-cpl-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
                     @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 3])

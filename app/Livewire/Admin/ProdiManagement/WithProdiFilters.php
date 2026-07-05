@@ -82,94 +82,94 @@ trait WithProdiFilters
         return $queryPr;
     }
 
-    protected function addRekapProdiPr(
-        $queryPr,
-        string $alias = 'rekap_pr'
-    ) {
-        $queryPr->addSelect('prodis.*');
+    // protected function addRekapProdiPr(
+    //     $queryPr,
+    //     string $alias = 'rekap_pr'
+    // ) {
+    //     $queryPr->addSelect('prodis.*');
 
-        $queryPr->selectSub(function ($query) {
-            $query->from('rekap_cpl_prodi')
-                ->whereColumn(
-                    'rekap_cpl_prodi.pr_id',
-                    'prodis.id'
-                )
-                ->selectRaw('
-                ROUND(
-                    COALESCE(
-                        AVG(rekap_cpl_prodi.nilai),
-                        0
-                    ),
-                    2
-                )
-            ');
-        }, $alias);
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rekap_cpl_prodi')
+    //             ->whereColumn(
+    //                 'rekap_cpl_prodi.pr_id',
+    //                 'prodis.id'
+    //             )
+    //             ->selectRaw('
+    //             ROUND(
+    //                 COALESCE(
+    //                     AVG(rekap_cpl_prodi.nilai),
+    //                     0
+    //                 ),
+    //                 2
+    //             )
+    //         ');
+    //     }, $alias);
 
-        return $queryPr;
-    }
+    //     return $queryPr;
+    // }
 
-    protected function addIndexProdiPr(
-        $queryPr,
-        string $alias = 'index_pr'
-    ) {
-        $queryPr->addSelect('prodis.*');
+    // protected function addIndexProdiPr(
+    //     $queryPr,
+    //     string $alias = 'index_pr'
+    // ) {
+    //     $queryPr->addSelect('prodis.*');
 
-        $queryPr->selectSub(function ($query) {
-            $query->from('rekap_cpl_prodi')
-                ->whereColumn(
-                    'rekap_cpl_prodi.pr_id',
-                    'prodis.id'
-                )
-                ->selectRaw('
-                CASE
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 4.00
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 3.70
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 3.30
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 3.00
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 2.70
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 2.30
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 2.00
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 1.00
-                    ELSE 0
-                END
-            ');
-        }, $alias);
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rekap_cpl_prodi')
+    //             ->whereColumn(
+    //                 'rekap_cpl_prodi.pr_id',
+    //                 'prodis.id'
+    //             )
+    //             ->selectRaw('
+    //             CASE
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 4.00
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 3.70
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 3.30
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 3.00
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 2.70
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 2.30
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 2.00
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 1.00
+    //                 ELSE 0
+    //             END
+    //         ');
+    //     }, $alias);
 
-        return $queryPr;
-    }
+    //     return $queryPr;
+    // }
 
-    protected function addAkreditasProdiPr(
-        $queryPr,
-        string $alias = 'akreditas_pr'
-    ) {
-        $queryPr->addSelect('prodis.*');
+    // protected function addAkreditasProdiPr(
+    //     $queryPr,
+    //     string $alias = 'akreditas_pr'
+    // ) {
+    //     $queryPr->addSelect('prodis.*');
 
-        $queryPr->selectSub(function ($query) {
-            $query->from('rekap_cpl_prodi')
-                ->whereColumn(
-                    'rekap_cpl_prodi.pr_id',
-                    'prodis.id'
-                )
-                ->selectRaw("
-                CASE
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 'A'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 'A-'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 'B+'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 'B'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 'B-'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 'C+'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 'C'
-                    WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 'D'
-                    ELSE 'E'
-                END
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rekap_cpl_prodi')
+    //             ->whereColumn(
+    //                 'rekap_cpl_prodi.pr_id',
+    //                 'prodis.id'
+    //             )
+    //             ->selectRaw("
+    //             CASE
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 86 THEN 'A'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 80 THEN 'A-'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 75 THEN 'B+'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 70 THEN 'B'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 65 THEN 'B-'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 60 THEN 'C+'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 56 THEN 'C'
+    //                 WHEN AVG(rekap_cpl_prodi.nilai) >= 40 THEN 'D'
+    //                 ELSE 'E'
+    //             END
 
-            ");
+    //         ");
 
-        }, $alias);
+    //     }, $alias);
 
-        return $queryPr;
+    //     return $queryPr;
 
-    }
+    // }
 
     public function filterByStrata($strata)
     {
@@ -199,7 +199,9 @@ trait WithProdiFilters
                 ->orderBy('fakultas.nama_fk', $this->sortDirection),
             'target_sks' => $queryPr->orderBy('prodis.target_sks', $this->sortDirection),
             'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
-            'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('rekap_pr', $this->sortDirection),
+
+            'nilai_pr', 'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('nilai_pr', $this->sortDirection),
+            
             'count_mk' => $queryPr->orderBy('count_mk', $this->sortDirection),
             'count_rps' => $queryPr->orderBy('count_rps', $this->sortDirection),
             'count_rps_aktif' => $queryPr->orderBy('count_rps_aktif', $this->sortDirection),

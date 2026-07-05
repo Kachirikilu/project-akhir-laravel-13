@@ -603,14 +603,17 @@ trait WithProdiSearchFilters
                 'strata' => fn ($pr) => $pr->strata,
 
                 'rekap_pr',
+                'nilai_pr',
                 'rekap_dp',
+                'nilai_dp',
                 'rekap_fk',
+                'nilai_fk',
                 'index_pr',
                 'index_dp',
                 'index_fk',
                 'akreditas_pr',
                 'akreditas_dp',
-                'akreditas_fk' => fn ($pr) => (float) ($pr->rekap_pr ?? $pr->rekap_dp ?? $pr->rekap_fk ?? 0),
+                'akreditas_fk' => fn ($pr) => (float) ($pr->nilai_pr ?? $pr->nilai_dp ?? $pr->nilai_fk ?? 0),
 
                 'count_mk' => fn ($pr) => $pr->count_mk ?? 0,
                 'count_rps' => fn ($pr) => $pr->count_rps ?? 0,

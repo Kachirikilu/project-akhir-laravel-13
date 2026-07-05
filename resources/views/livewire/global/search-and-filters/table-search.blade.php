@@ -23,7 +23,7 @@
         <div x-data="{ value: @entangle($modelString) }" class="sm:col-span-4 relative w-fit">
             <div class="relative">
 
-                <input x-model="value" wire:model.live.debounce.300ms="{{ $modelString }}" type="text"
+                <input x-model="value" wire:model.debounce.300ms="{{ $modelString }}" type="text"
                     placeholder="{{ $placeholder }}"
                     @if (isset($withSimbol) && $withSimbol) inputmode="text"
                         oninput="

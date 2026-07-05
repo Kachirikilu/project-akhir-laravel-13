@@ -146,7 +146,7 @@ trait WithUserFilters
             });
         } elseif ($this->filterStatus === 'dosen-non-aktif') {
             $queryUser->where(function ($q) {
-                $q->whereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+                $q->whereHas('dosen', fn ($sub) => $sub->where('status', 'Non-Aktif'));
             });
         } elseif ($this->filterStatus === 'user-aktif') {
             $queryUser->where(function ($q) {
@@ -156,9 +156,9 @@ trait WithUserFilters
             });
         } elseif ($this->filterStatus === 'user-non-aktif') {
             $queryUser->where(function ($q) {
-                $q->whereHas('admin', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
-                    ->orWhereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
-                    ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+                $q->whereHas('admin', fn ($sub) => $sub->where('status', 'Non-Aktif'))
+                    ->orWhereHas('dosen', fn ($sub) => $sub->where('status', 'Non-Aktif'))
+                    ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', 'Non-Aktif'));
             });
         } elseif ($this->filterStatus === 'mahasiswa-aktif') {
             $queryUser->where(function ($q) {
@@ -166,7 +166,7 @@ trait WithUserFilters
             });
         } elseif ($this->filterStatus === 'mahasiswa-non-aktif') {
             $queryUser->where(function ($q) {
-                $q->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+                $q->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', 'Non-Aktif'));
             });
         } elseif ($this->filterStatus === '' && ! $havePr) {
             $queryUser->where(function ($q) {

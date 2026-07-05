@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Admin\UserManagement\WithUserExcel;
-use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
@@ -21,7 +20,6 @@ class UserManagement extends Component
     use HasToast;
     use WithUserExcel;
     use WithPagination;
-    use WithUserDelete;
     use WithUserFilters;
     use WithUserSearchFilters;
 

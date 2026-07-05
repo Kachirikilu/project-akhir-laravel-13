@@ -167,7 +167,7 @@
         // MK
         $mkValue = (int) ($matakuliahLulusCount ?? 0);
         $mkDisplay = $mkValue . ' MK';
-        $mkSub = $isIps ? 'Registrasi KRS semester ini' : 'Rencana Pembelajaran Semester';
+        $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Rencana Pembelajaran Semester';
 
         // IPK / IPS
         $ipValue = is_numeric($calculatedIndex) ? (float) $calculatedIndex : 0;
@@ -210,7 +210,7 @@
 
         {{-- 1. SKS — ada rasio, donut penuh --}}
         @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'rectangle-stack',
+            'icon' => 'scale',
             'title' => $isIps ? 'SKS Semester' : 'SKS Ditempuh',
             'sub' => $sksSub,
             'value' => $sksValue,
@@ -225,7 +225,7 @@
 
         {{-- 2. MATA KULIAH — tidak ada rasio, angka saja di tengah --}}
         @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'book-open',
+            'icon' => 'rectangle-stack',
             'title' => $isIps ? 'Mata Kuliah Diambil' : 'Mata Kuliah Lulus',
             'sub' => $mkSub,
             'value' => $mkValue,

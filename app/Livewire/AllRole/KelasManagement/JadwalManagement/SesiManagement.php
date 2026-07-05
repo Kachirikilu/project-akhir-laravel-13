@@ -9,6 +9,7 @@ use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasStats;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
@@ -22,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class SesiManagement extends Component
 {
@@ -29,6 +31,7 @@ class SesiManagement extends Component
     use HasGetByKode;
     use HasSortir;
     use HasToast;
+    use HasStats;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
     use WithNilaiExcel;
@@ -77,8 +80,14 @@ class SesiManagement extends Component
 
     public $mapping_pertemuan;
 
-    protected $listeners = ['refresh-table' => 'refreshKelasList', 'refresh-data-sesi' => 'refreshSesiList', 'refresh-data-jadwal' => 'refreshSesiList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshKelasList',
+        'refresh-data-sesi' => 'refreshSesiList',
+        'refresh-data-jadwal' => 'refreshSesiList',
+        'refresh-stats-kelas' => 'refreshStatsKelasList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -97,6 +106,12 @@ class SesiManagement extends Component
     {
         $this->resetPage();
     }
+    #[On('refresh-stats-kelas')]
+    public function refreshStatsKelasList()
+    {
+        $this->clearKelasStatsCache();
+    }
+
 
 
     public function mount(

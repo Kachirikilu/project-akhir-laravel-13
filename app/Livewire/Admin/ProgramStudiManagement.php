@@ -246,18 +246,22 @@ class ProgramStudiManagement extends Component
             $stats = $this->getStatsProdi($this->showDeleted);
 
 
-            if ($this->switchTable === 'fakultas') {
-                $this->addRekapFakultasFk($queryFk, 'rekap_fk');
-                $this->addIndexFakultasFk($queryFk, 'index_fk');
-                $this->addAkreditasFakultasFk($queryFk, 'akreditas_fk');
-            } elseif ($this->switchTable === 'departemen') {
-                $this->addRekapDepartemenDp($queryDp, 'rekap_dp');
-                $this->addIndexDepartemenDp($queryDp, 'index_dp');
-                $this->addAkreditasDepartemenDp($queryDp, 'akreditas_dp');
-            } else {
-                $this->addRekapProdiPr($queryPr, 'rekap_pr');
-                $this->addIndexProdiPr($queryPr, 'index_pr');
-                $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+            // if ($this->switchTable === 'fakultas') {
+            //     $this->addRekapFakultasFk($queryFk, 'rekap_fk');
+            //     $this->addIndexFakultasFk($queryFk, 'index_fk');
+            //     $this->addAkreditasFakultasFk($queryFk, 'akreditas_fk');
+            // } elseif ($this->switchTable === 'departemen') {
+            //     $this->addRekapDepartemenDp($queryDp, 'rekap_dp');
+            //     $this->addIndexDepartemenDp($queryDp, 'index_dp');
+            //     $this->addAkreditasDepartemenDp($queryDp, 'akreditas_dp');
+            // } else {
+            //     $this->addRekapProdiPr($queryPr, 'rekap_pr');
+            //     $this->addIndexProdiPr($queryPr, 'index_pr');
+            //     $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+            //     $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
+            //     $this->buttonStrataFilter($queryPr);
+            // }
+            if ($this->switchTable === '' || $this->switchTable === 'prodi') {
                 $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
                 $this->buttonStrataFilter($queryPr);
             }
@@ -295,6 +299,7 @@ class ProgramStudiManagement extends Component
                 $countDp->onlyTrashed();
                 $countFk->onlyTrashed();
             }
+
 
             return view('livewire.admin.prodi-management', [
                 'prodis' => $prodis,

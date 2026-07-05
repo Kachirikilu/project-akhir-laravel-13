@@ -1,4 +1,4 @@
-<flux:modal name="tim-dosen-rps-modal" wire:model.live="showTimDosenRPSModal" flyout wire:key="tim-dosen-rps-modal-flyout" 
+<flux:modal name="tim-dosen-rps-modal" wire:model="showTimDosenRPSModal" flyout wire:key="tim-dosen-rps-modal-flyout" 
     class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
     {{-- Loading Overlay --}}

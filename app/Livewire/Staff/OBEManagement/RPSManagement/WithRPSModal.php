@@ -617,6 +617,7 @@ trait WithRPSModal
 
             $this->resetInputRPS();
             $this->dispatch('refresh-data-rps');
+            $this->dispatch('refresh-stats-rps');
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');

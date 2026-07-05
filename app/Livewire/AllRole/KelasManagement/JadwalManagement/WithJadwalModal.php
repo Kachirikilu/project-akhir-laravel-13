@@ -145,6 +145,8 @@ trait WithJadwalModal
 
             $this->resetInputJadwal();
             $this->dispatch('refresh-data-jadwal');
+            $this->dispatch('refresh-data-kelas');
+            $this->clearKelasStatsCache();
             $this->showJadwalJoin = false;
 
             $this->redirect(route('sesi-management', [$jadwal->kode_kelas, $jadwal->kode_jadwal]));
@@ -200,6 +202,8 @@ trait WithJadwalModal
             $this->resetInputJadwal();
             $this->dispatch('refresh-data-jadwal');
             $this->dispatch('refresh-data-sesi');
+            $this->dispatch('refresh-data-kelas');
+            $this->clearKelasStatsCache();
             $this->showJadwalLeft = false;
 
         } catch (\Exception $e) {
@@ -533,6 +537,9 @@ trait WithJadwalModal
 
             $this->resetInputJadwal();
             $this->dispatch('refresh-data-jadwal');
+            $this->dispatch('refresh-data-kelas');
+            $this->dispatch('refresh-stats-kelas');
+            $this->clearKelasStatsCache();
             $this->showJadwalModal = false;
 
         } catch (ValidationException $e) {
@@ -692,6 +699,10 @@ trait WithJadwalModal
                 $this->dispatch('refresh-data-jadwal');
                 $this->showJadwalModal = false;
             }
+            $this->dispatch('refresh-data-kelas');
+            $this->dispatch('refresh-stats-kelas');
+            $this->clearKelasStatsCache();
+
         } catch (ValidationException $e) {
 
             $this->toast(

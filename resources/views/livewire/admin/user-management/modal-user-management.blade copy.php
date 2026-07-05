@@ -1,5 +1,5 @@
 <div :wire:key="'user-modal-'.{{ $userIdModal }}">
-<flux:modal name="user-modal" wire:model.live="showUserModal"
+<flux:modal name="user-modal" wire:model="showUserModal"
     @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()"
     {{-- @sync-user-store.window="$store.user.setValueUser(
         $event.detail.email, $event.detail.password, $event.detail.name,

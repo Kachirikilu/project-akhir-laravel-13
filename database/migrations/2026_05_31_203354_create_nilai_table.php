@@ -89,6 +89,33 @@ return new class extends Migration
             $table->unique(['cpl_id', 'pr_id']);
         });
 
+        // Schema::create('rekap_prodi', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
+        //     $table->index('pr_id');
+        //     $table->decimal('nilai', 5, 2)->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
+        // Schema::create('rekap_departemen', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('dp_id')->nullable()->constrained('prodis')->nullOnDelete();
+        //     $table->index('dp_id');
+        //     $table->decimal('nilai', 5, 2)->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
+        // Schema::create('rekap_fakultas', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('fk_id')->nullable()->constrained('prodis')->nullOnDelete();
+        //     $table->index('fk_id');
+        //     $table->decimal('nilai', 5, 2)->nullable();
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
+
+
+
         Schema::create('rekap_cpmk_prodi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cpmk_id')->constrained('cpmks')->cascadeOnDelete();

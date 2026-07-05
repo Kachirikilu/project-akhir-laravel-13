@@ -250,7 +250,7 @@
                                         <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-700 align-top">
                                             <div class="flex flex-col h-full min-h-[34px]">
                                                 <input type="number" step="0.01"
-                                                    wire:model.live="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"
+                                                    wire:model="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"
                                                     class="w-full h-full border-0 rounded-none px-2 py-2 text-xs text-center outline-none bg-white dark:bg-neutral-800 focus:bg-blue-50/30 focus:ring-1 focus:ring-blue-500 {{ isset($rowNilaiErrors[$i]['sub_cpmk' . $loop->index . 'nilai']) ? 'bg-red-50 text-red-600' : '' }}">
                                                 @if (isset($rowNilaiErrors[$i]['sub_cpmk' . $loop->index . 'nilai']))
                                                     <p

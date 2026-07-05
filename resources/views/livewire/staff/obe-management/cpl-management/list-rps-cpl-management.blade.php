@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="cpl-rps-modal" wire:model.live="showCPLRPSModal" flyout wire:key="cpl-rps-modal-flyout"
+    <flux:modal name="cpl-rps-modal" wire:model="showCPLRPSModal" flyout wire:key="cpl-rps-modal-flyout"
         wire:ignore.self
         class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

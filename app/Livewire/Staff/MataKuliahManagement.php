@@ -178,7 +178,7 @@ class MataKuliahManagement extends Component
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryMK->onlyTrashed();
             }
-            $stats = $this->getStatsMK($this->showDeleted);
+            $stats = $this->getStatsMk($this->showDeleted);
 
             // =========================
             // STATS GLOBAL (FULL DATA)

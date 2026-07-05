@@ -1,6 +1,6 @@
 <div class="p-6">
     <div class="mb-4">
-        <input type="text" wire:model.live="search" placeholder="Cari ID atau Email..."
+        <input type="text" wire:model="search" placeholder="Cari ID atau Email..."
             class="w-full p-2 border rounded shadow-sm focus:ring focus:ring-blue-200">
     </div>
 
