@@ -1,4 +1,4 @@
-<flux:modal name="ref-delete" wire:model="showRefDelete"
+<flux:modal name="ref-delete" wire:model.live="showRefDelete"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <div class="space-y-6">

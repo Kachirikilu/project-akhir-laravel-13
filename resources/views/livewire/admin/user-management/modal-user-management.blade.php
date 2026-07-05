@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="user-modal" wire:model="showUserModal" :flyout="!!$parent"
+    <flux:modal name="user-modal" wire:model.live="showUserModal" :flyout="!!$parent"
         wire:key="user-modal-{{ $parent }}"
         @refresh-data-user.window="$store.user.reset()"
         class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!px-6 md:!px-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">

@@ -65,6 +65,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 });
 
+Route::get('/user-wallpaper/{id}', function ($id) {
+    $wallpaper = Wallpaper::findOrFail($id);
+    if ($wallpaper->user_id !== auth()->id()) abort(403);
+    return Storage::disk('private')->response($wallpaper->path);
+})->middleware('auth');
 
 
 Route::get('/test-wa/{sesi_id}', function ($sesi_id) {

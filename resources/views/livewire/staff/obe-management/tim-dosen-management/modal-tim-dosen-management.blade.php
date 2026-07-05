@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="tim-dosen-modal" wire:model="showTimDosenModal" x-data :flyout="!!$parent"
+    <flux:modal name="tim-dosen-modal" wire:model.live="showTimDosenModal" x-data :flyout="!!$parent"
         wire:key="tim-dosen-modal-{{ $parent }}" @refresh-data-tim-dosen.window="$store.tim_dosen.reset()"
         class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
         <div class="flex flex-col h-full relative">

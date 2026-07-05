@@ -5,6 +5,6 @@
         </div>
     </div>
 
-    <livewire:staff.mk-management.modal-mk-management lazy />
-    <livewire:staff.mk-management.delete-mk-management lazy />
+    <livewire:staff.mk-management.modal-mk-management />
+    <livewire:staff.mk-management.delete-mk-management />
 </x-layouts::app>

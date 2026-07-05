@@ -9,8 +9,8 @@ document.addEventListener("alpine:init", () => {
         isEdit: 0,
         showEdit: 0,
         isForceDelete: 0,
-        colorIcon: "",
-        colorIconBg: "",
+        colorIcon: "text-[var(--contrast-second-text)]",
+        colorIconBg: "bg-[var(--contrast-second-text)]/40",
 
         tim_dosen_delete: "",
         kode_tim_dosen_delete: "",
@@ -122,8 +122,8 @@ document.addEventListener("alpine:init", () => {
             if (isAdd == 0) {
                 this.isEdit = 0;
                 this.isForceDelete = 0;
-                this.colorIcon = "";
-                this.colorIconBg = "";
+                this.colorIcon = "text-[var(--contrast-second-text)]";
+                this.colorIconBg = "bg-[var(--contrast-second-text)]/40";
             }
         },
     });

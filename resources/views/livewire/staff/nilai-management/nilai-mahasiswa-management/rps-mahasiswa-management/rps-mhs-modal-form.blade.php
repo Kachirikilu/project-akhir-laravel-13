@@ -1,4 +1,4 @@
-<flux:modal name="rps-mahasiswa-modal" wire:model="showEditNilai" x-data
+<flux:modal name="rps-mahasiswa-modal" wire:model.live="showEditNilai" x-data
     @refresh-data-rps-mahasiswa.window="$store.nilai?.reset()"
     class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

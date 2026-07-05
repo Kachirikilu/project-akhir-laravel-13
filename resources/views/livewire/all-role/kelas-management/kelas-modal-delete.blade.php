@@ -1,4 +1,4 @@
-<flux:modal name="kelas-delete" wire:model="showKelasDelete"
+<flux:modal name="kelas-delete" wire:model.live="showKelasDelete"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <div class="space-y-6">

@@ -22,32 +22,32 @@
     </div>
 
     @if (request()->routeIs('program-studi-management'))
-    <livewire:admin.prodi-management.modal-prodi-management lazy />
-    <livewire:admin.prodi-management.delete-prodi-management lazy />
+        <livewire:admin.prodi-management.modal-prodi-management />
+        <livewire:admin.prodi-management.delete-prodi-management />
     @endif
 
     @if (request()->routeIs('capaian-management'))
-        <livewire:staff.obe-management.rps-management.modal-rps-management lazy />
-        <livewire:staff.obe-management.rps-management.show-rps-management lazy />
-        <livewire:staff.obe-management.rps-management.delete-rps-management lazy />
+        <livewire:staff.obe-management.rps-management.modal-rps-management />
+        <livewire:staff.obe-management.rps-management.show-rps-management />
+        <livewire:staff.obe-management.rps-management.delete-rps-management />
 
-        <livewire:staff.obe-management.cpl-management.modal-cpl-management lazy />
-        <livewire:staff.obe-management.cpl-management.list-rps-cpl-management lazy />
-        <livewire:staff.obe-management.cpl-management.delete-cpl-management lazy />
+        <livewire:staff.obe-management.cpl-management.modal-cpl-management />
+        <livewire:staff.obe-management.cpl-management.list-rps-cpl-management />
+        <livewire:staff.obe-management.cpl-management.delete-cpl-management />
 
-        <livewire:staff.obe-management.cpmk-management.modal-cpmk-management lazy />
-        <livewire:staff.obe-management.cpmk-management.delete-cpmk-management lazy />
+        <livewire:staff.obe-management.cpmk-management.modal-cpmk-management />
+        <livewire:staff.obe-management.cpmk-management.delete-cpmk-management />
 
-        <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management lazy />
-        <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management lazy />
+        <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management />
+        <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management />
 
-        <livewire:staff.obe-management.referensi-management.modal-referensi-management lazy />
+        <livewire:staff.obe-management.referensi-management.modal-referensi-management />
 
-        <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management lazy />
-        <livewire:staff.obe-management.tim-dosen-management.list-rps-tim-dosen-management lazy />
+        <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management />
+        <livewire:staff.obe-management.tim-dosen-management.list-rps-tim-dosen-management />
 
-        <livewire:admin.user-management.modal-user-management lazy />
-        <livewire:admin.user-management.list-rps-user-management lazy />
-        <livewire:admin.user-management.delete-user-management lazy />
+        <livewire:admin.user-management.modal-user-management />
+        <livewire:admin.user-management.list-rps-user-management />
+        <livewire:admin.user-management.delete-user-management />
     @endif
 </x-layouts::app>

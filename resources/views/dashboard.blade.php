@@ -10,6 +10,6 @@
         </div>
     </div>
 
-    <livewire:all-role.dashboard-management.modal-wa-dashboard-management lazy />
+    <livewire:all-role.dashboard-management.modal-wa-dashboard-management />
 
 </x-layouts::app>

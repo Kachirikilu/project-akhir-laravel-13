@@ -10,80 +10,59 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Rule;
+use App\Livewire\Global\HasToast;
 
 new #[Title('Profile Settings')] class extends Component {
     use ProfileValidationRules;
     use WithFileUploads;
+    use HasToast;
 
-    public string $name = '';
-    public string $email = '';
-
-    #[Rule(['nullable', 'image', 'max:1024'])]
+    #[
+        Rule(
+            ['nullable', 'image', 'max:2048'],
+            message: [
+                'photo.image' => 'File yang diunggah harus berupa gambar!',
+                'photo.max' => 'Ukuran foto maksimal adalah 2 MB!',
+            ],
+        ),
+    ]
     public $photo;
 
-    /**
-     * Mount the component.
-     */
-    public function mount(): void
-    {
-        $user = Auth::user();
-        $this->email = $user->email;
-        
-        $roleModel = $user->admin ?: ($user->dosen ?: $user->mahasiswa);
-        $this->name = $roleModel ? $roleModel->name : $user->name;
-    }
+    protected $listeners = ['validate-photo' => 'updatedPhoto'];
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
+        $this->validate();
         $user = Auth::user();
-        $validated = $this->validate($this->profileRules($user->id));
-
-        $user->email = $validated['email'];
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-        $user->save();
-
-        $roleModel = $user->admin ?: ($user->dosen ?: $user->mahasiswa);
-
-        if ($roleModel) {
-            if ($roleModel->name !== $validated['name']) {
-                $roleModel->name = $validated['name'];
-                $roleModel->save();
-            }
-        } else {
-            $user->name = $validated['name'];
-            $user->save();
-        }
-
         if ($this->photo) {
             $path = $this->photo->store('profile-photos', 'public');
+
             if ($user->profile_photo_path) {
                 Storage::disk('public')->delete($user->profile_photo_path);
             }
             $user->forceFill(['profile_photo_path' => $path])->save();
             $this->photo = null;
+            $this->resetErrorBag();
         }
 
-        Flux::toast(variant: 'success', text: __('Profile updated!'));
-        
+        // Flux::toast(variant: 'success', text: __('Foto Profil diperbarui!'));
+        $this->toast(text: 'Foto Profil diperbarui!', type: 'update');
         $this->dispatch('profile-updated');
     }
 
-    /**
-     * Delete the user's profile photo.
-     */
     public function deletePhoto(): void
     {
         $user = Auth::user();
+
         if ($user->profile_photo_path) {
             Storage::disk('public')->delete($user->profile_photo_path);
             $user->forceFill(['profile_photo_path' => null])->save();
         }
-        Flux::toast(variant: 'success', text: __('Photo removed!'));
+
+        // Menutup modal via JavaScript agar mulus
+        // Flux::toast(variant: 'success', text: __('Foto Profil berhasil dihapus!'));
+        $this->dispatch('close-modal-delete-photo');
+        $this->toast(text: 'Foto Profil diperbarui!', type: 'update');
         $this->dispatch('profile-updated');
     }
 
@@ -91,108 +70,192 @@ new #[Title('Profile Settings')] class extends Component {
     {
         $this->validateOnly('photo');
     }
-
-    /**
-     * Send an email verification notification to the current user.
-     */
-    public function resendVerificationNotification(): void
-    {
-        $user = Auth::user();
-
-        if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false));
-            return;
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        Flux::toast(text: __('A new verification link has been sent to your email address!'));
-    }
-
-    #[Computed]
-    public function hasUnverifiedEmail(): bool
-    {
-        return Auth::user() instanceof MustVerifyEmail && !Auth::user()->hasVerifiedEmail();
-    }
-
-    #[Computed]
-    public function showDeleteUser(): bool
-    {
-        return !Auth::user() instanceof MustVerifyEmail || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
-    }
 }; ?>
 
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
+    <flux:heading class="sr-only">{{ __('Profile Settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-
-            <div class="space-y-4">
+    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Perbarui Foto Profil Anda')">
+        <form wire:submit.prevent="updateProfileInformation" class="my-6 w-full space-y-6">
+            <div class="space-y-4 mb-9">
                 <flux:label :label="__('Profile Photo')" for="photo" />
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-6 mb-4">
+                    {{-- Foto Profil --}}
                     @if ($photo)
                         <img src="{{ $photo->temporaryUrl() }}" alt="{{ __('New Profile Photo') }}"
-                            class="h-20 w-20 rounded-full object-cover">
+                            class="h-20 w-20 rounded-full object-cover border-2 border-[var(--border-table-color)]">
                     @elseif (Auth()->user()->profile_photo_path)
-                        <img src="{{ Auth()->user()->profile_photo_url }}" alt="{{ $name }}"
-                            class="h-20 w-20 rounded-full object-cover">
+                        <img src="{{ Auth()->user()->profile_photo_url }}" alt="{{ Auth::user()->name }}"
+                            class="h-20 w-20 rounded-full object-cover border-2 border-[var(--border-table-color)]">
                     @else
-                        <div class="h-20 w-20 rounded-full bg-gray-200 dark:bg-zinc-700 flex items-center justify-center text-xl font-semibold text-black dark:text-white">
+                        <div
+                            class="h-20 w-20 rounded-full bg-[var(--sub-table-color)] border border-[var(--border-table-color)] flex items-center justify-center text-xl font-semibold text-[var(--contrast-main-text)]">
                             {{ Auth()->user()->initials() }}
                         </div>
                     @endif
 
-                    <div class="grid gap-2">
-                        <input type="file" wire:model="photo" id="photo" accept="image/*"
-                            class="block w-full text-sm text-gray-500 file:me-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 dark:file:bg-zinc-800 dark:file:text-zinc-300 dark:hover:file:bg-zinc-700" />
+                    <div class="flex flex-col items-start gap-3">
+                        {{-- Input File --}}
+                        <input type="file" wire:model="photo" wire:change="$dispatch('validate-photo')"
+                            id="photo" accept="image/*"
+                            class="block w-full text-sm text-[var(--contrast-third-text)] 
+                            file:me-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[var(--border-table-color)] 
+                            file:text-xs file:font-semibold file:bg-[var(--sub-table-color)] file:text-[var(--contrast-main-text)] 
+                            hover:file:bg-[var(--hover-table-color)] transition-all cursor-pointer" />
+                        {{-- Row Tombol --}}
+                        <div class="flex items-center gap-2">
+                            {{-- Tombol Remove --}}
+                            @if (Auth()->user()->profile_photo_path && !$photo)
+                                <flux:button variant="danger" size="sm" class="cursor-pointer"
+                                    x-on:click="$flux.modal('confirm-delete-photo').show()">
+                                    {{ __('Remove Photo') }}
+                                </flux:button>
+                            @endif
 
-                        @error('photo')
-                            <span class="text-sm text-red-500">{{ $message }}</span>
-                        @enderror
+                            {{-- Tombol Save (Hanya muncul jika ada file baru) --}}
+                            @if ($photo)
+                                <flux:button variant="primary" type="submit" size="sm"
+                                    wire:loading.attr="disabled" wire:loading.class="opacity-50"
+                                    class="cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]">
+                                    <span wire:loading.remove
+                                        wire:target="updateProfileInformation">{{ __('Save Photo') }}</span>
+                                    <span wire:loading
+                                        wire:target="updateProfileInformation">{{ __('Saving...') }}</span>
+                                </flux:button>
+                            @endif
 
-                        @if (Auth()->user()->profile_photo_path)
-                            <flux:button type="button" variant="danger" size="sm" wire:click="deletePhoto"
-                                wire:confirm="{{ __('Are you sure you want to delete your profile photo?') }}">
-                                {{ __('Remove Photo') }}
-                            </flux:button>
-                        @endif
+                            @error('photo')
+                                <span class="text-xs text-red-500 ml-3">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus
-                autocomplete="name" />
-
-            <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
-
-                @if ($this->hasUnverifiedEmail)
-                    <div>
-                        <flux:text class="mt-4">
-                            {{ __('Your email address is unverified!') }}
-
-                            <flux:link class="text-sm cursor-pointer"
-                                wire:click.prevent="resendVerificationNotification">
-                                {{ __('Click here to re-send the verification email!') }}
-                            </flux:link>
-                        </flux:text>
-                    </div>
-                @endif
-            </div>
-
-            <div class="flex items-center gap-4">
-                <flux:button variant="primary" type="submit" data-test="update-profile-button">
-                    {{ __('Save') }}
-                </flux:button>
-            </div>
         </form>
+        <div class="my-6 w-full space-y-6">
 
-        @if ($this->showDeleteUser)
+            @include('livewire.global.modal-form.input-form', [
+                'alpine' => 'user',
+                'value' => Auth::user()->name,
+                'isLivewire' => 1,
+                'noEntangle' => 1,
+                'modelString' => 'name',
+                'iconString' => 'user',
+                'isRequired' => 0,
+                'isReadonly' => 1,
+            ])
+            @include('livewire.global.modal-form.input-form', [
+                'alpine' => 'user',
+                'value' => Auth::user()->email,
+                'isLivewire' => 1,
+                'noEntangle' => 1,
+                'modelString' => 'email',
+                'iconString' => 'envelope',
+                'isRequired' => 0,
+                'isReadonly' => 1,
+            ])
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'user',
+                    'value' => Auth::user()->identity1 . ' / ' . Auth::user()->identity2,
+                    'isLivewire' => 1,
+                    'noEntangle' => 1,
+                    'modelString' => 'identity1_2',
+                    'nameXString' => Auth::user()->label_id1 . ' / ' . Auth::user()->label_id2,
+                    'iconString' => 'identification',
+                    'isRequired' => 0,
+                    'isReadonly' => 1,
+                ])
+            @elseif (Auth::user()->mahasiswa)
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'user',
+                    'value' => Auth::user()->mahasiswa->nim,
+                    'isLivewire' => 1,
+                    'noEntangle' => 1,
+                    'modelString' => 'identity1',
+                    'nameXString' => 'NIM',
+                    'iconString' => 'identification',
+                    'isRequired' => 0,
+                    'isReadonly' => 1,
+                ])
+            @endif
+            @if (Auth::user()->dosen)
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'user',
+                    'value' => Auth::user()->dosen->nidk ?? '-',
+                    'isLivewire' => 1,
+                    'noEntangle' => 1,
+                    'modelString' => 'identity3',
+                    'nameXString' => 'NIDK',
+                    'iconString' => 'identification',
+                    'isRequired' => 0,
+                    'isReadonly' => 1,
+                ])
+            @endif
+            @include('livewire.global.modal-form.input-form', [
+                'alpine' => 'user',
+                'value' => Auth::user()->nik,
+                'isLivewire' => 1,
+                'noEntangle' => 1,
+                'modelString' => 'NIK',
+                'nameXString' => 'NIK',
+                'iconString' => 'identification',
+                'isRequired' => 0,
+                'isReadonly' => 1,
+            ])
+            @include('livewire.global.modal-form.input-form', [
+                'alpine' => 'user',
+                'value' => Auth::user()->prodi . ' / ' . Auth::user()->kode_pr,
+                'isLivewire' => 1,
+                'noEntangle' => 1,
+                'modelString' => 'program_studi',
+                'iconString' => 'academic-cap',
+                'isRequired' => 0,
+                'isReadonly' => 1,
+            ])
+        </div>
+
+        {{-- @if ($this->showDeleteUser)
             <livewire:pages::settings.delete-user-form />
-        @endif
+        @endif --}}
+
+
+        <flux:modal name="confirm-delete-photo" x-on:close-modal-delete-photo.window="$flux.modal('confirm-delete-photo').close()"
+            class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Hapus Foto Profil?</flux:heading>
+                    <flux:subheading>
+                        Apakah Anda yakin ingin menghapus foto profil ini?
+                        <span class="text-red-700 dark:text-red-400 font-medium">Tindakan ini tidak dapat
+                            dibatalkan!</span>
+                    </flux:subheading>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+                    <flux:modal.close>
+                        <flux:button variant="ghost"
+                            class="cursor-pointer w-full sm:w-auto 
+                            bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)]
+                            text-[var(--contrast-second-text)]
+                            transition-colors duration-200">
+                            Batal
+                        </flux:button>
+                    </flux:modal.close>
+
+                    <flux:button wire:click="deletePhoto" wire:loading.attr="disabled" variant="primary"
+                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
+
+                        <span wire:loading.remove wire:target="deletePhoto">Ya, Hapus Foto</span>
+                        <span wire:loading wire:target="deletePhoto">Menghapus...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
     </x-pages::settings.layout>
 </section>

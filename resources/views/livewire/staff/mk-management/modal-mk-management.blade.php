@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="mk-modal" wire:model="showMKModal" x-data @refresh-data-mk.window="$store.mk.reset()" wire:key="mk-modal" 
+    <flux:modal name="mk-modal" wire:model.live="showMKModal" x-data @refresh-data-mk.window="$store.mk.reset()" wire:key="mk-modal" 
         {{-- x-bind:flyout="$store.mk.isEdit == 1" --}}
         class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

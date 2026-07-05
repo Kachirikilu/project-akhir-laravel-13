@@ -3,15 +3,19 @@
         $alpineState = $alpine ?? 'config';
         $isLivewireState = $isLivewire ?? null;
         $modelLivewire = "{$alpineState}_input.{$modelString}";
+        $noEntangle = $noEntangle ?? false;
         $isBlur = $isLivewireBlur ?? false;
     @endphp
 
     <div x-data="{
-        @if ($isLivewireState) @if (isset($itemsString))
-            valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
-        @else
-            valueInput: @entangle($modelLivewire).live, @endif
+        @if (!$noEntangle) @if ($isLivewireState) @if (isset($itemsString))
+                valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
+            @else
+                valueInput: @entangle($modelLivewire).live, @endif
         @endif
+        @else
+        valueInput: '',
+            @endif
     
         showPassword: false,
     
@@ -100,29 +104,26 @@ store.{{ $modelString }} = valueInput ?? '';
                     x-bind:class="$store.{{ $alpineState }}?.colorIcon" />
             </div>
 
-        <input
-            @if ($isReadonly ?? null) readonly @endif
-
-            @if ($isLivewireState)
+            <input @if ($isReadonly ?? null) readonly @endif
+                @if (!$noEntangle) @if ($isLivewireState)
                 @if (isset($itemsString))
                     wire:model="{{ $modelLivewire . '.' . $itemsString }}"
                 @elseif ($isBlur)
                     wire:model.live.blur="{{ $modelLivewire }}"
                 @else
-                    wire:model="{{ $modelLivewire }}"
+                    wire:model="{{ $modelLivewire }}" @endif
                 @endif
             @endif
 
-            @if (!$isLivewireState)
-                @if (isset($itemsString))
+            @if (!$isLivewireState) @if (isset($itemsString))
                     x-model="valueInput"
                 @else
-                    x-model="$store.{{ $alpineState }}.{{ $modelString }}"
-                @endif
+                    x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
             @endif
 
             name="{{ $modelString }}"
-            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : '{{ $value ?? ''  }}'" {{-- Tipe input dinamis --}}
+            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : '{{ $value ?? '' }}'"
+            {{-- Tipe input dinamis --}}
             :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
             class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $isReadonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
@@ -158,7 +159,6 @@ store.{{ $modelString }} = valueInput ?? '';
                 maxlength="18"
                 x-data="{
                     format(el) {
-                        // 1. Simpan posisi kursor awal (berapa jumlah angka di kiri kursor)
                         let selectionStart = el.selectionStart;
                         let val = el.value;
                         let numbersBeforeCursor = val.substring(0, selectionStart).replace(/\D/g, '').length;
@@ -173,7 +173,6 @@ store.{{ $modelString }} = valueInput ?? '';
                         let formatted = parts.join(' - ');
                         el.value = formatted;
 
-                        // 3. Kembalikan kursor ke posisi yang benar berdasarkan jumlah angka
                         let newCursorPos = 0;
                         let count = 0;
                         for (let i = 0; i < formatted.length; i++) {
@@ -189,7 +188,6 @@ store.{{ $modelString }} = valueInput ?? '';
                 x-init="format($el)"
                 x-on:input="format($el)"
                 x-on:keydown.backspace="
-                    // Jika kursor pas di depan separator, geser sedikit agar hapus angka yang benar
                     let pos = $el.selectionStart;
                     if ($el.value.substring(pos - 3, pos) === ' - ') {
                         $el.setSelectionRange(pos - 2, pos - 2);

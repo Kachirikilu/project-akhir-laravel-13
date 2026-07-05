@@ -2,5 +2,6 @@
     "agents": [
         "gemini"
     ],
+    "cloud": false,
     "guidelines": true
 }

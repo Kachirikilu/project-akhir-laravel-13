@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="cpmk-delete" wire:model="showCPMKDelete"
+    <flux:modal name="cpmk-delete" wire:model.live="showCPMKDelete"
         class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
         <div class="space-y-6">

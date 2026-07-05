@@ -1,4 +1,4 @@
-<flux:modal name="sesi-absen" wire:model="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
+<flux:modal name="sesi-absen" wire:model.live="showSesiAbsen" x-data @refresh-data-sesi.window="$store.sesi?.reset()"
     class="w-full md:w-[90vw] max-w-3xl !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <form x-on:submit.prevent="$wire.absensiSesi($store.sesi)" id="sesiForm">

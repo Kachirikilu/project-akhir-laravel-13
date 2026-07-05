@@ -16,7 +16,7 @@
         
         <!-- Badge Desktop (Muncul di kanan atas pada layar lebar) -->
         <div class="hidden md:block shrink-0">
-            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--main-pop-up-color)] border border-[var(--border-table-color)]">
+            <div class="pr2 flex items-center gap-2 pl-3 pr-4 py-1.5 rounded-lg bg-[var(--main-pop-up-color)] border border-[var(--border-table-color)]">
                 <flux:icon name="user-circle" class="w-4 h-4 text-[var(--focus-color)]" />
                 <span class="text-xs font-semibold text-[var(--contrast-second-text)] uppercase">{{ Auth::user()->role }}</span>
             </div>

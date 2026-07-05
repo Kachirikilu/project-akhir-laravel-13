@@ -5,9 +5,12 @@ namespace App\Livewire\AllRole;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Jenssegers\Agent\Agent;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class DashboardManagement extends Component
 {
@@ -16,12 +19,11 @@ class DashboardManagement extends Component
     use HasToast;
     use WithPagination;
 
-
     protected $listeners = [
         'refresh-table' => 'refreshDashboardsList',
         'refresh-data-dashboard' => 'refreshDashboardsList',
         'loadDraft' => 'loadDraft',
-        'saveToDraft' => 'saveToDraft'
+        'saveToDraft' => 'saveToDraft',
     ];
 
     #[On('refresh-data-dashboard')]
@@ -70,15 +72,38 @@ class DashboardManagement extends Component
                 $statsTimDosen,
                 $statsKelas,
                 $statsMk
-            );    
+            );
         } elseif (Auth::user()->mahasiswa) {
             $stats = array_merge(
                 $statsKelas,
-            );   
+            );
         }
 
-        return view('livewire.all-role.dashboard', [
-            'stats' => $stats ?? null,
-        ]);
+        $sessions = DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->get()
+            ->map(function ($session) {
+                $agent = new Agent();
+                $agent->setUserAgent($session->user_agent);
+
+                return (object) [
+                    'id' => $session->id,
+                    'device' => $agent->device() ?: 'Desktop/Unknown',
+                    'platform' => $agent->platform(),
+                    'browser' => $agent->browser(),
+                    'is_desktop' => $agent->isDesktop(),
+                    'last_activity' => \Carbon\Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
+                    'is_current' => ($session->id === session()->getId())
+                ];
+            })->sortByDesc(function ($session) {
+                return $session->is_current;
+            });
+
+
+
+            return view('livewire.all-role.dashboard', [
+                'stats'    => $stats ?? null,
+                'sessions' => $sessions,
+            ]);
     }
 }

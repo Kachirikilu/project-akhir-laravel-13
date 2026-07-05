@@ -61,7 +61,7 @@ trait WithTimDosenFilters
                 // 'tim-dosen-rps' => '✅',
                 // 'tim-dosen-non-rps' => '❌',
 
-        $userId = Auth::user()->id;
+        $userId = Auth::id();
 
         if (Auth::user()->dosen && $this->filterTimDosen == '') {
             $queryTimDosen->where(function ($q) use ($userId) {

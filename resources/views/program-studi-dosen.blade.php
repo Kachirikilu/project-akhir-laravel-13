@@ -9,23 +9,23 @@
         </div>
     </div>
 
-    <livewire:staff.obe-management.rps-management.modal-rps-management lazy />
-    <livewire:staff.obe-management.rps-management.show-rps-management lazy />
-    <livewire:staff.obe-management.rps-management.delete-rps-management lazy />
+    <livewire:staff.obe-management.rps-management.modal-rps-management />
+    <livewire:staff.obe-management.rps-management.show-rps-management />
+    <livewire:staff.obe-management.rps-management.delete-rps-management />
 
-    <livewire:staff.obe-management.cpl-management.modal-cpl-management lazy />
-    <livewire:staff.obe-management.cpl-management.list-rps-cpl-management lazy />
-    <livewire:staff.obe-management.cpl-management.delete-cpl-management lazy />
+    <livewire:staff.obe-management.cpl-management.modal-cpl-management />
+    <livewire:staff.obe-management.cpl-management.list-rps-cpl-management />
+    <livewire:staff.obe-management.cpl-management.delete-cpl-management />
 
-    <livewire:staff.obe-management.cpmk-management.modal-cpmk-management lazy />
-    <livewire:staff.obe-management.cpmk-management.delete-cpmk-management lazy />
+    <livewire:staff.obe-management.cpmk-management.modal-cpmk-management />
+    <livewire:staff.obe-management.cpmk-management.delete-cpmk-management />
 
-    <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management lazy />
-    <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management lazy />
+    <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management />
+    <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management />
 
-    <livewire:staff.obe-management.referensi-management.modal-referensi-management lazy />
+    <livewire:staff.obe-management.referensi-management.modal-referensi-management />
 
-    <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management lazy />
+    <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management />
 
-    <livewire:admin.user-management.list-rps-user-management lazy />
+    <livewire:admin.user-management.list-rps-user-management />
 </x-layouts::app>

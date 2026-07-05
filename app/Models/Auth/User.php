@@ -119,6 +119,11 @@ class User extends Authenticatable
         return $this->hasOne(Mahasiswa::class);
     }
 
+    public function wallpapers()
+    {
+        return $this->hasMany(Wallpaper::class);
+        }
+
     public function pendidikans(): HasMany
     {
         return $this->hasMany(Pendidikan::class);

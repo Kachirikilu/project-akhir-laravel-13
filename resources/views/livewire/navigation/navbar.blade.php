@@ -9,8 +9,22 @@
             <x-app-logo />
         </a>
     </div>
+    {{-- <div class="absolute inset-0 z-0 bg-black" 
+        style="background-image: url('/wallpaper/my-waguri.png'); 
+                background-size: cover; 
+                background-position: center;
+                filter: brightness(0.5);
+                opacity: 0.2;">
+    </div> --}}
 
-
+    <div x-show="$store.theme_manager.activeWallpaper !== null" 
+        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
+        :style="{
+            'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
+            'opacity': $store.theme_manager.opacity,
+            'filter': 'brightness(' + $store.theme_manager.brightness + ')'
+        }">
+    </div>
     <nav x-data="{
         openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
         openOBEMenu: {{ request()->routeIs('obe-management') ? 'true' : 'false' }},
@@ -34,21 +48,8 @@
                     this.$el.scrollTop
                 );
             });
-    
-            {{-- window.addEventListener('refresh-layout-sidebar', () => {
-                Livewire.navigate(window.location.href);
-            }); --}}
-    
-            {{-- window.addEventListener('refresh-layout-sidebar', () => {
-                if (window.Livewire) {
-                    const firstComponent = Object.values(Livewire.components)[0];
-                    if (firstComponent) {
-                        firstComponent.$wire.$refresh();
-                    }
-                }
-            }); --}}
         }
-    }" class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
+    }" class="flex-1 z-20 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
         @php
             $user = Auth::user();
             $lastKelas = session('kelas.last');

@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="nilai-absensi-modal" wire:model="showMahasiswaAbsen" x-data
+    <flux:modal name="nilai-absensi-modal" wire:model.live="showMahasiswaAbsen" x-data
         @refresh-data-sesi.window="$store.sesi.reset()" wire:key="nilai-absensi-sesi-modal"
         class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

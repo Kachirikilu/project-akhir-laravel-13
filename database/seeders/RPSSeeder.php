@@ -19,7 +19,7 @@ class RPSSeeder extends Seeder
     public function run(): void
     {
         $targetRps = 1024;
-        $batchSize = 256;
+        $batchSize = 18;
 
         // =========================
         // 1. MASTER CPL (LEBIH BANYAK & VARIATIF)

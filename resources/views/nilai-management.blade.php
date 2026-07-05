@@ -22,12 +22,12 @@
     </div>
 
     @if(request()->routeIs('nilai-management') && Auth::user()->admin)
-        <livewire:admin.user-management.modal-user-management lazy />
-        <livewire:admin.user-management.delete-user-management lazy />
+        <livewire:admin.user-management.modal-user-management />
+        <livewire:admin.user-management.delete-user-management />
     @endif
     @if (request()->routeIs('nilai-management') || request()->routeIs('rps-mahasiswa-management'))
-        <livewire:staff.obe-management.rps-management.show-rps-management lazy />
-        <livewire:admin.user-management.list-rps-user-management lazy :noModalRPS="1" />
+        <livewire:staff.obe-management.rps-management.show-rps-management />
+        <livewire:admin.user-management.list-rps-user-management :noModalRPS="1" />
     @endif
     @if (request()->routeIs('rps-mahasiswa-management'))
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.delete-rps-mahasiswa-management />

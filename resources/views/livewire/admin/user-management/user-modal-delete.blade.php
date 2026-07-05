@@ -1,4 +1,4 @@
-<flux:modal name="user-delete" wire:model="showUserDelete"
+<flux:modal name="user-delete" wire:model.live="showUserDelete"
     class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
     <div class="space-y-6">
@@ -41,16 +41,6 @@
                     Menghapus...
                 </span>
             </flux:button>
-            {{-- </flux:modal.close> --}}
-
         </div>
     </div>
-    {{-- <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('close-delete-modal', () => {
-                Flux.modal('user-delete').hide()
-            })
-        })
-    </script> --}}
-
 </flux:modal>

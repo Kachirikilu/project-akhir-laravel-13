@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="scpmk-delete" wire:model="showSCPMKDelete"
+    <flux:modal name="scpmk-delete" wire:model.live="showSCPMKDelete"
         class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
         <div class="space-y-6">

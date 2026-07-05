@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
                     "resources/js/KelasSesi.js",
                     "resources/js/Nilai.js",
                     "resources/js/NilaiPeriode.js",
+                    "resources/js/ThemeManager.js",
                 ],
                 refresh: true,
             }),

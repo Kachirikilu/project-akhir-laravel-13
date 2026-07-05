@@ -7,7 +7,8 @@
 
         @if (!$data['isTrashed'])
             <flux:menu.separator />
-            <flux:menu.item href="{{ route('nilai-mahasiswa', $data['identity1']) }}" wire:navigate
+          
+            <flux:menu.item href="{{ route('nilai-mahasiswa-management', ['nim' => $data['identity1']]) }}" navigate
                 class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 active:!bg-green-200 dark:active:!bg-green-900 transition-colors">
 
                 <flux:icon name="document-text" class="mr-2 h-4 w-4" />

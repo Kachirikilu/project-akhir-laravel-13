@@ -139,7 +139,8 @@
                         </span>
                     @endif
                     <div>
-                        <button @click="
+                        <button
+                            @click="
                                 $store.user?.reset();
                                 $flux.modal('wa-activation-modal').show();
                                 $dispatch('open-edit-wa-activation-modal');
@@ -152,27 +153,54 @@
                 </div>
             </div>
 
-            {{-- Riwayat Perangkat Login --}}
-<div class="flex items-center gap-2.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-3 py-2.5 mt-2">
-    <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--sub-table-color)]">
-        {{-- Ikon dinamis berdasarkan data --}}
-        <flux:icon name="{{ $data['device_icon'] ?? 'computer-desktop' }}" class="w-4 h-4 text-[var(--contrast-third-text)]" />
-    </div>
-    <div class="flex flex-col gap-0.5 min-w-0 flex-1">
-        <span class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">
-            Perangkat Terakhir
-        </span>
-        <span class="text-xs sm:text-sm font-semibold text-[var(--contrast-main-text)] truncate">
-            {{ $data['device_name'] ?? 'Unknown Device' }} 
-            <span class="text-[var(--contrast-third-text)] font-normal">({{ $data['browser'] ?? 'Browser' }})</span>
-        </span>
-    </div>
-    <div class="flex-shrink-0 text-[10px] text-[var(--contrast-third-text)] font-medium">
-        {{ $data['last_login_time'] ?? 'Baru saja' }}
-    </div>
-</div>
+            {{-- Container Utama Riwayat Perangkat --}}
+            <div class="mt-2 flex flex-col gap-2">
+                {{-- Judul --}}
+                <span class="text-[10px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)] px-1">
+                    {{ count($sessions) }} Perangkat terdeteksi
+                </span>
+
+                {{-- Daftar Perangkat --}}
+                <div class="flex flex-col gap-1.5">
+                    @foreach ($sessions as $device)
+                        <div
+                            class="flex items-center gap-2.5 rounded-[10px] border pl-3 pr-5 py-2.5 
+                {{ $device->is_current
+                    ? 'bg-[var(--focus-color)]/[0.1] border-[var(--focus-color)]/30'
+                    : 'border-[var(--border-table-color)] bg-[var(--second-table-color)]' }}">
+
+                            {{-- Ikon --}}
+                            <div
+                                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg 
+                    {{ $device->is_current ? 'bg-[var(--focus-color)]/20' : 'bg-[var(--sub-table-color)]' }}">
+                                <flux:icon
+                                    name="{{ $device->is_desktop ? 'computer-desktop' : 'device-phone-mobile' }}"
+                                    class="w-4 h-4 {{ $device->is_current ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-third-text)]' }}" />
+                            </div>
+
+                            {{-- Info --}}
+                            <div class="flex flex-col gap-0.5 min-w-0 flex-1">
+                                <span
+                                    class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">
+                                    {{ $device->platform }} {{ $device->is_current ? '• Sesi Saat Ini' : '' }}
+                                </span>
+                                <span
+                                    class="text-xs sm:text-sm font-semibold text-[var(--contrast-main-text)] truncate">
+                                    {{ $device->device }}
+                                    <span
+                                        class="text-[var(--contrast-third-text)] font-normal">({{ $device->browser }})</span>
+                                </span>
+                            </div>
+
+                            {{-- Waktu --}}
+                            <div class="flex-shrink-0 text-[10px] text-[var(--contrast-third-text)] font-medium">
+                                {{ $device->last_activity }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
+
+
     </div>
-
-
-</div>

@@ -11,7 +11,7 @@
 
     @include('livewire.global.header.tag-user')
 
-    <div class="flex flex-col gap-6 p-3 sm:p-6 max-w-6xl mx-auto">
+    <div class="flex flex-col gap-6 p-1 sm:p-3 max-w-6xl mx-auto">
 
         @if (Auth::user()->admin)
             @include('livewire.all-role.dashboard.dashboard-admin')

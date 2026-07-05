@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="wa-activation-modal" wire:model="showWAModal" wire:key="wa-activation--modal"
+    <flux:modal name="wa-activation-modal" wire:model.live="showWAModal" wire:key="wa-activation--modal"
         @refresh-data-user.window="$store.user.reset()" class="max-w-md w-full">
         <div class="flex flex-col gap-5">
             @php

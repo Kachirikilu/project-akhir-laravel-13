@@ -1,4 +1,4 @@
-<flux:modal {{-- :flyout="$isFlyoutRef" wire:key="ref-modal-{{ $isFlyoutRef }}" --}} name="ref-modal" wire:model="showRefModal" x-data
+<flux:modal {{-- :flyout="$isFlyoutRef" wire:key="ref-modal-{{ $isFlyoutRef }}" --}} name="ref-modal" wire:model.live="showRefModal" x-data
     @refresh-data-ref.window="$store.ref.reset()"
     class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
     <div class="flex flex-col h-full relative">

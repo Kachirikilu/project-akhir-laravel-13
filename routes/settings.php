@@ -11,22 +11,22 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::livewire('settings/appearance', 'pages::settings.appearance')->name('appearance.edit');
+    Route::livewire('settings/theme', 'pages::settings.theme')->name('theme.edit');
 
-    Route::livewire('settings/security', 'pages::settings.security')
-        ->middleware(
-            when(
-                Features::canManageTwoFactorAuthentication()
-                && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-                ['password.confirm'],
-                [],
-            ),
-        )
-        ->name('security.edit');
+    // Route::livewire('settings/security', 'pages::settings.security')
+    //     ->middleware(
+    //         when(
+    //             Features::canManageTwoFactorAuthentication()
+    //             && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+    //             ['password.confirm'],
+    //             [],
+    //         ),
+    //     )
+    //     ->name('security.edit');
 
-    Route::livewire('settings/teams', 'pages::teams.index')->name('teams.index');
+    // Route::livewire('settings/teams', 'pages::teams.index')->name('teams.index');
 
-    Route::middleware(EnsureTeamMembership::class)->group(function () {
-        Route::livewire('settings/teams/{team}', 'pages::teams.edit')->name('teams.edit');
-    });
+    // Route::middleware(EnsureTeamMembership::class)->group(function () {
+    //     Route::livewire('settings/teams/{team}', 'pages::teams.edit')->name('teams.edit');
+    // });
 });

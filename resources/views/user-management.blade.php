@@ -5,7 +5,7 @@
         </div>
     </div>
 
-    <livewire:admin.user-management.excel-user-management lazy />
-    <livewire:admin.user-management.modal-user-management lazy />
-    <livewire:admin.user-management.delete-user-management lazy />
+    <livewire:admin.user-management.excel-user-management />
+    <livewire:admin.user-management.modal-user-management />
+    <livewire:admin.user-management.delete-user-management />
 </x-layouts::app>

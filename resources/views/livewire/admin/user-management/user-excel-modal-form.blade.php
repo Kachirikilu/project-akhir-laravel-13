@@ -1,4 +1,4 @@
-<flux:modal name="user-excel-modal" wire:model="showUserExcelModal" flyout wire:key="user-excel-modal-flyout" 
+<flux:modal name="user-excel-modal" wire:model.live="showUserExcelModal" flyout wire:key="user-excel-modal-flyout" 
     @refresh-data-user.window="if (!$wire.showUserExcelModal) $store.user.reset()"
     class="w-full md:w-screen-2xl max-w-screen-2xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 

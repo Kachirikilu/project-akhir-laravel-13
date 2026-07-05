@@ -4,6 +4,7 @@
         'typeXString' => $data['label_id1'] . ' ' . $data['role'],
     ])
     @if (Auth::user()?->admin || Auth::user()?->dosen)
+            <flux:menu.separator />
 
         @if (!$data['isTrashed'])
             {{-- Tombol RPS --}}

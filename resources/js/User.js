@@ -4,7 +4,10 @@ document.addEventListener("alpine:init", () => {
         isEdit: 0,
         showEdit: 0,
         isForceDelete: 0,
-        colorIcon: "",
+        colorIcon: "text-[var(--contrast-second-text)]",
+        colorIconBg: "bg-[var(--contrast-second-text)]/40",
+        
+        // $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400', colors2[type] ?? 'bg-gray-50 dark:bg-gray-950/40');
 
         label_id1_delete: "",
         role_delete: "",
@@ -281,8 +284,8 @@ document.addEventListener("alpine:init", () => {
                 this.typeModal = "";
                 this.isEdit = 0;
                 this.isForceDelete = 0;
-                this.colorIcon = "";
-                this.colorIconBg = "";
+                this.colorIcon = "text-[var(--contrast-second-text)]";
+                this.colorIconBg = "bg-[var(--contrast-second-text)]/40";
             }
         },
 
@@ -294,8 +297,8 @@ document.addEventListener("alpine:init", () => {
                 this.typeModal = "";
                 this.isEdit = 0;
                 this.isForceDelete = 0;
-                this.colorIcon = "";
-                this.colorIconBg = "";
+                this.colorIcon = "text-[var(--contrast-second-text)]";
+                this.colorIconBg = "bg-[var(--contrast-second-text)]/40";
             }
         },
     });

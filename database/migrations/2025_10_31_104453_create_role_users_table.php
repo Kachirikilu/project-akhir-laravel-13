@@ -178,6 +178,13 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::create('user_wallpapers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('path');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -188,6 +195,6 @@ return new class extends Migration
         Schema::dropIfExists('admins');
         Schema::dropIfExists('dosens');
         Schema::dropIfExists('mahasiswas');
-
+        Schema::dropIfExists('user_wallpapers');
     }
 };

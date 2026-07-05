@@ -215,7 +215,7 @@
                 $isMahasiswa = false;
                 if (Auth::user()->admin || Auth::user()->dosen) {
                     $isMahasiswa = true;
-                } elseif (Auth::user()->mahasiswa && Auth::user()->id == $user->id) {
+                } elseif (Auth::user()->mahasiswa && Auth::id() == $user->id) {
                     $isMahasiswa = true;
                 }
             @endphp

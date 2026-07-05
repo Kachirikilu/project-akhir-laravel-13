@@ -3,7 +3,7 @@
 
     {{-- Tombol Toggle Mobile --}}
     <button type="button" x-cloak @click.stop="toggleExpanded()"
-        class="bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90 lg:hidden fixed z-90 top-4 left-4 p-2 text-white rounded-lg shadow-md border active:scale-95 transition-all duration-300 ease-out"
+        class="cursor-pointer bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90 lg:hidden fixed z-90 top-4 left-4 p-2 text-white rounded-lg shadow-md border active:scale-95 transition-all duration-300 ease-out"
         aria-label="Toggle Menu">
         <flux:icon name="bars-3" variant="outline" class="w-7 h-7" />
     </button>
@@ -13,7 +13,7 @@
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-300"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] lg:hidden">
+        class="fixed inset-0 bg-black/15 z-[45] lg:hidden">
     </div>
 
     {{-- <flux:spacer />

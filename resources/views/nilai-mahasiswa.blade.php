@@ -20,6 +20,6 @@
     </div>
     @if (request()->routeIs('rps-mahasiswa'))
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.modal-rps-mahasiswa-management />
-        <livewire:staff.obe-management.rps-management.show-rps-management lazy />
+        <livewire:staff.obe-management.rps-management.show-rps-management />
     @endif
 </x-layouts::app>

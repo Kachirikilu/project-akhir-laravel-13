@@ -83,7 +83,7 @@
                             class="w-full cursor-pointer"
                             data-test="logout-button"
                         >
-                            {{ __('Log out') }}
+                            {{ __('Log Out') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>
