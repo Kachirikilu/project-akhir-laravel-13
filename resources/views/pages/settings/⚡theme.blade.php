@@ -5,6 +5,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use App\Models\Auth\Wallpaper;
 use App\Livewire\Global\HasToast;
+use Illuminate\Support\Facades\Validator;
 
 new #[Title('Theme Settings')] class extends Component {
     use WithFileUploads;
@@ -14,8 +15,18 @@ new #[Title('Theme Settings')] class extends Component {
 
     public function updatedTempImage()
     {
-        $this->validate(['tempImage' => 'image|max:5120']);
-        // $this->validate(['tempImage' => 'image|max:50']);
+        $validator = Validator::make(['tempImage' => $this->tempImage], [
+            'tempImage' => 'image|max:5120',
+        ], [
+            'tempImage.image' => 'Wallpaper yang diunggah harus berupa gambar!',
+            'tempImage.max' => 'Ukuran foto maksimal adalah 5 MB!',
+        ]);
+        if ($validator->fails()) {
+            $this->toast(text: $validator->errors()->first(), type: 'error');
+            $this->reset('tempImage');
+            return;
+        }
+
         $path = $this->tempImage->store('wallpapers/' . auth()->id(), 'public');
         auth()
             ->user()
