@@ -10,7 +10,7 @@
         <template x-for="theme in $store.theme_manager.allThemes" :key="theme.id">
             <button type="button" 
                 @click="$store.theme_manager.setTheme(theme.id); if($store.theme_manager.isAutoPlaying) $store.theme_manager.toggleAutoPlay();"
-                class="relative flex-shrink-0 w-5 h-5 rounded-full transition-all duration-500 hover:scale-110 focus:outline-none snap-center"
+                class="cursor-pointer relative flex-shrink-0 w-5 h-5 rounded-full transition-all duration-500 hover:scale-110 focus:outline-none snap-center"
                 :class="$store.theme_manager.currentTheme === theme.id ? 'ring-2 ring-[var(--main-color)] ring-offset-2' : 'opacity-60'"
                 :style="`background-color: ${theme.color}`">
                 

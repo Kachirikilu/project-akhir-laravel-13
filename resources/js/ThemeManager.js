@@ -1,5 +1,6 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("theme_manager", {
+        duration: 12000,
         currentTheme: localStorage.getItem("app-theme") || "blue",
         isAutoPlaying: localStorage.getItem("auto-play-mode") === "true",
         autoPlayInterval: null,
@@ -57,7 +58,7 @@ document.addEventListener("alpine:init", () => {
                 this.setTheme(
                     this.allThemes[(idx + 1) % this.allThemes.length].id,
                 );
-            }, 12000);
+            }, duration);
         },
 
         stopInterval() {
@@ -109,14 +110,6 @@ document.addEventListener("alpine:init", () => {
             localStorage.setItem("wp-brightness", this.brightness);
         },
 
-        // setWallpaper(path) {
-        //     this.activeWallpaper = path;
-        //     localStorage.setItem("user-active-wp", path);
-        //     document.documentElement.style.setProperty(
-        //         "--user-bg-image",
-        //         `url(${path})`,
-        //     );
-        // },
         handleUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -127,8 +120,5 @@ document.addEventListener("alpine:init", () => {
             }
             console.log("File siap diupload:", file.name);
         },
-
-        // refreshWallpapers() {
-        // }
     });
 });

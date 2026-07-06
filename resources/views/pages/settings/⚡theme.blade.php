@@ -15,12 +15,16 @@ new #[Title('Theme Settings')] class extends Component {
 
     public function updatedTempImage()
     {
-        $validator = Validator::make(['tempImage' => $this->tempImage], [
-            'tempImage' => 'image|max:5120',
-        ], [
-            'tempImage.image' => 'Wallpaper yang diunggah harus berupa gambar!',
-            'tempImage.max' => 'Ukuran foto maksimal adalah 5 MB!',
-        ]);
+        $validator = Validator::make(
+            ['tempImage' => $this->tempImage],
+            [
+                'tempImage' => 'image|max:5120',
+            ],
+            [
+                'tempImage.image' => 'Wallpaper yang diunggah harus berupa gambar!',
+                'tempImage.max' => 'Ukuran foto maksimal adalah 5 MB!',
+            ],
+        );
         if ($validator->fails()) {
             $this->toast(text: $validator->errors()->first(), type: 'error');
             $this->reset('tempImage');
@@ -50,17 +54,18 @@ new #[Title('Theme Settings')] class extends Component {
             $this->toast(text: 'Wallpaper dihapus!', type: 'update');
         }
     }
-    public function with() {
-        $defaults = [
-            ['id' => 'd1', 'path' => '/wallpaper/my-alya.png', 'is_custom' => false],
-            ['id' => 'd2', 'path' => '/wallpaper/my-masha.png', 'is_custom' => false],
-            ['id' => 'd3', 'path' => '/wallpaper/my-waguri.png', 'is_custom' => false],
-        ];
-        $custom = Wallpaper::where('user_id', auth()->id())->get()->map(fn($wp) => [
-            'id' => $wp->id,
-            'path' => $wp->path,
-            'is_custom' => true,
-        ]);
+    public function with()
+    {
+        $defaults = [['id' => 'd1', 'path' => '/wallpaper/my-alya.png', 'is_custom' => false], ['id' => 'd2', 'path' => '/wallpaper/my-masha.png', 'is_custom' => false], ['id' => 'd3', 'path' => '/wallpaper/my-waguri.png', 'is_custom' => false]];
+        $custom = Wallpaper::where('user_id', auth()->id())
+            ->get()
+            ->map(
+                fn($wp) => [
+                    'id' => $wp->id,
+                    'path' => $wp->path,
+                    'is_custom' => true,
+                ],
+            );
 
         return [
             'allWallpapers' => array_merge($defaults, $custom->toArray()),
@@ -73,7 +78,7 @@ new #[Title('Theme Settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Theme Settings') }}</flux:heading>
     <x-pages::settings.layout :heading="__('Theme')" :subheading="__('Atur Tema pada Dashboard Akun Anda')">
-        <div class="space-y-4 w-full max-w-sm">
+        <div class="space-y-4 w-full max-w-lg">
             {{-- Radio Group Appearance --}}
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance"
                 class="!bg-[var(--sub-table-color)] !border !border-[var(--border-table-color)] p-1 rounded-lg w-full flex">
@@ -90,22 +95,24 @@ new #[Title('Theme Settings')] class extends Component {
 
             {{-- Container Tema (Atas) --}}
             <div class="space-y-2 w-full">
-                <div x-data
-                    class="w-full max-w-sm flex items-center p-1.5 bg-gray-100 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-x-auto no-scrollbar snap-x"
-                    x-ref="themeContainerBig">
-                    <div class="flex gap-2 items-center mx-auto w-max px-1.5">
-                        <template x-for="theme in $store.theme_manager.allThemes" :key="theme.id">
-                            <button type="button" @click="$store.theme_manager.setTheme(theme.id)"
-                                class="relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none snap-center"
-                                :class="$store.theme_manager.currentTheme === theme.id ?
-                                    'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100'"
-                                :style="`background-color: ${theme.color}`">
-                                <span x-show="$store.theme_manager.currentTheme === theme.id"
-                                    class="absolute inset-0 flex items-center justify-center">
-                                    <flux:icon name="check" variant="micro" class="w-4 h-4 text-white" />
-                                </span>
-                            </button>
-                        </template>
+                <div class="w-full flex justify-center">
+                    <div x-data
+                        class="w-full max-w-sm flex items-center p-1.5 bg-gray-100 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-x-auto no-scrollbar snap-x"
+                        x-ref="themeContainerBig">
+                        <div class="flex gap-2 items-center mx-auto w-max px-1.5">
+                            <template x-for="theme in $store.theme_manager.allThemes" :key="theme.id">
+                                <button type="button" @click="$store.theme_manager.setTheme(theme.id)"
+                                    class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none snap-center"
+                                    :class="$store.theme_manager.currentTheme === theme.id ?
+                                        'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100'"
+                                    :style="`background-color: ${theme.color}`">
+                                    <span x-show="$store.theme_manager.currentTheme === theme.id"
+                                        class="absolute inset-0 flex items-center justify-center">
+                                        <flux:icon name="check" variant="micro" class="w-4 h-4 text-white" />
+                                    </span>
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
@@ -151,32 +158,36 @@ new #[Title('Theme Settings')] class extends Component {
         </div>
 
         <!-- Wallpaper Selector Card -->
-        <div class="mt-8 p-4 bg-gray-800/50 rounded-2xl border border-white/10 w-full max-w-sm">
-            <h3 class="text-white text-sm font-medium mb-4">Pilih Wallpaper</h3>
+        <div
+            class="mt-8 p-4 bg-[var(--sub-table-color)] rounded-2xl border border-[var(--border-table-color)] w-full max-w-lg">
+            <h3 class="text-[var(--contrast-main-text)] text-sm font-medium mb-4">Pilih Wallpaper</h3>
 
-            <!-- Slider Gambar (Tetap) -->
-            <div x-ref="wallpaperSlider" class="flex gap-3 overflow-x-auto no-scrollbar snap-x pb-4">
+            <!-- Slider Gambar -->
+            <div x-ref="wallpaperSlider" class="flex gap-3 overflow-x-auto scrollbar-medium snap-x pb-4">
 
-                <!-- 1. Opsi None (Tetap ada sebagai pilihan default) -->
-                <div class="relative flex-shrink-0 w-[90px] h-[210px] rounded-xl overflow-hidden snap-center border-2 border-transparent bg-gray-700 flex items-center justify-center cursor-pointer"
+                <!-- 1. Opsi None -->
+
+
+                <div class="relative flex-shrink-0 w-[90px] h-[210px] rounded-xl overflow-hidden snap-center border-2 border-dashed border-[var(--border-table-color)] bg-[var(--main-color)] flex items-center justify-center cursor-pointer"
                     @click="$store.theme_manager.setWallpaper(null)">
-                    <div class="flex flex-col items-center justify-center text-gray-400">
+                    <div class="flex flex-col items-center justify-center text-[var(--border-main-color)]">
                         <flux:icon name="no-symbol" variant="mini" class="w-6 h-6 mb-1" />
                         <span class="text-[10px]">None</span>
                     </div>
                 </div>
 
-                <!-- 2. Loop Wallpaper dari Database menggunakan Blade -->
+                <!-- 2. Loop Wallpaper -->
                 @foreach ($allWallpapers as $wp)
                     <div class="relative flex-shrink-0 w-[90px] h-[210px] rounded-xl overflow-hidden snap-center border-2 transition-all cursor-pointer"
-                        :class="$store.theme_manager.activeWallpaper === '{{ $wp['path'] }}' ? 'border-[var(--main-color)]' : 'border-transparent'"
+                        :class="$store.theme_manager.activeWallpaper === '{{ $wp['path'] }}' ? 'border-[var(--main-color)]' :
+                            'border-transparent'"
                         @click="$store.theme_manager.setWallpaper('{{ $wp['path'] }}')">
-                        
+
                         <img src="{{ $wp['path'] }}" class="w-full h-full object-cover">
-                        
+
                         @if ($wp['is_custom'])
                             <button @click.stop="$wire.deleteWallpaper({{ $wp['id'] }})"
-                                    class="absolute top-2 right-2 bg-black/50 p-1 rounded-full hover:bg-red-600">
+                                class="cursor-pointer absolute top-2 right-2 bg-black/50 p-1 rounded-full hover:bg-red-600 transition-colors">
                                 <flux:icon name="trash" variant="micro" class="w-3 h-3 text-white" />
                             </button>
                         @endif
@@ -185,12 +196,12 @@ new #[Title('Theme Settings')] class extends Component {
 
                 <!-- 3. Tombol Upload -->
                 <label
-                    class="flex-shrink-0 w-[90px] h-[210px] rounded-xl border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-white/50 transition-colors">
+                    class="flex-shrink-0 w-[90px] h-[210px] rounded-xl border-2 border-dashed border-[var(--border-table-color)] flex items-center justify-center cursor-pointer hover:border-[var(--main-color)] transition-colors">
                     <input type="file" class="hidden" accept="image/*" wire:model.live="tempImage">
 
                     <div wire:loading wire:target="tempImage">
-                        <svg class="animate-spin w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
+                        <svg class="animate-spin w-6 h-6 text-[var(--main-color)]" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                 stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor"
@@ -198,32 +209,35 @@ new #[Title('Theme Settings')] class extends Component {
                         </svg>
                     </div>
                     <div wire:loading.remove wire:target="tempImage">
-                        <flux:icon name="plus" variant="mini" class="w-6 h-6 text-gray-400" />
+                        <flux:icon name="plus" variant="mini"
+                            class="w-6 h-6 text-[var(--contrast-main-text)] opacity-50" />
                     </div>
                 </label>
             </div>
 
             <!-- Kontrol Opacity & Brightness -->
-            <div class="pt-4 border-t border-white/10 space-y-4">
+            <div class="pt-4 border-t border-[var(--border-table-color)] space-y-4">
                 <div class="flex flex-col gap-1">
-                    <div class="flex justify-between text-xs text-gray-400">
+                    <div class="flex justify-between text-xs text-[var(--contrast-main-text)] opacity-70">
                         <span>Opacity</span>
                         <span x-text="Math.round($store.theme_manager.opacity * 100) + '%'"></span>
                     </div>
-                    <input type="range" min="0" max="1" step="0.1"
+                    <input type="range" min="0" max="1" step="0.01"
                         x-model.number="$store.theme_manager.opacity" @input="$store.theme_manager.updateSettings()"
-                        class="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[var(--main-color)]">
+                        :style="`background: linear-gradient(to right, var(--main-color) ${$store.theme_manager.opacity * 100}%, var(--border-table-color) ${$store.theme_manager.opacity * 100}%)`"
+                        class="theme-slider">
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <div class="flex justify-between text-xs text-gray-400">
+                    <div class="flex justify-between text-xs text-[var(--contrast-main-text)] opacity-70">
                         <span>Brightness</span>
                         <span x-text="Math.round($store.theme_manager.brightness * 100) + '%'"></span>
                     </div>
-                    <input type="range" min="0" max="1" step="0.1"
+                    <input type="range" min="0" max="1" step="0.01"
                         x-model.number="$store.theme_manager.brightness"
                         @input="$store.theme_manager.updateSettings()"
-                        class="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[var(--main-color)]">
+                        :style="`background: linear-gradient(to right, var(--main-color) ${$store.theme_manager.brightness * 100}%, var(--border-table-color) ${$store.theme_manager.brightness * 100}%)`"
+                        class="theme-slider">
                 </div>
             </div>
         </div>

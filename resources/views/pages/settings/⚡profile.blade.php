@@ -86,36 +86,45 @@ new #[Title('Profile Settings')] class extends Component {
                     {{-- Foto Profil --}}
                     @if ($photo)
                         <img src="{{ $photo->temporaryUrl() }}" alt="{{ __('New Profile Photo') }}"
-                            class="h-20 w-20 rounded-full object-cover border-2 border-[var(--border-table-color)]">
+                            class="h-20 w-20 aspect-square rounded-full object-cover border-2 border-[var(--border-table-color)] shrink-0">
                     @elseif (Auth()->user()->profile_photo_path)
                         <img src="{{ Auth()->user()->profile_photo_url }}" alt="{{ Auth::user()->name }}"
-                            class="h-20 w-20 rounded-full object-cover border-2 border-[var(--border-table-color)]">
+                            class="h-20 w-20 aspect-square rounded-full object-cover border-2 border-[var(--border-table-color)] shrink-0">
                     @else
                         <div
-                            class="h-20 w-20 rounded-full bg-[var(--sub-table-color)] border border-[var(--border-table-color)] flex items-center justify-center text-xl font-semibold text-[var(--contrast-main-text)]">
+                            class="h-20 w-20 aspect-square rounded-full bg-[var(--sub-table-color)] border border-[var(--border-table-color)] flex items-center justify-center text-xl font-semibold text-[var(--contrast-main-text)] shrink-0">
                             {{ Auth()->user()->initials() }}
                         </div>
                     @endif
 
-                    <div class="flex flex-col items-start gap-3">
-                        {{-- Input File --}}
-                        <input type="file" wire:model="photo" wire:change="$dispatch('validate-photo')"
-                            id="photo" accept="image/*"
-                            class="block w-full text-sm text-[var(--contrast-third-text)] 
-                            file:me-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[var(--border-table-color)] 
-                            file:text-xs file:font-semibold file:bg-[var(--sub-table-color)] file:text-[var(--contrast-main-text)] 
-                            hover:file:bg-[var(--hover-table-color)] transition-all cursor-pointer" />
-                        {{-- Row Tombol --}}
-                        <div class="flex items-center gap-2">
-                            {{-- Tombol Remove --}}
-                            @if (Auth()->user()->profile_photo_path && !$photo)
-                                <flux:button variant="danger" size="sm" class="cursor-pointer"
-                                    x-on:click="$flux.modal('confirm-delete-photo').show()">
-                                    {{ __('Remove Photo') }}
-                                </flux:button>
-                            @endif
+                    <div class="flex flex-col items-start gap-3 w-full">
+                        {{-- Wrapper untuk Input dan Tombol Hapus --}}
+                        <div class="relative w-full flex items-center gap-2">
 
-                            {{-- Tombol Save (Hanya muncul jika ada file baru) --}}
+                            {{-- Input File --}}
+                            <input type="file" wire:model="photo" wire:change="$dispatch('validate-photo')"
+                                id="photo" accept="image/*"
+                                class="block w-full text-sm text-[var(--contrast-third-text)] 
+                                            file:me-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[var(--border-table-color)] 
+                                            file:text-xs file:font-semibold file:bg-[var(--sub-table-color)] file:text-[var(--contrast-main-text)] 
+                                            hover:file:bg-[var(--hover-table-color)] transition-all cursor-pointer" />
+
+                            {{-- Tombol Remove (Bulat Kecil) --}}
+                            @if (Auth()->user()->profile_photo_path && !$photo)
+                                <button type="button" x-on:click="$flux.modal('confirm-delete-photo').show()"
+                                    class="flex items-center justify-center w-6 h-6 aspect-square rounded-full 
+                                            bg-[var(--sub-table-color)] border border-[var(--border-table-color)] 
+                                            hover:bg-red-500/20 hover:border-red-500 text-[var(--contrast-main-text)] 
+                                            hover:text-red-500 transition-all cursor-pointer flex-shrink-0 p-0">
+
+                                    {{-- Ikon dipaksa memiliki ukuran tetap --}}
+                                    <flux:icon name="trash" variant="micro" class="w-3 h-3 !block" />
+                                </button>
+                            @endif
+                        </div>
+
+                        {{-- Row Tombol Save --}}
+                        <div class="flex items-center gap-2">
                             @if ($photo)
                                 <flux:button variant="primary" type="submit" size="sm"
                                     wire:loading.attr="disabled" wire:loading.class="opacity-50"
@@ -128,7 +137,7 @@ new #[Title('Profile Settings')] class extends Component {
                             @endif
 
                             @error('photo')
-                                <span class="text-xs text-red-500 ml-3">{{ $message }}</span>
+                                <span class="text-xs text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -223,7 +232,8 @@ new #[Title('Profile Settings')] class extends Component {
         @endif --}}
 
 
-        <flux:modal name="confirm-delete-photo" x-on:close-modal-delete-photo.window="$flux.modal('confirm-delete-photo').close()"
+        <flux:modal name="confirm-delete-photo"
+            x-on:close-modal-delete-photo.window="$flux.modal('confirm-delete-photo').close()"
             class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
 
             <div class="space-y-6">

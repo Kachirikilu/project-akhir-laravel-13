@@ -296,7 +296,7 @@
 
     --main-table-color: #1b2420;
     --second-table-color: #222b27;
-    --sub-table-color: #27332d;
+    --sub-table-color: #252827;
 
     --hover-table-color: #2f4f3e;
 
@@ -337,10 +337,11 @@
     --second-table-color: #ffffff;
     --sub-table-color: #eaf5e0;
 
+    --hover-table-color: #bef264;
+
     --main-table-trans: #d9f3b5a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #ecfccba0;
-    --hover-table-color: #bef264;
 
     --border-table-color: #c9e8a7;
 
@@ -369,7 +370,8 @@
 
     --main-table-color: #23291d;
     --second-table-color: #2d3625;
-    --sub-table-color: #354228;
+    --sub-table-color: #272925;
+    
     --hover-table-color: #4d6631;
 
     --main-table-trans: #23291da0;
@@ -511,12 +513,12 @@
     --contrast-second-text: #fef08a;
     --contrast-third-text: #fde68a;
 
-    --focus-color: #fde047;
+    --focus-color: #fddb32;
     --hover-focus-color: #facc15;
 
     --main-table-color: #2b281f;
     --second-table-color: #363223;
-    --sub-table-color: #453e28;
+    --sub-table-color: #2b2926;
     --hover-table-color: #713f12;
 
     --main-table-trans: #2b281fa0;
@@ -666,7 +668,7 @@
 
     --main-table-color: #262f3e;
     --second-table-color: #0f172a;
-    --sub-table-color: #19212e;
+    --sub-table-color: #191d25;
     --hover-table-color: #33415566;
 
     --main-table-trans: #1e293ba0;

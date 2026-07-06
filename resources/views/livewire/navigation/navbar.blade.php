@@ -4,7 +4,7 @@
                     flex flex-col min-h-0">
 
     {{-- Header Logo & Toggle --}}
-    <div class="flex items-center h-10 mt-2 mx-1">
+    <div class="flex items-center h-10 mt-2 mx-1 z-20">
         <a href="#" @click.prevent="window.location.reload()" class="flex items-center gap-2">
             <x-app-logo />
         </a>
@@ -98,13 +98,6 @@
                     'label' => 'OBE Management',
                     'roles' => ['admin', 'dosen'],
                 ],
-                // [
-                //     'type' => 'link',
-                //     'icon' => 'calendar-days',
-                //     'route' => 'jadwal-mahasiswa',
-                //     'label' => 'Jadwal Kelas',
-                //     'roles' => ['mahasiswa'],
-                // ],
                 [
                     'type' => 'dropdown-jadwal',
                     'icon' => 'calendar-days',
@@ -135,22 +128,6 @@
                     'label' => 'Nilai Mahasiswa',
                     'roles' => ['admin', 'dosen'],
                 ],
-
-                // [
-                //     'type' => 'link',
-                //     'icon' => 'chart-pie',
-                //     'route' => 'nilai-management',
-                //     'label' => 'Nilai Mahasiswa',
-                //     'roles' => ['admin', 'dosen'],
-                // ],
-                // [
-                //     'type' => 'link',
-                //     'icon' => 'academic-cap',
-                //     'route' => 'nilai-mahasiswa',
-                //     'label' => 'Nilai Kuliah',
-                //     'roles' => ['mahasiswa'],
-                //     'active_routes' => ['nilai-mahasiswa'],
-                // ],
             ];
 
             $navItems = array_filter($allNavItems, function ($item) use ($user) {
