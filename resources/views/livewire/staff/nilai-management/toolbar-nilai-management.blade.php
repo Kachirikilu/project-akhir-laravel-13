@@ -15,7 +15,6 @@
 
                 <div class="flex justify-between items-center w-full">
                     <span>Lihat Nilai</span>
-                    <flux:icon wire:loading wire:target="showNilai" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
                 </div>
             </flux:menu.item>
 

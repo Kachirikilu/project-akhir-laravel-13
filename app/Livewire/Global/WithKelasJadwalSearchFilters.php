@@ -279,8 +279,8 @@ trait WithKelasJadwalSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allJadwal = $allJadwal->filter(function ($j) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $j->id,

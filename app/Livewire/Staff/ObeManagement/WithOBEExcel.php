@@ -5,16 +5,15 @@ namespace App\Livewire\Staff\ObeManagement;
 use App\Exports\CPLExport;
 use App\Exports\CPMKExport;
 use App\Exports\DosenExport;
-use App\Exports\TimDosenExport;
 use App\Exports\ReferensiExport;
 use App\Exports\RPSExport;
 use App\Exports\SubCPMKExport;
+use App\Exports\TimDosenExport;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
-use App\Models\Akademik\TimDosen;
 use App\Models\Auth\User;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -25,6 +24,14 @@ trait WithOBEExcel
 {
     public function exportOBEExcel()
     {
+        $selectMK = (property_exists($this, 'selectedMKId')) ? $this->selectedMKId : false;
+        $selectRPS = (property_exists($this, 'selectedRPSId')) ? $this->selectedRPSId : false;
+        $selectCPL = (property_exists($this, 'selectedCPLId')) ? $this->selectedCPLId : false;
+        $selectCPMK = (property_exists($this, 'selectedCPMKId')) ? $this->selectedCPMKId : false;
+        $selectSCPMK = (property_exists($this, 'selectedSCPMKId')) ? $this->selectedSCPMKId : false;
+        $selectRef = (property_exists($this, 'selectedRefId')) ? $this->selectedRefId : false;
+        $selectTimDosen = (property_exists($this, 'selectedTimDosenId')) ? $this->selectedTimDosenId : false;
+
         $univ = env('UNIVERSITAS');
         $UNIV = strtoupper($univ);
 
@@ -50,7 +57,6 @@ trait WithOBEExcel
                 'rps-draft' => ' Draft',
                 default => ''
             };
-
             // 2. Logika Nama Dosen
             if (Auth::user()->dosen && $this->filterRPS == '') {
                 $suffix .= '_Dosen '.Auth::user()->name;
@@ -59,21 +65,6 @@ trait WithOBEExcel
                 $suffix .= '_Dosen '.($dosen->name ?? '');
             }
         }
-
-        // 3. Logika Filter Berdasarkan Waktu (CPMK, SCPMK, CPL, REF)
-        // $filter = $this->filterCPMK ?: $this->filterSCPMK ?: $this->filterCPL ?: $this->filterRef ?: '';
-
-        // $suffix .= match (true) {
-        //     str_ends_with($filter, '-month') => '_'.date('M Y'),
-        //     str_ends_with($filter, '-6-months') => '_'.now()->subMonths(5)->format('M Y').' - '.now()->format('M Y'),
-        //     str_ends_with($filter, '-year') => " $currentYear",
-        //     str_ends_with($filter, '-older-5') => ' Keluaran '.($currentYear - 5).' Ke Bawah',
-        //     $filter == 'ref-2-3-years' => ' '.($currentYear - 2).'-'.($currentYear - 3),
-        //     $filter == 'ref-4-5-years' => ' '.($currentYear - 4).'-'.($currentYear - 5),
-        //     $filter == 'ref-6-10-years' => ' '.($currentYear - 6).'-'.($currentYear - 10),
-        //     $filter == 'ref-older-10' => ' Keluaran '.($currentYear - 10).' Ke Bawah',
-        //     default => ''
-        // };
 
         // 4. Finalisasi Variabel
         $sInput .= $suffix;
@@ -108,37 +99,37 @@ trait WithOBEExcel
         }
 
         if ($this->switchTable == 'rps') {
-            if ($this->selectedMKId) {
-                $mk = MataKuliah::find($this->selectedMKId);
+            if ($selectMK) {
+                $mk = MataKuliah::find($selectMK);
                 // $kodeMK = str_replace('-', '', $mk->kode);
                 $sInput .= '_Mata Kuliah '.$mk->kode;
                 $sINPUT .= strtoupper(' Mata Kuliah '.$mk->kode);
             }
         }
 
-        if ($this->selectedRPSId && ($this->switchTable == 'cpmk' || $this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi' || $this->switchTable == 'dosen')) {
-            $rps = RPS::find($this->selectedRPSId);
+        if ($selectRPS && ($this->switchTable == 'cpmk' || $this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi' || $this->switchTable == 'dosen')) {
+            $rps = RPS::find($selectRPS);
             // $kodeRPS = str_replace('-', '', $rps->kode);
             $sInput .= '_RPS '.$rps->kode;
             $sINPUT .= strtoupper(' RPS '.$rps->kode);
         }
 
-        if ($this->selectedCPLId && $this->switchTable == 'cpmk') {
-            $cpl = CPL::find($this->selectedCPLId);
+        if ($selectCPL && $this->switchTable == 'cpmk') {
+            $cpl = CPL::find($selectCPL);
             // $kodeCPL = str_replace('-', '', $cpl->kode);
             $sInput .= '_CPL '.$cpl->kode;
             $sINPUT .= strtoupper(' CPL '.$cpl->kode);
         }
 
-        if ($this->selectedCPMKId && ($this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi')) {
-            $cpmk = CPMK::find($this->selectedCPMKId);
+        if ($selectCPMK && ($this->switchTable == 'sub-cpmk' || $this->switchTable == 'cpl' || $this->switchTable == 'referensi')) {
+            $cpmk = CPMK::find($selectCPMK);
             // $kodeCPMK = str_replace('-', '', $cpmk->kode);
             $sInput .= '_CPMK '.$cpmk->kode;
             $sINPUT .= strtoupper(' CPMK '.$cpmk->kode);
         }
 
-        if ($this->selectedSCPMKId && $this->switchTable == 'referensi') {
-            $scpmk = SubCPMK::find($this->selectedSCPMKId);
+        if ($selectSCPMK && $this->switchTable == 'referensi') {
+            $scpmk = SubCPMK::find($selectSCPMK);
             // $kodeSCPMK = str_replace('-', '', $scpmk->kode);
             $sInput .= '_Sub-CPMK '.$scpmk->kode;
             $sINPUT .= strtoupper(' Sub CPMK '.$scpmk->kode);

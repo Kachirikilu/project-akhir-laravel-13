@@ -307,8 +307,8 @@ trait WithDosenSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allDosen = $allDosen->filter(function ($dosen) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $dosen->id,

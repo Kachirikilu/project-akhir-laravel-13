@@ -121,7 +121,7 @@
             <td class="table-second table-border-x whitespace-nowrap text-center">
                 @if (!$r->trashed())
                     <x-button-action color="blue"
-                        href="{{ route('capaian-mahasiswa-management', [
+                        href="{{ route('rps-capaian-mahasiswa-management', [
                             'kode_rps' => $r->kode ?? null,
                         ]) }}"
                         wire:navigate>

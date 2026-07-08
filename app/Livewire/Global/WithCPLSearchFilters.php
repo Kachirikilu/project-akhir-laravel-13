@@ -297,8 +297,8 @@ trait WithCPLSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allCPL = $allCPL->filter(function ($cpl) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $cpl->id,

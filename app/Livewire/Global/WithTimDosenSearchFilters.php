@@ -328,8 +328,8 @@ trait WithTimDosenSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allTimDosen = $allTimDosen->filter(function ($timDosen) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $timDosen->id,

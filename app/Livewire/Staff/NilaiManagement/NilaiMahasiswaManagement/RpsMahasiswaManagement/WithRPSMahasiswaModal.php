@@ -48,6 +48,7 @@ trait WithRPSMahasiswaModal
 
             return;
         }
+
         /*
         |--------------------------------------------------------------------------
         | 2. Validasi Dinamis
@@ -57,34 +58,27 @@ trait WithRPSMahasiswaModal
         $messages = [];
 
         for ($i = 1; $i <= 16; $i++) {
-
             if (! array_key_exists("nilai_$i", $data)) {
                 continue;
             }
-
             $rules["nilai_$i"] = [
                 'required',
                 'numeric',
                 'min:0',
                 'max:100',
             ];
-
             $messages["nilai_$i.required"] = "Nilai ke-$i wajib diisi.";
             $messages["nilai_$i.numeric"] = "Nilai ke-$i harus berupa angka.";
             $messages["nilai_$i.min"] = "Nilai ke-$i minimal 0.";
             $messages["nilai_$i.max"] = "Nilai ke-$i maksimal 100.";
         }
-
         $validator = Validator::make(
             $data,
             $rules,
             $messages
         );
-
         if ($validator->fails()) {
-
             $this->resetValidation();
-
             foreach ($validator->errors()->messages() as $field => $error) {
 
                 if (preg_match('/nilai_(\d+)/', $field, $match)) {
@@ -97,7 +91,6 @@ trait WithRPSMahasiswaModal
                     );
                 }
             }
-
             return;
         }
 
@@ -106,15 +99,11 @@ trait WithRPSMahasiswaModal
         | 3. Susun Nilai Array
         |--------------------------------------------------------------------------
         */
-
         $nilaiArray = [];
-
         for ($i = 1; $i <= 16; $i++) {
-
             if (! array_key_exists("nilai_$i", $data)) {
                 continue;
             }
-
             $nilaiArray[] = (float) $data["nilai_$i"];
         }
 
@@ -123,7 +112,6 @@ trait WithRPSMahasiswaModal
         | 4. Hitung Nilai Akhir
         |--------------------------------------------------------------------------
         */
-
         $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
         $nilaiAkhir = 0;
         foreach ($nilaiArray as $index => $nilai) {
@@ -136,17 +124,16 @@ trait WithRPSMahasiswaModal
         | 5. Simpan
         |--------------------------------------------------------------------------
         */
-
         try {
 
             DB::beginTransaction();
-
-            $nilai_mahasiswa->nilai_array = $nilaiArray;
-            $nilai_mahasiswa->nilai = round($nilaiAkhir, 2);
-
+            $nilai_mahasiswa->forceFill([
+                'nilai_array' => $nilaiArray,
+                'nilai' => round($nilaiAkhir, 2),
+            ]);
             $nilai_mahasiswa->save();
-
             DB::commit();
+
 
             $this->dispatch('refresh-data-rps-mahasiswa');
             $this->resetInputNilaiMahasiswa();
@@ -174,10 +161,10 @@ trait WithRPSMahasiswaModal
     public function getNilaiErrorSections()
     {
         return [
-            1 => $this->getNilaiErrorCountByIndexes(0, 3),
-            2 => $this->getNilaiErrorCountByIndexes(4, 7),
-            3 => $this->getNilaiErrorCountByIndexes(8, 11),
-            4 => $this->getNilaiErrorCountByIndexes(12, 99),
+            1 => $this->getNilaiErrorCountByIndexes(1, 4),
+            2 => $this->getNilaiErrorCountByIndexes(5, 8),
+            3 => $this->getNilaiErrorCountByIndexes(9, 12),
+            4 => $this->getNilaiErrorCountByIndexes(13, 99),
         ];
     }
 

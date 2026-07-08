@@ -17,6 +17,9 @@ use App\Livewire\Global\WithUserSearchFilters;
 // use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
+// use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSDelete;
+use App\Livewire\Staff\ObeManagement\WithOBEExcel;
+
 // use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSModal;
 // use App\Models\Akademik\CPL;
 use App\Models\Auth\User;
@@ -31,6 +34,9 @@ class NilaiManagement extends Component
     use HasStats;
     use HasToast;
     use RekapCapaian;
+    // use WithRPSDelete;
+    use WithOBEExcel;
+
 
     // use WithDepartemenSearchFilters;
     // use WithFakultasSearchFilters;
@@ -76,9 +82,9 @@ class NilaiManagement extends Component
         'refresh-table' => 'refreshUsersList',
         'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
         'refresh-stats-user' => 'refreshStatsUserList',
+        'refresh-stats-rps' => 'refreshStatsRPSList',
         'loadDraft' => 'loadDraft',
         'saveToDraft' => 'saveToDraft',
-        'refresh-stats-user' => 'refreshStatsUserList',
     ];
 
     protected $queryString = [
@@ -141,6 +147,15 @@ class NilaiManagement extends Component
     {
         $this->clearUserStatsCache();
         $this->clearMahasiswaStatsCache();
+    }
+
+    #[On('refresh-stats-rps')]
+    public function refreshStatsRPSList()
+    {
+        $this->clearObeStatsCache();
+        $this->clearRpsStatsCache();
+        $this->clearObeProdiStatsCache();
+        $this->clearRpsProdiStatsCache();
     }
 
     public function updatingSearch()

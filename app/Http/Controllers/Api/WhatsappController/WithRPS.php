@@ -106,11 +106,12 @@ trait WithRPS
 
         // 8. FORMAT OUTPUT PESAN WHATSAPP
         $head = "Halo _{$nameWA}_, berikut hasil pencarian RPS:";
-        $subTitle = $isDaftarRPSMurni ? 'Seluruh Prodi' : 'RPS Terdaftar Anda';
+        // $subTitle = $isDaftarRPSMurni ? 'Seluruh Prodi' : 'RPS Terdaftar Anda';
+        $subTitle = 'RPS Terdaftar';
         $filterTeks = $filterSemester ? " (Semester {$filterSemester})" : '';
 
         $teksRPS = "📚 *Daftar Dokumen RPS - {$subTitle}{$filterTeks}*\n";
-        $teksRPS .= "- Prodi: {$user->prodi_pr}\n\n";
+        $teksRPS .= "- {$user->prodi_pr}\n\n";
 
         if ($groupedRPS->isEmpty()) {
             $teksRPS .= '_Tidak ditemukan dokumen RPS yang sesuai dengan kriteria._';

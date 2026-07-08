@@ -170,7 +170,7 @@
                                             'iconString' => 'chart-bar',
                                             'placeholder' => 'Masukkan Nilai...',
                                             'isRequired' => 0,
-                                            'message' => $errors->first("nilai_$indexphp"),
+                                            'message' => $errors->first('nilai_'.($indexphp + 1)),
                                         ])
                                     </div>
 
@@ -184,7 +184,7 @@
                                             'iconString' => 'scale',
                                             'placeholder' => 'Bobot...',
                                             'isRequired' => 0,
-                                            'message' => $errors->first("bobot_$indexphp"),
+                                            'message' => $errors->first('bobot_'.($indexphp + 1)),
                                         ])
                                     </div>
 

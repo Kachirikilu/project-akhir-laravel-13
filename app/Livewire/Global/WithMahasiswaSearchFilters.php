@@ -412,8 +412,8 @@ trait WithMahasiswaSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allMahasiswa = $allMahasiswa->filter(function ($mahasiswa) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $mahasiswa->id,

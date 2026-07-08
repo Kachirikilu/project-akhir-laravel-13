@@ -318,8 +318,8 @@ trait WithReferensiSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allRef = $allRef->filter(function ($ref) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $ref->id,

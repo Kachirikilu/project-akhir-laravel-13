@@ -27,6 +27,13 @@
                 ])
             </div>
 
+            <div x-show="activeTable == 'rps'" class="shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'xString' => 'exportOBEExcel()',
+                    'autoSmall' => 'lg',
+                ])
+            </div>
+
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <div x-data="{ activeTab: @entangle('filterStatus') }" class="shrink-0">
                     <div x-show="activeTab !== ''" class="shrink-0">

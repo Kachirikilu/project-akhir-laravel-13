@@ -118,9 +118,13 @@
                     class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 px-5 py-4 relative">
                     <div>
                         <h3 class="text-sm font-bold text-gray-800 dark:text-zinc-100 tracking-wide">
-                            Distribusi Capaian Nilai per Mahasiswa
+                            Distribusi Capaian Nilai per Mahasiswa {{ $angkatan }}
                         </h3>
-                        <p class="text-[11px] text-gray-600 mt-0.5">Mata Kuliah {{ $rps->mk_rel->nama_mk }}</p>
+                        <p class="text-[11px] text-gray-600 mt-0.5">Mata Kuliah {{ $rps->mk_rel->nama_mk }}
+                            | Semester {{ $rps->mk_rel->semester }}
+                            | {{ $rps->mk_rel->sks }} SKS
+                            | {{ $rps->mk_rel->sks_text }}
+                        </p>
                     </div>
 
                     @if ($jadwal)
@@ -131,12 +135,31 @@
                             <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
                                 Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
                             </span>
+                            <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
+                                {{ $jadwal->kelas_rel->pr_rel->prodi ?? '-- -----' }}
+                            </span>
                         </div>
                     @else
                         <div class="text-right">
                             <span class="block text-[11px] font-bold text-gray-800 dark:text-zinc-100">
                                 Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
                             </span>
+
+                            @php
+                                $segments = array_filter([$pr_name, $dp_name]);
+                            @endphp
+
+                            @if (!empty($segments))
+                                <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
+                                    {{ implode(' | ', $segments) }}
+                                </span>
+                            @endif
+
+                            @if ($fk_name)
+                                <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
+                                    {{ $fk_name }}
+                                </span>
+                            @endif
                         </div>
                     @endif
 

@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('nilai-management/{switchTable?}', 'nilai-management')->name('nilai-management');
         Route::view('nilai-management/nim/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
         Route::view('nilai-management/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
-        Route::view('nilai-management/rps/{kode_rps}', 'nilai-management')->name('capaian-mahasiswa-management');
+        Route::view('nilai-management/rps/{kode_rps}', 'nilai-management')->name('rps-capaian-mahasiswa-management');
     });
     Route::middleware(['is_dosen'])->group(function () {
         Route::view('program-studi/{switchTable?}', 'program-studi-dosen')->name('program-studi-dosen');

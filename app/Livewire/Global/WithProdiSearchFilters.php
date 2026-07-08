@@ -365,8 +365,8 @@ trait WithProdiSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allPr = $allPr->filter(function ($pr) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $pr->id,

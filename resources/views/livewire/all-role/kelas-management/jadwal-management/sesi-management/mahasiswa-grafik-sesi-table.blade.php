@@ -169,7 +169,7 @@
     </div>
 
     <div class="w-full min-h-90 overflow-x-auto p-4 scrollbar-large"
-        wire:key="chart-{{ $search ?? '' }}-{{ $perPage ?? '' }}-{{ $sortField ?? '' }}-{{ $sortDirection ?? '' }}-{{ $switchTable ?? '' }}">
+        wire:key="chart-{{ $search ?? '' }}-{{ $searchAngkatan ?? '' }}-{{ $perPage ?? '' }}-{{ $sortField ?? '' }}-{{ $sortDirection ?? '' }}-{{ $switchTable ?? '' }}-{{ $filterStatus ?? '' }}-{{ $filterAngkatan ?? '' }}-{{ $refreshTrigger ?? '' }}">
 
         <div style="width: {{ $calculatedWidth }}px;" x-data="{
             chart: null,

@@ -132,7 +132,6 @@
                 </div>
             @endif
 
-
             {{-- TOMBOL KEDUA (Capaian) ditaruh di bawahnya, otomatis akan berjejer di sebelah kirinya tombol Excel --}}
             @if (Auth::user()->admin || Auth::user()->dosen)
                 <div class="shrink-0 mt-1">

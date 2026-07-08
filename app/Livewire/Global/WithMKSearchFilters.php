@@ -301,8 +301,8 @@ trait WithMKSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allMK = $allMK->filter(function ($mk) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $mk->id,

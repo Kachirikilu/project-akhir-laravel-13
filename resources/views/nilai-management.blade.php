@@ -17,8 +17,8 @@
                 <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" />
             @elseif (request()->routeIs('rps-mahasiswa-management'))
                 <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management :nim="request()->route('nim')" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
-            @elseif (request()->routeIs('capaian-mahasiswa-management'))
-                <livewire:staff.nilai-management.capaian-mahasiswa-management :kode_rps="request()->route('kode_rps')" />
+            @elseif (request()->routeIs('rps-capaian-mahasiswa-management'))
+                <livewire:staff.nilai-management.rps-capaian-mahasiswa-management :kode_rps="request()->route('kode_rps')" />
             @endif
 
         </div>
@@ -34,6 +34,9 @@
     @endif
     @if (request()->routeIs('rps-mahasiswa-management'))
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.delete-rps-mahasiswa-management />
+    @endif
+
+    @if (request()->routeIs('rps-mahasiswa-management') || request()->routeIs('rps-capaian-mahasiswa-management'))
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.modal-rps-mahasiswa-management />
     @endif
 </x-layouts::app>

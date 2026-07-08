@@ -71,8 +71,11 @@ class RpsMahasiswaManagement extends Component
 
     public $akademik_fix_url;
 
-    protected $listeners = ['refresh-table' => 'refreshUsersList', 'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $listeners = [
+        'refresh-table' => 'refreshCapaianList',
+        'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
         'search' => ['except' => ''],

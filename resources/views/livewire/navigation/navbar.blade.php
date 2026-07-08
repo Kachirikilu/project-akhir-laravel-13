@@ -31,7 +31,7 @@
         openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
         openRpsNilaiMenu: {{ request()->routeIs('nilai-mahasiswa', 'rps-mahasiswa') ? 'true' : 'false' }},
-        openNilaiMenu: {{ request()->routeIs('nilai-management', 'nilai-mahasiswa-management', 'rps-mahasiswa-management', 'capaian-mahasiswa-management') ? 'true' : 'false' }},
+        openNilaiMenu: {{ request()->routeIs('nilai-management', 'nilai-mahasiswa-management', 'rps-mahasiswa-management', 'rps-capaian-mahasiswa-management') ? 'true' : 'false' }},
     
         init() {
             this.$nextTick(() => {
@@ -566,12 +566,12 @@
                         'nilai-management',
                         'nilai-mahasiswa-management',
                         'rps-mahasiswa-management',
-                        'capaian-mahasiswa-management',
+                        'rps-capaian-mahasiswa-management',
                     );
 
                     $nilaiHistory = session('nilai.history', []);
                     $rpsHistory = session('rps_nilai.history', []);
-                    $capaianHistory = session('capaian_mahasiswa.history', []);
+                    $capaianHistory = session('rps_capaian_mahasiswa.history', []);
 
                     // Kelompokkan RPS per Mahasiswa
                     $groupedRps = [];
@@ -649,21 +649,21 @@
                         // Deteksi cerdas: Aktif jika di route rps ATAU jika route saat ini adalah capaian-mahasiswa-management
                         'active' =>
                             (request()->routeIs('nilai-management') && $currentTable === 'rps') ||
-                            request()->routeIs('capaian-mahasiswa-management'),
+                            request()->routeIs('rps-capaian-mahasiswa-management'),
                         'active-sub' =>
-                            request()->routeIs('capaian-mahasiswa-management'),
+                            request()->routeIs('rps-capaian-mahasiswa-management'),
                     ];
 
                     foreach ($capaianHistory as $kodeRps => $dataRps) {
                         $subMenus[] = [
                             'label' => $kodeRps,
                             'url' => $dataRps['url'] ?? '#',
-                            'param' => 'capaian-mahasiswa-management',
+                            'param' => 'rps-capaian-mahasiswa-management',
                             'icon' => 'document-text',
                             'color' => 'text-blue-500 dark:text-blue-300',
                             'level' => 1,
                             'active' =>
-                                request()->routeIs('capaian-mahasiswa-management') &&
+                                request()->routeIs('rps-capaian-mahasiswa-management') &&
                                 request()->route('kode_rps') === $kodeRps,
                         ];
                     }

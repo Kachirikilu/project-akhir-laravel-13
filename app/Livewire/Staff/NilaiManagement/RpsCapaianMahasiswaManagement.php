@@ -28,7 +28,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class CapaianMahasiswaManagement extends Component
+class RpsCapaianMahasiswaManagement extends Component
 {
     // use WithKelasDelete;
     // use WithNilaiMahasiswaFilters;
@@ -81,8 +81,14 @@ class CapaianMahasiswaManagement extends Component
 
     public $selectedFkId;
 
-    protected $listeners = ['refresh-table' => 'refreshCapaianList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    public $refreshTrigger = 0;
+
+    protected $listeners = [
+        'refresh-table' => 'refreshCapaianList',
+        'refresh-data-rps-mahasiswa' => 'refreshCapaianList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft'
+    ];
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -90,6 +96,7 @@ class CapaianMahasiswaManagement extends Component
         'filterCapaian' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],
+        'filterAngkatan' => ['except' => ''],
         'sortField' => ['except' => 'pertemuan_ke'],
         'sortDirection' => ['except' => 'desc'],
         'showDeleted' => ['except' => false],
@@ -113,6 +120,14 @@ class CapaianMahasiswaManagement extends Component
         $this->selectedFkId = $selectedFkId;
     }
 
+    #[On('refresh-data-rps-mahasiswa')]
+    #[On('refresh-table')]
+    public function refreshCapaianList()
+    {
+        $this->resetPage();
+        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+    }
+
     public function mount($kode_rps = '')
     {
         $this->kode_rps_url = $kode_rps;
@@ -120,7 +135,7 @@ class CapaianMahasiswaManagement extends Component
         $rps = $this->getRPSByKode($kode_rps);
 
         if (! $rps) {
-            foreach (['rps.history', 'capaian_mahasiswa.history'] as $key) {
+            foreach (['rps.history', 'rps_capaian_mahasiswa.history'] as $key) {
                 $history = session($key, []);
                 if (isset($history[$kode_rps])) {
                     unset($history[$kode_rps]);
@@ -135,7 +150,7 @@ class CapaianMahasiswaManagement extends Component
 
         $this->rps_id_url = $rpsId;
 
-        $sessionKey = 'capaian_mahasiswa.history';
+        $sessionKey = 'rps_capaian_mahasiswa.history';
         $nilaiHistory = session($sessionKey, []);
 
         $existingKey = array_search($rpsId, array_column($nilaiHistory, 'rps_id'));
@@ -175,11 +190,6 @@ class CapaianMahasiswaManagement extends Component
         $this->resetPage();
     }
 
-    public function refreshCapaianList()
-    {
-        $this->resetPage();
-    }
-
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -190,37 +200,6 @@ class CapaianMahasiswaManagement extends Component
         }
         $this->resetPage();
     }
-
-    // private function syncSortField($table, $sortField)
-    // {
-    //     $map = [
-    //         'tatap_muka' => 'sks_tm',
-    //         'praktikum' => 'sks_pr',
-    //         'praktek_lapangan' => 'sks_pl',
-    //         'simulasi' => 'sks_sm',
-    //     ];
-
-    //     if (isset($map[$table]) && str_starts_with($sortField, 'sks_')) {
-    //         $this->sortField = $map[$table];
-    //     }
-    // }
-
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-    //     $this->syncSortField($table, $this->sortField);
-
-    //     $this->resetPage();
-
-    //     $targetUrl = route('nilai-mahasiswa-management', ['switchTable' => $table]);
-    //     if ($table == '' || $table == null) {
-    //         $targetPath = '/nilai-mahasiswa-management';
-    //     } else {
-    //         $targetPath = '/nilai-mahasiswa-management/'.$table;
-    //     }
-
-    //     $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
-    // }
 
     public function render()
     {
@@ -303,18 +282,9 @@ class CapaianMahasiswaManagement extends Component
                 $groupsCpmk = collect();
             }
 
-            return view('livewire.staff.nilai-management.capaian-mahasiswa-management', [
-                // 'sesis' => $sesis,
+            return view('livewire.staff.nilai-management.rps-capaian-mahasiswa-management', [
                 'users' => $users,
                 'groupsCpmk' => $groupsCpmk ?? collect(),
-                // 'mapping_pertemuan' => $mapping_pertemuan ?? null,
-                // 'absensi' => $absensi,
-                // 'kelas' => $this->kelas,
-
-                // 'stats' => [
-                //     'sesi' => $totalSesiKelas,
-                //     'mahasiswa' => $countMahasiswa->count(),
-                // ],
             ]);
 
         } catch (\Throwable $e) {
@@ -322,30 +292,9 @@ class CapaianMahasiswaManagement extends Component
             session()->flash('error', $message);
             $this->toast(text: $message, variant: 'danger');
 
-            return view('livewire.staff.nilai-management.capaian-mahasiswa-management', [
-                // 'sesis' => KelasSesi::whereRaw('1 = 0')->paginate($this->perPage),
+            return view('livewire.staff.nilai-management.rps-capaian-mahasiswa-management', [
                 'users' => User::whereRaw('1 = 0')->paginate($this->perPage),
                 'groupsCpmk' => collect(),
-                // 'mapping_pertemuan' => null,
-                'absensi' => [
-                    'mhs_poin_absensi' => '-',
-                    'mhs_poin_absensi_percent' => '-',
-                    'mhs_absensi' => '-',
-                    'mhs_masuk' => '-',
-                    'mhs_hadir' => '-',
-                    'mhs_terlambat' => '-',
-                    'mhs_izin' => '-',
-                    'mhs_sakit' => '-',
-                    'mhs_dispensasi' => '-',
-                    'mhs_absen' => '-',
-                    'mhs_tidak_masuk' => '-',
-                ],
-                // 'kelas' => $this->kelas,
-
-                // 'stats' => [
-                //     'sesi' => '-',
-                //     'mahasiswa' => '-',
-                // ],
             ]);
         }
     }

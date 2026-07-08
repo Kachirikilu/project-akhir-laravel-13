@@ -292,8 +292,8 @@ trait WithUserSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allUser = $allUser->filter(function ($user) use ($searchLower, $searchAngkatan, $mode, $idJadwal, $withRPS) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
                     // $numberBobot = preg_replace('/[^0-9.]/', '', $searchAngkatan);
                     // $isNumericBobot = is_numeric($numberBobot) && $numberBobot !== '';
 
@@ -366,6 +366,7 @@ trait WithUserSearchFilters
                     | TOTAL BOBOT
                     |--------------------------------------------------------------------------
                     */
+                    // dump($searchAngkatan, $searchLower);
                     $matchAngkatan = false;
                     $matchAngkatan = $this->matchOnlyCount(
                         $user->mahasiswa->angkatan ?? null,
@@ -484,10 +485,7 @@ trait WithUserSearchFilters
                             (($user->mhs_poin_absensi ?? 0) / (2 * ($totalSesiKelas ?? 16))) * 100,
                             2,
                         );
-                        $matchPoin = $this->compareNumber(
-                            (float) $mhsPoin,
-                            $searchLower
-                        ) || $this->containsStrict(
+                        $matchPoin = $this->containsStrict(
                             $mhsPoin,
                             $searchLower
                         );

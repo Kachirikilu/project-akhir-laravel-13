@@ -26,14 +26,6 @@ trait WithExcelCapaianNilai
     use WithNilaiExcel;
     use WithUserFilters;
 
-    public $selectedPrId;
-
-    public $selectedDpId;
-
-    public $selectedFkId;
-
-    public $switchTable;
-
     private function processGateAwayExcelNilai(string $noWA, string $nameWA, string $pesan)
     {
         Log::info('=== PROSES GATEAWAY EXCEL NILAI ===');
@@ -286,48 +278,6 @@ trait WithExcelCapaianNilai
         // 2. Ekstraksi Parameter Kode dari Teks Pesan
         // Menghapus trigger kata pemicu untuk menyisakan kodenya saja
         $cleanMessage = strtoupper(trim($pesan));
-        $isRpsRequest = false;
-        $triggerRps = ['RPS', 'RENCANA PEMBELAJARAN SEMESTER'];
-
-        foreach ($triggerRps as $trig) {
-            if (str_contains($cleanMessage, $trig)) {
-                $isRpsRequest = true;
-                break;
-            }
-        }
-
-        if ($isRpsRequest) {
-            $parts = explode(' ', $cleanMessage);
-            $kodeRps = null;
-            $identifier = null;
-            $angkatan = null;
-
-            foreach ($parts as $p) {
-                $pUpper = strtoupper($p);
-                $isStrata = preg_match('/(S1|S2|S3|SARJANA|MAGISTER|DOKTOR)/', $pUpper);
-                if (is_numeric($p) && strlen($p) == 4) {
-                    $angkatan = $p;
-                } elseif (str_contains($p, '-') && ! $isStrata) {
-                    $kodeRps = $p;
-                } else {
-                    $identifier = $p;
-                }
-            }
-            $rps = $this->getRPSByKode($kodeRps);
-            if (! $rps) {
-                return response()->json([
-                    'status' => false,
-                    'head' => '*❌ Data Tidak Ditemukan!*',
-                    'message' => "Kode RPS `{$kodeRps}` tidak terdaftar di sistem!",
-                ], 404);
-            }
-            $prodi = $this->getProdiByKode($identifier);
-            $departemen = ! $prodi ? $this->getDepartemenByKode($identifier) : null;
-            $fakultas = (! $prodi && ! $departemen) ? $this->getFakultasByKode($identifier) : null;
-
-            return $this->resolveRpskGrafikPdf($rps, $prodi, $departemen, $fakultas, $angkatan);
-        }
-
         foreach ($pdfGetCapaianKey as $trigger) {
             if (str_starts_with($cleanMessage, $trigger)) {
                 $cleanMessage = trim(substr($cleanMessage, strlen($trigger)));
@@ -365,14 +315,9 @@ trait WithExcelCapaianNilai
             if ($this->jadwal) {
                 $data = $this->resolveCpmkGrafikPdf($this->jadwal->id);
 
-                $pesanFilter = "\n- ```{$this->jadwal->kelas_rel->pr_rel->prodi}```";
-                $pesanFilter .= "\n- RPS: *{$this->jadwal->kelas_rel->rps_rel->kode}*";
-                $pesanFilter .= "\n- MK: {$this->jadwal->kelas_rel->rps_rel->mk_rel->mk}";
-                $pesanFilter .= "\n- {$this->jadwal->kelas_rel->rps_rel->mk_rel->sks_text} - `{$this->jadwal->kelas_rel->rps_rel->mk_rel->sks} SKS`";
-
                 return response()->json([
                     'status' => true,
-                    'message' => "Berkas grafik CPMK Jadwal *{$this->jadwal->kode}* berhasil dibuat: {$pesanFilter}",
+                    'message' => "Berkas grafik CPMK Jadwal *{$this->jadwal->kode}* berhasil dibuat!",
                     'file_base64' => base64_encode($data['content']),
                     'file_name' => $data['name'],
                     'file_type' => 'pdf',
@@ -380,15 +325,10 @@ trait WithExcelCapaianNilai
             } elseif ($this->kelas) {
                 $allData = $this->resolveAllCpmkGrafikPdf($this->kelas->id);
 
-                $pesanFilter = "\n- ```{$this->kelas->pr_rel->prodi}```";
-                $pesanFilter .= "\n- RPS: *{$this->kelas->rps_rel->kode}*";
-                $pesanFilter .= "\n- MK: {$this->kelas->rps_rel->mk_rel->mk}";
-                $pesanFilter .= "\n- {$this->kelas->rps_rel->mk_rel->sks_text} - `{$this->kelas->rps_rel->mk_rel->sks} SKS`";
-
                 return response()->json([
                     'status' => true,
                     'head' => '*✅ File PDF Berhasil Dibuat!*',
-                    'message' => "Berhasil memproses semua jadwal dalam Kelas *{$this->kelas->kode_kelas}*: {$pesanFilter}",
+                    'message' => "Berhasil memproses semua jadwal dalam Kelas *{$this->kelas->kode_kelas}*.",
                     'files' => $allData,
                     'file_type' => 'excel',
                 ]);
@@ -403,13 +343,12 @@ trait WithExcelCapaianNilai
             ], 500);
         }
 
-        // Cari berdasarkan kodeRPS jika ada kata RPS di depan $pdfGetCapaianKey
-        // $rps = $this->getRPSByKode($kodeRPS);
-        // $prodi = $this->getProdiByKode($KodePr);
-        // $departemen = $this->getProdiByKode($KodeDp); // mungkin saja variabelnya sama karena tidak bisa dibedakan
-        // $fakultas = $this->getProdiByKode($KodeFk); // mungkin saja variabelnya sama karena tidak bisa dibedakan
-        // $parseAngkatan = ...
-        // public function resolveRpskGrafikPdf($rps, $prodi = null, $departemen = null, $fakultas = null, $parseAngkatan = null);
+        // Cari berdasarkan kodeRPS
+        $rps = $this->getRPSByKode($kodeRPS);
+        $prodi = $this->getProdiByKode($KodePr);
+        $parseAngkatan = ...
+        public function resolveRpskGrafikPdf($rps, $prodi = null, $parseAngkatan = null);
+
     }
 
     public function parseKodeJadwal($input)

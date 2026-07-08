@@ -2,20 +2,59 @@
 
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
+use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Models\Akademik\RPS;
+
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
+
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
 use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Auth;
 
 trait WithCpmkGrafikShow
 {
+    use WithUserFilters;
+
     public $mapping_pertemuan;
 
     public function printPDFCpmkGrafik($jadwalRPSId, $isRPS = false)
     {
-        $data = $this->resolveCpmkGrafikPdf($jadwalRPSId, $isRPS);
+        if ($isRPS) {
+            // $rpsId = $jadwalRPSId;
+            if ($this->filterStatus == '') {
+                $prodi = Prodi::find(Auth::user()->pr_id);
+            } else {
+                if ($this->selectedPrId !== null) {
+                    $prodi = Prodi::find($this->selectedPrId);
+                }
+                if ($this->selectedDpId !== null) {
+                    $departemen = Departemen::find($this->selectedDpId);
+                }
+                if ($this->selectedFkId !== null) {
+                    $fakultas = Fakultas::find($this->selectedFkId);
+                }
+
+            }
+            if ($this->filterAngkatan == '') {
+                $angkatan = $this->searchAngkatan;
+            } else {
+                $angkatan = $this->filterAngkatan;
+            }
+
+            $prName = $prodi->prodi ?? null;
+            $dpName = $departemen->departemen_dp ?? null;
+            $fkName = $fakultas->fakultas_fk ?? null;
+
+            $data = $this->resolveCpmkGrafikPdf($jadwalRPSId, $isRPS, $angkatan ?? null, $prName ?? null, $dpName ?? null, $fkName ?? null);
+
+        } else {
+            $data = $this->resolveCpmkGrafikPdf($jadwalRPSId);
+        }
 
         return response()->streamDownload(fn () => print ($data['content']), $data['name'], ['Content-Type' => 'application/pdf']);
     }
@@ -40,14 +79,78 @@ trait WithCpmkGrafikShow
 
         return response()->json([
             'status' => true,
-            'message' => "Berhasil generate {$jumlahJadwal} file PDF untuk kelas {$kelas->kode}",
+            'message' => "Berhasil generate {$jumlahJadwal} file PDF untuk Kelas {$kelas->kode}",
             'files' => $fileResults,
         ]);
     }
 
-    protected function resolveCpmkGrafikPdf($jadwalRPSId, $isRPS = false)
+    public function resolveRpskGrafikPdf($rps, $prodi = null, $departemen = null, $fakultas = null, $angkatan = null)
     {
+        $this->filterStatus = 'user-all';
+        $this->switchTable = 'mahasiswa';
 
+        if ($prodi) {
+            $this->selectedPrId = $prodi->id;
+        }
+        if ($departemen) {
+            $this->selectedDpId = $departemen->id;
+        }
+        if ($fakultas) {
+            $this->selectedFkId = $fakultas->id;
+        }
+
+        $this->filterAngkatan = $angkatan;
+        $prName = $prodi->prodi ?? null;
+        $dpName = $departemen->departemen_dp ?? null;
+        $fkName = $fakultas->fakultas_fk ?? null;
+
+        $data = $this->resolveCpmkGrafikPdf($rps->id, true, $angkatan ?? null, $prName ?? null, $dpName ?? null, $fkName ?? null);
+
+        $pesanFilter = "\n- RPS: *{$rps->kode}*";
+        $pesanFilter .= "\n- MK: {$rps->mk_rel->mk}";
+        $pesanFilter .= "\n- {$rps->mk_rel->sks_text} - `{$rps->mk_rel->sks} SKS`";
+        if ($angkatan) {
+            $pesanFilter .= "\n- Angkatan: {$angkatan}";
+        }
+        if ($prodi) {
+            $pesanFilter .= "\n- ```{$prName}```";
+        }
+        if ($departemen) {
+            $pesanFilter .= "\n- {$dpName}";
+        }
+        if ($fakultas) {
+            $pesanFilter .= "\n- {$fkName}";
+        }
+
+        $cleanData = function ($data) {
+            array_walk_recursive($data, function (&$item) {
+                if (is_string($item)) {
+                    $item = mb_convert_encoding($item, 'UTF-8', 'UTF-8');
+                    $item = iconv('UTF-8', 'UTF-8//IGNORE', $item);
+                }
+            });
+
+            return $data;
+        };
+
+        $fileInfo = [
+            'name' => $data['name'],
+            'base64' => base64_encode($data['content']),
+            'mime_type' => 'application/pdf',
+        ];
+
+        $response = [
+            'status' => true,
+            'head' => '*✅ File PDF Berhasil Dibuat!*',
+            'message' => "Berhasil generate file untuk: {$pesanFilter}",
+            'files' => [$fileInfo],
+        ];
+
+        return response()->json($cleanData($response));
+    }
+
+    protected function resolveCpmkGrafikPdf($jadwalRPSId, $isRPS = false, $angkatan = false, $prName = false, $dpName = false, $fkName = false)
+    {
         if ($isRPS) {
             $queryUser = $this->inputUserSearch('mahasiswa', null, null, null, $jadwalRPSId);
             $rps = RPS::where('id', $jadwalRPSId)->firstOrFail();
@@ -80,7 +183,7 @@ trait WithCpmkGrafikShow
         }
 
         // Logika Tahun Akademik
-        if (!$isRPS) {
+        if (! $isRPS) {
             $sesiPertama = $jadwal->sesis->sortBy('tanggal_pelaksanaan')->first();
             $tahun = $sesiPertama ? Carbon::parse($sesiPertama->tanggal_pelaksanaan)->format('Y') : date('Y');
             $semester = ($sesiPertama && Carbon::parse($sesiPertama->tanggal_pelaksanaan)->format('n') >= 7) ? 'Ganjil' : 'Genap';
@@ -88,26 +191,33 @@ trait WithCpmkGrafikShow
         }
 
         // Generate Content
-        $pdfContent = $this->generateCpmkGrafikRawPDFContent($users, $jadwal ?? null, $rps, $groupsCpmk, $tahunAkademik ?? null);
+        $pdfContent = $this->generateCpmkGrafikRawPDFContent($users, $jadwal ?? null, $rps, $groupsCpmk, $tahunAkademik ?? null, $angkatan ?? null, $prName ?? null, $dpName ?? null, $fkName ?? null);
 
         if ($isRPS) {
-            $fileName = sprintf('%s_%s.pdf',
+            $parts = [
                 str_replace(['/', '\\'], '-', $rps->mk),
-                $rps->kode,
-            );
+                str_replace(['/', '\\'], '-', $rps->kode)
+            ];
+            if (!empty($angkatan)) $parts[] = 'Angkatan ' . $angkatan;
+            if (!empty($prName))   $parts[] = str_replace(['/', '\\'], '-', $prName);
+            if (!empty($dpName))   $parts[] = str_replace(['/', '\\'], '-', $dpName);
+            if (!empty($fkName))   $parts[] = str_replace(['/', '\\'], '-', $fkName);
+            $fileName = implode('_', $parts) . '.pdf';
+
         } else {
-            $fileName = sprintf('%s_%s_%s_%s.pdf',
+            $parts = [
                 str_replace('/', '-', $jadwal->kode),
                 str_replace(['/', '\\'], '-', $rps->mk),
-                $rps->kode,
+                str_replace(['/', '\\'], '-', $rps->kode),
                 str_replace(' ', '-', $tahunAkademik)
-            );
+            ];
+            $fileName = implode('_', $parts) . '.pdf';
         }
 
         return ['content' => $pdfContent, 'name' => $fileName, 'jadwal' => $jadwal ?? null];
     }
 
-    protected function generateCpmkGrafikRawPDFContent($users, $jadwal = null, $rps, $groupsCpmk, $tahunAkademik): string
+    protected function generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik, $angkatan = null, $prName = null, $dpName = null, $fkName = null): string
     {
         $logoPath = public_path('images/logo-unsri.png');
         $univ = strtoupper(env('UNIVERSITAS'));
@@ -145,6 +255,12 @@ trait WithCpmkGrafikShow
             'jadwal' => $jadwal ?? null,
             'rps' => $rps,
             'tahun_akademik' => $tahunAkademik,
+
+            'angkatan' => $angkatan ?? null,
+            'pr_name' => $prName ?? null,
+            'dp_name' => $dpName ?? null,
+            'fk_name' => $fkName ?? null,
+
             'groupsCpmk' => $groupsCpmk ?? null,
             'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
             'mapping_pertemuan' => $this->mapping_pertemuan,

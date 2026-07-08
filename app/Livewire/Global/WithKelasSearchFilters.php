@@ -291,8 +291,8 @@ trait WithKelasSearchFilters
                 $mode = $this->detectSearchMode($searchLower);
 
                 $allKelas = $allKelas->filter(function ($k) use ($searchLower, $mode) {
-                    $number = preg_replace('/[^0-9.]/', '', $searchLower);
-                    $isNumericSearch = is_numeric($number) && $number !== '';
+                    // $number = preg_replace('/[^0-9.]/', '', $searchLower);
+                    // $isNumericSearch = is_numeric($number) && $number !== '';
 
                     $matchID = $this->matchID(
                         $k->id,

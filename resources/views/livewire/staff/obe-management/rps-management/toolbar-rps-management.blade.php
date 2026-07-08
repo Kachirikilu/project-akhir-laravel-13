@@ -1,5 +1,5 @@
 <div>
-    @if ($data['isMK'] ?? false)
+    @if ($isMK ?? false)
         @include('livewire.global.table.text-copy', [
             'xType' => $data['kode_mk'],
             'typeXString' => 'Kode MK',
@@ -11,6 +11,21 @@
         ])
     @endif
     @if (Auth::user()?->admin || Auth::user()?->dosen)
+
+        @if (!$data['isTrashed'] && $data['noData'])
+            <flux:menu.separator />
+
+            <flux:menu.item href="{{ route('rps-capaian-mahasiswa-management', ['kode_rps' => $data['kode']]) }}"
+                navigate
+                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 active:!bg-green-200 dark:active:!bg-green-900 transition-colors">
+                <flux:icon name="document-text" class="mr-2 h-4 w-4" />
+                <div class="flex justify-between items-center w-full">
+                    <span>Lihat Nilai</span>
+                </div>
+            </flux:menu.item>
+
+        @endif
+
         <flux:menu.separator />
 
         @if (!$data['isTrashed'])

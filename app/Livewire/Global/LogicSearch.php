@@ -334,31 +334,31 @@ trait LogicSearch
         float|int $value,
         string $search
     ): bool {
+        $search = trim($search);
+        if ($search === '') {
+            return true;
+        }
+        $result = $this->parseNumericSearch($search);
+        $operator = $result['operator'];
+        $number = $result['number'];
 
-        [
-            'operator' => $operator,
-            'number' => $number,
-        ] = $this->parseNumericSearch($search);
-
+        if ($number === null) {
+            return true;
+        }
         switch ($operator) {
-
             case '>':
                 return $value > $number;
-
             case '<':
                 return $value < $number;
-
             case '>=':
                 return $value >= $number;
-
             case '<=':
                 return $value <= $number;
-
             default:
                 return abs($value - $number) < 0.01;
         }
     }
-
+    
     protected function parseNumericSearch(
         string $search
     ): array {
