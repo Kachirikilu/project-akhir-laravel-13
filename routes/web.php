@@ -8,7 +8,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Kelas\KelasSesi;
 use App\Jobs\SendClassReminderJob;
-use App\Livewire\Staff\OBEManagement\RPSManagement\iFrameRpsController;
+use App\Livewire\Staff\ObeManagement\RpsManagement\iFrameRpsController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+
+Route::middleware(['web', 'check.registration'])->group(function () {
+    Route::get('/register', function () {
+        return view('pages.auth.register');
+    })->name('register');
+});
 
 Route::view('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -36,9 +43,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('rps-management/{switchTable?}', 'obe-management')->name('obe-management');
         // Route::get('/download-nilai/{jadwal}', DownloadNilaiController::class)->name('download.nilai');
 
-        Route::view('nilai-management', 'nilai-management')->name('nilai-management');
-        Route::view('nilai-management/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
-        Route::view('nilai-management/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
+        Route::view('nilai-management/{switchTable?}', 'nilai-management')->name('nilai-management');
+        Route::view('nilai-management/nim/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
+        Route::view('nilai-management/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
+        Route::view('nilai-management/rps/{kode_rps}', 'nilai-management')->name('capaian-mahasiswa-management');
     });
     Route::middleware(['is_dosen'])->group(function () {
         Route::view('program-studi/{switchTable?}', 'program-studi-dosen')->name('program-studi-dosen');
@@ -99,9 +107,9 @@ Route::get('/database-stats', function () {
     return view('database-stats', compact('totalRows'));
 })->name('database-stats');
 
-Route::prefix('{current_team}')
-    ->middleware(['auth', 'verified', EnsureTeamMembership::class])
-    ->group(function () {});
+// Route::prefix('{current_team}')
+//     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
+//     ->group(function () {});
 
 if (file_exists(__DIR__.'/settings.php')) {
     require __DIR__.'/settings.php';

@@ -184,7 +184,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->prodi ?? '', // I
                 $user->admin->kode_wilayah ?? $user->mahasiswa->kode_wilayah ?? '', // J
                 $user->tmt_lahir ?? '', // K
-                $user->tgl_lahir ?? '', // L
+                $user->tanggal_lahir ?? '', // L
                 $user->gender ?? '', // M
                 $user->agama ?? '', // N
                 $user->no_hp ?? '', // O
@@ -291,7 +291,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->prodi ?? '', // L
                 $user->admin->kode_wilayah ?? $user->mahasiswa->kode_wilayah ?? '', // M
                 $user->tmt_lahir ?? '', // N
-                $user->tgl_lahir ?? '', // O
+                $user->tanggal_lahir ?? '', // O
                 $user->gender ?? '', // P
                 $user->agama ?? '', // Q
                 $user->no_hp ?? '', // R
@@ -340,7 +340,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->prodi ?? '', // M
                 $user->admin->kode_wilayah ?? $user->mahasiswa->kode_wilayah ?? '', // N
                 $user->tmt_lahir ?? '', // O
-                $user->tgl_lahir ?? '', // P
+                $user->tanggal_lahir ?? '', // P
                 $user->gender ?? '', // Q
                 $user->agama ?? '', // R
                 $user->no_hp ?? '', // S

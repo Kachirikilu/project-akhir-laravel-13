@@ -26,5 +26,5 @@
             'switchTable' => $switchTable,
             'isTrashed' => $x->trashed(),
         ]"
-        wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}" />
+        wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}-{{ $switchTable }}" />
 </flux:menu>

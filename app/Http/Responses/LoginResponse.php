@@ -12,18 +12,22 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request): Response
     {
-        $user = $request->user();
-        $team = $user?->currentTeam ?? $user?->personalTeam();
+        // $user = $request->user();
+        // $team = $user?->currentTeam ?? $user?->personalTeam();
 
-        if (! $team) {
-            abort(403);
-        }
+        // if (! $team) {
+        //     abort(403);
+        // }
 
-        URL::defaults(['current_team' => $team->slug]);
+        // URL::defaults(['current_team' => $team->slug]);
+
+        // return $request->wantsJson()
+        //     ? new JsonResponse(['two_factor' => false], 200)
+        //     // : redirect()->intended("/{$team->slug}".Fortify::redirects('login'));
+        //     : redirect()->intended(Fortify::redirects('login'));
 
         return $request->wantsJson()
-            ? new JsonResponse(['two_factor' => false], 200)
-            // : redirect()->intended("/{$team->slug}".Fortify::redirects('login'));
-            : redirect()->intended(Fortify::redirects('login'));
+                ? new JsonResponse(['message' => 'Login successful'], 200)
+                : redirect()->intended(Fortify::redirects('login'));
     }
 }

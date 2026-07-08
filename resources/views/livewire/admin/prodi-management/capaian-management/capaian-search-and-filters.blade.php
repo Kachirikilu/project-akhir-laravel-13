@@ -4,6 +4,7 @@
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
         @include('livewire.staff.obe-management.obe-partial.obe-filters')
 
+        
         <div x-show="activeTab == 'mahasiswa'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"

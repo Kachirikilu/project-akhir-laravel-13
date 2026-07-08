@@ -253,7 +253,7 @@ store.{{ $modelString }} = valueInput ?? '';
                     showPassword = !showPassword;
                     inputType = showPassword ? 'text' : 'password'
                 "
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 mt-1 group focus:outline-none">
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 group focus:outline-none">
 
                     {{-- Icon Mata Terbuka --}}
                     <template x-if="!showPassword">

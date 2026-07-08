@@ -1,56 +1,80 @@
-
 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-grafik-sesi-table')
 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
 
 <x-global.main-layout-table :paginator="$users">
     <x-slot:sortir>
-        <div
-            class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'pertemuan_ke',
-                'headString' => 'NIM',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'name',
-                'headString' => 'Nama',
-            ])
-            @if (Auth::user()->admin || Auth::user()->dosen)
-                @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'mhs_nilai_akhir',
-                    'headString' => 'Nilai',
+        @if ($isRPS ?? false)
+            <div x-data="{ activeTab: @entangle('filterAngkatan') }"
+                class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByAngkatan',
+                    'xFilter' => 'filterAngkatan',
+                    'tabFilter' => $totalSeluruhAngkatan ?? null,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua',
+                    'icon' => 'users',
                 ])
-            @endif
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'angkatan',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'status',
-            ])
-        </div>
+                @foreach ($angkatanFilter as $angkatan)
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'filterByAngkatan',
+                        'xFilter' => 'filterAngkatan',
+                        'tabFilter' => $totalAngkatan[$angkatan] ?? 0,
+                        'tabString' => $angkatan,
+                        'tabNameString' => $angkatan,
+                        'icon' => 'calendar-days',
+                    ])
+                @endforeach
+            </div>
+        @else
+            <div
+                class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'pertemuan_ke',
+                    'headString' => 'NIM',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'name',
+                    'headString' => 'Nama',
+                ])
+                @if (Auth::user()->admin || Auth::user()->dosen)
+                    @include('livewire.global.table.head-sortir', [
+                        'sortFieldString' => 'mhs_nilai_akhir',
+                        'headString' => 'Nilai',
+                    ])
+                @endif
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'angkatan',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'status',
+                ])
+            </div>
+        @endif
     </x-slot:sortir>
     <x-slot:search>
         <div class="w-full md:w-110 xl:w-124">
-        <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
-            <div class="flex-shrink-0">
-                @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
-                    'key' => 'page-control-mahasiswa',
-                    'withB' => 0,
-                    'isSmall' => 1,
-                ])
-            </div>
+            <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
+                <div class="flex-shrink-0">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                        'key' => 'page-control-mahasiswa',
+                        'withB' => 0,
+                        'isSmall' => 1,
+                    ])
+                </div>
 
-            <div class="flex-grow max-w-md">
-                @include('livewire.global.search-and-filters.main-search', [
-                    'placeholder' => 'Cari Mahasiswa Kelas...',
-                    'defaultLive' => 1,
-                    'searchMode' => $searchMode,
-                    'searchValues' => ['simple', 'full'],
-                    'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Kompleks'],
-                    'isBorder' => 2,
-                ])
+                <div class="flex-grow max-w-md">
+                    @include('livewire.global.search-and-filters.main-search', [
+                        'placeholder' => 'Cari Mahasiswa Kelas...',
+                        'defaultLive' => 1,
+                        'searchMode' => $searchMode,
+                        'searchValues' => ['simple', 'full'],
+                        'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Kompleks'],
+                        'isBorder' => 2,
+                    ])
+                </div>
             </div>
-        </div>
         </div>
     </x-slot:search>
 
@@ -204,7 +228,10 @@
                     <button class="cursor-pointer">
                         <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                     </button>
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 1])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 1]
+                    )
                 </flux:dropdown>
             </td>
 
@@ -245,7 +272,10 @@
                                     'xValue' => $user->mhs_nilai_mutu ?? 'E',
                                 ])
                             </button>
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 2])
+                            @include(
+                                'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                                ['key' => 2]
+                            )
                         </flux:dropdown>
                     @else
                         -
@@ -319,7 +349,10 @@
                         ])
                     </button>
 
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 3])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 3]
+                    )
                 </flux:dropdown>
             </td>
             <td class="table-second text-center">
@@ -329,7 +362,10 @@
                             'xValue' => $user->status,
                         ])
                     </button>
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 4])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 4]
+                    )
                 </flux:dropdown>
             </td>
 
@@ -341,7 +377,10 @@
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table', ['key' => 5])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-toolbar-table',
+                        ['key' => 5]
+                    )
                 </flux:dropdown>
             </td>
 

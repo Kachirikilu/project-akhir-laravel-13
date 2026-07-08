@@ -69,7 +69,7 @@
             ])
             <p class="text-xs sm:text-sm mt-2 text-green-600 flex items-center gap-1 font-medium">
                 <flux:icon icon="check-circle" variant="mini" class="w-4 h-4" />
-                Syarat terpenuhi (Bobot: <span x-text="$store.rps.total_bobot"></span>%).
+                Syarat terpenuhi (Bobot: <span x-text="$store.rps.total_bobot + '%).'"></span>
             </p>
         </div>
     </template>

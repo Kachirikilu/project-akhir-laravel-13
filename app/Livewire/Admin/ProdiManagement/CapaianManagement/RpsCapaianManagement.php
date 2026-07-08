@@ -5,7 +5,7 @@ namespace App\Livewire\Admin\ProdiManagement\CapaianManagement;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithRPSSearchFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\RPS;
 use App\Models\ProgramStudi\Prodi;

@@ -5,7 +5,7 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
-// use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+// use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 
 class ToolbarSesiManagement extends Component
 {

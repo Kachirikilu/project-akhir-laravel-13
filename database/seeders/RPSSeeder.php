@@ -18,7 +18,7 @@ class RPSSeeder extends Seeder
 {
     public function run(): void
     {
-        $targetRps = 1024;
+        $targetRps = 56;
         $batchSize = 18;
 
         // =========================

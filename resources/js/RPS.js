@@ -112,7 +112,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         setValueRPS(
-            kodeBlok,
+            digitAkademik,
             deskripsi,
             idMK,
             kodeMK,
@@ -125,7 +125,7 @@ document.addEventListener("alpine:init", () => {
             totalBobot,
             kodeSemester,
         ) {
-            this.digit_akademik = kodeBlok;
+            this.digit_akademik = digitAkademik;
             this.deskripsi = deskripsi;
 
             this.mk_id = idMK;
@@ -195,7 +195,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         // resetSelect() {
-        //     this.kode_blok = "";
+        //     this.digit_akademik = "";
         //     this.semester = "";
         //     this.tipe_sks = "";
         //     this.is_wajib = "";
@@ -220,7 +220,7 @@ document.addEventListener("alpine:init", () => {
                 this.nama_mk_search = "";
                 this.mk_items = "";
 
-                this.digit_akademik = "";
+                // this.digit_akademik = "";
                 this.akademik = "";
                 this.akademik_1 = "";
                 this.akademik_2 = "";

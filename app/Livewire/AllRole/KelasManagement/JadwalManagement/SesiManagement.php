@@ -3,17 +3,17 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithSesiFilters;
-use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasGetByKode;
+use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasSortir;
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasStats;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasSesiSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
-use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
@@ -21,17 +21,18 @@ use App\Models\Kelas\KelasSesi;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class SesiManagement extends Component
 {
-    use HasNilaiAbsensi;
     use HasGetByKode;
+    use HasNilaiAbsensi;
     use HasSortir;
-    use HasToast;
     use HasStats;
+    use HasToast;
+    use WithCpmkGrafikShow;
     use WithJadwalModal;
     use WithKelasSesiSearchFilters;
     use WithNilaiExcel;
@@ -40,7 +41,6 @@ class SesiManagement extends Component
     use WithSesiFilters;
     use WithUserFilters;
     use WithUserSearchFilters;
-    use WithCpmkGrafikShow;
 
     public $search = '';
 
@@ -86,7 +86,7 @@ class SesiManagement extends Component
         'refresh-data-jadwal' => 'refreshSesiList',
         'refresh-stats-kelas' => 'refreshStatsKelasList',
         'loadDraft' => 'loadDraft',
-        'saveToDraft' => 'saveToDraft'
+        'saveToDraft' => 'saveToDraft',
     ];
 
     protected $queryString = [
@@ -106,13 +106,12 @@ class SesiManagement extends Component
     {
         $this->resetPage();
     }
+
     #[On('refresh-stats-kelas')]
     public function refreshStatsKelasList()
     {
         $this->clearKelasStatsCache();
     }
-
-
 
     public function mount(
         $isJadwalMhs = false,
@@ -200,8 +199,6 @@ class SesiManagement extends Component
 
         session([$sessionKey => $sesiHistory]);
     }
-
-    
 
     public function loadingTable() {}
 
@@ -407,17 +404,28 @@ class SesiManagement extends Component
              * COUNTING
              * =========================
              */
-            $countSesi = KelasSesi::where('kj_id', $jadwalId);
+            // $countSesi = KelasSesi::where('kj_id', $jadwalId);
+            $countSesi = 16;
 
             $countMahasiswa = User::whereHas('mahasiswa.jadwals', function ($q) use ($jadwalId) {
                 $q->where('kj_id', $jadwalId);
             });
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
-                $querySesi->onlyTrashed();
-                $queryUser->onlyTrashed();
-                $countSesi->onlyTrashed();
-                $countMahasiswa->onlyTrashed();
+                switch ($this->switchTable) {
+                    case '':
+                    case 'sesi-card':
+                    case 'sesi-table':
+                        $querySesi->onlyTrashed();
+                        // $countSesi->onlyTrashed();
+                        $countSesi = 0;
+                        break;
+                    case 'mahasiswa':
+                    case 'cpmk':
+                        $queryUser->onlyTrashed();
+                        $countMahasiswa->onlyTrashed();
+                        break;
+                }
             }
 
             /**
@@ -499,7 +507,6 @@ class SesiManagement extends Component
 
                     break;
             }
-
 
             /**
              * =========================
@@ -626,11 +633,12 @@ class SesiManagement extends Component
                     'mhs_tidak_masuk' => $tidakMasuk ?? 0,
                 ];
             }
+            
 
             return view('livewire.all-role.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => $sesis,
                 'users' => $users,
-                'groupsCpmk' => $groupsCpmk ?? null,
+                'groupsCpmk' => $groupsCpmk ?? collect(),
                 // 'mapping_pertemuan' => $mapping_pertemuan ?? null,
                 'absensi' => $absensi,
                 'kelas' => $this->kelas,
@@ -649,7 +657,7 @@ class SesiManagement extends Component
             return view('livewire.all-role.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => KelasSesi::whereRaw('1 = 0')->paginate($this->perPage),
                 'users' => User::whereRaw('1 = 0')->paginate($this->perPage),
-                'groupsCpmk' => null,
+                'groupsCpmk' => collect(),
                 // 'mapping_pertemuan' => null,
                 'absensi' => [
                     'mhs_poin_absensi' => '-',

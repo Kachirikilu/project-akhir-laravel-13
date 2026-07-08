@@ -1,3 +1,7 @@
+@php
+    $noPadding = $noPadding ?? false;
+@endphp
+
 <div
     x-data="{
         isAuto: false,
@@ -61,13 +65,13 @@
         isAuto = ($flux.appearance === 'system')
     "
 
-    class="px-1 pr-4 flex items-center"
+    class="{{ !$noPadding ? 'px-1 pr-4' : '' }} flex items-center"
 >
 
     {{-- ===================== --}}
     {{-- TOGGLE ICON (SUN / MOON) --}}
     {{-- ===================== --}}
-    <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 mr-6">
+    <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 {{ !$noPadding ? 'mr-6' : '' }}">
 
         <button type="button" @click="manualToggle()"
             class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/50 text-[var(--main-text)] transition-all">

@@ -4,6 +4,7 @@ namespace App\Models\Akademik;
 
 use App\Models\Kelas\Kelas;
 use App\Models\Penilaian\NilaiMahasiswa;
+use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -123,24 +124,6 @@ class RPS extends Model
             $program = collect();
             $scpmkIndex = 0;
 
-            // $dosenRps = $this->dosens ?? collect();
-
-            // $assignedGlobally = $this->all_scpmk->flatMap(function ($scpmk) {
-            //     return $scpmk->dosens ?? collect();
-            // })->filter(fn($d) => (int)($d->pivot->rps_id ?? 0) === (int)$this->id)
-            // ->pluck('id')->unique()->toArray();
-
-            // $timDosens = $this->tim_dosens;
-
-            // $dosenMaster = $timDosens->flatMap(function($tim) {
-            //     return $tim->dosens->map(function($dosen) use ($tim) {
-            //         $dosen->tim_id = $tim->id;
-            //         $dosen->pertemuan_ke = $dosen->pivot->pertemuan_ke;
-            //         $dosen->is_ketua = $dosen->pivot->is_ketua;
-            //         return $dosen;
-            //     });
-            // });
-
             for ($p = 1; $p <= 16; $p++) {
 
                 $isAssignedToMeeting = function ($dosen, $pertemuanKe) use ($p) {
@@ -169,58 +152,6 @@ class RPS extends Model
                 if (! isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
                     $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
                 }
-
-                // $dosenDiPertemuanIni = $dosenMaster->filter(function($dosen) use ($isAssignedToMeeting) {
-                //     return $isAssignedToMeeting($dosen, $dosen->pertemuan_ke);
-                // });
-                // $semuaDosenTim = $dosenMaster->groupBy('tim_id');
-                // $dosenDitemukan = false;
-                // $item->dosens_collection = $dosenDiPertemuanIni->filter(function($dosen) use ($dosenDiPertemuanIni, $semuaDosenTim, &$dosenDitemukan) {
-                //     $anggotaSatuTim = $semuaDosenTim->get($dosen->tim_id);
-                //     if ($dosenDiPertemuanIni->where('tim_id', $dosen->tim_id)->count() === $anggotaSatuTim->count()) {
-                //         return false;
-                //     }
-                //     $dosenDitemukan = true;
-                //     return true;
-                // });
-
-                // if ($item instanceof \App\Models\Akademik\SubCPMK && !empty($item->materi)) {
-
-                //     if (!$item->relationLoaded('dosens')) {
-                //         $item->load('dosens');
-                //     }
-
-                //     $assignedLocal = collect($item->dosens ?? [])
-                //         ->filter(fn($d) => (int)($d->pivot->rps_id ?? 0) === (int)$this->id);
-                //     if ($assignedLocal->isEmpty()) {
-                //         $dosenBelumMuncul = $dosenRps->filter(fn($d) => !in_array($d->id, $assignedGlobally));
-                //         $item->dosens_collection = $dosenBelumMuncul;
-                //     } else {
-                //         $dosenBelumMuncul = $dosenRps->filter(fn($d) => !in_array($d->id, $assignedGlobally));
-                //         $item->dosens_collection = $assignedLocal->merge($dosenBelumMuncul)->unique('id');
-                //     }
-                // } else {
-                //     $item->dosens_collection = collect();
-                // }
-
-                // $item->dosens_collection->transform(function ($dosen) use ($dosenRps) {
-                //     $pivotIsKetua = isset($dosen->pivot->is_ketua) ? (bool)$dosen->pivot->is_ketua : null;
-                //     if ($pivotIsKetua === null) {
-                //         $dosenMaster = $dosenRps->firstWhere('id', $dosen->id);
-                //         $dosen->is_ketua = (bool)($dosenMaster->pivot->is_ketua ?? false);
-                //     } else {
-                //         $dosen->is_ketua = $pivotIsKetua;
-                //     }
-
-                //     return $dosen;
-                // });
-
-                // $currentIds = $item->dosens_collection->pluck('id')->sort()->values()->toArray();
-                // $masterIds = $dosenRps->pluck('id')->sort()->values()->toArray();
-                // if ($currentIds === $masterIds && !empty($masterIds)) {
-                //     $item->dosens_collection = collect();
-                // }
-                // $item->dosen_id_string = $item->dosens_collection->pluck('id')->sort()->implode(',');
                 $program->push($item);
             }
 
@@ -267,7 +198,7 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->kode);
     }
 
-    // protected function kodeBlok(): Attribute
+    // protected function digitAkademik(): Attribute
     // {
     //     return Attribute::get(function () {
     //         $ta1 = (int) substr($this->akademik, 1, 4);
@@ -290,7 +221,7 @@ class RPS extends Model
     //     });
     // }
 
-    protected function kodeBlok(): Attribute
+    protected function digitAkademik(): Attribute
     {
         return Attribute::get(function () {
             $formatTahun = function ($ta) {
@@ -319,10 +250,10 @@ class RPS extends Model
             if (! $kodeMK || ! $this->akademik) {
                 return null;
             }
-            $kodeBlok = $this->kode_blok;
+            $digitAkademik = $this->digit_akademik;
             $gg = $this->mk_rel?->kode_semester;
 
-            return "{$kodeBlok}-{$gg}-{$kodeMK}";
+            return "{$digitAkademik}-{$gg}-{$kodeMK}";
         });
     }
 

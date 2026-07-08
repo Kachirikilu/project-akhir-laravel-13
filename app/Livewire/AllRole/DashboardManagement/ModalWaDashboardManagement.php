@@ -3,7 +3,7 @@
 namespace App\Livewire\AllRole\DashboardManagement;
 
 use App\Livewire\Global\HasToast;
-// use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+// use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 // use App\Livewire\Global\WithRPSSearchFilters;
 // use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Admin\UserManagement\WithUserModal;
@@ -26,6 +26,6 @@ class ModalWaDashboardManagement extends Component
 
     public function render()
     {
-            return view('livewire.all-role.dashboard.modal-wa-dashboard-management');
+            return view('livewire.all-role.dashboard-manager.modal-wa-dashboard-management');
     }
 }

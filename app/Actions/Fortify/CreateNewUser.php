@@ -51,15 +51,33 @@ class CreateNewUser implements CreatesNewUsers
         $adminKey = env('ADMIN_KEY', 'nrgKnSD$ZJP9sUh');
 
         Validator::make($input, [
-            ...$this->profileRules(),
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'admin_key' => ['nullable', 'string'],
+            // Tambahkan validasi NIP dan NIK di sini
+            'nip' => ['required', 'string', 'min:8', 'max:20', 'unique:admins,nip'], 
+            'nik' => ['required', 'string', 'min:12', 'max:16', 'unique:admins,nik'],
+        ], [
+            // Pesan error kustom Anda
+            'email.required' => 'Alamat email wajib diisi!',
+            'email.email' => 'Format email tidak valid!',
+            'email.unique' => 'Email ini sudah terdaftar di sistem!',
+            'password.required' => 'Password wajib diisi!',
+            'password.min' => 'Password minimal harus 8 karakter!',
+            'name.required' => 'Nama lengkap wajib diisi!',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
+            'nip.required' => 'NIP wajib diisi untuk Admin dan Dosen!',
+            'nip.unique' => 'NIP ini sudah terdaftar!',
+            'nip.min' => 'NIP minimal 8 karakter!',
+            'nip.max' => 'NIP maksimal 20 karakter!',
+            'nik.required' => 'NIK wajib diisi!',
+            'nik.unique' => 'NIK ini sudah terdaftar!',
+            'nik.min' => 'NIK minimal harus 12 karakter!',
+            'nik.max' => 'NIK maksimal 16 karakter!',
         ])->after(function ($validator) use ($input, $adminKey) {
             if (! empty($input['admin_key']) && $input['admin_key'] !== $adminKey) {
-                $validator->errors()->add(
-                    'admin_key',
-                    'Kunci admin tidak valid.'
-                );
+                $validator->errors()->add('admin_key', 'Kunci admin tidak valid.');
             }
         })->validate();
 
@@ -76,12 +94,10 @@ class CreateNewUser implements CreatesNewUsers
                     'user_id' => $user->id,
                     'name' => $input['name'],
                     'pr_id' => null,
-                    'nip' => '03041282227063',
-                    'nik' => '03041282227063'
+                    'nip' => $input['nip'],
+                    'nik' => $input['nik'],
                 ]);
             }
-
-            $this->createTeam->handle($user, $input['name']."'s Team", isPersonal: true);
 
             return $user;
         });

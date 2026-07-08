@@ -227,7 +227,6 @@ class KelasManagement extends Component
                 $kelas = $queryKelas->paginate($this->perPage);
             }
 
-            // dd($kelas);
 
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,

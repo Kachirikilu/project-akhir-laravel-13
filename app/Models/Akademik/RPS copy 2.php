@@ -275,7 +275,7 @@ if ($item instanceof \App\Models\Akademik\SubCPMK && ! empty($item->materi)) {
         return Attribute::get(fn () => $this->mk_rel?->kode);
     }
 
-    protected function kodeBlok(): Attribute
+    protected function digitAkademik(): Attribute
     {
         return Attribute::get(function () {
             $ta1 = (int) substr($this->akademik, 1, 4);
@@ -305,10 +305,10 @@ if ($item instanceof \App\Models\Akademik\SubCPMK && ! empty($item->materi)) {
             if (! $kodeMK || ! $this->akademik) {
                 return null;
             }
-            $kodeBlok = $this->kode_blok;
+            $digitAkademik = $this->digit_akademik;
             $gg = $this->mk_rel?->kode_semester;
  
-            return "{$kodeBlok}-{$gg}-{$kodeMK}";
+            return "{$digitAkademik}-{$gg}-{$kodeMK}";
         });
     }
 

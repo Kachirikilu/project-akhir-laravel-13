@@ -221,7 +221,7 @@
                                                                 $store.rps?.setFlyout(true);
                                                                 $store.rps?.setColor('text-green-700 dark:text-green-400');
                                                                 $store.rps?.setValueRPS(
-                                                                    '{{ $r['kode_blok'] ?? '' }}',
+                                                                    '{{ $r['digit_akademik'] ?? '' }}',
                                                                     '{{ $r['deskripsi'] ?? '' }}',
                                                                     '{{ $r['mk_id'] ?? '' }}',
                                                                     '{{ $r['kode_mk'] ?? '' }}',

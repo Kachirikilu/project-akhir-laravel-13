@@ -17,7 +17,6 @@
             if (!ta1 || !ta2) {
                 $store.rps.digit_akademik = '';
             } else {
-                // Menggabungkan suffix ta1 dan ta2
                 $store.rps.digit_akademik = getSuffix(ta1) + getSuffix(ta2);
             }
         }

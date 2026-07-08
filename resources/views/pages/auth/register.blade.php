@@ -1,77 +1,129 @@
-<x-layouts::auth :title="__('Register')">
-    <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
+<head>
+    @include('partials.head')
+</head>
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
-            @csrf
-            <!-- Name -->
-            <flux:input
-                name="name"
-                :label="__('Name')"
-                :value="old('name')"
-                type="text"
-                required
-                autofocus
-                autocomplete="name"
-                :placeholder="__('Full name')"
-            />
+<body class="min-h-screen antialiased bg-[var(--wadah-color)] dark:bg-neutral-950">
 
-            <!-- Email Address -->
-            <flux:input
-                name="email"
-                :label="__('Email address')"
-                :value="old('email')"
-                type="email"
-                required
-                autocomplete="email"
-                placeholder="email@example.com"
-            />
+    <div class="min-h-screen flex items-center justify-center p-3 sm:p-6">
+        <div class="w-full max-w-5xl flex rounded-[24px] overflow-hidden border border-[var(--border-table-color)]"
+            style="min-height: 560px;">
 
-            <!-- Password -->
-            <flux:input
-                name="password"
-                :label="__('Password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Password')"
-                viewable
-            />
+            {{-- ═══ PANEL KIRI: Branding (Sama seperti Login) ═══ --}}
+            <div class="relative hidden lg:flex flex-1 flex-col justify-between p-10 overflow-hidden"
+                style="background: var(--main-color);">
 
-            <!-- Confirm Password -->
-            <flux:input
-                name="password_confirmation"
-                :label="__('Confirm password')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                viewable
-            />
+                <div class="absolute inset-0"
+                    style="background-image: url('{{ asset('images/bg-unsri.png') }}'); background-size: cover; background-position: center;">
+                </div>
+                <div class="absolute inset-0 opacity-90"
+                    style="background: linear-gradient(150deg, var(--main-color) 0%, var(--hover-main-color) 100%);">
+                </div>
 
-            <flux:input
-                name="admin_key"
-                :label="__('Admin Key')"
-                type="password"
-                required
-                autocomplete="new-password"
-                :placeholder="__('Confirm password')"
-                viewable
-            />
+                <div class="relative z-10 flex flex-col justify-between h-full gap-8">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 flex-shrink-0">
+                            <x-app-logo-icon class="h-5 w-auto" />
+                        </div>
+                        <span class="text-[var(--main-text)] text-[13px] font-bold uppercase tracking-[0.08em]">
+                            {{ config('app.name', 'RPS Manajemen') }}
+                        </span>
+                    </div>
 
-            <div class="flex items-center justify-end">
-                <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
-                    {{ __('Create account') }}
-                </flux:button>
+                    <div class="flex flex-col gap-4">
+                        <span
+                            class="text-[var(--main-text)] inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em]">
+                            <flux:icon name="shield-check" class="w-3 h-3" />
+                            Universitas Sriwijaya
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-bold leading-tight text-white tracking-tighter">
+                            Registrasi Akun<br>Administrator
+                        </h1>
+                        <p class="text-[var(--main-text)]/70 text-sm leading-relaxed max-w-xs">
+                            Halaman khusus untuk pendaftaran akun administratif sistem manajemen pembelajaran OBE.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex items-center gap-2.5">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
+                            <span class="text-[var(--main-text)]/70 text-xs">Akses penuh Sistem</span>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
+                            <span class="text-[var(--main-text)]/70 text-xs">Manajemen User & Hak Akses</span>
+                        </div>
+                        <div class="mt-6 flex gap-4">
+                            <x-livewire::navigation.dark-mode :noPadding="1" />
+                            <x-livewire::navigation.color-mode :noBar="1" />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
 
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            <span>{{ __('Already have an account?') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+            {{-- ═══ PANEL KANAN: Form Register ═══ --}}
+            <div
+                class="w-full lg:w-[600px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)] p-8 sm:p-10 overflow-y-auto">
+
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold tracking-tight text-[var(--contrast-main-text)]">Buat Akun Admin</h2>
+                    <p class="text-xs text-[var(--contrast-third-text)] mt-1">Lengkapi Data Pendaftaran Administrator
+                        Baru</p>
+                </div>
+
+                <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+                    @csrf
+
+                    <flux:input name="name" label="Nama Lengkap" :value="old('name')" required
+                        placeholder="Nama Anda" />
+                    <flux:input name="email" label="Email" :value="old('email')" type="email" required
+                        placeholder="nama@unsri.ac.id" />
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <flux:input name="nip" label="NIP" :value="old('nip')" required maxlength="20"
+                            placeholder="Masukkan NIP..." />
+                        <flux:input name="nik" label="NIK" :value="old('nik')" required maxlength="20"
+                            placeholder="Masukkan NIK..." />
+                    </div>
+
+                    <flux:input name="password" label="Password" type="password" required viewable
+                        placeholder="••••••••" />
+                    <flux:input name="password_confirmation" label="Konfirmasi Password" type="password" required
+                        viewable placeholder="••••••••" />
+
+                    <div
+                        class="mt-2 p-4 rounded-xl border border-[var(--main-color)] bg-[var(--main-color)]/20 bg-opacity-5">
+                        <flux:input name="admin_key" label="Admin Secret Key" type="password" required viewable
+                            placeholder="Kunci otorisasi Admin..." />
+                    </div>
+
+                    <flux:button variant="primary" type="submit"
+                        class="cursor-pointer w-full mt-2 !bg-[var(--main-color)] hover:!bg-[var(--hover-main-color)] text-white font-bold py-2.5">
+                        {{ __('Create account') }}
+                    </flux:button>
+                </form>
+
+                {{-- <div class="mt-6 text-center text-xs text-[var(--contrast-third-text)]">
+                    <span>Sudah punya akun?</span>
+                    <a href="{{ route('login') }}" class="font-bold text-[var(--focus-color)] hover:underline ml-1">Log in</a>
+                </div> --}}
+            </div>
         </div>
     </div>
-</x-layouts::auth>
+
+    @persist('toast')
+        <flux:toast.group>
+            <flux:toast />
+        </flux:toast.group>
+    @endpersist
+
+    @fluxScripts
+
+</body>
+
+</html>

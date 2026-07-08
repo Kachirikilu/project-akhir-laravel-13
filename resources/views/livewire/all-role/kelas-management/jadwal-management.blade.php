@@ -27,12 +27,6 @@
 
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar')
 
-    @if  (Auth::user()->admin || Auth::user()->dosen)
-        {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-excel-modal-form') --}}
-    @elseif (Auth::user()->mahasiswa)
-        {{-- @include('livewire.all-role.kelas-management.jadwal-management.join-jadwal-modal-form') --}}
-    @endif
-
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @if ($this->switchTable == 'jadwal-card')
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-card')

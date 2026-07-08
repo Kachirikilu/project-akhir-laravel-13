@@ -86,7 +86,7 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->kode);
     }
 
-    protected function kodeBlok(): Attribute
+    protected function digitAkademik(): Attribute
     {
         return Attribute::get(function () {
             $ta1 = (int) substr($this->akademik, 1, 4);
@@ -116,7 +116,7 @@ class RPS extends Model
             if (! $kodeMK || ! $this->akademik) {
                 return null;
             }
-            $suffixKode = $this->kode_blok;
+            $suffixKode = $this->digit_akademik;
 
             $ganjilGenap = $this->mk_rel?->kode_semester;
             $suffixKode .= '-'.$ganjilGenap;

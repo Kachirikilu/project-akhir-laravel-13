@@ -16,7 +16,6 @@ new #[Title('Profile Settings')] class extends Component {
     use ProfileValidationRules;
     use WithFileUploads;
     use HasToast;
-
     #[
         Rule(
             ['nullable', 'image', 'max:2048'],
@@ -28,9 +27,49 @@ new #[Title('Profile Settings')] class extends Component {
     ]
     public $photo;
 
+    public $user_input = [
+        'password' => '',
+    ];
+
     protected $listeners = ['validate-photo' => 'updatedPhoto'];
 
-    public function updateProfileInformation(): void
+    public function preparePasswordUpdate()
+    {
+        $this->validate(
+            [
+                'user_input.password' => 'nullable|min:8',
+            ],
+            [
+                'user_input.password.min' => 'Password minimal harus 8 karakter!',
+            ],
+        );
+        $this->dispatch('open-modal-confirm-update-password');
+    }
+    public function updatePassword()
+    {
+        $validated = $this->validate(
+            [
+                'user_input.password' => 'nullable|min:8',
+            ],
+            [
+                'user_input.password.min' => 'Password minimal harus 8 karakter!',
+            ],
+        );
+
+        $user = Auth::user();
+        $passwordValue = $this->user_input['password'];
+
+        if (empty($passwordValue)) {
+            $passwordValue = $user->identity1;
+        }
+        $user->update([
+            'password' => Hash::make($passwordValue),
+        ]);
+        $this->dispatch('close-modal-confirm-update-password');
+        $this->toast(text: 'Password diperbarui menjadi ' . $passwordValue, type: 'update');
+    }
+
+    public function updatePhotoProfile(): void
     {
         $this->validate();
         $user = Auth::user();
@@ -78,7 +117,7 @@ new #[Title('Profile Settings')] class extends Component {
     <flux:heading class="sr-only">{{ __('Profile Settings') }}</flux:heading>
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Perbarui Foto Profil Anda')">
-        <form wire:submit.prevent="updateProfileInformation" class="my-6 w-full space-y-6">
+        <form wire:submit.prevent="updatePhotoProfile" class="my-6 w-full space-y-6">
             <div class="space-y-4 mb-9">
                 <flux:label :label="__('Profile Photo')" for="photo" />
 
@@ -130,9 +169,9 @@ new #[Title('Profile Settings')] class extends Component {
                                     wire:loading.attr="disabled" wire:loading.class="opacity-50"
                                     class="cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]">
                                     <span wire:loading.remove
-                                        wire:target="updateProfileInformation">{{ __('Save Photo') }}</span>
+                                        wire:target="updatePhotoProfile">{{ __('Save Photo') }}</span>
                                     <span wire:loading
-                                        wire:target="updateProfileInformation">{{ __('Saving...') }}</span>
+                                        wire:target="updatePhotoProfile">{{ __('Saving...') }}</span>
                                 </flux:button>
                             @endif
 
@@ -144,11 +183,11 @@ new #[Title('Profile Settings')] class extends Component {
                 </div>
             </div>
         </form>
-        <div class="my-6 w-full space-y-6">
+        <div class="mt-6 mb-28 w-full space-y-6">
 
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'user',
-                'value' => Auth::user()->name,
+                'value' => Auth::user()->name ?? '-',
                 'isLivewire' => 1,
                 'noEntangle' => 1,
                 'modelString' => 'name',
@@ -156,80 +195,357 @@ new #[Title('Profile Settings')] class extends Component {
                 'isRequired' => 0,
                 'isReadonly' => 1,
             ])
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'user',
-                'value' => Auth::user()->email,
-                'isLivewire' => 1,
-                'noEntangle' => 1,
-                'modelString' => 'email',
-                'iconString' => 'envelope',
-                'isRequired' => 0,
-                'isReadonly' => 1,
-            ])
             @if (Auth::user()->admin || Auth::user()->dosen)
-                @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'user',
-                    'value' => Auth::user()->identity1 . ' / ' . Auth::user()->identity2,
-                    'isLivewire' => 1,
-                    'noEntangle' => 1,
-                    'modelString' => 'identity1_2',
-                    'nameXString' => Auth::user()->label_id1 . ' / ' . Auth::user()->label_id2,
-                    'iconString' => 'identification',
-                    'isRequired' => 0,
-                    'isReadonly' => 1,
-                ])
+                <div class="grid grid-cols-12 gap-1">
+                    <div class="col-span-8">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->email ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'email',
+                            'iconString' => 'envelope',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                    <div class="col-span-4">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->role ?? 'Pengunjung',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'role',
+                            'iconString' => 'users',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                </div>
             @elseif (Auth::user()->mahasiswa)
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'user',
-                    'value' => Auth::user()->mahasiswa->nim,
+                    'value' => Auth::user()->email ?? '-',
                     'isLivewire' => 1,
                     'noEntangle' => 1,
-                    'modelString' => 'identity1',
-                    'nameXString' => 'NIM',
-                    'iconString' => 'identification',
+                    'modelString' => 'email',
+                    'iconString' => 'envelope',
                     'isRequired' => 0,
                     'isReadonly' => 1,
                 ])
+                <div class="grid grid-cols-12 gap-1">
+                    <div class="col-span-8">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->role ?? 'Pengunjung',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'role',
+                            'iconString' => 'users',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                    <div class="col-span-4">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->mahasiswa->angkatan ?? 'YYYY',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'angkatan',
+                            'iconString' => 'calendar-days',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                </div>
             @endif
-            @if (Auth::user()->dosen)
+
+            <div>
+                @include('livewire.global.modal-form.partial.label', [
+                    'nameXString' => 'Ganti Password',
+                    'isRequired' => 0,
+                ])
+                {{-- Form --}}
+                <form wire:submit.prevent="updatePassword" class="grid grid-cols-12 gap-2 items-center">
+                    <div class="col-span-10">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'isLivewire' => 1,
+                            'noLabel' => 1,
+                            'modelString' => 'password',
+                            'typeString' => 'password',
+                            'iconString' => 'lock-closed',
+                            'placeholder' => 'Default: ' . Auth::user()->identity1,
+                            // 'message' => $errors->first('user_input.password'),
+                            'isRequired' => 0,
+                        ])
+                    </div>
+                    <div class="col-span-2">
+                        {{-- Tombol pemicu modal --}}
+                        <flux:button type="button" variant="primary" wire:click="preparePasswordUpdate"
+                            class="text-white w-full cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]">
+                            {{ __('Save') }}
+                        </flux:button>
+                    </div>
+                </form>
+                @error('user_input.password')
+                    <span
+                        class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $errors->first('user_input.password') }}</span>
+                @enderror
+            </div>
+
+            @if (Auth::user()->admin || Auth::user()->dosen)
+                <div class="grid grid-cols-12 gap-1">
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->identity1 ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'identity1',
+                            'nameXString' => Auth::user()->label_id1,
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->identity2 ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'identity2',
+                            'nameXString' => Auth::user()->label_id2,
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                </div>
+            @elseif (Auth::user()->mahasiswa)
+                <div class="grid grid-cols-12 gap-1">
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->mahasiswa->nim ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'identity1',
+                            'nameXString' => 'NIM',
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->mahasiswa->nik ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'NIK',
+                            'nameXString' => 'NIK',
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                </div>
+            @endif
+            @if (Auth::user()->admin)
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'user',
-                    'value' => Auth::user()->dosen->nidk ?? '-',
+                    'value' => Auth::user()->admin->nik ?? '-',
                     'isLivewire' => 1,
                     'noEntangle' => 1,
-                    'modelString' => 'identity3',
-                    'nameXString' => 'NIDK',
+                    'modelString' => 'NIK',
+                    'nameXString' => 'NIK',
                     'iconString' => 'identification',
                     'isRequired' => 0,
                     'isReadonly' => 1,
                 ])
+            @elseif (Auth::user()->dosen)
+                <div class="grid grid-cols-12 gap-1">
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->dosen->nidk ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'identity3',
+                            'nameXString' => 'NIDK',
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                    <div class="col-span-6">
+                        @include('livewire.global.modal-form.input-form', [
+                            'alpine' => 'user',
+                            'value' => Auth::user()->dosen->nik ?? '-',
+                            'isLivewire' => 1,
+                            'noEntangle' => 1,
+                            'modelString' => 'NIK',
+                            'nameXString' => 'NIK',
+                            'iconString' => 'identification',
+                            'isRequired' => 0,
+                            'isReadonly' => 1,
+                        ])
+                    </div>
+                </div>
             @endif
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'user',
-                'value' => Auth::user()->nik,
-                'isLivewire' => 1,
-                'noEntangle' => 1,
-                'modelString' => 'NIK',
-                'nameXString' => 'NIK',
-                'iconString' => 'identification',
-                'isRequired' => 0,
-                'isReadonly' => 1,
-            ])
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'user',
-                'value' => Auth::user()->prodi . ' / ' . Auth::user()->kode_pr,
-                'isLivewire' => 1,
-                'noEntangle' => 1,
-                'modelString' => 'program_studi',
-                'iconString' => 'academic-cap',
-                'isRequired' => 0,
-                'isReadonly' => 1,
-            ])
+
+            <div class="grid grid-cols-12 gap-1">
+                <div class="col-span-6">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->gender ?? 'Tidak Dikeahui',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'gender',
+                        'iconString' => 'users',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+                <div class="col-span-6">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->agama ?? 'Tidak Diketahui',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'agama',
+                        'iconString' => 'bookmark',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-1">
+                <div class="col-span-7">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' =>
+                            (Auth::user()->tmt_lahir ?? '---') . ', ' . (Auth::user()->tgl_lahir ?? 'DD MM YYY'),
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'tempat_tanggal_lahir',
+                        'nameXString' => 'Tempat, Tanggal Lahir',
+                        'iconString' => 'map-pin',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+                <div class="col-span-5">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->no_wa_full ?? '+62 --- ---- -----',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'no_hp',
+                        'nameXString' => 'Nomor Telepon',
+                        'iconString' => 'phone',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-1">
+                <div class="col-span-7">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->pr_rel ? (Auth::user()->prodi . ' / ' . Auth::user()->kode_pr) : 'Tidak Terdaftar',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'program_studi',
+                        'iconString' => 'academic-cap',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+                <div class="col-span-5">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->status,
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'status',
+                        'iconString' => 'tag',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-1">
+                <div class="col-span-6">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->pr_rel?->dp_rel ? (Auth::user()->departemen . ' / ' . Auth::user()->kode_dp) : 'Tidak Terdaftar',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'departemen',
+                        'iconString' => 'book-open',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+                <div class="col-span-6">
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'value' => Auth::user()->pr_rel?->dp_rel?->fk_rel ? (Auth::user()->fakultas . ' / ' . Auth::user()->kode_fk) : 'Tidak Terdaftar',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'fakultas',
+                        'iconString' => 'building-library',
+                        'isRequired' => 0,
+                        'isReadonly' => 1,
+                    ])
+                </div>
+            </div>
+
         </div>
 
         {{-- @if ($this->showDeleteUser)
             <livewire:pages::settings.delete-user-form />
         @endif --}}
+
+        {{-- Modal Konfirmasi --}}
+        <flux:modal name="confirm-update-password"
+            x-on:open-modal-confirm-update-password.window="$flux.modal('confirm-update-password').show()"
+            x-on:close-modal-confirm-update-password.window="$flux.modal('confirm-update-password').close()"
+            class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+            <div class="space-y-6">
+                <div>
+                    <flux:heading size="lg">Perbarui Password?</flux:heading>
+                    <flux:subheading>
+                        Apakah Anda yakin ingin mengubah password Anda menjadi
+                        <span class="text-red-700 dark:text-red-400 font-medium">
+                            ***{{ !empty($user_input['password']) ? $user_input['password'] : Auth::user()->identity1 }}***
+                        </span>?
+                        Password baru akan menggantikan kredensial lama Anda.
+                    </flux:subheading>
+                </div>
+
+                <div class="flex gap-2">
+                    <flux:spacer />
+                    <flux:modal.close>
+                        <flux:button variant="ghost"
+                            class="cursor-pointer w-full sm:w-auto bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] text-[var(--contrast-second-text)] transition-colors duration-200">
+                            Batal
+                        </flux:button>
+                    </flux:modal.close>
+
+                    <flux:button wire:click="updatePassword" wire:loading.attr="disabled" variant="primary"
+                        class="text-white cursor-pointer w-full sm:w-auto bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] border-none transition-colors duration-200">
+                        <span wire:loading.remove wire:target="updatePassword">Ya, Simpan</span>
+                        <span wire:loading wire:target="updatePassword">Menyimpan...</span>
+                    </flux:button>
+                </div>
+            </div>
+        </flux:modal>
 
 
         <flux:modal name="confirm-delete-photo"

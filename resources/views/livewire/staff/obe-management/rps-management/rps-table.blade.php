@@ -79,6 +79,7 @@
                 'sortFieldString' => 'is_draf',
                 'headString' => 'Status',
                 'isMain' => 1,
+                'isCenter' => 1,
                 'rowSpan' => 2,
             ])
 
@@ -259,7 +260,7 @@
                             'noIcon' => 1,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 3])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 3, 'isMK' => 1])
                 </flux:dropdown>
             </td>
             <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
@@ -274,7 +275,7 @@
                             'sortir' => $r->wajib,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 4])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 4, 'isMK' => 1])
                 </flux:dropdown>
             </td>
 

@@ -73,13 +73,13 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
         foreach ($this->sesis as $sesi) {
             $scpmk = $sesi->scpmk_atr;
 
-            if ($scpmk instanceof SubCPMK) {
-                $cpmkKode = $scpmk->cpmks
-                    ?->first()
-                    ?->kode ?? null;
-            }
+            // if ($scpmk instanceof SubCPMK) {
+            //     $cpmkKode = $scpmk->cpmks
+            //         ?->first()
+            //         ?->kode ?? null;
+            // }
 
-            $header1[] = 'CPMK '.$cpmkKode;
+            $header1[] = 'CPMK '.$sesi->kode_cpmk;
             $header2[] = ($scpmk->kode ?? $scpmk->kode_scpmk).' (P-'.$sesi->pertemuan_ke.')';
 
             $bobotAsli = $scpmk->bobot ?? 0;

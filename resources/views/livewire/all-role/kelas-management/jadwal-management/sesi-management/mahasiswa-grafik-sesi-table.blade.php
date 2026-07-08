@@ -10,8 +10,9 @@
             'data' => [],
         ];
     }
-    $daftarNim = [];
 
+    $daftarNim = [];
+    // $index = 0;
     foreach ($users as $user) {
         $daftarNim[] = $user->identity1;
 
@@ -35,16 +36,31 @@
                 );
 
                 $nilaiPertemuan = $arrayNilai[$originalIndex] ?? 0;
-                $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
-                $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+                // $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
+                // $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+                $rasioBobot = $pertemuan['bobot'] / 100;
+                $skorMurniCpmk += $nilaiPertemuan * $rasioBobot;
             }
             $totalNilaiKontribusiCpmk = ($skorMurniCpmk / $bobotNormalisasiGlobalCpmk) * 100;
             $seriesData[$kodeCpmk]['data'][] = round($totalNilaiKontribusiCpmk, 1);
         }
+
+        // if ($index === 0) {
+        //     dump('Mapping:', $allMapping->toArray());
+        //     dump('Nilai User:', $arrayNilai);
+        //     dump('Bobot User:', $bobotCpmkArray);
+        // }
+        // $index++;
+        // if ($nilaiPertemuan * $rasioBobotDiCpmk > 100) {
+        //     dump('Anomali pada User: ' . $user->id);
+        //     dump('Nilai: ' . $nilaiPertemuan);
+        //     dump('Rasio Bobot: ' . $rasioBobotDiCpmk);
+        // }
     }
 
     $bobotCpmkLegend = [];
     $rataKeberhasilanCpmk = [];
+
     foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
         $bobotMentah = collect($pertemuans)->sum('bobot');
         $bobotNormalisasi = ($bobotMentah / $globalTotalBobotMentah) * 100;
@@ -56,7 +72,31 @@
             $totalMahasiswa > 0 ? round(array_sum($semuaNilaiCpmk) / $totalMahasiswa, 1) : 0;
     }
 
+    // foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
+    //     $bobotMentah = collect($pertemuans)->sum('bobot');
+    //     $bobotNormalisasi = ($bobotMentah / $globalTotalBobotMentah) * 100;
+
+    //     $bobotCpmkLegend[$kodeCpmk] = number_format($bobotNormalisasi, 2, '.', '');
+
+    //     $semuaNilaiCpmk = $seriesData[$kodeCpmk]['data'];
+    //     $totalMahasiswa = count($semuaNilaiCpmk);
+    //     $totalSkorMahasiswa = array_sum($semuaNilaiCpmk);
+
+    //     $rataKeberhasilanCpmk[$kodeCpmk] = $totalMahasiswa > 0 ? round($totalSkorMahasiswa / $totalMahasiswa, 1) : 0;
+
+    //     // --- DUMP DIAGNOSTIK ---
+    //     dump('Diagnostik untuk CPMK: ' . $kodeCpmk);
+    //     dump([
+    //         'Bobot Mentah CPMK' => $bobotMentah,
+    //         'Global Total Bobot Mentah' => $globalTotalBobotMentah,
+    //         'Bobot Normalisasi (Pembagi)' => $bobotNormalisasi,
+    //         'Total Mahasiswa' => $totalMahasiswa,
+    //         'Total Skor dari Semua Mahasiswa' => $totalSkorMahasiswa,
+    //         'Rata-rata Keberhasilan (Hasil)' => $rataKeberhasilanCpmk[$kodeCpmk],
+    //     ]);
+    // }
     $finalSeries = array_values($seriesData);
+
     $colorPalette = [
         '#3b82f6', // Blue-500
         '#8b5cf6', // Violet-500
@@ -79,34 +119,6 @@
     $calculatedWidth = max($totalMahasiswa * 160, 800);
 @endphp
 
-{{-- <div class="flex items-end justify-between h-[320px] border-b border-l border-gray-300 pb-0 px-2 gap-4">
-    @foreach ($daftarNim as $idxNim => $nim)
-        <div class="flex flex-col items-center flex-1 h-full justify-end group">
-            
-            <div class="flex items-end gap-1 h-full w-full justify-center">
-                @foreach ($finalSeries as $idxSeries => $series)
-                    @php
-                        $value = $series['data'][$idxNim] ?? 0;
-                        $color = $colorPalette[$idxSeries % count($colorPalette)];
-                    @endphp
-                    
-                    <div class="flex flex-col items-center justify-end" style="width: 20%; height: 100%;">
-                        <div class="w-full rounded-t-sm" 
-                             style="height: {{ $value }}%; background-color: {{ $color }}; min-height: 2px;">
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="h-12 mt-2 w-full text-center">
-                <span class="text-[8px] text-gray-600 block rotate-45 origin-top-left">
-                    {{ $nim }}
-                </span>
-            </div>
-        </div>
-    @endforeach
-</div> --}}
-
 <div
     class="my-6 w-full bg-white dark:bg-zinc-900 rounded-xl border-x border-gray-200 dark:border-zinc-800 shadow-xs overflow-hidden">
     <div
@@ -115,7 +127,8 @@
             <h3 class="text-sm font-bold text-gray-800 dark:text-zinc-100 tracking-wide whitespace-nowrap">Distribusi
                 Capaian Nilai per
                 Mahasiswa</h3>
-            <p class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Kode RPS: {{ $kelas->kode_rps }}</p>
+            <p class="text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">Kode RPS: {{ $kelas->kode_rps ?? $rps->kode }}
+            </p>
         </div>
 
         <div
@@ -143,7 +156,7 @@
             <div class="flex-shrink-0">
                 @include('livewire.global.table.export-button', [
                     'nameXString' => 'Export Grafik',
-                    'xString' => "printPDFCpmkGrafik($jadwal_id_url)",
+                    'xString' => 'printPDFCpmkGrafik(' . ($jadwal_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
                     'icon' => 'arrow-down-tray',
                     'isFull' => 1,
                     'valuePx' => 'px-6',

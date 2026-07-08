@@ -21,7 +21,7 @@
             @endif
         </div>
     </div>
-    <livewire:staff.obe-management.rps-management.show-rps-management lazy />
+    <livewire:staff.obe-management.rps-management.show-rps-management />
     @if (Auth::user()->admin || Auth::user()->dosen)
         @if (request()->routeIs('kelas-management'))
             <livewire:all-role.kelas-management.modal-kelas-management />

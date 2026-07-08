@@ -20,7 +20,7 @@ trait HasNilaiAbsensi
                     ->where('nilai_mahasiswa.kj_id', $jadwalId)
                     ->select("nilai_mahasiswa.$columnToSelect")
                     ->limit(1);
-            }
+            },
         ]);
 
         return $queryUser;
@@ -39,8 +39,9 @@ trait HasNilaiAbsensi
                     ->whereColumn('mahasiswas.user_id', 'users.id')
                     ->where('nilai_mahasiswa.rps_id', $rpsId)
                     ->select("nilai_mahasiswa.$columnToSelect")
+                    // ->latest('nilai_mahasiswa.created_at')
                     ->limit(1);
-            }
+            },
         ]);
 
         return $queryUser;
@@ -55,7 +56,7 @@ trait HasNilaiAbsensi
             ->selectRaw("99 as `{$alias}`");
     }
 
-    protected function addMahasiswaNilaiAkhir($queryUser, int $idJadwal, string $alias = 'mhs_nilai_akhir') 
+    protected function addMahasiswaNilaiAkhir($queryUser, int $idJadwal, string $alias = 'mhs_nilai_akhir')
     {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal) {
@@ -65,12 +66,13 @@ trait HasNilaiAbsensi
                     ->where('nilai_mahasiswa.kj_id', $idJadwal)
                     ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')
                     ->limit(1);
-            }
+            },
         ]);
+
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiIndex($queryUser, int $idJadwal, string $alias = 'mhs_nilai_index') 
+    protected function addMahasiswaNilaiIndex($queryUser, int $idJadwal, string $alias = 'mhs_nilai_index')
     {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal) {
@@ -78,7 +80,7 @@ trait HasNilaiAbsensi
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
                     ->where('nilai_mahasiswa.kj_id', $idJadwal)
-                    ->selectRaw("
+                    ->selectRaw('
                         CASE
                             WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
                             WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
@@ -90,14 +92,15 @@ trait HasNilaiAbsensi
                             WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
                             ELSE 0
                         END
-                    ")
+                    ')
                     ->limit(1);
-            }
+            },
         ]);
+
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiMutu($queryUser, int $idJadwal, string $alias = 'mhs_nilai_mutu') 
+    protected function addMahasiswaNilaiMutu($queryUser, int $idJadwal, string $alias = 'mhs_nilai_mutu')
     {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal) {
@@ -119,8 +122,9 @@ trait HasNilaiAbsensi
                         END
                     ")
                     ->limit(1);
-            }
+            },
         ]);
+
         return $queryUser;
     }
 
@@ -174,18 +178,18 @@ trait HasNilaiAbsensi
     ) {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal, $expiredCount) {
-                $query->selectRaw("
+                $query->selectRaw('
                     GREATEST(
                         0, 
                         ? - COUNT(*)
-                    )", [$expiredCount])
+                    )', [$expiredCount])
                     ->from('mahasiswa_kehadiran')
                     ->join('kelas_sesi', 'mahasiswa_kehadiran.sesi_id', '=', 'kelas_sesi.id')
                     ->join('mahasiswas', 'mahasiswa_kehadiran.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
                     ->where('kelas_sesi.kj_id', $idJadwal)
                     ->whereIn('mahasiswa_kehadiran.status', ['Hadir', 'Terlambat', 'Dispensasi']);
-            }
+            },
         ]);
 
         return $queryUser;

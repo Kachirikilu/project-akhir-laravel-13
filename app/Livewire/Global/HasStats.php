@@ -296,6 +296,9 @@ trait HasStats
                 'kelas-pr' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 2))->count(),
                 'kelas-pl' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 3))->count(),
                 'kelas-sm' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tipe_sks', 4))->count(),
+                'kelas-wajib' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', true))->count(),
+                'kelas-pilihan' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', false))->count(),
+                'kelas-uni' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 4))->count(),
             ];
         });
 

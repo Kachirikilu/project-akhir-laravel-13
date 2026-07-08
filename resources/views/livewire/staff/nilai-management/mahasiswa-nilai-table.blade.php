@@ -150,9 +150,9 @@
 
             <td class="table-second whitespace-nowrap">{{ $user->name ?? '-' }}</td>
 
-            <td class="table-second table-border-x whitespace-nowrap">
+            <td class="table-second table-border-x whitespace-nowrap text-center">
                 @if (!$user->trashed())
-                    <x-button-action color="emerald"
+                    <x-button-action color="blue"
                         href="{{ route('nilai-mahasiswa-management', [
                             'nim' => $user->mahasiswa->nim ?? null,
                         ]) }}"

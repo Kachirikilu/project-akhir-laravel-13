@@ -4,7 +4,7 @@ namespace App\Livewire\Global;
 
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\AllRole\KelasManagement\WithKelasFilters;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
 use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\TimDosen;

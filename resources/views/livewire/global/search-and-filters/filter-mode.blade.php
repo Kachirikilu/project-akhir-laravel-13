@@ -7,7 +7,7 @@
         'tabFilter' => $totalTab ?? null,
         'tabString' => $tabString ?? null,
         'tabHiddenString' => $tabHiddenString ?? null,
-        'tabNameString' => $tabName ?? ucfirst($tabString),
+        'tabNameString' => $tabName ?? ucfirst($tabString ?? null),
     ])
 
     {{-- Tab 1 --}}

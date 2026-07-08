@@ -46,7 +46,7 @@ trait WithRPSSearchFilters
             'id' => $r->id,
             'mk_id' => $r->mk_id,
             'kode_mk' => $r->kode_mk,
-            'kode_blok' => $r->kode_blok,
+            'digit_akademik' => $r->digit_akademik,
             'kode' => $r->kode,
             'rps' => $r->rps,
             'rps_with_kode' => $r->rps_with_kode,
@@ -148,10 +148,19 @@ trait WithRPSSearchFilters
         }
     }
 
+    public function updated($propertyName)
+{
+    if (in_array($propertyName, ['rpsNameSearch', 'rps_id'])) {
+        // dump akan menampilkan data di layar tanpa menghentikan eksekusi
+        dump("Variabel {$propertyName} diupdate menjadi: " . $this->{$propertyName});
+        dump("Nilai rps_items saat ini: ", $this->rps_items);
+    }
+}
+
     public function updatedRPSNameSearch($value)
     {
-        $this->rps_id = null;
-        $this->rps_items = null;
+        // $this->rps_id = null;
+        // $this->rps_items = null;
         $this->resetErrorBag(['rps_id', 'rpsNameSearch']);
 
         $query = $this->rpsQuery()->select('rps.*');
@@ -199,11 +208,110 @@ trait WithRPSSearchFilters
                 $this->rpsResults = $this->getRPSbyUser();
             } else {
                 $this->rpsResults = $this->mapRPS(
-                    $query->orderBy('rps.mk_rel.nama_mk')->limit(12)->get()
+                    $query->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                        ->select('rps.*')
+                        ->orderBy('mata_kuliahs.nama_mk', 'asc')
+                        ->limit(12)
+                        ->get()
                 );
             }
         }
     }
+
+    // public function updatedRPSNameSearch($value)
+    // {
+    //     $this->rps_id = null;
+    //     $this->rps_items = null;
+    //     $this->resetErrorBag(['rps_id', 'rpsNameSearch']);
+
+    //     $input = str($value)->lower()->trim();
+    //     if (empty($input->toString())) {
+    //         $this->rpsResults = $this->getRPSbyUser();
+
+    //         return;
+    //     }
+
+    //     $query = $this->rpsQuery()->select('rps.*');
+
+    //     $this->haveRPSParent($query);
+
+    //     if ($this->modeRPS !== 'single' && $input->toString() === 'uni' && ($this->mkType == 4 || $this->cplType == 4)) {
+    //         $allRPSodis = $query->get();
+    //         foreach ($allRPSodis as $p) {
+    //             if (! in_array($p->id, $this->rps_id_array)) {
+    //                 $this->rps_id_array[] = $p->id;
+    //                 $this->rps_items_array[] = $this->itemsRPS($p);
+    //             }
+    //         }
+    //         $this->rpsNameSearch = '';
+    //         $this->rpsResults = $this->getRPSbyUser();
+
+    //         return;
+    //     }
+
+    //     // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
+    //     $results = $query->searchRPS($value)->limit(12)->get();
+    //     // $results = $this->searchOutputRPS($query, $value, 12);
+    //     $this->rpsResults = $this->mapRPS($results);
+
+    //     $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+    //     $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
+    //         $normalizedRPSKode = str_replace(['-', ' '], '', strtolower($r->kode));
+
+    //         return strtolower($r->rps) === strtolower($value)
+    //             || strtolower($r->mk) === strtolower($value)
+    //             || $normalizedRPSKode === $normalizedValue;
+    //     });
+
+    //     // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
+    //     // $matches = $results->filter(function ($rpsodi) use ($input) {
+    //     //     $namaRPSodi = str($rpsodi->rpsodi)->lower()->trim();
+    //     //     $kodeRPSodi = str($rpsodi->kode)->lower()->trim();
+
+    //     //     $kodeDepartemen = $kodeRPSodi;
+    //     //     $kodeFakultas = $kodeRPSodi;
+
+    //     //     $namaStrata = str($rpsodi->strata)->lower()->trim();
+    //     //     $inisialStrata = match ($namaStrata->toString()) {
+    //     //         'sarjana' => 's1', 'magister' => 's2', 'doktor' => 's3', default => ''
+    //     //     };
+
+    //     //     $possibilities = [
+    //     //         $namaRPSodi->toString(),
+    //     //         $kodeRPSodi->toString(),
+    //     //         $kodeDepartemen->toString(),
+    //     //         $kodeFakultas->toString(),
+    //     //         "$inisialStrata $namaRPSodi",
+    //     //         "$namaStrata $namaRPSodi",
+    //     //         "$inisialStrata$namaRPSodi",
+    //     //     ];
+
+    //     //     return in_array($input->toString(), $possibilities);
+    //     // });
+
+    //     // 4. Eksekusi Hasil Match
+    //     if ($exactMatch) {
+    //         if ($this->modeRPS == 'single') {
+    //             $this->rpsNameSearch = $exactMatch->rpsodi;
+    //             $this->rps_id = $exactMatch->id;
+    //             $this->rps_items = $this->itemsRPS($exactMatch);
+    //         } else {
+    //             $this->rpsNameSearch = '';
+    //             $this->rps_id_array[] = $exactMatch->id;
+    //             $this->rps_items_array[] = $this->itemsRPS($exactMatch);
+
+    //             $this->rps_id_array = collect($this->rps_id_array)
+    //                 ->unique()
+    //                 ->values()
+    //                 ->all();
+    //             $this->rps_items_array = collect($this->rps_items_array)
+    //                 ->unique('id')
+    //                 ->values()
+    //                 ->all();
+    //         }
+    //         $this->rpsResults = $this->getRPSbyUser();
+    //     }
+    // }
 
     public function getRPSbyUser($mode = 'full')
     {
@@ -379,7 +487,7 @@ trait WithRPSSearchFilters
                             'semester',
                             'semes',
                             'sms',
-                            's'
+                            's',
                         ]
                     ) || $this->containsStrict(
                         'Semester'.$rps->semester,
@@ -417,7 +525,7 @@ trait WithRPSSearchFilters
                         $rps->mk_rel->digit_mk,
                         $searchLower
                     ) || $this->matchNo(
-                        intval($rps->mk_rel->digit_mk), 
+                        intval($rps->mk_rel->digit_mk),
                         $searchLower
                     );
 

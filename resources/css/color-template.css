@@ -77,9 +77,9 @@
     --second-table-trans: #303031a0;
     --sub-table-trans: #292c30a0;
 
-    --border-table-color: #141a1f;
+    --border-table-color: #2d353b;
 
-    --main-pop-up-color: #191a1a;
+    --main-pop-up-color: #2d2f31;
     --hover-pop-up-color: #252727;
     --second-pop-up-color: #383e3e;
 }
@@ -513,8 +513,8 @@
     --contrast-second-text: #fef08a;
     --contrast-third-text: #fde68a;
 
-    --focus-color: #fddb32;
-    --hover-focus-color: #facc15;
+    --focus-color: #dcc240;
+    --hover-focus-color: #d7b633;
 
     --main-table-color: #2b281f;
     --second-table-color: #363223;

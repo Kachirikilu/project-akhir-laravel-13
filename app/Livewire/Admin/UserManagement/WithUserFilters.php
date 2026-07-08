@@ -36,7 +36,7 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false)
+    public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false, $rpsId = null)
     {
         if (! $role) {
             $queryUser = User::query()->with([
@@ -82,6 +82,27 @@ trait WithUserFilters
                 $queryUser->inLocationUser('fakultas', $this->selectedFkId);
             }
         }
+
+        if (! empty($rpsId) && $role === 'mahasiswa') {
+            $queryUser->whereHas('mahasiswa.nilai_mahasiswas', function ($q) use ($rpsId) {
+                $q->where('nilai_mahasiswa.rps_id', $rpsId);
+            });
+        }
+
+        // if (! empty($rpsId) && $role === 'mahasiswa') {
+        //     $queryUser->with(['mahasiswa.nilai_mahasiswas' => function ($q) use ($rpsId) {
+        //         $q->where('rps_id', $rpsId);
+        //     }]);
+        // }
+
+        // if (! empty($rpsId) && $role === 'mahasiswa') {
+        //     $queryUser->with(['mahasiswa.nilai_mahasiswas' => function ($q) use ($rpsId) {
+        //         $q->where('rps_id', $rpsId);
+        //     }]);
+        // }
+
+        
+            // $queryUser = $this->inputUserSearch('mahasiswa', null, null, null, $rpsId);
 
         if (! empty($this->selectedRPSId) && $role === 'dosen') {
             $queryUser->whereHas('dosen.tim_dosens.rps', function ($q) {
@@ -203,6 +224,7 @@ trait WithUserFilters
                     ->count();
         }
     }
+
     protected function generateAngkatanFilter(int $jumlah = 5): array
     {
         $now = Carbon::now();

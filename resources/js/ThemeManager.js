@@ -91,12 +91,14 @@ document.addEventListener("alpine:init", () => {
 
         wallpapers: [
             { id: 'none', path: null, isCustom: false },
-            { id: 'default-1', path: '/wallpaper/my-alya.png', isCustom: false },
-            { id: 'default-2', path: '/wallpaper/my-masha.png', isCustom: false },
-            { id: 'default-3', path: '/wallpaper/my-waguri.png', isCustom: false }
+            { id: 'default-1', path: '/images/bg-unsri.png', isCustom: false },
+            { id: 'waifu-1', path: '/wallpapers/my-alya.png', isCustom: false },
+            { id: 'waifu-2', path: '/wallpapers/my-masha.png', isCustom: false },
+            { id: 'waifu-3', path: '/wallpapers/my-waguri.png', isCustom: false }
         ],
+        
         activeWallpaper:
-            localStorage.getItem("user-active-wp") || "/wallpaper/my-alya.png",
+            localStorage.getItem("user-active-wp") || "/images/bg-unsri.png",
         opacity: parseFloat(localStorage.getItem("wp-opacity")) || 0.3,
         brightness: parseFloat(localStorage.getItem("wp-brightness")) || 0.5,
 

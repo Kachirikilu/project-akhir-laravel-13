@@ -11,7 +11,7 @@ use App\Livewire\Global\HasStats;
 use App\Livewire\Global\WithKelasJadwalSearchFilters;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;

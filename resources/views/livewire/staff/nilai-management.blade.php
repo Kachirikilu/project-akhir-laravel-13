@@ -11,19 +11,7 @@
 
     @include('livewire.global.header.tag-user')
 
-    {{-- @include('livewire.staff.mk-management.mk-toolbar')
-    @include('livewire.staff.mk-management.mk-switch-table')
-
-    @include('livewire.staff.mk-management.mk-search-and-filters')
-
-    <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.staff.mk-management.mk-table')
-    </div>
-
-    @include('livewire.staff.mk-management.mk-modal-form')
-    @include('livewire.staff.mk-management.mk-modal-delete') --}}
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2 md:mb-6 w-full min-w-0">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
 
         <h2 class="text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] min-w-0 break-words">
             Manajemen Nilai Mahasiswa
@@ -32,7 +20,7 @@
         <div
             class="flex flex-row-reverse items-center justify-start gap-3 w-full md:w-auto overflow-x-auto scrollbar-tiny flex-nowrap shrink-0 pb-1">
 
-            <div class="shrink-0 flex items-center">
+            <div x-show="activeTable == 'mahasiswa'" class="shrink-0 flex items-center">
                 @include('livewire.global.table.export-button', [
                     'xString' => 'exportRekapMahasiswaExcel()',
                     'autoSmall' => 'sm',
@@ -63,11 +51,45 @@
         </div>
     </div>
 
+    <div class="flex items-center w-full mt-2 mb-2" x-data="{ activeTab: @entangle('switchTable') }">
+        <div class="w-full">
 
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 w-full">
 
-    @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa'])
+                <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full pb-1">
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'switchingTable',
+                        'xFilter' => $switchTable,
+                        'tabFilter' => null,
+                        'tabString' => 'mahasiswa',
+                        // 'tabNameString' => 's',
+                        'icon' => 'users',
+                    ])
 
-    @include('livewire.staff.nilai-management.mahasiswa-nilai-table')
+                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                        'xString' => 'switchingTable',
+                        'xFilter' => $switchTable,
+                        'tabFilter' => null,
+                        'tabString' => 'rps',
+                        'tabNameString' => 'Rencana Pembelajaran Semester',
+                        'icon' => 'clipboard-document-list',
+                    ])
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @include('livewire.staff.nilai-management.nilai-search-and-filters')
+
+    <div wire:loading.class="opacity-50" wire:target="switchingTable">
+        @if ($switchTable == 'mahasiswa')
+            @include('livewire.staff.nilai-management.mahasiswa-nilai-table')
+        @elseif ($switchTable == 'rps')
+            @include('livewire.staff.nilai-management.rps-nilai-table')
+            {{-- @include('livewire.staff.obe-management.rps-management.rps-table') --}}
+        @endif
+    </div>
 
     {{-- @include('livewire.admin.user-management.user-table', [
         'withRPS' => 1,

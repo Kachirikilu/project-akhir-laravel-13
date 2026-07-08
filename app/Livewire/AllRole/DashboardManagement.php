@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Jenssegers\Agent\Agent;
 use Livewire\Component;
-use Livewire\WithPagination;
+// use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 
 class DashboardManagement extends Component
@@ -17,7 +17,7 @@ class DashboardManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use WithPagination;
+    // use WithPagination;
 
     protected $listeners = [
         'refresh-table' => 'refreshDashboardsList',
@@ -33,12 +33,12 @@ class DashboardManagement extends Component
         $this->resetPage();
     }
 
-    public function loadingTable() {}
+    // public function loadingTable() {}
 
-    public function updatedPerPage()
-    {
-        $this->resetPage();
-    }
+    // public function updatedPerPage()
+    // {
+    //     $this->resetPage();
+    // }
 
     public function render()
     {
@@ -101,7 +101,7 @@ class DashboardManagement extends Component
 
 
 
-            return view('livewire.all-role.dashboard', [
+            return view('livewire.all-role.dashboard-manager', [
                 'stats'    => $stats ?? null,
                 'sessions' => $sessions,
             ]);

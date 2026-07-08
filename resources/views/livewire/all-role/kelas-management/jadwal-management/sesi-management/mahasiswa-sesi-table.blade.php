@@ -42,6 +42,7 @@
             </div>
         </div>
     </x-slot:search>
+    
 
     <x-slot:header>
         <tr>

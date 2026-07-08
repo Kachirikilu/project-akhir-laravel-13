@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\WhatsappController;
 
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

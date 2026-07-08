@@ -37,10 +37,6 @@
 <body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }"
     x-data="{
         expanded: $persist(false).as('sidebar_expanded'),
-        init() {
-            $watch('expanded', value => window.sidebarExpanded = value);
-            window.sidebarExpanded = this.expanded;
-        },
         expanded2: false,
         isDesktop: window.matchMedia('(min-width: 1024px)').matches,
     
@@ -50,14 +46,19 @@
                 this.expanded2 = this.expanded;
             }
         },
-    
         init() {
-            const media = window.matchMedia('(min-width: 1024px)');
-            this.isDesktop = media.matches;
+            $watch('expanded', value => {
+                window.sidebarExpanded = value;
+            });
     
+            window.sidebarExpanded = this.expanded;
+    
+            const media = window.matchMedia('(min-width: 1024px)');
+    
+            this.isDesktop = media.matches;
             this.expanded2 = this.expanded;
     
-            media.addEventListener('change', (e) => {
+            media.addEventListener('change', e => {
                 this.isDesktop = e.matches;
     
                 if (!e.matches) {
@@ -69,14 +70,39 @@
         }
     }">
 
+    {{-- <div class="fixed inset-y-0 left-0 z-100 transition-all duration-300"
+        :class="{
+            '-translate-x-full': !isDesktop && !expanded,
+            'translate-x-0': isDesktop || expanded,
+            'w-[72px]': isDesktop && !expanded,
+            'w-[256px]': !isDesktop || expanded,
+        }">
 
+        @livewire('navigation.navbar')
+    </div>
 
     <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
         x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full"
         x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-        class="z-100 fixed inset-y-0 left-0 z-50 transition-all duration-300"
+        class="z-100 fixed inset-y-0 left-0 transition-all duration-300"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
+
+        @livewire('navigation.navbar')
+
+    </div> --}}
+
+   <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
+        {{-- x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full" --}}
+        {{-- x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out" --}}
+        {{-- x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" --}}
+        class="z-100 fixed inset-y-0 left-0 transition-all duration-300"
+         :class="{
+            '-translate-x-full': !isDesktop && !expanded,
+            'translate-x-0': isDesktop || expanded,
+            'w-[72px]': isDesktop && !expanded,
+            'w-[256px]': !isDesktop || expanded,
+        }">
 
         @livewire('navigation.navbar')
 

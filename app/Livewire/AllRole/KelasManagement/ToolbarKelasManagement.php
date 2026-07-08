@@ -2,7 +2,7 @@
 
 namespace App\Livewire\AllRole\KelasManagement;
 
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
 

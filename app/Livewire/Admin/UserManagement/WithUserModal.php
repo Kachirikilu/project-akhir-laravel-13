@@ -9,8 +9,8 @@ use App\Models\Akademik\RPS;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
-use App\Models\Auth\Membership;
-use App\Models\Auth\Team;
+// use App\Models\Auth\Membership;
+// use App\Models\Auth\Team;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -376,14 +376,19 @@ trait WithUserModal
         $this->resetValidation();
 
         // dd($data['no_hp_back']);
-        if (empty($data['no_hp_back']) && ! empty($data['no_hp'])) {
-            $data['kode_no_hp'] = null;
-            $noHPLengkap = null;
-        } elseif ($data['kode_no_hp'] && $data['no_hp_back']) {
-            $data['no_hp'] = $data['kode_no_hp'].$data['no_hp_back'];
-            $data['no_hp'] = str_replace([' ', '-', '+', '/'], '', $data['no_hp']);
-        }
+        $kode = $data['kode_no_hp'] ?? null;
+        $noBack = $data['no_hp_back'] ?? null;
+        $noHp = $data['no_hp'] ?? null;
 
+        if (empty($noBack) && !empty($noHp)) {
+            $data['kode_no_hp'] = null;
+            $noHPLengkap = $noHp;
+        } elseif (!empty($kode) && !empty($noBack)) {
+            $gabungan = $kode . $noBack;
+            $data['no_hp'] = str_replace([' ', '-', '+', '/'], '', $gabungan);
+        } else {
+            $data['no_hp'] = null;
+        }
         if (empty($data['password']) && ! $isEditingUser) {
             if ($role === 'admin' || $role === 'dosen') {
                 $data['password'] = $data['nip'];
@@ -807,18 +812,18 @@ trait WithUserModal
                     ]));
                 }
 
-                $team = Team::forceCreate([
-                    'name' => explode(' ', $validated['name'])[0]."'s Team",
-                    'is_personal' => true,
-                ]);
+                // $team = Team::forceCreate([
+                //     'name' => explode(' ', $validated['name'])[0]."'s Team",
+                //     'is_personal' => true,
+                // ]);
 
-                $user->forceFill(['current_team_id' => $team->id])->save();
+                // $user->forceFill(['current_team_id' => $team->id])->save();
 
-                Membership::create([
-                    'team_id' => $team->id,
-                    'user_id' => $user->id,
-                    'role' => 'owner',
-                ]);
+                // Membership::create([
+                //     'team_id' => $team->id,
+                //     'user_id' => $user->id,
+                //     'role' => 'owner',
+                // ]);
 
                 // if (! empty($this->showTimDosenModal) && $dosen) {
                 //     if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {

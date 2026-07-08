@@ -4,8 +4,8 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
 use App\Exports\MultiNilaiExport;
 use App\Exports\NilaiExport;
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasGetByKode;
+use App\Livewire\Global\HasToast;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
 use App\Models\Kelas\Kelas;
@@ -30,8 +30,8 @@ use ZipArchive;
 
 trait WithNilaiExcel
 {
-    use HasToast;
     use HasGetByKode;
+    use HasToast;
     use WithFileUploads;
     use WithSesiFilters;
 
@@ -656,9 +656,9 @@ trait WithNilaiExcel
             $ganjilGenap = '';
             $tahunAkademik = '';
             $jadwalId = null;
-
             if ($jadwal) {
                 $rpsId = $jadwal->kelas_rel?->rps_id;
+                $rps = $jadwal->kelas_rel?->rps_rel;
                 $ganjilGenap = (string) $jadwal->ganjil_genap;
                 $tahunAkademik = (string) $jadwal->tahun_akademik;
                 $jadwalId = $jadwal->id;
@@ -688,11 +688,16 @@ trait WithNilaiExcel
                 }
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | 2. Cari atau Instansiasi Objek NilaiMahasiswa
-            |--------------------------------------------------------------------------
-            */
+            $strukturRPS = $rps->scpmkAtr;
+            $mapScpmk = [];
+            foreach ($strukturRPS as $index => $item) {
+                $kode = preg_replace('/[^A-Za-z0-9]/', '', $item->kode ?? '');
+                if ($kode !== '') {
+                    $mapScpmk[$kode][] = $index;
+                }
+            }
+
+            // 3. Cari atau buat record NilaiMahasiswa
             $nilai_mahasiswa = NilaiMahasiswa::query()
                 ->where('mahasiswa_id', $mahasiswa->id)
                 ->where('rps_id', $rpsId)
@@ -704,81 +709,191 @@ trait WithNilaiExcel
             if (! $nilai_mahasiswa) {
                 $nilai_mahasiswa = new NilaiMahasiswa;
                 $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
+                $nilai_mahasiswa->rps_id = $rps->id;
                 $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
                 $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
             }
 
-            $nilai_mahasiswa->rps_id = $rpsId;
             $nilai_mahasiswa->kj_id = $jadwalId;
 
-            $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
-            $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
+            // Inisialisasi array kosong dengan panjang 16 (indeks 0-15) jika data lama tidak ada
+            $nilaiArray = is_array($nilai_mahasiswa->nilai_array) ? $nilai_mahasiswa->nilai_array : array_fill(0, 16, 0);
+            $bobotArray = is_array($nilai_mahasiswa->bobot_array) ? $nilai_mahasiswa->bobot_array : array_fill(0, 16, 0);
 
-            /*
-            |--------------------------------------------------------------------------
-            | 3. Mapping index nilai dari sub_cpmk
-            |--------------------------------------------------------------------------
-            */
-            $mapScpmk = [];
-            if ($jadwalId) {
-                $sesis = $this->getSesiImportNilai($jadwalId);
-                foreach ($sesis as $index => $sesi) {
-                    $kodeSCPMK = preg_replace(
-                        '/[^A-Za-z0-9]/',
-                        '',
-                        $sesi->scpmk_atr?->kode
-                            ?? $sesi->scpmk_atr?->kode_scpmk
-                            ?? ''
-                    );
-                    if ($kodeSCPMK !== '') {
-                        $mapScpmk[$kodeSCPMK] = $index;
+            // 4. Mapping nilai dari Excel ke indeks yang benar
+            foreach ($validated['sub_cpmk'] ?? [] as $sub) {
+                $kodeExcel = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+                if (isset($mapScpmk[$kodeExcel])) {
+                    $indices = $mapScpmk[$kodeExcel];
+                    foreach ($indices as $targetIndex) {
+                        $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null) ? (float) $sub['nilai'] : 0;
+                        $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null) ? (float) $sub['bobot'] : 0;
                     }
                 }
             }
 
-            foreach ($validated['sub_cpmk'] ?? [] as $subIndex => $sub) {
-                $kodeSCPMK = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
-
-                $targetIndex = (isset($mapScpmk[$kodeSCPMK]) && $kodeSCPMK !== '')
-                    ? $mapScpmk[$kodeSCPMK]
-                    : $subIndex;
-
-                $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null)
-                    ? (float) $sub['nilai']
-                    : 0;
-
-                $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null)
-                    ? (float) $sub['bobot']
-                    : 0;
-            }
-
-            ksort($nilaiArray);
-            ksort($bobotArray);
-
-            // 🌟 KUNCI PERBAIKAN: NORMALISASI BOBOT SUPAYA TOTAL HARUS 100% (1.0)
+            // 5. Kalkulasi Nilai Akhir
             $totalBobotRPS = array_sum($bobotArray);
             $totalNilaiAkhir = 0;
 
             if ($totalBobotRPS > 0) {
                 foreach ($nilaiArray as $index => $nilai) {
                     $bobotMentah = $bobotArray[$index] ?? 0;
-
-                    // Normalisasikan bobot tiap elemen terhadap total bobot keseluruhan
                     $bobotNormal = $bobotMentah / $totalBobotRPS;
-
                     $totalNilaiAkhir += ($nilai * $bobotNormal);
                 }
             }
 
+            // 6. Simpan data
             $nilai_mahasiswa->nilai_array = $nilaiArray;
             $nilai_mahasiswa->bobot_array = $bobotArray;
-
-            // 🌟 Mengabaikan $validated['nilai_angka'] dan menggunakan kalkulasi proporsional murni
             $nilai_mahasiswa->nilai = round($totalNilaiAkhir, 2);
-
             $nilai_mahasiswa->save();
         });
     }
+    // private function saveNilaiFromExcel($validated)
+    // {
+    //     DB::transaction(function () use ($validated) {
+    //         $nim = trim($validated['nim']);
+    //         $mahasiswa = Mahasiswa::query()
+    //             ->where('nim', $nim)
+    //             ->first();
+
+    //         if (! $mahasiswa) {
+    //             throw new \Exception(
+    //                 "Mahasiswa dengan NIM {$nim} tidak ditemukan!"
+    //             );
+    //         }
+
+    //         $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
+
+    //         $rpsId = null;
+    //         $ganjilGenap = '';
+    //         $tahunAkademik = '';
+    //         $jadwalId = null;
+
+    // if ($jadwal) {
+    //     $rpsId = $jadwal->kelas_rel?->rps_id;
+    //     $ganjilGenap = (string) $jadwal->ganjil_genap;
+    //     $tahunAkademik = (string) $jadwal->tahun_akademik;
+    //     $jadwalId = $jadwal->id;
+    // } else {
+    //     $rps = $this->getRPSByKode($validated['kode_rps']);
+
+    //     if (! $rps) {
+    //         throw new \Exception(
+    //             "Kelas '{$validated['kode_jadwal']}' maupun RPS dengan kode '{$validated['kode_rps']}' tidak dapat ditemukan."
+    //         );
+    //     }
+
+    //     $rpsId = $rps->id;
+    //     $jadwalId = null;
+
+    //     $now = now();
+    //     $currentYear = $now->year;
+    //     $currentMonth = $now->month;
+
+    //     if ($currentMonth >= 2 && $currentMonth <= 7) {
+    //         $ganjilGenap = 'Genap';
+    //         $tahunAkademik = ($currentYear - 1).'/'.$currentYear;
+    //     } else {
+    //         $ganjilGenap = 'Ganjil';
+    //         $prevYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+    //         $tahunAkademik = $prevYear.'/'.($prevYear + 1);
+    //     }
+    // }
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | 2. Cari atau Instansiasi Objek NilaiMahasiswa
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         $nilai_mahasiswa = NilaiMahasiswa::query()
+    //             ->where('mahasiswa_id', $mahasiswa->id)
+    //             ->where('rps_id', $rpsId)
+    //             ->where('ganjil_genap', $ganjilGenap)
+    //             ->where('tahun_akademik', $tahunAkademik)
+    //             ->lockForUpdate()
+    //             ->first();
+
+    //         if (! $nilai_mahasiswa) {
+    //             $nilai_mahasiswa = new NilaiMahasiswa;
+    //             $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
+    //             $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
+    //             $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
+    //         }
+
+    //         $nilai_mahasiswa->rps_id = $rpsId;
+    //         $nilai_mahasiswa->kj_id = $jadwalId;
+
+    //         $nilaiArray = $nilai_mahasiswa->nilai_array ?? [];
+    //         $bobotArray = $nilai_mahasiswa->bobot_array ?? [];
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | 3. Mapping index nilai dari sub_cpmk
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         $mapScpmk = [];
+    //         if ($jadwalId) {
+    //             $sesis = $this->getSesiImportNilai($jadwalId);
+    //             foreach ($sesis as $index => $sesi) {
+    //                 $kodeSCPMK = preg_replace(
+    //                     '/[^A-Za-z0-9]/',
+    //                     '',
+    //                     $sesi->scpmk_atr?->kode
+    //                         ?? $sesi->scpmk_atr?->kode_scpmk
+    //                         ?? ''
+    //                 );
+    //                 if ($kodeSCPMK !== '') {
+    //                     $mapScpmk[$kodeSCPMK] = $index;
+    //                 }
+    //             }
+    //         }
+
+    //         foreach ($validated['sub_cpmk'] ?? [] as $subIndex => $sub) {
+    //             $kodeSCPMK = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+
+    //             $targetIndex = (isset($mapScpmk[$kodeSCPMK]) && $kodeSCPMK !== '')
+    //                 ? $mapScpmk[$kodeSCPMK]
+    //                 : $subIndex;
+
+    //             $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null)
+    //                 ? (float) $sub['nilai']
+    //                 : 0;
+
+    //             $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null)
+    //                 ? (float) $sub['bobot']
+    //                 : 0;
+    //         }
+
+    //         ksort($nilaiArray);
+    //         ksort($bobotArray);
+
+    //         // 🌟 KUNCI PERBAIKAN: NORMALISASI BOBOT SUPAYA TOTAL HARUS 100% (1.0)
+    //         $totalBobotRPS = array_sum($bobotArray);
+    //         $totalNilaiAkhir = 0;
+
+    //         if ($totalBobotRPS > 0) {
+    //             foreach ($nilaiArray as $index => $nilai) {
+    //                 $bobotMentah = $bobotArray[$index] ?? 0;
+
+    //                 // Normalisasikan bobot tiap elemen terhadap total bobot keseluruhan
+    //                 $bobotNormal = $bobotMentah / $totalBobotRPS;
+
+    //                 $totalNilaiAkhir += ($nilai * $bobotNormal);
+    //             }
+    //         }
+
+    //         $nilai_mahasiswa->nilai_array = $nilaiArray;
+    //         $nilai_mahasiswa->bobot_array = $bobotArray;
+
+    //         // 🌟 Mengabaikan $validated['nilai_angka'] dan menggunakan kalkulasi proporsional murni
+    //         $nilai_mahasiswa->nilai = round($totalNilaiAkhir, 2);
+
+    //         $nilai_mahasiswa->save();
+    //     });
+    // }
 
     public function directImportFromWhatsApp($fileExcel, $user)
     {

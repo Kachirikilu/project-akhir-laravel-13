@@ -1,24 +1,35 @@
-<flux:menu class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-    <livewire:staff.obe-management.rps-management.toolbar-rps-management 
-        lazy 
-        :data="[
-            'id'            => $r->id,
-            'kode'          => $r->kode,
-            'rps'           => $r->rps,
-            'draf'          => $r->draf,
-            'level_mk'      => $r->level_mk,
-            'deskripsi_rps' => $r->deskripsi_rps,
-            'mk_id'         => $r->mk_id,
-            'kode_mk'       => $r->kode_mk,
-            'mk'            => $r->mk,
-            'akademik'      => $r->akademik,
-            'count_scpmk'   => $r->count_scpmk,
-            'bobot_uts'     => $r->bobot_uts,
-            'bobot_uas'     => $r->bobot_uas,
-            'total_bobot'   => $r->total_bobot,
-            'kode_semester' => $r->kode_semester,
-            'isTrashed'     => $r->trashed(),
+<flux:menu
+    class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+    @if ($noData ?? false)
+        <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
+            'id' => $r->id,
+            'kode' => $r->kode,
+            'noData' => 1,
+            'isTrashed' => $r->trashed(),
         ]"
-        wire:key="toolbar-rps-{{ $r->id }}-{{ $key }}" 
-    />
+            wire:key="toolbar-rps-{{ $r->id }}-{{ $key }}" />
+    @else
+        <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
+            'id' => $r->id,
+            'kode' => $r->kode,
+            'rps' => $r->rps,
+            'draf' => $r->draf,
+            'level_mk' => $r->level_mk,
+            'deskripsi_rps' => $r->deskripsi_rps,
+            'mk_id' => $r->mk_id,
+            'kode_mk' => $r->kode_mk,
+            'mk' => $r->mk,
+            'akademik' => $r->akademik,
+            'count_scpmk' => $r->count_scpmk,
+            'bobot_uts' => $r->bobot_uts,
+            'bobot_uas' => $r->bobot_uas,
+            'total_bobot' => $r->total_bobot,
+            'kode_semester' => $r->kode_semester,
+            'noData' => 0,
+            'isMK' => $isMK ?? false,
+            'isTrashed' => $r->trashed(),
+        ]"
+            wire:key="toolbar-rps-{{ $r->id }}-{{ $key }}" />
+    @endif
+
 </flux:menu>

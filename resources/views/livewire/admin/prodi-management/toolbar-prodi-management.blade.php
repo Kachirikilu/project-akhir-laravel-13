@@ -2,8 +2,8 @@
     @php
         $typeXString = empty($data['switchTable']) ? 'prodi' : $data['switchTable'];
 
-        $typeX2String = $typeXString;
-        if ($typeX2String == '' || $typeX2String == 'prodi') {
+        $typeX2String = ucfirst($typeXString);
+        if ($typeXString == '' || $typeXString == 'prodi') {
             $typeX2String = 'Program Studi';
         }
     @endphp
@@ -54,7 +54,7 @@
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Edit {{ $xNameString ?? 'Data' }}</span>
+                    <span>Edit {{ $typeX2String ?? 'Data' }}</span>
                 </div>
             </flux:menu.item>
 
@@ -77,7 +77,7 @@
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Hapus {{ $xNameString ?? 'Data' }}</span>
+                    <span>Hapus {{ $typeX2String ?? 'Data' }}</span>
                 </div>
             </flux:menu.item>
         @else
@@ -87,7 +87,7 @@
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Restore {{ $xNameString ?? 'Data' }}</span>
+                    <span>Restore {{ $typeX2String ?? 'Data' }}</span>
                 </div>
             </flux:menu.item>
 
@@ -105,13 +105,13 @@
                         '{{ $data['isTrashed'] }}'
                     );
                     $flux.modal('prodi-delete').show();
-                    $dispatch('open-delete-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $data['typeXString'] }}', isTrash: {{ $data['isTrashed'] }} });
+                    $dispatch('open-delete-prodi-modal', { id: {{ $data['id'] }}, type: '{{ $typeXString }}', isTrash: {{ $data['isTrashed'] }} });
                 "
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen {{ $xNameString ?? 'Data' }}</span>
+                    <span>Hapus Permanen {{ $typeX2String ?? 'Data' }}</span>
                 </div>
             </flux:menu.item>
         @endif

@@ -15,7 +15,7 @@
             'numberOnly' => 1,
             'maxLength' => 20,
             'iconString' => 'identification',
-            'placeholder' => 'Masukkan NIP',
+            'placeholder' => 'Masukkan NIP...',
             'message' => $errors->first('nip'),
         ])
     </template>
@@ -28,7 +28,7 @@
             'numberOnly' => 1,
             'maxLength' => 20,
             'iconString' => 'identification',
-            'placeholder' => 'Masukkan NITK',
+            'placeholder' => 'Masukkan NITK...',
             'message' => $errors->first('nitk'),
             'isRequired' => 0,
         ])
@@ -42,7 +42,7 @@
             'numberOnly' => 1,
             'maxLength' => 20,
             'iconString' => 'identification',
-            'placeholder' => 'Masukkan NIDN',
+            'placeholder' => 'Masukkan NIDN...',
             'message' => $errors->first('nidn'),
             'isRequired' => 0,
         ])
@@ -56,7 +56,7 @@
             'numberOnly' => 1,
             'maxLength' => 20,
             'iconString' => 'identification',
-            'placeholder' => 'Masukkan NIDK',
+            'placeholder' => 'Masukkan NIDK...',
             'message' => $errors->first('nidk'),
             'isRequired' => 0,
         ])
@@ -70,7 +70,7 @@
             'numberOnly' => 1,
             'maxLength' => 20,
             'iconString' => 'identification',
-            'placeholder' => 'Masukkan NIM',
+            'placeholder' => 'Masukkan NIM...',
             'message' => $errors->first('nim'),
         ])
     </template>

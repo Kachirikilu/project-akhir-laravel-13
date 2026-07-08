@@ -8,7 +8,7 @@ use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Kelas\Kelas;
 use App\Models\Penilaian\NilaiMahasiswa;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
 // use Illuminate\Support\LazyCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;

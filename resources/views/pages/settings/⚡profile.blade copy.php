@@ -44,7 +44,7 @@ new #[Title('Profile Settings')] class extends Component {
     /**
      * Update the profile information for the currently authenticated user.
      */
-    public function updateProfileInformation(): void
+    public function updatePhotoProfile(): void
     {
         $user = Auth::user();
         $validated = $this->validate($this->profileRules($user->id));
@@ -139,7 +139,7 @@ new #[Title('Profile Settings')] class extends Component {
     <flux:heading class="sr-only">{{ __('Profile Settings') }}</flux:heading>
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Perbarui Foto Profil Anda')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
+        <form wire:submit="updatePhotoProfile" class="my-6 w-full space-y-6">
             <div class="space-y-4 mb-9">
                 <flux:label :label="__('Profile Photo')" for="photo" />
 

@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Livewire\Global\HasToast;
-use App\Livewire\Staff\OBEManagement\RPSManagement\WithRPSShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use Livewire\Attributes\On;

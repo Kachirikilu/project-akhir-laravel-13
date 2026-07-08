@@ -28,7 +28,7 @@
         x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">
             {{ env('UNIVERSITAS') }}
         </span>
-        <span class="truncate text-xs text-[var(--second-text)] font-medium" x-show="expanded" x-cloak
+        <span class="truncate text-xs text-[var(--main-text)]/60 font-medium" x-show="expanded" x-cloak
         x-transition:enter="transition-all duration-300 ease-out" x-transition:enter-start="opacity-0 translate-x-4"
         x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200 ease-in"
         x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">

@@ -7,8 +7,8 @@ use App\Livewire\Global\HasToast;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
-use App\Models\Auth\Membership;
-use App\Models\Auth\Team;
+// use App\Models\Auth\Membership;
+// use App\Models\Auth\Team;
 use App\Models\Auth\User;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
@@ -459,19 +459,19 @@ trait WithUserExcel
                 ]);
             }
 
-            $team = Team::forceCreate([
-                'id' => $user->id,
-                'name' => explode(' ', $validated['name'])[0]."'s Team",
-                'is_personal' => true,
-            ]);
+            // $team = Team::forceCreate([
+            //     'id' => $user->id,
+            //     'name' => explode(' ', $validated['name'])[0]."'s Team",
+            //     'is_personal' => true,
+            // ]);
 
-            Membership::create([
-                'team_id' => $team->id,
-                'user_id' => $user->id,
-                'role' => 'owner',
-            ]);
+            // Membership::create([
+            //     'team_id' => $team->id,
+            //     'user_id' => $user->id,
+            //     'role' => 'owner',
+            // ]);
 
-            $user->forceFill(['current_team_id' => $team->id])->save();
+            // $user->forceFill(['current_team_id' => $team->id])->save();
         });
     }
 
