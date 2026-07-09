@@ -163,24 +163,172 @@ trait HasGetByKode
         if (blank($kodeRPS)) {
             return null;
         }
-        $search = preg_replace(
-            '/[^A-Za-z0-9]/',
-            '',
-            strtolower(trim($kodeRPS))
+
+        $search = strtoupper(
+            preg_replace('/[^A-Za-z0-9]/', '', trim($kodeRPS))
         );
 
-        return $this->inputRPSSearch()
-            ->get()
-            ->first(function ($r) use ($search) {
-                $kode = preg_replace(
-                    '/[^A-Za-z0-9]/',
-                    '',
-                    strtolower($r->kode)
-                );
+        if (! preg_match('/^(\d{2})(\d{2})(01|02)([A-Z0-9]+)$/', $search, $m)) {
+            return null;
+        }
 
-                return $kode === $search;
-            });
+        [$full, $y1, $y2, $semester, $mkSearch] = $m;
+
+        $cleanSearchUpper = strtoupper($mkSearch);
+        $prefixPart = preg_replace('/[^A-Z]/', '', $cleanSearchUpper);
+        $digitPart = preg_replace('/[^0-9]/', '', $cleanSearchUpper);
+
+        return RPS::query()
+            ->where('akademik', 'like', "%20{$y1}%")
+            ->where('akademik', 'like', "%20{$y2}%")
+            ->whereHas('mk_rel', function ($q) use ($semester, $prefixPart, $digitPart) {
+
+                // Semester
+                if ($semester === '01') {
+                    $q->whereRaw('semester % 2 = 1');
+                } else {
+                    $q->whereRaw('semester % 2 = 0');
+                }
+
+                // Prefix kode MK
+                if ($prefixPart !== '') {
+
+                    $q->where(function ($low) use ($prefixPart) {
+
+                        $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
+
+                            ->orWhere(function ($q) use ($prefixPart) {
+                                $q->where('mata_kuliahs.level_mk', 1)
+                                    ->whereHas('prodis', function ($pro) use ($prefixPart) {
+                                        $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+                                            ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                            ->whereRaw(
+                                                "COALESCE(prodis.kode_pr, departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?",
+                                                [$prefixPart.'%']
+                                            );
+                                    });
+                            })
+
+                            ->orWhere(function ($q) use ($prefixPart) {
+                                $q->where('mata_kuliahs.level_mk', 2)
+                                    ->whereHas('prodis.dp_rel', function ($jur) use ($prefixPart) {
+                                        $jur->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                            ->whereRaw(
+                                                "COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?",
+                                                [$prefixPart.'%']
+                                            );
+                                    });
+                            })
+
+                            ->orWhere(function ($q) use ($prefixPart) {
+                                $q->where('mata_kuliahs.level_mk', 3)
+                                    ->whereHas('prodis.dp_rel.fk_rel', function ($fak) use ($prefixPart) {
+                                        $fak->whereRaw(
+                                            "COALESCE(fakultas.kode_fk, 'UNI') LIKE ?",
+                                            [$prefixPart.'%']
+                                        );
+                                    });
+                            });
+
+                        if ($prefixPart === 'UNI') {
+                            $low->orWhere('mata_kuliahs.level_mk', 4);
+                        }
+                    });
+                }
+
+                // Digit MK
+                if ($digitPart !== '') {
+
+                    if (strlen($digitPart) <= 2) {
+                        $q->where('mata_kuliahs.digit_semester', 'like', $digitPart.'%');
+                    } else {
+                        $q->where('mata_kuliahs.digit_semester', 'like', substr($digitPart, 0, 2).'%')
+                        ->where('mata_kuliahs.digit_mk', 'like', substr($digitPart, 2).'%');
+                    }
+                }
+            })
+            ->first();
     }
+
+    // protected function findRPSByKode(?string $kodeRPS): ?RPS
+    // {
+    //     if (blank($kodeRPS)) {
+    //         return null;
+    //     }
+    //     $search = preg_replace(
+    //         '/[^A-Za-z0-9]/',
+    //         '',
+    //         strtolower(trim($kodeRPS))
+    //     );
+
+    //     return $this->inputRPSSearch()
+    //         ->get()
+    //         ->first(function ($r) use ($search) {
+    //             $kode = preg_replace(
+    //                 '/[^A-Za-z0-9]/',
+    //                 '',
+    //                 strtolower($r->kode)
+    //             );
+
+    //             return $kode === $search;
+    //         });
+    // }
+
+    // protected function findRPSByKode(?string $kodeRPS): ?RPS
+    // {
+    //     if (blank($kodeRPS)) {
+    //         return null;
+    //     }
+    //     $search = preg_replace(
+    //         '/[^A-Za-z0-9]/',
+    //         '',
+    //         strtolower(trim($kodeRPS))
+    //     );
+
+    //     return $this->inputRPSSearch()
+    //         ->get()
+    //         ->first(function ($r) use ($search) {
+    //             $kode = preg_replace(
+    //                 '/[^A-Za-z0-9]/',
+    //                 '',
+    //                 strtolower($r->kode)
+    //             );
+
+    //             return $kode === $search;
+    //         });
+    // }
+
+    // protected function findRPSByKode(?string $kodeRPS): ?RPS
+    // {
+    //     if (blank($kodeRPS)) {
+    //         return null;
+    //     }
+
+    //     $search = strtoupper(
+    //         preg_replace('/[^A-Za-z0-9]/', '', trim($kodeRPS))
+    //     );
+
+    //     if (! preg_match('/^(\d{2})(\d{2})(01|02)([A-Z0-9]+)$/', $search, $m)) {
+    //         return null;
+    //     }
+
+    //     [$full, $y1, $y2, $semester, $kodeMK] = $m;
+
+    //     return RPS::query()
+    //         ->where('akademik', 'like', "%20{$y1}%")
+    //         ->where('akademik', 'like', "%20{$y2}%")
+    //         ->whereHas('mk_rel', function ($q) use ($semester, $kodeMK) {
+
+    //             if ($semester === '01') {
+    //                 $q->whereRaw('semester % 2 = 1');
+    //             } else {
+    //                 $q->whereRaw('semester % 2 = 0');
+    //             }
+
+    //             $q->searchMK($kodeMK, true);
+    //         })
+    //         ->first();
+    // }
 
     protected function getKelasByKode(?string $kodeKelas): ?Kelas
     {

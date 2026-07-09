@@ -618,72 +618,43 @@ class User extends Authenticatable
 
     public function scopeSearchUserSmart($query, $search, $withTahun = false)
     {
-        if (empty(trim($search))) {
+        if (blank(trim($search))) {
+            return $query;
+        }
+
+        $query->searchUser($search, $withTahun);
+
+        if ($withTahun) {
             return $query;
         }
 
         $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
-        $searchTerm = '%'.$search.'%';
+        $searchTerm = "%{$search}%";
+        $searchLower = strtolower($search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
+        return $query->orWhere(function ($q) use ($search, $searchTerm, $searchLower) {
 
-            if ($withTahun == false) {
-                $q->where('email', 'like', $searchTerm);
+            // Tanggal
+            $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
 
-                if (is_numeric($search)) {
-                    $q->orWhere('users.id', $search);
-                }
-
-                $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
-                    $numericFormats = ['%d/%m/%Y', '%Y-%m-%d'];
-                    $textFormats = ['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'];
-
-                    foreach ($numericFormats as $format) {
-                        $dq->orWhereRaw("DATE_FORMAT(users.created_at, '$format') LIKE ?", [$searchTerm])
+                foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+                    $dq->orWhereRaw("DATE_FORMAT(users.created_at, '$format') LIKE ?", [$searchTerm])
                         ->orWhereRaw("DATE_FORMAT(users.updated_at, '$format') LIKE ?", [$searchTerm]);
-                    }
-
-                    foreach ($textFormats as $format) {
-                        $dq->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '$format')) LIKE ?", [$searchLower])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '$format')) LIKE ?", [$searchLower]);
-                    }
-                });
-
-                $roleConfigs = [
-                    'admin' => ['name', 'nip', 'nitk', 'nik', 'status', 'id'],
-                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'nik', 'status', 'id'],
-                    'mahasiswa' => ['name', 'nim', 'nik', 'angkatan', 'status', 'id'],
-                ];
-
-                foreach ($roleConfigs as $role => $fields) {
-                    $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
-                        $r->where(function ($sub) use ($searchTerm, $fields) {
-                            foreach ($fields as $field) {
-                                $sub->orWhere($field, 'like', $searchTerm);
-                            }
-                        });
-                    });
-
-                    $q->orWhereHas('admin.pr_rel', function ($pr) use ($search) {
-                        $pr->searchProdiSmart($search);
-                    });
-
-                    $q->orWhereHas('dosen.pr_rel', function ($pr) use ($search) {
-                        $pr->searchProdiSmart($search);
-                    });
-
-                    $q->orWhereHas('mahasiswa.pr_rel', function ($pr) use ($search) {
-                        $pr->searchProdiSmart($search);
-                    });
-
-                    if (str_contains($searchLower, $role)) {
-                        $q->orWhereHas($role);
-                    }
                 }
 
-            } else {
-                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm]));
+                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
+                    $dq->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '$format')) LIKE ?", ["%{$searchLower}%"])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '$format')) LIKE ?", ["%{$searchLower}%"]);
+                }
+            });
+
+            // Prodi
+            foreach (['admin', 'dosen', 'mahasiswa'] as $role) {
+                $q->orWhereHas("$role.pr_rel", fn ($pr) => $pr->searchProdiSmart($search));
+
+                if (str_contains($searchLower, $role)) {
+                    $q->orWhereHas($role);
+                }
             }
         });
     }

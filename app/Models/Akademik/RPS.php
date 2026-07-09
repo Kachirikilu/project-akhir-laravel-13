@@ -541,7 +541,6 @@ class RPS extends Model
             return $query;
         }
 
-        // Gunakan seluruh logic SearchRPS
         $query->searchRPS($search, $withBobot);
 
         if ($withBobot) {

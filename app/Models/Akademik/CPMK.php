@@ -163,7 +163,6 @@ class CPMK extends Model
             return $query;
         }
 
-        // Pakai seluruh logika SearchCPMK
         $query->searchCPMK($search, $withBobot);
 
         if ($withBobot) {

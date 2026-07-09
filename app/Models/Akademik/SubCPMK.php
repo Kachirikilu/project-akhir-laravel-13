@@ -155,10 +155,8 @@ class SubCPMK extends Model
 
     public function scopeSearchSCPMKSmart($query, $search, $withBobot = false)
     {
-        // 1. Panggil logika dasar
         $query->searchSCPMK($search, $withBobot);
 
-        // 2. Tambahkan logika Smart
         $searchLower = strtolower($search);
         $searchTerm = '%'.$search.'%';
 

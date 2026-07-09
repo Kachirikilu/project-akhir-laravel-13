@@ -448,8 +448,8 @@ trait WithKelasSesiSearchFilters
 
                 'created_at' => fn ($s) => $s->created_at,
                 'updated_at' => fn ($s) => $s->updated_at,
-
-                default => fn ($s) => $s->id,
+                'id' => fn ($s) => $s->id,
+                default => fn ($s) => $s->pertemuan_ke,
             };
 
             $allSesi = $sortDirection === 'asc'

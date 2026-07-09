@@ -304,12 +304,13 @@ trait WithExcelCapaianNilai
 
             foreach ($parts as $p) {
                 $pUpper = strtoupper($p);
-                $isStrata = preg_match('/(S1|S2|S3|SARJANA|MAGISTER|DOKTOR)/', $pUpper);
-                if (is_numeric($p) && strlen($p) == 4) {
-                    $angkatan = $p;
-                } elseif (str_contains($p, '-') && ! $isStrata) {
+                $clean = preg_replace('/[^A-Z0-9]/', '', $pUpper);
+
+                if (preg_match('/^\d{6}[A-Z]{3,}\d+$/', $clean)) {
                     $kodeRps = $p;
-                } else {
+                } elseif (is_numeric($p) && strlen($p) === 4) {
+                    $angkatan = $p;
+                } elseif (! preg_match('/^(S1|S2|S3|SARJANA|MAGISTER|DOKTOR)$/', $pUpper)) {
                     $identifier = $p;
                 }
             }

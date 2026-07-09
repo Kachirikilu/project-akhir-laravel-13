@@ -166,83 +166,88 @@ class Fakultas extends Model
 
     public function scopeSearchFakultasSmart(Builder $query, $search)
     {
-        if (empty(trim($search))) {
+        if (blank(trim($search))) {
             return $query;
         }
 
+        $query->searchFakultas($search);
+
         $search = trim($search);
         $searchCleaned = trim(preg_replace('/(nilai|index)/i', '', $search));
+        $searchTerm = "%{$search}%";
+        $searchLower = strtolower($search);
 
-        $searchTerm = '%'.$search.'%';
-        $searchLower = '%'.strtolower($search).'%';
+        return $query->orWhere(function ($q) use ($searchCleaned, $searchTerm, $searchLower) {
 
-        return $query->where(function ($q) use ($search, $searchCleaned, $searchTerm, $searchLower) {
-
-            // Filter Dasar
-            $q->where('fakultas.nama_fk', 'like', $searchTerm)
-                ->orWhere('fakultas.kode_fk', 'like', $searchTerm)
-                ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
-
-            if (is_numeric($search)) {
-                $q->orWhere('fakultas.id', 'like', $search);
-            }
-            // --- B. Pencarian Cerdas Nilai/Index ---
+            // ===== Nilai / Index =====
             $q->orWhere(function ($sub) use ($searchCleaned) {
-                // 1. Mutu Huruf (A, B+, dll)
-                $mapHuruf = [
-                    'A' => [85, 100], 'A-' => [80, 84.99], 'B+' => [75, 79.99],
-                    'B' => [70, 74.99], 'B-' => [65, 69.99], 'C+' => [60, 64.99],
-                    'C' => [55, 59.99], 'D' => [40, 54.99], 'E' => [0, 39.99],
-                ];
-                $upperSearch = strtoupper($searchCleaned);
-                if (isset($mapHuruf[$upperSearch])) {
-                    $sub->orWhereBetween('nilai_fk', $mapHuruf[$upperSearch]);
 
-                    return; // Keluar jika sudah ketemu berdasarkan huruf
+                $mapHuruf = [
+                    'A'  => [85,100],
+                    'A-' => [80,84.99],
+                    'B+' => [75,79.99],
+                    'B'  => [70,74.99],
+                    'B-' => [65,69.99],
+                    'C+' => [60,64.99],
+                    'C'  => [55,59.99],
+                    'D'  => [40,54.99],
+                    'E'  => [0,39.99],
+                ];
+
+                $upper = strtoupper($searchCleaned);
+
+                if (isset($mapHuruf[$upper])) {
+                    $sub->orWhereBetween('nilai_fk', $mapHuruf[$upper]);
+                    return;
                 }
 
-                // 2. Pencarian Numerik
-                if (preg_match('/([><=]?)\s*(\d*\.?\d+)/', $searchCleaned, $matches)) {
-                    $operator = $matches[1] ?: 'LIKE';
-                    $val = $matches[2];
+                if (preg_match('/([><=]?)\s*(\d*\.?\d+)/', $searchCleaned, $m)) {
+
+                    $operator = $m[1] ?: 'LIKE';
+                    $value = (float) $m[2];
 
                     if ($operator === 'LIKE') {
-                        // A. Pencarian langsung ke nilai_fk (misal: "86" atau "3.7")
-                        $sub->orWhereRaw('CAST(ROUND(nilai_fk, 2) AS CHAR) LIKE ?', ['%'.$val.'%']);
 
-                        // B. Jika angka <= 4.00, kita perlakukan sebagai INDEKS
-                        if ((float) $val <= 4.00) {
-                            $mapIndeks = [
-                                '4.00' => [85, 100], '3.70' => [80, 84.99], '3.30' => [75, 79.99],
-                                '3.00' => [70, 74.99], '2.70' => [65, 69.99], '2.30' => [60, 64.99],
-                                '2.00' => [55, 59.99], '1.00' => [40, 54.99], '0.00' => [0, 39.99],
-                            ];
+                        $sub->orWhereRaw(
+                            'CAST(ROUND(nilai_fk,2) AS CHAR) LIKE ?',
+                            ['%'.$m[2].'%']
+                        );
 
-                            foreach ($mapIndeks as $indeks => $range) {
-                                if ($indeks === number_format((float) $val, 2, '.', '')) {
-                                    $sub->orWhereBetween('nilai_fk', $range);
-                                }
-                            }
+                        $mapIndex = [
+                            '4.00'=>[85,100],
+                            '3.70'=>[80,84.99],
+                            '3.30'=>[75,79.99],
+                            '3.00'=>[70,74.99],
+                            '2.70'=>[65,69.99],
+                            '2.30'=>[60,64.99],
+                            '2.00'=>[55,59.99],
+                            '1.00'=>[40,54.99],
+                            '0.00'=>[0,39.99],
+                        ];
+
+                        $key = number_format($value, 2, '.', '');
+
+                        if (isset($mapIndex[$key])) {
+                            $sub->orWhereBetween('nilai_fk', $mapIndex[$key]);
                         }
+
                     } else {
-                        // Jika ada operator (>, <, =), langsung ke nilai_fk
-                        $sub->orWhere('nilai_fk', $operator, (float) $val);
+                        $sub->orWhere('nilai_fk', $operator, $value);
                     }
                 }
             });
 
-            // 3. Filter Tanggal
+            // ===== Tanggal =====
             $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
-                $numericFormats = ['%d/%m/%Y', '%Y-%m-%d'];
-                $textFormats = ['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'];
 
-                foreach ($numericFormats as $format) {
+                foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
                     $dq->orWhereRaw("DATE_FORMAT(fakultas.created_at, '$format') LIKE ?", [$searchTerm])
                         ->orWhereRaw("DATE_FORMAT(fakultas.updated_at, '$format') LIKE ?", [$searchTerm]);
                 }
-                foreach ($textFormats as $format) {
-                    $dq->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '$format')) LIKE ?", [$searchLower])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '$format')) LIKE ?", [$searchLower]);
+
+                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
+                    $dq->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '$format')) LIKE ?", ["%{$searchLower}%"])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '$format')) LIKE ?", ["%{$searchLower}%"]);
                 }
             });
         });

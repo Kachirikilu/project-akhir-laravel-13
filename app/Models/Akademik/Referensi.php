@@ -135,10 +135,8 @@ class Referensi extends Model
 
     public function scopeSearchRefSmart($query, $search)
     {
-        // 1. Panggil logika dasar
         $query->searchRef($search);
 
-        // 2. Tambahkan logika tanggal (Smart)
         $searchTerm = '%'.trim($search).'%';
         $searchLower = '%'.strtolower(trim($search)).'%';
 
