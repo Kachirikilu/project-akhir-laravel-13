@@ -52,23 +52,24 @@ trait WithProdiExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        if ($this->switchTable === 'fakultas') {
-            $this->addRekapFakultasFk($queryPr, 'rekap_fk');
-            $this->addIndexFakultasFk($queryPr, 'index_fk');
-            $this->addAkreditasFakultasFk($queryPr, 'akreditas_fk');
-        } elseif ($this->switchTable === 'departemen') {
-            $this->addRekapDepartemenDp($queryPr, 'rekap_dp');
-            $this->addIndexDepartemenDp($queryPr, 'index_dp');
-            $this->addAkreditasDepartemenDp($queryPr, 'akreditas_dp');
-        } else {
+        // if ($this->switchTable === 'fakultas') {
+        //     $this->addRekapFakultasFk($queryPr, 'rekap_fk');
+        //     $this->addIndexFakultasFk($queryPr, 'index_fk');
+        //     $this->addAkreditasFakultasFk($queryPr, 'akreditas_fk');
+        // } elseif ($this->switchTable === 'departemen') {
+        //     $this->addRekapDepartemenDp($queryPr, 'rekap_dp');
+        //     $this->addIndexDepartemenDp($queryPr, 'index_dp');
+        //     $this->addAkreditasDepartemenDp($queryPr, 'akreditas_dp');
+        // } else {
             // $this->addRekapProdiPr($queryPr, 'rekap_pr');
             // $this->addIndexProdiPr($queryPr, 'index_pr');
             // $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+        if ($this->switchTable === '' || $this->switchTable === 'prodi') {
             $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
             $this->buttonStrataFilter($queryPr);
         }
 
-        if ($this->searchMode == 'full') {
+        if ($this->searchMode == 'complex') {
             $prodis = $this->searchOutputPr($queryPr, $this->search, null, $this->sortField, $this->sortDirection);
         } else {
             $prodis = $queryPr;

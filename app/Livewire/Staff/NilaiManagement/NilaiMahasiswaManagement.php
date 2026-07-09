@@ -9,8 +9,8 @@ use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\WithNilaiMahasis
 // use App\Models\Kelas\NilaiMahasiswa;
 use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 
-use App\Livewire\Admin\UserManagement\WithUserDelete;
-use App\Livewire\Admin\UserManagement\WithUserModal;
+// use App\Livewire\Admin\UserManagement\WithUserDelete;
+// use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Http\Services\RekapCapaian;
 
 use App\Models\Auth\User;
@@ -30,8 +30,8 @@ class NilaiMahasiswaManagement extends Component
     use WithNilaiSearchFilters;
     use WithNilaiMahasiswaExcel;
 
-    use WithUserDelete;
-    use WithUserModal;
+    // use WithUserDelete;
+    // use WithUserModal;
 
     use WithPagination;
 

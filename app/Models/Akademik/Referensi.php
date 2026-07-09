@@ -105,69 +105,55 @@ class Referensi extends Model
             return $query;
         }
 
-        $searchTerm = '%'.trim($search).'%';
+        $search = trim($search);
+        $searchTerm = '%'.$search.'%';
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($searchTerm, $search) {
-            // 1. Pencarian kolom standar tetap dipertahankan untuk performa
-            $q->where('kode_ref', 'like', $searchTerm)
-                ->orWhere('judul', 'like', $searchTerm)
-                ->orWhere('penulis', 'like', $searchTerm)
-                ->orWhere('penerbit', 'like', $searchTerm)
-                ->orWhere('tahun', 'like', $searchTerm);
+        return $query->where(function ($q) use ($search, $searchTerm, $searchClean) {
+            // 1. Pencarian Kolom Standar
+            $q->where('referensis.kode_ref', 'like', $searchTerm)
+                ->orWhere('referensis.kode_ref', 'like', $searchClean)
+                ->orWhere('referensis.judul', 'like', $searchTerm)
+                ->orWhere('referensis.penulis', 'like', $searchTerm)
+                ->orWhere('referensis.penerbit', 'like', $searchTerm)
+                ->orWhere('referensis.tahun', 'like', $searchTerm)
+                ->orWhere('referensis.link', 'like', $searchTerm);
 
-            // 2. Pencarian "Virtual" (Meniru logic Accessor Citation)
-            $q->orWhereRaw("
-            CONCAT_WS(' ', 
-                penulis, 
-                IF(tahun IS NOT NULL AND tahun != '', CONCAT('(', tahun, ')'), NULL), 
-                IF(judul IS NOT NULL AND judul != '', CONCAT(TRIM(judul), '.'), NULL), 
-                IF(penerbit IS NOT NULL AND penerbit != '', CONCAT(TRIM(penerbit), '.'), NULL)
-            ) LIKE ?", [$searchTerm]);
+            // 2. Pencarian "Virtual" (Citation)
+            $q->orWhereRaw("CONCAT_WS(' ', penulis, 
+            IF(tahun IS NOT NULL AND tahun != '', CONCAT('(', tahun, ')'), NULL), 
+            IF(judul IS NOT NULL AND judul != '', CONCAT(TRIM(judul), '.'), NULL), 
+            IF(penerbit IS NOT NULL AND penerbit != '', CONCAT(TRIM(penerbit), '.'), NULL)
+        ) LIKE ?", [$searchTerm]);
 
+            // 3. ID
             if (is_numeric($search)) {
-                $q->orWhere('id', $search);
+                $q->orWhere('referensis.id', $search);
             }
         });
     }
 
-    // public function scopeSearchRef($query, $search)
-    // {
-    //     if (empty(trim($search))) {
-    //         return $query;
-    //     }
+    public function scopeSearchRefSmart($query, $search)
+    {
+        // 1. Panggil logika dasar
+        $query->searchRef($search);
 
-    //     $search = trim($search);
-    //     $searchTerm = '%'.$search.'%';
-    //     $searchLower = '%'.strtolower($search).'%';
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+        // 2. Tambahkan logika tanggal (Smart)
+        $searchTerm = '%'.trim($search).'%';
+        $searchLower = '%'.strtolower(trim($search)).'%';
 
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
-    //         $q->where('referensis.kode_ref', 'like', $searchTerm)
-    //                 ->orWhere('referensis.kode_ref', 'like', $searchClean)
-    //                 ->orWhere('referensis.judul', 'like', $searchTerm)
-    //                 ->orWhere('referensis.penulis', 'like', $searchTerm)
-    //                 ->orWhere('referensis.penerbit', 'like', $searchTerm)
-    //                 ->orWhere('referensis.tahun', 'like', $searchTerm)
-    //                 ->orWhere('referensis.link', 'like', $searchTerm);
+        return $query->orWhere(function ($q) use ($searchTerm, $searchLower) {
+            $numericFormats = ['%d/%m/%Y', '%Y-%m-%d'];
+            $textFormats = ['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'];
 
-    //             if (is_numeric($searchTerm)) {
-    //                 $q->orWhere('referensis.id', 'like', $search);
-    //             }
-
-    //             $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-    //                 $dq->whereRaw("DATE_FORMAT(referensis.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(referensis.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("DATE_FORMAT(referensis.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(referensis.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-    //             });
-    //     });
-    // }
+            foreach ($numericFormats as $format) {
+                $q->orWhereRaw("DATE_FORMAT(referensis.created_at, '$format') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(referensis.updated_at, '$format') LIKE ?", [$searchTerm]);
+            }
+            foreach ($textFormats as $format) {
+                $q->orWhereRaw("LOWER(DATE_FORMAT(referensis.created_at, '$format')) LIKE ?", [$searchLower])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(referensis.updated_at, '$format')) LIKE ?", [$searchLower]);
+            }
+        });
+    }
 }

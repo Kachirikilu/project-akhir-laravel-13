@@ -44,7 +44,7 @@ trait WithRPSFilters
                 'refs',
                 'cpmks', 'cpmks.cpls', 'cpmks.refs',
                 'cpmks.scpmks', 'cpmks.scpmks.refs',
-                'tim_dosens.dosens', 'tim_dosens'
+                'tim_dosens.dosens', 'tim_dosens',
             ]);
 
         if (isset($this->switchTable) && $this->switchTable === 'rps') {
@@ -80,10 +80,14 @@ trait WithRPSFilters
                 });
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryRPS->searchRPS($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryRPS->searchRPSSmart($search);
+                    } else {
+                        $queryRPS->searchRPS($search);
+                    }
                 }
                 if (! empty($this->searchBobotRPS)) {
                     $queryRPS->searchRPS($this->searchBobotRPS, true);
@@ -127,9 +131,9 @@ trait WithRPSFilters
             $queryRPS->whereHas('mk_rel.prodis', function ($q) {
                 $q->where('prodis.id', Auth::user()->pr_id);
             })
-            ->whereDoesntHave('tim_dosens', function ($q) {
-                $q->where('tim_dosens.pr_id', Auth::user()->pr_id);
-            });
+                ->whereDoesntHave('tim_dosens', function ($q) {
+                    $q->where('tim_dosens.pr_id', Auth::user()->pr_id);
+                });
         } elseif ($this->filterRPS === 'rps-akademik') {
             if (! empty($prId)) {
                 $queryRPS->where('akademik', 'like', '%'.$currentYear.'%')

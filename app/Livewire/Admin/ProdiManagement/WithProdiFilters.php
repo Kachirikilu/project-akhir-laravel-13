@@ -28,10 +28,14 @@ trait WithProdiFilters
                 });
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryPr->searchProdi($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryPr->searchProdiSmart($search);
+                    } else {
+                        $queryPr->searchProdi($search);
+                    }
                 }
                 $this->sortFieldOrderProdi($queryPr);
             }
@@ -201,7 +205,7 @@ trait WithProdiFilters
             'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
 
             'nilai_pr', 'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('nilai_pr', $this->sortDirection),
-            
+
             'count_mk' => $queryPr->orderBy('count_mk', $this->sortDirection),
             'count_rps' => $queryPr->orderBy('count_rps', $this->sortDirection),
             'count_rps_aktif' => $queryPr->orderBy('count_rps_aktif', $this->sortDirection),

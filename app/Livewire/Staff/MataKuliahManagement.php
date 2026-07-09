@@ -210,7 +210,7 @@ class MataKuliahManagement extends Component
             $this->buttonMKSwitch($queryMK);
             $this->buttonMKFilter($queryMK);
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 $mks = $this->searchOutputMK($queryMK, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
                 $mks = $queryMK->paginate($this->perPage);

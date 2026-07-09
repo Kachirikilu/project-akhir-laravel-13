@@ -14,6 +14,13 @@ use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithProdiSearchFilters;
 // use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Global\WithCPLSearchFilters;
+use App\Livewire\Global\WithCPMKSearchFilters;
+use App\Livewire\Global\WithSubCPMKSearchFilters;
+use App\Livewire\Global\WithUserSearchFilters;
+
+
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKFilters;
@@ -47,6 +54,13 @@ class CapaianManagement extends Component
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
+
+    use WithRPSSearchFilters;
+    use WithCPLSearchFilters;
+    use WithCPMKSearchFilters;
+    use WithSubCPMKSearchFilters;
+    use WithUserSearchFilters;
+
 
     public $perPage = 8;
 
@@ -578,7 +592,7 @@ class CapaianManagement extends Component
                     //     break;
             }
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 switch ($this->switchTable) {
                     case 'rps':
                         $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);

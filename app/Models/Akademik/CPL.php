@@ -36,6 +36,7 @@ class CPL extends Model
         return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'pr_id')
             ->withPivot('sort_order');
     }
+    
 
     // public function rps(): BelongsToMany
     // {
@@ -202,60 +203,25 @@ class CPL extends Model
         });
     }
 
-    // public function scopeSearchCPL($query, $search)
-    // {
-    //     if (empty(trim($search))) {
-    //         return $query;
-    //     }
+    public function scopeSearchCPLSmart($query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+        $query->searchCPL($search);
+        if (preg_match('/^(\d+)\s*rps$/i', trim($search), $matches)) {
+            $targetRps = (int) $matches[1];
 
-    //     $search = trim($search);
-    //     $searchTerm = '%'.$search.'%';
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+            $query->where(function ($q) use ($targetRps) {
+                $q->whereRaw("(
+                    SELECT COUNT(DISTINCT rps_pivot_cpmk.rps_id)
+                    FROM cpmk_pivot_cpl
+                    JOIN rps_pivot_cpmk ON cpmk_pivot_cpl.cpmk_id = rps_pivot_cpmk.cpmk_id
+                    WHERE cpmk_pivot_cpl.cpl_id = cpls.id
+                ) = ?", [$targetRps]);
+            });
+        }
 
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchClean) {
-    //         $q->where('cpls.kode_cpl', 'like', $searchTerm)
-    //             ->orWhere('cpls.kode_cpl', 'like', $searchClean)
-    //             ->orWhere('cpls.deskripsi', 'like', $searchTerm);
-
-    //         if (is_numeric($search)) {
-    //             $q->orWhere('cpls.id', 'like', $search);
-    //         }
-    //     });
-    // }
-
-    // public function scopeSearchCPL($query, $search)
-    // {
-    //     if (empty(trim($search))) {
-    //         return $query;
-    //     }
-
-    //     $search = trim($search);
-    //     $searchTerm = '%'.$search.'%';
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
-
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
-    //         $q->where('cpls.kode_cpl', 'like', $searchTerm)
-    //                 ->orWhere('cpls.kode_cpl', 'like', $searchClean)
-    //                 ->orWhere('cpls.deskripsi', 'like', $searchTerm);
-
-    //             if (is_numeric($search)) {
-    //                 $q->orWhere('cpls.id', 'like', $search);
-    //             }
-
-    //             $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-    //                 $dq->whereRaw("DATE_FORMAT(cpls.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(cpls.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(cpls.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(cpls.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-    //             });
-    //     });
-    // }
+        return $query;
+    }
 }

@@ -48,6 +48,7 @@ class Prodi extends Model
             get: fn () => number_format($this->nilai_pr ?? 0, 2)
         );
     }
+
     protected function indexPr(): Attribute
     {
         return Attribute::make(
@@ -69,6 +70,7 @@ class Prodi extends Model
             }
         );
     }
+
     protected function akreditasPr(): Attribute
     {
         return Attribute::make(
@@ -345,7 +347,6 @@ class Prodi extends Model
             $searchNormalized,
             $strataExpr
         ) {
-
             // Nama Prodi & Kode Prodi
             $q->where('prodis.nama_pr', 'like', $searchTerm)
                 ->orWhere('prodis.kode_pr', 'like', $searchTerm)
@@ -356,15 +357,6 @@ class Prodi extends Model
                 $q->orWhere('prodis.id', $search);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | S1 + Nama Prodi
-            | Contoh:
-            | S1 Teknik Elektro
-            | S1TeknikElektro
-            | S1-Teknik Elektro
-            |--------------------------------------------------------------------------
-            */
             $q->orWhereRaw("
                 REPLACE(
                     REPLACE(
@@ -380,16 +372,6 @@ class Prodi extends Model
                     ''
                 ) LIKE ?
             ", ['%'.$searchNormalized.'%']);
-
-            /*
-            |--------------------------------------------------------------------------
-            | S1 + Kode Prodi
-            | Contoh:
-            | S1TKE
-            | S1-TKE
-            | S1 TKE
-            |--------------------------------------------------------------------------
-            */
             $q->orWhereRaw("
                 REPLACE(
                     REPLACE(
@@ -434,70 +416,93 @@ class Prodi extends Model
         });
     }
 
-    // public function scopeSearchProdi(Builder $query, $search)
-    // {
-    //     if (empty(trim($search))) {
-    //         return $query;
-    //     }
+    public function scopeSearchProdiSmart(Builder $query, $search)
+    {
+        if (blank(trim($search))) {
+            return $query;
+        }
 
-    //     $search = trim($search);
-    //     $searchLower = '%'.strtolower($search).'%';
-    //     $searchTerm = '%'.$search.'%';
+        // seluruh fitur SearchProdi
+        $query->searchProdi($search);
 
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-    //         // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
-    //         $q->where('prodis.nama_pr', 'like', $searchTerm)
-    //             ->orWhere('prodis.kode_pr', 'like', $searchTerm);
+        $search = trim($search);
+        $searchCleaned = trim(preg_replace('/(nilai|index)/i', '', $search));
+        $searchTerm = "%{$search}%";
+        $searchLower = strtolower($search);
 
-    //         if (is_numeric($search)) {
-    //             $q->orWhere('prodis.id', 'like', $search);
-    //         }
+        return $query->orWhere(function ($q) use ($search, $searchCleaned, $searchTerm, $searchLower) {
 
-    //         // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
-    //         $q->orWhereRaw("
-    //             CONCAT(
-    //                 CASE
-    //                     WHEN strata = 'Sarjana' THEN 'S1'
-    //                     WHEN strata = 'Magister' THEN 'S2'
-    //                     WHEN strata = 'Doktor' THEN 'S3'
-    //                     ELSE strata
-    //                 END,
-    //                 ' ',
-    //                 nama_pr
-    //             ) LIKE ?", [$searchTerm])
-    //             ->orWhereRaw("CONCAT(strata, ' ', nama_pr) LIKE ?", [$searchTerm]);
+            // ===== Nilai / Index =====
+            $q->orWhere(function ($sub) use ($searchCleaned) {
 
-    //         $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-    //             $dq->whereRaw("DATE_FORMAT(prodis.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(prodis.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-    //                 ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
-    //         });
+                $mapHuruf = [
+                    'A' => [85, 100], 'A-' => [80, 84.99],
+                    'B+' => [75, 79.99], 'B' => [70, 74.99],
+                    'B-' => [65, 69.99], 'C+' => [60, 64.99],
+                    'C' => [55, 59.99], 'D' => [40, 54.99],
+                    'E' => [0, 39.99],
+                ];
 
-    //         // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
-    //         $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
-    //             $j->withTrashed()->where(function ($sq) use ($searchTerm) {
-    //                 $sq->where('nama_dp', 'like', $searchTerm)
-    //                     ->orWhere('kode_dp', 'like', $searchTerm)
-    //                     ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm]);
-    //             })
-    //             // 4. Filter Relasi ke Fakultas (Termasuk kode_fk)
-    //                 ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
-    //                     $f->withTrashed()->where(function ($sf) use ($searchTerm) {
-    //                         $sf->where('nama_fk', 'like', $searchTerm)
-    //                             ->orWhere('kode_fk', 'like', $searchTerm)
-    //                             ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
-    //                     });
-    //                 });
-    //         });
-    //     });
-    // }
+                $upper = strtoupper($searchCleaned);
+
+                if (isset($mapHuruf[$upper])) {
+                    $sub->orWhereBetween('nilai_pr', $mapHuruf[$upper]);
+
+                    return;
+                }
+
+                if (preg_match('/([><=]?)\s*(\d*\.?\d+)/', $searchCleaned, $m)) {
+
+                    $operator = $m[1] ?: 'LIKE';
+                    $value = (float) $m[2];
+
+                    if ($operator === 'LIKE') {
+
+                        $sub->orWhereRaw(
+                            'CAST(ROUND(nilai_pr,2) AS CHAR) LIKE ?',
+                            ['%'.$m[2].'%']
+                        );
+
+                        $mapIndex = [
+                            '4.00' => [85, 100],
+                            '3.70' => [80, 84.99],
+                            '3.30' => [75, 79.99],
+                            '3.00' => [70, 74.99],
+                            '2.70' => [65, 69.99],
+                            '2.30' => [60, 64.99],
+                            '2.00' => [55, 59.99],
+                            '1.00' => [40, 54.99],
+                            '0.00' => [0, 39.99],
+                        ];
+
+                        $key = number_format($value, 2, '.', '');
+
+                        if (isset($mapIndex[$key])) {
+                            $sub->orWhereBetween('nilai_pr', $mapIndex[$key]);
+                        }
+
+                    } else {
+                        $sub->orWhere('nilai_pr', $operator, $value);
+                    }
+                }
+            });
+
+            // ===== Tanggal =====
+            $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
+
+                foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+                    $dq->orWhereRaw("DATE_FORMAT(prodis.created_at,'$format') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(prodis.updated_at,'$format') LIKE ?", [$searchTerm]);
+                }
+
+                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
+                    $dq->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at,'$format')) LIKE ?", ["%{$searchLower}%"])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at,'$format')) LIKE ?", ["%{$searchLower}%"]);
+                }
+            });
+
+            // ===== Relasi =====
+            $q->orWhereHas('dp_rel', fn ($dp) => $dp->searchDepartemenSmart($search));
+        });
+    }
 }

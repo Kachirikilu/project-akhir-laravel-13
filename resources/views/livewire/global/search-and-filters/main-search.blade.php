@@ -10,9 +10,10 @@
 
     // Jika searchValues tidak kosong, otomatis isi label dan deskripsi default-nya
     if (!empty($searchValues)) {
-        $searchOptions = $searchOptions ?? ['Pencarian Sederhana', 'Pencarian Kompleks'];
+        $searchOptions = $searchOptions ?? ['Pencarian Sederhana', 'Pencarian Cerdas', 'Pencarian Kompleks'];
         $searchDescs = $searchDescs ?? [
             'Mencari data utama secara instan.',
+            'Mencari hingga ke relasi secara instan.',
             'Mencari ke seluruh kolom dan relasi data secara detail.',
         ];
     } else {

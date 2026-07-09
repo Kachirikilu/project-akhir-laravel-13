@@ -171,7 +171,7 @@ trait WithKelasSesiSearchFilters
         }
     }
 
-    public function getSesibyUser($mode = 'full')
+    public function getSesibyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

@@ -220,7 +220,7 @@ trait WithTimDosenSearchFilters
         }
     }
 
-    public function getTimDosenbyUser($mode = 'full')
+    public function getTimDosenbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

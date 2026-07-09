@@ -54,8 +54,8 @@
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
                     'searchMode' => $searchMode,
-                    'searchValues' => ['simple', 'full'],
-                    'searchOptions' => ['Cari Email & Identitas', 'Pencarian Kompleks'],
+                    'searchValues' => ['simple', 'smart', 'complex'],
+                    'searchOptions' => ['Cari Email & Identitas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
@@ -71,8 +71,8 @@
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
                         'searchMode' => $searchMode,
-                        'searchValues' => ['simple', 'full'],
-                        'searchOptions' => ['Cari Email & Identitas', 'Pencarian Kompleks'],
+                        'searchValues' => ['simple', 'smart', 'complex'],
+                        'searchOptions' => ['Cari Email & Identitas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                     ])
                 </div>
 
@@ -99,8 +99,8 @@
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Rencana Pembelajaran Semester...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
         <div class="relative sm:col-span-3">

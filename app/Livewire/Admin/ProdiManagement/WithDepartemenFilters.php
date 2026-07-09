@@ -21,10 +21,14 @@ trait WithDepartemenFilters
             $queryDp->where('departemens.id', $this->selectedDpId);
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;
             if (! empty($search)) {
-                $queryDp->searchDepartemen($search);
+                if ($this->searchMode == 'smart') {
+                    $queryDp->searchDepartemenSmart($search);
+                } else {
+                    $queryDp->searchDepartemen($search);
+                }
             }
 
             $this->sortFieldOrderDepartemen($queryDp);

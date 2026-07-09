@@ -204,7 +204,7 @@ trait WithDosenSearchFilters
         }
     }
 
-    public function getDosenbyUser($mode = 'full')
+    public function getDosenbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

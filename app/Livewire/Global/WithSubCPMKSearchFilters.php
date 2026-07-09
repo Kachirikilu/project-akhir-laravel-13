@@ -255,7 +255,7 @@ trait WithSubCPMKSearchFilters
         }
     }
 
-    public function getSCPMKbyUser($mode = 'full')
+    public function getSCPMKbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

@@ -471,7 +471,7 @@ class CapaianManagement extends Component
                     //     break;
             }
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 switch ($this->switchTable) {
                     case 'rps':
                         $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);

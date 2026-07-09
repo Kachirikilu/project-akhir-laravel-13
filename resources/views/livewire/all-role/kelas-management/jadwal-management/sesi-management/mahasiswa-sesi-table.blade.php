@@ -35,8 +35,8 @@
                     'placeholder' => 'Cari Mahasiswa Kelas...',
                     'defaultLive' => 1,
                     'searchMode' => $searchMode,
-                    'searchValues' => ['simple', 'full'],
-                    'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Kompleks'],
+                    'searchValues' => ['simple', 'smart', 'complex'],
+                    'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                     'isBorder' => 2,
                 ])
             </div>

@@ -204,7 +204,7 @@ trait WithOBEExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.$sINPUT.' '.$UNIV;
 
-        if ($this->searchMode == 'full') {
+        if ($this->searchMode == 'complex') {
             switch ($this->switchTable) {
                 case 'rps':
                     $obes = $this->searchOutputRPS($queryOBE, $this->search, $this->searchBobotRPS, null, $this->sortField, $this->sortDirection);

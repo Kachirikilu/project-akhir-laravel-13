@@ -23,10 +23,14 @@ trait WithFakultasFilters
             });
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;
             if (! empty($search)) {
-                $queryFk->searchFakultas($search);
+                if ($this->searchMode == 'smart') {
+                    $queryFk->searchFakultasSmart($search);
+                } else {
+                    $queryFk->searchFakultas($search);
+                }
             }
             $this->sortFieldOrderFakultas($queryFk);
         }

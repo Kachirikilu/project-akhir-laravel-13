@@ -98,7 +98,7 @@ trait WithUserExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        if ($this->searchMode == 'full') {
+        if ($this->searchMode == 'complex') {
             $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, null, $this->sortField, $this->sortDirection);
         } else {
             $users = $queryUser;

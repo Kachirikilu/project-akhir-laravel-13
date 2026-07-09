@@ -3,7 +3,6 @@
 namespace App\Livewire\Staff\ObeManagement\CplManagement;
 
 use App\Models\Akademik\CPL;
-use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithCPLFilters
@@ -41,10 +40,14 @@ trait WithCPLFilters
                 $queryCPL->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId);
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryCPL->searchCPL($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryCPL->searchCPLSmart($search);
+                    } else {
+                        $queryCPL->searchCPL($search);
+                    }
                 }
                 $this->sortFieldOrderCPL($queryCPL);
             }
@@ -56,6 +59,7 @@ trait WithCPLFilters
     protected function addCountRpsCpl($queryCPL, ?int $prId = null, string $alias = 'count_rps')
     {
         $queryCPL->addSelect('cpls.*');
+
         return $queryCPL->selectSub(function ($query) use ($prId) {
             $query->from('rps')
                 ->join(

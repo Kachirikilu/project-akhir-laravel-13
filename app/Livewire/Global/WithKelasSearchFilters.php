@@ -183,7 +183,7 @@ trait WithKelasSearchFilters
         }
     }
 
-    public function getKelasbyUser($mode = 'full')
+    public function getKelasbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

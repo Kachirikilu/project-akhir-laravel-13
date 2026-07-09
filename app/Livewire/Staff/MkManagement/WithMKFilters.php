@@ -36,18 +36,15 @@ trait WithMKFilters
             }
         }
 
-        // Filter Tab/Pills
-        // if (! empty($this->filterMK)) {
-        //     if (is_numeric($this->filterMK)) {
-        //         $queryMK->where('semester', $this->filterMK);
-        //     }
-        // }
-
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;
 
             if (! empty($search)) {
-                $queryMK->searchMK($search);
+                if ($this->searchMode == 'smart') {
+                    $queryMK->searchMKSmart($search);
+                } else {
+                    $queryMK->searchMK($search);
+                }
             }
 
             $this->sortFieldOrderMK($queryMK);

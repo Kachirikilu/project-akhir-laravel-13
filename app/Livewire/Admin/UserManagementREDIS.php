@@ -201,7 +201,7 @@ class UserManagement extends Component
                 ];
                 $stats = array_merge($baseStats, $this->getStatsUser($countUser));
 
-                if ($this->searchMode == 'full') {
+                if ($this->searchMode == 'complex') {
                     $paginator = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
                 } else {
                     $paginator = $queryUser->paginate($this->perPage);

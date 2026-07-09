@@ -173,7 +173,7 @@ trait WithDepartemenSearchFilters
         }
     }
 
-    public function getDpbyUser($type = 'full')
+    public function getDpbyUser($type = 'complex')
     {
         $user = Auth::user();
         $departemenId = $user->dp_id ?? null;

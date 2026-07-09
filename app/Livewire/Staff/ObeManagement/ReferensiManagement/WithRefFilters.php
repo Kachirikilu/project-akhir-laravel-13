@@ -66,10 +66,14 @@ trait WithRefFilters
                 $queryRef->whereHas('scpmks', fn ($q) => $q->where('sub_cpmks.id', $this->selectedSCPMKId));
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryRef->searchRef($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryRef->searchRefSmart($search);
+                    } else {
+                        $queryRef->searchRef($search);
+                    }
                 }
                 $this->sortFieldOrderRef($queryRef);
             }
@@ -107,7 +111,7 @@ trait WithRefFilters
         return match ($this->sortField) {
             'kode' => $queryRef->orderBy('kode_ref', $this->sortDirection),
 
-            'citation' => $queryRef->orderByRaw("CONCAT_WS(' ', penulis, tahun, judul, penerbit) " . $this->sortDirection),
+            'citation' => $queryRef->orderByRaw("CONCAT_WS(' ', penulis, tahun, judul, penerbit) ".$this->sortDirection),
             'judul' => $queryRef->orderBy('judul', $this->sortDirection),
             'penulis' => $queryRef->orderBy('penulis', $this->sortDirection),
             'penerbit' => $queryRef->orderBy('penerbit', $this->sortDirection),

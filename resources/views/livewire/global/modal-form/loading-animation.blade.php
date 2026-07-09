@@ -6,7 +6,7 @@
             '20' => 'h-20',
             '32' => 'h-32',
             '40' => 'h-40',
-            'full' => 'h-full',
+            'complex' => 'h-full',
             default => '',
         };
     @endphp

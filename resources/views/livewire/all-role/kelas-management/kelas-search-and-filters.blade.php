@@ -79,8 +79,8 @@
         @include('livewire.global.search-and-filters.main-search', [
             'placeholder' => 'Cari Kelas...',
             'searchMode' => $searchMode,
-            'searchValues' => ['simple', 'full'],
-            'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
+            'searchValues' => ['simple', 'smart', 'complex'],
+            'searchOptions' => ['Cari Kode Kelas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
         ])
     </div>
 
@@ -114,8 +114,8 @@
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Kelas...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Kode Kelas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
 

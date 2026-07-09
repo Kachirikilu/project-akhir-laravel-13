@@ -261,7 +261,7 @@ class RpsCapaianManagement extends Component
             $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
 
             $rps = collect();
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 $rps = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
                 $rps = $queryRPS->paginate($this->perPage);

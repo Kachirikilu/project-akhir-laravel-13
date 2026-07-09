@@ -309,7 +309,7 @@ trait WithMahasiswaSearchFilters
         }
     }
 
-    public function getMahasiswabyUser($mode = 'full')
+    public function getMahasiswabyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

@@ -221,7 +221,7 @@ class KelasManagement extends Component
 
             $this->buttonKelasFilter($queryKelas);
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 $kelas = $this->searchOutputKelas($queryKelas, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
                 $kelas = $queryKelas->paginate($this->perPage);
@@ -231,21 +231,6 @@ class KelasManagement extends Component
             return view('livewire.all-role.kelas-management', [
                 'kelas' => $kelas,
                 'stats' => $stats ?? null,
-
-                // 'stats' => [
-                //     'kelas-saya' => $totalKelasSaya ?? 0,
-                //     'kelas-prodi' => $totalKelasProdi,
-
-                //     'kelas' => $totalKelas,
-                //     'kelas-tp' => $totalTatapMuka,
-                //     'kelas-pr' => $totalPraktikum,
-                //     'kelas-pl' => $totalPraktek,
-                //     'kelas-sm' => $totalSimulasi,
-
-                //     'kelas-wajib' => $totalWajib,
-                //     'kelas-pilihan' => $totalPilihan,
-                //     'kelas-uni' => $totalUni,
-                // ],
             ]);
 
         } catch (QueryException $e) {

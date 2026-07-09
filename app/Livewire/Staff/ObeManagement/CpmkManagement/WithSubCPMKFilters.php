@@ -52,10 +52,14 @@ trait WithSubCPMKFilters
                 $querySCPMK->whereHas('cpmks', fn ($q) => $q->where('cpmks.id', $this->selectedCPMKId));
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $querySCPMK->searchSCPMK($search);
+                    if ($this->searchMode == 'smart') {
+                        $querySCPMK->searchSCPMKSmart($search);
+                    } else {
+                        $querySCPMK->searchSCPMK($search);
+                    }
                 }
                 if (! empty($this->searchBobotSCPMK)) {
                     $querySCPMK->searchSCPMK($this->searchBobotSCPMK, true);
@@ -106,7 +110,7 @@ trait WithSubCPMKFilters
             'rekap_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
             'index_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
             'mutu_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
-            
+
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),
 

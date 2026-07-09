@@ -185,16 +185,16 @@
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Tim Dosen, atau Ketua Dosen...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Tim Dosen', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Tim Dosen', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
         <div x-show="(activeTab == 'dosen' && activeFilterDosen == '')" class="sm:col-span-7 w-full">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Nama Dosen, atau ID Dosen...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Identitas Dosen', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Identitas Dosen', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
         <div x-show="(activeTab !== 'dosen' || activeFilterDosen !== '') && activeTab !== 'tim-dosen'"
@@ -202,8 +202,8 @@
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, & Referensi...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
 

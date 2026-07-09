@@ -142,7 +142,7 @@ trait WithFakultasSearchFilters
         }
     }
 
-    public function getFkbyUser($mode = 'full')
+    public function getFkbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $fakultasId = $user->fk_id ?? null;

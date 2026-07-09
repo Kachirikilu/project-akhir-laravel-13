@@ -53,10 +53,14 @@ trait WithCPMKFilters
                 $queryCPMK->whereHas('cpls', fn ($q) => $q->where('cpls.id', $this->selectedCPLId));
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryCPMK->searchCPMK($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryCPMK->searchCPMKSmart($search);
+                    } else {
+                        $queryCPMK->searchCPMK($search);
+                    }
                 }
                 if (! empty($this->searchBobotCPMK)) {
                     $queryCPMK->searchCPMK($this->searchBobotCPMK, true);

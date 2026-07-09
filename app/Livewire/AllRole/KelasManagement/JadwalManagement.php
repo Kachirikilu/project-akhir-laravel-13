@@ -195,7 +195,7 @@ class JadwalManagement extends Component
             }
 
             // $jadwals = $queryJadwal->paginate($this->perPage);
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
                 $jadwals = $queryJadwal->paginate($this->perPage);

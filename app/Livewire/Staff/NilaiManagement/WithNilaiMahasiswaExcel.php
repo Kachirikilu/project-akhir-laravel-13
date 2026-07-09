@@ -85,7 +85,7 @@ trait WithNilaiMahasiswaExcel
 
         $fileNameSafe = str_replace('/', '-', $fileName);
 
-        if ($this->searchMode == 'full') {
+        if ($this->searchMode == 'complex') {
             $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, null, $this->sortField, $this->sortDirection, null, 1);
         } else {
             $users = $queryUser;

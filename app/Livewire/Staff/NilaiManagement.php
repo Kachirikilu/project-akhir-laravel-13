@@ -14,6 +14,7 @@ use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
 // use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
@@ -40,6 +41,7 @@ class NilaiManagement extends Component
 
     // use WithDepartemenSearchFilters;
     // use WithFakultasSearchFilters;
+    use WithRPSSearchFilters;
     use WithNilaiMahasiswaExcel;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -299,7 +301,7 @@ class NilaiManagement extends Component
                 $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
             }
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 switch ($this->switchTable) {
                     case 'rps':
                         $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);

@@ -38,7 +38,7 @@
             x-transition:leave-end="opacity-0 -translate-y-4" class="col-start-1 row-start-1 relative w-full">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Program Studi, Departemen, atau Fakultas...',
-                'searchValues' => ['simple', 'full'],
+                'searchValues' => ['simple', 'smart', 'complex'],
             ])
         </div>
 
@@ -57,7 +57,7 @@
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Departemen...',
-                        'searchValues' => ['simple', 'full'],
+                        'searchValues' => ['simple', 'smart', 'complex'],
                     ])
                 </div>
                 <div class="col-start-2 row-start-1 sm:col-span-1">
@@ -81,7 +81,7 @@
                 <div class="col-start-1 row-start-1 sm:col-span-8">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Fakultas...',
-                        'searchValues' => ['simple', 'full'],
+                        'searchValues' => ['simple', 'smart', 'complex'],
                     ])
                 </div>
                 <div class="col-start-2 row-start-1 sm:col-span-1">

@@ -211,7 +211,7 @@ trait WithCPMKSearchFilters
         }
     }
 
-    public function getCPMKbyUser($mode = 'full')
+    public function getCPMKbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

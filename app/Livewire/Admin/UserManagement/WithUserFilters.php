@@ -101,8 +101,7 @@ trait WithUserFilters
         //     }]);
         // }
 
-        
-            // $queryUser = $this->inputUserSearch('mahasiswa', null, null, null, $rpsId);
+        // $queryUser = $this->inputUserSearch('mahasiswa', null, null, null, $rpsId);
 
         if (! empty($this->selectedRPSId) && $role === 'dosen') {
             $queryUser->whereHas('dosen.tim_dosens.rps', function ($q) {
@@ -118,16 +117,20 @@ trait WithUserFilters
             }
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple' && $this->filterAngkatan == '') {
+        if ($this->hasProperty('searchMode') && (($this->searchMode == 'simple' || $this->searchMode == 'smart') || $this->searchMode == 'smart')) {
             $search = trim($this->search);
             if (! empty($search)) {
                 if (! str_contains($search, '%')) {
                     $queryUser->where(function ($q) use ($search) {
-                        $q->searchUser($search);
+                        if ($this->searchMode == 'smart') {
+                            $q->searchUserSmart($search);
+                        } else {
+                            $q->searchUser($search);
+                        }
                     });
                 }
             }
-            if (! empty($this->searchAngkatan) && $role == 'mahasiswa') {
+            if (! empty($this->searchAngkatan) && $role == 'mahasiswa' && $this->filterAngkatan == '') {
                 $queryUser->searchUser($this->searchAngkatan, true);
             }
             $this->sortFieldOrderUser($queryUser);

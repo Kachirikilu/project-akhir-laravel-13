@@ -539,7 +539,7 @@ class ObeManagement extends Component
                     break;
             }
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 switch ($this->switchTable) {
                     case 'rps':
                         $data['rps'] = $this->searchOutputRPS($queryRPS, $this->search, $this->searchBobotRPS, $this->perPage, $this->sortField, $this->sortDirection);
@@ -643,21 +643,8 @@ class ObeManagement extends Component
                 'dosen-non-aktif' => '🔴',
             ];
 
-            // $stats['rps'] = (clone $countRPS)->count();
-            // $stats['cpl'] = (clone $countCPL)->count();
-            // $stats['cpmk'] = (clone $countCPMK)->count();
-            // $stats['scpmk'] = (clone $countSCPMK)->count();
-            // $stats['ref'] = (clone $countRef)->count();
-            // $stats['tim-dosen'] = (clone $countTimDosen)->count();
-            // $stats['dosen'] = (clone $countDosen)->count();
 
             $stats = array_merge($stats, $this->getStatsObe($this->showDeleted));
-
-            // if (Auth::user()->dosen) {
-            //     $stats['rps-saya'] = (clone $countRPS)->whereHas('tim_dosens.dosens', function ($q) {
-            //         $q->where('dosens.id', Auth::user()->dosen->id);
-            //     })->count();
-            // }
 
             // =========================
             // SWITCH STATS (TIDAK OVERWRITE)

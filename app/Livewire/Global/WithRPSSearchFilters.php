@@ -313,7 +313,7 @@ trait WithRPSSearchFilters
     //     }
     // }
 
-    public function getRPSbyUser($mode = 'full')
+    public function getRPSbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

@@ -3,8 +3,8 @@
 namespace App\Livewire\AllRole\KelasManagement\JadwalManagement;
 
 use App\Models\Kelas\KelasJadwal;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 trait WithJadwalFilters
 {
@@ -18,7 +18,7 @@ trait WithJadwalFilters
 
     public function inputJadwalSearch($idKelas = null)
     {
-        if (!empty($idKelas)) {
+        if (! empty($idKelas)) {
             $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)
                 ->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
         } else {
@@ -31,10 +31,14 @@ trait WithJadwalFilters
             }
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;
             if (! empty($search)) {
-                $queryJadwal->searchKelasJadwal($search);
+                if ($this->searchMode == 'smart') {
+                    $queryJadwal->searchKelasJadwalSmart($search);
+                } else {
+                    $queryJadwal->searchKelasJadwal($search);
+                }
             }
             $this->sortFieldOrderJadwal($queryJadwal);
         }
@@ -57,6 +61,7 @@ trait WithJadwalFilters
         } else {
             $pwSearch = 'id';
         }
+
         return match ($this->sortField) {
             // 'kode' => $this->applyJadwalKodeSort($queryJadwal),
             'kode' => $queryJadwal->orderByRaw('CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah, kelas_jadwals.tanggal_mulai) '.$this->sortDirection),

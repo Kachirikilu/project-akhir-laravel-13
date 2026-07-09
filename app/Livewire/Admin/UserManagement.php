@@ -230,7 +230,7 @@ class UserManagement extends Component
             }
             $stats = array_merge($stats, $this->getStatsUser($this->showDeleted));
 
-            if ($this->searchMode == 'full') {
+            if ($this->searchMode == 'complex') {
                 $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
                 $users = $queryUser->paginate($this->perPage);

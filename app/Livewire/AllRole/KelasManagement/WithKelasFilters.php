@@ -56,22 +56,20 @@ trait WithKelasFilters
         if (! empty($this->selectedMKId)) {
             $queryKelas->whereHas('rps_rel', fn ($q) => $q->where('mk_id', $this->selectedMKId));
         }
-        // if ($this->filterKelas !== '' && !Auth::user()->dosen) {
-        // if (!Auth::user()->dosen || (Auth::user()->dosen && $this->filterKelas !== '')) {
-            if (! empty($this->selectedDosenId)) {
-                $queryKelas->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
-                    $q->where('dosens.id', $this->selectedDosenId);
-                });
-                // $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                //     $q->where('dosens.id', $this->selectedDosenId);
-                // });
-            }
-        // }
+        if (! empty($this->selectedDosenId)) {
+            $queryKelas->whereHas('rps_rel.tim_dosens.dosens', function ($q) {
+                $q->where('dosens.id', $this->selectedDosenId);
+            });
+        }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;
             if (! empty($search)) {
-                $queryKelas->searchKelas($search);
+                if ($this->searchMode == 'smart') {
+                    $queryKelas->searchKelasSmart($search);
+                } else {
+                    $queryKelas->searchKelas($search);
+                }
             }
             $this->sortFieldOrderKelas($queryKelas);
         }

@@ -90,8 +90,8 @@
                         'placeholder' => 'Cari Jadwal Kelas...',
                         'defaultLive' => 1,
                         'searchMode' => $searchMode,
-                        'searchValues' => ['simple', 'full'],
-                        'searchOptions' => ['Cari Kode Kelas', 'Pencarian Kompleks'],
+                        'searchValues' => ['simple', 'smart', 'complex'],
+                        'searchOptions' => ['Cari Kode Kelas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                         'isBorder' => 2,
                     ])
                 </div>

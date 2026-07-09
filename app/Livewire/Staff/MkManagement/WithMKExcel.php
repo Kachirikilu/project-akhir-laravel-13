@@ -81,7 +81,7 @@ trait WithMKExcel
         $fileNameSafe = str_replace('/', '-', $fileName);
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-        if ($this->searchMode == 'full') {
+        if ($this->searchMode == 'complex') {
             $mks = $this->searchOutputMK($queryMK, $this->search, null, $this->sortField, $this->sortDirection);
         } else {
             $mks = $queryMK;

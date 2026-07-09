@@ -4,7 +4,6 @@ namespace App\Models\Kelas;
 
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\SubCPMK;
-use App\Models\Auth\Dosen;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -60,26 +59,26 @@ class KelasSesi extends Model
     //         $allScpmk = $this->all_scpmk;
 
     //         // 1. Deteksi status UTS/UAS di dalam koleksi SCPMK
-    //         $hasUtsInRps = $allScpmk->contains(fn($i) => 
-    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || 
+    //         $hasUtsInRps = $allScpmk->contains(fn($i) =>
+    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) ||
     //             Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true)
     //         );
 
-    //         $hasUasInRps = $allScpmk->contains(fn($i) => 
-    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || 
+    //         $hasUasInRps = $allScpmk->contains(fn($i) =>
+    //             Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) ||
     //             Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true)
     //         );
 
     //         // 2. Fungsi Helper untuk objek UTS/UAS
     //         $getUtsObject = fn() => (object) [
-    //             'kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 
-    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts, 
+    //             'kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS',
+    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uts,
     //             'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'
     //         ];
 
     //         $getUasObject = fn() => (object) [
-    //             'kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 
-    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas, 
+    //             'kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS',
+    //             'bobot' => $this->jadwal_rel->kelas_rel->rps_rel->bobot_uas,
     //             'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'
     //         ];
 
@@ -93,12 +92,11 @@ class KelasSesi extends Model
     //         if ($hasUtsInRps && $p > 8 && !$hasUasInRps) $targetIndex = $p - 2;
 
     //         return $allScpmk->get($targetIndex) ?? (object) [
-    //             'kode' => '-', 'kode_cpmk' => '-', 'bobot' => '-', 'metode' => '-', 
+    //             'kode' => '-', 'kode_cpmk' => '-', 'bobot' => '-', 'metode' => '-',
     //             'deskripsi' => 'Materi belum ditentukan'
     //         ];
     //     });
     // }
-
 
     // public function getAllScpmkAttribute()
     // {
@@ -111,7 +109,7 @@ class KelasSesi extends Model
 
             $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
 
-            if (!$rps) {
+            if (! $rps) {
                 return null;
             }
 
@@ -151,10 +149,10 @@ class KelasSesi extends Model
             if ($rps && isset($rps->refs)) {
                 $referensi = $referensi->merge($rps->refs);
             }
+
             return $referensi->unique('id')->values();
         });
     }
-    
 
     public function kehadirans(): HasMany
     {
@@ -172,6 +170,7 @@ class KelasSesi extends Model
                 ->count();
         });
     }
+
     public function totalAbsensiAll(): Attribute
     {
         return Attribute::get(function () {
@@ -350,7 +349,7 @@ class KelasSesi extends Model
 
             $scpmk = $this->scpmk_atr;
 
-            if (!$scpmk) {
+            if (! $scpmk) {
                 return '-';
             }
 
@@ -365,6 +364,7 @@ class KelasSesi extends Model
                 : number_format($bobot, 2);
         });
     }
+
     protected function deskripsi(): Attribute
     {
         return Attribute::get(function () {
@@ -548,7 +548,7 @@ class KelasSesi extends Model
         $searchLower = '%'.strtolower($search).'%';
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchClean) {
             // 1. Pertemuan & ID Sesi
             if (preg_match('/(?:p|per|pertemuan)\s*(\d+)/i', $searchClean, $match)) {
                 $q->orWhere('kelas_sesi.pertemuan_ke', $match[1]);
@@ -556,24 +556,6 @@ class KelasSesi extends Model
                 $q->orWhere('kelas_sesi.pertemuan_ke', $search)
                     ->orWhere('kelas_sesi.id', $search);
             }
-
-            // // 2. Tanggal & Hari Pelaksanaan
-            // $q->orWhereRaw("CASE WEEKDAY(kelas_sesi.tanggal)
-            //     WHEN 0 THEN 'senin' WHEN 1 THEN 'selasa' WHEN 2 THEN 'rabu'
-            //     WHEN 3 THEN 'kamis' WHEN 4 THEN 'jumat' WHEN 5 THEN 'sabtu'
-            //     WHEN 6 THEN 'minggu' END LIKE ?", [$searchLower])
-            //     ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%d/%m/%Y') LIKE ?", [$searchTerm])
-            //     ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%Y-%m-%d') LIKE ?", [$searchTerm]);
-
-            // // 3. Jam Pelaksanaan (Override vs Jadwal Induk)
-            // $q->orWhere(function ($jq) use ($searchTerm) {
-            //     $timeQuery = function ($oq) use ($searchTerm) {
-            //         $oq->whereRaw("TIME_FORMAT(jam_mulai, '%H:%i') LIKE ?", [$searchTerm])
-            //             ->orWhereRaw("TIME_FORMAT(jam_berakhir, '%H:%i') LIKE ?", [$searchTerm])
-            //             ->orWhereRaw("CONCAT(TIME_FORMAT(jam_mulai, '%H:%i'), ' - ', TIME_FORMAT(jam_berakhir, '%H:%i')) LIKE ?", [$searchTerm]);
-            //     };
-            //     $jq->whereHas('override', $timeQuery)->orWhereHas('jadwal_rel', $timeQuery);
-            // });
 
             // 4. Struktur Kelas (Jadwal, Relasi Kelas, Kode Wilayah, Label)
             $q->orWhereHas('jadwal_rel', function ($jq) use ($searchClean, $searchTerm) {
@@ -593,7 +575,73 @@ class KelasSesi extends Model
             });
         });
     }
-    // public function scopeSearchKelasSesi($query, $search)
+
+    public function scopeSearchKelasSesiSmart($query, $search)
+    {
+        if (blank(trim($search))) {
+            return $query;
+        }
+
+        // Seluruh logika dasar
+        $query->searchKelasSesi($search);
+
+        $search = trim($search);
+        $searchTerm = "%{$search}%";
+        $searchLower = strtolower($search);
+
+        return $query->orWhere(function ($q) use ($search, $searchTerm, $searchLower) {
+
+            // Hari & tanggal
+            $q->orWhereRaw("
+            CASE WEEKDAY(kelas_sesi.tanggal)
+                WHEN 0 THEN 'senin'
+                WHEN 1 THEN 'selasa'
+                WHEN 2 THEN 'rabu'
+                WHEN 3 THEN 'kamis'
+                WHEN 4 THEN 'jumat'
+                WHEN 5 THEN 'sabtu'
+                WHEN 6 THEN 'minggu'
+            END LIKE ?
+        ", ["%{$searchLower}%"])
+                ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal,'%d/%m/%Y') LIKE ?", [$searchTerm])
+                ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal,'%Y-%m-%d') LIKE ?", [$searchTerm]);
+
+            // Jam (override / jadwal)
+            $timeSearch = function ($q) use ($searchTerm) {
+                $q->whereRaw("TIME_FORMAT(jam_mulai,'%H:%i') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("TIME_FORMAT(jam_berakhir,'%H:%i') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("
+                    CONCAT(
+                        TIME_FORMAT(jam_mulai,'%H:%i'),
+                        ' - ',
+                        TIME_FORMAT(jam_berakhir,'%H:%i')
+                    ) LIKE ?
+                ", [$searchTerm]);
+            };
+
+            $q->orWhereHas('override', $timeSearch)
+                ->orWhereHas('jadwal_rel', $timeSearch);
+
+            // Smart Jadwal (otomatis ikut Smart Kelas, RPS, MK, Prodi, dst.)
+            $q->orWhereHas('jadwal_rel', fn ($jq) => $jq->searchKelasJadwalSmart($search));
+
+            // Timestamp
+            $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
+
+                foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+                    $dq->orWhereRaw("DATE_FORMAT(kelas_sesi.created_at,'$format') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(kelas_sesi.updated_at,'$format') LIKE ?", [$searchTerm]);
+                }
+
+                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
+                    $dq->orWhereRaw("LOWER(DATE_FORMAT(kelas_sesi.created_at,'$format')) LIKE ?", ["%{$searchLower}%"])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(kelas_sesi.updated_at,'$format')) LIKE ?", ["%{$searchLower}%"]);
+                }
+            });
+        });
+    }
+
+    // public function scopeSearchKelasSesiSmart($query, $search)
     // {
     //     if (blank(trim($search))) {
     //         return $query;
@@ -715,70 +763,6 @@ class KelasSesi extends Model
     //         // =========================================================================
     //         // 7. DATA TIMESTAMPS RECORD SESI
     //         // =========================================================================
-    //         $q->orWhereRaw("DATE_FORMAT(kelas_sesi.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //             ->orWhereRaw("LOWER(DATE_FORMAT(kelas_sesi.created_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])
-    //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm]);
-    //     });
-    // }
-
-    // public function scopeSearchKelasSesi($query, $search)
-    // {
-    //     if (blank(trim($search))) {
-    //         return $query;
-    //     }
-
-    //     $search = trim($search);
-    //     $searchTerm = "%{$search}%";
-    //     $searchLower = '%'.strtolower($search).'%';
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
-
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $searchClean) {
-    //         // 1. Pertemuan & ID Sesi
-    //         if (preg_match('/(?:p|per|pertemuan)\s*(\d+)/i', $searchClean, $match)) {
-    //             $q->orWhere('kelas_sesi.pertemuan_ke', $match[1]);
-    //         } elseif (is_numeric($search)) {
-    //             $q->orWhere('kelas_sesi.pertemuan_ke', $search)
-    //                 ->orWhere('kelas_sesi.id', $search);
-    //         }
-
-    //         // 2. Tanggal & Hari Pelaksanaan
-    //         $q->orWhereRaw("CASE WEEKDAY(kelas_sesi.tanggal)
-    //             WHEN 0 THEN 'senin' WHEN 1 THEN 'selasa' WHEN 2 THEN 'rabu'
-    //             WHEN 3 THEN 'kamis' WHEN 4 THEN 'jumat' WHEN 5 THEN 'sabtu'
-    //             WHEN 6 THEN 'minggu' END LIKE ?", [$searchLower])
-    //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.tanggal, '%Y-%m-%d') LIKE ?", [$searchTerm]);
-
-    //         // 3. Jam Pelaksanaan (Override vs Jadwal Induk)
-    //         $q->orWhere(function ($jq) use ($searchTerm) {
-    //             $timeQuery = function ($oq) use ($searchTerm) {
-    //                 $oq->whereRaw("TIME_FORMAT(jam_mulai, '%H:%i') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("TIME_FORMAT(jam_berakhir, '%H:%i') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("CONCAT(TIME_FORMAT(jam_mulai, '%H:%i'), ' - ', TIME_FORMAT(jam_berakhir, '%H:%i')) LIKE ?", [$searchTerm]);
-    //             };
-    //             $jq->whereHas('override', $timeQuery)->orWhereHas('jadwal_rel', $timeQuery);
-    //         });
-
-    //         // 4. Struktur Kelas (Jadwal, Relasi Kelas, Kode Wilayah, Label)
-    //         $q->orWhereHas('jadwal_rel', function ($jq) use ($searchClean, $searchTerm) {
-    //             $jq->where(function ($inner) use ($searchClean) {
-    //                 $inner->whereHas('kelas_rel', function ($rq) use ($searchClean) {
-    //                     $rq->whereRaw("REPLACE(kode_kelas, '-', '') LIKE ?", ["%{$searchClean}%"])
-    //                         ->orWhere('kode_kelas', 'LIKE', $searchClean);
-    //                 })
-    //                     ->orWhere('label_kelas', 'LIKE', "%{$searchClean}%")
-    //                     ->orWhere('kode_wilayah', 'LIKE', "%{$searchClean}%")
-    //                     ->orWhereRaw("REPLACE(CONCAT(label_kelas, kode_wilayah, RIGHT(YEAR(tanggal_mulai), 2)), '-', '') LIKE ?", ["%{$searchClean}%"]);
-    //             })
-    //                 ->orWhere('password', 'LIKE', $searchTerm)
-    //                 ->orWhere('label_kelas', 'LIKE', $searchTerm)
-    //                 ->orWhere('kode_wilayah', 'LIKE', $searchTerm)
-    //                 ->orWhereRaw("CONCAT(label_kelas, ' ', kode_wilayah) LIKE ?", [$searchTerm]);
-    //         });
-
-    //         // 5. Timestamps Record
     //         $q->orWhereRaw("DATE_FORMAT(kelas_sesi.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
     //             ->orWhereRaw("DATE_FORMAT(kelas_sesi.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
     //             ->orWhereRaw("LOWER(DATE_FORMAT(kelas_sesi.created_at, '%a, %d %b %Y')) LIKE ?", [$searchLower])

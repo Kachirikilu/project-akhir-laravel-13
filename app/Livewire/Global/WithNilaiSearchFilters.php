@@ -189,7 +189,7 @@ trait WithNilaiSearchFilters
         }
     }
 
-    public function getNilaibyUser($mode = 'full')
+    public function getNilaibyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

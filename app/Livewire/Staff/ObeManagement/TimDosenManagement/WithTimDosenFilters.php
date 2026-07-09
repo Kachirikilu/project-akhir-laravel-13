@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Staff\ObeManagement\TimDosenManagement;
 
-use App\Models\Akademik\TimDosen;
 use App\Livewire\Global\HasSortir;
+use App\Models\Akademik\TimDosen;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 trait WithTimDosenFilters
 {
-    use WithPagination;
     use HasSortir;
+    use WithPagination;
 
     public $filterTimDosen = '';
 
@@ -18,9 +18,8 @@ trait WithTimDosenFilters
     {
         $queryTimDosen = TimDosen::query()->with([
             'rps', 'rps.mk_rel', 'dosens',
-            'pr_rel', 'pr_rel.dp_rel', 'pr_rel.dp_rel.fk_rel'
+            'pr_rel', 'pr_rel.dp_rel', 'pr_rel.dp_rel.fk_rel',
         ]);
-
 
         if ($this->switchTable === 'tim-dosen') {
             if (! empty($this->selectedPrId)) {
@@ -39,10 +38,15 @@ trait WithTimDosenFilters
                 });
             }
 
-            if ($this->hasProperty('searchMode') && $this->searchMode == 'simple') {
+            if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
                 $search = $this->search;
                 if (! empty($search)) {
-                    $queryTimDosen->searchTimDosen($search);
+                    if ($this->searchMode == 'smart') {
+                        $queryTimDosen->searchTimDosenSmart($search);
+                    } else {
+                        $queryTimDosen->searchTimDosen($search);
+
+                    }
                 }
                 $this->sortFieldOrderTimDosen($queryTimDosen);
             }
@@ -54,12 +58,12 @@ trait WithTimDosenFilters
 
     public function buttonTimDosenFilter($queryTimDosen)
     {
-        
-                // 'tim-dosen-saya' => '👥',
-                // 'tim-dosen-prodi' => '🏛️',
-                // 'tim-dosen-all' => '👥',
-                // 'tim-dosen-rps' => '✅',
-                // 'tim-dosen-non-rps' => '❌',
+
+        // 'tim-dosen-saya' => '👥',
+        // 'tim-dosen-prodi' => '🏛️',
+        // 'tim-dosen-all' => '👥',
+        // 'tim-dosen-rps' => '✅',
+        // 'tim-dosen-non-rps' => '❌',
 
         $userId = Auth::id();
 
@@ -86,44 +90,44 @@ trait WithTimDosenFilters
         $this->filterTimDosen = $tim;
         $this->resetPage();
     }
-    
+
     public function sortFieldOrderTimDosen($queryTimDosen)
     {
         $queryTimDosen->select('tim_dosens.*');
 
         match ($this->sortField) {
-            'kode'      => $queryTimDosen->orderBy('kode_tim_dosen', $this->sortDirection),
-            'nama_tim'  => $queryTimDosen->orderBy('nama_tim', $this->sortDirection),
-            
+            'kode' => $queryTimDosen->orderBy('kode_tim_dosen', $this->sortDirection),
+            'nama_tim' => $queryTimDosen->orderBy('nama_tim', $this->sortDirection),
+
             'ketua_tim', 'nama_ketua' => $this->applyKetuaSort($queryTimDosen, 'name'),
-            'nip_ketua'               => $this->applyKetuaSort($queryTimDosen, 'nip'),
-            
-            'count_dosen' => $queryTimDosen->orderByRaw("(
+            'nip_ketua' => $this->applyKetuaSort($queryTimDosen, 'nip'),
+
+            'count_dosen' => $queryTimDosen->orderByRaw('(
                 SELECT count(*) 
                 FROM tim_dosen_pivot_dosen 
                 WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id
-            ) " . $this->sortDirection),
+            ) '.$this->sortDirection),
 
             'count_koordinator' => $queryTimDosen->orderByRaw("(
                 SELECT count(*) 
                 FROM tim_dosen_pivot_dosen 
                 WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
                 AND tim_dosen_pivot_dosen.peran = 'Koordinator'
-            ) " . $this->sortDirection),
+            ) ".$this->sortDirection),
 
             'count_pengajar' => $queryTimDosen->orderByRaw("(
                 SELECT count(*) 
                 FROM tim_dosen_pivot_dosen 
                 WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
                 AND tim_dosen_pivot_dosen.peran = 'Pengajar'
-            ) " . $this->sortDirection),
+            ) ".$this->sortDirection),
 
             'count_asisten' => $queryTimDosen->orderByRaw("(
                 SELECT count(*) 
                 FROM tim_dosen_pivot_dosen 
                 WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
                 AND tim_dosen_pivot_dosen.peran = 'Asisten'
-            ) " . $this->sortDirection),
+            ) ".$this->sortDirection),
 
             'count_rps' => $queryTimDosen->orderBy('count_rps', $this->sortDirection),
             'total_sks' => $queryTimDosen->orderBy('total_sks', $this->sortDirection),
@@ -135,7 +139,7 @@ trait WithTimDosenFilters
             ),
             'created_at' => $queryTimDosen->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryTimDosen->orderBy('updated_at', $this->sortDirection),
-            default      => $queryTimDosen->orderBy('id', $this->sortDirection),
+            default => $queryTimDosen->orderBy('id', $this->sortDirection),
         };
 
         return $queryTimDosen;

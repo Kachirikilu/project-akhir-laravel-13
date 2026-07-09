@@ -189,7 +189,7 @@ trait WithCPLSearchFilters
         }
     }
 
-    public function getCPLbyUser($mode = 'full')
+    public function getCPLbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;

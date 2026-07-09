@@ -19,10 +19,17 @@
     <x-slot:search>
         <div class="w-full md:w-96 xl:w-108">
             <div class="col-start-1 row-start-1 w-full">
-                @include('livewire.global.search-and-filters.main-search', [
+                {{-- @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Sesi Pertemuan Kelas...',
                     'isLive' => 1,
                     'isBorder' => 2,
+                ]) --}}
+
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Sesi Pertemuan Kelas...',
+                    'searchMode' => $searchMode,
+                    'searchValues' => ['simple', 'smart', 'complex'],
+                    'searchOptions' => ['Cari Kode Kelas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
@@ -168,12 +175,12 @@
     @endphp
 
     @forelse($sesis as $s)
-            @php
-                $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
-                $kehadiran_mhs = Auth::user()->mahasiswa
-                    ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
-                    : null;
-            @endphp
+        @php
+            $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
+            $kehadiran_mhs = Auth::user()->mahasiswa
+                ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
+                : null;
+        @endphp
 
         <tr wire:key="kelas-sesi-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
             class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
@@ -211,7 +218,10 @@
                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $s->kode_scpmk ?? '---' }}
                         </flux:badge>
                     </button>
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table', ['key' => 2])
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                        ['key' => 2]
+                    )
                 </flux:dropdown>
             </td>
             <td class="table-sub table-border-r text-center whitespace-nowrap">

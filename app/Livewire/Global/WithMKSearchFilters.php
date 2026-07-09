@@ -178,7 +178,7 @@ trait WithMKSearchFilters
         }
     }
 
-    public function getMKbyUser($mode = 'full')
+    public function getMKbyUser($mode = 'complex')
     {
         // if ($this->skipMkNameSearchUpdate) {
         //     return;

@@ -171,7 +171,7 @@ trait WithKelasJadwalSearchFilters
         }
     }
 
-    public function getJadwalbyUser($mode = 'full')
+    public function getJadwalbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -377,6 +377,14 @@ trait WithKelasJadwalSearchFilters
                         $searchLower
                     );
 
+                    $matchLabelExtra = $this->containsStrict(
+                        $j->label_extra,
+                        $searchLower
+                    ) || $this->containsStrict(
+                        $j->label_full,
+                        $searchLower
+                    );
+
                     /*
                     |--------------------------------------------------------------------------
                     | Pencarian MK
@@ -555,6 +563,7 @@ trait WithKelasJadwalSearchFilters
                         || $matchKodeMK
 
                         || $matchLabel
+                        || $matchLabelExtra
                         || $matchKodeWly
                         || $matchHari
                         || $matchTanggal

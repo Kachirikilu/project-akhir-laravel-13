@@ -47,16 +47,16 @@
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Nama, atau ID Mahasiswa...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
         <div x-show="activeTab !== 'mahasiswa'" class="sm:col-span-4 w-full">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL,...',
                 'searchMode' => $searchMode,
-                'searchValues' => ['simple', 'full'],
-                'searchOptions' => ['Cari Kode OBE', 'Pencarian Kompleks'],
+                'searchValues' => ['simple', 'smart', 'complex'],
+                'searchOptions' => ['Cari Kode OBE', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
 

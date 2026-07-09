@@ -75,8 +75,8 @@
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mata Kuliah...',
                     'searchMode' => $searchMode,
-                    'searchValues' => ['simple', 'full'],
-                    'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Kompleks'],
+                    'searchValues' =>  ['simple', 'smart', 'complex'],
+                    'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
@@ -93,8 +93,8 @@
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Mata Kuliah...',
                         'searchMode' => $searchMode,
-                        'searchValues' => ['simple', 'full'],
-                        'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Kompleks'],
+                        'searchValues' =>  ['simple', 'smart', 'complex'],
+                        'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                     ])
                 </div>
 

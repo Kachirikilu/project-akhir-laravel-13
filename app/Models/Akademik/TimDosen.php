@@ -165,6 +165,30 @@ class TimDosen extends Model
             });
         });
     }
+    public function scopeSearchTimDosenSmart($query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+        $search = trim($search);
+        $targetRps = null;
+        if (preg_match('/^(\d+)\s*rps$/i', $search, $matches)) {
+            $targetRps = (int) $matches[1];
+        }
+        $isKetua = (strcasecmp($search, 'ketua') === 0);
+        $query->where(function($q) use ($search, $targetRps, $isKetua) {
+            $q->searchTimDosen($search);
+            if ($targetRps !== null) {
+                $q->withCount('rps')->having('rps_count', '=', $targetRps);
+            }
+            if ($isKetua) {
+                $q->orWhereHas('dosens', function ($sub) {
+                    $sub->where('tim_dosen_pivot_dosen.is_ketua', true);
+                });
+            }
+        });
 
+        return $query;
+    }
 
 }

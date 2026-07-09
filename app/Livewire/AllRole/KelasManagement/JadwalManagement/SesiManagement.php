@@ -462,12 +462,15 @@ class SesiManagement extends Component
                     $sesis = $querySesi->get();
                     break;
                 case 'sesi-table':
-                    $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                    if ($this->searchMode == 'complex') {
+                        $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                    } else {
+                        $sesis = $querySesi->paginate($this->perPage);
+                    }
                     break;
                 case 'mahasiswa':
-                    if ($this->searchMode == 'full') {
+                    if ($this->searchMode == 'complex') {
                         $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
-                        // dd($users);
                     } else {
                         $users = $queryUser->paginate($this->perPage);
                     }
@@ -481,7 +484,7 @@ class SesiManagement extends Component
                     }
                     $mappingData = $sampleNilai->mapping_pertemuan ?? [];
 
-                    if ($this->searchMode == 'full') {
+                    if ($this->searchMode == 'complex') {
                         $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
                     } else {
                         $users = $queryUser->paginate($this->perPage);

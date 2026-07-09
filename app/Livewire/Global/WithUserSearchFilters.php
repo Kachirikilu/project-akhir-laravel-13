@@ -189,7 +189,7 @@ trait WithUserSearchFilters
         }
     }
 
-    public function getUserbyUser($mode = 'full')
+    public function getUserbyUser($mode = 'complex')
     {
         $user = Auth::user();
         $userodiId = $user->pr_id ?? null;

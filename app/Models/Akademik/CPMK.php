@@ -127,8 +127,6 @@ class CPMK extends Model
 
         $search = trim($search);
         $searchTerm = '%'.$search.'%';
-        // $searchLower = strtolower($search);
-        // $searchLikeLower = '%'.$searchLower.'%';
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchClean, $withBobot) {
@@ -159,82 +157,83 @@ class CPMK extends Model
         });
     }
 
-    // public function scopeSearchCPMK($query, $search, $withBobot = false)
-    // {
-    //     if (empty(trim($search))) {
-    //         return $query;
-    //     }
+    public function scopeSearchCPMKSmart($query, $search, $withBobot = false)
+    {
+        if (blank(trim($search))) {
+            return $query;
+        }
 
-    //     $search = trim($search);
-    //     $searchTerm = '%'.$search.'%';
-    //     $searchLower = strtolower($search);
-    //     $searchLikeLower = '%'.$searchLower.'%';
-    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+        // Pakai seluruh logika SearchCPMK
+        $query->searchCPMK($search, $withBobot);
 
-    //     return $query->where(function ($q) use ($search, $searchTerm, $searchLikeLower, $searchClean, $withBobot) {
+        if ($withBobot) {
+            return $query;
+        }
 
-    //         if ($withBobot == false) {
-    //             // --- 1. PENCARIAN TEKS DASAR ---
-    //             $q->where('cpmks.kode_cpmk', 'like', $searchTerm)
-    //                 ->orWhere('cpmks.kode_cpmk', 'like', $searchClean)
-    //                 ->orWhere('cpmks.deskripsi', 'like', $searchTerm);
+        $search = trim($search);
+        $searchTerm = "%{$search}%";
+        $searchLower = strtolower($search);
 
-    //             $q->orWhereExists(function ($sq) use ($searchTerm) {
-    //                 $sq->select(DB::raw(1))
-    //                     ->from('cpls')
-    //                     ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
-    //                     ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
-    //                     ->where(function ($sub) use ($searchTerm) {
-    //                         $sub->where('cpls.deskripsi', 'like', $searchTerm)
-    //                             ->orWhere('cpls.kode_cpl', 'like', $searchTerm);
-    //                     });
-    //             });
+        return $query->orWhere(function ($q) use ($search, $searchTerm, $searchLower) {
 
-    //             $q->orWhereRaw("(SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ')
-    //         FROM cpls
-    //         INNER JOIN cpmk_pivot_cpl ON cpls.id = cpmk_pivot_cpl.cpl_id
-    //         WHERE cpmk_pivot_cpl.cpmk_id = cpmks.id) LIKE ?", [$searchTerm]);
+            // ===== CPL =====
+            $q->orWhereExists(function ($sq) use ($searchTerm) {
+                $sq->select(DB::raw(1))
+                    ->from('cpls')
+                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
+                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
+                    ->where(function ($sub) use ($searchTerm) {
+                        $sub->where('cpls.deskripsi', 'like', $searchTerm)
+                            ->orWhere('cpls.kode_cpl', 'like', $searchTerm);
+                    });
+            });
 
-    //             if (is_numeric($search)) {
-    //                 $q->orWhere('cpmks.id', 'like', $search);
-    //             }
+            $q->orWhereRaw("
+                (
+                    SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ')
+                    FROM cpls
+                    JOIN cpmk_pivot_cpl
+                        ON cpls.id = cpmk_pivot_cpl.cpl_id
+                    WHERE cpmk_pivot_cpl.cpmk_id = cpmks.id
+                ) LIKE ?
+            ", [$searchTerm]);
 
-    //             // --- 2. PENCARIAN JUMLAH SUB-CPMK (Langsung dari CPMK) ---
-    //             if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $matches)) {
-    //                 $number = $matches[1];
-    //                 $q->orWhereExists(function ($sq) use ($number) {
-    //                     $sq->select(DB::raw(1))
-    //                         ->from('cpmk_pivot_scpmk')
-    //                         ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id')
-    //                         ->groupBy('cpmk_pivot_scpmk.cpmk_id')
-    //                         ->havingRaw('COUNT(*) = ?', [$number]);
-    //                 });
-    //             }
+            // ===== Jumlah SCPMK =====
+            if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $m)) {
+                $q->orWhereExists(function ($sq) use ($m) {
+                    $sq->select(DB::raw(1))
+                        ->from('cpmk_pivot_scpmk')
+                        ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id')
+                        ->groupBy('cpmk_pivot_scpmk.cpmk_id')
+                        ->havingRaw('COUNT(*) = ?', [(int) $m[1]]);
+                });
+            }
 
-    //             // --- 3. FILTER TANGGAL ---
-    //             $q->orWhere(function ($dq) use ($searchLikeLower, $searchTerm) {
-    //                 $dq->whereRaw("DATE_FORMAT(cpmks.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("DATE_FORMAT(cpmks.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(cpmks.created_at, '%a, %d %b %Y')) LIKE ?", [$searchLikeLower])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(cpmks.created_at, '%W, %d %M %Y')) LIKE ?", [$searchLikeLower])
-    //                     ->orWhereRaw("DATE_FORMAT(cpmks.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-    //                     ->orWhereRaw("LOWER(DATE_FORMAT(cpmks.updated_at, '%a, %d %b %Y')) LIKE ?", [$searchLikeLower]);
-    //             });
+            // ===== Jumlah CPL =====
+            if (preg_match('/^(\d+)\s*(cpl|capaian)$/i', $search, $m)) {
+                $q->orWhereExists(function ($sq) use ($m) {
+                    $sq->select(DB::raw(1))
+                        ->from('cpmk_pivot_cpl')
+                        ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
+                        ->groupBy('cpmk_pivot_cpl.cpmk_id')
+                        ->havingRaw('COUNT(*) = ?', [(int) $m[1]]);
+                });
+            }
 
-    //         } else {
-    //             // --- 4. PENCARIAN TOTAL BOBOT (Langsung dari CPMK) ---
-    //             if (preg_match('/(\d+)\s*(%|pers|bob|tot)/i', $search, $matches)) {
-    //                 $weight = $matches[1];
-    //                 $q->orWhereExists(function ($sq) use ($weight) {
-    //                     $sq->select(DB::raw(1))
-    //                         ->from('cpmk_pivot_scpmk')
-    //                         ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
-    //                         ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id')
-    //                         ->groupBy('cpmk_pivot_scpmk.cpmk_id')
-    //                         ->havingRaw('SUM(sub_cpmks.bobot) = ?', [$weight]);
-    //                 });
-    //             }
-    //         }
-    //     });
-    // }
+            // ===== Tanggal =====
+            $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
+
+                foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+                    $dq->orWhereRaw("DATE_FORMAT(cpmks.created_at, '$format') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(cpmks.updated_at, '$format') LIKE ?", [$searchTerm]);
+                }
+
+                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
+                    $dq->orWhereRaw("LOWER(DATE_FORMAT(cpmks.created_at, '$format')) LIKE ?", ["%{$searchLower}%"])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(cpmks.updated_at, '$format')) LIKE ?", ["%{$searchLower}%"]);
+                }
+            });
+
+        });
+    }
 }

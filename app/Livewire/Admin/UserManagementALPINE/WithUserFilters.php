@@ -95,7 +95,7 @@ trait WithUserFilters
     //         }
     //     }
 
-    //     if ($this->hasProperty('searchMode') && $this->searchMode == 'simple' && $this->filterAngkatan == '') {
+    //     if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart') && $this->filterAngkatan == '') {
     //         $search = trim($this->search);
     //         if (! empty($search)) {
     //             if (! str_contains($search, '%')) {
@@ -181,7 +181,7 @@ trait WithUserFilters
             }
         }
 
-        if ($this->hasProperty('searchMode') && $this->searchMode == 'simple' && $this->filterAngkatan == '') {
+        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart') && $this->filterAngkatan == '') {
             $search = trim($this->search);
             if (! empty($search)) {
                 if (! str_contains($search, '%')) {
