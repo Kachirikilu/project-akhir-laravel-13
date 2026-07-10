@@ -117,7 +117,7 @@ trait WithRPSShow
     protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
     {
         // $data = $this->formatRPSDetailForShow($rps);
-        $logoPath = public_path('images/logo-unsri.png');
+        $logoPath = public_path('images/logo-unsri.webp');
         $logoBase64 = '';
 
         if (file_exists($logoPath)) {

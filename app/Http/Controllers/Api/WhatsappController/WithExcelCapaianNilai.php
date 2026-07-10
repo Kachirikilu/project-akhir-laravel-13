@@ -279,7 +279,7 @@ trait WithExcelCapaianNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Akses Gagal!*',
-                'message' => 'Mahasiswa tidak memiliki akses untuk mengambil File Excel Nilai!',
+                'message' => 'Mahasiswa tidak memiliki akses untuk mengambil File Capaian!',
             ], 403);
         }
 
@@ -340,7 +340,7 @@ trait WithExcelCapaianNilai
             return response()->json([
                 'status' => false,
                 'head' => '*⚠️ Parameter Kurang!*',
-                'message' => "Format salah. Gunakan:\n`GET NILAI [KODE_KELAS/KODE_JADWAL]`",
+                'message' => "Format salah. Gunakan:\n`GET NILAI [KODE_KELAS]`",
             ], 400);
         }
 

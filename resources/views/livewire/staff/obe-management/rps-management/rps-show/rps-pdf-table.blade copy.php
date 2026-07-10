@@ -41,7 +41,7 @@
                     @if ($logoBase64 ?? null)
                         <img src="{{ $logoBase64 }}" class="h-20 object-contain">
                     @else
-                        <img src="{{ asset('images/logo-unsri.png') }}" class="h-20 object-contain">
+                        <img src="{{ asset('images/logo-unsri.svg') }}" class="h-20 object-contain">
                     @endif
                 </div>
             </td>

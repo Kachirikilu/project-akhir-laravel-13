@@ -38,7 +38,7 @@ trait WithDataDiri
 
         return response()->json([
             'status' => false,
-            'message' => "Nomor WhatsApp [{$noWA}] *BELUM TERDAFTAR* pada akun mana pun di sistem akademik! Silakan hubungi admin untuk mendaftarkan nomor HP Anda!",
+            'message' => "Nomor WhatsApp [{$noWA}] *BELUM TERDAFTAR* pada akun mana pun di Sistem Akademik! Silakan hubungi admin untuk mendaftarkan nomor HP Anda!",
         ], 404);
     }
 

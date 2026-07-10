@@ -219,7 +219,7 @@ trait WithCpmkGrafikShow
 
     protected function generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik, $angkatan = null, $prName = null, $dpName = null, $fkName = null): string
     {
-        $logoPath = public_path('images/logo-unsri.png');
+        $logoPath = public_path('images/logo-unsri.webp');
         $univ = strtoupper(env('UNIVERSITAS'));
         $logoBase64 = '';
 

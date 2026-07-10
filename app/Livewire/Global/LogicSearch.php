@@ -260,13 +260,14 @@ trait LogicSearch
 
     private function normalizePhoneNumber(?string $phone): string
     {
-        if (!$phone) {
+        if (! $phone) {
             return '';
         }
         $cleaned = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($cleaned, '62')) {
-            $cleaned = '0' . substr($cleaned, 2);
+            $cleaned = '0'.substr($cleaned, 2);
         }
+
         return $cleaned;
     }
 
@@ -358,7 +359,7 @@ trait LogicSearch
                 return abs($value - $number) < 0.01;
         }
     }
-    
+
     protected function parseNumericSearch(
         string $search
     ): array {
@@ -571,29 +572,51 @@ trait LogicSearch
     protected function matchAkademik(?string $akademik, ?string $search): bool
     {
         $akademik = trim($akademik ?? '');
-        $search = trim($search ?? '');
+        $search = strtolower(trim($search ?? ''));
 
         if ($akademik === '' || $search === '') {
             return false;
         }
+
         if (! preg_match('/^(\d{4})\/(\d{4})$/', $akademik, $m)) {
             return false;
         }
-        [$full, $tahun1, $tahun2] = $m;
+
+        [, $tahun1, $tahun2] = $m;
+
+        // Hilangkan kata-kata umum
+        $search = preg_replace(
+            '/\b(kurikulum|akademik|tahun|ta|tahun akademik)\b/u',
+            '',
+            $search
+        );
+
+        // Rapikan spasi
+        $search = preg_replace('/\s+/', ' ', trim($search));
+
+        // Format lengkap
         if (preg_match('/^\d{4}\/\d{4}$/', $search)) {
             return $akademik === $search;
         }
+
+        // Ambil tahun pertama yang ditemukan
         if (! preg_match('/\d{4}/', $search, $sm)) {
             return false;
         }
+
         $queryYear = $sm[0];
+
+        // "/2025"
         if (str_starts_with($search, '/')) {
             return $queryYear === $tahun2;
         }
+
+        // "2024/"
         if (str_contains($search, '/')) {
             return $queryYear === $tahun1;
         }
 
+        // Default: cocokkan tahun pertama
         return $queryYear === $tahun1;
     }
 
@@ -816,6 +839,15 @@ trait LogicSearch
 
         if (preg_match('/\b(no|nomor|number)\b/i', $search)) {
             return 'nomor';
+        }
+
+        if (
+            $this->typoContains('tahun akademik', $search) ||
+            $this->typoContains('akademik', $search) ||
+            $this->typoContains('kurikulum', $search) ||
+            preg_match('/\bta\s+\d{4}\b/i', $search)
+        ) {
+            return 'akademik';
         }
 
         if (

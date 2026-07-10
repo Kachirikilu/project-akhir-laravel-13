@@ -221,7 +221,7 @@ trait WithRPSFilters
 
             'kode' => $this->applyRPSKodeSort($queryRPS),
 
-            'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
+            'akademik', 'kurikulum' => $queryRPS->orderBy('akademik', $this->sortDirection),
 
             'kode_mk' => $this->applyMKKodeSort($queryRPS, 'rps.mk_id'),
 

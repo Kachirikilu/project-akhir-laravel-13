@@ -29,7 +29,6 @@
         <livewire:admin.user-management.delete-user-management />
     @endif
     @if (request()->routeIs('nilai-management') || request()->routeIs('rps-mahasiswa-management'))
-        <livewire:staff.obe-management.rps-management.show-rps-management />
         <livewire:admin.user-management.list-rps-user-management :noModalRPS="1" />
     @endif
     @if (request()->routeIs('rps-mahasiswa-management'))
@@ -38,5 +37,9 @@
 
     @if (request()->routeIs('rps-mahasiswa-management') || request()->routeIs('rps-capaian-mahasiswa-management'))
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.modal-rps-mahasiswa-management />
+    @endif
+
+    @if (request()->routeIs('nilai-management') || request()->routeIs('rps-mahasiswa-management') || request()->routeIs('rps-capaian-mahasiswa-management'))
+        <livewire:staff.obe-management.rps-management.show-rps-management />
     @endif
 </x-layouts::app>

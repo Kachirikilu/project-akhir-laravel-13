@@ -51,8 +51,8 @@
 
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'akademik',
-                'headString' => 'Tahun Akademik',
+                'sortFieldString' => 'kurikulum',
+                'headString' => 'Kurikulum',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])

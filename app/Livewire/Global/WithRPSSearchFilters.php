@@ -705,6 +705,8 @@ trait WithRPSSearchFilters
                     switch ($mode) {
                         case 'id':
                             return $matchID;
+                        case 'akademik':
+                            return $matchAkademik;
                         case 'semester':
                             return $matchSemester || $matchSemesterJenis;
                         case 'sks':
@@ -763,7 +765,7 @@ trait WithRPSSearchFilters
 
             $sortValue = match ($sortField) {
                 'kode' => fn ($rps) => $rps->kode,
-                'akademik' => fn ($rps) => $rps->akademik,
+                'akademik', 'kurikulum' => fn ($rps) => $rps->akademik,
 
                 'kode_mk' => fn ($rps) => $rps->kode_mk,
                 'mk' => fn ($rps) => $rps->mk,

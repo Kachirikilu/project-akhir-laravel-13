@@ -46,7 +46,7 @@ class MataKuliah extends Model
     //             1 => 'mk-prodi',
     //             2 => 'mk-departemen',
     //             3 => 'mk-fakultas',
-    //             4 => 'mk-universitas',
+    //             4 => 'mk-uni',
     //             default => 'mk',
     //         };
     //     });

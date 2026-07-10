@@ -200,21 +200,14 @@ class NilaiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'mutu_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
-            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ip_mhs', 7 => 'mutu_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status'],
-            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'ip_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'is_draf', 5 => 'revisi'],
+            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ipk_mhs', 7 => 'mutu_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status', 10 => 'kampus', 11 => 'program_studi'],
         ];
 
         $aliases = [
-            'rekap_rps_pr' => ['rekap_cpl_pr', 'rekap_cpmk_pr', 'rekap_scpmk_pr', 'rekap_mhs'],
-            'index_rps_pr' => ['index_cpl_pr', 'index_cpmk_pr', 'index_scpmk_pr', 'ip_mhs'],
-            'mutu_rps_pr' => ['mutu_cpl_pr', 'mutu_cpmk_pr', 'mutu_scpmk_pr', 'mutu_mhs'],
-
-            'kode' => ['kode', 'name'],
-            'deskripsi' => ['deskripsi', 'mk'],
-            'materi' => ['materi'],
-            'count_cpl' => ['count_cpl', 'count_rps', 'total_sks'],
-            'is_draf' => ['is_draf', 'indikator'],
+            'kode' => ['kode'],
+            'akademik' => ['akademik', 'angkatan'],
+            'is_draf' => ['is_draf', 'status'],
         ];
 
         $this->sortField($table, $sortField, $columns, $aliases);

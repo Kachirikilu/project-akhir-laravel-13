@@ -162,7 +162,7 @@ trait WithNilaiMahasiswaFilters
     //         $queryNilai->where('is_wajib', true);
     //     } elseif ($this->filterNilai === 'mk-pilihan') {
     //         $queryNilai->where('is_wajib', false);
-    //     } elseif ($this->filterNilai === 'mk-universitas') {
+    //     } elseif ($this->filterNilai === 'mk-uni') {
     //         $queryNilai->where('level_mk', 4);
     //     }
 

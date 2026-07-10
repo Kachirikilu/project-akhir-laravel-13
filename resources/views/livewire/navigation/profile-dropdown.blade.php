@@ -84,9 +84,26 @@
         <flux:menu.separator />
 
         <flux:menu.radio.group>
+            <flux:menu.item :href="route('dashboard')" icon="squares-2x2" wire:navigate>
+                {{ __('Dashboard') }}
+            </flux:menu.item>
+        </flux:menu.radio.group>
+
+        <flux:menu.separator />
+
+        <flux:menu.radio.group>
+            <flux:menu.item href="/" icon="computer-desktop" wire:navigate>
+                {{ __('Front Page') }}
+            </flux:menu.item>
+        </flux:menu.radio.group>
+
+        <flux:menu.separator />
+
+        <flux:menu.radio.group>
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
             </flux:menu.item>
         </flux:menu.radio.group>
+
 
         <flux:menu.separator />
 

@@ -133,6 +133,9 @@ trait WithMKModal
         $this->resetErrorBag();
         $this->resetValidation();
 
+        if ($data['digit_mk'] < 10) {
+            $data['digit_mk'] = str_pad($data['digit_mk'], 2, '0', STR_PAD_LEFT);
+        }
         $data['nama_mk'] = $this->normalizeNama($data['nama_mk'] ?? '');
         $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
         $data['bahan_kajian'] = $this->normalizeText($data['bahan_kajian'] ?? '');
@@ -146,12 +149,14 @@ trait WithMKModal
             'digit_semester' => 'required|string|size:2',
             'digit_mk' => [
                 'required', 'string', 'size:2',
-                function ($attribute, $value, $fail) use ($targetProdiIds, $isEditingMK) {
-                    if (empty($value) || empty($targetProdiIds)) {
+                function ($attribute, $value, $fail) use ($targetProdiIds, $isEditingMK, $data) {
+                    $semesterSaatIni = $data['semester'];
+
+                    if (empty($value) || empty($targetProdiIds) || empty($semesterSaatIni)) {
                         return;
                     }
 
-                    foreach ($targetProdiIds as $index => $pId) {
+                    foreach ($targetProdiIds as $pId) {
                         if (empty($pId)) {
                             continue;
                         }
@@ -159,6 +164,7 @@ trait WithMKModal
                         $query = DB::table('mata_kuliahs')
                             ->join('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
                             ->where('prodi_pivot_mk.pr_id', $pId)
+                            ->where('mata_kuliahs.semester', $semesterSaatIni)
                             ->where('mata_kuliahs.digit_mk', $value);
 
                         if ($isEditingMK) {
@@ -168,7 +174,8 @@ trait WithMKModal
                         if ($query->exists()) {
                             $prodiModel = Prodi::find($pId);
                             $namaProdi = $prodiModel ? $prodiModel->prodi : "Prodi ID: $pId";
-                            $fail("Digit MK '$value' sudah terpakai di Program Studi: ***$namaProdi***!");
+
+                            $fail("Digit MK '$value' sudah terpakai pada Semester $semesterSaatIni di Program Studi: ***$namaProdi***!");
                             break;
                         }
                     }
@@ -302,7 +309,7 @@ trait WithMKModal
 
             $this->resetInputMK();
             $this->dispatch('refresh-data-mk');
-            $this->dispatch('refresh-stats-mk'); 
+            $this->dispatch('refresh-stats-mk');
 
             $this->showMKModal = false;
             $this->toast(message: "Mata Kuliah {$validated['nama_mk']}");

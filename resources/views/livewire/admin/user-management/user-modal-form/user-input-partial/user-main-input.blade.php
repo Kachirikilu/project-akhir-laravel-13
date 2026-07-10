@@ -7,15 +7,42 @@
         Informasi Akun</h4>
 
     {{-- 📧 Email Input --}}
+    <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'user',
         // 'isLivewire' => 1,
         'modelString' => 'email',
         'typeString' => 'email',
         'iconString' => 'envelope',
-        'placeholder' => 'contoh@domain.com',
+        'placeholder' => 'Default: NIP@staff.unsri.ac.id',
         'message' => $errors->first('email'),
+        'isRequired' => 0,
     ])
+    </template>
+        <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+    @include('livewire.global.modal-form.input-form', [
+        'alpine' => 'user',
+        // 'isLivewire' => 1,
+        'modelString' => 'email',
+        'typeString' => 'email',
+        'iconString' => 'envelope',
+        'placeholder' => 'Default: NIP@lecture.unsri.ac.id',
+        'message' => $errors->first('email'),
+        'isRequired' => 0,
+    ])
+    </template>
+        <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+    @include('livewire.global.modal-form.input-form', [
+        'alpine' => 'user',
+        // 'isLivewire' => 1,
+        'modelString' => 'email',
+        'typeString' => 'email',
+        'iconString' => 'envelope',
+        'placeholder' => 'Default: NIM@student.unsri.ac.id',
+        'message' => $errors->first('email'),
+        'isRequired' => 0,
+    ])
+    </template>
 
     {{-- 🔒 Password Input --}}
     <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>

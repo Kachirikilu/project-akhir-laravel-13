@@ -45,7 +45,7 @@ trait WithRPSShow
         $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);
 
-        $logoPath = public_path('images/logo-unsri.png');
+        $logoPath = public_path('images/logo-unsri.webp');
         $logoBase64 = '';
 
         if (file_exists($logoPath)) {

@@ -56,7 +56,7 @@
                 'tab5String' => 'rps-aktif',
                 'tab6String' => 'rps-draf',
                 'tab7String' => 'rps-older-5',
-                'tabName' => Auth::user()->prodi,
+                'tabName' => Auth::user()->prodi ?? 'Program Studi Saya',
                 'tab1Name' => Auth::user()->prodi . ' Tidak Aktif',
                 'tab2Name' => 'Semua RPS',
                 'tab3Name' => 'Terbaru',

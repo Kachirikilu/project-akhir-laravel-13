@@ -13,7 +13,7 @@
     {{-- switch-table --}}
     <div>
         <div
-            class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-2 p-4 rounded-lg shadow-md border animate-pulse">
+            class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-2 p-4 rounded-lg shadow-md border animate-pulse">
             <div class="table-border border-b gap-4 flex items-end">
                 <div class="min-w-0 flex-1">
                     <div class="flex space-x-4 pb-1 w-full">
@@ -34,7 +34,7 @@
 
     {{-- search-and-filters --}}
     <div
-        class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border animate-pulse">
+        class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border animate-pulse">
         <div class="table-border flex items-end justify-between border-b mb-4 gap-4">
             <div class="min-w-0 flex-1 overflow-hidden">
                 <div class="flex space-x-4 pb-1">
@@ -70,7 +70,7 @@
 {{-- search-and-filters --}}
 
 <div
-    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden animate-pulse">
+    class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden animate-pulse">
     <div class="scrollbar-x-large overflow-auto max-h-[1000px]">
         <table class="min-w-full divide-y">
             <!-- Header Placeholder -->

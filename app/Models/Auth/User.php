@@ -629,28 +629,190 @@ class User extends Authenticatable
         }
 
         $search = trim($search);
-        $searchTerm = "%{$search}%";
         $searchLower = strtolower($search);
+        $searchTerm = "%{$search}%";
 
-        return $query->orWhere(function ($q) use ($search, $searchTerm, $searchLower) {
+        return $query->orWhere(function ($q) use ($search, $searchLower, $searchTerm) {
 
-            // Tanggal
-            $q->orWhere(function ($dq) use ($searchTerm, $searchLower) {
+            /*
+            |--------------------------------------------------------------------------
+            | Created / Updated
+            |--------------------------------------------------------------------------
+            */
+
+            $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
 
                 foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
                     $dq->orWhereRaw("DATE_FORMAT(users.created_at, '$format') LIKE ?", [$searchTerm])
                         ->orWhereRaw("DATE_FORMAT(users.updated_at, '$format') LIKE ?", [$searchTerm]);
                 }
 
-                foreach (['%a, %d %b %Y', '%W, %d %M %Y', '%a %d %b %Y', '%W %d %M %Y'] as $format) {
-                    $dq->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '$format')) LIKE ?", ["%{$searchLower}%"])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '$format')) LIKE ?", ["%{$searchLower}%"]);
+                foreach ([
+                    '%a, %d %b %Y',
+                    '%W, %d %M %Y',
+                    '%a %d %b %Y',
+                    '%W %d %M %Y',
+                ] as $format) {
+
+                    $dq->orWhereRaw(
+                        "LOWER(DATE_FORMAT(users.created_at, '$format')) LIKE ?",
+                        ["%{$searchLower}%"]
+                    );
+
+                    $dq->orWhereRaw(
+                        "LOWER(DATE_FORMAT(users.updated_at, '$format')) LIKE ?",
+                        ["%{$searchLower}%"]
+                    );
                 }
             });
 
-            // Prodi
+            /*
+            |--------------------------------------------------------------------------
+            | Smart Role Data
+            |--------------------------------------------------------------------------
+            */
+
             foreach (['admin', 'dosen', 'mahasiswa'] as $role) {
-                $q->orWhereHas("$role.pr_rel", fn ($pr) => $pr->searchProdiSmart($search));
+
+                $q->orWhereHas($role, function ($r) use ($search, $searchLower, $searchTerm) {
+
+                    $r->where(function ($sub) use ($search, $searchLower, $searchTerm) {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Tempat lahir
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $sub->orWhereRaw(
+                            "LOWER(tempat_lahir) LIKE ?",
+                            ["%{$searchLower}%"]
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Nomor HP
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $phone = preg_replace('/\D/', '', $search);
+
+                        if ($phone !== '') {
+
+                            $phones = [$phone];
+
+                            if (str_starts_with($phone, '08')) {
+                                $phones[] = '62' . substr($phone, 1);
+                            }
+
+                            if (str_starts_with($phone, '62')) {
+                                $phones[] = '0' . substr($phone, 2);
+                            }
+
+                            foreach (array_unique($phones) as $hp) {
+                                $sub->orWhere('no_hp', 'like', "%{$hp}%");
+                            }
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Tanggal lahir
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $sub->orWhere(function ($dq) use ($search, $searchLower, $searchTerm) {
+
+                            foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+                                $dq->orWhereRaw(
+                                    "DATE_FORMAT(tanggal_lahir, '$format') LIKE ?",
+                                    [$searchTerm]
+                                );
+                            }
+
+                            foreach ([
+                                '%a, %d %b %Y',
+                                '%W, %d %M %Y',
+                                '%a %d %b %Y',
+                                '%W %d %M %Y',
+                            ] as $format) {
+
+                                $dq->orWhereRaw(
+                                    "LOWER(DATE_FORMAT(tanggal_lahir, '$format')) LIKE ?",
+                                    ["%{$searchLower}%"]
+                                );
+                            }
+
+                            if (preg_match('/^\d{4}$/', $search)) {
+                                $dq->orWhereYear('tanggal_lahir', $search);
+                            }
+
+                            if (preg_match('/^(0?[1-9]|1[0-2])$/', $search)) {
+                                $dq->orWhereMonth('tanggal_lahir', (int) $search);
+                            }
+                        });
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Jenis Kelamin
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (preg_match('/^(l|lk|laki|laki-laki|pria|cowok|male)$/i', $search)) {
+                            $sub->orWhere(function ($jk) {
+                                $jk->where('jenis_kelamin', 'L')
+                                    ->orWhere('jenis_kelamin', 'Laki-laki')
+                                    ->orWhere('jenis_kelamin', 'Male');
+                            });
+                        }
+
+                        if (preg_match('/^(p|pr|perempuan|wanita|cewek|female)$/i', $search)) {
+                            $sub->orWhere(function ($jk) {
+                                $jk->where('jenis_kelamin', 'P')
+                                    ->orWhere('jenis_kelamin', 'Perempuan')
+                                    ->orWhere('jenis_kelamin', 'Female');
+                            });
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Agama
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $agamaMap = [
+                            'islam' => ['islam'],
+                            'kristen' => ['kristen', 'protestan'],
+                            'katolik' => ['katolik'],
+                            'hindu' => ['hindu'],
+                            'buddha' => ['buddha', 'budha'],
+                            'konghucu' => ['konghucu'],
+                        ];
+
+                        foreach ($agamaMap as $dbValue => $keywords) {
+
+                            foreach ($keywords as $keyword) {
+
+                                if (str_contains($keyword, $searchLower)) {
+
+                                    $sub->orWhere('agama', 'like', "%{$dbValue}%");
+
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prodi
+                |--------------------------------------------------------------------------
+                */
+
+                $q->orWhereHas(
+                    "{$role}.pr_rel",
+                    fn($pr) => $pr->searchProdiSmart($search)
+                );
 
                 if (str_contains($searchLower, $role)) {
                     $q->orWhereHas($role);

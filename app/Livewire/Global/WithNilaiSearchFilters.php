@@ -354,7 +354,7 @@ trait WithNilaiSearchFilters
                             'semester',
                             'semes',
                             'sms',
-                            's'
+                            's',
                         ]
                     ) || $this->containsStrict(
                         'Semester'.$n->semester,
@@ -379,8 +379,6 @@ trait WithNilaiSearchFilters
                         );
                         $matchSKS = $sks === $targetSKS;
                     }
-
-
 
                     // $matchCreatedAt = $this->matchDateField(
                     //     $n->created_at,
@@ -479,7 +477,6 @@ trait WithNilaiSearchFilters
                     $searchLower
                 );
 
-
                 /*
                 |--------------------------------------------------------------------------
                 | SKS
@@ -502,26 +499,25 @@ trait WithNilaiSearchFilters
                     $searchLower
                 );
 
-                    $semester = (int) ($n->semester ?? 0);
-                    $matchSemester = $this->matchCount(
-                        $n->semester,
-                        $searchLower,
-                        [
-                            'sem',
-                            'semester',
-                            'semes',
-                            'sms',
-                            's'
-                        ]
-                    ) || $this->containsStrict(
-                        'Semester'.$n->semester,
-                        $searchLower
-                    );
-                    $matchSemesterJenis = $this->matchSemesterJenis(
-                        $semester,
-                        $searchLower
-                    );
-
+                $semester = (int) ($n->semester ?? 0);
+                $matchSemester = $this->matchCount(
+                    $n->semester,
+                    $searchLower,
+                    [
+                        'sem',
+                        'semester',
+                        'semes',
+                        'sms',
+                        's',
+                    ]
+                ) || $this->containsStrict(
+                    'Semester'.$n->semester,
+                    $searchLower
+                );
+                $matchSemesterJenis = $this->matchSemesterJenis(
+                    $semester,
+                    $searchLower
+                );
 
                 $matchAkademik = $this->matchAkademik(
                     $n->akademik,
@@ -543,6 +539,8 @@ trait WithNilaiSearchFilters
                 switch ($mode) {
                     case 'nilai':
                         return $matchNilaiAkhir || $matchNilaiMutu;
+                    case 'akademik':
+                        return $matchAkademik;
                     case 'index':
                         return $matchNilaiIndex;
                     case 'mutu':

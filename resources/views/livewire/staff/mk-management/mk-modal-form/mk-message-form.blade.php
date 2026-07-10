@@ -20,7 +20,7 @@
                             'mk-prodi': ['Program Studi'],
                             'mk-departemen': ['Program Studi', 'Departemen'],
                             'mk-fakultas': ['Program Studi', 'Fakultas'],
-                            'mk-universitas': ['Program Studi']
+                            'mk-uni': ['Program Studi']
                         };
                         return mapping[$store.mk?.typeModal] || [];
                     },

@@ -34,21 +34,36 @@
         {{-- Desktop View --}}
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between sm:gap-4">
             @if (!($isSmall ?? false))
-            <div>
-                <p class="text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
-                    {!! __('Menampilkan') !!}
-                    @if ($paginator->firstItem())
-                        <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->firstItem() }}</span>
-                        {!! __('sampai') !!}
-                        <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->lastItem() }}</span>
-                    @else
-                        {{ $paginator->count() }}
-                    @endif
-                    {!! __('dari') !!}
-                    <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->total() }}</span>
-                    {!! __('hasil') !!}
-                </p>
-            </div>
+                <div>
+                    <p class="{{ ($withNowrap ?? false) ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
+                        {!! __('Menampilkan') !!}
+                        @if ($paginator->firstItem())
+                            <span
+                                class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->firstItem() }}</span>
+                            {!! __('sampai') !!}
+                            <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->lastItem() }}</span>
+                        @else
+                            {{ $paginator->count() }}
+                        @endif
+                        {!! __('dari') !!}
+                        <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->total() }}</span>
+                        {!! __('hasil') !!}
+                    </p>
+                </div>
+            @else
+                <div>
+                    <p class="{{ ($withNowrap ?? false) ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
+                        @if ($paginator->total() > 0)
+                            <span class="font-bold text-[var(--contrast-main-text)]">
+                                {{ $paginator->firstItem() ?? $paginator->count() }}-{{ $paginator->lastItem() ?? $paginator->count() }}
+                            </span>
+                            dari
+                            <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->total() }}</span>
+                        @else
+                            0 dari 0
+                        @endif
+                    </p>
+                </div>
             @endif
             <div>
                 <span class="relative z-0 inline-flex shadow-sm rounded-md">

@@ -86,7 +86,8 @@ class WallpaperManagement extends Component
         }
     }
 
-    public function loadingTable() {}
+    public function loadingDefaultWallpaper() {}
+    public function loadingCustomWallpaper() {}
 
     public function updatedPerPage()
     {
@@ -102,15 +103,32 @@ class WallpaperManagement extends Component
     {
         $perPage = 8;
 
-        // 1. Logika Default Wallpaper (Array ke Pagination)
-        $defaultsArray = array_map(function ($i) {
-            return [
-                'id' => 'w'.$i,
-                'path' => '/wallpapers/wallpaper-'.$i.'.png',
-                'is_custom' => false,
-            ];
-        }, range(1, 12));
+        $groups = [
+            'unsri-w'      => 18,
+            'danau-unsri-w' => 7,
+            'sky-w'        => 16,
+            'musi-w'       => 4,
+            'night-w'      => 7,
+            'macro-w'      => 4,
+            'my-alya-w'      => 7,
+            'my-masha-w'      => 7,
+            'my-yuki-w'      => 7,
+            'my-waguri-w'      => 7,
+            'my-yuzuhara-w'      => 7,
 
+        ];
+
+        $defaultsArray = [];
+
+        foreach ($groups as $prefix => $count) {
+            for ($i = 1; $i <= $count; $i++) {
+                $defaultsArray[] = [
+                    'id' => $prefix . $i,
+                    'path' => '/wallpapers/' . $prefix . $i . '.png',
+                    'is_custom' => false,
+                ];
+            }
+        }
         $currentPage = Paginator::resolveCurrentPage('defaultPage');
         $defaultCollection = collect($defaultsArray);
 

@@ -12,10 +12,9 @@
 /* ============================================================
    BLUE THEME (default)
    ============================================================ */
-:root,
 [data-theme="blue"] {
-    --wadah-color: #feffff;
-    --border-wadah-color: #c0ced5;
+    --wadah-color: #fcfdff;
+    --border-wadah-color: #c9d9f3;
 
     --main-color: #075985;
     --hover-main-color: #066fa7;
@@ -23,67 +22,62 @@
     --contrast-main-color: #075985;
 
     --main-text: #ffffff;
-    --second-text: #a4a6aa;
-    --contrast-main-text: #1f2937;
-    --contrast-second-text: #445978;
-    --contrast-third-text: #64748b;
+    --second-text: #a4b3d4;
+    --contrast-main-text: #1e3a8a;
+    --contrast-second-text: #33548c;
+    --contrast-third-text: #4f73b6;
 
-    /* FIX: lebih gelap dari sebelumnya (#3b82f6) agar kontras teks putih cukup */
-    --focus-color: #1d6fb8;
-    --hover-focus-color: #1558a0;
+    --focus-color: #3b82f6;
+    --hover-focus-color: #2563eb;
 
-    --main-table-color: #d1e0f0;
+    --main-table-color: #dbeafe;
     --second-table-color: #ffffff;
-    --sub-table-color: #dae6f8;
-    --hover-table-color: #a8cfe6;
+    --sub-table-color: #e8f1ff;
+    --hover-table-color: #bfdbfe;
 
-    --main-table-trans: #c4d8eca0;
+    --main-table-trans: #dbeafea0;
     --second-table-trans: #ffffffa0;
-    --sub-table-trans: #eef2f7a0;
+    --sub-table-trans: #eef5ffa0;
 
-    --border-table-color: #93abc6;
+    --border-table-color: #b3d0f8;
 
-    --main-pop-up-color: #f0f4f9;
-    --hover-pop-up-color: #e0ecf8;
-    --second-pop-up-color: #f8fafc;
+    --main-pop-up-color: #eff6ff;
+    --hover-pop-up-color: #ceddf2;
+    --second-pop-up-color: #f8fbff;
 }
-
-.dark,
 [data-theme="blue"].dark {
-    --wadah-color: #17191a;
-    --border-wadah-color: #1e343f;
+    --wadah-color: #17191d;
+    --border-wadah-color: #243149;
 
     --main-color: #082f49;
     --hover-main-color: #063e63;
     --border-main-color: #075985;
     --contrast-main-color: #ffffff;
 
-    --main-text: #e0e3e9;
-    --second-text: #9297a1;
+    --main-text: #e5e7eb;
+    --second-text: #a5b4d6;
     --contrast-main-text: #ffffff;
-    --contrast-second-text: #b6b6bd;
-    --contrast-third-text: #9999a0;
+    --contrast-second-text: #c5d2ef;
+    --contrast-third-text: #9cb4e7;
 
-    /* FIX: lebih terang di dark mode */
     --focus-color: #60a5fa;
     --hover-focus-color: #93c5fd;
 
-    --main-table-color: #25292d;
-    --second-table-color: #303031;
-    --sub-table-color: #2f3235a0;
-    --hover-table-color: #37415199;
+    --main-table-color: #242933;
+    --second-table-color: #2b3038;
+    --sub-table-color: #313844a0;
+    --hover-table-color: #2563eb55;
 
-    --main-table-trans: #2d3134a0;
-    --second-table-trans: #303031a0;
-    --sub-table-trans: #292c30a0;
+    --main-table-trans: #2b313ca0;
+    --second-table-trans: #303640a0;
+    --sub-table-trans: #313844a0;
 
-    --border-table-color: #2d353b;
+    --border-table-color: #3b5173;
 
-    --main-pop-up-color: #2d2f31;
-    --hover-pop-up-color: #252727;
-    --second-pop-up-color: #383e3e;
+    --main-pop-up-color: #29313d;
+    --hover-pop-up-color: #334155;
+    --second-pop-up-color: #394454;
 }
-
 
 /* ============================================================
    PURPLE THEME
@@ -119,7 +113,7 @@
     --border-table-color: #d8b4fe;
 
     --main-pop-up-color: #f5f3ff;
-    --hover-pop-up-color: #ede9fe;
+    --hover-pop-up-color: #e3def5;
     /* FIX: sedikit ungu agar lebih on-theme */
     --second-pop-up-color: #fdf8ff;
 }
@@ -152,10 +146,10 @@
     --second-table-trans: #2b282ba0;
     --sub-table-trans: #312f35a0;
 
-    --border-table-color: #442444;
+    --border-table-color: #543254;
 
     --main-pop-up-color: #3b2d3b;
-    --hover-pop-up-color: #3c2e3c;
+    --hover-pop-up-color: #493949;
     --second-pop-up-color: #3b343b;
 }
 
@@ -194,7 +188,7 @@
     --border-table-color: #d59a9a;
 
     --main-pop-up-color: #fef2f2;
-    --hover-pop-up-color: #fee2e2;
+    --hover-pop-up-color: #f6d6d6;
     /* FIX: putih dengan sentuhan merah, bukan putih murni */
     --second-pop-up-color: #fffafa;
 }
@@ -227,10 +221,10 @@
     --second-table-trans: #313030a0;
     --sub-table-trans: #352f2fa0;
 
-    --border-table-color: #3c1e1e;
+    --border-table-color: #683535;
 
     --main-pop-up-color: #382e2e;
-    --hover-pop-up-color: #393030;
+    --hover-pop-up-color: #483d3d;
     --second-pop-up-color: #383131;
 }
 
@@ -271,7 +265,7 @@
     /* FIX: dari #ffffff → ada sentuhan hijau, lebih on-theme */
     --main-pop-up-color: #f0fdf4;
     /* FIX: tambahkan agar konsisten dengan tema lain */
-    --hover-pop-up-color: #dcfce7;
+    --hover-pop-up-color: #d5ebdc;
     --second-pop-up-color: #f7fcf9;
 }
 
@@ -304,10 +298,10 @@
     --second-table-trans: #222b27a0;
     --sub-table-trans: #27332da0;
 
-    --border-table-color: #2f3f37;
+    --border-table-color: #44554c;
 
     --main-pop-up-color: #202a25;
-    --hover-pop-up-color: #2a3a32;
+    --hover-pop-up-color: #303f37;
     --second-pop-up-color: #26332d;
 }
 
@@ -317,72 +311,74 @@
    ============================================================ */
 [data-theme="lime"] {
     --wadah-color: #fefffd;
-    --border-wadah-color: #d9e6cc;
+    --border-wadah-color: #d8e2cc;
 
-    --main-color: #65a30d;
-    --hover-main-color: #4d7c0f;
-    --border-main-color: #a3e635;
-    --contrast-main-color: #3f6212;
+    --main-color: #4d7c0f;
+    --hover-main-color: #3f6212;
+    --border-main-color: #65a30d;
+    --contrast-main-color: #365314;
 
     --main-text: #ffffff;
-    --second-text: #c0c4ca;
-    --contrast-main-text: #1a2e05; 
+    --second-text: #b4b8be;
+    --contrast-main-text: #223107;
     --contrast-second-text: #3f6212;
     --contrast-third-text: #4d7c0f;
 
-    --focus-color: #84cc16;
-    --hover-focus-color: #65a30d;
+    /* Lebih gelap supaya teks putih jelas */
+    --focus-color: #5f8f18;
+    --hover-focus-color: #4d7c0f;
 
-    --main-table-color: #f0f9e9; 
+    --main-table-color: #d9e9c9;
     --second-table-color: #ffffff;
-    --sub-table-color: #eaf5e0;
+    --sub-table-color: #edf6e4;
 
-    --hover-table-color: #bef264;
+    --hover-table-color: #d5ebb5;
 
-    --main-table-trans: #d9f3b5a0;
+    --main-table-trans: #d8eabda0;
     --second-table-trans: #ffffffa0;
-    --sub-table-trans: #ecfccba0;
+    --sub-table-trans: #f5fbeea0;
 
-    --border-table-color: #c9e8a7;
+    --border-table-color: #bfd59c;
 
-    --main-pop-up-color: #ffffff;
-    --hover-pop-up-color: #eafdc1;
-    --second-pop-up-color: #f9fff0;
+    --main-pop-up-color: #f8fcf2;
+    --hover-pop-up-color: #e1ecd2;
+    --second-pop-up-color: #fcfff8;
 }
 
 [data-theme="lime"].dark {
-    --wadah-color: #1a1e16;
-    --border-wadah-color: #364028;
+    --wadah-color: #181b16;
+    --border-wadah-color: #2d3725;
 
     --main-color: #365314;
     --hover-main-color: #4d7c0f;
     --border-main-color: #65a30d;
     --contrast-main-color: #ffffff;
 
-    --main-text: #e6edde;
-    --second-text: #9ca38f;
+    --main-text: #e7ece2;
+    --second-text: #a3aa9c;
     --contrast-main-text: #ffffff;
-    --contrast-second-text: #cdd6c1;
-    --contrast-third-text: #a3b18a;
+    --contrast-second-text: #c8d1c1;
+    --contrast-third-text: #aab59f;
 
-    --focus-color: #a3e635;
-    --hover-focus-color: #bef264;
+    /* Tidak terlalu neon */
+    --focus-color: #7fb52c;
+    --hover-focus-color: #96c84b;
 
-    --main-table-color: #23291d;
-    --second-table-color: #2d3625;
-    --sub-table-color: #272925;
-    
-    --hover-table-color: #4d6631;
+    --main-table-color: #22281d;
+    --second-table-color: #2a3025;
+    --sub-table-color: #2d3428;
 
-    --main-table-trans: #23291da0;
-    --second-table-trans: #2d3625a0;
-    --sub-table-trans: #354228a0;
+    --hover-table-color: #42552d;
 
-    --border-table-color: #3b4d2e;
+    --main-table-trans: #22281da0;
+    --second-table-trans: #2a3025a0;
+    --sub-table-trans: #303a2ba0;
 
-    --main-pop-up-color: #252e1f;
-    --hover-pop-up-color: #364028;
-    --second-pop-up-color: #2d3625;
+    --border-table-color: #536545;
+
+    --main-pop-up-color: #232b1e;
+    --hover-pop-up-color: #374130;
+    --second-pop-up-color: #2a3025;
 }
 
 /* ============================================================
@@ -416,12 +412,12 @@
     --sub-table-trans: #fffef9a0;
     --hover-table-color: #efdd85;
 
-    --border-table-color: #e6ce82;
+    --border-table-color: #dac16f;
 
     /* FIX: lebih netral, tidak terlalu oranye */
     --main-pop-up-color: #fffbeb;
     /* FIX: dari #fdba74 (terlalu jenuh) → #fef3c7 (lebih soft) */
-    --hover-pop-up-color: #fef3c7;
+    --hover-pop-up-color: #ede3b8;
     /* FIX: hampir putih dengan sentuhan amber */
     --second-pop-up-color: #fffdf5;
 }
@@ -454,10 +450,10 @@
     --second-table-trans: #2b2a28a0;
     --sub-table-trans: #35312fa0;
 
-    --border-table-color: #3c2c24;
+    --border-table-color: #554740;
 
     --main-pop-up-color: #342c25;
-    --hover-pop-up-color: #3a332d;
+    --hover-pop-up-color: #413b36;
     --second-pop-up-color: #39332f;
 }
 
@@ -465,71 +461,75 @@
    YELLOW THEME
    ============================================================ */
 [data-theme="yellow"] {
-    --wadah-color: #fffffb;
-    --border-wadah-color: #fde68a;
+    --wadah-color: #fffefb;
+    --border-wadah-color: #eadfb8;
 
-    --main-color: #ca8a04;
-    --hover-main-color: #a16207;
-    --border-main-color: #eab308;
-    --contrast-main-color: #713f12;
+    --main-color: #9a6b06;
+    --hover-main-color: #825705;
+    --border-main-color: #c58b08;
+    --contrast-main-color: #6f4b06;
 
     --main-text: #ffffff;
-    --second-text: #7a7c82;
-    --contrast-main-text: #713f12;
-    --contrast-second-text: #a16207;
-    --contrast-third-text: #ca8a04;
+    --second-text: #b3b5ba;
+    --contrast-main-text: #4d3505;
+    --contrast-second-text: #825705;
+    --contrast-third-text: #9a6b06;
 
-    --focus-color: #d5a30d;
-    --hover-focus-color: #ca8a04;
+    /* Lebih gelap supaya teks putih jelas */
+    --focus-color: #b27b09;
+    --hover-focus-color: #996807;
 
-    --main-table-color: #f5edb2;
+    --main-table-color: #ede2bb;
     --second-table-color: #ffffff;
-    --sub-table-color: #fef9c3;
+    --sub-table-color: #f8f2db;
 
-    --main-table-trans: #fef08aa0;
+    --hover-table-color: #e8d59d;
+
+    --main-table-trans: #ede2bca0;
     --second-table-trans: #ffffffa0;
-    --sub-table-trans: #fef9c3a0;
-    --hover-table-color: #fde047;
+    --sub-table-trans: #fbf8eca0;
 
-    --border-table-color: #fde68a;
+    --border-table-color: #dcc98b;
 
-    --main-pop-up-color: #fffef2;
-    --hover-pop-up-color: #fffbeb;
-    --second-pop-up-color: #fffdf8;
+    --main-pop-up-color: #fffdf5;
+    --hover-pop-up-color: #eee7cd;
+    --second-pop-up-color: #fffef9;
 }
 
 [data-theme="yellow"].dark {
-    --wadah-color: #1f1d16;
-    --border-wadah-color: #4d4020;
+    --wadah-color: #1b1916;
+    --border-wadah-color: #3b3322;
 
-    --main-color: #713f12;
-    --hover-main-color: #854d0e;
-    --border-main-color: #a16207;
+    --main-color: #6f4b06;
+    --hover-main-color: #825705;
+    --border-main-color: #9a6b06;
     --contrast-main-color: #ffffff;
 
-    --main-text: #fef3c7;
-    --second-text: #a8a29e;
+    --main-text: #ece8de;
+    --second-text: #aaa59a;
     --contrast-main-text: #ffffff;
-    --contrast-second-text: #fef08a;
-    --contrast-third-text: #fde68a;
+    --contrast-second-text: #d8cfbf;
+    --contrast-third-text: #b7af9f;
 
-    --focus-color: #dcc240;
-    --hover-focus-color: #d7b633;
+    /* Tidak neon */
+    --focus-color: #c7971c;
+    --hover-focus-color: #ddb34c;
 
-    --main-table-color: #2b281f;
-    --second-table-color: #363223;
-    --sub-table-color: #2b2926;
-    --hover-table-color: #713f12;
+    --main-table-color: #26231d;
+    --second-table-color: #2f2b24;
+    --sub-table-color: #323026;
 
-    --main-table-trans: #2b281fa0;
-    --second-table-trans: #363223a0;
-    --sub-table-trans: #453e28a0;
+    --hover-table-color: #4d4126;
 
-    --border-table-color: #574a27;
+    --main-table-trans: #26231da0;
+    --second-table-trans: #2f2b24a0;
+    --sub-table-trans: #373326a0;
 
-    --main-pop-up-color: #2b281d;
-    --hover-pop-up-color: #423b24;
-    --second-pop-up-color: #363121;
+    --border-table-color: #645941;
+
+    --main-pop-up-color: #27231d;
+    --hover-pop-up-color: #423c31;
+    --second-pop-up-color: #2f2b24;
 }
 
 
@@ -564,11 +564,11 @@
     --sub-table-trans: #fefafca0;
     --hover-table-color: #f472b6;
 
-    --border-table-color: #f9a8d4;
+    --border-table-color: #ef98c8;
 
     /* FIX: lebih pink subtle untuk form */
     --main-pop-up-color: #fdf2f8;
-    --hover-pop-up-color: #fce7f3;
+    --hover-pop-up-color: #f3e2eb;
     --second-pop-up-color: #fefafc;
 }
 
@@ -600,10 +600,10 @@
     --second-table-trans: #1a1012a0;
     --sub-table-trans: #271619a0;
 
-    --border-table-color: #3d2428;
+    --border-table-color: #52393e;
 
     --main-pop-up-color: #351a1f;
-    --hover-pop-up-color: #3f1e24;
+    --hover-pop-up-color: #4d2b31;
     --second-pop-up-color: #322b2c;
 }
 
@@ -627,8 +627,8 @@
     --contrast-third-text: #94a3b8;
 
     /* FIX: dari #334155 (= main-color, tidak bisa dibedakan) → biru yang kontras */
-    --focus-color: #2563eb;
-    --hover-focus-color: #1d4ed8;
+    --focus-color: #265db5;
+    --hover-focus-color: #1e4eb5;
 
     --main-table-color: #d1d9e3;
     --second-table-color: #ffffff;
@@ -642,7 +642,7 @@
     --border-table-color: #a0b6d0;
 
     --main-pop-up-color: #f1f5f9;
-    --hover-pop-up-color: #e2e8f0;
+    --hover-pop-up-color: #d1dcea;
     /* FIX: putih bersih untuk form field */
     --second-pop-up-color: #ffffff;
 }
@@ -663,8 +663,8 @@
     --contrast-third-text: #64748b;
 
     /* FIX: biru terang di dark mode */
-    --focus-color: #60a5fa;
-    --hover-focus-color: #93c5fd;
+    --focus-color: #3277cb;
+    --hover-focus-color: #4a8bd6;
 
     --main-table-color: #262f3e;
     --second-table-color: #0f172a;
@@ -714,13 +714,10 @@
     --sub-table-trans: #fdfaf7a0;
     --hover-table-color: #d7ccc8;
 
-    --border-table-color: #d6bcb3;
+    --border-table-color: #cba89c;
 
-    /* FIX: dari #d5c6b7 (terlalu gelap untuk form) → krem terang */
     --main-pop-up-color: #fdf8f5;
-    /* FIX: lebih netral, tidak terlalu coklat tua */
-    --hover-pop-up-color: #f5ece4;
-    /* FIX: hampir putih dengan sentuhan warm */
+    --hover-pop-up-color: #e7d8cb;
     --second-pop-up-color: #fffdf9;
 }
 
@@ -740,8 +737,8 @@
     --contrast-third-text: #a09d99;
 
     /* FIX: coklat terang di dark mode */
-    --focus-color: #d4a574;
-    --hover-focus-color: #e8c4a0;
+    --focus-color: #c4935e;
+    --hover-focus-color: #d4ae88;
 
     --main-table-color: #27221f;
     --second-table-color: #1a1715;
@@ -752,7 +749,7 @@
     --second-table-trans: #1a1715a0;
     --sub-table-trans: #2d2621a0;
 
-    --border-table-color: #483934;
+    --border-table-color: #51443f;
 
     --main-pop-up-color: #332e2b;
     --hover-pop-up-color: #413d3a;
@@ -794,7 +791,7 @@
     --border-table-color: #737373;
 
     --main-pop-up-color: #f9f9f9;
-    --hover-pop-up-color: #efefef;
+    --hover-pop-up-color: #dedede;
     /* FIX: putih bersih untuk form field */
     --second-pop-up-color: #ffffff;
 }
@@ -812,11 +809,14 @@
     --second-text: #a3a3a3;
     --contrast-main-text: #ffffff;
     --contrast-second-text: #d4d4d4;
-    --contrast-third-text: #737373;
+    --contrast-third-text: #999999;
 
-    /* FIX: abu terang di dark mode, beda dari background gelap */
-    --focus-color: #a3a3a3;
-    --hover-focus-color: #d4d4d4;
+    /* --focus-color: #a3a3a3;
+    --hover-focus-color: #d4d4d4; */
+    /* --focus-color: #525252;
+    --hover-focus-color: #737373; */
+    --focus-color: #828282;
+    --hover-focus-color: #a1a1a1;
 
     --main-table-color: #1e1e1e;
     --second-table-color: #0a0a0a;

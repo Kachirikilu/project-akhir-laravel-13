@@ -6,7 +6,7 @@
 </head>
 
 <body class="min-h-screen antialiased bg-[var(--wadah-color)] dark:bg-neutral-950">
-
+    @include('components.global.bg-elements')
     <div class="min-h-screen flex items-center justify-center p-3 sm:p-6">
         <div class="w-full max-w-5xl flex rounded-[24px] overflow-hidden border border-[var(--border-table-color)]"
             style="min-height: 560px;">
@@ -17,7 +17,7 @@
 
                 {{-- Foto latar --}}
                 <div class="absolute inset-0"
-                    style="background-image: url('{{ asset('images/bg-unsri.png') }}'); background-size: cover; background-position: center;">
+                    style="background-image: url('{{ asset('images/bg-unsri.webp') }}'); background-size: cover; background-position: center;">
                 </div>
                 <div class="absolute inset-0 opacity-90"
                     style="background: linear-gradient(150deg, var(--main-color) 0%, var(--hover-main-color) 100%);">
@@ -41,7 +41,7 @@
                         <span
                             class="text-[var(--main-text)] inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em]">
                             <flux:icon name="shield-check" class="w-3 h-3" />
-                            Universitas Sriwijaya
+                            {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
                         </span>
                         <h1 class="text-2xl sm:text-3xl font-bold leading-tight"
                             style="color: #ffffff; letter-spacing: -0.02em;">
@@ -63,9 +63,9 @@
                                 <span class="text-[var(--main-text)]/70 text-xs">{{ $feat }}</span>
                             </div>
                         @endforeach
-                        <div class="mt-6 flex gap-4">
-                            <x-livewire::navigation.dark-mode :noPadding="1" />
-                            <x-livewire::navigation.color-mode :noBar="1" />
+                        <div class="flex items-center mt-6 gap-4">
+                            <x-livewire::navigation.dark-mode :noPadding="1" :noToggle="1" />
+                            <x-livewire::navigation.color-mode :noBar="1" :autoSmall="1" />
                         </div>
                     </div>
 
@@ -74,7 +74,7 @@
 
             {{-- ═══ PANEL KANAN: Form Login ═══ --}}
             <div
-                class="w-full md:w-[400px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)] p-8 sm:p-10">
+                class="w-full md:w-[375px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)]/70 backdrop-blur-lg p-8 sm:p-10">
 
                 {{-- Header --}}
                 <div class="mb-7">
@@ -167,8 +167,11 @@
                     </a>
                 </div>
                 {{-- Footer --}}
-                <p class="mt-6 text-center text-[10px] text-[var(--contrast-third-text)]">
-                    Sistem Informasi Universitas Sriwijaya
+                <p class="mt-5 text-center text-[10px] text-[var(--contrast-third-text)] flex items-center justify-center gap-1.5 hover:-translate-y-[1px] active:-translate-y-[1px] transition-all duration-300">
+                    <a href="/" class="flex items-center justify-center gap-1.5 transition-colors duration-300 hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
+                        <flux:icon name="shield-check" class="w-3 h-3 text-[var(--focus-color)]" />
+                        Sistem Informasi {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
+                    </a>
                 </p>
             </div>
         </div>

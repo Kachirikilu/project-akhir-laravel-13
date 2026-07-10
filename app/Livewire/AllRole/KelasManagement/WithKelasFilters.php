@@ -39,7 +39,7 @@ trait WithKelasFilters
         $queryKelas = Kelas::query()
             ->with(['jadwals', 'rps_rel.mk_rel.prodis', 'rps_rel.mk_rel.prodis.dp_rel', 'rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
 
-        if ($this->filterKelas !== '' && $this->filterKelas !== 'kelas-prodi' && $this->filterKelas !== 'kelas-universitas') {
+        if ($this->filterKelas !== '' && $this->filterKelas !== 'kelas-prodi' && $this->filterKelas !== 'kelas-uni') {
             if (! empty($this->selectedPrId)) {
                 $queryKelas->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
@@ -122,7 +122,19 @@ trait WithKelasFilters
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.is_wajib', false);
             });
-        } elseif ($this->filterKelas === 'kelas-universitas') {
+        } elseif ($this->filterKelas === 'kelas-pr') {
+            $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
+                $q->where('mata_kuliahs.level_mk', 1);
+            });
+        } elseif ($this->filterKelas === 'kelas-dp') {
+            $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
+                $q->where('mata_kuliahs.level_mk', 2);
+            });
+        } elseif ($this->filterKelas === 'kelas-fk') {
+            $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
+                $q->where('mata_kuliahs.level_mk', 3);
+            });
+        } elseif ($this->filterKelas === 'kelas-uni') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.level_mk', 4);
             });

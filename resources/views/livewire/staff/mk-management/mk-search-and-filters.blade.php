@@ -1,5 +1,5 @@
 <div x-data="{ activeFilter: @entangle('filterMK') }"
-    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     <div x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
@@ -16,16 +16,25 @@
                     'totalTab1' => $stats['mk-opsi'] ?? null,
                     'totalTab2' => $stats['mk-wajib'] ?? null,
                     'totalTab3' => $stats['mk-pilihan'] ?? null,
-                    'totalTab4' => $stats['mk-uni'] ?? null,
+                    'totalTab4' => $stats['mk-pr'] ?? null,
+                    'totalTab5' => $stats['mk-dp'] ?? null,
+                    'totalTab6' => $stats['mk-fk'] ?? null,
+                    'totalTab7' => $stats['mk-uni'] ?? null,
                     'tab1String' => 'mk-all',
                     'tab2String' => 'mk-wajib',
                     'tab3String' => 'mk-pilihan',
-                    'tab4String' => 'mk-universitas',
-                    'tabName' => Auth::user()->prodi,
+                    'tab4String' => 'mk-pr',
+                    'tab5String' => 'mk-dp',
+                    'tab6String' => 'mk-fk',
+                    'tab7String' => 'mk-uni',
+                    'tabName' => Auth::user()->prodi ?? 'Program Studi Saya',
                     'tab1Name' => 'Semua MK',
                     'tab2Name' => 'Wajib',
                     'tab3Name' => 'Pilihan',
-                    'tab4Name' => 'Universitas',
+                    'tab4Name' => 'Program Studi',
+                    'tab5Name' => 'Departemen',
+                    'tab6Name' => 'Fakultas',
+                    'tab7Name' => 'Universitas',
                 ])
             @elseif (Auth::user()->dosen)
                 @include('livewire.global.search-and-filters.filter-mode', [
@@ -36,18 +45,27 @@
                     'totalTab2' => $stats['mk-opsi'] ?? null,
                     'totalTab3' => $stats['mk-wajib'] ?? null,
                     'totalTab4' => $stats['mk-pilihan'] ?? null,
-                    'totalTab5' => $stats['mk-uni'] ?? null,
+                    'totalTab5' => $stats['mk-pr'] ?? null,
+                    'totalTab6' => $stats['mk-dp'] ?? null,
+                    'totalTab7' => $stats['mk-fk'] ?? null,
+                    'totalTab8' => $stats['mk-uni'] ?? null,
                     'tab1String' => 'mk-prodi',
                     'tab2String' => 'mk-all',
                     'tab3String' => 'mk-wajib',
                     'tab4String' => 'mk-pilihan',
-                    'tab5String' => 'mk-universitas',
+                    'tab5String' => 'mk-pr',
+                    'tab6String' => 'mk-dp',
+                    'tab7String' => 'mk-fk',
+                    'tab8String' => 'mk-uni',
                     'tabName' => 'MK Saya',
                     'tab1Name' => Auth::user()->prodi,
                     'tab2Name' => 'Semua MK',
                     'tab3Name' => 'Wajib',
                     'tab4Name' => 'Pilihan',
-                    'tab5Name' => 'Universitas',
+                    'tab5Name' => 'Program Studi',
+                    'tab6Name' => 'Departemen',
+                    'tab7Name' => 'Fakultas',
+                    'tab8Name' => 'Universitas',
                 ])
             @endif
         </div>
@@ -63,7 +81,7 @@
 
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
-        <div x-show="activeFilter == '' || activeFilter == 'mk-saya' || activeFilter == 'mk-prodi' || activeFilter == 'mk-universitas'"
+        <div x-show="activeFilter == '' || activeFilter == 'mk-saya' || activeFilter == 'mk-prodi' || activeFilter == 'mk-uni'"
             x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -75,13 +93,13 @@
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mata Kuliah...',
                     'searchMode' => $searchMode,
-                    'searchValues' =>  ['simple', 'smart', 'complex'],
+                    'searchValues' => ['simple', 'smart', 'complex'],
                     'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                 ])
             </div>
         </div>
 
-        <div x-show="activeFilter !== '' && activeFilter !== 'mk-saya' && activeFilter !== 'mk-prodi' && activeFilter !== 'mk-universitas'"
+        <div x-show="activeFilter !== '' && activeFilter !== 'mk-saya' && activeFilter !== 'mk-prodi' && activeFilter !== 'mk-uni'"
             x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -93,7 +111,7 @@
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Mata Kuliah...',
                         'searchMode' => $searchMode,
-                        'searchValues' =>  ['simple', 'smart', 'complex'],
+                        'searchValues' => ['simple', 'smart', 'complex'],
                         'searchOptions' => ['Cari Kode Mata Kuliah', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                     ])
                 </div>

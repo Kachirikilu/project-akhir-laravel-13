@@ -6,7 +6,7 @@
 </head>
 
 <body class="min-h-screen antialiased bg-[var(--wadah-color)] dark:bg-neutral-950">
-
+    @include('components.global.bg-elements')
     <div class="min-h-screen flex items-center justify-center p-3 sm:p-6">
         <div class="w-full max-w-5xl flex rounded-[24px] overflow-hidden border border-[var(--border-table-color)]"
             style="min-height: 560px;">
@@ -16,7 +16,7 @@
                 style="background: var(--main-color);">
 
                 <div class="absolute inset-0"
-                    style="background-image: url('{{ asset('images/bg-unsri.png') }}'); background-size: cover; background-position: center;">
+                    style="background-image: url('{{ asset('images/bg-unsri.webp') }}'); background-size: cover; background-position: center;">
                 </div>
                 <div class="absolute inset-0 opacity-90"
                     style="background: linear-gradient(150deg, var(--main-color) 0%, var(--hover-main-color) 100%);">
@@ -37,13 +37,13 @@
                         <span
                             class="text-[var(--main-text)] inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em]">
                             <flux:icon name="shield-check" class="w-3 h-3" />
-                            Universitas Sriwijaya
+                            {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
                         </span>
                         <h1 class="text-2xl sm:text-3xl font-bold leading-tight text-white tracking-tighter">
                             Registrasi Akun<br>Administrator
                         </h1>
                         <p class="text-[var(--main-text)]/70 text-sm leading-relaxed max-w-xs">
-                            Halaman khusus untuk pendaftaran akun administratif sistem manajemen pembelajaran OBE.
+                            Halaman ini disediakan sebagai portal pendaftaran untuk membuat akun Administratif, yang akan memberikan akses penuh dalam mengelola Sistem Manajemen Pembelajaran berbasis kurikulum OBE.
                         </p>
                     </div>
 
@@ -58,9 +58,9 @@
                                 class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
                             <span class="text-[var(--main-text)]/70 text-xs">Manajemen User & Hak Akses</span>
                         </div>
-                        <div class="mt-6 flex gap-4">
-                            <x-livewire::navigation.dark-mode :noPadding="1" />
-                            <x-livewire::navigation.color-mode :noBar="1" />
+                        <div class="flex items-center mt-6 gap-4">
+                            <x-livewire::navigation.dark-mode :noPadding="1" :noToggle="1" />
+                            <x-livewire::navigation.color-mode :noBar="1" :autoSmall="1" />
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
 
             {{-- ═══ PANEL KANAN: Form Register ═══ --}}
             <div
-                class="w-full lg:w-[600px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)] p-8 sm:p-10 overflow-y-auto">
+                class="w-full lg:w-[600px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)]/70 backdrop-blur-lg p-8 sm:p-10 overflow-y-auto">
 
                 <div class="mb-6">
                     <h2 class="text-xl font-bold tracking-tight text-[var(--contrast-main-text)]">Buat Akun Admin</h2>
@@ -84,10 +84,10 @@
                     <flux:input name="email" label="Email" :value="old('email')" type="email" required
                         placeholder="nama@unsri.ac.id" />
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                         <flux:input name="nip" label="NIP" :value="old('nip')" required maxlength="20"
                             placeholder="Masukkan NIP..." />
-                        <flux:input name="nik" label="NIK" :value="old('nik')" required maxlength="20"
+                        <flux:input name="nik" label="NIK" :value="old('nik')" required maxlength="16"
                             placeholder="Masukkan NIK..." />
                     </div>
 
@@ -104,10 +104,15 @@
 
                     <flux:button variant="primary" type="submit"
                         class="cursor-pointer w-full mt-2 !bg-[var(--main-color)] hover:!bg-[var(--hover-main-color)] text-white font-bold py-2.5">
-                        {{ __('Create account') }}
+                        {{ __('Create Account') }}
                     </flux:button>
                 </form>
-
+                <p class="mt-5 text-center text-[10px] text-[var(--contrast-third-text)] flex items-center justify-center gap-1.5">
+                    <a href="/" class="flex items-center justify-center gap-1.5 transition-colors duration-300 hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
+                        <flux:icon name="shield-check" class="w-3 h-3 text-[var(--focus-color)]" />
+                        Sistem Informasi {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
+                    </a>
+                </p>
                 {{-- <div class="mt-6 text-center text-xs text-[var(--contrast-third-text)]">
                     <span>Sudah punya akun?</span>
                     <a href="{{ route('login') }}" class="font-bold text-[var(--focus-color)] hover:underline ml-1">Log in</a>

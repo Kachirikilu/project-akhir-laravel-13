@@ -352,7 +352,7 @@ class ObeManagement extends Component
             // 'akademik' => ['akademik', 'bobot', 'total_bobot'],
             'bobot' => ['bobot', 'total_bobot'],
             // 'total_bobot' => ['total_bobot', 'akademik', 'bobot'],
-            'is_draf' => ['is_draf', 'indikator'],
+            'is_draf' => ['is_draf', 'indikator', 'status'],
             // 'indikator' => ['indikator', 'is_draf'],
             'program_studi' => ['program_studi'],
             'created_at' => ['created_at'],

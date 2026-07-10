@@ -205,7 +205,6 @@ trait WithUserModal
                 $this->loadUserRPSPagination();
             }
 
-
             // dump($this->pr_id);
             // $this->syncUserStore($user, $formattedPhone['no_hp_back'] ?? '');
         } catch (\Exception $e) {
@@ -380,11 +379,27 @@ trait WithUserModal
         $noBack = $data['no_hp_back'] ?? null;
         $noHp = $data['no_hp'] ?? null;
 
-        if (empty($noBack) && !empty($noHp)) {
+        if ($data['email'] == null || $data['email'] == '' || empty($data['email'])) {
+            if (strtolower($role) == 'admin') {
+                $data['email'] = $data['nip'].'@staff.unsri.ac.id';
+            } elseif (strtolower($role) == 'dosen') {
+                $data['email'] = $data['nip'].'@lecturer.unsri.ac.id';
+            } elseif (strtolower($role) == 'mahasiswa') {
+                $data['email'] = $data['nim'].'@student.unsri.ac.id';
+            }
+        }
+
+        if ($data['gender'] == 'L') {
+            $data['gender'] = 'Laki-laki';
+        } elseif ($data['gender'] == 'P') {
+            $data['gender'] = 'Perempuan';
+        }
+
+        if (empty($noBack) && ! empty($noHp)) {
             $data['kode_no_hp'] = null;
             $noHPLengkap = $noHp;
-        } elseif (!empty($kode) && !empty($noBack)) {
-            $gabungan = $kode . $noBack;
+        } elseif (! empty($kode) && ! empty($noBack)) {
+            $gabungan = $kode.$noBack;
             $data['no_hp'] = str_replace([' ', '-', '+', '/'], '', $gabungan);
         } else {
             $data['no_hp'] = null;
@@ -403,11 +418,6 @@ trait WithUserModal
         }
 
         $rules = [
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($this->selected_id_user),
-            ],
             'password' => $isEditingUser ? 'nullable|min:8' : 'required|min:8',
             'name' => 'required|string|max:255',
             'nip' => 'nullable|string|min:8|max:20',
@@ -416,6 +426,11 @@ trait WithUserModal
             'nidk' => 'nullable|string|min:8|max:20',
             'nim' => 'nullable|string|min:8|max:20',
             'nik' => 'required|string|min:12|max:16',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->selected_id_user),
+            ],
         ];
 
         /* ===================== ADMIN ===================== */
@@ -955,7 +970,7 @@ trait WithUserModal
                 $model->update($data);
             });
             $roleType = ucfirst($role);
-            $labelIdentity1;
+
             if ($role == 'admin' || $role == 'dosen') {
                 $labelIdentity1 = "NIP {$validated['nip']}";
             } elseif ($role == 'mahasiswa') {

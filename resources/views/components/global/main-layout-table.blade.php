@@ -70,7 +70,7 @@
     </div>
 @endif
 
-<div class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
+<div class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
     id="table-results-container">
     <div class="scrollbar-x-large overflow-auto max-h-[1000px]">
         <table class="min-w-full divide-y">

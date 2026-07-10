@@ -11,6 +11,7 @@ use App\Livewire\Admin\UserManagement\WithUserFilters;
 // use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasNilaiAbsensi;
 use App\Livewire\Global\HasToast;
@@ -40,6 +41,7 @@ class RpsCapaianMahasiswaManagement extends Component
     use WithCpmkGrafikShow;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
+    use WithRPSShow;
 
     // use WithNilaiSearchFilters;
     use WithPagination;

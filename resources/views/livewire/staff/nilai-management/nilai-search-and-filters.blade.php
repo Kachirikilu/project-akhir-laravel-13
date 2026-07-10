@@ -2,7 +2,7 @@
     activeTab: $wire.entangle('switchTable'),
     activeFilter: $wire.entangle('filterStatus')
 }"
-    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
         @include('livewire.staff.obe-management.obe-partial.obe-filters', ['rpsOnly' => 1])
@@ -26,7 +26,7 @@
                     'tab1String' => 'mahasiswa-all',
                     'tab2String' => 'mahasiswa-aktif',
                     'tab3String' => 'mahasiswa-non-aktif',
-                    'tabName' => Auth::user()->prodi,
+                    'tabName' => Auth::user()->prodi ?? 'Program Studi Saya',
                     'tab1Name' => 'Semua Status',
                     'tab2Name' => 'Aktif',
                     'tab3Name' => 'Tidak Aktif',
@@ -52,7 +52,7 @@
             class="col-start-1 row-start-1 w-full grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
             <div class="sm:col-span-7 relative">
                 @include('livewire.global.search-and-filters.main-search', [
-                    'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
+                    'placeholder' => 'Cari Nama, Email, atau NIM Mahasiswa...',
                     'searchMode' => $searchMode,
                     'searchValues' => ['simple', 'smart', 'complex'],
                     'searchOptions' => ['Cari Email & Identitas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
@@ -69,7 +69,7 @@
             <div class=" grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
                 <div class="sm:col-span-4 relative">
                     @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
+                        'placeholder' => 'Cari Nama, Email, atau NIM Mahasiswa...',
                         'searchMode' => $searchMode,
                         'searchValues' => ['simple', 'smart', 'complex'],
                         'searchOptions' => ['Cari Email & Identitas', 'Pencarian Cerdas', 'Pencarian Kompleks'],

@@ -496,6 +496,21 @@ class RPS extends Model
                     $q->orWhere('rps.id', 'like', $search);
                 }
 
+                // 5. Tahun Akademik / Kurikulum
+                $searchAkademik = strtolower($search);
+                $searchAkademik = preg_replace(
+                    '/\b(kurikulum|akademik|tahun|ta|tahun akademik)\b/u',
+                    '',
+                    $searchAkademik
+                );
+                $searchAkademik = trim(preg_replace('/\s+/', ' ', $searchAkademik));
+                if ($searchAkademik !== '' && preg_match('/\d{4}/', $searchAkademik, $m)) {
+                    $tahun = $m[0];
+                    $q->orWhere(function ($aq) use ($tahun) {
+                        $aq->where('akademik', 'like', "%{$tahun}%");
+                    });
+                }
+
             } else {
                 // --- 5. PENCARIAN TOTAL BOBOT (Toleran Typo/Singkat) ---
                 if (preg_match('/(\d+)\s*(|%|pers|bob|tot)/i', $search, $matches)) {
@@ -603,5 +618,4 @@ class RPS extends Model
             };
         });
     }
-
 }

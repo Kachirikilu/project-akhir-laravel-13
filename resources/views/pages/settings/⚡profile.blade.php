@@ -146,7 +146,7 @@ new #[Title('Profile Settings')] class extends Component {
                                 class="block w-full text-sm text-[var(--contrast-third-text)] 
                                             file:me-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[var(--border-table-color)] 
                                             file:text-xs file:font-semibold file:bg-[var(--sub-table-color)] file:text-[var(--contrast-main-text)] 
-                                            hover:file:bg-[var(--hover-table-color)] transition-all cursor-pointer" />
+                                            hover:file:bg-[var(--hover-table-color)] active:file:bg-[var(--hover-table-color)] transition-all cursor-pointer" />
 
                             {{-- Tombol Remove (Bulat Kecil) --}}
                             @if (Auth()->user()->profile_photo_path && !$photo)
@@ -154,7 +154,7 @@ new #[Title('Profile Settings')] class extends Component {
                                     class="flex items-center justify-center w-6 h-6 aspect-square rounded-full 
                                             bg-[var(--sub-table-color)] border border-[var(--border-table-color)] 
                                             hover:bg-red-500/20 hover:border-red-500 text-[var(--contrast-main-text)] 
-                                            hover:text-red-500 transition-all cursor-pointer flex-shrink-0 p-0">
+                                            hover:text-red-500 active:text-red-600 transition-all cursor-pointer flex-shrink-0 p-0">
 
                                     {{-- Ikon dipaksa memiliki ukuran tetap --}}
                                     <flux:icon name="trash" variant="micro" class="w-3 h-3 !block" />
@@ -167,7 +167,7 @@ new #[Title('Profile Settings')] class extends Component {
                             @if ($photo)
                                 <flux:button variant="primary" type="submit" size="sm"
                                     wire:loading.attr="disabled" wire:loading.class="opacity-50"
-                                    class="cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]">
+                                    class="cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90">
                                     <span wire:loading.remove
                                         wire:target="updatePhotoProfile">{{ __('Save Photo') }}</span>
                                     <span wire:loading
@@ -284,7 +284,7 @@ new #[Title('Profile Settings')] class extends Component {
                     <div class="col-span-2">
                         {{-- Tombol pemicu modal --}}
                         <flux:button type="button" variant="primary" wire:click="preparePasswordUpdate"
-                            class="text-white w-full cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]">
+                            class="text-white w-full cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90">
                             {{ __('Save') }}
                         </flux:button>
                     </div>
@@ -539,7 +539,7 @@ new #[Title('Profile Settings')] class extends Component {
                     </flux:modal.close>
 
                     <flux:button wire:click="updatePassword" wire:loading.attr="disabled" variant="primary"
-                        class="text-white cursor-pointer w-full sm:w-auto bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] border-none transition-colors duration-200">
+                        class="text-white cursor-pointer w-full sm:w-auto bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 border-none transition-colors duration-200">
                         <span wire:loading.remove wire:target="updatePassword">Ya, Simpan</span>
                         <span wire:loading wire:target="updatePassword">Menyimpan...</span>
                     </flux:button>

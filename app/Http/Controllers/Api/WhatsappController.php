@@ -25,7 +25,7 @@ class WhatsappController extends Controller
     use WithNilaiMahasiswa;
     use WithVerification;
 
-    public $verifyKey = ['VERIFIKASI', 'VERIFY', 'VERYFICATION', 'IDENTITAS', 'DAFTAR', 'REGISTRASI', 'LOGIN', 'LOG IN', 'MASUK'];
+    public $verifyKey = ['VERIFIKASI', 'VERIFY', 'VERYFICATION', 'IDENTITAS', 'REGISTRASI', 'LOGIN', 'LOG IN', 'MASUK'];
 
     public $dataDiriKey = ['DATA DIRI', 'MY SELF', 'DATA', 'AUTH', 'AKUN', 'USER', 'TOKEN', 'CHECK TOKEN', 'CEK TOKEN', 'INFORMASI TOKEN', 'LIMTI', 'CHECK LIMIT', 'LIMIT'];
 

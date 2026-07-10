@@ -72,16 +72,17 @@
     {{-- TOGGLE ICON (SUN / MOON) --}}
     {{-- ===================== --}}
     <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 {{ !$noPadding ? 'mr-6' : '' }}">
-
         <button type="button" @click="manualToggle()"
-            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/50 text-[var(--main-text)] transition-all">
+            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg 
+            bg-white/20 border border-black/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] 
+            hover:bg-white/20 active:bg-white/50 
+            text-[var(--main-text)] transition-all">
 
             <span class="flex items-center justify-center w-4 h-4 bg-white rounded-full shadow-sm">
                 {{-- ☀️ LIGHT --}}
                 <flux:icon x-show="!isDark" name="sun" variant="mini" class="w-4 h-4 text-amber-500" />
                 {{-- 🌙 DARK --}}
                 <flux:icon x-show="isDark" name="moon" variant="mini" class="w-4 h-4 text-sky-900" />
-
             </span>
 
         </button>
@@ -90,54 +91,55 @@
     {{-- ===================== --}}
     {{-- SYSTEM TOGGLE --}}
     {{-- ===================== --}}
-    <div class="cursor-pointer flex items-center space-x-2 whitespace-nowrap" x-show="expanded" x-cloak
-        x-transition:enter="transition-all duration-300 ease-out" x-transition:enter-start="opacity-0 translate-x-4"
-        x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200 ease-in"
-        x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">
+    @if (!($noToggle ?? false))
+        <div class="cursor-pointer flex items-center space-x-2 whitespace-nowrap" x-show="expanded" x-cloak
+            x-transition:enter="transition-all duration-300 ease-out" x-transition:enter-start="opacity-0 translate-x-4"
+            x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200 ease-in"
+            x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">
 
-        {{-- CHECKBOX --}}
-        <flux:checkbox x-model="isAuto"
-            @change="
-                if (isAuto) {
-                    updateAppearance('system');
-                } else {
-                    updateAppearance(
-                        window.matchMedia('(prefers-color-scheme: dark)').matches 
-                            ? 'dark' 
-                            : 'light'
-                    );
-                }
-            " />
+            {{-- CHECKBOX --}}
+            <flux:checkbox x-model="isAuto"
+                @change="
+                    if (isAuto) {
+                        updateAppearance('system');
+                    } else {
+                        updateAppearance(
+                            window.matchMedia('(prefers-color-scheme: dark)').matches 
+                                ? 'dark' 
+                                : 'light'
+                        );
+                    }
+                " />
 
-        {{-- LABEL --}}
-        <span class="text-sm font-medium text-white select-none cursor-pointer"
-            @click="
-                isAuto = !isAuto;
+            {{-- LABEL --}}
+            <span class="text-sm font-medium text-white select-none cursor-pointer"
+                @click="
+                    isAuto = !isAuto;
 
-                if (isAuto) {
-                    updateAppearance('system');
-                } else {
-                    updateAppearance(
-                        window.matchMedia('(prefers-color-scheme: dark)').matches 
-                            ? 'dark' 
-                            : 'light'
-                    );
-                }
-            ">
-            System
-        </span>
+                    if (isAuto) {
+                        updateAppearance('system');
+                    } else {
+                        updateAppearance(
+                            window.matchMedia('(prefers-color-scheme: dark)').matches 
+                                ? 'dark' 
+                                : 'light'
+                        );
+                    }
+                ">
+                System
+            </span>
 
-        <div x-show="typeof expanded !== 'undefined' ? expanded : true" x-cloak class="ml-auto flex items-center">
-            <button type="button" @click="toggleColorMenu()"
-                class="ml-2 cursor-pointer flex items-center justify-center p-1 rounded hover:bg-white/10 active:bg-white/20 text-white/70 hover:text-white transition-colors"
-                aria-label="Toggle Color Menu">
-                <flux:icon name="chevron-down" variant="mini" class="w-4 h-4 transition-transform duration-300"
-                    ::class="!colorMenuOpen ? 'rotate-180' : ''" />
-            </button>
+            <div x-show="typeof expanded !== 'undefined' ? expanded : true" x-cloak class="ml-auto flex items-center">
+                <button type="button" @click="toggleColorMenu()"
+                    class="ml-2 cursor-pointer flex items-center justify-center p-1 rounded hover:bg-white/10 active:bg-white/20 text-white/70 hover:text-white transition-colors"
+                    aria-label="Toggle Color Menu">
+                    <flux:icon name="chevron-down" variant="mini" class="w-4 h-4 transition-transform duration-300"
+                        ::class="!colorMenuOpen ? 'rotate-180' : ''" />
+                </button>
+            </div>
+
         </div>
-
-    </div>
-
+    @endif
 
 
 </div>

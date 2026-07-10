@@ -39,9 +39,9 @@ new #[Title('Theme Settings')] class extends Component {
                         <div class="flex gap-2 items-center mx-auto w-max px-1.5">
                             <template x-for="theme in $store.theme_manager.allThemes" :key="theme.id">
                                 <button type="button" @click="$store.theme_manager.setTheme(theme.id)"
-                                    class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none snap-center"
+                                    class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 active:scale-105 focus:outline-none snap-center"
                                     :class="$store.theme_manager.currentTheme === theme.id ?
-                                        'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100'"
+                                        'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100 active:opacity-100'"
                                     :style="`background-color: ${theme.color}`">
                                     <span x-show="$store.theme_manager.currentTheme === theme.id"
                                         class="absolute inset-0 flex items-center justify-center">
@@ -61,7 +61,7 @@ new #[Title('Theme Settings')] class extends Component {
                         <button @click="$store.theme_manager.scrollThemes('left', 'themeContainerBig')" type="button"
                             class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer">
                             <flux:icon name="chevron-left" variant="mini"
-                                class="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                class="w-4 h-4 text-gray-400 group-hover:text-white group-active:text-white" />
                         </button>
 
                         {{-- 3 TITIK DINAMIS (MODE RAHASIA) --}}
@@ -69,7 +69,7 @@ new #[Title('Theme Settings')] class extends Component {
                             class="flex items-center gap-1.5 px-4 group cursor-pointer"
                             :title="$store.theme_manager.isAutoPlaying ? 'Stop Auto Mode' : 'Secret Party Mode!'">
 
-                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100 group-active:opacity-100"
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(-1)}`"
                                 :class="$store.theme_manager.isAutoPlaying && 'animate-bounce translate-y-[1px]'"></div>
 
@@ -77,7 +77,7 @@ new #[Title('Theme Settings')] class extends Component {
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(0)}`"
                                 :class="$store.theme_manager.isAutoPlaying && 'animate-pulse scale-125'"></div>
 
-                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100 group-active:opacity-100"
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(1)}`"
                                 :class="$store.theme_manager.isAutoPlaying &&
                                     'animate-bounce [animation-delay:0.2s] translate-y-[1px]'">
@@ -88,7 +88,7 @@ new #[Title('Theme Settings')] class extends Component {
                             type="button"
                             class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer">
                             <flux:icon name="chevron-right" variant="mini"
-                                class="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                class="w-4 h-4 text-gray-400 group-hover:text-white group-active:text-white" />
                         </button>
                     </div>
                 </div>
@@ -105,21 +105,21 @@ new #[Title('Theme Settings')] class extends Component {
 
     <button @click="scrollThemes('left')" type="button"
         class="group flex items-center justify-center w-10 h-6 hover:bg-white/10 transition-all cursor-pointer">
-        <flux:icon name="chevron-left" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white" />
+        <flux:icon name="chevron-left" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white group-active:text-white" />
     </button>
 
     <button @click="toggleAutoPlay()" type="button" class="flex items-center gap-2 px-3 group cursor-pointer">
-        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100"
+        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100 group-active:opacity-100"
             :style="`background-color: ${getThemeColor(-1)}`"></div>
         <div class="w-2 h-2 rounded-full transition-all duration-300 shadow-sm"
             :style="`background-color: ${getThemeColor(0)}`"></div>
-        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100"
+        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100 group-active:opacity-100"
             :style="`background-color: ${getThemeColor(1)}`"></div>
     </button>
 
     <button @click="scrollThemes('right')" type="button"
         class="group flex items-center justify-center w-10 h-6 hover:bg-white/10 transition-all cursor-pointer">
-        <flux:icon name="chevron-right" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white" />
+        <flux:icon name="chevron-right" variant="mini" class="w-4 h-4 text-gray-400 group-hover:text-white group-active:text-white" />
     </button>
 </div> --}}
 

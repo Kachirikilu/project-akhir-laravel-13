@@ -245,7 +245,7 @@ trait WithRPS
         $inputParams = trim(str_ireplace($matchedKey, '', $pesan));
 
         if (empty($inputParams)) {
-            return response()->json(['status' => true, 'head' => '*❌ Gagal Mencari RPS!*', 'message' => "Format: *{$matchedKey} KODE_RPS [KODE_PRODI]*"], 400);
+            return response()->json(['status' => true, 'head' => '*❌ Gagal Mencari RPS!*', 'message' => "Format:\n*{$matchedKey} [KODE_RPS]*"], 400);
         }
 
         $parts = explode(' ', $inputParams);

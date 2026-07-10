@@ -121,7 +121,7 @@
                 $dispatch('open-show-rps-modal', { id: {{ $kelas->rps_id }}, prId: {{ $kelas->pr_id }} });
             "
             icon="eye" size="sm"
-            class="!cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+            class="text-xs !cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
             <span>Show RPS</span>
         </flux:button>
 
@@ -166,7 +166,7 @@
                 $dispatch('open-edit-kelas-modal', { id: {{ $kelas->id }} });
             "
                 icon="pencil-square" size="sm"
-                class="!cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                 <span>Edit Kelas</span>
             </flux:button>
         @endif
@@ -193,7 +193,7 @@
                     $dispatch('open-edit-jadwal-modal', { id: {{ $jadwal_id_url }}, kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' });
                 "
                     icon="pencil-square" size="sm"
-                    class="!cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                    class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                     <span>Edit Jadwal</span>
                 </flux:button>
             @endif

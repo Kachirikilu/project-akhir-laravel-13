@@ -58,7 +58,7 @@ new #[Title('Theme Settings')] class extends Component {
     }
     public function with()
     {
-        $defaults = [['id' => 'd1', 'path' => '/images/bg-unsri.png', 'is_custom' => false], ['id' => 'w1', 'path' => '/wallpapers/my-alya.png', 'is_custom' => false], ['id' => 'w2', 'path' => '/wallpapers/my-masha.png', 'is_custom' => false], ['id' => 'w3', 'path' => '/wallpapers/my-waguri.png', 'is_custom' => false]];
+        $defaults = [['id' => 'd1', 'path' => '/images/bg-unsri.webp', 'is_custom' => false], ['id' => 'w1', 'path' => '/wallpapers/my-alya.png', 'is_custom' => false], ['id' => 'w2', 'path' => '/wallpapers/my-masha.png', 'is_custom' => false], ['id' => 'w3', 'path' => '/wallpapers/my-waguri.png', 'is_custom' => false]];
         $custom = Wallpaper::where('user_id', auth()->id())
             ->get()
             ->map(

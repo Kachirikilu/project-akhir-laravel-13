@@ -88,7 +88,15 @@
 <div class="fixed bottom-[0.5cm] right-[0.5cm] z-[999] flex items-center gap-5">
     <div class="flex flex-col items-end leading-none gap-1">
         <span class="text-[8px] font-semibold text-gray-500">
-            {{ $jadwal->kelas_rel->pr_rel->prodi_pr ?? null }}
+            @if ($jadwal ?? false)
+                {{ $jadwal->kelas_rel->pr_rel->prodi_pr ?? null }}
+            @elseif ($pr_name ?? false)
+                Program Studi {{ $pr_name ?? null }}
+            @elseif ($dp_name ?? false)
+                {{ $dp_name ?? null }}
+            @elseif ($fk_name ?? false)
+                {{ $fk_name ?? null }}
+            @endif
         </span>
         <span class="text-[8px] font-semibold text-gray-400">
             {{ $univ }}
@@ -99,7 +107,7 @@
     @if ($logoBase64 ?? null)
         <img src="{{ $logoBase64 }}" class="h-9 object-contain">
     @else
-        <img src="{{ asset('images/logo-unsri.png') }}" class="h-9 object-contain">
+        <img src="{{ asset('images/logo-unsri.webp') }}" class="h-9 object-contain">
     @endif
 </div>
 

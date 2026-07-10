@@ -226,6 +226,14 @@ trait WithUserExcel
                         $data[$header] = trim((string) ($row[$col] ?? ''));
                     }
 
+                    $rawGender = $data['jenis kelamin'] ?? $data['jenis_kelamin'] ?? $data['gender'] ?? '';
+                    $gender = trim((string)$rawGender);
+                    $genderFormatted = match (strtoupper($gender)) {
+                        'L', 'LAKI', 'LAKI-LAKI' => 'Laki-laki',
+                        'P', 'PEREMPUAN'         => 'Perempuan',
+                        default                  => ''
+                    };
+
                     $this->parsedUserRows[] = [
                         'email' => $data['email'] ?? '',
                         'password' => $data['password'] ?? '',
@@ -238,12 +246,12 @@ trait WithUserExcel
                         'nik' => $data['nik'] ?? '',
                         'no_hp' => $data['no. hp'] ?? $data['no hp'] ?? $data['no telepon'] ?? $data['telepon'] ?? $data['wa'] ?? $data['no wa'] ?? '',
                         'agama' => $data['agama'] ?? $data['kepercayaan'] ?? '',
-                        'jenis_kelamin' => $data['jenis kelamin'] ?? $data['gender'] ?? '',
+                        'jenis_kelamin' => $genderFormatted,
                         'tempat_lahir' => $data['tempat lahir'] ?? $data['tmt lahir'] ?? '',
                         'tanggal_lahir' => $data['tanggal lahir'] ?? $data['tgl lahir'] ?? '',
                         'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus'] ?? '')),
                         'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
-                        'role' => ucfirst($data['role'] ?? ''),
+                        'role' => ucfirst(! empty($data['role']) ? $data['role'] : 'None'),
                     ];
                 }
             } // 🌟 Akhir loop sheet
@@ -333,7 +341,24 @@ trait WithUserExcel
             ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
                 foreach ($chunk as $index => $row) {
                     try {
-                        $this->roleType = $row['role'];
+                        $rawRole = $row['role'] ?? null;
+                        $role = ! empty($rawRole) ? ucfirst(trim($rawRole)) : null;
+                        if (strtolower($role) === 'none') {
+                            $role = null;
+                        }
+                        if (empty($role)) {
+                            $role = ! empty($this->user_input['role']) && strtolower($this->user_input['role']) !== 'none'
+                                    ? ucfirst(trim($this->user_input['role']))
+                                    : null;
+                        }
+                        if (empty($role)) {
+                            throw ValidationException::withMessages([
+                                'role' => [
+                                    'Role tidak boleh kosong. Silakan pilih role yang valid atau gunakan input role utama!',
+                                ],
+                            ]);
+                        }
+                        $this->roleType = $role;
                         $this->selected_id_user = null;
 
                         $dataToValidate = $row;
@@ -342,8 +367,8 @@ trait WithUserExcel
                             $dataToValidate['status'] = 'Aktif';
                         }
 
-                        $validatedData = $this->inputModalUser(false, $dataToValidate, strtolower($row['role']));
-                        $this->saveUserFromExcel($validatedData, strtolower($row['role']));
+                        $validatedData = $this->inputModalUser(false, $dataToValidate, strtolower($role));
+                        $this->saveUserFromExcel($validatedData, strtolower($role));
 
                         $successfulIndices[] = $index;
                         $successCount++;
@@ -387,12 +412,13 @@ trait WithUserExcel
             $this->reset('excel_user_file');
             $this->resetInputUser();
             $this->showUserExcelModal = false;
+            $this->dispatch('refresh-data-user');
+            $this->dispatch('refresh-stats-user');
         } else {
             $this->toast(text: $messageText, variant: 'warning');
 
         }
-        $this->dispatch('refresh-data-user');
-        $this->dispatch('refresh-stats-user');
+
     }
 
     private function saveUserFromExcel($validated, $role)

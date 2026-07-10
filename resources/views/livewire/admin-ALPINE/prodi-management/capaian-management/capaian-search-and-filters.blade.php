@@ -1,5 +1,5 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
-    class="bg-[var(--main-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
         @include('livewire.staff.obe-management.obe-partial.obe-filters')

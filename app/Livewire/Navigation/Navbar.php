@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Route;
 
 class Navbar extends Component
 {
-    public $currentRoute;
+    // public $currentRoute;
 
-    public function mount()
-    {
-        $this->currentRoute = Route::currentRouteName();
-    }
+    // public function mount()
+    // {
+    //     $this->currentRoute = Route::currentRouteName();
+    // }
 
     // #[On('refresh-layout-sidebar')]
     // public function refreshNavbar()

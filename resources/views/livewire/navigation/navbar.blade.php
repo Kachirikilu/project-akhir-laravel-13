@@ -60,7 +60,7 @@
             $allNavItems = [
                 [
                     'type' => 'link',
-                    'icon' => 'home',
+                    'icon' => 'squares-2x2',
                     'route' => 'dashboard',
                     'label' => 'Dashboard',
                     'roles' => ['admin', 'dosen', 'mahasiswa'],

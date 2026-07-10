@@ -67,7 +67,13 @@ trait WithMKFilters
             $queryMK->where('is_wajib', true);
         } elseif ($this->filterMK === 'mk-pilihan') {
             $queryMK->where('is_wajib', false);
-        } elseif ($this->filterMK === 'mk-universitas') {
+        } elseif ($this->filterMK === 'mk-pr') {
+            $queryMK->where('level_mk', 1);
+        } elseif ($this->filterMK === 'mk-dp') {
+            $queryMK->where('level_mk', 2);
+        } elseif ($this->filterMK === 'mk-fk') {
+            $queryMK->where('level_mk', 3);
+        } elseif ($this->filterMK === 'mk-uni') {
             $queryMK->where('level_mk', 4);
         }
 

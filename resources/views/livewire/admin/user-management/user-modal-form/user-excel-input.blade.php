@@ -51,6 +51,17 @@
             'wireLoading' => 'fetchPr',
         ])
 
+        @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'user',
+            'isLivewire' => 1,
+            'modelString' => 'role',
+            'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
+            'iconString' => 'users',
+            'placeholder' => 'Pilih Role Utama ketika data tidak memiliki Role...',
+            'isRequired' => 0,
+            'message' => $errors->first('role'),
+        ])
+
         <h4
             class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Pengguna
@@ -125,11 +136,11 @@
                                         'minW' => '192',
                                     ])
 
-                                   @include('livewire.global.modal-form.table.excel-input-form', [
+                                    @include('livewire.global.modal-form.table.excel-input-form', [
                                         'model' => $this->parsedUserRows[$i]['role'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.role",
                                         'isSelect' => 1,
-                                        'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
+                                        'xOptions' => ['Admin', 'Dosen', 'Mahasiswa', 'None'],
                                         'message' => $rowUserErrors[$i]['role'] ?? null,
                                         'isDark' => 1,
                                         'minW' => '192',
@@ -259,7 +270,15 @@
                                         'model' => $this->parsedUserRows[$i]['agama'] ?? '',
                                         'wireModel' => "parsedUserRows.$i.agama",
                                         'isSelect' => 1,
-                                        'xOptions' => ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'],
+                                        'xOptions' => [
+                                            'Islam',
+                                            'Kristen',
+                                            'Hindu',
+                                            'Buddha',
+                                            'Katolik',
+                                            'Khonghucu',
+                                            'Lainnya',
+                                        ],
                                         'message' => $rowUserErrors[$i]['agama'] ?? null,
                                         'minW' => '192',
                                     ])
