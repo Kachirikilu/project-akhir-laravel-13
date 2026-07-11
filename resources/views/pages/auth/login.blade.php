@@ -26,7 +26,7 @@
                 <div class="relative z-10 flex flex-col justify-between h-full gap-8">
 
                     {{-- Logo --}}
-                    <div class="flex items-center gap-5">
+                    <a href="/" class="flex items-center gap-5">
                         <div
                             class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 flex-shrink-0">
                             <x-app-logo-icon class="h-5 w-auto" />
@@ -34,7 +34,7 @@
                         <span class="text-[var(--main-text)] text-[13px] font-bold uppercase tracking-[0.08em]">
                             {{ config('app.name', 'RPS Manajemen') }}
                         </span>
-                    </div>
+                    </a>
 
                     {{-- Heading --}}
                     <div class="flex flex-col gap-4">
@@ -109,18 +109,39 @@
                     @csrf
 
                     {{-- Email --}}
-                    <flux:input label="Email" name="email" :value="old('email')" type="email" required autofocus
-                        autocomplete="email" placeholder="nama@unsri.ac.id" icon="envelope" />
-                    @error('email')
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'email',
+                        'oldValue' => old('email'),
+                        'iconString' => 'users',
+                        'placeholder' => 'id_akademik@role.unsri.ac.id',
+                        'message' => $errors->first('email'),
+                        'isRequired' => 0,
+                    ])
+                    {{-- <flux:input label="Email atau ID Akademik" name="email" :value="old('email')" required autofocus
+                        autocomplete="email" placeholder="id_akademik@role.unsri.ac.id" icon="envelope" /> --}}
+                    {{-- @error('email')
                         <p class="text-[11px] text-red-500">{{ $message }}</p>
-                    @enderror
+                    @enderror --}}
 
                     {{-- Password --}}
-                    <flux:input label="Password" name="password" type="password" required
-                        autocomplete="current-password" placeholder="••••••••" icon="lock-closed" viewable />
-                    @error('password')
+                    @include('livewire.global.modal-form.input-form', [
+                        'alpine' => 'user',
+                        'isLivewire' => 1,
+                        'noEntangle' => 1,
+                        'modelString' => 'password',
+                        'typeString' => 'password',
+                        'placeholder' => '••••••••',
+                        'message' => $errors->first('password'),
+                        'isRequired' => 0,
+                    ])
+                    {{-- <flux:input label="Password" name="password" type="password" required
+                        autocomplete="current-password" placeholder="••••••••" icon="lock-closed" viewable /> --}}
+                    {{-- @error('password')
                         <p class="text-[11px] text-red-500">{{ $message }}</p>
-                    @enderror
+                    @enderror --}}
 
                     {{-- Remember Me --}}
                     <div class="flex items-center gap-2">
@@ -167,8 +188,10 @@
                     </a>
                 </div>
                 {{-- Footer --}}
-                <p class="mt-5 text-center text-[10px] text-[var(--contrast-third-text)] flex items-center justify-center gap-1.5 hover:-translate-y-[1px] active:-translate-y-[1px] transition-all duration-300">
-                    <a href="/" class="flex items-center justify-center gap-1.5 transition-colors duration-300 hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
+                <p
+                    class="mt-5 text-center text-[10px] text-[var(--contrast-third-text)] flex items-center justify-center gap-1.5 hover:-translate-y-[1px] active:-translate-y-[1px] transition-all duration-300">
+                    <a href="/"
+                        class="flex items-center justify-center gap-1.5 transition-colors duration-300 hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
                         <flux:icon name="shield-check" class="w-3 h-3 text-[var(--focus-color)]" />
                         Sistem Informasi {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
                     </a>

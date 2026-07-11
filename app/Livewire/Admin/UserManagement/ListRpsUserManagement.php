@@ -43,7 +43,7 @@ class ListRpsUserManagement extends Component
         $this->editUser($id, $withRPS, $isRPS);
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

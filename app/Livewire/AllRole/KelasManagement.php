@@ -132,6 +132,12 @@ class KelasManagement extends Component
         $this->clearKelasStatsCache();
     }
 
+    public function refreshStats() {
+        $this->refreshStatsKelasList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik Kelas berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {

@@ -165,7 +165,7 @@ trait HasStats
         Cache::forget('stats_rps_global_pr_'.$currentVersion.'_normal');
         Cache::forget('stats_rps_global_pr_'.$currentVersion.'_trash');
         if ($prId) {
-            $this->toast(text: 'Data statistik Rencana Pembelajaran Semester untuk Program Studi ini diperbarui!', type: 'info', variant: 'info');
+            // $this->toast(text: 'Data statistik Rencana Pembelajaran Semester untuk Program Studi ini diperbarui!', type: 'info', variant: 'info');
         }
     }
 
@@ -259,7 +259,7 @@ trait HasStats
             $version = Cache::get("stats_{$prefix}_version", 1);
             Cache::forget("stats_{$prefix}_pr_{$version}_{$prodiId}_normal");
             Cache::forget("stats_{$prefix}_pr_{$version}_{$prodiId}_trash");
-            $this->toast(text: "Data statistik $label untuk Program Studi ini diperbarui!", type: 'info', variant: 'info');
+            // $this->toast(text: "Data statistik $label untuk Program Studi ini diperbarui!", type: 'info', variant: 'info');
         } else {
             Cache::put("stats_{$prefix}_version", time());
         }
@@ -420,7 +420,7 @@ trait HasStats
         $currentVersion = Cache::get('stats_kelas_version', 1);
         Cache::forever('stats_kelas_version', $currentVersion + 1);
 
-        $this->toast(text: 'Data statistik Kelas telah diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Kelas telah diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas
     // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas // Statistik Kelas Kelas
@@ -451,7 +451,7 @@ trait HasStats
     {
         Cache::forget('stats_obe_normal');
         Cache::forget('stats_obe_trash');
-        $this->toast(text: 'Data statistik OBE diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik OBE diperbarui!', type: 'info', variant: 'info');
     }
 
     // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS // Statistik RPS RPS RPS
@@ -523,11 +523,7 @@ trait HasStats
         $currentVersion = Cache::get('stats_rps_version', 1);
         Cache::forever('stats_rps_version', $currentVersion + 1);
 
-        $this->toast(
-            text: 'Data statistik Rencana Pembelajaran Semester diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast(text: 'Data statistik Rencana Pembelajaran Semester diperbarui!', type: 'info', variant: 'info');
     }
 
     // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL // Statistik CPL CPL CPL
@@ -560,21 +556,21 @@ trait HasStats
     {
         Cache::forget('stats_cpl_normal');
         Cache::forget('stats_cpl_trash');
-        $this->toast(text: 'Data statistik Capaian Pembelajaran Lulusan diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Capaian Pembelajaran Lulusan diperbarui!', type: 'info', variant: 'info');
     }
 
     public function clearCpmkStatsCache()
     {
         Cache::forget('stats_cpmk_normal');
         Cache::forget('stats_cpmk_trash');
-        $this->toast(text: 'Data statistik Capaian Pembelajaran Mata Kuliah diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Capaian Pembelajaran Mata Kuliah diperbarui!', type: 'info', variant: 'info');
     }
 
     public function clearScpmkStatsCache()
     {
         Cache::forget('stats_scpmk_normal');
         Cache::forget('stats_scpmk_trash');
-        $this->toast(text: 'Data statistik Sub-CPMK diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Sub-CPMK diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK
     // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK // Statistik Sub-CPMK Sub-CPMK Sub-CPMK
@@ -606,7 +602,7 @@ trait HasStats
     {
         Cache::forget('stats_ref_normal');
         Cache::forget('stats_ref_trash');
-        $this->toast(text: 'Data statistik Referensi diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Referensi diperbarui!', type: 'info', variant: 'info');
     }
 
     // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen // Statistik Tim Dosen
@@ -679,12 +675,7 @@ trait HasStats
     {
         $currentVersion = Cache::get('stats_tim_dosen_version', 1);
         Cache::forever('stats_tim_dosen_version', $currentVersion + 1);
-
-        $this->toast(
-            text: 'Data statistik Tim Dosen telah diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast( ext: 'Data statistik Tim Dosen telah diperbarui!', type: 'info', variant: 'info');
     }
 
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
@@ -737,12 +728,7 @@ trait HasStats
     {
         $currentVersion = Cache::get('stats_dosen_version', 1);
         Cache::forever('stats_dosen_version', $currentVersion + 1);
-
-        $this->toast(
-            text: 'Data statistik Dosen telah diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast(text: 'Data statistik Dosen telah diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
     // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen // Statistik Dosen
@@ -792,11 +778,7 @@ trait HasStats
         $currentVersion = Cache::get('stats_mhs_version', 1);
         Cache::forever('stats_mhs_version', $currentVersion + 1);
 
-        $this->toast(
-            text: 'Data statistik Mahasiswa telah diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast(text: 'Data statistik Mahasiswa telah diperbarui!', type: 'info', variant: 'info');
     }
 
     // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa // Statistik Mahasiswa
@@ -885,11 +867,7 @@ trait HasStats
         $currentVersion = Cache::get('stats_mk_version', 1);
         Cache::forever('stats_mk_version', $currentVersion + 1);
 
-        $this->toast(
-            text: 'Data statistik Mata Kuliah telah diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast(text: 'Data statistik Mata Kuliah telah diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
     // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah // Statistik Mata Kuliah
@@ -929,7 +907,7 @@ trait HasStats
         Cache::forget('stats_prodi_normal');
         Cache::forget('stats_prodi_trash');
 
-        $this->toast(text: 'Data statistik Program Studi diperbarui!', type: 'info', variant: 'info');
+        // $this->toast(text: 'Data statistik Program Studi diperbarui!', type: 'info', variant: 'info');
     }
     // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi
     // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi // Statistik Program Studi
@@ -989,11 +967,7 @@ trait HasStats
         $currentVersion = Cache::get('stats_user_version', 1);
         Cache::forever('stats_user_version', $currentVersion + 1);
 
-        $this->toast(
-            text: 'Data statistik Pengguna telah diperbarui!',
-            type: 'info',
-            variant: 'info'
-        );
+        // $this->toast(text: 'Data statistik Pengguna telah diperbarui!', type: 'info', variant: 'info');
     }
     // private function getStatsUser(bool $isTrash = false): array
     // {

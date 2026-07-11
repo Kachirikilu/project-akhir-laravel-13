@@ -83,8 +83,8 @@ class NilaiManagement extends Component
     protected $listeners = [
         'refresh-table' => 'refreshUsersList',
         'refresh-data-rps-mahasiswa' => 'refreshNilaisList',
-        'refresh-stats-user' => 'refreshStatsUserList',
-        'refresh-stats-rps' => 'refreshStatsRPSList',
+        'refresh-stats-user' => 'refreshStatsUsersList',
+        'refresh-stats-rps' => 'refreshStatsRPSsList',
         'loadDraft' => 'loadDraft',
         'saveToDraft' => 'saveToDraft',
     ];
@@ -145,19 +145,26 @@ class NilaiManagement extends Component
     }
 
     #[On('refresh-stats-user')]
-    public function refreshStatsUserList()
+    public function refreshStatsUsersList()
     {
         $this->clearUserStatsCache();
         $this->clearMahasiswaStatsCache();
     }
 
     #[On('refresh-stats-rps')]
-    public function refreshStatsRPSList()
+    public function refreshStatsRPSsList()
     {
         $this->clearObeStatsCache();
         $this->clearRpsStatsCache();
         $this->clearObeProdiStatsCache();
         $this->clearRpsProdiStatsCache();
+    }
+
+    public function refreshStats() {
+        $this->refreshStatsUsersList();
+        $this->refreshStatsRPSsList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik User & RPS berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
     public function updatingSearch()
@@ -167,7 +174,7 @@ class NilaiManagement extends Component
 
     public function loadingTable() {}
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function updatedPerPage()
     {

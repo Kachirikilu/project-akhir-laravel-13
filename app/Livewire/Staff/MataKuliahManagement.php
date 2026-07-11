@@ -108,6 +108,12 @@ class MataKuliahManagement extends Component
         $this->clearMkStatsCache();
     }
 
+    public function refreshStats() {
+        $this->refreshStatsMKsList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik Mata Kuliah berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();

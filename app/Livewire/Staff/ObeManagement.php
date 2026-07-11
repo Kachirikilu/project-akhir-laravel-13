@@ -100,23 +100,23 @@ class ObeManagement extends Component
     public $selectedDosenId;
 
     protected $listeners = [
-        'refresh-table'       => 'refreshOBEList',
-        'refresh-data-obe'    => 'refreshOBEList',
-        'refresh-data-rps'    => 'refreshOBEList',
-        'refresh-data-cpl'    => 'refreshOBEList',
-        'refresh-data-cpmk'   => 'refreshOBEList',
-        'refresh-data-scpmk'  => 'refreshOBEList',
-        'refresh-data-ref'    => 'refreshOBEList',
-        'refresh-data-tim-dosen' => 'refreshOBEList',
-        'refresh-data-user'   => 'refreshOBEList',
-        'refresh-stats-obe'   => 'refreshStatsOBEList',
-        'refresh-stats-rps'   => 'refreshStatsRPSList',
-        'refresh-stats-cpl'   => 'refreshStatsCPLList',
-        'refresh-stats-cpmk'  => 'refreshStatsCPMKList',
-        'refresh-stats-scpmk' => 'refreshStatsSCPMKList',
-        'refresh-stats-ref'   => 'refreshStatsRefList',
-        'refresh-stats-tim-dosen' => 'refreshStatsTimDosenList',
-        'refresh-stats-user'  => 'refreshStatsUserList',
+        'refresh-table'       => 'refreshOBEsList',
+        'refresh-data-obe'    => 'refreshOBEsList',
+        'refresh-data-rps'    => 'refreshOBEsList',
+        'refresh-data-cpl'    => 'refreshOBEsList',
+        'refresh-data-cpmk'   => 'refreshOBEsList',
+        'refresh-data-scpmk'  => 'refreshOBEsList',
+        'refresh-data-ref'    => 'refreshOBEsList',
+        'refresh-data-tim-dosen' => 'refreshOBEsList',
+        'refresh-data-user'   => 'refreshOBEsList',
+        'refresh-stats-obe'   => 'refreshStatsOBEsList',
+        'refresh-stats-rps'   => 'refreshStatsRPSsList',
+        'refresh-stats-cpl'   => 'refreshStatsCPLsList',
+        'refresh-stats-cpmk'  => 'refreshStatsCPMKsList',
+        'refresh-stats-scpmk' => 'refreshStatsSubCPMKsList',
+        'refresh-stats-ref'   => 'refreshStatsRefsList',
+        'refresh-stats-tim-dosen' => 'refreshStatsTimDosensList',
+        'refresh-stats-user'  => 'refreshStatsUsersList',
         'loadDraft'           => 'loadDraft',
         'saveToDraft'         => 'saveToDraft',
     ];
@@ -229,19 +229,19 @@ class ObeManagement extends Component
     #[On('refresh-data-tim-dosen')]
     #[On('refresh-data-user')]
     #[On('refresh-table')]
-    public function refreshOBEList()
+    public function refreshOBEsList()
     {
         $this->resetPage();
     }
 
     #[On('refresh-stats-obe')]
-    public function refreshStatsOBEList()
+    public function refreshStatsOBEsList()
     {
         $this->clearObeStatsCache();
         $this->clearObeProdiStatsCache();
     }
     #[On('refresh-stats-rps')]
-    public function refreshStatsRPSList()
+    public function refreshStatsRPSsList()
     {
         $this->clearObeStatsCache();
         $this->clearRpsStatsCache();
@@ -249,7 +249,7 @@ class ObeManagement extends Component
         $this->clearRpsProdiStatsCache();
     }
     #[On('refresh-stats-cpl')]
-    public function refreshStatsCPLList()
+    public function refreshStatsCPLsList()
     {
         $this->clearObeStatsCache();
         $this->clearCplStatsCache();
@@ -257,7 +257,7 @@ class ObeManagement extends Component
         $this->clearCplProdiStatsCache();
     }
     #[On('refresh-stats-cpmk')]
-    public function refreshStatsCPMKList()
+    public function refreshStatsCPMKsList()
     {
         $this->clearObeStatsCache();
         $this->clearCpmkStatsCache();
@@ -265,7 +265,7 @@ class ObeManagement extends Component
         $this->clearCpmkProdiStatsCache();
     }
     #[On('refresh-stats-scpmk')]
-    public function refreshStatsSCPMKList()
+    public function refreshStatsSubCPMKsList()
     {
         $this->clearObeStatsCache();
         $this->clearScpmkStatsCache();
@@ -273,24 +273,38 @@ class ObeManagement extends Component
         $this->clearScpmkProdiStatsCache();
     }
     #[On('refresh-stats-ref')]
-    public function refreshStatsReferensiList()
+    public function refreshStatsReferensisList()
     {
         $this->clearObeStatsCache();
         $this->clearReferensiStatsCache();
     }
     #[On('refresh-stats-tim-dosen')]
-    public function refreshStatsTimDosenList()
+    public function refreshStatsTimDosensList()
     {
         $this->clearObeStatsCache();
         $this->clearTimDosenStatsCache();
     }
     #[On('refresh-stats-user')]
-    public function refreshStatsUserList()
+    public function refreshStatsUsersList()
     {
         $this->clearUserStatsCache();
         $this->clearObeStatsCache();
         $this->clearDosenStatsCache();
     }
+
+    public function refreshStats() {
+        $this->refreshStatsOBEsList();
+        $this->refreshStatsRPSsList();
+        $this->refreshStatsCPLsList();
+        $this->refreshStatsCPMKsList();
+        $this->refreshStatsSubCPMKsList();
+        $this->refreshStatsReferensisList();
+        $this->refreshStatsTimDosensList();
+        $this->refreshStatsUsersList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik OBE berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
 
     public function updatingSearch()
     {
@@ -299,7 +313,7 @@ class ObeManagement extends Component
 
     public function loadingTable() {}
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function updatedPerPage()
     {

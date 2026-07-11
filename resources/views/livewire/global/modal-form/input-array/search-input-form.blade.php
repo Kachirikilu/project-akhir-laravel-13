@@ -19,30 +19,38 @@
             }
         }"
         x-effect="
-        const config = $store.{{ $alpine ?? 'config' }};
-        
-        if (config?.isEdit === 0) {
-            search = '';
-            items = null;
-            itemsAll = null;
-        } else {
-            let currentId = config?.['{{ $idString }}'];
-
-            if (!currentId) {
-                // Hanya reset jika tidak sedang dalam proses input manual
-                if (!isManual) {
-                    search = '';
-                    items = null;
-                    itemsAll = null;
-                }
+            const config = $store.{{ $alpine ?? 'config' }};
+            
+            if (config?.isEdit === 0) {
+                search = '';
+                items = null;
+                itemsAll = null;
             } else {
-                // Sinkronisasi dari Global Store ke Entangle (State Lokal)
-                search = config?.['{{ $modelString }}'];
-                items = config?.['{{ $idString }}'];
-                itemsAll = config?.['{{ $itemsAllString }}'];
-            }
+                let currentId = config?.['{{ $idString }}'];
+
+                if (!currentId) {
+                    if (!isManual) {
+                        search = '';
+                        items = null;
+                        itemsAll = null;
+                    }
+                } else {
+                    search = config?.['{{ $modelString }}'];
+                    items = config?.['{{ $idString }}'];
+                    itemsAll = config?.['{{ $itemsAllString }}'];
+                }
+            },
+
+            if (icon) {
+            const color = isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400';
+            icon.className = icon.className.replace(/text-[a-z0-9-]+/g, color);
         }
-    ">
+        "
+        {{-- x-init="$watch('isParentReady', (value) => {
+            console.log('%c[Debug] isParentReady berubah menjadi:', 'color: #007bff; font-weight: bold;', value);
+            console.log('Nilai parentSelectedId saat ini:', parentSelectedId);
+        });
+        console.log('Status awal isParentReady:', isParentReady);" --}}>
 
         @include('livewire.global.modal-form.partial.label')
         @include('livewire.global.modal-form.input-array.partial.input-search', [

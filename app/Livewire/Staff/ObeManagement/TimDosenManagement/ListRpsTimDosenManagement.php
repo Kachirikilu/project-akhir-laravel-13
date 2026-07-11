@@ -33,7 +33,7 @@ class ListRpsTimDosenManagement extends Component
         $this->editTimDosen($id, $isRPS);
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

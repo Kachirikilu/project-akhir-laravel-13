@@ -87,7 +87,7 @@ class ModalTimDosenManagement extends Component
         }
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

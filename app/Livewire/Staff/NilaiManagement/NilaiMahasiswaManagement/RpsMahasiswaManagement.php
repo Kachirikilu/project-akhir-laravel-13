@@ -167,6 +167,9 @@ class RpsMahasiswaManagement extends Component
     {
         $this->resetPage();
     }
+    public function refreshStats() {
+        $this->resetPage();
+    }
 
 
     public function updatingSearch()

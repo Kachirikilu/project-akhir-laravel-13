@@ -147,6 +147,19 @@
         box-shadow: inset 0 -1px 0 var(--border-table-color) !important;
     }
 
+    /* @keyframes refresh-spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(720deg);
+        }
+    }
+
+    .refresh-spin {
+        animation: refresh-spin 0.9s cubic-bezier(0.4, 0, 0.2, 1) 1;
+    } */
+
     /* .table-main-sticky {
         border-left: none !important;
         border-right: none !important;

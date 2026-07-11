@@ -58,7 +58,7 @@ class ModalSubCpmkManagement extends Component
         }
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

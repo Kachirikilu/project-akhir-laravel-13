@@ -19,6 +19,8 @@ use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
+use App\Livewire\Global\HasStats;
+
 // use App\Livewire\Global\WithUserSearchFilters;
 // use App\Livewire\Global\WithNilaiSearchFilters;
 use App\Models\Auth\Mahasiswa;
@@ -42,7 +44,7 @@ class RpsCapaianMahasiswaManagement extends Component
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
     use WithRPSShow;
-
+    use HasStats;
     // use WithNilaiSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;
@@ -86,8 +88,8 @@ class RpsCapaianMahasiswaManagement extends Component
     public $refreshTrigger = 0;
 
     protected $listeners = [
-        'refresh-table' => 'refreshCapaianList',
-        'refresh-data-rps-mahasiswa' => 'refreshCapaianList',
+        'refresh-table' => 'refreshCapaiansList',
+        'refresh-data-rps-mahasiswa' => 'refreshCapaiansList',
         'loadDraft' => 'loadDraft',
         'saveToDraft' => 'saveToDraft'
     ];
@@ -124,10 +126,33 @@ class RpsCapaianMahasiswaManagement extends Component
 
     #[On('refresh-data-rps-mahasiswa')]
     #[On('refresh-table')]
-    public function refreshCapaianList()
+    public function refreshCapaiansList()
     {
         $this->resetPage();
         $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+    }
+
+
+    #[On('refresh-stats-user')]
+    public function refreshStatsUsersList()
+    {
+        $this->clearUserStatsCache();
+        $this->clearMahasiswaStatsCache();
+    }
+    #[On('refresh-stats-rps')]
+    public function refreshStatsRPSsList()
+    {
+        $this->clearObeStatsCache();
+        $this->clearRpsStatsCache();
+        $this->clearObeProdiStatsCache();
+        $this->clearRpsProdiStatsCache();
+    }
+    public function refreshStats() {
+        $this->refreshCapaiansList();
+        $this->refreshStatsUsersList();
+        $this->refreshStatsRPSsList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik RPS & Grafik Capaian berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
     public function mount($kode_rps = '')

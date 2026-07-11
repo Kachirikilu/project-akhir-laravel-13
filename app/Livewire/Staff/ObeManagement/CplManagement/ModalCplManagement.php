@@ -51,7 +51,7 @@ class ModalCplManagement extends Component
         $this->editCPL($id, $tingkatan, $isRPS);
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

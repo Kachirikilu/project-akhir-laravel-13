@@ -113,6 +113,12 @@ class SesiManagement extends Component
         $this->clearKelasStatsCache();
     }
 
+    public function refreshStats() {
+        $this->refreshStatsKelasList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik Kelas berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
     public function mount(
         $isJadwalMhs = false,
         $kode_kelas = null,

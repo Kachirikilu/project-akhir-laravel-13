@@ -148,14 +148,14 @@ trait WithRPSSearchFilters
         }
     }
 
-    public function updated($propertyName)
-{
-    if (in_array($propertyName, ['rpsNameSearch', 'rps_id'])) {
-        // dump akan menampilkan data di layar tanpa menghentikan eksekusi
-        dump("Variabel {$propertyName} diupdate menjadi: " . $this->{$propertyName});
-        dump("Nilai rps_items saat ini: ", $this->rps_items);
-    }
-}
+    // public function updated($propertyName)
+    // {
+    //     if (in_array($propertyName, ['rpsNameSearch', 'rps_id'])) {
+    //         // dump akan menampilkan data di layar tanpa menghentikan eksekusi
+    //         dump("Variabel {$propertyName} diupdate menjadi: ".$this->{$propertyName});
+    //         dump('Nilai rps_items saat ini: ', $this->rps_items);
+    //     }
+    // }
 
     public function updatedRPSNameSearch($value)
     {

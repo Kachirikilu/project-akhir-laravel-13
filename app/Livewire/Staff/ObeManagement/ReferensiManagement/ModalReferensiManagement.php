@@ -54,7 +54,7 @@ class ModalReferensiManagement extends Component
         $this->editRef($id);
     }
 
-    public function loadingRPSList() {}
+    public function loadingRPSsList() {}
 
     public function render()
     {

@@ -752,7 +752,7 @@ trait WithUserModal
     public function validationMessagesUser()
     {
         return [
-            'email.required' => 'Alamat email wajib diisi!',
+            'email.required' => 'Alamat Email wajib diisi!',
             'email.email' => 'Format email tidak valid!',
             'email.unique' => 'Email ini sudah terdaftar di sistem!',
             'password.required' => 'Password wajib diisi!',

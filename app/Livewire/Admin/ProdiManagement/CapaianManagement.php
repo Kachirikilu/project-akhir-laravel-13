@@ -170,14 +170,14 @@ class CapaianManagement extends Component
     }
 
     #[On('refresh-stats-obe')]
-    public function refreshStatsOBEList()
+    public function refreshStatsOBEsList()
     {
         $this->clearObeStatsCache();
         $this->clearObeProdiStatsCache($this->pr_id_url);
     }
 
     #[On('refresh-stats-rps')]
-    public function refreshStatsRPSList()
+    public function refreshStatsRPSsList()
     {
         $this->clearObeStatsCache();
         $this->clearRpsStatsCache();
@@ -186,7 +186,7 @@ class CapaianManagement extends Component
     }
 
     #[On('refresh-stats-cpl')]
-    public function refreshStatsCPLList()
+    public function refreshStatsCPLsList()
     {
         $this->clearObeStatsCache();
         $this->clearCplStatsCache();
@@ -195,7 +195,7 @@ class CapaianManagement extends Component
     }
 
     #[On('refresh-stats-cpmk')]
-    public function refreshStatsCPMKList()
+    public function refreshStatsCPMKsList()
     {
         $this->clearObeStatsCache();
         $this->clearCpmkStatsCache();
@@ -204,7 +204,7 @@ class CapaianManagement extends Component
     }
 
     #[On('refresh-stats-scpmk')]
-    public function refreshStatsSCPMKList()
+    public function refreshStatsSubCPMKsList()
     {
         $this->clearObeStatsCache();
         $this->clearScpmkStatsCache();
@@ -213,13 +213,23 @@ class CapaianManagement extends Component
     }
 
     #[On('refresh-stats-user')]
-    public function refreshStatsUserList()
+    public function refreshStatsUsersList()
     {
         $this->clearUserStatsCache();
         $this->clearObeStatsCache();
         // $this->clearDosenStatsCache();
         $this->clearObeProdiStatsCache($this->pr_id_url);
         $this->clearMahasiswaProdiStatsCache($this->pr_id_url);
+    }
+    public function refreshStats() {
+        $this->refreshStatsOBEsList();
+        $this->refreshStatsRPSsList();
+        $this->refreshStatsCPLsList();
+        $this->refreshStatsCPMKsList();
+        $this->refreshStatsSubCPMKsList();
+        $this->refreshStatsUsersList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik OBE berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
     // public function mount($switchTable = '')
@@ -394,7 +404,7 @@ class CapaianManagement extends Component
 
     public function loadingTable() {}
 
-    public function loadingRPSList() {}
+    public function loadingRPSssList() {}
 
     public function updatedPerPage()
     {

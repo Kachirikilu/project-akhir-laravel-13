@@ -145,6 +145,9 @@ class NilaiMahasiswaManagement extends Component
     {
         $this->resetPage();
     }
+    public function refreshStats() {
+        $this->resetPage();
+    }
 
     public function sortBy($field)
     {

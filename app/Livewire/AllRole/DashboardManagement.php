@@ -7,17 +7,17 @@ use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Jenssegers\Agent\Agent;
-use Livewire\Component;
-// use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use Jenssegers\Agent\Agent;
+use Livewire\WithPagination;
+use Livewire\Component;
 
 class DashboardManagement extends Component
 {
     use HasSortir;
     use HasStats;
     use HasToast;
-    // use WithPagination;
+    use WithPagination;
 
     protected $listeners = [
         'refresh-table' => 'refreshDashboardsList',
@@ -31,6 +31,26 @@ class DashboardManagement extends Component
     public function refreshDashboardsList()
     {
         $this->resetPage();
+    }
+
+    public function refreshStats()
+    {
+        $this->clearKelasStatsCache();
+
+        if (Auth::user()->admin || Auth::user()->dosen) {
+            $this->clearObeProdiStatsCache();
+            $this->clearRpsProdiStatsCache();
+            $this->clearMkStatsCache();
+
+            if (Auth::user()->admin) {
+                $this->clearDosenStatsCache();
+                $this->clearMahasiswaProdiStatsCache();
+            } else {
+                $this->clearTimDosenStatsCache();
+            }
+        }
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik Dashboard berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
     // public function loadingTable() {}
@@ -83,7 +103,7 @@ class DashboardManagement extends Component
             ->where('user_id', Auth::id())
             ->get()
             ->map(function ($session) {
-                $agent = new Agent();
+                $agent = new Agent;
                 $agent->setUserAgent($session->user_agent);
 
                 return (object) [
@@ -92,18 +112,16 @@ class DashboardManagement extends Component
                     'platform' => $agent->platform(),
                     'browser' => $agent->browser(),
                     'is_desktop' => $agent->isDesktop(),
-                    'last_activity' => \Carbon\Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
-                    'is_current' => ($session->id === session()->getId())
+                    'last_activity' => Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
+                    'is_current' => ($session->id === session()->getId()),
                 ];
             })->sortByDesc(function ($session) {
                 return $session->is_current;
             });
 
-
-
-            return view('livewire.all-role.dashboard-manager', [
-                'stats'    => $stats ?? null,
-                'sessions' => $sessions,
-            ]);
+        return view('livewire.all-role.dashboard-manager', [
+            'stats' => $stats ?? null,
+            'sessions' => $sessions,
+        ]);
     }
 }

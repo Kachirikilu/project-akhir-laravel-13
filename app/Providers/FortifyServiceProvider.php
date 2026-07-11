@@ -7,16 +7,19 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\LoginResponse;
 use App\Http\Responses\RegisterResponse;
 use App\Http\Responses\TwoFactorLoginResponse;
+use App\Models\Auth\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
+// use Laravel\Fortify\Http\Requests\LoginRequest;
 use Laravel\Fortify\Fortify;
-use Illuminate\Support\Facades\Route;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -38,6 +41,42 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+
+        // Fortify::loginRequest(function (Request $request) {
+        //     return LoginRequest::createFrom($request, [
+        //         'email' => ['required', 'string'],
+        //         'password' => ['required', 'string'],
+        //     ], [
+        //         'email.failed' => 'Email atau ID Akademik dan Password yang Anda masukkan tidak cocok dengan Sistem kami!',
+        //     ]);
+        // });
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $identifier = $request->input('email');
+            $password = $request->password;
+
+            $user = User::where('email', $identifier)->first();
+            if (! $user) {
+                $user = User::whereHas('admin', function ($query) use ($identifier) {
+                    $query->where('nip', $identifier);
+                })->first();
+            }
+            if (! $user) {
+                $user = User::whereHas('dosen', function ($query) use ($identifier) {
+                    $query->where('nip', $identifier);
+                })->first();
+            }
+            if (! $user) {
+                $user = User::whereHas('mahasiswa', function ($query) use ($identifier) {
+                    $query->where('nim', $identifier);
+                })->first();
+            }
+
+            // Verifikasi password
+            if ($user && Hash::check($password, $user->password)) {
+                return $user;
+            }
+        });
 
         Fortify::registerView(function () {
             return view('auth.register');

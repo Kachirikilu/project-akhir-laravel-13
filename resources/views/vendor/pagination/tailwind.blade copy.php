@@ -35,8 +35,7 @@
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between sm:gap-4">
             @if (!($isSmall ?? false))
                 <div>
-                    <p
-                        class="{{ $withNowrap ?? false ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
+                    <p class="{{ ($withNowrap ?? false) ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
                         {!! __('Menampilkan') !!}
                         @if ($paginator->firstItem())
                             <span
@@ -53,8 +52,7 @@
                 </div>
             @else
                 <div>
-                    <p
-                        class="{{ $withNowrap ?? false ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
+                    <p class="{{ ($withNowrap ?? false) ? 'whitespace-nowrap' : '' }} text-xs sm:text-sm text-gray-700 leading-5 dark:text-gray-400">
                         @if ($paginator->total() > 0)
                             <span class="font-bold text-[var(--contrast-main-text)]">
                                 {{ $paginator->firstItem() ?? $paginator->count() }}-{{ $paginator->lastItem() ?? $paginator->count() }}
@@ -97,72 +95,37 @@
                         </button>
                     @endif
 
-                    @php
-                        $maxButtons = max(3, $maxButtons ?? 12) - 4;
-
-                        $current = $paginator->currentPage();
-                        $last = $paginator->lastPage();
-
-                        $side = intdiv($maxButtons - 1, 2);
-
-                        $start = max(1, $current - $side);
-                        $end = min($last, $start + $maxButtons - 1);
-
-                        // Geser ke kiri jika mentok kanan
-                        $start = max(1, min($start, $last - $maxButtons + 1));
-                        $end = min($last, $start + $maxButtons - 1);
-                    @endphp
-
-                    {{-- Halaman pertama --}}
-                    @if ($start > 1)
-                        <button type="button"
-                            wire:click="gotoPage(1, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
-                            class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
-                            1
-                        </button>
-
-                        @if ($start > 2)
-                            <span
-                                class="inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300">
-                                ...
-                            </span>
-                        @endif
-                    @endif
-
-                    {{-- Nomor halaman --}}
-                    @for ($page = $start; $page <= $end; $page++)
-                        @if ($page == $current)
-                            <span aria-current="page">
+                    {{-- Pagination Elements --}}
+                    @foreach ($elements as $element)
+                        {{-- "Three Dots" Separator --}}
+                        @if (is_string($element))
+                            <span aria-disabled="true">
                                 <span
-                                    class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-bold text-white bg-[var(--main-color)] border border-[var(--main-color)]">
-                                    {{ $page }}
-                                </span>
-                            </span>
-                        @else
-                            <button type="button"
-                                wire:click="gotoPage({{ $page }}, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
-                                class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
-                                {{ $page }}
-                            </button>
-                        @endif
-                    @endfor
-
-                    {{-- Halaman terakhir --}}
-                    @if ($end < $last)
-                        @if ($end < $last - 1)
-                            <span
-                                class="inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300">
-                                ...
+                                    class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300">{{ $element }}</span>
                             </span>
                         @endif
 
-                        <button type="button"
-                            wire:click="gotoPage({{ $last }}, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
-                            class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
-                            {{ $last }}
-                        </button>
-                    @endif
+                        {{-- Array Of Links --}}
+                        @if (is_array($element))
+                            @foreach ($element as $page => $url)
+                                @if ($page == $paginator->currentPage())
+                                    <span aria-current="page">
+                                        <span
+                                            class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-bold text-white bg-[var(--main-color)] border border-[var(--main-color)] cursor-default leading-5">{{ $page }}</span>
+                                    </span>
+                                @else
+                                    <button type="button"
+                                        wire:click="gotoPage({{ $page }}, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
+                                        class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150"
+                                        aria-label="{{ __('Go to page :page', ['page' => $page]) }}">
+                                        {{ $page }}
+                                    </button>
+                                @endif
+                            @endforeach
+                        @endif
+                    @endforeach
 
+                    {{-- Next Page Link --}}
                     @if ($paginator->hasMorePages())
                         <button type="button"
                             wire:click="nextPage('{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
@@ -192,4 +155,5 @@
             </div>
         </div>
     </nav>
+
 @endif

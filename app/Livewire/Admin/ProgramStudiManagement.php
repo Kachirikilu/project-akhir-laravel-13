@@ -112,6 +112,12 @@ class ProgramStudiManagement extends Component
         $this->clearProdiStatsCache();
     }
 
+    public function refreshStats() {
+        $this->refreshStatsProdisList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik Program Studi berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();

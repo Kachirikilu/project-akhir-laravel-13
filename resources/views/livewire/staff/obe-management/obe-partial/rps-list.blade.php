@@ -9,7 +9,7 @@
         <div class="space-y-4">
 
             @include('livewire.global.modal-form.loading-animation', [
-                'wireLoading' => ($wireLoading ?? 'edit' . $nameXString) . ', loadingRPSList',
+                'wireLoading' => ($wireLoading ?? 'edit' . $nameXString) . ', loadingRPSsList',
             ])
 
             {{-- HEADER --}}
@@ -59,7 +59,7 @@
                         @foreach ($rps_items_list as $r)
                             <div wire:key="rps-row-{{ $r['id'] }}-{{ $nameXString }}" x-data="{ expanded: false }"
                                 wire:loading.class="opacity-50 pointer-events-none"
-                                wire:target="{{ $wireLoading ?? 'edit' . $nameXString }}, loadingRPSList"
+                                wire:target="{{ $wireLoading ?? 'edit' . $nameXString }}, loadingRPSsList"
                                 class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:border-green-300 dark:hover:border-green-800 transition-all">
 
                                 {{-- HEADER ITEM (clickable) --}}
@@ -264,7 +264,9 @@
                                 {{-- <div
                                 wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}"> --}}
                                 {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSList',
+                                    'typeXLoading' => 'loadingRPSsList',
+                                    'isSmall' => 1,
+                                    'maxButtons' => 8
                                 ]) }}
                                 {{-- </div> --}}
                             </div>
@@ -273,7 +275,7 @@
                             wire:key="secure-pagination-zone">
                             @if (!empty($rps_modal_paginator) && $rps_modal_paginator->hasPages())
                                 {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSList',
+                                    'typeXLoading' => 'loadingRPSsList',
                                 ]) }}
                             @endif
                         </div> --}}

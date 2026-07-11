@@ -268,19 +268,19 @@
                         </div>
 
                         {{-- Nama Mata Kuliah --}}
-                        <p class="text-[15px] font-bold leading-[1.35] tracking-[0.1em] text-[var(--main-text)]">
+                        <p class="mt-1 text-[14px] font-bold leading-[1.35] tracking-[0.1em] text-[var(--main-text)]">
                             {{ $n->mk ?? '-' }} {{ $n->digit_mk }}
                         </p>
 
                         <div class="flex flex-wrap items-center gap-2">
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                 <flux:icon name="users" class="w-3 h-3" />
                                 {{ $nim_url ?? '-' }}
                             </span>
                             <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                 <flux:icon name="academic-cap" class="w-3 h-3" />
                                 {{ $n->sks ?? ($n->sks ?? '-') }} SKS
                             </span>

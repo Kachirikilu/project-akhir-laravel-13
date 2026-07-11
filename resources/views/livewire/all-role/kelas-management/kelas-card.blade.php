@@ -115,7 +115,9 @@
                                 <flux:icon name="academic-cap" class="w-3 h-3" />
                                 {{ $k->kode }}
                             </button>
-                     @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 1])
+                            @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
+                                'key' => 1,
+                            ])
                         </flux:dropdown>
                         @if (Auth::user()->admin || Auth::user()->dosen)
                             <span class="text-xs text-white/60 font-mono">ID:
@@ -129,26 +131,32 @@
                             class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
                             <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                         </button>
-                     @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2])
+                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2])
                     </flux:dropdown>
                 </div>
 
                 {{-- Nama Mata Kuliah --}}
-                <p class="text-[15px] font-bold leading-[1.35] tracking-[-0.02em] text-[var(--main-text)]">
+                <p class="mt-1 text-[14px] font-bold leading-[1.35] tracking-[-0.02em] text-[var(--main-text)]">
                     {{ $k->mk ?? '-' }}
                 </p>
 
                 {{-- Sub info: nama kelas + prodi --}}
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
-                        <flux:icon name="users" class="w-3 h-3" />
-                        {{ $k->kelas ?? '-' }}
-                    </span>
-                    <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
-                    <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
-                        <flux:icon name="academic-cap" class="w-3 h-3" />
-                        {{ $k->kode_pr ?? '-' }}
-                    </span>
+                <div class="flex flex-col gap-1.5">
+                    <!-- Baris Atas: Kelas -->
+                    <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <flux:icon name="users" class="w-3 h-3 mt-[1px] flex-shrink-0" />
+                        <span class="leading-tight break-words">
+                            {{ $k->kelas ?? '-' }}
+                        </span>
+                    </div>
+
+                    <!-- Baris Bawah: Kode PR -->
+                    <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <flux:icon name="academic-cap" class="w-3 h-3 mt-[1px] flex-shrink-0" />
+                        <span class="leading-tight break-words">
+                            {{ $k->kode_pr ?? '-' }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -227,9 +235,8 @@
                         $flux.modal('rps-detail-modal').show();
                         $dispatch('open-show-rps-modal', { id: {{ $k->rps_id }}, prId: {{ $k->pr_id }} });
                     "
-                    <flux:icon
-                        name="clipboard-document-list" class="w-3.5 h-3.5" />
-                    <span>Lihat RPS</span>
+                    <flux:icon name="clipboard-document-list" class="w-3.5 h-3.5" />
+                <span>Lihat RPS</span>
                 </button>
 
                 <button

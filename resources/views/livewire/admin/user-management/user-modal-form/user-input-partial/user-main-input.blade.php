@@ -8,40 +8,40 @@
 
     {{-- 📧 Email Input --}}
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'user',
-        // 'isLivewire' => 1,
-        'modelString' => 'email',
-        'typeString' => 'email',
-        'iconString' => 'envelope',
-        'placeholder' => 'Default: NIP@staff.unsri.ac.id',
-        'message' => $errors->first('email'),
-        'isRequired' => 0,
-    ])
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'modelString' => 'email',
+            'typeString' => 'email',
+            'iconString' => 'envelope',
+            'placeholder' => 'Default: nip@staff.unsri.ac.id',
+            'message' => $errors->first('email'),
+            'isRequired' => 0,
+        ])
     </template>
-        <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'user',
-        // 'isLivewire' => 1,
-        'modelString' => 'email',
-        'typeString' => 'email',
-        'iconString' => 'envelope',
-        'placeholder' => 'Default: NIP@lecture.unsri.ac.id',
-        'message' => $errors->first('email'),
-        'isRequired' => 0,
-    ])
+    <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'modelString' => 'email',
+            'typeString' => 'email',
+            'iconString' => 'envelope',
+            'placeholder' => 'Default: nip@lecture.unsri.ac.id',
+            'message' => $errors->first('email'),
+            'isRequired' => 0,
+        ])
     </template>
-        <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'user',
-        // 'isLivewire' => 1,
-        'modelString' => 'email',
-        'typeString' => 'email',
-        'iconString' => 'envelope',
-        'placeholder' => 'Default: NIM@student.unsri.ac.id',
-        'message' => $errors->first('email'),
-        'isRequired' => 0,
-    ])
+    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'modelString' => 'email',
+            'typeString' => 'email',
+            'iconString' => 'envelope',
+            'placeholder' => 'Default: nim@student.unsri.ac.id',
+            'message' => $errors->first('email'),
+            'isRequired' => 0,
+        ])
     </template>
 
     {{-- 🔒 Password Input --}}
@@ -52,7 +52,7 @@
                 'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
-                'iconString' => 'lock-closed',
+                'showPassword' => 1,
                 'placeholder' => 'Default: NIP',
                 'message' => $errors->first('password'),
                 'isRequired' => 0,
@@ -66,7 +66,7 @@
                 'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
-                'iconString' => 'lock-closed',
+                'showPassword' => 1,
                 'placeholder' => 'Default: NIM',
                 'message' => $errors->first('password'),
                 'isRequired' => 0,
@@ -80,7 +80,7 @@
             'isLivewire' => 1,
             'modelString' => 'password',
             'typeString' => 'password',
-            'iconString' => 'lock-closed',
+            'showPassword' => 1,
             'placeholder' => 'Kosongkan jika tidak ingin diubah...',
             'message' => $errors->first('password'),
             'isRequired' => 0,

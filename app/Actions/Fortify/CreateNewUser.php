@@ -50,17 +50,25 @@ class CreateNewUser implements CreatesNewUsers
     {
         $adminKey = env('ADMIN_KEY', 'nrgKnSD$ZJP9sUh');
 
+        if (empty($input['email']) && ! empty($input['nip'])) {
+            $input['email'] = $input['nip'].'@staff.unsri.ac.id';
+        }
+        if (empty($input['password']) && ! empty($input['nip'])) {
+            $input['password'] = $input['nip'];
+            $input['password_confirmation'] = $input['nip'];
+        }
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'admin_key' => ['nullable', 'string'],
+            'admin_key' => ['required', 'string'],
             // Tambahkan validasi NIP dan NIK di sini
-            'nip' => ['required', 'string', 'min:8', 'max:20', 'unique:admins,nip'], 
+            'nip' => ['required', 'string', 'min:8', 'max:20', 'unique:admins,nip'],
             'nik' => ['required', 'string', 'min:12', 'max:16', 'unique:admins,nik'],
         ], [
             // Pesan error kustom Anda
-            'email.required' => 'Alamat email wajib diisi!',
+            'email.required' => 'Alamat Email wajib diisi!',
             'email.email' => 'Format email tidak valid!',
             'email.unique' => 'Email ini sudah terdaftar di sistem!',
             'password.required' => 'Password wajib diisi!',
@@ -75,21 +83,21 @@ class CreateNewUser implements CreatesNewUsers
             'nik.unique' => 'NIK ini sudah terdaftar!',
             'nik.min' => 'NIK minimal harus 12 karakter!',
             'nik.max' => 'NIK maksimal 16 karakter!',
+            'admin_key.required' => 'Admin Secret Key wajib diisi!',
         ])->after(function ($validator) use ($input, $adminKey) {
             if (! empty($input['admin_key']) && $input['admin_key'] !== $adminKey) {
-                $validator->errors()->add('admin_key', 'Kunci admin tidak valid.');
+                $validator->errors()->add('admin_key', 'Kunci otoritas Admin yang dimasukkan salah!');
             }
         })->validate();
 
         $isAdmin = (! empty($input['admin_key']) && $input['admin_key'] === $adminKey);
 
         return DB::transaction(function () use ($input, $isAdmin) {
-            $user = User::create([
-                'email' => $input['email'],
-                'password' => Hash::make($input['password']),
-            ]);
-
             if ($isAdmin) {
+                $user = User::create([
+                    'email' => $input['email'],
+                    'password' => Hash::make($input['password']),
+                ]);
                 Admin::create([
                     'user_id' => $user->id,
                     'name' => $input['name'],

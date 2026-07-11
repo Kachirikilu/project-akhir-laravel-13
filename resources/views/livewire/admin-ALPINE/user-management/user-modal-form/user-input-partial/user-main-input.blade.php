@@ -25,7 +25,7 @@
                 'alpine' => 'user',
                 'modelString' => 'password',
                 'typeString' => 'password',
-                'iconString' => 'lock-closed',
+                'showPassword' => 1,
                 'placeholder' => 'Default: NIP',
                 'message' => $errors->first('password'),
             ])
@@ -38,20 +38,19 @@
                 'alpine' => 'user',
                 'modelString' => 'password',
                 'typeString' => 'password',
-                'iconString' => 'lock-closed',
+                'showPassword' => 1,
                 'placeholder' => 'Default: NIM',
                 'message' => $errors->first('password'),
             ])
         </template>
     </template>
-    
+
     <template x-if="$store.user?.isEdit == 1" x-cloak>
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
             'modelString' => 'password',
             'typeString' => 'password',
-            'iconString' => 'lock-closed',
             'placeholder' => 'Kosongkan jika tidak ingin diubah...',
             'message' => $errors->first('password'),
             'isRequired' => 0,

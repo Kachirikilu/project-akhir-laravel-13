@@ -11,7 +11,7 @@ new #[Title('Theme Settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Theme Settings') }}</flux:heading>
     <x-pages::settings.layout :heading="__('Theme')" :subheading="__('Atur Tema pada Dashboard Akun Anda')">
-        <div class="space-y-4 w-full max-w-lg">
+        <div class="space-y-4 w-full max-w-xl">
             {{-- Radio Group Appearance --}}
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance"
                 class="!bg-[var(--sub-table-color)] !border !border-[var(--border-table-color)] p-1 rounded-lg w-full flex">
@@ -29,7 +29,7 @@ new #[Title('Theme Settings')] class extends Component {
 
         <livewire:all-role.wallpaper-management lazy />
 
-        <div class="space-y-4 w-full max-w-lg">
+        <div class="space-y-4 w-full max-w-xl">
             {{-- Container Tema (Atas) --}}
             <div class="space-y-2 w-full">
                 <div class="w-full flex justify-center">

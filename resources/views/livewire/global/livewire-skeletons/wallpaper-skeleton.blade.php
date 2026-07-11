@@ -1,4 +1,4 @@
-<div class="my-4 p-4 bg-[var(--sub-table-color)] rounded-2xl border border-[var(--border-table-color)] w-full max-w-lg animate-pulse">
+<div class="my-4 p-4 bg-[var(--sub-table-color)] rounded-2xl border border-[var(--border-table-color)] w-full animate-pulse">
     <div class="w-full flex justify-between items-center mb-4">
         <div class="h-4 w-32 bg-[var(--border-table-color)] rounded"></div>
     </div>

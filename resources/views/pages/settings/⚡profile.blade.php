@@ -275,7 +275,6 @@ new #[Title('Profile Settings')] class extends Component {
                             'noLabel' => 1,
                             'modelString' => 'password',
                             'typeString' => 'password',
-                            'iconString' => 'lock-closed',
                             'placeholder' => 'Default: ' . Auth::user()->identity1,
                             // 'message' => $errors->first('user_input.password'),
                             'isRequired' => 0,

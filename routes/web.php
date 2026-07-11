@@ -17,6 +17,12 @@ Route::middleware(['web', 'check.registration'])->group(function () {
     })->name('register');
 });
 
+// Route::middleware(['web', 'check.user.exists'])->group(function () {
+//     Route::get('/login', function () {
+//         return view('pages.auth.login');
+//     })->name('login');
+// });
+
 Route::view('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');

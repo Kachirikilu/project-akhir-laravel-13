@@ -226,11 +226,11 @@
             @endphp
 
             {{-- <template x-if="itemVisibilityMap[{{ $s->id }}]?.visible"> --}}
-            <div x-show="itemVisibilityMap[{{ $s->id }}]?.visible" x-transition>
+            <div x-show="itemVisibilityMap[{{ $s->id }}]?.visible" x-transition class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
                     :style="'order: ' + (itemVisibilityMap[{{ $s->id }}]?.order ?? {{ $index }})"
                     @click="expanded = !expanded"
-                    class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer {{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/40' : '' }}">
+                    class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer {{ $isUjian ? 'ring-1 ring-amber-500/40' : '' }}">
 
                     {{-- ═══ HERO ═══ --}}
                     <div class="flex flex-col gap-3 p-[18px] {{ $isUjian ? 'bg-amber-700' : 'bg-[var(--main-color)]' }}"
@@ -288,7 +288,7 @@
                         </div>
 
                         {{-- Judul: Sub-CPMK atau label Ujian --}}
-                        <p class="text-[15px] font-bold leading-[1.35] tracking-[0.1em] text-[var(--main-text)]">
+                        <p class="mt-1 text-[15px] font-bold leading-[1.35] tracking-[0.1em] text-[var(--main-text)]">
                             @if ($isUjian)
                                 <span class="text-amber-200">Sesi Evaluasi Utama</span>
                             @else
@@ -299,13 +299,13 @@
                         {{-- Sub info: hari + tanggal --}}
                         <div class="flex flex-wrap items-center gap-2">
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                 <flux:icon name="calendar-days" class="w-3 h-3" />
                                 {{ $s->hari ?? '-' }}, {{ $s->jam_pelaksanaan ?? '-' }}
                             </span>
                             <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                 <flux:icon name="clock" class="w-3 h-3" />
                                 {{ $s->tanggal_pelaksanaan ?? '-' }}
                             </span>

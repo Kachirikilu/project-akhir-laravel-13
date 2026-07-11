@@ -1,4 +1,4 @@
-<div class="my-4 p-4 bg-[var(--sub-table-color)] rounded-2xl border border-[var(--border-table-color)] w-full max-w-lg">
+<div class="my-4 p-4 bg-[var(--sub-table-color)] rounded-2xl border border-[var(--border-table-color)] w-full">
     <div class="w-full flex justify-between items-center mb-4">
         <h3 class="text-[var(--contrast-main-text)] text-sm font-medium">
             Pilih Wallpaper
@@ -45,7 +45,7 @@
     
     @if ($defaultWallpapers->hasPages())
         <div class="pb-2 overflow-auto scrollbar-medium" id="pagination-links-container" wire:target="{{ $defaultWallpapers->getPageName() }}">
-            {{ $defaultWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'typeXLoading' => 'loadingDefaultWallpaper', 'withNowrap' => 1]) }}
+            {{ $defaultWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 6, 'typeXLoading' => 'loadingDefaultWallpaper', 'withNowrap' => 1]) }}
         </div>
     @endif
 
@@ -63,7 +63,7 @@
         {{-- Navigasi Halaman --}}
         @if ($customWallpapers->hasPages())
             <div class="pb-2 overflow-auto scrollbar-medium" id="pagination-links-container" wire:target="{{ $customWallpapers->getPageName() }}">
-                {{ $customWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'typeXLoading' => 'loadingCustomWallpaper', 'withNowrap' => 1]) }}
+                {{ $customWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 6, 'typeXLoading' => 'loadingCustomWallpaper', 'withNowrap' => 1]) }}
             </div>
         @endif
     @endif

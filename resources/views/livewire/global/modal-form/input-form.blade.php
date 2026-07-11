@@ -17,7 +17,7 @@
         valueInput: '',
             @endif
     
-        showPassword: false,
+        showPassword: {{ $showPassword ?? 'false' }},
     
             inputType:
             @if (($isDate ?? false) === 1 || ($isDate ?? false) === true || ($isDate ?? false) === 'date') 'date'
@@ -100,9 +100,25 @@ store.{{ $modelString }} = valueInput ?? '';
 
             {{-- Icon Samping Kiri --}}
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <flux:icon icon="{{ $iconString }}" variant="mini"
-                    x-bind:class="$store.{{ $alpineState }}?.colorIcon" />
+                @if (($typeString ?? '') === 'password')
+                    <template x-if="!showPassword">
+                        <flux:icon icon="{{ $iconString ?? 'lock-closed' }}" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
+                            class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
+                    </template>
+
+                    <template x-if="showPassword">
+                        <flux:icon icon="{{ $icon2String ?? 'lock-open' }}" variant="mini"
+                            class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
+                    </template>
+                @else
+                    <flux:icon icon="{{ $iconString }}" variant="mini"
+                        x-bind:class="$store.{{ $alpineState }}?.colorIcon" />
+
+                @endif
             </div>
+
+            {{-- Icon Mata Terbuka --}}
+
 
             <input @if ($isReadonly ?? null) readonly @endif
                 @if (!$noEntangle) @if ($isLivewireState)
@@ -122,7 +138,7 @@ store.{{ $modelString }} = valueInput ?? '';
             @endif
 
             name="{{ $modelString }}"
-            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : '{{ $value ?? '' }}'"
+            x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : ('{{ $oldValue ?? ($value ?? '') }}')"
             {{-- Tipe input dinamis --}}
             :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
             class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
@@ -250,9 +266,9 @@ store.{{ $modelString }} = valueInput ?? '';
             @if (($typeString ?? '') === 'password')
                 <button type="button"
                     @click="
-                    showPassword = !showPassword;
-                    inputType = showPassword ? 'text' : 'password'
-                "
+                        showPassword = !showPassword;
+                        inputType = showPassword ? 'text' : 'password'
+                    "
                     class="absolute inset-y-0 right-0 flex items-center pr-3 group focus:outline-none">
 
                     {{-- Icon Mata Terbuka --}}

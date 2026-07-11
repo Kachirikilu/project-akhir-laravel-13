@@ -134,6 +134,12 @@ class UserManagement extends Component
         $this->clearMahasiswaProdiStatsCache();
     }
 
+    public function refreshStats() {
+        $this->refreshStatsUsersList();
+        $this->resetPage();
+        $this->toast(text: 'Data Statistik User berhasil diperbarui!', type: 'info', variant: 'info');
+    }
+
     public function resetInputFilter()
     {
         $this->reset(['search', 'searchAngkatan']);

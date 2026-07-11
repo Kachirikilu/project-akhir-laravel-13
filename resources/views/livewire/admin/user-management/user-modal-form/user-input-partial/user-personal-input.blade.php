@@ -13,7 +13,7 @@
         'nameXString' => 'Full Name',
         'modelString' => 'name',
         'iconString' => 'user-circle',
-        'placeholder' => 'Masukkan Nama Lengkap',
+        'placeholder' => 'Masukkan Nama Lengkap...',
         'message' => $errors->first('name'),
     ])
 
