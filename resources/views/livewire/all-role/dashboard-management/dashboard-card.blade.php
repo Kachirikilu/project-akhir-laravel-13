@@ -1,13 +1,14 @@
-<div class="flex flex-col gap-4 sm:gap-6 p-3 mt-3 max-w-6xl mx-auto">
+<div class="flex flex-col gap-4 sm:gap-6 py-3 mt-3 max-w-6xl mx-auto">
 
     @php
         $data = [
             'nama' => Auth::user()->name ?? 'Budi Santoso',
             'ID_AKADEMIK' => Auth::user()->identity1,
             'id_label' => Auth::user()->label_id1,
-            'ttl' => (Auth::user()->tmt_lahir && Auth::user()->tgl_lahir) 
-                ? Auth::user()->tmt_lahir . ', ' . Auth::user()->tgl_lahir 
-                : (Auth::user()->tmt_lahir ?? Auth::user()->tgl_lahir ?? 'Tidak Terdaftar'),
+            'ttl' =>
+                Auth::user()->tmt_lahir && Auth::user()->tgl_lahir
+                    ? Auth::user()->tmt_lahir . ', ' . Auth::user()->tgl_lahir
+                    : Auth::user()->tmt_lahir ?? (Auth::user()->tgl_lahir ?? 'Tidak Terdaftar'),
             'gender' => Auth::user()->gender ?? 'Tidak Terdaftar',
             'agama' => Auth::user()->agama ?? 'Tidak Terdaftar',
             'no_hp' => Auth::user()->no_wa_full ?? 'Tidak Terdaftar',
@@ -206,3 +207,4 @@
 
 
     </div>
+</div>

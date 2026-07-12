@@ -39,25 +39,25 @@ trait WithUserFilters
     public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false, $rpsId = null)
     {
         if (! $role) {
-            $queryUser = User::query()->with([
+            $queryUser = User::query()->select('users.*')->with([
                 'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
                 'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
                 'dosen.tim_dosens.rps',
                 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
             ]);
         } elseif ($role == 'admin') {
-            $queryUser = User::query()
+            $queryUser = User::query()->select('users.*')
                 ->with(['admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel'])
                 ->whereHas('admin');
         } elseif ($role == 'dosen') {
-            $queryUser = User::query()
+            $queryUser = User::query()->select('users.*')
                 ->with([
                     'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
                     'dosen.tim_dosens.rps',
                 ])
                 ->whereHas('dosen');
         } elseif ($role == 'mahasiswa') {
-            $queryUser = User::query()
+            $queryUser = User::query()->select('users.*')
                 ->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel'])
                 ->whereHas('mahasiswa');
             if ($jadwalId) {

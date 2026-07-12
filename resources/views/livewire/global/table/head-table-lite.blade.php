@@ -6,7 +6,7 @@
 @if ($withTh ?? true)
     <th rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
         class="bg-[var(--main-table-color)] table-border p-6 relative border-b 
-        {{ $isSticky ?? false ? 'sticky left-0 top-0 z-30' : '' }} 
+        {{ $isSticky ?? false ? 'sticky lg:sticky lg:left-0 lg:top-0 lg:z-30' : '' }} 
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}">
 @endif
 

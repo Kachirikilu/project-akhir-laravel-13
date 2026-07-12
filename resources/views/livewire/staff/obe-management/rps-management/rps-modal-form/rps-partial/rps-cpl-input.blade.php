@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 
-        <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
+        <h4 class="text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium mr-2">
             Capaian Pembelajaran Lulusan</h4>
 
         @if ($parent !== 'cpl')

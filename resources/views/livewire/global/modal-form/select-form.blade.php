@@ -209,7 +209,7 @@ setNestedValue(
                 "
                 class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
                 <div class="flex flex-wrap items-start gap-x-4 gap-y-1 my-1">
-                    <span class="my-2 flex-1 min-w-[150px] text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
+                    <span class="my-2 flex-1 text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
                         {{ $label }}
                     </span>
                     <span class="my-1 shrink-0 text-xs sm:text-sm bg-[var(--focus-color)] text-white px-2 py-1 rounded-md">

@@ -7,6 +7,7 @@ use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\SubCPMK;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Browsershot\Browsershot;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\On;
 
 trait WithRPSShow
@@ -116,7 +117,6 @@ trait WithRPSShow
 
     protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
     {
-        // $data = $this->formatRPSDetailForShow($rps);
         $logoPath = public_path('images/logo-unsri.webp');
         $logoBase64 = '';
 
@@ -133,7 +133,6 @@ trait WithRPSShow
             'rps' => $rps,
             'prodi' => $prodi,
             'tim_dosen' => $tim_dosen,
-            // 'detailRPSData' => $data,
             'logoBase64' => $logoBase64,
         ])->render();
 
@@ -149,6 +148,37 @@ trait WithRPSShow
 
         return $browsershot->pdf();
     }
+
+    // protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
+    // {
+    //     $logoPath = public_path('images/logo-unsri.webp');
+    //     $logoBase64 = '';
+
+    //     if (file_exists($logoPath)) {
+    //         $type = pathinfo($logoPath, PATHINFO_EXTENSION);
+    //         $dataLogo = file_get_contents($logoPath);
+    //         $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
+    //     }
+
+    //     $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($prodi->id);
+    //     $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
+
+    //     $pdf = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-print', [
+    //         'rps' => $rps,
+    //         'prodi' => $prodi,
+    //         'tim_dosen' => $tim_dosen,
+    //         'logoBase64' => $logoBase64,
+    //     ]);
+
+    //     $pdf->setPaper('a4', 'portrait');
+    //     $pdf->setOptions([
+    //         'isHtml5ParserEnabled' => true,
+    //         'isRemoteEnabled' => true,
+    //         'dpi' => 96,
+    //     ]);
+
+    //     return $pdf->output();
+    // }
 
     public function formatRPSDetailForShow(RPS $rps): array
     {

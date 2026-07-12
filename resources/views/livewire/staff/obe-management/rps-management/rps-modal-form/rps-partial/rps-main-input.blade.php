@@ -1,7 +1,7 @@
 <div
     class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Rencana Pembelajaran Semester</h4>
 
     @include('livewire.global.modal-form.textarea-form', [
@@ -87,7 +87,7 @@
             </div>
 
             
-            {{-- <div class="grid sm:grid-cols-6 gap-1 sm:gap-3 items-end">
+            {{-- <div class="grid sm:grid-cols-6 gap-2 sm:gap-3 items-end">
                 <div class="sm:col-span-2">
                     @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-digit-akademik')
                 </div>

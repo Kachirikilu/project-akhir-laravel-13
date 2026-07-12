@@ -117,10 +117,10 @@
             {{-- <template x-for="(id, index) in items" :key="id"> --}}
             <template x-for="(id, index) in items" :key="id + '-' + index">
                 <div
-                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-1 sm:px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
                     <div class="flex items-start gap-3 flex-1">
 
-                        <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
+                        <span class="text-[9px] sm:text-xs font-black text-[var(--hover-focus-color)] w-2 mt-0.5"
                             x-text="index + 1"></span>
 
                         <div class="flex flex-col gap-1 flex-1">

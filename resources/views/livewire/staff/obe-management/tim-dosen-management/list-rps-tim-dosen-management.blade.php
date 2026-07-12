@@ -38,6 +38,7 @@
                         'parent' => 'tim-dosen-rps',
                         'isFlyout' => false,
                     ])
+                    @include('livewire.global.modal-form.footer.button-close')
                 </div>
 
             </div>

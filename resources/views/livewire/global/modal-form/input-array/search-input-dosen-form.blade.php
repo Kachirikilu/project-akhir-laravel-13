@@ -202,14 +202,18 @@
 
         {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
         <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400">Daftar
-                    Terpilih:</span>
-                <div class="flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400 whitespace-nowrap">
+                    Daftar Terpilih:
+                </span>
+                <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
+
                     @include('livewire.global.modal-form.partial.reset-all-buttons')
-                    <span x-show="items.length > 0"
-                        class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
-                        x-text="items.length + ' Terpilih'"></span>
+
+                    <span x-show="(items?.length || 0) > 0"
+                        class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full whitespace-nowrap"
+                        x-text="(items?.length || 0) + ' Terpilih'">
+                    </span>
                 </div>
             </div>
 
@@ -243,7 +247,8 @@
                                         x-text="itemsAll[index]?.slot1"></span>
 
                                     {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
-                                    <div class="mt-1 flex items-center flex-wrap text-xs text-gray-500 gap-y-1">
+                                    <div
+                                        class="mt-1 flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
                                         {{-- NIP --}}
                                         -<span class="ml-1 font-bold text-[var(--hover-focus-color)]"
                                             x-text="'NIP: ' + itemsAll[index]?.kode"></span>
@@ -290,7 +295,10 @@
                             </div>
 
                             {{-- PEMILIH PERAN --}}
-                            <div class="flex items-center gap-2">
+                           {{-- Tambahkan w-full dan justify-between pada wrapper --}}
+                            <div class="flex items-center justify-between gap-2">
+                                
+                                {{-- SELECT (Kiri) --}}
                                 <select x-model="itemsAll[index].peran"
                                     class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">
                                     <option value="Koordinator">Koordinator</option>
@@ -298,18 +306,18 @@
                                     <option value="Asisten">Asisten</option>
                                 </select>
 
-                                {{-- ACTION BUTTONS --}}
-                                <div class="flex items-center gap-1 ml-2">
-                                    <div class="flex flex-col gap-0.5">
+                                {{-- ACTION BUTTONS (Otomatis akan terdorong ke kanan karena justify-between) --}}
+                                <div class="flex items-center sm:gap-1 ml-auto">
+                                    <div class="flex flex-col">
                                         <button @click="move(index, -1)" type="button"
                                             class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600 rounded disabled:opacity-10"
                                             :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
-                                            <flux:icon icon="chevron-up" variant="mini" class="size-4" />
+                                            <flux:icon icon="chevron-up" variant="mini" class="size-3 sm:size-4" />
                                         </button>
                                         <button @click="move(index, 1)" type="button"
                                             class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600 rounded disabled:opacity-10"
                                             :disabled="index === items.length - 1 || index == 0">
-                                            <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                                            <flux:icon icon="chevron-down" variant="mini" class="size-4 sm:size-5" />
                                         </button>
                                     </div>
 

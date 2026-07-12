@@ -1,9 +1,14 @@
 <div
-    class="flex items-start justify-between px-4 py-3 bg-white/40 dark:bg-black/10 transition-colors hover:bg-white/60 dark:hover:bg-black/20 active:bg-white/70 dark:active:bg-black/30">
+    class="flex items-start justify-between px-1 sm:px-3 py-3 bg-white/40 dark:bg-black/10 transition-colors hover:bg-white/60 dark:hover:bg-black/20 active:bg-white/70 dark:active:bg-black/30">
 
     <div class="flex items-start gap-3 flex-1">
         {{-- NOMOR URUT --}}
-        <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5" x-text="index + 1"></span>
+        <div class="flex flex-col items-center leading-none">
+            <template x-for="digit in (index + 1).toString().split('')">
+                <span class="text-[9px] sm:text-xs font-black text-[var(--hover-focus-color)]" x-text="digit">
+                </span>
+            </template>
+        </div>
 
         <div class="flex flex-col gap-1 flex-1 cursor-pointer"
             x-on:click="expanded.includes(index) ? expanded = expanded.filter(i => i !== index) : expanded.push(index)">
@@ -18,6 +23,7 @@
                         x-text="itemsAll[index]?.kode"></span>
                 </div>
                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-150 opacity-40"></div>
+                @include('livewire.global.modal-form.partial.action-buttons')
             </div>
 
             {{-- NAMA UTAMA --}}
@@ -25,13 +31,14 @@
                 x-text="itemsAll[index]?.slot1"></span>
 
             {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
-            <div class="text-xs sm:text-sm flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+            <div
+                class="text-xs sm:text-sm flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
                 <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
                 <span class="mx-1.5 opacity-50">|</span>
                 <span class="flex items-center gap-1">
                     <span x-text="itemsAll[index]?.slot2"></span>
                     @if ($typeX2String == 'count_scpmk')
-                         Pertemuan
+                        Pertemuan
                     @endif
                 </span>
                 <span class="mx-1.5 opacity-50">|</span>
@@ -50,5 +57,5 @@
     </div>
 
     {{-- ACTION BUTTONS --}}
-    @include('livewire.global.modal-form.partial.action-buttons')
+    {{-- @include('livewire.global.modal-form.partial.action-buttons') --}}
 </div>

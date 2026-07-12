@@ -1,7 +1,7 @@
 <div
     class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Mata Kuliah</h4>
 
     {{-- 📧 Mata Kuliah Input --}}
@@ -19,7 +19,7 @@
 
         <div class="space-y-4">
             <div>
-                <div class="grid grid-cols-6 gap-1 items-end">
+                <div class="grid grid-cols-6 gap-2 items-end">
 
                     <div class="col-span-3 sm:col-span-2">
                         <template x-if="$store.mk?.typeModal == 1" x-cloak>
@@ -71,7 +71,7 @@
                         @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-digit-semester')
                     </div>
 
-                    <div class="col-span-6 sm:col-span-2 mt-1 sm:mt-0">
+                    <div class="col-span-6 sm:col-span-2 mt-2 sm:mt-0">
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'mk',
                             'nameXString' => 'Urutan Mata Kuliah',
@@ -109,7 +109,7 @@
     </div>
 
 
-    <div class="grid grid-cols-6 gap-1">
+    <div class="grid grid-cols-6 gap-2">
         <div class="col-span-3 sm:col-span-2">
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'mk',
@@ -143,7 +143,7 @@
                 'message' => $errors->first('is_wajib'),
             ])
         </div>
-        <div class="col-span-6 sm:col-span-2 mt-1 sm:mt-0">
+        <div class="col-span-6 sm:col-span-2 mt-2 sm:mt-0">
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'mk',
                 'nameXString' => 'Kategori Blok',
@@ -158,8 +158,8 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-10 sm:grid-cols-8 gap-2 sm:gap-4">
-        <div class="col-span-7 sm:col-span-5">
+    <div class="grid grid-cols-12 gap-2 sm:gap-4">
+        <div class="col-span-8">
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'mk',
                 'nameXString' => 'Tipe SKS',
@@ -172,7 +172,7 @@
                 'message' => $errors->first('tipe_sks'),
             ])
         </div>
-        <div class="col-span-3">
+        <div class="col-span-4">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'mk',
                 'nameXString' => 'SKS',

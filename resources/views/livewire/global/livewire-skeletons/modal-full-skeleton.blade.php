@@ -1,11 +1,11 @@
 <div class="flex flex-col h-full animate-pulse">
     {{-- Header --}}
-    <div class="px-6 py-6 border-b border-[var(--border-table-color)]">
+    <div class="md:px-4 lg:px-6 py-6 border-b border-[var(--border-table-color)]">
         <div class="h-8 w-56 rounded-lg bg-[var(--main-table-color)]"></div>
     </div>
 
     {{-- Content --}}
-    <div class="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-large">
+    <div class="flex-1 overflow-y-auto md:px-4 lg:px-6 py-6 space-y-8 scrollbar-large">
         {{-- Judul Section --}}
         <div class="space-y-3">
             <div class="h-6 w-72 rounded bg-[var(--main-table-color)]"></div>
@@ -43,7 +43,7 @@
     </div>
 
     {{-- Footer --}}
-    <div class="border-t border-[var(--border-table-color)] p-6 flex justify-end gap-3">
+    <div class="border-t border-[var(--border-table-color)] md:px-4 lg:px-6 py-6 flex justify-end gap-3">
         <div class="h-10 w-28 rounded-lg bg-[var(--main-table-color)]"></div>
         <div class="h-10 w-36 rounded-lg bg-[var(--focus-color)] opacity-40"></div>
     </div>

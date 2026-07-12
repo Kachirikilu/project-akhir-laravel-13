@@ -155,10 +155,10 @@
             <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span>
         @enderror
 
-        <div class="grid sm:grid-cols-4 gap-3 items-start" x-data="{}"
+        <div class="grid grid-cols-4 gap-1 sm:gap-3 items-start mt-4" x-data="{}"
             x-effect="$store.{{ $alpine ?? 'config' }}.kode_cpl = ($store.{{ $alpine ?? 'config' }}.kode_cpl_1 || '') + ($store.{{ $alpine ?? 'config' }}.kode_cpl_2 || '')">
 
-            <div class="sm:col-span-2 mt-4">
+            <div class="col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'rps',
                     'nameXString' => 'Bobot UTS (Kustom)',
@@ -171,7 +171,7 @@
                     'isRequired' => 0,
                 ])
             </div>
-            <div class="sm:col-span-2 mt-4">
+            <div class="col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'rps',
                     'nameXString' => 'Bobot UAS (Kustom)',

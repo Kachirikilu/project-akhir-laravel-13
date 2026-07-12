@@ -7,7 +7,7 @@
             shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
             Upload File Excel Nilai</h4>
 
         {{-- 📁 File Input --}}
@@ -31,7 +31,7 @@
         class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Nilai Mahasiswa
         </h4>
 
@@ -81,7 +81,7 @@
                                 <th rowspan="3" class="{{ $headColumn }}">Nama Kelas</th>
 
                                 <th rowspan="3"
-                                    class="{{ $headColumn }} sticky left-0 z-20">
+                                    class="{{ $headColumn }} lg:sticky lg:left-0 lg:z-20">
                                     NIM
                                 </th>
                                 <th rowspan="3" class="{{ $headColumn }}">Nama Mahasiswa</th>

@@ -7,7 +7,7 @@
             shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
             Upload File Excel Pengguna</h4>
 
         {{-- 📁 File Input --}}
@@ -52,7 +52,7 @@
         ])
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Pengguna
         </h4>
 

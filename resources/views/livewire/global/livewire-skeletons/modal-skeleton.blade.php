@@ -1,4 +1,4 @@
-<div class="flex flex-col h-full animate-pulse p-6 space-y-6">
+<div class="flex flex-col h-full animate-pulse md:px-4 lg:px-6 py-6 space-y-6">
 
     {{-- Header --}}
     <div class="border-b border-[var(--border-table-color)] pb-4">

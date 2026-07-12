@@ -25,7 +25,7 @@
                     <flux:modal.close>
                         <flux:button variant="ghost"
                             class="cursor-pointer w-full sm:w-auto 
-                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)]
+                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]/90
                 text-[var(--contrast-second-text)]
                 transition-colors duration-200">
                             Batal</flux:button>
@@ -33,7 +33,7 @@
 
                     <flux:button wire:click="destroyJadwal" wire:loading.attr="disabled"
                         wire:target="deleteJadwal, destroyJadwal" type="submit" variant="primary"
-                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
+                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 border-none transition-colors duration-200">
                         <span wire:loading.remove wire:target="destroyJadwal">
                             Ya, Hapus
                             <strong x-text="$store.jadwal?.role_delete">
@@ -47,7 +47,7 @@
                 </div>
             </div>
         @else
-            @include('livewire.global.livewire-skeletons.modal-delete-skeleton                               ')
+            @include('livewire.global.livewire-skeletons.modal-delete-skeleton')
         @endif
     </flux:modal>
 </div>

@@ -1,6 +1,6 @@
 <div class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Tim Dosen</h4>
 
 
@@ -8,7 +8,7 @@
         @include('livewire.global.modal-form.partial.label', [
             'nameXString' => 'Kode Tim Dosen',
         ])
-        <div class="grid grid-cols-6 gap-1 sm:gap-2 items-end" x-data="{}"
+        <div class="grid grid-cols-6 gap-2 sm:gap-2 items-end" x-data="{}"
             x-effect="$store.tim_dosen.kode_tim_dosen = ($store.tim_dosen.kode_tim_dosen_1 || '') + ($store.tim_dosen.kode_tim_dosen_2 || '')">
 
             <div class="col-span-3">

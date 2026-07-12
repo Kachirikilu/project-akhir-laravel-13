@@ -67,44 +67,26 @@
                 </div>
             </div>
 
-            {{-- <div class="p-4 relative bg-white rounded-md border-2">
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'showRPS', 'updateRPS'])
-        @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-show')
-    </div> --}}
-
-            {{-- @php
-            $firstProdiId = $prodisCollection->first()->id ?? null;
-        @endphp --}}
 
             <div class="p-4 relative bg-white rounded-md border-2" x-data="{
                 get rpsId() { return $store.rps?.rps_id_show; },
                 get prId() { return $store.rps?.pr_id_show; }
-            }" {{-- get prId() { return $store.rps?.pr_id_show || '{{ $firstProdiId }}'; } --}}
-                {{-- x-effect="
-                if ($store.rps && (!$store.rps.pr_id_show || $store.rps.pr_id_show == null)) {
-                    $store.rps.pr_id_show = '{{ $firstProdiId }}';
-                } --}} ">
-            <!-- Elemen Debug -->
-            {{-- <div class="bg-yellow-100 p-2 text-xs text-black font-mono mb-2" x-show="true">
-                DEBUG: pr_id_show = <span x-text="$store.rps?.pr_id_show ?? 'NULL'"></span> |
-                frisrtProdiId Livewire {{ $firstProdiId }} |
-                rps_id_show = <span x-text="$store.rps?.rps_id_show ?? 'NULL'"></span>
-            </div> --}}
+            }">
 
-            <div class="flex justify-end mb-4">
-                <button type="button" onclick="document.getElementById('pdf-frame').contentWindow.print()"
-                    class="cursor-pointer text-sm sm:text-md flex items-center gap-2 bg-blue-600 text-white px-12 py-2 rounded shadow hover:bg-blue-700 active:bg-blue-800 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d=" M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0
+
+                <div class="flex justify-end mb-4">
+                    <button type="button" onclick="document.getElementById('pdf-frame').contentWindow.print()"
+                        class="cursor-pointer text-sm sm:text-md flex items-center gap-2 bg-blue-600 text-white px-12 py-2 rounded shadow hover:bg-blue-700 active:bg-blue-800 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=" M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0
                 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-            </svg>
-            Cetak PDF
-            </button>
-</div>
+                        </svg>
+                        Cetak PDF
+                    </button>
+                </div>
 
-<div class="w-full h-[2000px] border" wire:ignore
-    x-effect="
+                <div class="w-full h-[2000px] border" wire:ignore
+                    x-effect="
                 const frame = document.getElementById('pdf-frame');
                 if (rpsId && rpsId !== 'null' && rpsId !== 'undefined') {
                     let urlParts = ['{{ url('/rps/pdf-preview/') }}', rpsId];
@@ -117,11 +99,14 @@
                     }
                 }
             ">
-    <iframe id="pdf-frame" src="about:blank" class="w-full h-full border-none"></iframe>
-</div>
-</div>
-@else
-@include('livewire.global.livewire-skeletons.modal-full-skeleton')
-@endif
-</flux:modal>
+                    <iframe id="pdf-frame" src="about:blank" class="w-full h-full border-none"></iframe>
+                </div>
+            </div>
+        @else
+            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+        @endif
+
+        @include('livewire.global.modal-form.footer.button-close')
+
+    </flux:modal>
 </div>

@@ -4,7 +4,7 @@
 <div
     class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Program Studi</h4>
 
     {{-- 📧 Program Studi Input --}}
@@ -86,8 +86,8 @@
     </div>
 
 
-    <div class="grid grid-cols-10 sm:grid-cols-8 gap-2 sm:gap-4">
-        <div class="col-span-7 sm:col-span-5">
+    <div class="grid grid-cols-12 gap-2 sm:gap-4">
+        <div class="col-span-7 sm:col-span-8">
             {{-- 📧 Nama Strata Input --}}
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'prodi',
@@ -99,7 +99,7 @@
                 'message' => $errors->first('strata'),
             ])
         </div>
-        <div class="col-span-3">
+        <div class="col-span-5 sm:col-span-4">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'prodi',
                 'nameXString' => 'Target SKS',

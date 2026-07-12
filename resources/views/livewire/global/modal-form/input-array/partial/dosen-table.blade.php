@@ -6,7 +6,7 @@
                 <thead>
                     <tr class="text-gray-400 uppercase tracking-tighter border-b table-border">
                         <th class="pb-3 px-4 text-center">ID DSN</th>
-                        <th class="pb-3 px-4 text-center font-bold min-w-16">NIP</th>
+                        <th class="pb-3 px-4 font-bold">NIP</th>
                         <th class="pb-3 px-4 min-w-32">Nama</th>
                         <th class="pb-3 px-4">Peran</th>
                         <th class="pb-3 px-4 text-center">Ketua</th>

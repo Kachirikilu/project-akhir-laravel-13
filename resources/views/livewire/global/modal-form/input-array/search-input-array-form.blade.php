@@ -123,16 +123,18 @@
         {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
         <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
-            <div class="flex items-center justify-between mb-4">
-                <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400">Daftar
-                    Terpilih:</span>
-                <div class="flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400 whitespace-nowrap">
+                    Daftar Terpilih:
+                </span>
+                <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
 
                     @include('livewire.global.modal-form.partial.reset-all-buttons')
 
                     <span x-show="(items?.length || 0) > 0"
-                        class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
-                        x-text="(items?.length || 0) + ' Terpilih'"></span>
+                        class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full whitespace-nowrap"
+                        x-text="(items?.length || 0) + ' Terpilih'">
+                    </span>
                 </div>
             </div>
 
@@ -140,11 +142,16 @@
                 {{-- <template x-for="(id, index) in items" :key="id"> --}}
                 <template x-for="(id, index) in items" :key="id + '-' + index">
                     <div
-                        class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
+                        class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-1 sm:px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
                         <div class="flex items-start gap-3 flex-1">
 
-                            <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
-                                x-text="index + 1"></span>
+                            <div class="flex flex-col items-center leading-none">
+                                <template x-for="digit in (index + 1).toString().split('')">
+                                    <span class="text-[9px] sm:text-xs font-black text-[var(--hover-focus-color)]"
+                                        x-text="digit">
+                                    </span>
+                                </template>
+                            </div>
 
                             <div class="flex flex-col gap-1 flex-1">
                                 <div class="flex items-center gap-2">
@@ -158,6 +165,7 @@
                                             x-text="itemsAll[index]?.kode"></span>
                                     @endif
                                     <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
+                                    @include('livewire.global.modal-form.partial.action-buttons')
                                 </div>
 
                                 <span
@@ -212,7 +220,6 @@
                         </div>
 
                         {{-- ACTION BUTTONS --}}
-                        @include('livewire.global.modal-form.partial.action-buttons')
 
                     </div>
                 </template>

@@ -14,19 +14,19 @@
     <div class="flex flex-col gap-6 p-1 sm:p-3 max-w-6xl mx-auto">
 
         @if (Auth::user()->admin)
-            @include('livewire.all-role.dashboard-manager.dashboard-admin')
+            @include('livewire.all-role.dashboard-management.dashboard-admin')
         @endif
 
         @if (Auth::user()->dosen)
-            @include('livewire.all-role.dashboard-manager.dashboard-dosen')
+            @include('livewire.all-role.dashboard-management.dashboard-dosen')
         @endif
 
         @if (Auth::user()->mahasiswa)
-            @include('livewire.all-role.dashboard-manager.dashboard-mahasiswa')
+            @include('livewire.all-role.dashboard-management.dashboard-mahasiswa')
         @endif
 
     </div>
-    @include('livewire.all-role.dashboard-manager.dashboard-card')
+    @include('livewire.all-role.dashboard-management.dashboard-card')
 
 
 </div>

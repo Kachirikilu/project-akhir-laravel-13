@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('invitations/{invitation}/accept', AcceptInvitation::class)
         ->name('invitations.accept');
 
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::view('dashboard', 'dashboard-management')->name('dashboard');
 
 
     Route::middleware(['is_admin'])->group(function () {

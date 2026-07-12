@@ -24,7 +24,7 @@
             <span
                 class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
                 {{ $mainHead }}</span>
-            <span class="text-md sm:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
+            <span class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
 
             @if ($subLabel ?? false)
                 <span
@@ -36,7 +36,7 @@
                 class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Mata
                 Kuliah</span>
             <span
-                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
             <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->kode_mk ?? '---' }}
                 <strong class="px-2">|</strong>
@@ -47,7 +47,7 @@
                 class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Program
                 Studi</span>
             <span
-                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->prodi ?? '-' }}</span>
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->prodi ?? '-' }}</span>
             <span
                 class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">{{ $kelas->kode_pr ?? '---' }}
                 <strong class="px-2">|</strong>
@@ -60,7 +60,7 @@
                 /
                 SKS</span>
             <span
-                class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps_url ?? '---' }}</span>
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps_url ?? '---' }}</span>
             <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->sks ?? '-' }} SKS
                 <strong class="px-2">|</strong>
@@ -79,7 +79,7 @@
                 </span>
 
                 <div class="flex items-center gap-3 mb-1">
-                    <span class="text-md sm:text-lg font-semibold text-[var(--contrast-second-text)]">
+                    <span class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">
                         {{ $dosen->name }}
                     </span>
              
@@ -90,7 +90,7 @@
                     <strong class="px-2">|</strong>
                     <span class="font-medium text-[var(--contrast-second-text)]">{{ $dosen->pivot->peran }}</span>
                     @if ($dosen->pivot->is_ketua)
-                        <span class="ml-2 px-1.5 py-0.5 text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                        <span class="ml-2 px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
                     @endif
                 </span>
 

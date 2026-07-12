@@ -1,6 +1,6 @@
 <div class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Kelas Perkuliahan</h4>
 
     <div>
@@ -8,7 +8,7 @@
             'nameXString' => 'Kode Kelas'. ($isJadwal ? ' (Terkunci)' : ''),
             'isRequired' => !$isJadwal,
         ])
-        <div class="grid grid-cols-6 gap-1 sm:gap-2 items-end" x-data="{}"
+        <div class="grid grid-cols-6 gap-2 sm:gap-2 items-end" x-data="{}"
             x-effect="$store.kelas.kode_kelas = ($store.kelas.kode_kelas_1 || '') + ($store.kelas.kode_kelas_2 || '')">
 
             {{-- @if (!$isJadwal) --}}

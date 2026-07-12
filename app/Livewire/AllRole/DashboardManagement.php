@@ -119,7 +119,7 @@ class DashboardManagement extends Component
                 return $session->is_current;
             });
 
-        return view('livewire.all-role.dashboard-manager', [
+        return view('livewire.all-role.dashboard-management', [
             'stats' => $stats ?? null,
             'sessions' => $sessions,
         ]);

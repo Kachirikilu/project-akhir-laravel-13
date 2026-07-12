@@ -1,4 +1,4 @@
-<div class="rps-pdf space-y-10 mt-10 bg-white">
+<div class="rps-pdf space-y-10 mt-10 bg-white min-w-[1000px]">
 
     <style>
         .rps-pdf {
@@ -189,10 +189,6 @@
     </table>
 
     <div class="page-break"></div>
-
-
-
-
 
 
 

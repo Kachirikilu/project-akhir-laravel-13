@@ -1,7 +1,7 @@
 <div
     class="form-container">
     <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Sub Capaian Pembelajaran Mata Kuliah</h4>
 
 
@@ -9,7 +9,7 @@
         @include('livewire.global.modal-form.partial.label', [
             'nameXString' => 'Kode Sub-CPMK',
         ])
-        <div class="grid grid-cols-6 gap-1 sm:gap-2 items-end" x-data="{}"
+        <div class="grid grid-cols-6 gap-2 sm:gap-2 items-end" x-data="{}"
             x-effect="$store.scpmk.kode_scpmk = ($store.scpmk.kode_scpmk_1 || '') + ($store.scpmk.kode_scpmk_2 || '')">
 
             <div class="col-span-3">
