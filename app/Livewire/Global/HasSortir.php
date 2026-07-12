@@ -77,15 +77,13 @@ trait HasSortir
         return $queryMK->orderByRaw("
             (
                 SELECT CONCAT(
-                    MIN(
-                        CASE 
-                            WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 4 THEN 'UNI'
-                            ELSE mk.kode_mk
-                        END
-                    ),
+                    CASE
+                        WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
+                        WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
+                        WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                        WHEN mk.level_mk = 4 THEN 'UNI'
+                        ELSE mk.kode_mk
+                    END,
                     LPAD(mk.digit_semester, 2, '0'),
                     LPAD(mk.digit_mk, 2, '0')
                 )
@@ -95,6 +93,7 @@ trait HasSortir
                 LEFT JOIN departemens j ON p.dp_id = j.id
                 LEFT JOIN fakultas f ON j.fk_id = f.id
                 WHERE mk.id = {$sortir}
+                LIMIT 1
             ) {$this->sortDirection}
         ");
     }
@@ -114,30 +113,11 @@ trait HasSortir
                                     ELSE ''
                                 END,
                                 '-',
-                                COALESCE(
-                                    p.kode_pr,
-                                    d.kode_dp,
-                                    f.kode_fk,
-                                    'UNI'
-                                )
+                                COALESCE(p.kode_pr, d.kode_dp, f.kode_fk, 'UNI')
                             )
-
-                            WHEN c.level_cpl = 2 THEN
-                                COALESCE(
-                                    d.kode_dp,
-                                    f.kode_fk,
-                                    'UNI'
-                                )
-
-                            WHEN c.level_cpl = 3 THEN
-                                COALESCE(
-                                    f.kode_fk,
-                                    'UNI'
-                                )
-
-                            WHEN c.level_cpl = 4 THEN
-                                'UNI'
-
+                            WHEN c.level_cpl = 2 THEN COALESCE(d.kode_dp, f.kode_fk, 'UNI')
+                            WHEN c.level_cpl = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN c.level_cpl = 4 THEN 'UNI'
                             ELSE ''
                         END
                     ),
@@ -145,50 +125,47 @@ trait HasSortir
                     c.kode_cpl
                 )
                 FROM cpls c
-                LEFT JOIN prodi_pivot_cpl ppc
-                    ON c.id = ppc.cpl_id
-                LEFT JOIN prodis p
-                    ON ppc.pr_id = p.id
-                LEFT JOIN departemens d
-                    ON p.dp_id = d.id
-                LEFT JOIN fakultas f
-                    ON d.fk_id = f.id
-                WHERE c.id = {$sortir}
+                LEFT JOIN prodi_pivot_cpl ppc ON c.id = ppc.cpl_id
+                LEFT JOIN prodis p ON ppc.pr_id = p.id
+                LEFT JOIN departemens d ON p.dp_id = d.id
+                LEFT JOIN fakultas f ON d.fk_id = f.id
+                WHERE c.id = cpls.id -- Menggunakan cpls.id agar sinkron dengan baris luar
+                GROUP BY c.id, c.kode_cpl -- TAMBAHAN INI YANG MEMPERBAIKI ERROR
             ) {$this->sortDirection}
         ");
     }
-
     public function applyRPSKodeSort($queryRPS, $sortir = 'rps')
     {
         return $queryRPS->orderByRaw("
-        {$sortir}.akademik {$this->sortDirection},
-        (
-            SELECT mk.digit_semester % 2 
-            FROM mata_kuliahs mk 
-            WHERE mk.id = {$sortir}.mk_id
-        ) {$this->sortDirection},
-        (
-            SELECT CONCAT(
-                MIN(
-                    CASE 
-                        WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 4 THEN 'UNI'
-                        ELSE mk.kode_mk
-                    END
-                ),
-                LPAD(mk.digit_semester, 2, '0'),
-                LPAD(mk.digit_mk, 2, '0')
-            )
-            FROM mata_kuliahs mk
-            LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
-            LEFT JOIN prodis p ON ppm.pr_id = p.id
-            LEFT JOIN departemens j ON p.dp_id = j.id
-            LEFT JOIN fakultas f ON j.fk_id = f.id
-            WHERE mk.id = {$sortir}.mk_id
-        ) {$this->sortDirection}
-    ");
+            {$sortir}.akademik {$this->sortDirection},
+            (
+                SELECT mk.digit_semester % 2 
+                FROM mata_kuliahs mk 
+                WHERE mk.id = {$sortir}.mk_id
+            ) {$this->sortDirection},
+            (
+                SELECT CONCAT(
+                    MIN(
+                        CASE 
+                            WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 4 THEN 'UNI'
+                            ELSE mk.kode_mk
+                        END
+                    ),
+                    LPAD(mk.digit_semester, 2, '0'),
+                    LPAD(mk.digit_mk, 2, '0')
+                )
+                FROM mata_kuliahs mk
+                LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
+                LEFT JOIN prodis p ON ppm.pr_id = p.id
+                LEFT JOIN departemens j ON p.dp_id = j.id
+                LEFT JOIN fakultas f ON j.fk_id = f.id
+                WHERE mk.id = {$sortir}.mk_id
+                GROUP BY mk.id, mk.digit_semester, mk.digit_mk -- Tambahkan GROUP BY di sini
+            ) {$this->sortDirection}
+        ");
     }
 
     // public function applyJadwalKodeSort($queryJadwal, $sortir = 'kelas_jadwals')

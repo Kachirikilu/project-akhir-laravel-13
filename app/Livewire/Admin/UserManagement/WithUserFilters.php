@@ -301,25 +301,20 @@ trait WithUserFilters
 
     private function applyUserCombinedSort($queryUser)
     {
+        $queryUser = User::query()->from('users as users');
+
         $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-            ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-            ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-            ->select('users.*');
+                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
+                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
+                ->select('users.*');
 
         if ($this->sortField === 'program_studi') {
-            return $this->applyProdiSort(
-                $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+            $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
                     ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
-                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
-                'COALESCE(ap.strata, dp.strata, mp.strata)',
-                'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
-            );
-        }
-        if ($this->sortField === 'program_studi') {
+                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id');
+
             return $this->applyProdiSort(
-                $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
-                    ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
-                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
+                $queryUser,
                 'COALESCE(ap.strata, dp.strata, mp.strata)',
                 'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
             );

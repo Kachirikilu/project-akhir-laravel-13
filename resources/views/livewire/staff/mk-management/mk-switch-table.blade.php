@@ -9,7 +9,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mk'],
+                    'tabFilter' => $stats['mk'] ?? null,
                     'tabString' => '',
                     'tabNameString' => 'Semua Mata Kuliah',
                 ])
@@ -17,7 +17,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mk-tp'],
+                    'tabFilter' => $stats['mk-tp'] ?? null,
                     'tabString' => 'tatap-muka',
                     'tabNameString' => 'Tatap Muka',
                 ])
@@ -25,7 +25,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mk-pr'],
+                    'tabFilter' => $stats['mk-pr'] ?? null,
                     'tabString' => 'praktikum',
                     'tabNameString' => 'Praktikum',
                 ])
@@ -33,7 +33,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mk-pl'],
+                    'tabFilter' => $stats['mk-pl'] ?? null,
                     'tabString' => 'praktek-lapangan',
                     'tabNameString' => 'Praktek Lapangan',
                 ])
@@ -41,7 +41,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
-                    'tabFilter' => $stats['mk-sm'],
+                    'tabFilter' => $stats['mk-sm'] ?? null,
                     'tabString' => 'simulasi',
                     'tabNameString' => 'Simulasi',
                 ])
