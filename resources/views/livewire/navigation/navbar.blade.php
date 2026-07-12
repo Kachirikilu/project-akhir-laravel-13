@@ -3,19 +3,11 @@
                     bg-[var(--main-color)] border-[var(--border-main-color)]
                     flex flex-col min-h-0">
 
-    {{-- Header Logo & Toggle --}}
     <div class="flex items-center h-10 mt-2 mx-1 z-20">
         <a href="#" @click.prevent="window.location.reload()" class="flex items-center gap-2">
             <x-app-logo />
         </a>
     </div>
-    {{-- <div class="absolute inset-0 z-0 bg-black" 
-        style="background-image: url('/wallpapers/my-waguri.png'); 
-                background-size: cover; 
-                background-position: center;
-                filter: brightness(0.5);
-                opacity: 0.2;">
-    </div> --}}
 
     <div x-show="$store.theme_manager.activeWallpaper !== null"
         class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"

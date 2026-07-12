@@ -70,12 +70,12 @@
         }
     }">
 
-   <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
+    {{-- <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
         class="z-100 fixed inset-y-0 left-0 transition-all duration-300">
         @livewire('navigation.navbar')
-    </div>
+    </div> --}}
 
-   {{-- <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
+    {{-- <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
         class="z-100 fixed inset-y-0 left-0 transition-all duration-300"
          :class="{
             '-translate-x-full': !isDesktop && !expanded,
@@ -96,20 +96,36 @@
         <livewire:navigation.navbar />
     </div> --}}
 
-    {{-- <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
+    <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
         x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full"
         x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
         class="z-100 fixed inset-y-0 left-0 transition-all duration-300"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
+        <livewire:navigation.navbar />
+    </div>
 
-        @livewire('navigation.navbar')
+    {{-- <template x-if="isDesktop">
+        <div x-show="isDesktop" x-cloak x-transition:enter="transition transform duration-300 ease-in-out"
+            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition transform duration-200 ease-in-out" x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full" class="z-100 fixed inset-y-0 left-0 transition-all duration-300"
+            :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
+            <livewire:navigation.navbar />
+        </div>
+    </template>
+    <template x-if="!isDesktop">
+        <div x-show="expanded && !isDesktop" x-cloak x-transition:enter="transition transform duration-300 ease-in-out"
+            x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition transform duration-200 ease-in-out" x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="-translate-x-full"
+            class="w-[256px] z-100 fixed inset-y-0 left-0 transition-all duration-300">
+            <livewire:navigation.navbar />
+        </div>
+    </template> --}}
 
-    </div> --}}
 
-
-
-{{-- <div
+    {{-- <div
     class="fixed inset-y-0 left-0 z-100 transition-all duration-300"
     :class="{
         'invisible opacity-0 pointer-events-none -translate-x-full':
