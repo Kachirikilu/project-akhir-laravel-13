@@ -45,7 +45,7 @@
     
     @if ($defaultWallpapers->hasPages())
         <div class="pb-2 overflow-auto scrollbar-medium" id="pagination-links-container" wire:target="{{ $defaultWallpapers->getPageName() }}">
-            {{ $defaultWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 6, 'typeXLoading' => 'loadingDefaultWallpaper', 'withNowrap' => 1]) }}
+            {{ $defaultWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 8, 'typeXLoading' => 'loadingDefaultWallpaper', 'withNowrap' => 1]) }}
         </div>
     @endif
 
@@ -63,7 +63,7 @@
         {{-- Navigasi Halaman --}}
         @if ($customWallpapers->hasPages())
             <div class="pb-2 overflow-auto scrollbar-medium" id="pagination-links-container" wire:target="{{ $customWallpapers->getPageName() }}">
-                {{ $customWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 6, 'typeXLoading' => 'loadingCustomWallpaper', 'withNowrap' => 1]) }}
+                {{ $customWallpapers->links('vendor.pagination.tailwind', ['isSmall' => 1, 'maxButtons' => 8, 'typeXLoading' => 'loadingCustomWallpaper', 'withNowrap' => 1]) }}
             </div>
         @endif
     @endif

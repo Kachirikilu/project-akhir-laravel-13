@@ -107,7 +107,7 @@ store.{{ $modelString }} = valueInput ?? '';
                     </template>
 
                     <template x-if="showPassword">
-                        <flux:icon icon="{{ $icon2String ?? 'lock-open' }}" variant="mini"
+                        <flux:icon icon="{{ $icon2String ?? 'lock-open' }}" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
                             class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                     </template>
                 @else

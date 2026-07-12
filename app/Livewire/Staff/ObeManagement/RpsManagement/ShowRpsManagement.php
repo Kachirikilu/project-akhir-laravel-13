@@ -12,32 +12,12 @@ class ShowRpsManagement extends Component
     use WithRPSModal;
     use WithRPSShow;
 
-    // public $showCPLModal;
-
-    // public $showCPMKModal;
-
-    // public $showSCPMKModal;
-
-    // public $showRefModal;
-
-    // public $showTimDosenModal;
-
-    // public $isEditingCPL;
-
-    // public $isEditingCPMK;
-
-    // public $isEditingSCPMK;
-
-    // public $isEditingRef;
-
-    // public $isEditingTimDosen;
-
-    // public $parent;
+    public $isReady;
 
     #[On('open-show-rps-modal')]
     public function handleShowRPS($id, $prId = null)
     {
-        // $this->parent = $parent;
+        $this->isReady = true;
         $this->showRPS($id, $prId);
     }
 

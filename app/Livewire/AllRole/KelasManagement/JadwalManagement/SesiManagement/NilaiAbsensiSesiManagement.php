@@ -18,10 +18,12 @@ class NilaiAbsensiSesiManagement extends Component
     public $sks;
     public $count_sesi = 16;
 
+    public $isReady;
 
     #[On('open-edit-nilai-absensi-modal')]
     public function handleEditNilaiAbsensi($id, $jadwal_id, $count_sesi)
     {
+        $this->isReady = true;
         $this->count_sesi = $count_sesi;
         $this->editNilaiAbsensi($id, $jadwal_id);
     }

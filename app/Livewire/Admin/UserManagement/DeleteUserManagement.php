@@ -10,10 +10,12 @@ class DeleteUserManagement extends Component
 {
     use HasToast;
     use WithUserDelete;
+    public $isReady;
 
     #[On('open-delete-user-modal')]
     public function handleDeleteUser($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteUser($id, $isTrash);
     }
     

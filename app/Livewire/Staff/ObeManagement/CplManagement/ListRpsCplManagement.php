@@ -23,9 +23,12 @@ class ListRpsCplManagement extends Component
 
     public $tingkatan;
 
+    public $isReady;
+
     #[On('refresh-data-rps-cpl-rps')]
     public function handleRefreshShowCPL()
     {
+        $this->isReady = true;
         if ($this->selected_id_cpl) {
             $this->editCPL($this->selected_id_cpl, $this->tingkatan, 1);
         }
@@ -34,6 +37,7 @@ class ListRpsCplManagement extends Component
     #[On('open-list-rps-cpl-modal')]
     public function handleShowCPL($id, $tingkatan = 1, $isRPS = false)
     {
+        $this->isReady = true;
         $this->tingkatan = $tingkatan;
         $this->editCPL($id, $tingkatan, $isRPS);
     }

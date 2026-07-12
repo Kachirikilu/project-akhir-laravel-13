@@ -41,8 +41,8 @@
         
             'resetXInput' => 'resetPrInput()',
             'typeXString' => 'prodi',
-            'typeX2String' => 'departemen',
-            'typeX3String' => 'fakultas',
+            // 'typeX2String' => 'departemen',
+            'typeX2String' => 'fakultas',
         
             'nameXString' => 'Program Studi',
             'nameSearchString' => 'prNameSearch',

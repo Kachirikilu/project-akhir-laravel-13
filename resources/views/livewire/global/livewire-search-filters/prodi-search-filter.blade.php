@@ -11,7 +11,8 @@
     'xSearchResults' => $prSearchResults,
     'selectXForFilterString' => 'selectPrForFilter',
     'typeXString' => 'prodi',
-    'typeX2String' => 'departemen',
-    'typeX3String' => 'fakultas',
+    // 'typeX2String' => 'departemen',
+    'typeX2String' => 'fakultas',
     'unfoundString' => 'Tidak ada Program Studi ditemukan!',
+    'minW' => 'sm:min-w-[360px]'
 ])

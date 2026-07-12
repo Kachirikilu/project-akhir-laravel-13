@@ -20,24 +20,14 @@ class ModalTimDosenManagement extends Component
     use WithRPSShow;
     use WithTimDosenModal;
 
-    // public $showUserModal;
-    // public $isEditingUser;
-
-    // public $showRPSModal;
-    // public $isEditingCPMK;
-    // public $isFlyoutCPMK;
-    // public $isEditingSCPMK;
-    // public $isFlyoutSCPMK;
-    // public $isEditingCPL;
-    // public $isFlyoutCPL;
-    // public $isEditingRef;
-    // public $isFlyoutRef;
-
     public $parent;
+
+    public $isReady;
 
     #[On('refresh-data-rps-tim-dosen')]
     public function handleRefreshTimDosen()
     {
+        $this->isReady = true;
         if ($this->selected_id_tim_dosen) {
             $this->editTimDosen($this->selected_id_tim_dosen);
         }
@@ -49,6 +39,7 @@ class ModalTimDosenManagement extends Component
     #[On('open-add-tim-dosen-modal')]
     public function handleAddTimDosen($parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addTimDosen();
     }
@@ -56,6 +47,7 @@ class ModalTimDosenManagement extends Component
     #[On('open-edit-tim-dosen-modal')]
     public function handleEditTimDosen($id, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->editTimDosen($id);
     }
@@ -63,6 +55,7 @@ class ModalTimDosenManagement extends Component
     #[On('dosen-created-tim-dosen')]
     public function handleDosenCreated($id)
     {
+        $this->isReady = true;
         $dosen = Dosen::find($id);
         if (! $dosen) {
             return;

@@ -15,4 +15,5 @@
     'typeX3String' => 'total_bobot_text',
     'typeX4String' => 'total_pertemuan',
     'unfoundString' => 'Tidak ada CPMK ditemukan!',
+    'minW' => 'sm:min-w-[660px]'
 ])

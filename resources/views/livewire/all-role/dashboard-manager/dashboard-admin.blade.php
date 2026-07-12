@@ -144,8 +144,8 @@
                 'value' => $kelasProdi,
                 'unit' => 'Kelas',
                 'sub' => null,
-                'accent' => 'var(--main-color)',
-                'accentSoft' => 'color-mix(in srgb, var(--main-color) 15%, transparent)',
+                'accent' => '#d97706',
+                'accentSoft' => 'rgba(217,119,6,0.12)',
             ])
         </div>
     </div>

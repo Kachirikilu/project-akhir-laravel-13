@@ -21,6 +21,8 @@ class ModalJadwalManagement extends Component
 
     public $isSesi;
 
+    public $isReady;
+
     public function mount($isSesi = false) {
         $this->isSesi = $isSesi;
     }
@@ -31,6 +33,7 @@ class ModalJadwalManagement extends Component
     #[On('open-add-jadwal-modal')]
     public function handleAddJadwal($kelas_id, $kode_kelas, $sks)
     {
+        $this->isReady = true;
         $this->kelas_id = $kelas_id;
         $this->kode_kelas = $kode_kelas;
         $this->sks = $sks;
@@ -40,6 +43,7 @@ class ModalJadwalManagement extends Component
     #[On('open-edit-jadwal-modal')]
     public function handleEditJadwal($id, $kelas_id, $kode_kelas, $sks)
     {
+        $this->isReady = true;
         $this->kelas_id = $kelas_id;
         $this->kode_kelas = $kode_kelas;
         $this->sks = $sks;

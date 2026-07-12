@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-2 rounded-[16px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] p-4">
+<div class="flex flex-col gap-2 rounded-[16px] border border-[var(--border-table-color)] bg-[var(--second-table-color)]/80 p-4">
 
     <div class="flex h-9 w-9 items-center justify-center rounded-lg" style="background: {{ $accentSoft }};">
         <flux:icon name="{{ $icon }}" class="w-[17px] h-[17px]" style="color: {{ $accent }};" />

@@ -25,9 +25,12 @@ class ModalCplManagement extends Component
 
     public $tingkatan;
 
+    public $isReady;
+
     #[On('refresh-data-rps-cpl')]
     public function handleRefreshCPL()
     {
+        $this->isReady = true;
         if ($this->selected_id_cpl) {
             $this->editCPL($this->selected_id_cpl, $this->tingkatan);
         }
@@ -39,6 +42,7 @@ class ModalCplManagement extends Component
     #[On('open-add-cpl-modal')]
     public function handleAddCPL($tingkatan = 1, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addCPL($tingkatan);
     }
@@ -46,6 +50,7 @@ class ModalCplManagement extends Component
     #[On('open-edit-cpl-modal')]
     public function handleEditCPL($id, $tingkatan = 1, $isRPS = false, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->tingkatan = $tingkatan;
         $this->editCPL($id, $tingkatan, $isRPS);

@@ -3,6 +3,7 @@
         {{-- x-bind:flyout="$store.mk.isEdit == 1" --}}
         class="w-full md:w-4xl max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
+        @if ($isReady)
         {{-- Loading Overlay --}}
         <div wire:loading wire:target="saveMK, updateMK">
             <div
@@ -77,6 +78,9 @@
                 </form>
             </div>
         </div>
+                @else
+            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+        @endif
     </flux:modal>
 
 </div>

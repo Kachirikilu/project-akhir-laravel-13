@@ -14,17 +14,12 @@ class AbsensiSesiManagement extends Component
     use HasToast;
     use WithNilaiAbsensiModal;
 
-    // public $kode_rps;
-    // public $kode_jadwal;
-    // public $kode_wilayah;
-    // public $mk;
-    // public $sks;
+    public $isReady;
 
     #[On('open-absensi-sesi-modal')]
     public function handleAbsensiSesi()
     {
-        // $this->sks = $sks;
-        // $this->editSesi($id);
+        $this->isReady = true;
     }
 
     public function render()

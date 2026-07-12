@@ -19,9 +19,12 @@ class ListRpsTimDosenManagement extends Component
     use WithRPSShow;
     use WithTimDosenModal;
 
+    public $isReady;
+
     #[On('refresh-data-rps-tim-dosen-rps')]
     public function handleRefreshShowTimDosen()
     {
+        $this->isReady = true;
         if ($this->selected_id_tim_dosen) {
             $this->editTimDosen($this->selected_id_tim_dosen, 1);
         }
@@ -30,6 +33,7 @@ class ListRpsTimDosenManagement extends Component
     #[On('open-list-rps-tim-dosen-modal')]
     public function handleShowTimDosen($id, $isRPS = false)
     {
+        $this->isReady = true;
         $this->editTimDosen($id, $isRPS);
     }
 

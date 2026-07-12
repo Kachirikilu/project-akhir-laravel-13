@@ -1,0 +1,905 @@
+/* ============================================================
+   TEMA WARNA — LARAVEL PROJECT
+   Semua tema telah disesuaikan agar konsisten:
+   - focus-color: selalu cukup gelap untuk kontras teks putih
+   - focus-color: selalu berbeda dari main-color dan main-table-color
+   - main-pop-up-color: selalu terang (cocok untuk form background)
+   - hover-pop-up-color: selalu lebih gelap dari main-pop-up-color
+   - second-pop-up-color: selalu paling terang (field background)
+   ============================================================ */
+
+
+/* ============================================================
+   BLUE THEME (default)
+   ============================================================ */
+[data-theme="blue"] {
+    --wadah-color: #fcfdff;
+    --border-wadah-color: #c9d9f3;
+
+    --main-color: #075985;
+    --hover-main-color: #066fa7;
+    --border-main-color: #0284c7;
+    --contrast-main-color: #075985;
+
+    --main-text: #ffffff;
+    --second-text: #a4b3d4;
+    --contrast-main-text: #1e3a8a;
+    --contrast-second-text: #33548c;
+    --contrast-third-text: #4f73b6;
+
+    --focus-color: #3b82f6;
+    --hover-focus-color: #2563eb;
+
+    --main-table-color: #caddf6;
+    --second-table-color: #ffffff;
+    --sub-table-color: #e8f1ff;
+    --hover-table-color: #bfdbfe;
+
+    --main-table-trans: #c9dcf4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #eef5ffa0;
+
+    --border-table-color: #a2c3f0;
+
+    --main-pop-up-color: #eff6ff;
+    --hover-pop-up-color: #ceddf2;
+    --second-pop-up-color: #f8fbff;
+}
+[data-theme="blue"].dark {
+    --wadah-color: #17191d;
+    --border-wadah-color: #243149;
+
+    --main-color: #082f49;
+    --hover-main-color: #063e63;
+    --border-main-color: #075985;
+    --contrast-main-color: #ffffff;
+
+    --second-text: #a5b4d6;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #c5d2ef;
+    --contrast-third-text: #9cb4e7;
+
+    --focus-color: #4a94ed;
+    --hover-focus-color: #7ab0ee;
+
+    --main-table-color: #242933;
+    --second-table-color: #2b3038;
+    --sub-table-color: #313844a0;
+    --hover-table-color: #2563eb55;
+
+    --main-table-trans: #2b313ca0;
+    --second-table-trans: #303640a0;
+    --sub-table-trans: #313844a0;
+
+    --border-table-color: #3b5173;
+
+    --main-pop-up-color: #29313d;
+    --hover-pop-up-color: #334155;
+    --second-pop-up-color: #394454;
+}
+
+/* ============================================================
+   CYAN THEME
+   ============================================================ */
+[data-theme="cyan"] {
+    --wadah-color: #f7fdfe;
+    --border-wadah-color: #c7edf3;
+
+    --main-color: #0e7490;
+    --hover-main-color: #0891b2;
+    --border-main-color: #06b6d4;
+    --contrast-main-color: #155e75;
+
+    --main-text: #ffffff;
+    --second-text: #9ca7af;
+    --contrast-main-text: #164e63;
+    --contrast-second-text: #0e7490;
+    --contrast-third-text: #0891b2;
+
+    --focus-color: #0891b2;
+    --hover-focus-color: #0284c7;
+
+    --main-table-color: #cdeff5;
+    --second-table-color: #ffffff;
+    --sub-table-color: #e7f9fc;
+
+    --hover-table-color: #bae6fd;
+
+    --main-table-trans: #cdeff5a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #effcfea0;
+
+    --border-table-color: #a9d8e0;
+
+    --main-pop-up-color: #f4fcfd;
+    --hover-pop-up-color: #d9eef2;
+    --second-pop-up-color: #fbfeff;
+}
+
+[data-theme="cyan"].dark {
+    --wadah-color: #161a1c;
+    --border-wadah-color: #28424a;
+
+    --main-color: #155e75;
+    --hover-main-color: #0e7490;
+    --border-main-color: #06b6d4;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #e6ecee;
+    --second-text: #9fb0b5;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #c5d6db;
+    --contrast-third-text: #9ec5d0;
+
+    --focus-color: #22c3e6;
+    --hover-focus-color: #4dd2ef;
+
+    --main-table-color: #1d2528;
+    --second-table-color: #252d30;
+    --sub-table-color: #2a3438;
+
+    --hover-table-color: #0e749055;
+
+    --main-table-trans: #20282ca0;
+    --second-table-trans: #252d30a0;
+    --sub-table-trans: #2a3438a0;
+
+    --border-table-color: #42616b;
+
+    --main-pop-up-color: #263238;
+    --hover-pop-up-color: #33454d;
+    --second-pop-up-color: #2d3940;
+}
+
+/* ============================================================
+   PURPLE THEME
+   ============================================================ */
+[data-theme="purple"] {
+    --wadah-color: #fcfaff;
+    --border-wadah-color: #e9d5ff;
+
+    --main-color: #6b21a8;
+    --hover-main-color: #7e22ce;
+    --border-main-color: #a855f7;
+    --contrast-main-color: #581c87;
+
+    --main-text: #ffffff;
+    --second-text: #a4a6aa;
+    --contrast-main-text: #3f0f64;
+    --contrast-second-text: #6b21a8;
+    --contrast-third-text: #7c3aed;
+
+    /* FIX: dari #9333ea → lebih gelap, kontras teks putih cukup */
+    --focus-color: #7c3aed;
+    --hover-focus-color: #6d28d9;
+
+    --main-table-color: #e9d5ff;
+    --second-table-color: #ffffff;
+    --sub-table-color: #e2d7eb;
+
+    --main-table-trans: #eddefda0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #faf5ffa0;
+    --hover-table-color: #d8b4fe;
+
+    --border-table-color: #d8b4fe;
+
+    --main-pop-up-color: #f8f7ff;
+    --hover-pop-up-color: #e3def5;
+    /* FIX: sedikit ungu agar lebih on-theme */
+    --second-pop-up-color: #fdf8ff;
+}
+
+[data-theme="purple"].dark {
+    --wadah-color: #17131b;
+    --border-wadah-color: #412554;
+
+    --main-color: #4c1d95;
+    --hover-main-color: #5b21b6;
+    --border-main-color: #7c3aed;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #ece7f6;
+    --second-text: #b2a8c6;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #ddd2f4;
+    --contrast-third-text: #c6b6eb;
+
+    --focus-color: #9875ff;
+    --hover-focus-color: #b193ff;
+
+    --main-table-color: #261f30;
+    --second-table-color: #2d2438;
+    --sub-table-color: #342b42a0;
+    --hover-table-color: #7c3aed55;
+
+    --main-table-trans: #261f30a0;
+    --second-table-trans: #2d2438a0;
+    --sub-table-trans: #342b42a0;
+
+    --border-table-color: #5c437f;
+
+    --main-pop-up-color: #2f253b;
+    --hover-pop-up-color: #3c2d4d;
+    --second-pop-up-color: #352c43;
+}
+
+
+/* ============================================================
+   RED THEME
+   ============================================================ */
+[data-theme="red"] {
+    --wadah-color: #feffff;
+    --border-wadah-color: #e5cbd0;
+
+    --main-color: #991b1b;
+    --hover-main-color: #b91c1c;
+    --border-main-color: #dc2626;
+    --contrast-main-color: #991b1b;
+
+    --main-text: #ffffff;
+    --second-text: #a4a6aa;
+    --contrast-main-text: #3f0f0f;
+    --contrast-second-text: #7f1d1d;
+    --contrast-third-text: #991b1b;
+
+    /* FIX: dari #ef4444 → lebih gelap, beda dari main-table-color yang merah muda */
+    --focus-color: #dc2626;
+    --hover-focus-color: #b91c1c;
+
+    --main-table-color: #ffcdcd;
+    --second-table-color: #ffffff;
+    --sub-table-color: #eed8d8;
+
+    --main-table-trans: #fcc4c4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fef9f9a0;
+    --hover-table-color: #fca5a5;
+
+    --border-table-color: #d59a9a;
+
+    --main-pop-up-color: #fcf4f4;
+    --hover-pop-up-color: #f6d6d6;
+    /* FIX: putih dengan sentuhan merah, bukan putih murni */
+    --second-pop-up-color: #fffafa;
+}
+
+[data-theme="red"].dark {
+    --wadah-color: #191515;
+    --border-wadah-color: #492525;
+
+    --main-color: #450a0a;
+    --hover-main-color: #7f1d1d;
+    --border-main-color: #991b1b;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #f2e8e8;
+    --second-text: #bea8a8;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #f0d0d0;
+    --contrast-third-text: #d9b3b3;
+
+    --focus-color: #ef5d5d;
+    --hover-focus-color: #ff8c8c;
+
+    --main-table-color: #2b2121;
+    --second-table-color: #322626;
+    --sub-table-color: #3a2d2da0;
+    --hover-table-color: #991b1b55;
+
+    --main-table-trans: #2b2121a0;
+    --second-table-trans: #322626a0;
+    --sub-table-trans: #3a2d2da0;
+
+    --border-table-color: #744343;
+
+    --main-pop-up-color: #342626;
+    --hover-pop-up-color: #443030;
+    --second-pop-up-color: #3a2c2c;
+}
+
+
+/* ============================================================
+   GREEN THEME
+   ============================================================ */
+[data-theme="green"] {
+    --wadah-color: #f5f7f6;
+    --border-wadah-color: #d1d5db;
+
+    --main-color: #14532d;
+    --hover-main-color: #166534;
+    --border-main-color: #22c55e;
+    --contrast-main-color: #064e3b;
+
+    --main-text: #ffffff;
+    --second-text: #94979f;
+    --contrast-main-text: #052e16;
+    --contrast-second-text: #166534;
+    --contrast-third-text: #15803d;
+
+    --focus-color: #16a34a;
+    --hover-focus-color: #15803d;
+
+    --main-table-color: #c6e7d3;
+    --second-table-color: #ffffff;
+    --sub-table-color: #d1ecdc;
+
+    --main-table-trans: #adebbfa0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #ecfdf5a0;
+
+    --hover-table-color: #dcfce7;
+
+    --border-table-color: #a9c6af;
+
+    /* FIX: dari #ffffff → ada sentuhan hijau, lebih on-theme */
+    --main-pop-up-color: #f4fbf6;
+    /* FIX: tambahkan agar konsisten dengan tema lain */
+    --hover-pop-up-color: #d5ebdc;
+    --second-pop-up-color: #f7fcf9;
+}
+
+[data-theme="green"].dark {
+    --wadah-color: #161a18;
+    --border-wadah-color: #2a3a32;
+
+    --main-color: #14532d;
+    --hover-main-color: #166534;
+    --border-main-color: #22c55e;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #e2e8e5;
+    --second-text: #94a3a0;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #b6bdb9;
+    --contrast-third-text: #9ca3af;
+
+    /* FIX: lebih terang di dark */
+    --focus-color: #2cb55e;
+    --hover-focus-color: #46bd71;
+
+    --main-table-color: #1b2420;
+    --second-table-color: #222b27;
+    --sub-table-color: #252827;
+
+    --hover-table-color: #2f4f3e;
+
+    --main-table-trans: #1d2722a0;
+    --second-table-trans: #222b27a0;
+    --sub-table-trans: #27332da0;
+
+    --border-table-color: #44554c;
+
+    --main-pop-up-color: #232d28;
+    --hover-pop-up-color: #303f37;
+    --second-pop-up-color: #26332d;
+}
+
+
+/* ============================================================
+   LIME THEME
+   ============================================================ */
+[data-theme="lime"] {
+    --wadah-color: #fefffd;
+    --border-wadah-color: #d8e2cc;
+
+    --main-color: #4d7c0f;
+    --hover-main-color: #3f6212;
+    --border-main-color: #65a30d;
+    --contrast-main-color: #365314;
+
+    --main-text: #ffffff;
+    --second-text: #b4b8be;
+    --contrast-main-text: #223107;
+    --contrast-second-text: #3f6212;
+    --contrast-third-text: #4d7c0f;
+
+    /* Lebih gelap supaya teks putih jelas */
+    --focus-color: #5f8f18;
+    --hover-focus-color: #4d7c0f;
+
+    --main-table-color: #e0eed2;
+    --second-table-color: #ffffff;
+    --sub-table-color: #edf6e4;
+
+    --hover-table-color: #d5ebb5;
+
+    --main-table-trans: #d8eabda0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #f5fbeea0;
+
+    --border-table-color: #bfd59c;
+
+    --main-pop-up-color: #fbfef7;
+    --hover-pop-up-color: #e1ecd2;
+    --second-pop-up-color: #fcfff8;
+}
+
+[data-theme="lime"].dark {
+    --wadah-color: #181b16;
+    --border-wadah-color: #2d3725;
+
+    --main-color: #365314;
+    --hover-main-color: #4d7c0f;
+    --border-main-color: #65a30d;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #e7ece2;
+    --second-text: #a3aa9c;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #c8d1c1;
+    --contrast-third-text: #aab59f;
+
+    /* Tidak terlalu neon */
+    --focus-color: #7fb52c;
+    --hover-focus-color: #96c84b;
+
+    --main-table-color: #22281d;
+    --second-table-color: #2a3025;
+    --sub-table-color: #2d3428;
+
+    --hover-table-color: #42552d;
+
+    --main-table-trans: #1c2217a0;
+    --second-table-trans: #2a3025a0;
+    --sub-table-trans: #303a2ba0;
+
+    --border-table-color: #536545;
+
+    --main-pop-up-color: #2a3125;
+    --hover-pop-up-color: #374130;
+    --second-pop-up-color: #2a3025;
+}
+
+/* ============================================================
+   AMBER THEME
+   ============================================================ */
+[data-theme="amber"] {
+    --wadah-color: #fffdfa;
+    --border-wadah-color: #f1e2c4;
+
+    --main-color: #b45309;
+    --hover-main-color: #d97706;
+    --border-main-color: #f59e0b;
+    --contrast-main-color: #92400e;
+
+    --main-text: #ffffff;
+    --second-text: #aaabae;
+    --contrast-main-text: #4c2f0f;
+    --contrast-second-text: #92400e;
+    --contrast-third-text: #b45309;
+
+    /* FIX: dari #f59e0b (kuning) → #b45309 (coklat tua), kontras teks putih OK */
+    --focus-color: #a34b07;
+    --hover-focus-color: #92400e;
+
+    --main-table-color: #eae0c9;
+    --second-table-color: #ffffff;
+    --sub-table-color: #f1edd5;
+
+    --main-table-trans: #eee3b9a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fffef9a0;
+    --hover-table-color: #efdd85;
+
+    --border-table-color: #dac16f;
+
+    /* FIX: lebih netral, tidak terlalu oranye */
+    --main-pop-up-color: #fcfaf1;
+    /* FIX: dari #fdba74 (terlalu jenuh) → #fef3c7 (lebih soft) */
+    --hover-pop-up-color: #ede3b8;
+    /* FIX: hampir putih dengan sentuhan amber */
+    --second-pop-up-color: #fffdf5;
+}
+
+[data-theme="amber"].dark {
+    --wadah-color: #171614;
+    --border-wadah-color: #3b2a1a;
+
+    --main-color: #4f2006;
+    --hover-main-color: #78350f;
+    --border-main-color: #92400e;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #eee7e0;
+    --second-text: #a19792;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #bdb9b6;
+    --contrast-third-text: #a09d99;
+
+    /* FIX: kuning cerah di dark mode */
+    --focus-color: #ae5714;
+    --hover-focus-color: #a04f1d;
+
+    --main-table-color: #27231f;
+    --second-table-color: #2b2a28;
+    --sub-table-color: #35312fa0;
+    --hover-table-color: #78350f66;
+
+    --main-table-trans: #27231fa0;
+    --second-table-trans: #2b2a28a0;
+    --sub-table-trans: #35312fa0;
+
+    --border-table-color: #554740;
+
+    --main-pop-up-color: #342c25;
+    --hover-pop-up-color: #413b36;
+    --second-pop-up-color: #39332f;
+}
+
+/* ============================================================
+   YELLOW THEME
+   ============================================================ */
+[data-theme="yellow"] {
+    --wadah-color: #fffdfb;
+    --border-wadah-color: #e5dcc0; /* Lebih ke arah beige, bukan kuning neon */
+
+    /* Warna lebih kalem, sedikit desaturated */
+    --main-color: #b9890f; 
+    --hover-main-color: #a1770d;
+    --border-main-color: #d4a737;
+    --contrast-main-color: #5f4b1a;
+
+    --main-text: #ffffff;
+    --second-text: #786638;
+    --contrast-main-text: #45391c;
+    --contrast-second-text: #8b6c1f;
+    --contrast-third-text: #a18130;
+
+    --focus-color: #c49a2a;
+    --hover-focus-color: #a88425;
+
+    --main-table-color: #ebe2c1; /* Soft yellow-cream */
+    --second-table-color: #ffffff;
+    --sub-table-color: #f9f4e5;
+
+    --hover-table-color: #e6d7a3;
+
+    --main-table-trans: #f4edd4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fcf9eff0;
+
+    --border-table-color: #d4c59a; /* Tidak kontras tajam */
+
+    --main-pop-up-color: #fefef9;
+    --hover-pop-up-color: #f7efe0;
+    --second-pop-up-color: #fffdf8;
+}
+
+[data-theme="yellow"].dark {
+    --wadah-color: #1a1814;
+    --border-wadah-color: #363022;
+
+    /* Mustard gelap, bukan kuning terang */
+    --main-color: #83710c;
+    --hover-main-color: #947815;
+    --border-main-color: #70581d;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #eeebe2;
+    --second-text: #8e8674;
+    --contrast-main-text: #f0e6ce;
+    --contrast-second-text: #c9b685;
+    --contrast-third-text: #a89464;
+
+    --focus-color: #b8902d;
+    --hover-focus-color: #d4a737;
+
+    --main-table-color: #24211a;
+    --second-table-color: #2b271f;
+    --sub-table-color: #332e23;
+
+    --hover-table-color: #4a422d;
+
+    --main-table-trans: #211e16a0;
+    --second-table-trans: #2b271fa0;
+    --sub-table-trans: #332e23a0;
+
+    --border-table-color: #524a35;
+
+    --main-pop-up-color: #2b2821;
+    --hover-pop-up-color: #3d372a;
+    --second-pop-up-color: #2b271f;
+}
+
+
+/* ============================================================
+   PINK THEME
+   ============================================================ */
+[data-theme="pink"] {
+    --wadah-color: #fffafb;
+    --border-wadah-color: #fce7f3;
+
+    --main-color: #be185d;
+    --hover-main-color: #db2777;
+    --border-main-color: #f472b6;
+    --contrast-main-color: #9d174d;
+
+    --main-text: #ffffff;
+    --second-text: #a4a6aa;
+    --contrast-main-text: #500724;
+    --contrast-second-text: #831843;
+    --contrast-third-text: #be185d;
+
+    /* FIX: dari #ec4899 (terlalu terang & mirip tabel) → pakai main-color yang sudah gelap */
+    --focus-color: #be185d;
+    --hover-focus-color: #9d174d;
+
+    --main-table-color: #f5d5e7;
+    --second-table-color: #ffffff;
+    --sub-table-color: #ecd4e0;
+
+    --main-table-trans: #fac8e4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fefafca0;
+    --hover-table-color: #f472b6;
+
+    --border-table-color: #ef98c8;
+
+    /* FIX: lebih pink subtle untuk form */
+    --main-pop-up-color: #fdf6fa;
+    --hover-pop-up-color: #f3e2eb;
+    --second-pop-up-color: #fefafc;
+}
+
+[data-theme="pink"].dark {
+    --wadah-color: #1a1012;
+    --border-wadah-color: #3f1e25;
+
+    --main-color: #4c0519;
+    --hover-main-color: #831843;
+    --border-main-color: #be185d;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #f9ecef;
+    --second-text: #a19295;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #bdb6b8;
+    --contrast-third-text: #a0999a;
+
+    /* ok, terang di dark mode */
+    --focus-color: #e75fa5;
+    --hover-focus-color: #e2368c;
+
+    --main-table-color: #2d1b1e;
+    --second-table-color: #1a1012;
+    --sub-table-color: #271619a0;
+    --hover-table-color: #4c051966;
+
+    --main-table-trans: #231619a0;
+    --second-table-trans: #1a1012a0;
+    --sub-table-trans: #271619a0;
+
+    --border-table-color: #52393e;
+
+    --main-pop-up-color: #3a2326;
+    --hover-pop-up-color: #4d2b31;
+    --second-pop-up-color: #322b2c;
+}
+
+
+/* ============================================================
+   NAVY THEME
+   ============================================================ */
+[data-theme="navy"] {
+    --wadah-color: #f8fafc;
+    --border-wadah-color: #e2e8f0;
+
+    --main-color: #334155;
+    --hover-main-color: #475569;
+    --border-main-color: #64748b;
+    --contrast-main-color: #1e293b;
+
+    --main-text: #ffffff;
+    --second-text: #94a3b8;
+    --contrast-main-text: #0f172a;
+    --contrast-second-text: #475569;
+    --contrast-third-text: #94a3b8;
+
+    /* FIX: dari #334155 (= main-color, tidak bisa dibedakan) → biru yang kontras */
+    --focus-color: #265db5;
+    --hover-focus-color: #1e4eb5;
+
+    --main-table-color: #d1d9e3;
+    --second-table-color: #ffffff;
+    --sub-table-color: #b7cce0;
+
+    --main-table-trans: #c4d2e4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #f8fafca0;
+    --hover-table-color: #cbd5e1;
+
+    --border-table-color: #a0b6d0;
+
+    --main-pop-up-color: #f1f5f9;
+    --hover-pop-up-color: #d1dcea;
+    /* FIX: putih bersih untuk form field */
+    --second-pop-up-color: #ffffff;
+}
+
+[data-theme="navy"].dark {
+    --wadah-color: #161a22;
+    --border-wadah-color: #1e293b;
+
+    --main-color: #1e293b;
+    --hover-main-color: #334155;
+    --border-main-color: #475569;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #f1f5f9;
+    --second-text: #94a3b8;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #94a3b8;
+    --contrast-third-text: #64748b;
+
+    /* FIX: biru terang di dark mode */
+    --focus-color: #3277cb;
+    --hover-focus-color: #4a8bd6;
+
+    --main-table-color: #1b212c;
+    --second-table-color: #0f172a;
+    --sub-table-color: #191d25;
+    --hover-table-color: #33415566;
+
+    --main-table-trans: #0d141ea0;
+    --second-table-trans: #0f172aa0;
+    --sub-table-trans: #1e293ba0;
+
+    --border-table-color: #3d4d67;
+
+    --main-pop-up-color: #222a3a;
+    --hover-pop-up-color: #304058;
+    --second-pop-up-color: #303a48;
+}
+
+
+/* ============================================================
+   BROWN THEME
+   ============================================================ */
+[data-theme="brown"] {
+    --wadah-color: #fdfaf7;
+    --border-wadah-color: #ede0d4;
+
+    --main-color: #5d4037;
+    --hover-main-color: #795548;
+    --border-main-color: #a1887f;
+    --contrast-main-color: #3e2723;
+
+    --main-text: #ffffff;
+    --second-text: #a4a6aa;
+    --contrast-main-text: #2d1b16;
+    --contrast-second-text: #5d4037;
+    --contrast-third-text: #8d6e63;
+
+    /* FIX: dari #8d6e63 (terlalu mirip hover) → coklat tua yang lebih kontras */
+    --focus-color: #78350f;
+    --hover-focus-color: #451a03;
+
+    --main-table-color: #e3d4c0;
+    --second-table-color: #ffffff;
+    --sub-table-color: #ece6e0;
+
+    --main-table-trans: #e4d5c4a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fdfaf7a0;
+    --hover-table-color: #d7ccc8;
+
+    --border-table-color: #cba89c;
+
+    --main-pop-up-color: #fdf8f5;
+    --hover-pop-up-color: #e7d8cb;
+    --second-pop-up-color: #fffdf9;
+}
+
+[data-theme="brown"].dark {
+    --wadah-color: #1a1715;
+    --border-wadah-color: #352a22;
+
+    --main-color: #2b1e16;
+    --hover-main-color: #3e2723;
+    --border-main-color: #5d4037;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #e9e5e0;
+    --second-text: #a19a92;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #bdb9b6;
+    --contrast-third-text: #a09d99;
+
+    /* FIX: coklat terang di dark mode */
+    --focus-color: #b9864e;
+    --hover-focus-color: #c79b6e;
+
+    --main-table-color: #27221f;
+    --second-table-color: #1a1715;
+    --sub-table-color: #2d2621a0;
+    --hover-table-color: #3e272366;
+
+    --main-table-trans: #27211ea0;
+    --second-table-trans: #1a1715a0;
+    --sub-table-trans: #2d2621a0;
+
+    --border-table-color: #51443f;
+
+    --main-pop-up-color: #302a25;
+    --hover-pop-up-color: #413d3a;
+    --second-pop-up-color: #39332f;
+}
+
+
+/* ============================================================
+   BLACK THEME
+   ============================================================ */
+[data-theme="black"] {
+    --wadah-color: #fafafa;
+    --border-wadah-color: #d4d4d4;
+
+    --main-color: #171717;
+    --hover-main-color: #262626;
+    --border-main-color: #404040;
+    --contrast-main-color: #000000;
+
+    --main-text: #ffffff;
+    --second-text: #919090;
+    --contrast-main-text: #000000;
+    --contrast-second-text: #404040;
+    --contrast-third-text: #a3a3a3;
+
+    /* FIX: dari #171717 (= main-color, tombol = header tabel) → abu gelap yang berbeda */
+    --focus-color: #404040;
+    --hover-focus-color: #262626;
+
+    --main-table-color: #cacaca;
+    --second-table-color: #ffffff;
+    --sub-table-color: #cbcbcb;
+
+    --main-table-trans: #bcbcbca0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fafafaa0;
+    --hover-table-color: #e5e5e5cc;
+
+    --border-table-color: #737373;
+
+    --main-pop-up-color: #f9f9f9;
+    --hover-pop-up-color: #dedede;
+    /* FIX: putih bersih untuk form field */
+    --second-pop-up-color: #ffffff;
+}
+
+[data-theme="black"].dark {
+    --wadah-color: #0a0a0a;
+    --border-wadah-color: #262626;
+
+    --main-color: #171717;
+    --hover-main-color: #262626;
+    --border-main-color: #404040;
+    --contrast-main-color: #ffffff;
+
+    --main-text: #f5f5f5;
+    --second-text: #a3a3a3;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #d4d4d4;
+    --contrast-third-text: #999999;
+
+    /* --focus-color: #a3a3a3;
+    --hover-focus-color: #d4d4d4; */
+    /* --focus-color: #525252;
+    --hover-focus-color: #737373; */
+    --focus-color: #828282;
+    --hover-focus-color: #a1a1a1;
+
+    --main-table-color: #1e1e1e;
+    --second-table-color: #0a0a0a;
+    --sub-table-color: #171717;
+    --hover-table-color: #26262666;
+
+    --main-table-trans: #232323a0;
+    --second-table-trans: #0a0a0aa0;
+    --sub-table-trans: #171717a0;
+
+    --border-table-color: #535252;
+
+    --main-pop-up-color: #282828;
+    --hover-pop-up-color: #414141;
+    --second-pop-up-color: #4c4c4c;
+}

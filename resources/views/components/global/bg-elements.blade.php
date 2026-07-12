@@ -34,8 +34,9 @@
     </style>
 
         <div class="glow"></div>
-        <div class="glow"></div>
-        <div class="glow"></div>
+        <div class="glow opacity-90"></div>
+        <div class="glow opacity-80"></div>
+        <div class="glow opacity-70"></div>
 
         <div class="glow blur-xl opacity-40"></div>
         <div class="glow blur-3xl opacity-20"></div>

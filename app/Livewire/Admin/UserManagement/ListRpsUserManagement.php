@@ -21,6 +21,8 @@ class ListRpsUserManagement extends Component
 
     public $noModalRPS;
 
+    public $isReady;
+
     public function mount($noModalRPS = false)
     {
         $this->noModalRPS = $noModalRPS;
@@ -30,6 +32,7 @@ class ListRpsUserManagement extends Component
     #[On('refresh-data-rps-user-rps')]
     public function handleRefreshShowUser()
     {
+        $this->isReady = true;
         if ($this->selected_id_user) {
             $this->editUser($this->selected_id_user, 1, 1);
         }
@@ -38,6 +41,7 @@ class ListRpsUserManagement extends Component
     #[On('open-list-rps-user-modal')]
     public function handleShowUser($id, $withRPS = false, $isRPS = false, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->withRPS = $withRPS;
         $this->editUser($id, $withRPS, $isRPS);

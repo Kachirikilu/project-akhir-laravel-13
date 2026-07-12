@@ -13,4 +13,5 @@
     'typeXString' => 'deskripsi',
     'typeX2String' => 'kode',
     'unfoundString' => 'Tidak ada CPL ditemukan!',
+    'minW' => 'sm:min-w-[512px]'
 ])

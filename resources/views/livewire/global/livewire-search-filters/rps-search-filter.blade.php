@@ -15,4 +15,5 @@
     'typeX3String' => 'wajib_text',
     'typeX4String' => 'draf_full',
     'unfoundString' => 'Tidak ada RPS ditemukan!',
+    'minW' => 'sm:min-w-[512px]'
 ])

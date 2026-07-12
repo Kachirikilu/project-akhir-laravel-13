@@ -17,6 +17,8 @@ class ModalMkManagement extends Component
     use WithFakultasSearchFilters;
     use WithMKModal;
 
+    public $isReady;
+
     #[On('trigger-mk-modal')]
     public function handleTriggerMK()
     {
@@ -25,12 +27,14 @@ class ModalMkManagement extends Component
     #[On('open-add-mk-modal')]
     public function handleAddMK($tingkatan = 1)
     {
+        $this->isReady = true;
         $this->addMK($tingkatan);
     }
 
     #[On('open-edit-mk-modal')]
     public function handleEditMK($id, $tingkatan = false)
     {
+        $this->isReady = true;
         $this->editMK($id, $tingkatan);
     }
 

@@ -258,9 +258,9 @@ class RpsCapaianMahasiswaManagement extends Component
             $this->addNilaiRPSSubquery($queryUser, $rpsId, 'mhs_nilai_array', 'nilai_array');
             $this->addNilaiRPSSubquery($queryUser, $rpsId, 'mhs_bobot_array', 'bobot_array');
 
-            $this->addMahasiswaNilaiAkhir($queryUser, $rpsId, 'mhs_nilai_akhir');
-            $this->addMahasiswaNilaiIndex($queryUser, $rpsId, 'mhs_nilai_index');
-            $this->addMahasiswaNilaiMutu($queryUser, $rpsId, 'mhs_nilai_mutu');
+            $this->addMahasiswaNilaiAkhir($queryUser, $rpsId, 'mhs_nilai_akhir', 'rps_id');
+            $this->addMahasiswaNilaiIndex($queryUser, $rpsId, 'mhs_nilai_index', 'rps_id');
+            $this->addMahasiswaNilaiMutu($queryUser, $rpsId, 'mhs_nilai_mutu', 'rps_id');
 
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryUser->onlyTrashed();

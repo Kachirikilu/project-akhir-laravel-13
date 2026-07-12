@@ -17,32 +17,26 @@ class ModalReferensiManagement extends Component
     use HasToast;
     use WithRefModal;
 
-    // public $showRPSModal;
-    // public $isEditingCPMK;
-    // public $isFlyoutCPMK;
-    // public $isEditingSCPMK;
-    // public $isFlyoutSCPMK;
-    // public $isEditingCPL;
-    // public $isFlyoutCPL;
-
     public $parent;
+
+    public $isReady;
 
     #[On('refresh-data-rps-ref')]
     public function handleRefreshReferensi()
     {
+        $this->isReady = true;
         if ($this->selected_id_ref) {
             $this->editRef($this->selected_id_ref);
         }
     }
 
     #[On('trigger-ref-modal')]
-    public function handleTriggerRef()
-    {
-    }
+    public function handleTriggerRef() {}
 
     #[On('open-add-ref-modal')]
     public function handleAddRef($parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addRef();
     }
@@ -50,6 +44,7 @@ class ModalReferensiManagement extends Component
     #[On('open-edit-ref-modal')]
     public function handleEditRef($id, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->editRef($id);
     }

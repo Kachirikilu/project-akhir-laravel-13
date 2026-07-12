@@ -11,9 +11,12 @@ class DeleteTimDosenManagement extends Component
     use HasToast;
     use WithTimDosenDelete;
 
+    public $isReady;
+
     #[On('open-delete-tim-dosen-modal')]
     public function handleDeleteTimDosen($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteTimDosen($id, $isTrash);
     }
     

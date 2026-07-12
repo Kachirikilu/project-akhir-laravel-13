@@ -10,7 +10,7 @@
 @endphp
 
 <div
-    class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] p-4 sm:p-5 gap-5">
+    class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--main-table-color)]/80 p-4 sm:p-5 gap-5">
 
     {{-- Header: icon + judul --}}
     <div class="flex items-center gap-3">
@@ -29,7 +29,7 @@
             <svg width="84" height="84" viewBox="0 0 84 84" class="-rotate-90">
                 {{-- Track / background ring --}}
                 <circle cx="42" cy="42" r="{{ $radius }}" fill="none"
-                    stroke="var(--sub-table-color)" stroke-width="10" />
+                    stroke="var(--main-pop-up-color)" stroke-width="10" />
                 {{-- Progress ring --}}
                 <circle cx="42" cy="42" r="{{ $radius }}" fill="none"
                     stroke="{{ $accent }}" stroke-width="10" stroke-linecap="round"

@@ -154,8 +154,8 @@
                 'value' => $kelasSaya,
                 'unit' => 'Kelas',
                 'sub' => null,
-                'accent' => 'var(--main-color)',
-                'accentSoft' => 'color-mix(in srgb, var(--main-color) 15%, transparent)',
+                'accent' => '#7c3aed',
+                'accentSoft' => 'rgba(124,58,237,0.12)',
             ])
         </div>
     </div>

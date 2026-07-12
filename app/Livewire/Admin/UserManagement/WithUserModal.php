@@ -389,10 +389,10 @@ trait WithUserModal
             }
         }
 
-        if ($data['gender'] == 'L') {
-            $data['gender'] = 'Laki-laki';
-        } elseif ($data['gender'] == 'P') {
-            $data['gender'] = 'Perempuan';
+        if ($data['jenis_kelamin'] == 'L') {
+            $data['jenis_kelamin'] = 'Laki-laki';
+        } elseif ($data['jenis_kelamin'] == 'P') {
+            $data['jenis_kelamin'] = 'Perempuan';
         }
 
         if (empty($noBack) && ! empty($noHp)) {

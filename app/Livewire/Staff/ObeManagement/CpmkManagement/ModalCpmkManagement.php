@@ -25,10 +25,12 @@ class ModalCpmkManagement extends Component
     use WithSubCPMKSearchFilters;
 
     public $parent;
+    public $isReady;
 
     #[On('refresh-data-rps-cpmk')]
     public function handleRefreshCPMK()
     {
+        $this->isReady = true;
         if ($this->selected_id_cpmk) {
             $this->editCPMK($this->selected_id_cpmk);
         }
@@ -40,6 +42,7 @@ class ModalCpmkManagement extends Component
     #[On('open-add-cpmk-modal')]
     public function handleAddCPMK($parent = nul)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addCPMK();
     }
@@ -47,6 +50,7 @@ class ModalCpmkManagement extends Component
     #[On('open-edit-cpmk-modal')]
     public function handleEditCPMK($id, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->editCPMK($id);
     }
@@ -54,6 +58,7 @@ class ModalCpmkManagement extends Component
     #[On('cpl-created-cpmk')]
     public function handleCPLCreated($id)
     {
+        $this->isReady = true;
         $cpl = CPL::with(['prodis'])->find($id);
         if (! $cpl) {
             return;
@@ -65,6 +70,7 @@ class ModalCpmkManagement extends Component
     #[On('scpmk-created-cpmk')]
     public function handleSubCPMKCreated($id)
     {
+        $this->isReady = true;
         $scpmk = SubCPMK::with(['refs'])->find($id);
         if (! $scpmk) {
             return;
@@ -78,6 +84,7 @@ class ModalCpmkManagement extends Component
     #[On('scpmk-updated-cpmk')]
     public function handleSubCPMKUpdated($id)
     {
+        $this->isReady = true;
         $scpmk = SubCPMK::find($id);
         if ($scpmk) {
             $this->refreshUpdatedSubCPMKInArrays($scpmk);
@@ -87,6 +94,7 @@ class ModalCpmkManagement extends Component
     #[On('ref-created-cpmk')]
     public function handleRefCreated($id)
     {
+        $this->isReady = true;
         $ref = Referensi::find($id);
         if (! $ref) {
             return;

@@ -27,7 +27,7 @@
     $rpsValue  = (int) ($prodi_data['count_rps_aktif'] ?? 0);
 @endphp
 
-<div class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--second-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
+<div class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
 
     {{-- 1. RATA-RATA CPL — donut ring /100 --}}
     @include('livewire.global.statistik.donut-mini-stats', [

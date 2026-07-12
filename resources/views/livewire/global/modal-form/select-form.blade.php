@@ -157,21 +157,21 @@ setNestedValue(
                 ?
                 'bg-gray-100 dark:bg-zinc-800 cursor-not-allowed opacity-70 text-gray-500 border-gray-200' :
                 'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
-            class="text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
+            class="placeholder-shown:pr-2 text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
 
         <template x-if="!isDisabled">
             @if ($isLivewireState)
                 @include('livewire.global.search-and-filters.partial.reset-button', [
                     'xShow' => 'value',
                     'xClick' => "
-                                                        value = '';
-                                                        valueInput = '';
-                                                        setNestedValue(
-                                                            \$store.$alpineState,
-                                                            '$fullModelPath',
-                                                            ''
-                                                        );
-                                                    ",
+                                                                        value = '';
+                                                                        valueInput = '';
+                                                                        setNestedValue(
+                                                                            \$store.$alpineState,
+                                                                            '$fullModelPath',
+                                                                            ''
+                                                                        );
+                                                                    ",
                 ])
             @else
                 @include('livewire.global.search-and-filters.partial.reset-button', [
@@ -208,13 +208,11 @@ setNestedValue(
                     open = false;
                 "
                 class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
-                <div class="flex justify-between items-center my-1">
-                    <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
+                <div class="flex flex-wrap items-start gap-x-4 gap-y-1 my-1">
+                    <span class="my-2 flex-1 min-w-[150px] text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
                         {{ $label }}
                     </span>
-
-                    <span
-                        class="text-xs sm:text-sm  bg-[var(--focus-color)] text-white text-xs px-2 py-1 rounded-md ml-2">
+                    <span class="my-1 shrink-0 text-xs sm:text-sm bg-[var(--focus-color)] text-white px-2 py-1 rounded-md">
                         {{ $xPilih[$i] ?? 'Pilih' }}
                     </span>
                 </div>

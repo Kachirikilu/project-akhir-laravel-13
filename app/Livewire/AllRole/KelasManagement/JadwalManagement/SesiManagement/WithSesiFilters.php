@@ -16,6 +16,8 @@ trait WithSesiFilters
 
     public $searchBobotSesi = '';
 
+    public $dosens_by_sesi = [];
+
     public function inputSesiSearch($idJadwal)
     {
         $querySesi = KelasSesi::where('kj_id', $idJadwal)
@@ -34,6 +36,29 @@ trait WithSesiFilters
         }
 
         return $querySesi;
+    }
+
+    public function loadData($pertemuan)
+    {
+        if (!isset($this->dosens_by_sesi[$pertemuan])) {
+            $this->dosens_by_sesi[$pertemuan] = $this->getDosenByPertemuan($pertemuan);
+        }
+    }
+    public function getDosenByPertemuan($pertemuanKe)
+    {
+        return $this->tim_dosen->flatMap(function ($tim) {
+            return $tim->dosens->map(function ($dosen) {
+                return [
+                    'id' => $dosen->id,
+                    'name' => $dosen->name,
+                    'nip' => $dosen->nip,
+                    'is_ketua' => (bool) $dosen->pivot->is_ketua,
+                    'pertemuan_ke' => json_decode($dosen->pivot->pertemuan_ke ?? '[]', true),
+                ];
+            });
+        })->filter(function ($dosen) use ($pertemuanKe) {
+            return in_array($pertemuanKe, $dosen['pertemuan_ke']);
+        });
     }
 
     public function sortFieldOrderSesi($querySesi)

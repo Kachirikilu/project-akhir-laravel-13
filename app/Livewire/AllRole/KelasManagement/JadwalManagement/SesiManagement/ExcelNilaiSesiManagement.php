@@ -14,15 +14,13 @@ class ExcelNilaiSesiManagement extends Component
     use HasToast;
     use WithSesiModal;
     use WithNilaiExcel;
-    // use WithMahasiswaSearchFilters;
-    // use WithProdiSearchFilters;
-    // use WithDepartemenSearchFilters;
 
-    // public $kelas_id;
-    // public $kode_kelas;
+    public $isReady;
 
     #[On('open-excel-sesi-modal')]
-    public function handleAddExcelNilaiSesi() {}
+    public function handleAddExcelNilaiSesi() {
+        $this->isReady = true;
+    }
 
     public function render()
     {

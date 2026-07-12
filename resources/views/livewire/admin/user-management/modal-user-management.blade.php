@@ -1,61 +1,65 @@
 <div>
     <flux:modal name="user-modal" wire:model.live="showUserModal" :flyout="!!$parent"
-        wire:key="user-modal-{{ $parent }}"
-        @refresh-data-user.window="$store.user.reset()"
+        wire:key="user-modal-{{ $parent }}" @refresh-data-user.window="$store.user.reset()"
         class="w-full md:w-3xl max-w-4xl h-[98vh] !p-4 sm:!px-6 md:!px-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
-        <div class="flex flex-col h-full">
 
-            {{-- 1. Header Modal (Tetap di Atas) --}}
-            <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        @if ($isReady)
+            <div class="flex flex-col h-full">
 
-                <h3 class="text-xl font-semibold">
-                    <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-                        <flux:badge icon="cog-6-tooth" color="red" size="lg">
-                            <span
-                                x-text="$store.user?.isEdit ? 'Edit Pengguna - Admin' : 'Tambah Pengguna - Admin'"></span>
-                        </flux:badge>
-                    </template>
-                    <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-                        <flux:badge icon="cog-6-tooth" color="lime" size="lg">
-                            <span
-                                x-text="$store.user?.isEdit ? 'Edit Pengguna - Dosen' : 'Tambah Pengguna - Dosen'"></span>
-                        </flux:badge>
-                    </template>
-                    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                        <flux:badge icon="cog-6-tooth" color="cyan" size="lg">
-                            <span
-                                x-text="$store.user?.isEdit ? 'Edit Pengguna - Mahasiswa' : 'Tambah Pengguna - Mahasiswa'"></span>
-                        </flux:badge>
-                    </template>
-                </h3>
-            </div>
+                {{-- 1. Header Modal (Tetap di Atas) --}}
+                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
-            {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-            <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                    <h3 class="text-xl font-semibold">
+                        <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
+                            <flux:badge icon="cog-6-tooth" color="red" size="lg">
+                                <span
+                                    x-text="$store.user?.isEdit ? 'Edit Pengguna - Admin' : 'Tambah Pengguna - Admin'"></span>
+                            </flux:badge>
+                        </template>
+                        <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+                            <flux:badge icon="cog-6-tooth" color="lime" size="lg">
+                                <span
+                                    x-text="$store.user?.isEdit ? 'Edit Pengguna - Dosen' : 'Tambah Pengguna - Dosen'"></span>
+                            </flux:badge>
+                        </template>
+                        <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+                            <flux:badge icon="cog-6-tooth" color="cyan" size="lg">
+                                <span
+                                    x-text="$store.user?.isEdit ? 'Edit Pengguna - Mahasiswa' : 'Tambah Pengguna - Mahasiswa'"></span>
+                            </flux:badge>
+                        </template>
+                    </h3>
+                </div>
 
-                <form
-                    x-on:submit.prevent="$store.user.isEdit ? $wire.updateUser($store.user.getDataUser()) : $wire.saveUser($store.user.getDataUser())"
-                    enctype="multipart/form-data" id="userForm">
+                {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
+                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
 
-                    @include('livewire.admin.user-management.user-modal-form.user-input')
+                    <form
+                        x-on:submit.prevent="$store.user.isEdit ? $wire.updateUser($store.user.getDataUser()) : $wire.saveUser($store.user.getDataUser())"
+                        enctype="multipart/form-data" id="userForm">
 
-                    {{-- 3. Footer/Tombol --}}
-                    <div class="form-message-container">
+                        @include('livewire.admin.user-management.user-modal-form.user-input')
 
-                        <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                            @include('livewire.admin.user-management.user-modal-form.user-message-form')
+                        {{-- 3. Footer/Tombol --}}
+                        <div class="form-message-container">
 
-                            @include('livewire.global.modal-form.footer.button-form', [
-                                'xType' => $roleType,
-                                'targetX' => 'addUser, saveUser, editUser, updateUser',
-                                'isLeft' => 0,
-                            ])
+                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
+                                @include('livewire.admin.user-management.user-modal-form.user-message-form')
+
+                                @include('livewire.global.modal-form.footer.button-form', [
+                                    'xType' => $roleType,
+                                    'targetX' => 'addUser, saveUser, editUser, updateUser',
+                                    'isLeft' => 0,
+                                ])
+                            </div>
+
                         </div>
+                    </form>
+                </div>
 
-                    </div>
-                </form>
             </div>
-
-        </div>
+        @else
+            @include('livewire.global.livewire-skeletons.modal-skeleton')
+        @endif
     </flux:modal>
 </div>

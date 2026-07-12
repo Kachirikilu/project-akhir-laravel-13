@@ -11,9 +11,12 @@ class DeleteProdiManagement extends Component
     use HasToast;
     use WithProdiDelete;
 
+    public $isReady;
+
     #[On('open-delete-prodi-modal')]
     public function handleDeleteProdi($id, $type = 'prodi', $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteProdi($id, $type, $isTrash);
     }
     

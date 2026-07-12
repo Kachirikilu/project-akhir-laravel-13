@@ -11,9 +11,12 @@ class DeleteMkManagement extends Component
     use HasToast;
     use WithMKDelete;
 
+    public $isReady;
+
     #[On('open-delete-mk-modal')]
     public function handleDeleteMK($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteMK($id, $isTrash);
     }
     

@@ -21,9 +21,12 @@ class ModalUserManagement extends Component
 
     public $parent;
 
+    public $isReady;
+
     #[On('refresh-data-rps-user')]
     public function handleRefreshUser()
     {
+        $this->isReady = true;
         if ($this->selected_id_user) {
             $this->editUser($this->selected_id_user, 1);
         }
@@ -33,11 +36,13 @@ class ModalUserManagement extends Component
     #[On('trigger-user-modal')]
     public function handleTriggerUser()
     {
+        // $this->isReady = true;
     }
 
     #[On('open-add-user-modal')]
     public function handleAddUser($role, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addUser($role);
         // $this->fetchPr();
@@ -50,6 +55,7 @@ class ModalUserManagement extends Component
     #[On('open-edit-user-modal')]
     public function handleEditUser($id, $withRPS = false, $isRPS = false, $parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->withRPS = $withRPS;
         $this->editUser($id, $withRPS, $isRPS);

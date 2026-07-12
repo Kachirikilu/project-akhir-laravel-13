@@ -14,9 +14,12 @@ class ExcelUserManagement extends Component
     use WithUserExcel;
     use WithUserModal;
 
+    public $isReady;
+
     #[On('open-excel-user-modal')]
     public function handleExcelUser()
     {
+        $this->isReady = true;
         $this->addUser('excel');
     }
 

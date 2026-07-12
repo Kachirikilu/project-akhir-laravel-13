@@ -94,7 +94,7 @@
             {{-- Kontak Akademik UNSRI --}}
             <div
                 class="flex items-center gap-3 rounded-[12px] border border-[var(--border-table-color)] bg-[var(--sub-table-color)] px-3 py-3">
-                <img src="{{ asset('images/logo-unsri.svg') }}" alt="Logo UNSRI"
+                <img src="{{ asset('favicon.svg') }}" alt="Logo UNSRI"
                     class="h-10 w-10 flex-shrink-0 rounded-lg object-contain bg-white p-1 border border-[var(--border-table-color)]" />
                 <div class="flex flex-col gap-0.5 min-w-0 flex-1">
                     <span class="text-xs font-bold text-[var(--contrast-main-text)]">{{ $waSystemName }}</span>

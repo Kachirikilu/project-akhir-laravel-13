@@ -93,33 +93,33 @@
     {{-- BAGIAN SEARCH UTAMA --}}
     <div class="grid grid-cols-1 sm:grid-cols-12 gap-x-3 gap-y-2 items-center w-full">
 
-        <div class="sm:col-span-8 relative">
+        <div class="sm:col-span-7 relative">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari Kelas...',
+                'placeholder' => 'Cari Kelas, atau Kode Kelas...',
                 'searchMode' => $searchMode,
                 'searchValues' => ['simple', 'smart', 'complex'],
                 'searchOptions' => ['Cari Kode Kelas', 'Pencarian Cerdas', 'Pencarian Kompleks'],
             ])
         </div>
 
-        <div class="sm:col-span-4 relative">
+        <div class="sm:col-span-5 relative">
             <livewire:global.search-filters.dosen-search-filter lazy wire:key="dosen-search-filter" />
         </div>
 
         <div x-show="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-uni'"
-            class="sm:col-span-6 lg:col-span-3 relative">
+            class="sm:col-span-6 xl:col-span-3 relative">
             <livewire:global.search-filters.prodi-search-filter lazy wire:key="pr-search-filter" />
         </div>
 
         <div class="relative text-left"
             :class="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-uni' ?
-                'sm:col-span-6 lg:col-span-4' : 'sm:col-span-5'">
+                'sm:col-span-6 xl:col-span-4' : 'sm:col-span-5'">
             <livewire:global.search-filters.mk-search-filter lazy wire:key="mk-search-filter" />
         </div>
 
         <div class="relative text-left"
             :class="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-uni' ?
-                'sm:col-span-12 lg:col-span-5' : 'sm:col-span-7'">
+                'sm:col-span-12 xl:col-span-5' : 'sm:col-span-7'">
             <livewire:global.search-filters.rps-search-filter lazy wire:key="rps-search-filter" />
         </div>
     </div>

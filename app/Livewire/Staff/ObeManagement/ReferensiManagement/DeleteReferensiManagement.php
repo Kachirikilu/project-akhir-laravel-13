@@ -10,10 +10,13 @@ class DeleteReferensiManagement extends Component
 {
     use HasToast;
     use WithRefDelete;
+    
+    public $isReady;
 
     #[On('open-delete-ref-modal')]
     public function handleDeleteRef($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteRef($id, $isTrash);
     }
     

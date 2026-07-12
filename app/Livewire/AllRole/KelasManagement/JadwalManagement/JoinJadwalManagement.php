@@ -15,9 +15,12 @@ class JoinJadwalManagement extends Component
 
     public $jadwal_id;
 
+    public $isReady;
 
     #[On('open-join-jadwal-modal')]
-    public function handleJoinJadwal() {}
+    public function handleJoinJadwal() {
+        $this->isReady = true;
+    }
 
     public function render()
     {

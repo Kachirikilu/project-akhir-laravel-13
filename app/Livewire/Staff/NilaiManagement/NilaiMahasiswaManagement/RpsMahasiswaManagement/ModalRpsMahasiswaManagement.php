@@ -10,9 +10,13 @@ class ModalRpsMahasiswaManagement extends Component
 {
     use HasToast;
     use WithRPSMahasiswaModal;
+
+    public $isReady;
   
     #[On('open-edit-rps-mahasiswa-modal')]
-    public function handleEditRPSMahasiswa() {}
+    public function handleEditRPSMahasiswa() {
+        $this->isReady = true;
+    }
 
     public function render()
     {

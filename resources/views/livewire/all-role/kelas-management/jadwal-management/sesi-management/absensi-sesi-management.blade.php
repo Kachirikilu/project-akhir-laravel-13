@@ -1,7 +1,7 @@
 <div>
     <flux:modal name="absensi-sesi-modal" wire:model.live="showSesiAbsen" x-data
         @refresh-data-sesi.window="$store.sesi?.reset()" wire:key="absensi-sesi-modal" class="max-w-lg w-full">
-
+        @if ($isReady)
         <form x-on:submit.prevent="$wire.absensiSesi($store.sesi.getDataAbsensiSesi())" id="sesiForm">
             <div class="flex flex-col gap-5">
 
@@ -80,14 +80,6 @@
                                         </div>
                                     </div>
 
-                                    {{-- <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-xs sm:text-sm text-[var(--contrast-main-text)]"
-                                        x-text="item.label"></div>
-
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                        Pilih status <span x-text="item.label.toLowerCase()"></span>
-                                    </div>
-                                </div> --}}
                                 </div>
 
                                 <span class="text-[11px] sm:text-xs font-semibold text-[var(--contrast-main-text)]"
@@ -139,7 +131,8 @@
                 {{-- Footer Aksi --}}
                 <div class="flex items-center gap-2 pt-1">
                     <flux:modal.close>
-                        <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">Batal
+                        <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">
+                            Batal
                         </flux:button>
                     </flux:modal.close>
                     <flux:button type="submit" variant="primary" icon="check-circle" wire:loading.attr="disabled"
@@ -151,7 +144,9 @@
                 </div>
             </div>
         </form>
-
+        @else
+            @include('livewire.global.livewire-skeletons.modal-absensi-skeleton')
+        @endif
     </flux:modal>
 
 </div>

@@ -2,6 +2,15 @@
     <div x-data="{
         open: false,
         localSearch: @entangle($xSearchQueryString).defer,
+        align: 'left',
+        checkPosition() {
+            const rect = this.$refs.dropdown.getBoundingClientRect();
+            if (window.innerWidth - rect.left < 800) {
+                this.align = 'right';
+            } else {
+                this.align = 'left';
+            }
+        },
         init() {
             if (typeof this.localSearch !== 'string') {
                 this.localSearch = '';
@@ -17,21 +26,20 @@
             {{-- INPUT --}}
             <input type="text" x-model="localSearch" placeholder="{{ $placeholderString }}"
                 @focus="
-                open = true; 
-                $event.target.select();
-                $wire.{{ $inputXFilterString }}(); 
-            "
+                    open = true; 
+                    $event.target.select();
+                    $wire.{{ $inputXFilterString }}(); 
+                    $nextTick(() => checkPosition());
+                "
                 @input.debounce.300ms="
-                open = true;
-                $wire.set('{{ $xSearchQueryString }}', localSearch);
-                $wire.{{ $inputXFilterString }}(); 
-            "
+                    open = true;
+                    $wire.set('{{ $xSearchQueryString }}', localSearch);
+                    $wire.{{ $inputXFilterString }}(); 
+                "
                 @click.outside="open = false" @keydown.escape.window="open = false"
                 class="text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 px-4 pr-10 rounded-lg shadow-sm
-            bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
-                {{-- placeholder-[var(--contrast-third-text)] --}}
-            {{-- focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400 --}}
-            "
+                        placeholder-shown:pr-2 bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
+                "
                 autocomplete="off" />
 
             @include('livewire.global.search-and-filters.partial.reset-button', [
@@ -43,11 +51,16 @@
 
 
         {{-- DROPDOWN --}}
-        <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+       <div x-show="open" x-cloak 
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95" 
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100" 
+            x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
+            x-ref="dropdown"
+            :class="align === 'right' ? 'right-0' : 'left-0'"
+            class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full {{ $minW ?? 'sm:min-w-[450px]' }} mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
             @forelse ($xSearchResults as $x)
                 <div wire:key="x-{{ $x['id'] }}"
                     @click="
@@ -56,73 +69,54 @@
                     $wire.{{ $selectXForFilterString }}({{ $x['id'] }});
                 "
                     class="px-4 py-2 cursor-pointer transition-colors duration-200
-                bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-                hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90
-                text-xs sm:text-sm">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="text-[var(--contrast-main-text)] font-medium">
-                                {{ $x[$typeXString] }}
-                            </div>
-
-                            {{-- <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
-                                    {{ $x['id'] }}</span></span>
-
-                            @if ($typeX2String ?? null)
-                                <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX2String] }}</span>
-                            @endif
-                            @if ($typeX3String ?? null)
-                                <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX3String] }}</span>
-                            @endif
-                            @if ($typeX4String ?? null)
-                                <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX4String] }}</span>
-                            @endif
-                        </div> --}}
-
-                            <div class="flex flex-wrap items-center text-xs sm:text-sm">
-                                <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
-                                    <span class="font-bold">- ID: {{ $x['id'] }}</span>
+                        bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
+                        hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90
+                        text-xs sm:text-sm">
+                        <div class="flex flex-wrap items-start gap-x-4 gap-y-1">
+                            
+                            <div class="flex-1 min-w-[200px]">
+                                <div class="text-[var(--contrast-main-text)] font-medium break-words">
+                                    {{ $x[$typeXString] }}
                                 </div>
 
-                                @if ($typeX2String ?? null)
-                                    <div
-                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                        <span class="mx-2">|</span>
-                                        <span>{{ $x[$typeX2String] }}</span>
+                                <div class="flex flex-wrap items-center text-xs sm:text-sm">
+                                    <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
+                                        <span class="font-bold">- ID: {{ $x['id'] }}</span>
                                     </div>
-                                @endif
 
-                                @if ($typeX3String ?? null)
-                                    <div
-                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                        <span class="mx-2">|</span>
-                                        <span>{{ $x[$typeX3String] }}</span>
-                                    </div>
-                                @endif
+                                    @if ($typeX2String ?? null)
+                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                            <span class="mx-2">|</span>
+                                            <span>{{ $x[$typeX2String] }}</span>
+                                        </div>
+                                    @endif
 
-                                @if ($typeX4String ?? null)
-                                    <div
-                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                        <span class="mx-2">|</span>
-                                        <span>{{ $x[$typeX4String] }}</span>
-                                    </div>
-                                @endif
+                                    @if ($typeX3String ?? null)
+                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                            <span class="mx-2">|</span>
+                                            <span>{{ $x[$typeX3String] }}</span>
+                                        </div>
+                                    @endif
+
+                                    @if ($typeX4String ?? null)
+                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                            <span class="mx-2">|</span>
+                                            <span>{{ $x[$typeX4String] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
 
+                            <div class="shrink-0">
+                                <span class="my-2 inline-block bg-[var(--focus-color)] text-[var(--main-text)] text-[9px] sm:text-xs px-2 py-1 rounded-md">
+                                    @if ($typeKodeString ?? null)
+                                        {{ $x[$typeKodeString] }}
+                                    @else
+                                        {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
+                                    @endif
+                                </span>
+                            </div>
                         </div>
-                        <span
-                            class="bg-[var(--focus-color)] text-[var(--main-text)] text-[9px] sm:text-xs px-2 py-1 rounded-md ml-2">
-                            @if ($typeKodeString ?? null)
-                                {{ $x[$typeKodeString] }}
-                            @else
-                                {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
-                            @endif
-                        </span>
-                    </div>
                 </div>
             @empty
                 <div class="py-4">

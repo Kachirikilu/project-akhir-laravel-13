@@ -11,9 +11,12 @@ class DeleteCplManagement extends Component
     use HasToast;
     use WithCPLDelete;
 
+    public $isReady;
+
     #[On('open-delete-cpl-modal')]
     public function handleDeleteCPL($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteCPL($id, $isTrash);
     }
     

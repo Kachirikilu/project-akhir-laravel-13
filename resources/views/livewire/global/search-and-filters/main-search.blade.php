@@ -102,7 +102,7 @@
             ? '{{ !$isLive && $isMode ? 'pr-26' : 'pr-10' }}'
             : 'pr-[64px]'" @endif />
 
-    <div class="absolute inset-y-0 right-0 flex items-center pr-1 gap-1">
+    <div class="absolute inset-y-0 right-0 flex items-center pr-1">
         @if ($alpineStore)
             @include('livewire.global.search-and-filters.partial.reset-button', [
                 'alpine' => $alpineStore,

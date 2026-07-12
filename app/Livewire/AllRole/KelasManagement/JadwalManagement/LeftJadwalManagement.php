@@ -15,8 +15,11 @@ class LeftJadwalManagement extends Component
 
     public $jadwal_id;
 
+    public $isReady;
+
     #[On('open-left-jadwal-modal')]
     public function handleLeftJadwal($jadwal_id) {
+        $this->isReady = true;
         $this->jadwal_id = $jadwal_id;
     }
 

@@ -17,7 +17,7 @@
             </div>
         </flux:menu.item>
     @else
-        @if (!empty($j->with_pw))
+        @if (!empty($data['with_pw']))
             <flux:menu.item
                 @click="
                 $store.jadwal?.setEdit(0);

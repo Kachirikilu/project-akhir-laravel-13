@@ -32,31 +32,17 @@ class ModalRpsManagement extends Component
     public $parent;
     public $isFlyout;
 
-    // public function mount()
-    // {
-    //     $this->refNameSearch = [
-    //         'rps' => '',
-    //         'cpmk' => '',
-    //         'scpmk' => '',
-    //     ];
-    //     $this->ref_id_array = [
-    //         'rps' => [],
-    //         'cpmk' => [],
-    //         'scpmk' => [],
-    //     ];
-    //     $this->ref_items_array = [
-    //         'rps' => [],
-    //         'cpmk' => [],
-    //         'scpmk' => [],
-    //     ];
-    // }
+    public $isReady;
 
     #[On('trigger-rps-modal')]
-    public function handleTriggerRPS() {}
+    public function handleTriggerRPS() {
+        // $this->isReady = true;
+    }
 
     #[On('open-add-rps-modal')]
     public function handleAddRPS($parent = null)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->addRPS();
     }
@@ -64,6 +50,7 @@ class ModalRpsManagement extends Component
     #[On('open-edit-rps-modal')]
     public function handleEditRPS($id, $parent = null, $isFlyout = false)
     {
+        $this->isReady = true;
         $this->parent = $parent;
         $this->isFlyout = $isFlyout;
         $this->editRPS($id);
@@ -72,6 +59,7 @@ class ModalRpsManagement extends Component
     #[On('cpmk-created-rps')]
     public function handleCPMKCreated($id)
     {
+        $this->isReady = true;
         $cpmk = CPMK::with(['scpmks', 'refs'])->find($id);
         if (! $cpmk) {
             return;
@@ -85,6 +73,7 @@ class ModalRpsManagement extends Component
     #[On('scpmk-updated-rps')]
     public function handleSubCPMKUpdated($id)
     {
+        $this->isReady = true;
         $scpmk = SubCPMK::find($id);
         if ($scpmk) {
             $this->refreshUpdatedSubCPMKInArrays($scpmk);
@@ -95,6 +84,7 @@ class ModalRpsManagement extends Component
     #[On('ref-created-rps')]
     public function handleRefCreated($id)
     {
+        $this->isReady = true;
         $ref = Referensi::find($id);
         if (! $ref) {
             return;
@@ -108,6 +98,7 @@ class ModalRpsManagement extends Component
     #[On('tim-dosen-created-rps')]
     public function handleTimDosenCreated($id)
     {
+        $this->isReady = true;
         $tim_dosen = TimDosen::with(['dosens'])->find($id);
         if (! $tim_dosen) {
             return;
@@ -117,6 +108,12 @@ class ModalRpsManagement extends Component
         $mapped = $this->mapTimDosen(collect([$tim_dosen]));
         $this->pushToTimDosenItems($mapped);
     }
+
+    public function placeholder()
+    {
+        return view('livewire.global.livewire-skeletons.modal-skeleton');
+    }
+
 
     public function render()
     {

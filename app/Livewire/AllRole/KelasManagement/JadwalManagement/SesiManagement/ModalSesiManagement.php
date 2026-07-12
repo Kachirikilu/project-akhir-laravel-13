@@ -13,13 +13,10 @@ class ModalSesiManagement extends Component
 {
     use HasToast;
     use WithSesiModal;
-    // use WithMahasiswaSearchFilters;
-    // use WithProdiSearchFilters;
-    // use WithDepartemenSearchFilters;
 
-    // public $kelas_id;
-    // public $kode_kelas;
     public $sks;
+
+    public $isReady;
 
     #[On('trigger-sesi-modal')]
     public function handleTriggerSesi() {}
@@ -27,12 +24,14 @@ class ModalSesiManagement extends Component
     #[On('open-add-sesi-modal')]
     public function handleAddSesi()
     {
+        $this->isReady = true;
         $this->addSesi();
     }
 
     #[On('open-edit-sesi-modal')]
     public function handleEditSesi($id, $sks)
     {
+        $this->isReady = true;
         $this->sks = $sks;
         $this->editSesi($id);
     }

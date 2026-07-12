@@ -123,8 +123,8 @@
 
                         @if ($start > 2)
                             <span
-                                class="inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300">
-                                ...
+                                class="inline-flex items-center px-2 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-700">
+                                |
                             </span>
                         @endif
                     @endif
@@ -151,8 +151,8 @@
                     @if ($end < $last)
                         @if ($end < $last - 1)
                             <span
-                                class="inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300">
-                                ...
+                                class="inline-flex items-center px-2 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-300 bg-white border border-gray-300 cursor-default leading-5 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-700">
+                                |
                             </span>
                         @endif
 

@@ -56,14 +56,14 @@ trait HasNilaiAbsensi
             ->selectRaw("99 as `{$alias}`");
     }
 
-    protected function addMahasiswaNilaiAkhir($queryUser, int $idJadwal, string $alias = 'mhs_nilai_akhir')
+    protected function addMahasiswaNilaiAkhir($queryUser, int $idJadwal, string $alias = 'mhs_nilai_akhir', string $kolom = 'kj_id')
     {
         $queryUser->addSelect([
-            $alias => function ($query) use ($idJadwal) {
+            $alias => function ($query) use ($idJadwal, $kolom) {
                 $query->from('nilai_mahasiswa')
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
-                    ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                    ->where("nilai_mahasiswa.$kolom", $idJadwal)
                     ->selectRaw('COALESCE(nilai_mahasiswa.nilai, 0)')
                     ->limit(1);
             },
@@ -72,14 +72,14 @@ trait HasNilaiAbsensi
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiIndex($queryUser, int $idJadwal, string $alias = 'mhs_nilai_index')
+    protected function addMahasiswaNilaiIndex($queryUser, int $idJadwal, string $alias = 'mhs_nilai_index', string $kolom = 'kj_id')
     {
         $queryUser->addSelect([
-            $alias => function ($query) use ($idJadwal) {
+            $alias => function ($query) use ($idJadwal, $kolom) {
                 $query->from('nilai_mahasiswa')
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
-                    ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                    ->where("nilai_mahasiswa.$kolom", $idJadwal)
                     ->selectRaw('
                         CASE
                             WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
@@ -100,14 +100,14 @@ trait HasNilaiAbsensi
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiMutu($queryUser, int $idJadwal, string $alias = 'mhs_nilai_mutu')
+    protected function addMahasiswaNilaiMutu($queryUser, int $idJadwal, string $alias = 'mhs_nilai_mutu', string $kolom = 'kj_id')
     {
         $queryUser->addSelect([
-            $alias => function ($query) use ($idJadwal) {
+            $alias => function ($query) use ($idJadwal, $kolom) {
                 $query->from('nilai_mahasiswa')
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
-                    ->where('nilai_mahasiswa.kj_id', $idJadwal)
+                    ->where("nilai_mahasiswa.$kolom", $idJadwal)
                     ->selectRaw("
                         CASE
                             WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'

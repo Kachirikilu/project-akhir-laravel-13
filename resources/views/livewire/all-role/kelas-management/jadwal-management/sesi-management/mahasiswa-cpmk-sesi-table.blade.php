@@ -124,22 +124,32 @@
                         $containsUts = $collection->contains('is_evaluasi', 'UTS');
                         $containsUas = $collection->contains('is_evaluasi', 'UAS');
 
-                        $colorClass = '';
                         $hasEvaluasi = $containsUts || $containsUas;
 
-                        if ($hasEvaluasi) {
-                            $colorClass = 'text-amber-700 dark:text-amber-500 font-bold';
-                        }
+                        $colorClass = $hasEvaluasi
+                            ? 'font-bold text-[var(--focus-color-special)]'
+                            : '';
                     @endphp
-                    <th colspan="3" x-data="{ showLine: {{ $hasEvaluasi ? 'true' : 'false' }} }"
+
+                    <th colspan="3"
+                        x-data="{ showLine: {{ $hasEvaluasi ? 'true' : 'false' }} }"
                         class="{{ $colorClass }} table-head-sub text-center border-x relative">
 
-                        <div class="text-xs sm:text-sm">{{ $kodeCpmk }}</div>
-                        <div class="text-[10px] font-normal opacity-90">{{ $rangePertemuan }}</div>
-
-                        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] h-[3px] mb-1 bg-amber-700 dark:bg-amber-500 origin-center"
-                            x-show="showLine" x-init="$nextTick(() => { if ({{ $hasEvaluasi ? 'true' : 'false' }}) showLine = true; })">
+                        <div class="text-xs sm:text-sm">
+                            {{ $kodeCpmk }}
                         </div>
+
+                        <div class="text-[10px] font-normal opacity-90">
+                            {{ $rangePertemuan }}
+                        </div>
+
+                        <div
+                            class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] h-[3px] mb-1 origin-center"
+                            style="background: var(--focus-color-special);"
+                            x-show="showLine"
+                            x-init="$nextTick(() => { if ({{ $hasEvaluasi ? 'true' : 'false' }}) showLine = true; })">
+                        </div>
+
                     </th>
                 @endforeach
             @endif

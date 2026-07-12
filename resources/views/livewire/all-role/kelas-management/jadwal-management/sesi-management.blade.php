@@ -23,11 +23,6 @@
         'subHead' => 'Sesi Kelas',
     ])
 
-    {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
-        'alpineKey' => 'sesi?.rps_id_show',
-        'isEdit' => 0,
-    ]) --}}
-
     @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-switch-table')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
@@ -46,7 +41,5 @@
 
     @if (Auth::user()->mahasiswa)
         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-left')
-        {{-- @include('livewire.all-role.kelas-management.jadwal-management.left-jadwal-modal-form') --}}
-        {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-absen-modal-form') --}}
     @endif
 </div>

@@ -17,7 +17,6 @@
             @include('livewire.all-role.kelas-management.kelas-modal-form.kelas-input-partial.kelas-main-input')
         </div>
         <div x-show="step === 2">
-
             @include('livewire.all-role.kelas-management.kelas-modal-form.kelas-input-partial.kelas-rps-input')
         </div>
     </div>

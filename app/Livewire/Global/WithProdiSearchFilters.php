@@ -62,8 +62,8 @@ trait WithProdiSearchFilters
             'id' => $p->id,
             'kode' => $p->kode,
             'slot1' => $p->prodi,
-            'slot2' => $p->departemenDp,
-            'slot3' => $p->fakultasFk,
+            // 'slot2' => $p->departemenDp,
+            'slot2' => $p->fakultasFk,
         ];
     }
 

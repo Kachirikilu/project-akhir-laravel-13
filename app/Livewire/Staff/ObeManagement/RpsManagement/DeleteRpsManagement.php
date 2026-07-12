@@ -11,9 +11,12 @@ class DeleteRpsManagement extends Component
     use HasToast;
     use WithRPSDelete;
 
+    public $isReady;
+
     #[On('open-delete-rps-modal')]
     public function handleDeleteRPS($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteRPS($id, $isTrash);
     }
     

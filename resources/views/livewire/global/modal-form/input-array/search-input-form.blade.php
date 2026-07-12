@@ -1,23 +1,27 @@
 <div>
     <div class="relative"
         wire:key="input-array.search-input-form-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
-        x-data="{
-            open: false,
-            search: @entangle($nameSearchString).live,
-            items: @entangle($idString).live,
-            itemsAll: @entangle($itemsAllString).live,
-            isManual: false,
-        
-            /* Logika Parent */
-            hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
-            parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
-        
-            get isParentReady() {
-                if (!this.hasParent) return true;
-                if (Array.isArray(this.parentSelectedId)) return this.parentSelectedId.length > 0;
-                return this.parentSelectedId != null && this.parentSelectedId !== '';
-            }
-        }"
+x-data="{
+    open: false,
+    search: @entangle($nameSearchString).live,
+    items: @entangle($idString).live,
+    itemsAll: @entangle($itemsAllString).live,
+    isManual: false,
+
+    hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
+    parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
+    isParentReady: false,
+
+    checkReady() {
+        if (!this.hasParent) {
+            this.isParentReady = true;
+        } else if (Array.isArray(this.parentSelectedId)) {
+            this.isParentReady = this.parentSelectedId.length > 0;
+        } else {
+            this.isParentReady = this.parentSelectedId != null && this.parentSelectedId !== '';
+        }
+    }
+}"
         x-effect="
             const config = $store.{{ $alpine ?? 'config' }};
             
@@ -39,18 +43,14 @@
                     items = config?.['{{ $idString }}'];
                     itemsAll = config?.['{{ $itemsAllString }}'];
                 }
-            },
+            };
 
-            if (icon) {
-            const color = isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400';
-            icon.className = icon.className.replace(/text-[a-z0-9-]+/g, color);
-        }
+            {{-- if (icon) {
+                const color = isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400';
+                icon.className = icon.className.replace(/text-[a-z0-9-]+/g, color);
+            } --}}
         "
-        {{-- x-init="$watch('isParentReady', (value) => {
-            console.log('%c[Debug] isParentReady berubah menjadi:', 'color: #007bff; font-weight: bold;', value);
-            console.log('Nilai parentSelectedId saat ini:', parentSelectedId);
-        });
-        console.log('Status awal isParentReady:', isParentReady);" --}}>
+       x-init="checkReady(); $watch('parentSelectedId', () => checkReady())">
 
         @include('livewire.global.modal-form.partial.label')
         @include('livewire.global.modal-form.input-array.partial.input-search', [

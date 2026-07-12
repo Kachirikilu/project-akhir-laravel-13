@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: [
                     "resources/css/color-template.css",
+                    "resources/css/color-template-special.css",
                     "resources/css/app.css",
                     "resources/js/app.js",
                     "resources/js/User.js",

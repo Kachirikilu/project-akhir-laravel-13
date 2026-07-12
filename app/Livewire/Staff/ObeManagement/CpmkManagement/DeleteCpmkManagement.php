@@ -11,9 +11,12 @@ class DeleteCpmkManagement extends Component
     use HasToast;
     use WithCPMKDelete;
 
+    public $isReady;
+
     #[On('open-delete-cpmk-modal')]
     public function handleDeleteCPMK($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteCPMK($id, $isTrash);
     }
     

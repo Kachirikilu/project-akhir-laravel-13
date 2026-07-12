@@ -11,9 +11,12 @@ class DeleteJadwalManagement extends Component
     use HasToast;
     use WithJadwalDelete;
 
+    public $isReady;
+
     #[On('open-delete-jadwal-modal')]
     public function handleDeleteJadwal($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteJadwal($id, $isTrash);
     }
     

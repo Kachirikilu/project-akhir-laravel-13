@@ -10,10 +10,13 @@ class DeleteRpsMahasiswaManagement extends Component
 {
     use HasToast;
     use WithRPSMahasiswaDelete;
+    
+    public $isReady;
 
     #[On('open-delete-rps-mahasiswa-modal')]
     public function handleDeleteNilai($id, $isTrash = false)
     {
+        $this->isReady = true;
         $this->deleteNilai($id, $isTrash);
     }
     

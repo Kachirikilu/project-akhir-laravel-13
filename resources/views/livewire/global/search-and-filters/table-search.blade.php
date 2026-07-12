@@ -81,7 +81,7 @@
                         oninput="this.value = this.value.replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxLength ?? 255 }})"
                     @else
                         maxLength="{{ $maxLength ?? 255 }}" @endif
-                    class="mt-1 text-[10px] w-{{ $wInput ?? '13' }} border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
+                    class="placeholder-shown:pr-2 mt-1 text-[10px] w-{{ $wInput ?? '13' }} border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
                 {{-- Tombol Reset --}}
                 @include('livewire.global.search-and-filters.partial.reset-button', [

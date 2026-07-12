@@ -14,4 +14,5 @@
     'typeX2String' => 'kode_text',
     'typeX3String' => 'fakultas',
     'unfoundString' => 'Tidak ada Departemen ditemukan!',
+    'minW' => 'sm:min-w-[360px]'
 ])

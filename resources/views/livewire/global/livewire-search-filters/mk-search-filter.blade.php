@@ -15,4 +15,5 @@
     'typeX3String' => 'semester_text',
     'typeX4String' => 'wajib_text',
     'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
+    'minW' => 'sm:min-w-[512px]'
 ])

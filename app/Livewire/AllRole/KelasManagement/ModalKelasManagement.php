@@ -19,6 +19,8 @@ class ModalKelasManagement extends Component
 
     public $isJadwal;
 
+    public $isReady;
+
     public function mount($isJadwal = false) {
         $this->isJadwal = $isJadwal;
     }
@@ -29,12 +31,14 @@ class ModalKelasManagement extends Component
     #[On('open-add-kelas-modal')]
     public function handleAddKelas()
     {
+        $this->isReady = true;
         $this->addKelas();
     }
 
     #[On('open-edit-kelas-modal')]
     public function handleEditKelas($id)
     {
+        $this->isReady = true;
         $this->editKelas($id);
     }
 
