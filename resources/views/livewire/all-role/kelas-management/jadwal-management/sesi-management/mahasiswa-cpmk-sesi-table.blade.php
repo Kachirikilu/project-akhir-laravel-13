@@ -1,7 +1,7 @@
 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-grafik-sesi-table')
 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
 
-<x-global.main-layout-table :paginator="$users">
+<x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
     <x-slot:sortir>
         @if ($isRPS ?? false)
             <div x-data="{ activeTab: @entangle('filterAngkatan') }"

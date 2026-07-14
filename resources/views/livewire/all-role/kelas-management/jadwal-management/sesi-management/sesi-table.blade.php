@@ -1,4 +1,4 @@
-<x-global.main-layout-table :paginator="$sesis">
+<x-global.main-layout-table :paginator="$sesis" :onlyAdmin="!Auth::user()->admin">
 
     <x-slot:sortir>
         <div

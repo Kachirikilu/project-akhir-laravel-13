@@ -1,15 +1,14 @@
 <?php
 
 use App\Http\Middleware\EnsureTeamMembership;
-use App\Livewire\Pages\Teams\AcceptInvitation;
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Kelas\KelasSesi;
 use App\Jobs\SendClassReminderJob;
+use App\Livewire\Pages\Teams\AcceptInvitation;
 use App\Livewire\Staff\ObeManagement\RpsManagement\iFrameRpsController;
-use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+use App\Models\Kelas\KelasSesi;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Laravel\Fortify\Features;
 
 Route::middleware(['web', 'check.registration'])->group(function () {
     Route::get('/register', function () {
@@ -34,7 +33,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('dashboard', 'dashboard-management')->name('dashboard');
 
-
     Route::middleware(['is_admin'])->group(function () {
         Route::view('user-management/{switchTable?}', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
@@ -54,15 +52,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('nilai-management/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
         Route::view('nilai-management/rps/{kode_rps}', 'nilai-management')->name('rps-capaian-mahasiswa-management');
     });
+
     Route::middleware(['is_dosen'])->group(function () {
         Route::view('program-studi/{switchTable?}', 'program-studi-dosen')->name('program-studi-dosen');
+
+        Route::view('jadwal-kelas/jadwal/{switchTable?}', 'jadwal-kelas')->name('jadwal-kelas');
+        Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
     });
 
     Route::middleware(['is_mahasiswa'])->group(function () {
-        Route::view('jadwal-kelas/{switchTable?}', 'jadwal-mahasiswa')->name('jadwal-mahasiswa');
-        Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/{switchTable?}', 'jadwal-mahasiswa')->name('sesi-mahasiswa');
-        // Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
-        // Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('nilai-rps-mahasiswa');
+        // Route::view('jadwal-kelas/jadwal/{switchTable?}', 'jadwal-kelas')->name('jadwal-kelas');
+        // Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
 
         Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
         Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('rps-mahasiswa');
@@ -73,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'kelas-management')->name('sesi-management');
 
     Route::get('/rps/pdf-preview/{rps_id}/{pr_id?}', [iFrameRpsController::class, 'preview'])->name('rps.pdf.preview');
-    
+
     // Route::middleware('kelas.access')->group(function () {
     // });
     Route::redirect('settings', 'settings/profile');
@@ -81,16 +81,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/user-wallpaper/{id}', function ($id) {
     $wallpaper = Wallpaper::findOrFail($id);
-    if ($wallpaper->user_id !== auth()->id()) abort(403);
+    if ($wallpaper->user_id !== auth()->id()) {
+        abort(403);
+    }
+
     return Storage::disk('private')->response($wallpaper->path);
 })->middleware('auth');
 
-
 Route::get('/test-wa/{sesi_id}', function ($sesi_id) {
     $sesi = KelasSesi::findOrFail($sesi_id);
-    SendClassReminderJob::dispatchSync($sesi); 
-    
-    return "Test perkuliahan sesi " . $sesi->id . " berhasil ditembak ke Fonnte!";
+    SendClassReminderJob::dispatchSync($sesi);
+
+    return 'Test perkuliahan sesi '.$sesi->id.' berhasil ditembak ke Fonnte!';
 });
 
 Route::get('/database-stats', function () {

@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-3 p-[18px] {{ $isUjian ? 'bg-[var(--main-color-special)]' : 'bg-[var(--main-color)]' }}" @click.stop>
+<div class="flex flex-col gap-3 p-[18px] {{ $mainColor }}" @click.stop>
 
     <div class="flex items-start justify-between gap-2">
 

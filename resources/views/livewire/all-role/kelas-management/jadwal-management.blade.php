@@ -5,13 +5,13 @@
      "
     @navigate.window="
         let segment = window.location.pathname.split('/').pop();
-        activeTable = (segment === {{ $isJadwalMhs ?? null ? 'jadwal-mahasiswa' : 'jadwal-management' }} || segment === '') ? 'jadwal-card' : segment;
+        activeTable = (segment === {{ $isJadwalOnly ?? null ? 'jadwal-kelas' : 'jadwal-management' }} || segment === '') ? 'jadwal-card' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
     @include('livewire.global.header.tag-user')
 
-    @if (!$isJadwalMhs)
+    @if (!$isJadwalOnly)
         @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
             'alpine' => 'jadwal',
             'mainKode' => $kode_kelas_url ?? '-',
@@ -28,7 +28,10 @@
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @if ($this->switchTable == 'jadwal-card')
+        @if ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] == 0)
+            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message')
+        @endif
+        @if ($this->switchTable == 'jadwal-card' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-card')
         @elseif ($this->switchTable == 'jadwal-table')
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-table')

@@ -87,14 +87,14 @@
 
                 <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                     NIP: {{ $dosen->nip }}
-                    <strong class="px-2">|</strong>
-                    <span class="font-medium text-[var(--contrast-second-text)]">{{ $dosen->pivot->peran }}</span>
+                    <strong class="px-1">|</strong>
+                    <span class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>
                     @if ($dosen->pivot->is_ketua)
-                        <span class="ml-2 px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                        <span class="px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
                     @endif
                 </span>
 
-                <span class="flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
+                <span class="mt-1 flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
                     <flux:icon.phone variant="micro" />
                     {{ $dosen->no_wa_full }}
                 </span>
@@ -111,9 +111,6 @@
                 $store.rps?.setShowRPS(
                     '{{ $kelas->rps_id ?? '' }}',
                     '{{ $kelas->rps_rel->kode ?? '' }}',
-                    '{{ $kelas->rps_rel->rps ?? '' }}',
-                    '{{ $kelas->rps_rel->draf ?? '' }}',
-                    '{{ $kelas->rps_rel->level_mk ?? '' }}',
                     '{{ $kelas->pr_id ?? '' }}',
                 );
                 $store.rps?.setColor('text-green-700 dark:text-green-400');

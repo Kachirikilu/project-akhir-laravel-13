@@ -139,15 +139,15 @@
                     $bobot = $bobotCpmkLegend[$kodeCpmk] ?? 0;
                     $keberhasilan = $rataKeberhasilanCpmk[$kodeCpmk] ?? 0;
                 @endphp
-                <div class="flex items-center gap-2 shrink-0">
-                    <div class="w-3 h-3 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-4 h-4 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
                     <div class="flex flex-col">
                         <span
                             class="text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 leading-none whitespace-nowrap">
                             {{ $kodeCpmk }}
                         </span>
                         <span
-                            class="text-[9px] sm:text-xs text-gray-500 font-medium leading-none mt-0.5 whitespace-nowrap">
+                            class="text-[9px] sm:text-xs text-gray-500 font-medium leading-none mt-1 whitespace-nowrap">
                             Bobot: {{ $bobot }}% <span class="mx-1">|</span> Tercapai: {{ $keberhasilan }}%
                         </span>
                     </div>

@@ -226,9 +226,6 @@
                         $store.rps?.setShowRPS(
                                 '{{ $k->rps_id ?? '' }}',
                                 '{{ $k->rps_rel->kode ?? '' }}',
-                                '{{ $k->rps_rel->rps ?? '' }}',
-                                '{{ $k->rps_rel->draf ?? '' }}',
-                                '{{ $k->rps_rel->level_mk ?? '' }}',
                                 '{{ $k->pr_id ?? '' }}',
                         );
                         $store.rps?.setColor('text-green-700 dark:text-green-400');

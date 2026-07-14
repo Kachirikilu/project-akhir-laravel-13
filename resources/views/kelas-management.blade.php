@@ -9,15 +9,15 @@
 @endphp
 
 <x-layouts::app :title="$pageTitle">
-    <div class="flex h-full w-full flex-1 flex-col rounded-xl">
-        <div class="relative h-full flex-1 mb-32 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
+    <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
+        <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
             @if (request()->routeIs('kelas-management'))
                 <livewire:all-role.kelas-management :switchTable="request()->route('switchTable') ?? ''" :switchTable2="request()->route('switchTable2') ?? 'kelas-card'" />
             @elseif (request()->routeIs('jadwal-management'))
                 <livewire:all-role.kelas-management.jadwal-management :kode_kelas="request()->route('kode_kelas')" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
             @elseif(request()->routeIs('sesi-management'))
                 <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
-                    :kode_jadwal_short="request()->route('kode_jadwal_short')" :switchTable="request()->route('switchTable') ?? 'sesi-card'" />
+                    :kode_jadwal_short="request()->route('kode_jadwal_short')" :switchTable="request()->route('switchTable') ?? 'sesi-hari-ini'" />
             @endif
         </div>
     </div>

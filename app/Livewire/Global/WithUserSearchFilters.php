@@ -700,7 +700,7 @@ trait WithUserSearchFilters
                 'mhs_izin' => fn ($user) => $user->mhs_izin ?? null,
                 'mhs_sakit' => fn ($user) => $user->mhs_sakit ?? null,
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
-                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu' => fn ($user) => $user->mahasiswa->mhs_nilai_akhir ?? 0,
+                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu' => fn ($user) => $user->mhs_nilai_akhir ?? 0,
 
                 'count_rps' => fn ($user) => $user->count_rps ?? $user->mahasiswa->count_rps ?? null,
                 'total_sks' => fn ($user) => $user->total_sks ?? $user->mahasiswa->total_sks ?? null,

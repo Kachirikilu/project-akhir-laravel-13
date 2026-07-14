@@ -1,14 +1,23 @@
 <div class="flex items-start max-md:flex-col">
-    <div class="me-10 w-full pb-4 md:w-[220px]">
-        <flux:navlist aria-label="{{ __('Settings') }}">
-            <flux:navlist.item class="mb-0.5" :href="route('profile.edit')" wire:navigate>{{ __('Profile') }}</flux:navlist.item>
-            <flux:navlist.item class="mb-0.5" :href="route('theme.edit')" wire:navigate>{{ __('Theme') }}</flux:navlist.item>
-        </flux:navlist>
-    </div>
-            {{-- <flux:navlist.item :href="route('security.edit')" wire:navigate>{{ __('Security') }}</flux:navlist.item> --}}
-            {{-- <flux:navlist.item :href="route('teams.index')" :current="request()->routeIs('teams.*')" wire:navigate>{{ __('Teams') }}</flux:navlist.item> --}}
-    <flux:separator class="md:hidden" />
+    <div class="me-10 w-full pb-4 md:w-[220px] space-y-1">
 
+        @php
+            $profileActive = request()->routeIs('profile.edit');
+            $themeActive = request()->routeIs('theme.edit');
+        @endphp
+
+        <a href="{{ route('profile.edit') }}" wire:navigate @class(['settings-link', 'settings-link-active' => $profileActive])>
+            <flux:icon name="user" class="w-4 h-4" />
+            <span>Profile</span>
+        </a>
+
+        <a href="{{ route('theme.edit') }}" wire:navigate @class(['settings-link', 'settings-link-active' => $themeActive])>
+            <flux:icon name="paint-brush" class="w-4 h-4" />
+            <span>Theme</span>
+        </a>
+
+    </div>
+    <flux:separator class="md:hidden" />
     <div class="flex-1 self-stretch max-md:pt-6">
         <flux:heading>{{ $heading ?? '' }}</flux:heading>
         <flux:subheading>{{ $subheading ?? '' }}</flux:subheading>

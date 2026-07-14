@@ -6,35 +6,35 @@ use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNil
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Global\HasGetByKode;
 use App\Livewire\Global\HasSortir;
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasStats;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithKelasJadwalSearchFilters;
+use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
-use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class JadwalManagement extends Component
 {
     use HasGetByKode;
     use HasSortir;
-    use HasToast;
     use HasStats;
-    use WithRPSShow;
-    use WithNilaiExcel;
+    use HasToast;
     use WithJadwalFilters;
-    use WithPagination;
     use WithKelasJadwalSearchFilters;
+    use WithNilaiExcel;
+    use WithPagination;
+    use WithRPSShow;
 
     public $search = '';
 
     public $searchMode = 'simple';
 
-    public $isJadwalMhs = false;
+    public $isJadwalOnly = false;
 
     public $kode_kelas_url;
 
@@ -64,7 +64,7 @@ class JadwalManagement extends Component
         'refresh-data-kelas' => 'refreshJadwalList',
         'refresh-stats-kelas' => 'refreshStatsKelasList',
         'loadDraft' => 'loadDraft',
-        'saveToDraft' => 'saveToDraft'
+        'saveToDraft' => 'saveToDraft',
     ];
 
     protected $queryString = [
@@ -83,24 +83,26 @@ class JadwalManagement extends Component
     {
         $this->resetPage();
     }
+
     #[On('refresh-stats-kelas')]
     public function refreshStatsKelasList()
     {
         $this->clearKelasStatsCache();
     }
 
-    public function refreshStats() {
+    public function refreshStats()
+    {
         $this->refreshStatsKelasList();
         $this->resetPage();
         $this->toast(text: 'Data Statistik Kelas berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
-    public function mount($isJadwalMhs = false, $kode_kelas = null, $switchTable = 'jadwal-card')
+    public function mount($isJadwalOnly = false, $kode_kelas = null, $switchTable = 'jadwal-card')
     {
-        $this->isJadwalMhs = $isJadwalMhs;
+        $this->isJadwalOnly = $isJadwalOnly;
         $this->switchTable = $switchTable;
 
-        if (! $this->isJadwalMhs && $kode_kelas !== null) {
+        if (! $this->isJadwalOnly && $kode_kelas !== null) {
             $this->kode_kelas_url = $kode_kelas;
 
             $kelas = $this->getKelasByKode($kode_kelas);
@@ -123,7 +125,7 @@ class JadwalManagement extends Component
             $this->kode_rps_url = $this->kelas->kode_rps;
             $this->tim_dosen = $this->getTimDosenByKelas($kelas->rps_id, $kelas->pr_id);
 
-            $sessionKey = $this->isJadwalMhs ? 'kelas_mahasiswa.history' : 'kelas.history';
+            $sessionKey = $this->isJadwalOnly ? 'kelas_mahasiswa.history' : 'kelas.history';
             $kelasHistory = session($sessionKey, []);
             $currentKode = $kelas->kode;
 
@@ -169,12 +171,16 @@ class JadwalManagement extends Component
         }
     }
 
+    // public function updatedSwitchTable() {
+    //     $this->dispatch('navbar-switch-table', switchTable: $this->switchTable);
+    // }
+
     public function switchingTable($table)
     {
         $this->switchTable = $table;
         $this->resetPage();
 
-        $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
+        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
         $suffix = ($table && $table !== 'jadwal-card') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal{$suffix}";
@@ -182,35 +188,44 @@ class JadwalManagement extends Component
         $targetPath = '/'.ltrim(rtrim($targetPath, '/'), '/');
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+        if ($this->isJadwalOnly) {
+            $this->dispatch('navbar-switch-table', switchTableMain: $this->switchTable, routeMain: 'jadwal-kelas');
+        }
     }
 
     public function render()
     {
         try {
-            if (! $this->isJadwalMhs) {
+
+            if (! $this->isJadwalOnly) {
                 $queryJadwal = $this->inputJadwalSearch($this->kelas->id);
-                $countJadwal = KelasJadwal::where('kelas_id', $this->kelas->id);
+                $queryJadwalHari = $this->inputJadwalSearch($this->kelas->id, true);
             } else {
                 $queryJadwal = $this->inputJadwalSearch();
-                $countJadwal = KelasJadwal::query();
+                $queryJadwalHari = $this->inputJadwalSearch(false, true);
             }
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryJadwal->onlyTrashed();
-                $countJadwal->onlyTrashed();
+                $queryJadwalHari->onlyTrashed();
+            }
+
+            $jadwalQuerys = $queryJadwal;
+            if ($this->switchTable == 'hari-ini') {
+                $jadwalQuerys = $queryJadwalHari;
             }
 
             // $jadwals = $queryJadwal->paginate($this->perPage);
             if ($this->searchMode == 'complex') {
-                $jadwals = $this->searchOutputJadwal($queryJadwal, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
+                $jadwals = $this->searchOutputJadwal($jadwalQuerys, $this->search, $this->perPage, $this->sortField, $this->sortDirection);
             } else {
-                $jadwals = $queryJadwal->paginate($this->perPage);
+                $jadwals = $jadwalQuerys->paginate($this->perPage);
             }
             if (Auth::user()->mahasiswa) {
                 $userId = Auth::id();
                 $jadwals->load('mahasiswas:id,user_id');
                 $jadwals->getCollection()->transform(function ($jadwal) use ($userId) {
-                    if (! $this->isJadwalMhs) {
+                    if (! $this->isJadwalOnly) {
                         if ($jadwal->password == '' || $jadwal->password == null) {
                             $jadwal->with_pw = false;
                         } else {
@@ -230,7 +245,8 @@ class JadwalManagement extends Component
                 'jadwals' => $jadwals,
                 'kelas' => $this->kelas ?? null,
                 'stats' => [
-                    'jadwal' => $countJadwal->count(),
+                    'jadwal-hari-ini' => $queryJadwalHari->count() ?? null,
+                    'jadwal' => $queryJadwal->count(),
                 ],
             ]);
 

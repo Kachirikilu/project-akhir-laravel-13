@@ -297,35 +297,49 @@ trait HasAkreditas
         return $queryUser;
     }
 
-    protected function addCountRpsDosen($queryUser)
-    {
-        $sub = DB::table('rps_pivot_tim_dosen')
+ protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
+{
+    $queryUser->addSelect('users.*');
+
+    $queryUser->selectSub(
+        DB::table('rps_pivot_tim_dosen')
             ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
             ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
             ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
-            ->select('dosens.user_id', DB::raw('COUNT(DISTINCT rps_pivot_tim_dosen.rps_id) as count_rps'))
-            ->groupBy('dosens.user_id');
+            ->whereColumn('dosens.user_id', 'users.id')
+            ->selectRaw('COUNT(DISTINCT rps_pivot_tim_dosen.rps_id)'),
+        $alias
+    );
 
-        return $queryUser->leftJoinSub($sub, 'rps_counts', function ($join) {
-            $join->on('users.id', '=', 'rps_counts.user_id');
-        })->addSelect('rps_counts.count_rps');
-    }
+    return $queryUser;
+}
+protected function addTotalSksDosen($queryUser, string $alias = 'total_sks')
+{
+    $queryUser->addSelect('users.*');
 
-    protected function addTotalSksDosen($queryUser)
-    {
-        $sub = DB::table('rps_pivot_tim_dosen')
-            ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
-            ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
-            ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
-            ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
-            ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-            ->select('dosens.user_id', DB::raw('SUM(mata_kuliahs.sks_kuliah) as total_sks'))
-            ->groupBy('dosens.user_id');
+    $queryUser->selectSub(
+        DB::table(function ($sub) {
+            $sub->from('rps_pivot_tim_dosen')
+                ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
+                ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
+                ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
+                ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
+                ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                ->selectRaw('
+                    dosens.user_id,
+                    rps_pivot_tim_dosen.rps_id,
+                    MAX(mata_kuliahs.sks_kuliah) as sks
+                ')
+                ->groupBy('dosens.user_id', 'rps_pivot_tim_dosen.rps_id');
+        }, 'rps_unik')
+        ->whereColumn('rps_unik.user_id', 'users.id')
+        ->selectRaw('COALESCE(SUM(rps_unik.sks), 0)'),
+        $alias
+    );
 
-        return $queryUser->leftJoinSub($sub, 'sks_counts', function ($join) {
-            $join->on('users.id', '=', 'sks_counts.user_id');
-        })->addSelect(DB::raw('COALESCE(sks_counts.total_sks, 0) as total_sks'));
-    }
+    return $queryUser;
+}
+
     protected function addCountRpsTimDosen($queryTimDosen, string $alias = 'count_rps')
     {
         $queryTimDosen->select('tim_dosens.*');

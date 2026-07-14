@@ -23,7 +23,6 @@
                     <span>Lihat Nilai</span>
                 </div>
             </flux:menu.item>
-
         @endif
 
         <flux:menu.separator />
@@ -36,9 +35,6 @@
                     $store.rps?.setShowRPS(
                         '{{ $data['id'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}',
-                        '{{ $data['rps'] ?? '' }}',
-                        '{{ $data['draf'] ?? '' }}',
-                        '{{ $data['level_mk'] ?? '' }}',
                     );
                     $store.rps?.setColor('text-green-700 dark:text-green-400');
                     $flux.modal('rps-detail-modal').show();
@@ -71,7 +67,19 @@
                     class="animate-spin h-4 w-4 ml-2" />
             </div>
 
-            @if (!$data['noData'])
+            @if ($data['noData'])
+                <flux:menu.separator />
+                <flux:menu.item wire:navigate
+                    href="{{ route('obe-management', ['switchTable' => 'rps']) . '?search=' . urlencode($data['kode']) }}"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Edit RPS di OBE</span>
+                    </div>
+                </flux:menu.item>
+            @else
                 <flux:menu.separator />
 
                 {{-- Tombol Edit --}}

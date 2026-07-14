@@ -186,33 +186,6 @@ class MataKuliahManagement extends Component
             }
             $stats = $this->getStatsMk($this->showDeleted);
 
-            // =========================
-            // STATS GLOBAL (FULL DATA)
-            // =========================
-            // $totalMK = (clone $countMK)->count();
-            // $totalTatapMuka = (clone $countMK)->where('tipe_sks', 1)->count();
-            // $totalPraktikum = (clone $countMK)->where('tipe_sks', 2)->count();
-            // $totalPraktek = (clone $countMK)->where('tipe_sks', 3)->count();
-            // $totalSimulasi = (clone $countMK)->where('tipe_sks', 4)->count();
-
-            // // =========================
-            // // STATS PER TAB
-            // // =========================
-            // $tabQuery = clone $countMK;
-            // $this->buttonMKSwitch($tabQuery);
-
-            // $totalMKProdi = (clone $tabQuery)->whereHas('prodis', function ($q) {
-            //     $q->where('prodis.id', Auth::user()->pr_id);
-            // })->count();
-            // $totalMKOpsi = (clone $tabQuery)->count();
-
-            // $totalWajib = (clone $tabQuery)->where('is_wajib', true)->count();
-            // $totalPilihan = (clone $tabQuery)->where('is_wajib', false)->count();
-            // $totalUni = (clone $tabQuery)->where('level_mk', 4)->count();
-
-            // =========================
-            // QUERY FINAL TABLE
-            // =========================
             $this->buttonMKSwitch($queryMK);
             $this->buttonMKFilter($queryMK);
 
@@ -225,19 +198,6 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => $mks,
                 'stats' => $stats,
-                // 'stats' => [
-                //     'mk' => $totalMK,
-                //     'mk-tp' => $totalTatapMuka,
-                //     'mk-pr' => $totalPraktikum,
-                //     'mk-pl' => $totalPraktek,
-                //     'mk-sm' => $totalSimulasi,
-
-                //     'mk-prodi' => $totalMKProdi,
-                //     'mk-opsi' => $totalMKOpsi,
-                //     'mk-wajib' => $totalWajib,
-                //     'mk-pilihan' => $totalPilihan,
-                //     'mk-uni' => $totalUni,
-                // ],
             ]);
 
         } catch (QueryException $e) {

@@ -2,40 +2,40 @@
 
 namespace App\Livewire\Staff;
 
+use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Global\HasAkreditas;
 use App\Livewire\Global\HasSortir;
 use App\Livewire\Global\HasStats;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
-use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Global\WithTimDosenSearchFilters;
 // use App\Livewire\Staff\ObeManagement\TimDosenManagement\WithTimDosenDelete;
+use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
-use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
 // use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKDelete;
+use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefFilters;
 // use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithDosenFilters;
-use App\Livewire\Staff\ObeManagement\TimDosenManagement\WithTimDosenFilters;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
-use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\Staff\ObeManagement\TimDosenManagement\WithTimDosenFilters;
 use App\Livewire\Staff\ObeManagement\WithOBEExcel;
 use App\Models\Akademik\CPL;
-use App\Models\Akademik\TimDosen;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
+use App\Models\Akademik\TimDosen;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -50,6 +50,7 @@ class ObeManagement extends Component
     use HasToast;
     use WithCPLFilters;
     use WithCPLSearchFilters;
+
     // use WithTimDosenDelete;
     use WithCPMKFilters;
     use WithCPMKSearchFilters;
@@ -62,17 +63,19 @@ class ObeManagement extends Component
     use WithPagination;
     use WithProdiSearchFilters;
     use WithReferensiSearchFilters;
-    use WithTimDosenSearchFilters;
     use WithRefFilters;
+
     // use WithRefModal;
     use WithRPSFilters;
     use WithRPSSearchFilters;
+
     // use WithSubCPMKDelete;
     use WithSubCPMKFilters;
     use WithSubCPMKSearchFilters;
+    use WithTimDosenFilters;
+    use WithTimDosenSearchFilters;
     use WithUserFilters;
     use WithUserSearchFilters;
-    use WithTimDosenFilters;
 
     public $switchTable = 'rps';
 
@@ -91,34 +94,41 @@ class ObeManagement extends Component
     public $sortDirection = 'asc';
 
     public $selectedPrId;
+
     public $selectedFkId;
+
     public $selectedMKId;
+
     public $selectedRPSId;
+
     public $selectedCPLId;
+
     public $selectedCPMKId;
+
     public $selectedSCPMKId;
+
     public $selectedDosenId;
 
     protected $listeners = [
-        'refresh-table'       => 'refreshOBEsList',
-        'refresh-data-obe'    => 'refreshOBEsList',
-        'refresh-data-rps'    => 'refreshOBEsList',
-        'refresh-data-cpl'    => 'refreshOBEsList',
-        'refresh-data-cpmk'   => 'refreshOBEsList',
-        'refresh-data-scpmk'  => 'refreshOBEsList',
-        'refresh-data-ref'    => 'refreshOBEsList',
+        'refresh-table' => 'refreshOBEsList',
+        'refresh-data-obe' => 'refreshOBEsList',
+        'refresh-data-rps' => 'refreshOBEsList',
+        'refresh-data-cpl' => 'refreshOBEsList',
+        'refresh-data-cpmk' => 'refreshOBEsList',
+        'refresh-data-scpmk' => 'refreshOBEsList',
+        'refresh-data-ref' => 'refreshOBEsList',
         'refresh-data-tim-dosen' => 'refreshOBEsList',
-        'refresh-data-user'   => 'refreshOBEsList',
-        'refresh-stats-obe'   => 'refreshStatsOBEsList',
-        'refresh-stats-rps'   => 'refreshStatsRPSsList',
-        'refresh-stats-cpl'   => 'refreshStatsCPLsList',
-        'refresh-stats-cpmk'  => 'refreshStatsCPMKsList',
+        'refresh-data-user' => 'refreshOBEsList',
+        'refresh-stats-obe' => 'refreshStatsOBEsList',
+        'refresh-stats-rps' => 'refreshStatsRPSsList',
+        'refresh-stats-cpl' => 'refreshStatsCPLsList',
+        'refresh-stats-cpmk' => 'refreshStatsCPMKsList',
         'refresh-stats-scpmk' => 'refreshStatsSubCPMKsList',
-        'refresh-stats-ref'   => 'refreshStatsRefsList',
+        'refresh-stats-ref' => 'refreshStatsRefsList',
         'refresh-stats-tim-dosen' => 'refreshStatsTimDosensList',
-        'refresh-stats-user'  => 'refreshStatsUsersList',
-        'loadDraft'           => 'loadDraft',
-        'saveToDraft'         => 'saveToDraft',
+        'refresh-stats-user' => 'refreshStatsUsersList',
+        'loadDraft' => 'loadDraft',
+        'saveToDraft' => 'saveToDraft',
     ];
 
     protected $queryString = [
@@ -140,9 +150,15 @@ class ObeManagement extends Component
         'showDeleted' => ['except' => false],
     ];
 
-    public function mount($switchTable = 'rps')
+    public function mount($switchTable)
     {
+        if (empty($switchTable)) {
+            return redirect()->route('obe-management', ['switchTable' => 'rps']);
+        }
         $this->switchTable = $switchTable;
+
+
+        $this->updatedShowDeleted();
         // $this->cplNameSearch = [
         //     // 'rps' => '',
         //     'cpmk' => '',
@@ -184,36 +200,43 @@ class ObeManagement extends Component
     {
         $this->selectedPrId = $selectedPrId;
     }
+
     #[On('selected-fk-id-updated')]
     public function updateSelectedFkId($selectedFkId)
     {
         $this->selectedFkId = $selectedFkId;
     }
+
     #[On('selected-mk-id-updated')]
     public function updateSelectedMKId($selectedMKId)
     {
         $this->selectedMKId = $selectedMKId;
     }
+
     #[On('selected-rps-id-updated')]
     public function updateSelectedRPSId($selectedRPSId)
     {
         $this->selectedRPSId = $selectedRPSId;
     }
+
     #[On('selected-cpl-id-updated')]
     public function updateSelectedCPLId($selectedCPLId)
     {
         $this->selectedCPLId = $selectedCPLId;
     }
+
     #[On('selected-cpmk-id-updated')]
     public function updateSelectedCPMKId($selectedCPMKId)
     {
         $this->selectedCPMKId = $selectedCPMKId;
     }
+
     #[On('selected-scpmk-id-updated')]
     public function updateSelectedSCPMKId($selectedSCPMKId)
     {
         $this->selectedSCPMKId = $selectedSCPMKId;
     }
+
     #[On('selected-dosen-id-updated')]
     public function updateSelectedDosenId($selectedDosenId)
     {
@@ -240,6 +263,7 @@ class ObeManagement extends Component
         $this->clearObeStatsCache();
         $this->clearObeProdiStatsCache();
     }
+
     #[On('refresh-stats-rps')]
     public function refreshStatsRPSsList()
     {
@@ -248,6 +272,7 @@ class ObeManagement extends Component
         $this->clearObeProdiStatsCache();
         $this->clearRpsProdiStatsCache();
     }
+
     #[On('refresh-stats-cpl')]
     public function refreshStatsCPLsList()
     {
@@ -256,6 +281,7 @@ class ObeManagement extends Component
         $this->clearObeProdiStatsCache();
         $this->clearCplProdiStatsCache();
     }
+
     #[On('refresh-stats-cpmk')]
     public function refreshStatsCPMKsList()
     {
@@ -264,6 +290,7 @@ class ObeManagement extends Component
         $this->clearObeProdiStatsCache();
         $this->clearCpmkProdiStatsCache();
     }
+
     #[On('refresh-stats-scpmk')]
     public function refreshStatsSubCPMKsList()
     {
@@ -272,18 +299,21 @@ class ObeManagement extends Component
         $this->clearObeProdiStatsCache();
         $this->clearScpmkProdiStatsCache();
     }
+
     #[On('refresh-stats-ref')]
     public function refreshStatsReferensisList()
     {
         $this->clearObeStatsCache();
         $this->clearReferensiStatsCache();
     }
+
     #[On('refresh-stats-tim-dosen')]
     public function refreshStatsTimDosensList()
     {
         $this->clearObeStatsCache();
         $this->clearTimDosenStatsCache();
     }
+
     #[On('refresh-stats-user')]
     public function refreshStatsUsersList()
     {
@@ -292,7 +322,8 @@ class ObeManagement extends Component
         $this->clearDosenStatsCache();
     }
 
-    public function refreshStats() {
+    public function refreshStats()
+    {
         $this->refreshStatsOBEsList();
         $this->refreshStatsRPSsList();
         $this->refreshStatsCPLsList();
@@ -304,7 +335,6 @@ class ObeManagement extends Component
         $this->resetPage();
         $this->toast(text: 'Data Statistik OBE berhasil diperbarui!', type: 'info', variant: 'info');
     }
-
 
     public function updatingSearch()
     {
@@ -424,9 +454,16 @@ class ObeManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
-    public function updatedSwitchTable($value)
+    public function updatedSwitchTable()
     {
-        $this->dispatch('switch-table-changed', table: $value);
+        $this->updatedShowDeleted();
+    }
+
+    public function updatedShowDeleted()
+    {
+        if (Auth::user()->dosen && $this->switchTable == 'dosen') {
+            $this->showDeleted = false;
+        }
     }
 
     // public function placeholder()
@@ -474,30 +511,34 @@ class ObeManagement extends Component
                     break;
             }
 
-
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 switch ($this->switchTable) {
                     case 'rps':
-                    $queryRPS->onlyTrashed();
+                        $queryRPS->onlyTrashed();
                         break;
                     case 'cpl':
-                    $queryCPL->onlyTrashed();
+                        $queryCPL->onlyTrashed();
                         break;
                     case 'cpmk':
-                    $queryCPMK->onlyTrashed();
+                        $queryCPMK->onlyTrashed();
                         break;
                     case 'sub-cpmk':
-                    $querySCPMK->onlyTrashed();
+                        $querySCPMK->onlyTrashed();
                         break;
                     case 'referensi':
-                    $queryRef->onlyTrashed();
+                        $queryRef->onlyTrashed();
                         break;
                     case 'tim-dosen':
-                    $queryTimDosen->onlyTrashed();
+                        $queryTimDosen->onlyTrashed();
                         break;
-                    case 'dosen':
-                    $queryUser->onlyTrashed();
-                        break;
+                }
+            }
+
+            if (Auth::user()->admin) {
+                if ($this->showDeleted && $this->AuthCheck('admin')) {
+                    if ($this->switchTable == 'dosen') {
+                        $queryUser->onlyTrashed();
+                    }
                 }
             }
 
@@ -656,7 +697,6 @@ class ObeManagement extends Component
                 'dosen-aktif' => '🟢',
                 'dosen-non-aktif' => '🔴',
             ];
-
 
             $stats = array_merge($stats, $this->getStatsObe($this->showDeleted));
 

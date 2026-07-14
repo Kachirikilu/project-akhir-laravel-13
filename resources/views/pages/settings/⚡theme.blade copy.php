@@ -1,10 +1,9 @@
 <?php
 
-use Livewire\Component;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
-new #[Title('Theme Settings')] class extends Component {
-}; ?>
+new #[Title('Theme Settings')] class extends Component {}; ?>
 
 <section class="w-full pb-48">
     @include('partials.settings-heading')

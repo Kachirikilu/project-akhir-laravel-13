@@ -110,10 +110,11 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
             ->with([
                 'nilai_mahasiswas' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
-                        ->where('ganjil_genap', $this->jadwal->ganjil_genap)
-                        ->where('tahun_akademik', $this->jadwal->tahun_akademik);
+                    ->where('ganjil_genap', $this->jadwal->ganjil_genap)
+                    ->where('tahun_akademik', $this->jadwal->tahun_akademik);
                 },
             ])
+            ->distinct()
             ->get();
 
         $startRow = 4;

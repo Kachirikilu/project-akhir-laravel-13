@@ -12,10 +12,20 @@
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 w-full">
 
                     <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full pb-1">
+
                         @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                             'xString' => 'switchingTable',
                             'xFilter' => $switchTable,
-                            'tabFilter' => $stats['jadwal'],
+                            'tabFilter' => $stats['jadwal-hari-ini'] ?? null,
+                            'tabString' => 'hari-ini',
+                            'tabNameString' => 'Kelas Hari Ini',
+                            'icon' => 'academic-cap',
+                        ])
+
+                        @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                            'xString' => 'switchingTable',
+                            'xFilter' => $switchTable,
+                            'tabFilter' => $stats['jadwal'] ?? null,
                             'tabString' => 'jadwal-card',
                             'tabNameString' => 'Jadwal Kelas',
                             'icon' => 'academic-cap',
@@ -24,7 +34,7 @@
                         @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                             'xString' => 'switchingTable',
                             'xFilter' => $switchTable,
-                            'tabFilter' => $stats['jadwal'],
+                            'tabFilter' => $stats['jadwal'] ?? null,
                             'tabString' => 'jadwal-table',
                             'tabNameString' => 'Tabel Jadwal',
                             'icon' => 'table-cells',
@@ -38,17 +48,22 @@
         <div class="flex flex-col items-stretch md:items-end gap-3 w-full md:w-auto shrink-0">
             <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
 
-                <div class="shrink-0">
-                    @include('livewire.global.search-and-filters.page-control', [
-                        'perPageOptions' => [2, 4, 6, 8, 12],
-                        'key' => 'page-control-jadwal',
-                        'isSmall' => 1,
-                        'withB' => 0,
-                        'withArr' => 1,
-                    ])
-                </div>
+                @unless ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
+                <div></div>
+                @endunless
+                @if ($this->switchTable == 'jadwal-card' || $this->switchTable == 'jadwal-table' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
+                    <div class="shrink-0">
+                        @include('livewire.global.search-and-filters.page-control', [
+                            'perPageOptions' => [2, 4, 6, 8, 12],
+                            'key' => 'page-control-jadwal',
+                            'isSmall' => 1,
+                            'withB' => 0,
+                            'withArr' => 1,
+                        ])
+                    </div>
+                @endif
 
-                @if (Auth::user()->admin || Auth::user()->dosen)
+                @if ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
                     <div class="shrink-0">
                         <flux:dropdown>
                             <flux:button variant="primary" icon="plus" size="sm"

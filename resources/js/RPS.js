@@ -178,13 +178,10 @@ document.addEventListener("alpine:init", () => {
             };
         },
 
-        setShowRPS(idRPS, kode, rps, draf, level, prId) {
+        setShowRPS(idRPS, kode, prId) {
             this.resetShow();
             this.rps_id_show = idRPS;
             this.kode_rps_show = kode;
-            this.rps_show = rps;
-            this.draf_show = draf;
-            this.level_mk_show = level;
             this.pr_id_show = prId
         },
 

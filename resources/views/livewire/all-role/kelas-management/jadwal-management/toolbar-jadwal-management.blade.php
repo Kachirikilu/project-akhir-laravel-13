@@ -7,7 +7,7 @@
 
     @if (($data['is_my_class'] || Auth::user()->admin || Auth::user()->dosen) && !$data['isTrashed'])
         <flux:menu.item
-            href="{{ $data['isJadwalMhs'] ?? null ? route('sesi-mahasiswa', [$data['kode_kelas'], $data['kode_jadwal']]) : route('sesi-management', [$data['kode_kelas'], $data['kode_jadwal']]) }}"
+            href="{{ $data['isJadwalOnly'] ?? null ? route('sesi-jadwal-kelas', [$data['kode_kelas'], $data['kode_jadwal']]) : route('sesi-management', [$data['kode_kelas'], $data['kode_jadwal']]) }}"
             wire:navigate
             class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 active:!bg-green-200 dark:active:!bg-green-900 transition-colors">
 

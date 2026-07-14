@@ -182,7 +182,7 @@
                             {{ $j->trashed()
                                 ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
                                 : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
-                        {{ $j->trashed() ? 'disabled' : 'href=' . ($isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal])) . ' wire:navigate' }}>
+                        {{ $j->trashed() ? 'disabled' : 'href=' . ($isJadwalOnly ?? null ? route('sesi-jadwal-kelas', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal])) . ' wire:navigate' }}>
                         <flux:icon name="calendar-days" class="w-3.5 h-3.5 {{ $j->trashed() ? 'opacity-40' : '' }}" />
                         <span>Lihat Jadwal Kelas</span>
                     </button>
@@ -237,7 +237,7 @@
         <div
             class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
             <flux:icon name="information-circle" class="mx-auto h-8 w-8 text-[var(--contrast-second-text)] mb-2" />
-            <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Jadwal Kelas ditemukan!</p>
+            <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Jadwal Kelas {{ $switchTable == 'hari-ini' ? 'hari ini' : '' }} ditemukan!</p>
         </div>
     @endforelse
 

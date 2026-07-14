@@ -90,6 +90,7 @@
         @endif
     @elseif (Auth::user()?->admin || Auth::user()?->dosen)
         @if (!$data['isTrashed'])
+            <flux:menu.separator />
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="

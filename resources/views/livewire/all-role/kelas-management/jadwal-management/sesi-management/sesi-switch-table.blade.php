@@ -7,6 +7,16 @@
         </h3>
 
         <div class="shrink-0 flex lg:hidden">
+            @if ($haveSesiDay == false)
+                <div x-show="activeTab === 'sesi-hari-ini'">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [2, 4, 8, 16],
+                        'alpine' => 'sesi',
+                        'key' => 'page-control-sesi-card',
+                        'withB' => 0,
+                    ])
+                </div>
+            @endif
             <div x-show="activeTab === 'sesi-card'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [2, 4, 8, 16],
@@ -38,6 +48,14 @@
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
 
             <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full lg:w-auto pb-1">
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => $stats['sesi-hari-ini'] ?? null,
+                    'tabString' => 'sesi-hari-ini',
+                    'tabNameString' => 'Sesi Hari Ini',
+                    'icon' => 'academic-cap',
+                ])
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -84,7 +102,16 @@
             @endif
             </div> --}}
             <div class="shrink-0 hidden lg:flex">
-
+                @if ($haveSesiDay == false)
+                    <div x-show="activeTab === 'sesi-hari-ini'">
+                        @include('livewire.global.search-and-filters.page-control', [
+                            'perPageOptions' => [2, 4, 8, 16],
+                            'alpine' => 'sesi',
+                            'key' => 'page-control-sesi-card',
+                            'withB' => 0,
+                        ])
+                    </div>
+                @endif
                 <div x-show="activeTab === 'sesi-card'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [2, 4, 8, 16],

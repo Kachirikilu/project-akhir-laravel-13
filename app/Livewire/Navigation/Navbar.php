@@ -4,21 +4,20 @@ namespace App\Livewire\Navigation;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
-use Illuminate\Support\Facades\Route;
+use Livewire\Attributes\Url;
 
 class Navbar extends Component
 {
-    // public $currentRoute;
+    // #[Url(as: 'switchTable', keep: true)]
+    public $switchTableMain;
+    public $routeMain;
 
-    // public function mount()
-    // {
-    //     $this->currentRoute = Route::currentRouteName();
-    // }
-
-    // #[On('refresh-layout-sidebar')]
-    // public function refreshNavbar()
-    // {
-    // }
+    #[On('navbar-switch-table')]
+    public function navbarSwitchTableMain($switchTableMain, $routeMain)
+    {
+        $this->switchTableMain = $switchTableMain;
+        $this->routeMain = $routeMain;
+    }
 
     public function render()
     {

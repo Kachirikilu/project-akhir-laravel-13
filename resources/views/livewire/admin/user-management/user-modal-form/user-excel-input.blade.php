@@ -2,9 +2,7 @@
     {{-- ****************************************************** --}}
     {{-- 1. UPLOAD EXCEL FILE --}}
     {{-- ***********************F******************************* --}}
-    <div
-        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border
-            shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    <div class="form-container">
 
         <h4
             class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
@@ -27,49 +25,51 @@
     {{-- 2. TABEL INPUT HASIL PARSING --}}
     {{-- ****************************************************** --}}
 
-    <div
-        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    <div class="form-container-excel">
 
-        @include('livewire.global.modal-form.input-array.search-input-form', [
-            'alpine' => 'user',
-            'xResults' => $prResults,
-            'selectX' => 'selectPr',
-            'modelString' => 'nama_pr',
-        
-            'idString' => 'pr_id',
-            'itemsAllString' => 'pr_items',
-        
-            'resetXInput' => 'resetPrInput()',
-            'typeXString' => 'prodi',
-            // 'typeX2String' => 'departemen',
-            'typeX2String' => 'fakultas',
-        
-            'nameXString' => 'Program Studi',
-            'nameSearchString' => 'prNameSearch',
-            'fetchString' => 'fetchPr',
-            'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchPr',
-        ])
-
-        @include('livewire.global.modal-form.select-form', [
-            'alpine' => 'user',
-            'isLivewire' => 1,
-            'modelString' => 'role',
-            'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
-            'iconString' => 'users',
-            'placeholder' => 'Pilih Role Utama ketika data tidak memiliki Role...',
-            'isRequired' => 0,
-            'message' => $errors->first('role'),
-        ])
+        <div class="mx-2 sm:mx-0">
+            @include('livewire.global.modal-form.input-array.search-input-form', [
+                'alpine' => 'user',
+                'xResults' => $prResults,
+                'selectX' => 'selectPr',
+                'modelString' => 'nama_pr',
+            
+                'idString' => 'pr_id',
+                'itemsAllString' => 'pr_items',
+            
+                'resetXInput' => 'resetPrInput()',
+                'typeXString' => 'prodi',
+                // 'typeX2String' => 'departemen',
+                'typeX2String' => 'fakultas',
+            
+                'nameXString' => 'Program Studi',
+                'nameSearchString' => 'prNameSearch',
+                'fetchString' => 'fetchPr',
+                'iconString' => 'academic-cap',
+                'wireLoading' => 'fetchPr',
+            ])
+        </div>
+        <div class="mx-2 sm:mx-0">
+            @include('livewire.global.modal-form.select-form', [
+                'alpine' => 'user',
+                'isLivewire' => 1,
+                'modelString' => 'role',
+                'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
+                'iconString' => 'users',
+                'placeholder' => 'Pilih Role Utama ketika data tidak memiliki Role...',
+                'isRequired' => 0,
+                'message' => $errors->first('role'),
+            ])
+        </div>
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
+            class="mx-2 sm:mx-0 text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Pengguna
         </h4>
 
         <div class="relative">
             @if (empty($parsedUserRows))
-                <div class="text-sm text-gray-500 italic h-16">
+                <div class="mx-2 sm:mx-0 text-sm text-gray-500 italic h-16">
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else

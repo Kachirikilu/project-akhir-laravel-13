@@ -20,7 +20,7 @@
             'password'          => $j->password,
             'is_my_class'       => $j->is_my_class,
             'with_pw'           => $j->with_pw,
-            'isJadwalMhs'       => $isJadwalMhs ?? 0,
+            'isJadwalOnly'       => $isJadwalOnly ?? 0,
             'isTrashed'         => $j->trashed(),
         ]"
         wire:key="toolbar-jadwal-{{ $j->id }}-{{ $key }}" 

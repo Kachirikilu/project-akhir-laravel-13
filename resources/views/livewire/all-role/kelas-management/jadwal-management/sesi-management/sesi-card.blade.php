@@ -15,12 +15,17 @@
                 'dbIndex' => $index,
                 'pertemuan_ke' => $p,
                 'total_absensi' => (int) ($s->total_absensi ?? 0),
+                'hari' => trim($s->hari ?? ''), // Tambahkan trim()
+                'hari_jam' => trim("{$s->hari}, {$s->jam_pelaksanaan}"), // Konsistenkan
+                'hari_tanggal' => trim("{$s->hari}, {$s->tanggal_pelaksanaan}"), // Konsistenkan
                 'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                 'tanggal' => $s->tanggal ?? '',
+                'bobot_normalisasi' => $s->bobot_normalisasi ?? '',
                 'metode' => strtolower($s->metode ?? ''),
                 'tugas' => strtolower($s->tugas ?? ''),
                 'kode_scpmk' => strtolower($stringKodeSCPMK),
                 'kode_cpmk' => strtolower($stringKodeCPMK),
+                'searchKodeCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeCPMK)),
                 'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeSCPMK)),
                 'searchPertemuan' => [
                     (string) $p,
@@ -74,37 +79,35 @@
         let cleanQuery = query.replace(/[^a-z0-9]/g, '');
         let dotQuery = query.replace(',', '.');
 
+        let normalizedQuery = query.replace(/[\u2013\u2014]/g, '-');
+
         let filtered = this.rawItems.filter(item => {
             if (!query) return true;
 
+            // Ambil field (sekarang sudah lengkap dengan searchKodeCPMK)
             let metode = String(item.metode || '').toLowerCase();
             let tugas = String(item.tugas || '').toLowerCase();
             let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
             let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
             let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
-            let searchCpmk = String(item.searchKodeCPMK || '').toLowerCase();
+            let searchCpmk = String(item.searchKodeCPMK || '').toLowerCase(); // Ini yang tadi kurang
 
-            if (metode.includes(query) || tugas.includes(query)) {
-                return true;
-            }
+            let hari = String(item.hari || '').toLowerCase();
+            let hariJam = String(item.hari_jam || '').toLowerCase().replace(/[\u2013\u2014]/g, '-');
+            let hariTanggal = String(item.hari_tanggal || '').toLowerCase();
 
-            if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) {
-                return true;
-            }
+            if (metode.includes(query) || tugas.includes(query)) return true;
+            if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
+            if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
+            if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
 
-            if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) {
-                return true;
-            }
-
-            let cocokPertemuan = item.searchPertemuan?.some(pText => String(pText).includes(query)) || false;
-            if (cocokPertemuan) return true;
-
-            let cocokBobot = item.bobot?.some(bText => {
-                let text = String(bText);
-                return text === query || text === dotQuery || text.includes(query) || text.includes(dotQuery);
-            }) || false;
-
-            if (cocokBobot) return true;
+            if (hari.includes(query) || hariTanggal.includes(query)) return true;
+            if (hariJam.includes(normalizedQuery)) return true;
+            
+            if (item.bobot?.some(bText => {
+                    let text = String(bText).toLowerCase();
+                    return text.includes(query) || text.includes(dotQuery);
+                })) return true;
 
             return false;
         });
@@ -230,12 +233,9 @@
                     : null;
             @endphp
 
-            {{-- <template x-if="itemVisibilityMap[{{ $s->id }}]?.visible"> --}}
             <div x-show="itemVisibilityMap[{{ $s->id }}]?.visible" x-transition
                 class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{
-                    {{-- expanded: {{ $isUjian ? 'true' : 'false' }},
-                    hasLoaded: {{ $isUjian ? 'true' : 'false' }} --}}
                     expanded: false,
                         hasLoaded: false
                 }"
@@ -246,17 +246,30 @@
 
                     @php
                         if ($isUjian) {
+                            $mainColor = 'bg-[var(--main-color-special)]';
                             $bgBorder = 'border-[var(--border-table-color-special)] bg-[var(--second-table-color-special)]';
                             $mainText = 'text-[var(--contrast-main-text-special)]';
                             $secondText = 'text-[var(--contrast-second-text-special)]';
                             $thirdText = 'text-[var(--contrast-third-text-special)]';
+
+                            $focusColor = 'bg-[var(--focus-color-special)]';
+                            $mainTable = 'bg-[var(--main-table-color-special)]';
+                            $secondTable = 'bg-[var(--second-table-color-special)]';
+                            $subTable = 'bg-[var(--sub-table-color-special)]';
                         } else {
-                            $bgBorder =  'border-[var(--border-table-color)] bg-[var(--second-table-color)]';
+                            $mainColor = 'bg-[var(--main-color)]';
+                            $bgBorder = 'border-[var(--border-table-color)] bg-[var(--second-table-color)]';
                             $mainText = 'text-[var(--contrast-main-text]';
                             $secondText = 'text-[var(--contrast-second-text)]';
                             $thirdText = 'text-[var(--contrast-third-text)]';
+
+                            $focusColor = 'bg-[var(--focus-color)]';
+                            $mainTable = 'bg-[var(--main-table-color)]';
+                            $secondTable = 'bg-[var(--second-table-color)]';
+                            $subTable = 'bg-[var(--sub-table-color)]';
                         }
                     @endphp
+
                     {{-- ═══ HERO ═══ --}}
                     @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
 
@@ -279,28 +292,7 @@
                     </div>
 
                     {{-- ═══ FOOTER: toggle hint ═══ --}}
-                    {{-- @if (!$isUjian) --}}
-                    <div class="px-4 pb-4" @click.stop>
-                        <button
-                            class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent transition-all active:scale-[0.99]
-                                {{ $isUjian
-                                    ? 'btn-card-focus-state-special ring-1 ring-[var(--focus-color-special)]'
-                                    : 'btn-card-focus-state text-[var(--focus-color)] ring-1 ring-[var(--focus-color)]'
-                                }}"
-                            @click="
-                                if (!hasLoaded) { 
-                                    $wire.loadData({{ $s->pertemuan_ke }}); 
-                                    hasLoaded = true; 
-                                }
-                                expanded = !expanded;
-                            ">
-                            <flux:icon name="chevron-down" class="w-3.5 h-3.5 transition-transform duration-300"
-                                ::class="{ 'rotate-180': expanded }" />
-
-                            <span x-text="expanded ? 'Sembunyikan Detail' : 'Lihat Detail'"></span>
-                        </button>
-                    </div>
-                    {{-- @endif --}}
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
 
                 </div>
             </div>
@@ -318,7 +310,9 @@
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
             @include('livewire.global.table.pagination-alpine')
-            @include('livewire.global.table.trash-delete')
+            @if (Auth::user()->admin)
+                @include('livewire.global.table.trash-delete')
+            @endif
         </x-slot:footer>
 
     </x-global.main-layout-card>

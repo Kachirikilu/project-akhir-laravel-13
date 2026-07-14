@@ -3,15 +3,24 @@
 use Livewire\Component;
 use Livewire\Attributes\Title;
 
-new #[Title('Theme Settings')] class extends Component {
-}; ?>
+new #[Title('Theme Settings')] class extends Component {}; ?>
 
 <section class="w-full pb-48">
     @include('partials.settings-heading')
 
     <flux:heading class="sr-only">{{ __('Theme Settings') }}</flux:heading>
-    <x-pages::settings.layout :heading="__('Theme')" :subheading="__('Atur Tema pada Dashboard Akun Anda')">
-        <div class="space-y-4 w-full max-w-xl">
+    <x-pages::settings.layout>
+
+        <flux:heading class="text-[var(--contrast-main-text)]">
+            Theme
+        </flux:heading>
+
+        <flux:subheading class="text-[var(--contrast-third-text)]">
+            Atur Tema pada Dashboard Akun Anda
+        </flux:subheading>
+
+
+        <div class="mt-8 space-y-4 w-full max-w-xl">
             {{-- Radio Group Appearance --}}
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance"
                 class="!bg-[var(--sub-table-color)] !border !border-[var(--border-table-color)] p-1 rounded-lg w-full flex">
@@ -41,7 +50,8 @@ new #[Title('Theme Settings')] class extends Component {
                                 <button type="button" @click="$store.theme_manager.setTheme(theme.id)"
                                     class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 active:scale-105 focus:outline-none snap-center"
                                     :class="$store.theme_manager.currentTheme === theme.id ?
-                                        'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100 active:opacity-100'"
+                                        'ring-2 ring-[var(--main-color)] ring-offset-1' :
+                                        'opacity-70 hover:opacity-100 active:opacity-100'"
                                     :style="`background-color: ${theme.color}`">
                                     <span x-show="$store.theme_manager.currentTheme === theme.id"
                                         class="absolute inset-0 flex items-center justify-center">
@@ -84,8 +94,7 @@ new #[Title('Theme Settings')] class extends Component {
                             </div>
                         </button>
 
-                        <button @click="$store.theme_manager.scrollThemes('right', 'themeContainerBig')"
-                            type="button"
+                        <button @click="$store.theme_manager.scrollThemes('right', 'themeContainerBig')" type="button"
                             class="group flex items-center justify-center w-8 h-4 hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer">
                             <flux:icon name="chevron-right" variant="mini"
                                 class="w-4 h-4 text-gray-400 group-hover:text-white group-active:text-white" />

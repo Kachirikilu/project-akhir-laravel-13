@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
@@ -445,7 +444,6 @@ trait WithNilaiExcel
                             'nilai' => is_numeric($nilaiRaw) ? (float) $nilaiRaw : null,
                         ];
                     }
-
                     $this->parsedNilaiRows[] = [
                         '_index' => count($this->parsedNilaiRows),
                         'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
@@ -460,6 +458,7 @@ trait WithNilaiExcel
                         'nilai_mutu' => strtoupper(trim((string) ($row[$nilaiMutuIndex] ?? ''))),
                         'role' => 'mahasiswa',
                     ];
+
                 }
             } // 🌟 Akhir loop sheet
         } // Akhir loop file
@@ -505,45 +504,123 @@ trait WithNilaiExcel
         }
     }
 
+    public function updatedParsedNilaiRows($value): void
+    {
+        if (! is_array($value)) {
+            return;
+        }
+
+        $normalizedRows = [];
+        foreach ($value as $rowIndex => $row) {
+            $normalizedRows[$rowIndex] = is_array($row)
+                ? $this->normalizeParsedNilaiRow($row)
+                : $row;
+        }
+
+        $this->parsedNilaiRows = $normalizedRows;
+    }
+
+    private function deriveNilaiGrade(float $average): array
+    {
+        if ($average >= 86) {
+            return ['nilai_index' => 4, 'nilai_mutu' => 'A'];
+        }
+
+        if ($average >= 71) {
+            return ['nilai_index' => 3, 'nilai_mutu' => 'B'];
+        }
+
+        if ($average >= 56) {
+            return ['nilai_index' => 2, 'nilai_mutu' => 'C'];
+        }
+
+        if ($average >= 41) {
+            return ['nilai_index' => 1, 'nilai_mutu' => 'D'];
+        }
+
+        return ['nilai_index' => 0, 'nilai_mutu' => 'E'];
+    }
+
+    private function normalizeParsedNilaiRows(): void
+    {
+        if (! is_array($this->parsedNilaiRows)) {
+            return;
+        }
+
+        $normalizedRows = [];
+        foreach ($this->parsedNilaiRows as $rowIndex => $row) {
+            $normalizedRows[$rowIndex] = is_array($row)
+                ? $this->normalizeParsedNilaiRow($row)
+                : $row;
+        }
+
+        $this->parsedNilaiRows = $normalizedRows;
+    }
+
+    private function normalizeParsedNilaiRow(array $row): array
+    {
+        $subCpmks = $row['sub_cpmk'] ?? [];
+        if (! is_array($subCpmks)) {
+            $subCpmks = [];
+        }
+
+        $normalizedSubCpmks = collect($subCpmks)
+            ->map(function ($sub) {
+                if (! is_array($sub)) {
+                    return $sub;
+                }
+
+                if (array_key_exists('nilai', $sub) && $sub['nilai'] !== '' && $sub['nilai'] !== null && ! is_numeric($sub['nilai'])) {
+                    $sub['nilai'] = null;
+                }
+
+                return $sub;
+            })
+            ->values()
+            ->all();
+
+        $totalNilai = 0;
+        $count = 0;
+        foreach ($normalizedSubCpmks as $sub) {
+            if (isset($sub['nilai']) && is_numeric($sub['nilai'])) {
+                $totalNilai += (float) $sub['nilai'];
+                $count++;
+            }
+        }
+
+        $average = $count > 0 ? round($totalNilai / $count, 2) : 0;
+        $gradeInfo = $this->deriveNilaiGrade($average);
+
+        $row['sub_cpmk'] = $normalizedSubCpmks;
+        $row['nilai_angka'] = $average;
+        $row['nilai_index'] = $gradeInfo['nilai_index'];
+        $row['nilai_mutu'] = $gradeInfo['nilai_mutu'];
+
+        return $row;
+    }
+
     public function recalculateRowNilai(int $rowIndex)
     {
         if (! isset($this->parsedNilaiRows[$rowIndex])) {
             return;
         }
 
-        $row = &$this->parsedNilaiRows[$rowIndex];
-        $subCpmks = $row['sub_cpmk'] ?? [];
+        $this->parsedNilaiRows[$rowIndex] = $this->normalizeParsedNilaiRow($this->parsedNilaiRows[$rowIndex]);
+    }
 
-        $totalNilai = 0;
-        $count = 0;
-        foreach ($subCpmks as $sub) {
-            if (isset($sub['nilai']) && is_numeric($sub['nilai'])) {
-                $totalNilai += (float) $sub['nilai'];
-            }
-            $count++;
+    public function updateParsedNilaiCell(int $rowIndex, int $subIndex, $value): void
+    {
+        if (! isset($this->parsedNilaiRows[$rowIndex]['sub_cpmk'][$subIndex])) {
+            return;
         }
 
-        $average = $count > 0 ? ($totalNilai / $count) : 0;
-        $average = round($average, 2);
+        $normalizedValue = trim((string) $value);
+        $numericValue = $normalizedValue === '' ? null : (is_numeric($normalizedValue) ? (float) $normalizedValue : null);
 
-        $row['nilai_angka'] = $average;
-
-        if ($average >= 86) {
-            $row['nilai_index'] = 4;
-            $row['nilai_mutu'] = 'A';
-        } elseif ($average >= 71) {
-            $row['nilai_index'] = 3;
-            $row['nilai_mutu'] = 'B';
-        } elseif ($average >= 56) {
-            $row['nilai_index'] = 2;
-            $row['nilai_mutu'] = 'C';
-        } elseif ($average >= 41) {
-            $row['nilai_index'] = 1;
-            $row['nilai_mutu'] = 'D';
-        } else {
-            $row['nilai_index'] = 0;
-            $row['nilai_mutu'] = 'E';
-        }
+        $rows = $this->parsedNilaiRows;
+        data_set($rows, "$rowIndex.sub_cpmk.$subIndex.nilai", $numericValue);
+        $this->parsedNilaiRows = $rows;
+        $this->recalculateRowNilai($rowIndex);
     }
 
     public function saveNilaiExcel()
@@ -565,6 +642,7 @@ trait WithNilaiExcel
         }
 
         try {
+            $this->normalizeParsedNilaiRows();
             foreach ($this->parsedNilaiRows as $rowIndex => $row) {
                 $this->recalculateRowNilai($rowIndex);
             }
@@ -582,31 +660,33 @@ trait WithNilaiExcel
         $successfulIndices = [];
         $total = count($this->parsedNilaiRows);
 
-        LazyCollection::make($this->parsedNilaiRows)
-            ->chunk(20)
-            ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
-                foreach ($chunk as $index => $row) {
-                    try {
-                        $validatedData = $this->inputModalNilai($row);
-                        $this->saveNilaiFromExcel($validatedData);
+        $rows = $this->parsedNilaiRows;
 
-                        $successfulIndices[] = $index;
-                        $successCount++;
-                    } catch (ValidationException $e) {
-                        $this->rowNilaiErrors[$index] = $e->errors();
-                    } catch (\Throwable $e) {
-                        $this->rowNilaiErrors[$index] = ['general' => [$e->getMessage()]];
-                    }
+        foreach (array_chunk($rows, 20, true) as $chunk) {
+            foreach ($chunk as $rowIndex => $row) {
+                try {
+                    $validatedData = $this->inputModalNilai($row);
+                    // dd($validatedData);
+                    $this->saveNilaiFromExcel($validatedData);
+
+                    $successfulIndices[] = $rowIndex;
+                    $successCount++;
+                } catch (ValidationException $e) {
+                    $this->rowNilaiErrors[$rowIndex] = $e->errors();
+                } catch (\Throwable $e) {
+                    $this->rowNilaiErrors[$rowIndex] = ['general' => [$e->getMessage()]];
                 }
+            }
 
-                $message = "Memproses nilai... $successCount dari $total mahasiswa berhasil disimpan!";
-                $this->stream(to: 'import-progress', content: $message, replace: true);
-            });
+            $message = "Memproses nilai... $successCount dari $total mahasiswa berhasil disimpan!";
+            $this->stream(to: 'import-progress', content: $message, replace: true);
+        }
 
         foreach (array_reverse($successfulIndices) as $idx) {
             unset($this->parsedNilaiRows[$idx]);
             unset($this->rowNilaiErrors[$idx]);
         }
+
         $this->parsedNilaiRows = array_values($this->parsedNilaiRows);
 
         $newRowErrors = [];
@@ -629,6 +709,7 @@ trait WithNilaiExcel
         }
 
         $this->dispatch('refresh-nilai-data');
+        $this->dispatch('refresh-data-sesi');
     }
 
     private function getSesiImportNilai($jadwalId)
@@ -638,118 +719,82 @@ trait WithNilaiExcel
 
     private function saveNilaiFromExcel($validated)
     {
+        $nim = trim($validated['nim']);
+        $nilaiAkhir = $validated['nilai_angka'] ?? null;
+        // \Log::info("DEBUG NIM: {$nim} | NilaiAkhir: {$nilaiAkhir} | SubCPMK Count: ".count($validated['sub_cpmk'] ?? []));
         DB::transaction(function () use ($validated) {
             $nim = trim($validated['nim']);
-            $mahasiswa = Mahasiswa::query()
-                ->where('nim', $nim)
-                ->first();
+            $mahasiswa = Mahasiswa::where('nim', $nim)->first();
 
             if (! $mahasiswa) {
-                throw new \Exception(
-                    "Mahasiswa dengan NIM {$nim} tidak ditemukan!"
-                );
+                throw new \Exception("Mahasiswa dengan NIM {$nim} tidak ditemukan!");
             }
 
             $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
+            $rps = $jadwal ? $jadwal->kelas_rel?->rps_rel : $this->getRPSByKode($validated['kode_rps']);
 
-            $rpsId = null;
-            $ganjilGenap = '';
-            $tahunAkademik = '';
-            $jadwalId = null;
-            if ($jadwal) {
-                $rpsId = $jadwal->kelas_rel?->rps_id;
-                $rps = $jadwal->kelas_rel?->rps_rel;
-                $ganjilGenap = (string) $jadwal->ganjil_genap;
-                $tahunAkademik = (string) $jadwal->tahun_akademik;
-                $jadwalId = $jadwal->id;
-            } else {
-                $rps = $this->getRPSByKode($validated['kode_rps']);
-
-                if (! $rps) {
-                    throw new \Exception(
-                        "Kelas '{$validated['kode_jadwal']}' maupun RPS dengan kode '{$validated['kode_rps']}' tidak dapat ditemukan."
-                    );
-                }
-
-                $rpsId = $rps->id;
-                $jadwalId = null;
-
-                $now = now();
-                $currentYear = $now->year;
-                $currentMonth = $now->month;
-
-                if ($currentMonth >= 2 && $currentMonth <= 7) {
-                    $ganjilGenap = 'Genap';
-                    $tahunAkademik = ($currentYear - 1).'/'.$currentYear;
-                } else {
-                    $ganjilGenap = 'Ganjil';
-                    $prevYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
-                    $tahunAkademik = $prevYear.'/'.($prevYear + 1);
-                }
+            if (! $rps) {
+                throw new \Exception("RPS untuk NIM {$nim} tidak ditemukan.");
             }
 
-            $strukturRPS = $rps->scpmkAtr;
+            $ganjilGenap = $jadwal ? (string) $jadwal->ganjil_genap : ($now = now()->month >= 2 && now()->month <= 7 ? 'Genap' : 'Ganjil');
+            $tahunAkademik = $jadwal ? (string) $jadwal->tahun_akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1));
+            $jadwalId = $jadwal?->id;
+
+            $strukturRPS = $rps->scpmkAtr ?? [];
             $mapScpmk = [];
-            foreach ($strukturRPS as $index => $item) {
+            foreach ($strukturRPS as $idx => $item) {
                 $kode = preg_replace('/[^A-Za-z0-9]/', '', $item->kode ?? '');
                 if ($kode !== '') {
-                    $mapScpmk[$kode][] = $index;
+                    $mapScpmk[$kode][] = $idx;
                 }
             }
 
-            // 3. Cari atau buat record NilaiMahasiswa
-            $nilai_mahasiswa = NilaiMahasiswa::query()
-                ->where('mahasiswa_id', $mahasiswa->id)
-                ->where('rps_id', $rpsId)
-                ->where('ganjil_genap', $ganjilGenap)
-                ->where('tahun_akademik', $tahunAkademik)
-                ->lockForUpdate()
-                ->first();
+            $len = max(16, count($strukturRPS));
+            $nArr = array_fill(0, $len, 0);
+            $bArr = array_fill(0, $len, 0);
 
-            if (! $nilai_mahasiswa) {
-                $nilai_mahasiswa = new NilaiMahasiswa;
-                $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
-                $nilai_mahasiswa->rps_id = $rps->id;
-                $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
-                $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
-            }
-
-            $nilai_mahasiswa->kj_id = $jadwalId;
-
-            // Inisialisasi array kosong dengan panjang 16 (indeks 0-15) jika data lama tidak ada
-            $nilaiArray = is_array($nilai_mahasiswa->nilai_array) ? $nilai_mahasiswa->nilai_array : array_fill(0, 16, 0);
-            $bobotArray = is_array($nilai_mahasiswa->bobot_array) ? $nilai_mahasiswa->bobot_array : array_fill(0, 16, 0);
-
-            // 4. Mapping nilai dari Excel ke indeks yang benar
             foreach ($validated['sub_cpmk'] ?? [] as $sub) {
-                $kodeExcel = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
-                if (isset($mapScpmk[$kodeExcel])) {
-                    $indices = $mapScpmk[$kodeExcel];
-                    foreach ($indices as $targetIndex) {
-                        $nilaiArray[$targetIndex] = is_numeric($sub['nilai'] ?? null) ? (float) $sub['nilai'] : 0;
-                        $bobotArray[$targetIndex] = is_numeric($sub['bobot'] ?? null) ? (float) $sub['bobot'] : 0;
+                $k = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+                if (isset($mapScpmk[$k])) {
+                    foreach ($mapScpmk[$k] as $idx) {
+                        $nArr[$idx] = (float) ($sub['nilai'] ?? 0);
+                        $bArr[$idx] = (float) ($sub['bobot'] ?? 0);
                     }
                 }
             }
 
-            // 5. Kalkulasi Nilai Akhir
-            $totalBobotRPS = array_sum($bobotArray);
-            $totalNilaiAkhir = 0;
+            \DB::table('nilai_mahasiswa')->updateOrInsert(
+                [
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'rps_id' => $rps->id,
+                    'ganjil_genap' => $ganjilGenap,
+                    'tahun_akademik' => $tahunAkademik,
+                ],
+                [
+                    'kj_id' => $jadwalId,
+                    'nilai_array' => json_encode($nArr),
+                    'bobot_array' => json_encode($bArr),
+                    'nilai' => round(is_numeric($validated['nilai_angka'] ?? null) ? $validated['nilai_angka'] : $this->calculateFinal($nArr, $bArr), 2),
+                    'updated_at' => now(),
+                ]
+            );
 
-            if ($totalBobotRPS > 0) {
-                foreach ($nilaiArray as $index => $nilai) {
-                    $bobotMentah = $bobotArray[$index] ?? 0;
-                    $bobotNormal = $bobotMentah / $totalBobotRPS;
-                    $totalNilaiAkhir += ($nilai * $bobotNormal);
-                }
-            }
-
-            // 6. Simpan data
-            $nilai_mahasiswa->nilai_array = $nilaiArray;
-            $nilai_mahasiswa->bobot_array = $bobotArray;
-            $nilai_mahasiswa->nilai = round($totalNilaiAkhir, 2);
-            $nilai_mahasiswa->save();
         });
+    }
+
+    private function calculateFinal($nArr, $bArr)
+    {
+        $totalB = array_sum($bArr);
+        if ($totalB <= 0) {
+            return 0;
+        }
+        $totalN = 0;
+        foreach ($nArr as $i => $v) {
+            $totalN += ($v * ($bArr[$i] / $totalB));
+        }
+
+        return $totalN;
     }
     // private function saveNilaiFromExcel($validated)
     // {

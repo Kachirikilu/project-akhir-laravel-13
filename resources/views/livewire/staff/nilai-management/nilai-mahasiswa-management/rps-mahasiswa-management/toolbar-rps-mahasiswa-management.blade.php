@@ -12,9 +12,6 @@
                 $store.rps?.setShowRPS(
                         '{{ $data['rps_id'] ?? '' }}',
                         '{{ $data['kode_rps'] ?? '' }}',
-                        '{{ $data['rps'] ?? '' }}',
-                        '{{ $data['draf'] ?? '' }}',
-                        '{{ $data['level_mk'] ?? '' }}',
                         '{{ $data['pr_id'] ?? '' }}',
                 );
                 $store.rps?.setColor('text-green-700 dark:text-green-400');

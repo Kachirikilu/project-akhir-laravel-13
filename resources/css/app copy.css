@@ -43,7 +43,11 @@
         @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
         @apply px-2 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
     }
-
+    .form-container-excel {
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
+        @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
+        @apply px-0 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
+    }
     .form-message {
         @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
         @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;

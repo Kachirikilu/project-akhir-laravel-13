@@ -200,7 +200,9 @@
                             'sortir' => $r->level_mk,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                        'key' => 1,
+                    ])
                 </flux:dropdown>
             </td>
 
@@ -214,13 +216,10 @@
                             $store.rps?.setShowRPS(
                                 '{{ $r->id ?? '' }}',
                                 '{{ $r->kode ?? '' }}',
-                                '{{ $r->rps ?? '' }}',
-                                '{{ $r->draf ?? '' }}',
-                                '{{ $r->level_mk ?? '' }}',
                             );
                             $store.rps?.setColor('text-green-700 dark:text-green-400');
                             $flux.modal('rps-detail-modal').show();
-                            $dispatch('open-show-rps-modal', { id: {{  $r->id }} });
+                            $dispatch('open-show-rps-modal', { id: {{ $r->id }} });
                         "
                         color="emerald">
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
@@ -246,7 +245,9 @@
                                 'xValue' => $r->mutu_rps_pr ?? 'E',
                             ])
                         </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 2])
+                        @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                            'key' => 2,
+                        ])
                     </flux:dropdown>
                 </td>
             @endif
@@ -260,7 +261,10 @@
                             'noIcon' => 1,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 3, 'isMK' => 1])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                        'key' => 3,
+                        'isMK' => 1,
+                    ])
                 </flux:dropdown>
             </td>
             <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
@@ -275,7 +279,10 @@
                             'sortir' => $r->wajib,
                         ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 4, 'isMK' => 1])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                        'key' => 4,
+                        'isMK' => 1,
+                    ])
                 </flux:dropdown>
             </td>
 
@@ -307,7 +314,9 @@
                             @endif
                         </button>
 
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 5])
+                        @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                            'key' => 5,
+                        ])
                     </flux:dropdown>
                 </td>
 
@@ -334,7 +343,9 @@
                             @endif
                         </button>
 
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 6])
+                        @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                            'key' => 6,
+                        ])
                     </flux:dropdown>
 
                 </td>
@@ -343,17 +354,13 @@
             <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @if ($r->draf == 0)
-                            <flux:badge color="green" size="sm" icon="check-circle">
-                                Aktif
-                            </flux:badge>
-                        @else
-                            <flux:badge color="red" size="sm" icon="document-text">
-                                Draf
-                            </flux:badge>
-                        @endif
+                        @include('livewire.global.table.badge.draft-badge', [
+                            'xValue' => $r->draf ?? null,
+                        ])
                     </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 7])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                        'key' => 7,
+                    ])
                 </flux:dropdown>
             </td>
             <td class="table-second whitespace-nowrap">{{ $r->revisi_day ?? 'Tidak ada Revisi  ' }}</td>
@@ -361,10 +368,12 @@
 
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost"
-                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                        inset="top bottom">
                     </flux:button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', ['key' => 8])
+                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                        'key' => 8,
+                    ])
                 </flux:dropdown>
             </td>
 

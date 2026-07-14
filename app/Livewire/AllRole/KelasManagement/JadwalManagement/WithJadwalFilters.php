@@ -16,19 +16,53 @@ trait WithJadwalFilters
 
     public $searchBobotJadwal = '';
 
-    public function inputJadwalSearch($idKelas = null)
+    public function inputJadwalSearch($idKelas = null, $isHariIni = false)
     {
+        $user = Auth::user();
+
+        $filterRole = function ($queryJadwal) use ($user) {
+            if ($user->dosen) {
+                $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
+                    $q->where('dosens.id', $user->dosen->id);
+                });
+            } elseif ($user->mahasiswa) {
+                $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
+                    $q->where('mahasiswas.id', $user->mahasiswa->id);
+                });
+            }
+        };
+
         if (! empty($idKelas)) {
             $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)
                 ->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
         } else {
-            if (Auth::user()->mahasiswa) {
+            if (Auth::user()->dosen) {
+                $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) {
+                    $q->where('dosens.id', Auth::user()->dosen->id);
+                })->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
+            } elseif (Auth::user()->mahasiswa) {
                 $queryJadwal = KelasJadwal::whereHas('mahasiswas', function ($q) {
                     $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
                 })->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
             } else {
                 $queryJadwal = KelasJadwal::query()->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
             }
+        }
+
+        if ($isHariIni) {
+            $queryJadwal->whereHas('sesis', function ($query) {
+                $query->whereDate('tanggal', today());
+            });
+        }
+
+        if ($user->dosen) {
+            $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
+                $q->where('dosens.id', $user->dosen->id);
+            });
+        } elseif ($user->mahasiswa) {
+            $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
+                $q->where('mahasiswas.id', $user->mahasiswa->id);
+            });
         }
 
         if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {

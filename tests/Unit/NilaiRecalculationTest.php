@@ -92,6 +92,96 @@ class NilaiRecalculationTest extends TestCase
         $this->assertEquals('E', $dummy->parsedNilaiRows[0]['nilai_mutu']);
     }
 
+    public function test_updated_parsed_rows_recalculates_all_rows()
+    {
+        $dummy = new class
+        {
+            use WithNilaiExcel;
+
+            public function AuthCheck($role = null)
+            {
+                return true;
+            }
+
+            public function toast($text, $variant = 'success') {}
+
+            public function dispatch($event, ...$args) {}
+
+            public function getPage($pageName)
+            {
+                return 1;
+            }
+        };
+
+        $dummy->parsedNilaiRows = [
+            [
+                'sub_cpmk' => [
+                    ['nilai' => 80],
+                    ['nilai' => 60],
+                ],
+                'nilai_angka' => 0,
+                'nilai_index' => null,
+                'nilai_mutu' => null,
+            ],
+            [
+                'sub_cpmk' => [
+                    ['nilai' => 50],
+                ],
+                'nilai_angka' => 0,
+                'nilai_index' => null,
+                'nilai_mutu' => null,
+            ],
+        ];
+
+        $dummy->updatedParsedNilaiRows($dummy->parsedNilaiRows);
+
+        $this->assertEquals(70.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
+        $this->assertEquals(2, $dummy->parsedNilaiRows[0]['nilai_index']);
+        $this->assertEquals('C', $dummy->parsedNilaiRows[0]['nilai_mutu']);
+        $this->assertEquals(50.0, $dummy->parsedNilaiRows[1]['nilai_angka']);
+        $this->assertEquals('D', $dummy->parsedNilaiRows[1]['nilai_mutu']);
+    }
+
+    public function test_updated_parsed_rows_recalculates_all_rows_via_hook()
+    {
+        $dummy = new class
+        {
+            use WithNilaiExcel;
+
+            public function AuthCheck($role = null)
+            {
+                return true;
+            }
+
+            public function toast($text, $variant = 'success') {}
+
+            public function dispatch($event, ...$args) {}
+
+            public function getPage($pageName)
+            {
+                return 1;
+            }
+        };
+
+        $dummy->parsedNilaiRows = [
+            [
+                'sub_cpmk' => [
+                    ['nilai' => 90],
+                    ['nilai' => 70],
+                ],
+                'nilai_angka' => 0,
+                'nilai_index' => null,
+                'nilai_mutu' => null,
+            ],
+        ];
+
+        $dummy->updatedParsedNilaiRows($dummy->parsedNilaiRows);
+
+        $this->assertEquals(80.0, $dummy->parsedNilaiRows[0]['nilai_angka']);
+        $this->assertEquals(3, $dummy->parsedNilaiRows[0]['nilai_index']);
+        $this->assertEquals('B', $dummy->parsedNilaiRows[0]['nilai_mutu']);
+    }
+
     public function test_key_normalization_matching()
     {
         $excelKey = 'Sub-CPMK-1';

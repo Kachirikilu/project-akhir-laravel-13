@@ -381,9 +381,6 @@
                                 $store.rps?.setShowRPS(
                                     '{{ $n->rps_id ?? '' }}',
                                     '{{ $n->rps_rel->kode ?? '' }}',
-                                    '{{ $n->rps_rel->rps ?? '' }}',
-                                    '{{ $n->rps_rel->draf ?? '' }}',
-                                    '{{ $n->rps_rel->level_mk ?? '' }}',
                                     '{{ $mahasiswa->pr_id ?? '' }}',
                                 );
                                 $store.rps?.setColor('text-green-700 dark:text-green-400');

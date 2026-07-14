@@ -46,7 +46,7 @@ class SesiManagement extends Component
 
     public $searchMode = 'simple';
 
-    public $isJadwalMhs = false;
+    public $isJadwalOnly = false;
 
     public $kode_kelas_url;
 
@@ -80,11 +80,17 @@ class SesiManagement extends Component
 
     public $mapping_pertemuan;
 
+    public $refreshTrigger = 0;
+
     protected $listeners = [
-        'refresh-table' => 'refreshKelasList',
+        'refresh-table' => 'refreshSesiList',
+        'refresh-table' => 'refreshCapaiansList',
+        'refresh-data-sesi' => 'refreshSesiList',
         'refresh-data-sesi' => 'refreshSesiList',
         'refresh-data-jadwal' => 'refreshSesiList',
-        'refresh-stats-kelas' => 'refreshStatsKelasList',
+        'refresh-data-jadwal' => 'refreshCapaiansList',
+        'refresh-data-rps-mahasiswa' => 'refreshCapaiansList',
+        'refresh-stats-kelas' => 'refreshKelasList',
         'loadDraft' => 'loadDraft',
         'saveToDraft' => 'saveToDraft',
     ];
@@ -107,26 +113,47 @@ class SesiManagement extends Component
         $this->resetPage();
     }
 
+    #[On('refresh-data-rps-mahasiswa')]
+    #[On('refresh-data-sesi')]
+    #[On('refresh-data-jadwal')]
+    #[On('refresh-table')]
+    public function refreshCapaiansList()
+    {
+        $this->resetPage();
+        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+    }
+
+    public function updatedShowDeletedd()
+    {
+        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+    }
+
     #[On('refresh-stats-kelas')]
     public function refreshStatsKelasList()
     {
         $this->clearKelasStatsCache();
     }
 
-    public function refreshStats() {
+    public function refreshStats()
+    {
         $this->refreshStatsKelasList();
         $this->resetPage();
         $this->toast(text: 'Data Statistik Kelas berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
     public function mount(
-        $isJadwalMhs = false,
+        $isJadwalOnly = false,
         $kode_kelas = null,
         $kode_jadwal_short = null,
-        $switchTable = 'sesi-card'
+        $switchTable = 'sesi-hari-ini'
     ) {
+        $this->updatedShowDeleted();
+
+        if (empty($switchTable) || $switchTable == null || $switchTable == 'null') {
+            $switchTable = '';
+        }
         $this->kode_kelas_url = $kode_kelas;
-        $this->isJadwalMhs = $isJadwalMhs;
+        $this->isJadwalOnly = $isJadwalOnly;
 
         $kelas = $this->getKelasByKode($kode_kelas);
 
@@ -172,7 +199,7 @@ class SesiManagement extends Component
         // =====================================
         // MANAJEMEN RIWAYAT/HISTORY SESSION
         // =====================================
-        $sessionKey = $this->isJadwalMhs ? 'jadwal_mahasiswa.history' : 'jadwal.history';
+        $sessionKey = $this->isJadwalOnly ? 'jadwal_mahasiswa.history' : 'jadwal.history';
         $sesiHistory = session($sessionKey, []);
 
         $currentKode = $kelas->kode;
@@ -293,11 +320,27 @@ class SesiManagement extends Component
             }
         }
 
-        $base = $this->isJadwalMhs ? 'jadwal-kelas' : 'kelas-management/kelas';
-        $suffix = ($table && $table !== 'sesi-card') ? "/{$table}" : '';
+        if (Auth::user()->dosen && ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk')) {
+            $this->showDeleted = false;
+        }
+
+        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
+        $suffix = ($table && $table !== 'sesi-hari-ini') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}/sesi{$suffix}";
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    }
+
+    public function updatedSwitchTable()
+    {
+        $this->updatedShowDeleted();
+    }
+
+    public function updatedShowDeleted()
+    {
+        if ($this->switchTable == '' || $this->switchTable == 'sesi-hari-ini' || $this->switchTable == 'sesi-card' || $this->switchTable == 'sesi-table' || (Auth::user()->dosen && ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk')) || Auth::user()->mahasiswa) {
+            $this->showDeleted = false;
+        }
     }
 
     public function render()
@@ -308,12 +351,14 @@ class SesiManagement extends Component
             $querySesi = collect();
             $queryUser = collect();
 
+            $querySesi = $this->inputSesiSearch($jadwalId);
+
             switch ($this->switchTable) {
-                case '':
-                case 'sesi-card':
-                case 'sesi-table':
-                    $querySesi = $this->inputSesiSearch($jadwalId);
-                    break;
+                // case '':
+                // case 'sesi-hari-ini':
+                // case 'sesi-card':
+                // case 'sesi-table':
+                //     break;
                 case 'mahasiswa':
                 case 'cpmk':
                     $queryUser = $this->inputUserSearch('mahasiswa', $jadwalId, null, 1);
@@ -382,6 +427,7 @@ class SesiManagement extends Component
 
                 switch ($this->switchTable) {
                     case '':
+                    case 'sesi-hari-ini':
                     case 'sesi-card':
                     case 'sesi-table':
                         $this->addAbsenSesi($querySesi, $jadwalId, 'mhs_absensi');
@@ -417,15 +463,16 @@ class SesiManagement extends Component
                 $q->where('kj_id', $jadwalId);
             });
 
-            if ($this->showDeleted && $this->AuthCheck('staff')) {
+            if ($this->showDeleted && $this->AuthCheck('admin')) {
                 switch ($this->switchTable) {
-                    case '':
-                    case 'sesi-card':
-                    case 'sesi-table':
-                        $querySesi->onlyTrashed();
-                        // $countSesi->onlyTrashed();
-                        $countSesi = 0;
-                        break;
+                    // case '':
+                    // case 'sesi-hari-ini':
+                    // case 'sesi-card':
+                    // case 'sesi-table':
+                    //     $querySesi->onlyTrashed();
+                    //     // $countSesi->onlyTrashed();
+                    //     $countSesi = 0;
+                    //     break;
                     case 'mahasiswa':
                     case 'cpmk':
                         $queryUser->onlyTrashed();
@@ -464,6 +511,15 @@ class SesiManagement extends Component
              * =========================
              */
             switch ($this->switchTable) {
+                case 'sesi-hari-ini':
+                    $sesis = (clone $querySesi)->whereDate('tanggal', today())->get();
+                    if ($sesis->count() === 0) {
+                        $sesis = $querySesi->get();
+                        $haveSesiDay = false;
+                    } else {
+                        $haveSesiDay = true;
+                    }
+                    break;
                 case 'sesi-card':
                     $sesis = $querySesi->get();
                     break;
@@ -642,7 +698,6 @@ class SesiManagement extends Component
                     'mhs_tidak_masuk' => $tidakMasuk ?? 0,
                 ];
             }
-            
 
             return view('livewire.all-role.kelas-management.jadwal-management.sesi-management', [
                 'sesis' => $sesis,
@@ -652,7 +707,10 @@ class SesiManagement extends Component
                 'absensi' => $absensi,
                 'kelas' => $this->kelas,
 
+                'haveSesiDay' => $haveSesiDay ?? false,
+
                 'stats' => [
+                    'sesi-hari-ini' => (clone $querySesi)->whereDate('tanggal', today())->count(),
                     'sesi' => $totalSesiKelas,
                     'mahasiswa' => $countMahasiswa->count(),
                 ],
@@ -681,9 +739,12 @@ class SesiManagement extends Component
                     'mhs_absen' => '-',
                     'mhs_tidak_masuk' => '-',
                 ],
-                'kelas' => $this->kelas,
+                'kelas' => $this->kelas ?? collect(),
+
+                'haveSesiDay' => false,
 
                 'stats' => [
+                    'sesi-hari-ini' => '',
                     'sesi' => '-',
                     'mahasiswa' => '-',
                 ],

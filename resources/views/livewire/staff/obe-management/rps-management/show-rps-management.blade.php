@@ -39,33 +39,27 @@
                 </div>
 
                 {{-- KANAN-ATAS: Badges --}}
-                <div class="flex flex-wrap items-center justify-start xl:justify-end gap-2 w-full order-1 xl:order-2">
-                    <flux:badge x-show="$store.rps?.level_mk_show == 1" icon="academic-cap" color="emerald"
-                        size="lg" class="px-4">
-                        <span x-text="$store.rps?.kode_rps_show"></span>
-                    </flux:badge>
-                    <flux:badge x-show="$store.rps?.level_mk_show == 2" icon="book-open" color="amber" size="lg"
-                        class="px-4">
-                        <span x-text="$store.rps?.kode_rps_show"></span>
-                    </flux:badge>
-                    <flux:badge x-show="$store.rps?.level_mk_show == 3" icon="building-library" color="indigo"
-                        size="lg" class="px-4">
-                        <span x-text="$store.rps?.kode_rps_show"></span>
-                    </flux:badge>
-                    <flux:badge x-show="$store.rps?.level_mk_show == 4" icon="globe-alt" color="red" size="lg"
-                        class="px-4">
-                        <span x-text="$store.rps?.kode_rps_show"></span>
+                <div wire:loading.class="opacity-10" wire:target="showRPS" class="flex flex-wrap items-center justify-start xl:justify-end gap-2 w-full order-1 xl:order-2">
+
+                    @include('livewire.global.table.badge.level-mk-badge', [
+                        'xValue' => $rps_data->kode ?? null,
+                        'sortir' => $rps_data->level_mk ?? null,
+                        'size' => 'lg',
+                    ])
+
+                    <flux:badge color="emerald" size="lg" class="px-4">
+                        {{ $rps_data->rps }}
                     </flux:badge>
 
-                    <flux:badge color="emerald" size="lg" class="px-4" x-text="$store.rps?.rps_show">
-                    </flux:badge>
 
-                    <flux:badge x-show="$store.rps?.draf_show == 0" color="green" size="lg" class="px-4"
-                        icon="check-circle">Aktif</flux:badge>
-                    <flux:badge x-show="$store.rps?.draf_show == 1" color="red" size="lg" class="px-4"
-                        icon="document-text">Draf</flux:badge>
+                    @include('livewire.global.table.badge.draft-badge', [
+                        'xValue' => $rps_data->draf ?? null,
+                        'size' => 'lg',
+                    ])
+
                 </div>
             </div>
+
 
 
             <div class="p-4 relative bg-white rounded-md border-2" x-data="{
@@ -102,11 +96,11 @@
                     <iframe id="pdf-frame" src="about:blank" class="w-full h-full border-none"></iframe>
                 </div>
             </div>
+            @include('livewire.global.modal-form.footer.button-close')
         @else
             @include('livewire.global.livewire-skeletons.modal-full-skeleton')
         @endif
 
-        @include('livewire.global.modal-form.footer.button-close')
 
     </flux:modal>
 </div>

@@ -1,6 +1,366 @@
 <style>
     @page {
         size: A4 landscape;
+        margin: 1cm;
+    }
+
+    /* Reset dasar pengganti Tailwind Preflight (box-sizing border-box WAJIB
+       karena banyak elemen pakai width/height tetap + padding/border sekaligus) */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        /* margin: 0;
+        padding: 0; */
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+    }
+
+    img {
+        display: block;
+    }
+
+    /* ===== Generic helpers ===== */
+    .relative {
+        position: relative;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .fixed {
+        position: fixed;
+    }
+
+    .w-full {
+        width: 100%;
+    }
+
+    .block {
+        display: block;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-black {
+        color: #000;
+    }
+
+    .bg-white {
+        background-color: #fff;
+    }
+
+    .rounded {
+        border-radius: 4px;
+    }
+
+    .rounded-sm {
+        border-radius: 2px;
+    }
+
+    .rounded-lg {
+        border-radius: 8px;
+    }
+
+    .rounded-t-sm {
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+    }
+
+    .font-bold {
+        font-weight: bold;
+    }
+
+    .font-semibold {
+        font-weight: 600;
+    }
+
+    .font-medium {
+        font-weight: 500;
+    }
+
+    .leading-none {
+        line-height: 1;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .whitespace-nowrap {
+        white-space: nowrap;
+    }
+
+    .tracking-wide {
+        letter-spacing: 0.025em;
+    }
+
+    .tracking-wider {
+        letter-spacing: 0.05em;
+    }
+
+    .text-gray-400 {
+        color: #9ca3af;
+    }
+
+    .text-gray-500 {
+        color: #6b7280;
+    }
+
+    .text-gray-600 {
+        color: #4b5563;
+    }
+
+    .text-gray-700 {
+        color: #374151;
+    }
+
+    .text-gray-800 {
+        color: #1f2937;
+    }
+
+    .z-30 {
+        z-index: 30;
+    }
+
+    .z-50 {
+        z-index: 50;
+    }
+
+    /* mt-* dipertahankan sebagai nama class (dipakai langsung dari $marginClass
+       yang di-generate PHP: 'mt-20' / 'mt-10' / 'mt-0'), nilainya sesuai skala px Tailwind */
+    .mt-20 {
+        margin-top: 80px;
+    }
+
+    .mt-10 {
+        margin-top: 40px;
+    }
+
+    .mt-0 {
+        margin-top: 0;
+    }
+
+    /* ===== Footer logo (fixed, terulang tiap halaman) ===== */
+    .pdf-footer-fixed {
+        bottom: 32px;
+        right: 32px;
+        z-index: 999;
+    }
+
+    .pdf-footer-table td {
+        vertical-align: middle;
+    }
+
+    .pdf-footer-text-cell {
+        text-align: right;
+        padding-right: 12px;
+    }
+
+    .pdf-footer-prodi {
+        font-size: 8px;
+        font-weight: 600;
+        color: #6b7280;
+        line-height: 1.4;
+    }
+
+    .pdf-footer-univ {
+        font-size: 8px;
+        font-weight: 600;
+        color: #9ca3af;
+        line-height: 1.4;
+    }
+
+    .pdf-footer-logo-cell img {
+        height: 36px;
+    }
+
+    /* ===== Root wrapper ===== */
+    .capaian-pdf {
+        font-family: "Times New Roman", Times, serif;
+    }
+
+    /* .page-container {
+        page-break-after: always;
+    } */
+
+    /* ===== Header ===== */
+    .chart-header-wrap {
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .chart-header-table {
+        width: 100%;
+    }
+
+    .chart-header-table td {
+        vertical-align: top;
+        padding: 16px 20px;
+    }
+
+    .chart-header-title {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .chart-header-subtitle {
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .chart-header-kelas {
+        font-size: 11px;
+    }
+
+    .chart-header-meta {
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .chart-body {
+        padding-top: 24px;
+    }
+
+    /* Box pembungkus: rata kanan */
+    .cpmk-legend-box {
+        background-color: #f9fafb;
+        padding: 0 24px;
+        border: 1px solid #f3f4f6;
+        text-align: right;
+    }
+
+    /* Item: berjejer kesamping */
+    .cpmk-legend-item {
+        display: inline-block;
+        vertical-align: top;
+        text-align: left;
+        margin-left: 10px;
+    }
+
+    .cpmk-legend-table td {
+        vertical-align: middle;
+        padding: 0;
+    }
+
+    .cpmk-legend-swatch {
+        width: 12px;
+        height: 12px;
+    }
+
+    .cpmk-legend-swatch-cell {
+        padding-right: 12px !important;
+    }
+
+    .cpmk-legend-kode {
+        font-size: 9px;
+    }
+
+    .cpmk-legend-detail {
+        font-size: 7px;
+    }
+
+    /* ===== Sumbu-Y + area chart (table, pengganti flex) ===== */
+    .chart-outer-table {
+        width: 100%;
+    }
+
+    .chart-yaxis-cell {
+        vertical-align: bottom;
+        width: 20px;
+    }
+
+    .chart-yaxis-label {
+        right: 4px;
+        font-size: 7px;
+    }
+
+    .chart-area-cell {
+        vertical-align: bottom;
+    }
+
+    .chart-area-frame {
+        border-bottom: 1px solid #d1d5db;
+        border-left: 1px solid #d1d5db;
+        padding: 0 8px 0 12px;
+    }
+
+    .chart-gridline {
+        left: 0;
+        width: 100%;
+        border-top: 1px solid #f3f4f6;
+        z-index: 0;
+    }
+
+    .chart-threshold-line {
+        left: 0;
+        width: 100%;
+        border-top: 2px dashed #ef4444;
+    }
+
+    .chart-threshold-label {
+        right: 0;
+        top: -14px;
+        font-size: 9px;
+        padding: 2px 6px;
+        background-color: #fff;
+        color: #ef4444;
+        border: 1px solid #ef4444;
+    }
+
+    /* ===== Bar per mahasiswa (table, pengganti flex-wrap) ===== */
+    .chart-bars-table {
+        z-index: 20;
+    }
+
+    .chart-bar-group-cell {
+        vertical-align: bottom;
+        padding-right: 10px;
+    }
+
+    .chart-bar-inner-table td {
+        vertical-align: bottom;
+        text-align: center;
+        padding: 0 1px;
+    }
+
+    .chart-bar-value {
+        font-size: 7px;
+        margin-bottom: 2px;
+    }
+
+    /* ===== Label NIM (table terpisah, tetap pakai $barGroupWidth) ===== */
+    .chart-nim-table {
+        margin-top: 8px;
+    }
+
+    .chart-nim-cell {
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .chart-nim-text {
+        display: inline-block;
+        font-size: 8px;
+        transform: rotate(45deg);
+        transform-origin: top left;
     }
 </style>
 
@@ -85,210 +445,226 @@
     $calculatedWidth = max($totalMahasiswa * 160, 800);
 @endphp
 {{-- Logo + nama universitas, fixed di pojok kanan-bawah, terulang tiap halaman --}}
-<div class="fixed bottom-[0.5cm] right-[0.5cm] z-[999] flex items-center gap-5">
-    <div class="flex flex-col items-end leading-none gap-1">
-        <span class="text-[8px] font-semibold text-gray-500">
-            @if ($jadwal ?? false)
-                {{ $jadwal->kelas_rel->pr_rel->prodi_pr ?? null }}
-            @elseif ($pr_name ?? false)
-                Program Studi {{ $pr_name ?? null }}
-            @elseif ($dp_name ?? false)
-                {{ $dp_name ?? null }}
-            @elseif ($fk_name ?? false)
-                {{ $fk_name ?? null }}
-            @endif
-        </span>
-        <span class="text-[8px] font-semibold text-gray-400">
-            {{ $univ }}
-        </span>
-
-    </div>
-
-    @if ($logoBase64 ?? null)
-        <img src="{{ $logoBase64 }}" class="h-9 object-contain">
-    @else
-        <img src="{{ asset('images/logo-unsri.webp') }}" class="h-9 object-contain">
-    @endif
+<div class="fixed pdf-footer-fixed">
+    <table class="pdf-footer-table">
+        <tr>
+            <td class="pdf-footer-text-cell">
+                <div class="pdf-footer-prodi">
+                    @if ($jadwal ?? false)
+                        {{ $jadwal->kelas_rel->pr_rel->prodi_pr ?? null }}
+                    @elseif ($pr_name ?? false)
+                        Program Studi {{ $pr_name ?? null }}
+                    @elseif ($dp_name ?? false)
+                        {{ $dp_name ?? null }}
+                    @elseif ($fk_name ?? false)
+                        {{ $fk_name ?? null }}
+                    @endif
+                </div>
+                <div class="pdf-footer-univ">
+                    {{ $univ }}
+                </div>
+            </td>
+            <td class="pdf-footer-logo-cell">
+                @if ($logoBase64 ?? null)
+                    <img src="{{ $logoBase64 }}">
+                @else
+                    <img src="{{ asset('images/logo-unsri.webp') }}">
+                @endif
+            </td>
+        </tr>
+    </table>
 </div>
 
-@yield('content')
-<div class="rps-pdf bg-white">
+{{-- @yield('content') --}}
+<div class="capaian-pdf bg-white">
     @php
         $jumlahSeries = count($finalSeries);
-        $barGroupWidth = $jumlahSeries * 20 + max($jumlahSeries - 1, 0) * 2;
+        $barGroupWidth = $jumlahSeries * 30 + max($jumlahSeries - 1, 0) * 2;
     @endphp
 
     <div class="w-full">
         @foreach ($chunk_users as $chunk_user)
-            <div class="page-container w-full" style="height: 10vh;">
+            <div class="page-container w-full"
+                style="{{ $loop->last ? 'page-break-after: auto;' : 'page-break-after: always;' }} break-inside: avoid;">
 
-                <div
-                    class="flex items-start justify-between border-b border-gray-100 dark:border-zinc-800 px-5 py-4 relative">
-                    <div>
-                        <h3 class="text-sm font-bold text-gray-800 dark:text-zinc-100 tracking-wide">
-                            Distribusi Capaian Nilai per Mahasiswa {{ $angkatan }}
-                        </h3>
-                        <p class="text-[11px] text-gray-600 mt-0.5">Mata Kuliah {{ $rps->mk_rel->nama_mk }}
-                            | Semester {{ $rps->mk_rel->semester }}
-                            | {{ $rps->mk_rel->sks }} SKS
-                            | {{ $rps->mk_rel->sks_text }}
-                        </p>
-                    </div>
+                <div class="chart-header-wrap">
+                    <table class="chart-header-table">
+                        <tr>
+                            <td>
+                                <h3 class="font-bold text-gray-800 tracking-wide chart-header-title">
+                                    Distribusi Capaian Nilai per Mahasiswa {{ $angkatan }}
+                                </h3>
+                                <p class="text-gray-600 chart-header-subtitle">Mata Kuliah {{ $rps->mk_rel->nama_mk }}
+                                    | Semester {{ $rps->mk_rel->semester }}
+                                    | {{ $rps->mk_rel->sks }} SKS
+                                    | {{ $rps->mk_rel->sks_text }}
+                                </p>
+                            </td>
 
-                    @if ($jadwal)
-                        <div class="text-right">
-                            <span class="block text-[11px] font-bold text-gray-800 dark:text-zinc-100">
-                                {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $tahun_akademik }}
-                            </span>
-                            <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
-                                Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
-                            </span>
-                            <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
-                                {{ $jadwal->kelas_rel->pr_rel->prodi ?? '-- -----' }}
-                            </span>
-                        </div>
-                    @else
-                        <div class="text-right">
-                            <span class="block text-[11px] font-bold text-gray-800 dark:text-zinc-100">
-                                Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
-                            </span>
+                            @if ($jadwal)
+                                <td class="text-right">
+                                    <span class="block font-bold text-gray-800 chart-header-kelas">
+                                        {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $tahun_akademik }}
+                                    </span>
+                                    <span class="block text-gray-500 uppercase tracking-wider chart-header-meta">
+                                        Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
+                                    </span>
+                                    <span class="block text-gray-500 uppercase tracking-wider chart-header-meta">
+                                        {{ $jadwal->kelas_rel->pr_rel->prodi ?? '-- -----' }}
+                                    </span>
+                                </td>
+                            @else
+                                <td class="text-right">
+                                    <span class="block font-bold text-gray-800 chart-header-kelas">
+                                        Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
+                                    </span>
 
-                            @php
-                                $segments = array_filter([$pr_name, $dp_name]);
-                            @endphp
+                                    @php
+                                        $segments = array_filter([$pr_name, $dp_name]);
+                                    @endphp
 
-                            @if (!empty($segments))
-                                <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
-                                    {{ implode(' | ', $segments) }}
-                                </span>
+                                    @if (!empty($segments))
+                                        <span class="block text-gray-500 uppercase tracking-wider chart-header-meta">
+                                            {{ implode(' | ', $segments) }}
+                                        </span>
+                                    @endif
+
+                                    @if ($fk_name)
+                                        <span class="block text-gray-500 uppercase tracking-wider chart-header-meta">
+                                            {{ $fk_name }}
+                                        </span>
+                                    @endif
+                                </td>
                             @endif
-
-                            @if ($fk_name)
-                                <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
-                                    {{ $fk_name }}
-                                </span>
-                            @endif
-                        </div>
-                    @endif
-
+                        </tr>
+                    </table>
                 </div>
 
-                <div class="pt-6">
+                <div class="chart-body">
 
                     {{-- PEMBUNGKUS GRAFIK --}}
-                    <div class="relative" style="height: 320px; padding-top: 68px;">
+                    <div class="relative" style="height: 360px; padding-top: 68px;">
 
-                        @php
-                            $count = count($daftarCpmk);
-                            $marginClass = match (true) {
-                                $count >= 13 => 'mt-20', // 13-18
-                                $count >= 7 => 'mt-10', // 7-12
-                                default => 'mt-0', // 1-6
-                            };
-                        @endphp
+                        {{-- Hapus left: 0 dan pastikan posisi merapat ke kanan --}}
+                        <div class="absolute z-30 cpmk-legend-box" style="top:0; right:0;">
+                            @foreach ($daftarCpmk as $index => $kodeCpmk)
+                                <div class="cpmk-legend-item">
+                                    <table class="cpmk-legend-table">
+                                        <tr>
+                                            <td class="cpmk-legend-swatch-cell">
+                                                <div class="rounded-sm cpmk-legend-swatch"
+                                                    style="background-color: {{ $colorPalette[$index % count($colorPalette)] }};">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="font-bold text-gray-700 leading-none cpmk-legend-kode">{{ $kodeCpmk }}</span>
+                                                <div class="text-gray-500 font-medium leading-none cpmk-legend-detail"
+                                                    style="white-space: nowrap; margin-bottom: 7px;">
+                                                    Bobot: {{ $bobotCpmkLegend[$kodeCpmk] ?? 0 }}% | Tercapai:
+                                                    {{ $rataKeberhasilanCpmk[$kodeCpmk] ?? 0 }}%
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @endforeach
 
-                        <div
-                            class="absolute top-0 right-0 bg-gray-50 dark:bg-zinc-950/50 px-4 py-3 rounded-lg border border-gray-100 dark:border-zinc-800 z-30">
-                            <div class="grid grid-cols-6 gap-x-6 gap-y-4">
-                                @foreach ($daftarCpmk as $index => $kodeCpmk)
-                                    {{-- Isi foreach Anda ... --}}
-                                    <div class="flex items-center gap-1.5 min-w-[120px]">
-                                        <div class="w-3 h-3 rounded-sm shrink-0"
-                                            style="background-color: {{ $colorPalette[$index % count($colorPalette)] }};">
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <span
-                                                class="text-[9px] font-bold text-gray-700 dark:text-gray-200 leading-none">{{ $kodeCpmk }}</span>
-                                            <span
-                                                class="text-[7px] text-gray-500 font-medium leading-none mt-0.5">Bobot:
-                                                {{ $bobotCpmkLegend[$kodeCpmk] ?? 0 }}% | Tercapai:
-                                                {{ $rataKeberhasilanCpmk[$kodeCpmk] ?? 0 }}%</span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
 
                         {{-- Div bawah dengan margin dinamis --}}
-                        <div class="flex h-full {{ $marginClass }}">
-
-                            {{-- Kolom sumbu-Y --}}
-                            <div class="relative shrink-0" style="width: 20px; height: 100%;">
-                                @for ($i = 0; $i <= 100; $i += 10)
-                                    <span class="absolute right-1 text-[7px] text-gray-400 leading-none"
-                                        style="bottom: {{ $i }}%; transform: translateY(50%);">
-                                        {{ $i }}
-                                    </span>
-                                @endfor
-                            </div>
-
-                            {{-- Wrapper area chart — TANPA padding di sini --}}
-                            <div class="relative flex-1" style="height: 100%;">
-
-                                {{-- Border + padding sekarang menyatu di div ini, border tidak ikut geser --}}
-                                <div
-                                    class="relative flex flex-wrap items-end justify-start h-full border-b border-l border-gray-300 gap-8 pl-3 pr-2">
-
-                                    {{-- Garis kisi per 10% --}}
-                                    @for ($i = 10; $i <= 100; $i += 10)
-                                        <div class="absolute left-0 w-full border-t border-gray-100 z-0"
-                                            style="bottom: {{ $i }}%;"></div>
-                                    @endfor
-
-                                    {{-- Garis Batas Kelulusan 70% --}}
-                                    <div class="absolute left-0 w-full z-50" style="bottom: 70%;">
-                                        <div class="w-full border-t-2 border-dashed" style="border-color: #ef4444;">
-                                        </div>
-                                        <span
-                                            class="absolute right-0 -top-[14px] text-[9px] font-bold px-1.5 py-0.5 rounded bg-white"
-                                            style="color: #ef4444; border: 1px solid #ef4444;">
-                                            Batas Kelulusan 70%
-                                        </span>
+                        <table class="chart-outer-table" style="transform: translateY(64px);">
+                            <tr>
+                                {{-- Kolom sumbu-Y --}}
+                                <td class="chart-yaxis-cell" style="vertical-align: bottom;">
+                                    <div class="relative" style="width: 20px; height: 252px;">
+                                        @for ($i = 0; $i <= 100; $i += 10)
+                                            <span class="absolute text-gray-400"
+                                                style="bottom: {{ $i }}%; transform: translateY(50%); right: 5px; font-size: 10px;">
+                                                {{ $i }}
+                                            </span>
+                                        @endfor
                                     </div>
+                                </td>
+                                {{-- Wrapper area chart — TANPA padding di sini --}}
+                                <td class="chart-area-cell">
+                                    {{-- Border + padding sekarang menyatu di div ini, border tidak ikut geser --}}
+                                    <div class="relative chart-area-frame" style="height: 252px;">
 
-                                    {{-- Bar per mahasiswa --}}
-                                    @foreach ($chunk_user as $user)
-                                        @php
-                                            $nim = $user->identity1;
-                                            $idxGlobal = array_search($nim, $daftarNim);
-                                        @endphp
+                                        {{-- Garis kisi per 10% --}}
+                                        @for ($i = 10; $i <= 100; $i += 10)
+                                            <div class="absolute chart-gridline" style="bottom: {{ $i }}%;">
+                                            </div>
+                                        @endfor
 
-                                        <div
-                                            class="relative flex items-end gap-0.5 h-full justify-center shrink-0 z-20">
-                                            @foreach ($finalSeries as $idxSeries => $series)
-                                                @php
-                                                    $value = $series['data'][$idxGlobal] ?? 0;
-                                                    $color = $colorPalette[$idxSeries % count($colorPalette)];
-                                                @endphp
-                                                <div class="flex flex-col items-center justify-end h-full">
-                                                    <span
-                                                        class="text-[7px] font-bold mb-0.5 leading-none whitespace-nowrap"
-                                                        style="color: {{ $color }};">
-                                                        {{ $value }}
-                                                    </span>
-                                                    <div class="rounded-t-sm"
-                                                        style="height: {{ $value }}%; background-color: {{ $color }}; width: 20px; min-height: 2px;">
-                                                    </div>
-                                                </div>
-                                            @endforeach
+                                        {{-- Garis Batas Kelulusan 70% --}}
+                                        <div class="absolute z-50" style="left:0; width:100%; bottom: 70%;">
+                                            <div class="chart-threshold-line" style="border-color: #ef4444;">
+                                            </div>
+                                            <span class="absolute font-bold rounded bg-white chart-threshold-label"
+                                                style="color: #ef4444; border: 1px solid #ef4444;">
+                                                Batas Kelulusan 70%
+                                            </span>
                                         </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
+
+                                        {{-- Bar per mahasiswa --}}
+                                        <table class="chart-bars-table">
+                                            <tr>
+                                                @foreach ($chunk_user as $user)
+                                                    @php
+                                                        $nim = $user->identity1;
+                                                        $idxGlobal = array_search($nim, $daftarNim);
+                                                    @endphp
+
+                                                    <td class="chart-bar-group-cell">
+                                                        <table class="chart-bar-inner-table">
+                                                            {{-- Baris 1: Grafik Batang --}}
+                                                            <tr>
+                                                                @foreach ($finalSeries as $idxSeries => $series)
+                                                                    @php
+                                                                        $value = $series['data'][$idxGlobal] ?? 0;
+                                                                        $color =
+                                                                            $colorPalette[
+                                                                                $idxSeries % count($colorPalette)
+                                                                            ];
+                                                                    @endphp
+                                                                    <td
+                                                                        style="height: 252px; vertical-align: bottom; position: relative;">
+                                                                        <span class="font-bold chart-bar-value"
+                                                                            style="position: absolute; bottom: {{ $value }}%; left: 0; width: 100%; text-align: center; color: {{ $color }}; font-size: 8px;">
+                                                                            {{ $value }}
+                                                                        </span>
+                                                                        <div class="rounded-t-sm"
+                                                                            style="height: {{ $value }}%; background-color: {{ $color }}; width: 20px; min-height: 2px;">
+                                                                        </div>
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+
+                                                            {{-- Baris 2: Label NIM (Tepat di bawah tiap grup batang) --}}
+                                                            <tr>
+                                                                <td colspan="{{ count($finalSeries) }}"
+                                                                    style="text-align: center; vertical-align: top;">
+                                                                    <div
+                                                                        style="transform: translateY(12px); font-size: 10px; width: 60px; margin: 0 auto;">
+                                                                        <span class="text-black chart-nim-text">
+                                                                            {{ $user->identity1 }}
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
-                    {{-- LABEL NIM — offset = 28px (sumbu-Y) + 24px (pl-6), lebar kotak = $barGroupWidth (samakan dgn bar) --}}
-                    <div class="flex flex-wrap justify-start gap-8 mt-2" style="padding-left: 44px;">
-                        @foreach ($chunk_user as $user)
-                            <div class="flex justify-center shrink-0" style="width: {{ $barGroupWidth }}px;">
-                                <span class="text-[8px] text-black block rotate-45 origin-top-left"
-                                    style="width: 60px;">
-                                    {{ $user->identity1 }}
-                                </span>
-                            </div>
-                        @endforeach
-                    </div>
+
                 </div>
             </div>
         @endforeach

@@ -163,7 +163,7 @@
                 @if (!$j->trashed())
                     @if ($j->is_my_class || Auth::user()->admin || Auth::user()->dosen)
                         <x-button-action color="amber"
-                            href="{{ $isJadwalMhs ?? null ? route('sesi-mahasiswa', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
+                            href="{{ $isJadwalOnly ?? null ? route('sesi-jadwal-kelas', [$j->kode_kelas, $j->kode_jadwal]) : route('sesi-management', [$j->kode_kelas, $j->kode_jadwal]) }}" wire:navigate>
                             <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
                             <span>Lihat Kelas
                         </x-button-action>

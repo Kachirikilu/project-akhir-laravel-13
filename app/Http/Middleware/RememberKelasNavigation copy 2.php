@@ -14,7 +14,7 @@ class RememberKelasNavigation
         $routeName = $request->route()?->getName();
 
         // 1. HANDLER JADWAL (LEVEL 0 MANAGEMENT / LEVEL 0 MAHASISWA)
-        if ($routeName === 'jadwal-management' || $routeName === 'jadwal-mahasiswa') {
+        if ($routeName === 'jadwal-management' || $routeName === 'jadwal-kelas') {
             $currentKode = $request->route('kode_kelas');
             $currentKodeDb = str_replace('-', '', $currentKode);
 
@@ -27,7 +27,7 @@ class RememberKelasNavigation
             }
 
             // Tentukan key session berdasarkan scope user
-            $sessionKey = ($routeName === 'jadwal-mahasiswa') ? 'kelas_mahasiswa.history' : 'kelas.history';
+            $sessionKey = ($routeName === 'jadwal-kelas') ? 'kelas_mahasiswa.history' : 'kelas.history';
             $kelasHistory = session($sessionKey, []);
             
             unset($kelasHistory[$currentKode]);
@@ -44,7 +44,7 @@ class RememberKelasNavigation
         }
 
         // 2. HANDLER SESI (LEVEL 2 MANAGEMENT / LEVEL 1 MAHASISWA)
-        if ($routeName === 'sesi-management' || $routeName === 'sesi-mahasiswa') {
+        if ($routeName === 'sesi-management' || $routeName === 'sesi-jadwal-kelas') {
             $currentKode = $request->route('kode_kelas');
             $currentKodeJadwal = $request->route('kode_jadwal_url');
             $currentIdJadwal = $request->route('jadwal_id');
@@ -71,7 +71,7 @@ class RememberKelasNavigation
             }
 
             // Tentukan key session berdasarkan scope user
-            $sessionKey = ($routeName === 'sesi-mahasiswa') ? 'jadwal_mahasiswa.history' : 'jadwal.history';
+            $sessionKey = ($routeName === 'sesi-jadwal-kelas') ? 'jadwal_mahasiswa.history' : 'jadwal.history';
             $sesiHistory = session($sessionKey, []);
 
             $compositeKey = $currentKode.'_'.$currentKodeJadwal;

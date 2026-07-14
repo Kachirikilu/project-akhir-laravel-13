@@ -5,7 +5,7 @@
      "
     @navigate.window="
         let segment = window.location.pathname.split('/').pop();
-        activeTable = (segment === {{ $isJadwalMhs ?? null ? 'sesi-mahasiswa' : 'sesi-management' }} || segment === '') ? 'sesi-card' : segment;
+        activeTable = (segment === {{ $isJadwalOnly ?? null ? 'sesi-jadwal-kelas' : 'sesi-management' }} || segment === '') ? 'sesi-card' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
@@ -14,8 +14,8 @@
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
         'alpine' => 'sesi',
         'backUrl' =>
-            $isJadwalMhs ?? null
-                ? route('jadwal-mahasiswa')
+            $isJadwalOnly ?? null
+                ? route('jadwal-kelas')
                 : route('jadwal-management', ['kode_kelas' => $kode_kelas_url]),
         'mainKode' => $kode_jadwal_url ?? '-',
         'subLabel' => 'Kelas ' . ($jadwal->label_extra ?? '- ---'),
@@ -26,7 +26,12 @@
     @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-switch-table')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @if ($this->switchTable == 'sesi-card')
+        @if ($this->switchTable == 'sesi-hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini', ['mb' => 'mb-6'])
+        @elseif ($this->switchTable == 'sesi-card' || ($this->switchTable == 'sesi-hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
+            @if ($this->switchTable == 'sesi-hari-ini' && $stats['sesi-hari-ini'] == 0)
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message')
+            @endif
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
         @elseif ($this->switchTable == 'sesi-table')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table')

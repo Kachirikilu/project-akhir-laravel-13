@@ -20,7 +20,7 @@
     <nav x-data="{
         openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
         openOBEMenu: {{ request()->routeIs('obe-management') ? 'true' : 'false' }},
-        openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
+        openJadwalMenu: {{ request()->routeIs('jadwal-kelas', 'sesi-jadwal-kelas') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
         openRpsNilaiMenu: {{ request()->routeIs('nilai-mahasiswa', 'rps-mahasiswa') ? 'true' : 'false' }},
         openNilaiMenu: {{ request()->routeIs('nilai-management', 'nilai-mahasiswa-management', 'rps-mahasiswa-management', 'rps-capaian-mahasiswa-management') ? 'true' : 'false' }},
@@ -85,18 +85,18 @@
                     'roles' => ['admin', 'dosen'],
                 ],
                 [
+                    'type' => 'dropdown-jadwal',
+                    'icon' => 'calendar-days',
+                    'route' => 'jadwal-kelas',
+                    'label' => 'Jadwal Kelas',
+                    'roles' => ['dosen', 'mahasiswa'],
+                    'active_routes' => ['jadwal-kelas', 'sesi-jadwal-kelas'],
+                ],
+                [
                     'type' => 'dropdown-obe',
                     'icon' => 'clipboard-document-list',
                     'label' => 'OBE Management',
                     'roles' => ['admin', 'dosen'],
-                ],
-                [
-                    'type' => 'dropdown-jadwal',
-                    'icon' => 'calendar-days',
-                    'route' => 'jadwal-mahasiswa',
-                    'label' => 'Jadwal Kelas',
-                    'roles' => ['mahasiswa'],
-                    'active_routes' => ['jadwal-mahasiswa', 'sesi-mahasiswa'],
                 ],
                 [
                     'type' => 'dropdown-kelas',
@@ -117,7 +117,7 @@
                     'type' => 'dropdown-nilai',
                     'icon' => 'chart-pie',
                     'route' => 'nilai-management',
-                    'label' => 'Nilai Mahasiswa',
+                    'label' => 'Nilai & Capaian',
                     'roles' => ['admin', 'dosen'],
                 ],
             ];
@@ -279,9 +279,6 @@
                 </div>
             @elseif ($item['type'] === 'dropdown-obe')
                 @php
-                    $currentTable = null;
-                    // $currentTable = request()->route('switchTable');
-                    // $currentTable = $this->switchTable ?? 'rps';
                     $isOBEActive = request()->routeIs('obe-management');
 
                     $subMenus = [
@@ -291,7 +288,7 @@
                             'param' => 'rps',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-green-600 dark:text-green-400',
-                            'active' => $isOBEActive && $currentTable === 'rps',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'CPL',
@@ -299,7 +296,7 @@
                             'param' => 'cpl',
                             'icon' => 'document-text',
                             'color' => 'text-sky-600 dark:text-sky-400',
-                            'active' => $isOBEActive && $currentTable === 'cpl',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'CPMK',
@@ -307,7 +304,7 @@
                             'param' => 'cpmk',
                             'icon' => 'academic-cap',
                             'color' => 'text-violet-600 dark:text-violet-400',
-                            'active' => $isOBEActive && $currentTable === 'cpmk',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'Sub-CPMK',
@@ -315,7 +312,7 @@
                             'param' => 'sub-cpmk',
                             'icon' => 'academic-cap',
                             'color' => 'text-fuchsia-600 dark:text-fuchsia-400',
-                            'active' => $isOBEActive && $currentTable === 'sub-cpmk',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'Referensi',
@@ -323,7 +320,7 @@
                             'param' => 'referensi',
                             'icon' => 'book-open',
                             'color' => 'text-orange-600 dark:text-orange-400',
-                            'active' => $isOBEActive && $currentTable === 'referensi',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'Tim Dosen',
@@ -331,7 +328,7 @@
                             'param' => 'tim-dosen',
                             'icon' => 'user-group',
                             'color' => 'text-blue-600 dark:text-blue-400',
-                            'active' => $isOBEActive && $currentTable === 'tim-dosen',
+                            'active' => $isOBEActive,
                         ],
                         [
                             'label' => 'Dosen',
@@ -339,7 +336,7 @@
                             'param' => 'dosen',
                             'icon' => 'briefcase',
                             'color' => 'text-lime-600 dark:text-lime-400',
-                            'active' => $isOBEActive && $currentTable === 'dosen',
+                            'active' => $isOBEActive,
                         ],
                     ];
 
@@ -358,17 +355,29 @@
                 </div>
             @elseif($item['type'] === 'dropdown-jadwal')
                 @php
+                    $isJadwalMainActive = request()->routeIs('jadwal-kelas') ?? $this->routeMain;
+                    if ($this->routeMain == 'jadwal-kelas') {
+                        $isJadwalMainActive = true;
+                    }
                     $sesiHistory = session('jadwal_mahasiswa.history', []);
-
+                    $currentSwitch = request()->route('switchTable') ?? $this->switchTableMain;
                     $subMenus = [
                         [
+                            'label' => 'Jadwal Kelas Harian',
+                            'url' => route('jadwal-kelas', ['switchTable' => 'hari-ini']),
+                            'icon' => 'calendar-days',
+                            'color' => 'text-emerald-600 dark:text-emerald-400',
+                            'active' => $isJadwalMainActive && $currentSwitch === 'hari-ini',
+                        ],
+                        [
                             'label' => 'Daftar Jadwal Kelas',
-                            'url' => route('jadwal-mahasiswa'),
-                            'param' => 'jadwal-mahasiswa',
+                            'url' => route('jadwal-kelas'),
+                            'param' => 'jadwal-kelas',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-amber-600 dark:text-amber-400',
-                            'active' => request()->routeIs('jadwal-mahasiswa'),
-                            'active-sub' => request()->routeIs('sesi-mahasiswa'),
+                            'active' =>
+                                $isJadwalMainActive && in_array($currentSwitch, ['', 'jadwal-card', 'jadwal-table']),
+                            'active-sub' => request()->routeIs('sesi-jadwal-kelas'),
                         ],
                     ];
 
@@ -381,27 +390,29 @@
                         $subMenus[] = [
                             'label' => $kodeKelas . '-' . $kodeJadwal,
                             'url' => route(
-                                'sesi-mahasiswa',
+                                'sesi-jadwal-kelas',
                                 array_filter([
                                     'kode_kelas' => $kodeKelas,
                                     'kode_jadwal_short' => $kodeJadwal,
-                                    'jadwal_id' => $jadwalId,
-                                    'switchTable' => $switchTable,
+                                    'switchTable' => ($switchTable ?? 'sesi-hari-ini') ? '' : $switchTable,
                                 ]),
                             ),
-                            'param' => 'sesi-mahasiswa',
+                            'param' => 'sesi-jadwal-kelas',
                             'icon' => 'academic-cap',
                             'color' => 'text-indigo-600 dark:text-indigo-400',
                             'level' => 1,
                             'active' =>
-                                request()->routeIs('sesi-mahasiswa') &&
+                                request()->routeIs('sesi-jadwal-kelas') &&
                                 request()->route('kode_kelas') === $kodeKelas &&
                                 request()->route('kode_jadwal_short') === $kodeJadwal,
                         ];
                     }
 
                     $openMenuVar = 'openJadwalMenu';
-                    $isJadwalActive = request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa');
+                    $isJadwalActive = request()->routeIs('jadwal-kelas', 'sesi-jadwal-kelas');
+                    if ($this->routeMain == 'jadwal-kelas') {
+                        $isJadwalActive = true;
+                    }
                 @endphp
 
                 <div class="relative mr-2" @toggle-menu-obe.window="openJadwalMenu = !openJadwalMenu">
@@ -582,8 +593,9 @@
                             'param' => '',
                             'icon' => 'user-group',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'active' => request()->routeIs('nilai-management') && ($currentTable == 'mahasiswa' || $currentTable !== 'rps'),
-
+                            'active' =>
+                                request()->routeIs('nilai-management') &&
+                                ($currentTable == 'mahasiswa' || $currentTable !== 'rps'),
                             'active-sub' => request()->routeIs(
                                 'nilai-mahasiswa-management',
                                 'rps-mahasiswa-management',
@@ -642,8 +654,7 @@
                         'active' =>
                             (request()->routeIs('nilai-management') && $currentTable === 'rps') ||
                             request()->routeIs('rps-capaian-mahasiswa-management'),
-                        'active-sub' =>
-                            request()->routeIs('rps-capaian-mahasiswa-management'),
+                        'active-sub' => request()->routeIs('rps-capaian-mahasiswa-management'),
                     ];
 
                     foreach ($capaianHistory as $kodeRps => $dataRps) {

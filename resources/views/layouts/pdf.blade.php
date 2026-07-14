@@ -21,7 +21,6 @@
         table {
             page-break-inside: auto;
         }
-
         tr {
             page-break-inside: avoid;
             page-break-after: auto;
@@ -30,7 +29,6 @@
         thead {
             display: table-header-group;
         }
-
         tfoot {
             display: table-footer-group;
         }
@@ -38,7 +36,6 @@
         .page-break {
             page-break-before: always;
         }
-
         .page-container {
             page-break-after: always;
             break-inside: avoid;

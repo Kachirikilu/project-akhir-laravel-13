@@ -39,25 +39,25 @@ trait WithUserFilters
     public function inputUserSearch($role = null, $jadwalId = null, $prId = null, $noFilter = false, $rpsId = null)
     {
         if (! $role) {
-            $queryUser = User::query()->select('users.*')->with([
+            $queryUser = User::query()->with([
                 'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
                 'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
                 'dosen.tim_dosens.rps',
                 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
             ]);
         } elseif ($role == 'admin') {
-            $queryUser = User::query()->select('users.*')
+            $queryUser = User::query()
                 ->with(['admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel'])
                 ->whereHas('admin');
         } elseif ($role == 'dosen') {
-            $queryUser = User::query()->select('users.*')
+            $queryUser = User::query()
                 ->with([
                     'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
                     'dosen.tim_dosens.rps',
                 ])
                 ->whereHas('dosen');
         } elseif ($role == 'mahasiswa') {
-            $queryUser = User::query()->select('users.*')
+            $queryUser = User::query()
                 ->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel'])
                 ->whereHas('mahasiswa');
             if ($jadwalId) {
@@ -301,56 +301,62 @@ trait WithUserFilters
 
     private function applyUserCombinedSort($queryUser)
     {
-        $queryUser = User::query()->from('users as users');
-
         $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*');
+            ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
+            ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
+            ->select('users.*');
 
         if ($this->sortField === 'program_studi') {
-            $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
-                    ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
-                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id');
-
             return $this->applyProdiSort(
-                $queryUser,
+                $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+                    ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
+                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
+                'COALESCE(ap.strata, dp.strata, mp.strata)',
+                'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
+            );
+        }
+        if ($this->sortField === 'program_studi') {
+            return $this->applyProdiSort(
+                $queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+                    ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
+                    ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
                 'COALESCE(ap.strata, dp.strata, mp.strata)',
                 'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)'
             );
         }
 
-        if (
-            $this->sortField === 'rekap_mhs' ||
-            $this->sortField === 'ipk_mhs' ||
-            $this->sortField === 'mutu_mhs' ||
-            $this->sortField === 'count_rps' ||
-            $this->sortField === 'total_sks'
-        ) {
-            $queryUser
-                ->leftJoin(
-                    'rekap_nilai_mahasiswa as rnm',
-                    'mahasiswas.id',
-                    '=',
-                    'rnm.mahasiswa_id'
-                );
+        // if (
+        //     // $this->sortField === 'rekap_mhs' ||
+        //     // $this->sortField === 'ipk_mhs' ||
+        //     // $this->sortField === 'mutu_mhs' ||
+        //     $this->sortField === 'count_rps' ||
+        //     $this->sortField === 'total_sks'
+        // ) {
+        //     $queryUser
+        //         ->leftJoin(
+        //             'rekap_nilai_mahasiswa as rnm',
+        //             'mahasiswas.id',
+        //             '=',
+        //             'rnm.mahasiswa_id'
+        //         );
 
-            return match ($this->sortField) {
-                'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => $queryUser->orderBy(
-                    'rnm.nilai',
-                    $this->sortDirection
-                ),
-                'count_rps' => $queryUser->orderBy(
-                    'rnm.count_rps',
-                    $this->sortDirection
-                ),
-                'total_sks' => $queryUser->orderBy(
-                    'rnm.total_sks',
-                    $this->sortDirection
-                ),
-                default => $queryUser,
-            };
-        }
+        //     return match ($this->sortField) {
+        //         // 'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => $queryUser->orderBy(
+        //         //     'rnm.nilai',
+        //         //     $this->sortDirection
+        //         // ),
+        //         'count_rps' => $queryUser->orderBy(
+        //             'rnm.count_rps',
+        //             $this->sortDirection
+        //         ),
+        //         'total_sks' => $queryUser->orderBy(
+        //             'rnm.total_sks',
+        //             $this->sortDirection
+        //         ),
+        //         default => $queryUser,
+        //     };
+        // }
+        
 
         $aliasSort = match ($this->sortField) {
             'mhs_nilai_akhir',
@@ -424,60 +430,5 @@ trait WithUserFilters
             "$orderByRaw {$this->sortDirection}"
         );
     }
-    // private function applyUserCombinedSort($queryUser)
-    // {
-    //     $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-    //         ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-    //         ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-    //         ->select('users.*');
-
-    //     if ($this->sortField === 'program_studi') {
-    //         return $this->applyProdiSort($queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
-    //             ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
-    //             ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
-    //             'COALESCE(ap.strata, dp.strata, mp.strata)',
-    //             'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)');
-    //     }
-
-    //     $orderByRaw = match ($this->sortField) {
-    //         'admin_id' => 'admins.id',
-    //         'dosen_id' => 'dosens.id',
-    //         'mahasiswa_id' => 'mahasiswas.id',
-    //         'role' => 'CASE
-    //                         WHEN admins.id IS NOT NULL THEN 1
-    //                         WHEN dosens.id IS NOT NULL THEN 2
-    //                         WHEN mahasiswas.id IS NOT NULL THEN 3
-    //                         ELSE 4
-    //                     END',
-    //         'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
-    //         'kode' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
-    //         'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
-    //         'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
-    //         'identity3' => 'dosens.nidk',
-    //         'nip' => 'COALESCE(admins.nip, dosens.nip)',
-    //         'nitk' => 'admins.nitk',
-    //         'nidn' => 'dosens.nidn',
-    //         'nidk' => 'dosens.nidk',
-    //         'nim' => 'mahasiswas.nim',
-    //         'count_rps' => '(SELECT COUNT(DISTINCT rpd.rps_id)
-    //                         FROM rps_pivot_dosen rpd
-    //                         WHERE rpd.dosen_id = dosens.id)',
-    //         'total_sks' => '(SELECT COALESCE(SUM(mk.sks_kuliah), 0)
-    //             FROM rps_pivot_dosen rpd
-    //             JOIN rps r ON r.id = rpd.rps_id
-    //             JOIN mata_kuliahs mk ON mk.id = r.mk_id
-    //             WHERE rpd.dosen_id = dosens.id)',
-    //         'pertemuan_ke' => 'mahasiswas.nim',
-    //         'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
-    //         'kampus' => 'COALESCE(admins.kode_wilayah, mahasiswas.kode_wilayah)',
-    //         'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
-    //         'angkatan' => 'mahasiswas.angkatan',
-    //         'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu' => 'mahasiswas.mhs_nilai_akhir',
-    //         'created_at' => 'users.created_at',
-    //         'updated_at' => 'users.updated_at',
-    //         default => 'users.id'
-    //     };
-
-    //     return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
-    // }
+   
 }

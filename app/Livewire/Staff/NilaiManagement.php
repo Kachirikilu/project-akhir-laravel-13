@@ -20,6 +20,7 @@ use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
 // use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSDelete;
 use App\Livewire\Staff\ObeManagement\WithOBEExcel;
+use Illuminate\Support\Facades\Auth;
 
 // use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSModal;
 // use App\Models\Akademik\CPL;
@@ -104,6 +105,8 @@ class NilaiManagement extends Component
     public function mount($switchTable = 'mahasiswa')
     {
         $this->switchTable = $switchTable;
+        $this->updatedShowDeleted();
+
     }
 
     #[On('selected-pr-id-updated')]
@@ -247,11 +250,25 @@ class NilaiManagement extends Component
             $this->perPage = min((int) $this->perPage, $limits[$table]);
         }
 
+
         $suffix = ($table && $table !== 'mahasiswa') ? "/{$table}" : '';
 
         $targetPath = "/nilai-management{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
+    }
+
+ 
+    public function updatedSwitchTable()
+    {
+        $this->updatedShowDeleted();
+    }
+
+    public function updatedShowDeleted()
+    {
+        if (Auth::user()->dosen && $this->switchTable == 'mahasiswa') {
+            $this->showDeleted = false;
+        }
     }
 
     public function render()
@@ -270,6 +287,8 @@ class NilaiManagement extends Component
                     break;
                 case 'mahasiswa':
                     $queryUser = $this->inputUserSearch('mahasiswa');
+                    $this->addCountRpsMahasiswa($queryUser, 'count_rps');
+                    $this->addTotalSksMahasiswa($queryUser, 'total_sks');
                     break;
             }
 
@@ -280,11 +299,13 @@ class NilaiManagement extends Component
                         break;
                 }
             }
-            if ($this->showDeleted && $this->AuthCheck('admin')) {
-                switch ($this->switchTable) {
-                    case 'mahasiswa':
-                        $queryUser->onlyTrashed();
-                        break;
+            if (Auth::user()->admin) {
+                if ($this->showDeleted && $this->AuthCheck('admin')) {
+                    switch ($this->switchTable) {
+                        case 'mahasiswa':
+                            $queryUser->onlyTrashed();
+                            break;
+                    }
                 }
             }
 

@@ -13,7 +13,7 @@
 
     <nav x-data="{
         openOBEMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
-        openJadwalMenu: {{ request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa') ? 'true' : 'false' }},
+        openJadwalMenu: {{ request()->routeIs('jadwal-kelas', 'sesi-jadwal-kelas') ? 'true' : 'false' }},
         openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
     
         init() {
@@ -78,17 +78,17 @@
                 // [
                 //     'type' => 'link',
                 //     'icon' => 'calendar-days',
-                //     'route' => 'jadwal-mahasiswa',
+                //     'route' => 'jadwal-kelas',
                 //     'label' => 'Jadwal Kelas',
                 //     'roles' => ['mahasiswa'],
                 // ],
                 [
                     'type' => 'dropdown-jadwal',
                     'icon' => 'calendar-days',
-                    'route' => 'jadwal-mahasiswa',
+                    'route' => 'jadwal-kelas',
                     'label' => 'Jadwal Kelas',
                     'roles' => ['mahasiswa'],
-                    'active_routes' => ['jadwal-mahasiswa', 'sesi-mahasiswa'],
+                    'active_routes' => ['jadwal-kelas', 'sesi-jadwal-kelas'],
                 ],
                 [
                     'type' => 'dropdown-kelas',
@@ -218,12 +218,12 @@
                     $subMenus = [
                         [
                             'label' => 'Daftar Jadwal Kelas',
-                            'url' => route('jadwal-mahasiswa'),
-                            'param' => 'jadwal-mahasiswa',
+                            'url' => route('jadwal-kelas'),
+                            'param' => 'jadwal-kelas',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-amber-600 dark:text-amber-400',
-                            'active' => request()->routeIs('jadwal-mahasiswa'),
-                            'active-sub' => request()->routeIs('sesi-mahasiswa'),
+                            'active' => request()->routeIs('jadwal-kelas'),
+                            'active-sub' => request()->routeIs('sesi-jadwal-kelas'),
                         ],
                     ];
 
@@ -236,7 +236,7 @@
                         $subMenus[] = [
                             'label' => $kodeKelas . '-' . $kodeJadwal,
                             'url' => route(
-                                'sesi-mahasiswa',
+                                'sesi-jadwal-kelas',
                                 array_filter([
                                     'kode_kelas' => $kodeKelas,
                                     'kode_jadwal_url' => $kodeJadwal,
@@ -244,19 +244,19 @@
                                     'switchTable' => $switchTable,
                                 ]),
                             ),
-                            'param' => 'sesi-mahasiswa',
+                            'param' => 'sesi-jadwal-kelas',
                             'icon' => 'academic-cap',
                             'color' => 'text-indigo-600 dark:text-indigo-400',
                             'level' => 1,
                             'active' =>
-                                request()->routeIs('sesi-mahasiswa') &&
+                                request()->routeIs('sesi-jadwal-kelas') &&
                                 request()->route('kode_kelas') === $kodeKelas &&
                                 request()->route('kode_jadwal_url') === $kodeJadwal,
                         ];
                     }
 
                     $openMenuVar = 'openJadwalMenu';
-                    $isJadwalActive = request()->routeIs('jadwal-mahasiswa', 'sesi-mahasiswa');
+                    $isJadwalActive = request()->routeIs('jadwal-kelas', 'sesi-jadwal-kelas');
                 @endphp
 
                 <div class="relative mr-2" @toggle-menu-obe.window="openJadwalMenu = !openJadwalMenu">

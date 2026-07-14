@@ -38,12 +38,117 @@
 @layer components {
     /* Border */
 
+    .menu-theme-item {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+
+        width: 100%;
+        padding: .65rem .85rem;
+
+        border-radius: .75rem;
+
+        color: var(--contrast-main-text);
+        text-decoration: none;
+
+        transition:
+            background-color .18s ease,
+            color .18s ease,
+            transform .12s ease;
+    }
+
+    .menu-theme-item:hover {
+        background: color-mix(in srgb, var(--focus-color) 32%, transparent);
+        /* color: var(--focus-color); */
+    }
+
+    .menu-theme-item:hover .menu-theme-icon,
+    .menu-theme-item:hover .menu-theme-label {
+        color: inherit;
+    }
+
+    .menu-theme-item:focus-visible {
+        outline: none;
+        background: color-mix(in srgb, var(--focus-color) 12%, transparent);
+        color: var(--focus-color);
+    }
+
+    .menu-theme-item:active {
+        background: color-mix(in srgb, var(--focus-color) 48%, transparent);
+        /* color: var(--main-text); */
+        transform: scale(.985);
+    }
+
+    .menu-theme-item:active .menu-theme-icon,
+    .menu-theme-item:active .menu-theme-label {
+        color: inherit;
+    }
+
+    .menu-theme-icon {
+        flex-shrink: 0;
+    }
+
+    .menu-theme-label {
+        font-size: .875rem;
+        font-weight: 500;
+    }
+
+    .settings-link {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+
+        width: 100%;
+        padding: .4rem .9rem;
+
+        border-radius: .75rem;
+
+        color: var(--contrast-main-text);
+        text-decoration: none;
+
+        transition:
+            background-color .18s ease,
+            color .18s ease,
+            transform .12s ease;
+    }
+
+    .settings-link:hover {
+        color: var(--focus-color);
+        background: color-mix(in srgb, var(--focus-color) 10%, transparent);
+    }
+
+    .settings-link:focus-visible {
+        outline: none;
+        color: var(--focus-color);
+        background: color-mix(in srgb, var(--focus-color) 12%, transparent);
+    }
+
+    .settings-link:active {
+        color: var(--main-text);
+        background: var(--focus-color);
+        transform: scale(.985);
+    }
+
+    .settings-link-active {
+        color: var(--focus-color);
+        font-weight: 600;
+        background: color-mix(in srgb, var(--focus-color) 15%, transparent);
+    }
+
+    .settings-link-active:hover {
+        background: color-mix(in srgb, var(--focus-color) 20%, transparent);
+    }
+
     .form-container {
         @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
         @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
         @apply px-2 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
     }
-
+    .form-container-excel {
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
+        @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
+        @apply px-0 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
+    }
     .form-message {
         @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
         @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;
@@ -186,6 +291,7 @@
             @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
+
     .btn-card-focus-state-special {
         @apply transition-all duration-200;
 
@@ -194,7 +300,7 @@
             @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
- 
+
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }

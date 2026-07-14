@@ -32,7 +32,7 @@ trait WithDataDiri
         if ($userNonAktif) {
             return response()->json([
                 'status' => false,
-                'message' => "Nomor Anda [{$noWA}] sudah terdaftar di sistem, tetapi *AKUN BELUM AKTIF*. Silakan ketik *VERIFIKASI [ID Akademik]* terlebih dahulu untuk mengaktifkan fitur bot!",
+                'message' => "Nomor Anda [{$noWA}] sudah terdaftar di sistem, tetapi *AKUN BELUM AKTIF*. Silakan ketik *LOGIN [ID Akademik]* terlebih dahulu untuk mengaktifkan fitur bot!",
             ], 403);
         }
 

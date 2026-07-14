@@ -14,6 +14,7 @@ use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
 use Spatie\Browsershot\Browsershot;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 trait WithCpmkGrafikShow
@@ -217,6 +218,71 @@ trait WithCpmkGrafikShow
         return ['content' => $pdfContent, 'name' => $fileName, 'jadwal' => $jadwal ?? null];
     }
 
+    // protected function generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik, $angkatan = null, $prName = null, $dpName = null, $fkName = null): string
+    // {
+    //     $logoPath = public_path('images/logo-unsri.webp');
+    //     $univ = strtoupper(env('UNIVERSITAS'));
+    //     $logoBase64 = '';
+
+    //     if (file_exists($logoPath)) {
+    //         $type = pathinfo($logoPath, PATHINFO_EXTENSION);
+    //         $dataLogo = file_get_contents($logoPath);
+    //         $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
+    //     }
+    //     $countCPMK = $rps->count_cpmk;
+
+    //     if ($countCPMK == 1) {
+    //         $chunk_users = $users->chunk(18);
+    //     } elseif ($countCPMK == 2) {
+    //         $chunk_users = $users->chunk(13);
+    //     } elseif ($countCPMK == 3) {
+    //         $chunk_users = $users->chunk(10);
+    //     } elseif ($countCPMK == 4) {
+    //         $chunk_users = $users->chunk(8);
+    //     } elseif ($countCPMK == 5) {
+    //         $chunk_users = $users->chunk(6);
+    //     } elseif ($countCPMK == 6 || $countCPMK == 7) {
+    //         $chunk_users = $users->chunk(5);
+    //     } elseif ($countCPMK == 8 || $countCPMK == 9) {
+    //         $chunk_users = $users->chunk(4);
+    //     } elseif ($countCPMK == 10 || $countCPMK == 11 || $countCPMK == 12 || $countCPMK == 13) {
+    //         $chunk_users = $users->chunk(4);
+    //     } elseif ($countCPMK == 14 || $countCPMK == 15 || $countCPMK == 16) {
+    //         $chunk_users = $users->chunk(2);
+    //     }
+    //     $html = view('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
+    //         'users' => $users,
+    //         'chunk_users' => $chunk_users,
+    //         'jadwal' => $jadwal ?? null,
+    //         'rps' => $rps,
+    //         'tahun_akademik' => $tahunAkademik,
+
+    //         'angkatan' => $angkatan ?? null,
+    //         'pr_name' => $prName ?? null,
+    //         'dp_name' => $dpName ?? null,
+    //         'fk_name' => $fkName ?? null,
+
+    //         'groupsCpmk' => $groupsCpmk ?? null,
+    //         'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
+    //         'mapping_pertemuan' => $this->mapping_pertemuan,
+    //         'univ' => $univ,
+    //         'logoBase64' => $logoBase64,
+    //     ])->render();
+
+    //     $browsershot = Browsershot::html($html)
+    //         ->noSandbox()
+    //         ->format('A4')
+    //         ->landscape()
+    //         ->margins(20, 20, 20, 20)
+    //         ->showBackground();
+
+    //     if ($chromePath = env('BROWSERSHOT_CHROME_PATH')) {
+    //         $browsershot->setChromePath($chromePath);
+    //     }
+
+    //     return $browsershot->pdf();
+    // }
+
     protected function generateCpmkGrafikRawPDFContent($users, $jadwal, $rps, $groupsCpmk, $tahunAkademik, $angkatan = null, $prName = null, $dpName = null, $fkName = null): string
     {
         $logoPath = public_path('images/logo-unsri.webp');
@@ -228,57 +294,59 @@ trait WithCpmkGrafikShow
             $dataLogo = file_get_contents($logoPath);
             $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
         }
+        
         $countCPMK = $rps->count_cpmk;
 
-        if ($countCPMK == 1) {
-            $chunk_users = $users->chunk(18);
-        } elseif ($countCPMK == 2) {
-            $chunk_users = $users->chunk(13);
+        if ($countCPMK == 1 || $countCPMK == 2) {
+            $chunk_users = $users->chunk(17); // SUDAH
         } elseif ($countCPMK == 3) {
-            $chunk_users = $users->chunk(10);
+            $chunk_users = $users->chunk(13); // SUDAH
         } elseif ($countCPMK == 4) {
-            $chunk_users = $users->chunk(8);
+            $chunk_users = $users->chunk(10); // SUDAH
         } elseif ($countCPMK == 5) {
-            $chunk_users = $users->chunk(6);
-        } elseif ($countCPMK == 6 || $countCPMK == 7) {
-            $chunk_users = $users->chunk(5);
-        } elseif ($countCPMK == 8 || $countCPMK == 9) {
-            $chunk_users = $users->chunk(4);
-        } elseif ($countCPMK == 10 || $countCPMK == 11 || $countCPMK == 12 || $countCPMK == 13) {
-            $chunk_users = $users->chunk(4);
-        } elseif ($countCPMK == 14 || $countCPMK == 15 || $countCPMK == 16) {
-            $chunk_users = $users->chunk(2);
+            $chunk_users = $users->chunk(8); // SUDAH
+        } elseif ($countCPMK == 6) {
+            $chunk_users = $users->chunk(7); // SUDAH
+        } elseif ($countCPMK == 7) {
+            $chunk_users = $users->chunk(6); // SUDAH
+        } elseif ($countCPMK == 8) {
+            $chunk_users = $users->chunk(5); // SUDAH
+        } elseif ($countCPMK == 9 || $countCPMK == 10) {
+            $chunk_users = $users->chunk(4); // SUDAH
+        } elseif ($countCPMK >= 11 && $countCPMK <= 14) {
+            $chunk_users = $users->chunk(3); // SUDAH
+        } elseif ($countCPMK == 15 || $countCPMK == 16) {
+            $chunk_users = $users->chunk(2); // SUDAH
+        } else {
+            $chunk_users = $users->chunk(15);
         }
-        $html = view('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
+
+        $pdf = Pdf::loadView('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
             'users' => $users,
             'chunk_users' => $chunk_users,
             'jadwal' => $jadwal ?? null,
             'rps' => $rps,
             'tahun_akademik' => $tahunAkademik,
-
             'angkatan' => $angkatan ?? null,
             'pr_name' => $prName ?? null,
             'dp_name' => $dpName ?? null,
             'fk_name' => $fkName ?? null,
-
             'groupsCpmk' => $groupsCpmk ?? null,
             'totalBobotPerCpmk' => $totalBobotPerCpmk ?? null,
             'mapping_pertemuan' => $this->mapping_pertemuan,
             'univ' => $univ,
             'logoBase64' => $logoBase64,
-        ])->render();
+        ]);
 
-        $browsershot = Browsershot::html($html)
-            ->noSandbox()
-            ->format('A4')
-            ->landscape()
-            ->margins(20, 20, 20, 20)
-            ->showBackground();
+        $pdf->setPaper('a4', 'landscape');
+        
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'isPhpEnabled' => true,
+            'dpi' => 96,
+        ]);
 
-        if ($chromePath = env('BROWSERSHOT_CHROME_PATH')) {
-            $browsershot->setChromePath($chromePath);
-        }
-
-        return $browsershot->pdf();
+        return $pdf->output();
     }
 }

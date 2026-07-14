@@ -144,9 +144,6 @@
                             $store.rps?.setShowRPS(
                                 '{{ $r->id ?? '' }}',
                                 '{{ $r->kode ?? '' }}',
-                                '{{ $r->rps ?? '' }}',
-                                '{{ $r->draf ?? '' }}',
-                                '{{ $r->level_mk ?? '' }}',
                             );
                             $store.rps?.setColor('text-green-700 dark:text-green-400');
                             $flux.modal('rps-detail-modal').show();

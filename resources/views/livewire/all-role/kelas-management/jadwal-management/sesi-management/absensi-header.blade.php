@@ -21,7 +21,7 @@
     $izinSakit = (int)   ($dataSource['mhs_izin']       ?? 0)
                + (int)   ($dataSource['mhs_sakit']      ?? 0);
     $tidakHdr  = (int)   ($dataSource['mhs_tidak_masuk'] ?? 0);
-    $denom     = max($denominator, 1);
+    $denom     = $denominator ?? 0;
 
     $r = 28; // radius lebih kecil agar proporsional dalam kolom grid
     $c = 2 * M_PI * $r;

@@ -116,7 +116,16 @@ new #[Title('Profile Settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Profile Settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Perbarui Foto Profil Anda')">
+    <x-pages::settings.layout>
+
+        <flux:heading class="text-[var(--contrast-main-text)]">
+            Profile
+        </flux:heading>
+
+        <flux:subheading class="text-[var(--contrast-third-text)]">
+            Perbarui Foto Profil Anda
+        </flux:subheading>
+
         <form wire:submit.prevent="updatePhotoProfile" class="my-6 w-full space-y-6">
             <div class="space-y-4 mb-9">
                 <flux:label :label="__('Profile Photo')" for="photo" />
@@ -170,8 +179,7 @@ new #[Title('Profile Settings')] class extends Component {
                                     class="cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90">
                                     <span wire:loading.remove
                                         wire:target="updatePhotoProfile">{{ __('Save Photo') }}</span>
-                                    <span wire:loading
-                                        wire:target="updatePhotoProfile">{{ __('Saving...') }}</span>
+                                    <span wire:loading wire:target="updatePhotoProfile">{{ __('Saving...') }}</span>
                                 </flux:button>
                             @endif
 
@@ -283,7 +291,7 @@ new #[Title('Profile Settings')] class extends Component {
                     <div class="col-span-2">
                         {{-- Tombol pemicu modal --}}
                         <flux:button type="button" variant="primary" wire:click="preparePasswordUpdate"
-                            class="text-white w-full cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90">
+                            class="!h-8.5 !sm:h-9.5 !py-0 text-white w-full cursor-pointer bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90">
                             {{ __('Save') }}
                         </flux:button>
                     </div>
@@ -455,7 +463,9 @@ new #[Title('Profile Settings')] class extends Component {
                 <div class="col-span-7">
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
-                        'value' => Auth::user()->pr_rel ? (Auth::user()->prodi . ' / ' . Auth::user()->kode_pr) : 'Tidak Terdaftar',
+                        'value' => Auth::user()->pr_rel
+                            ? Auth::user()->prodi . ' / ' . Auth::user()->kode_pr
+                            : 'Tidak Terdaftar',
                         'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'program_studi',
@@ -482,7 +492,9 @@ new #[Title('Profile Settings')] class extends Component {
                 <div class="col-span-6">
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
-                        'value' => Auth::user()->pr_rel?->dp_rel ? (Auth::user()->departemen . ' / ' . Auth::user()->kode_dp) : 'Tidak Terdaftar',
+                        'value' => Auth::user()->pr_rel?->dp_rel
+                            ? Auth::user()->departemen . ' / ' . Auth::user()->kode_dp
+                            : 'Tidak Terdaftar',
                         'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'departemen',
@@ -494,7 +506,9 @@ new #[Title('Profile Settings')] class extends Component {
                 <div class="col-span-6">
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
-                        'value' => Auth::user()->pr_rel?->dp_rel?->fk_rel ? (Auth::user()->fakultas . ' / ' . Auth::user()->kode_fk) : 'Tidak Terdaftar',
+                        'value' => Auth::user()->pr_rel?->dp_rel?->fk_rel
+                            ? Auth::user()->fakultas . ' / ' . Auth::user()->kode_fk
+                            : 'Tidak Terdaftar',
                         'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'fakultas',

@@ -12,9 +12,9 @@
         <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
             'id' => $r->id,
             'kode' => $r->kode,
-            'rps' => $r->rps,
-            'draf' => $r->draf,
-            'level_mk' => $r->level_mk,
+            // 'rps' => $r->rps,
+            // 'draf' => $r->draf,
+            // 'level_mk' => $r->level_mk,
             'deskripsi_rps' => $r->deskripsi_rps,
             'mk_id' => $r->mk_id,
             'kode_mk' => $r->kode_mk,

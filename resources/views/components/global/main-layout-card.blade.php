@@ -81,7 +81,7 @@
             $layout_grid = 'space-y-4';
         }
     @endphp
-    <div class="max-w-[4500px] {{ $layout_grid ?? null }}"
+    <div class="max-w-[4600px] {{ $layout_grid ?? null }}"
         wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
         {{ $slot }}
     </div>

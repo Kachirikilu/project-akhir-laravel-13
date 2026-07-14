@@ -54,8 +54,7 @@
     </div>
 
 
-    <flux:menu
-        class="w-[224px] !bg-[var(--main-table-color)] !table-border !text-[var(--contrast-main-text)]">
+    <flux:menu class="w-[224px] !bg-[var(--main-table-color)] !table-border !text-[var(--contrast-main-text)]">
         <flux:menu.radio.group>
             <div class="p-0 text-sm font-normal">
                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -74,8 +73,10 @@
                     </span>
 
                     <div class="grid flex-1 text-start text-sm leading-tight">
-                        <span class="truncate font-semibold text-[var(--contrast-main-text)]">{{ Auth()->user()->name }}</span>
-                        <span class="truncate text-xs text-[var(--contrast-second-text)]">{{ Auth()->user()->email }}</span>
+                        <span
+                            class="truncate font-semibold text-[var(--contrast-main-text)]">{{ Auth()->user()->name }}</span>
+                        <span
+                            class="truncate text-xs text-[var(--contrast-second-text)]">{{ Auth()->user()->email }}</span>
                     </div>
                 </div>
             </div>
@@ -83,36 +84,45 @@
 
         <flux:menu.separator />
 
-        <flux:menu.radio.group>
-            <flux:menu.item :href="route('dashboard')" icon="squares-2x2" wire:navigate>
-                {{ __('Dashboard') }}
-            </flux:menu.item>
-        </flux:menu.radio.group>
+        <div class="space-y-1">
+
+            <a href="{{ route('dashboard') }}" wire:navigate class="menu-theme-item">
+                <flux:icon name="squares-2x2" class="menu-theme-icon w-5 h-5" />
+                <span class="menu-theme-label">
+                    {{ __('Dashboard') }}
+                </span>
+            </a>
+
+            <a href="/" wire:navigate class="menu-theme-item">
+                <flux:icon name="computer-desktop" class="menu-theme-icon w-5 h-5" />
+                <span class="menu-theme-label">
+                    {{ __('Front Page') }}
+                </span>
+            </a>
+
+            <a href="{{ route('profile.edit') }}" wire:navigate class="menu-theme-item">
+                <flux:icon name="cog" class="menu-theme-icon w-5 h-5" />
+                <span class="menu-theme-label">
+                    {{ __('Settings') }}
+                </span>
+            </a>
+
+        </div>
 
         <flux:menu.separator />
 
-        <flux:menu.radio.group>
-            <flux:menu.item href="/" icon="computer-desktop" wire:navigate>
-                {{ __('Front Page') }}
-            </flux:menu.item>
-        </flux:menu.radio.group>
-
-        <flux:menu.separator />
-
-        <flux:menu.radio.group>
-            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
-            </flux:menu.item>
-        </flux:menu.radio.group>
-
-
-        <flux:menu.separator />
-
-        <form method="POST" action="{{ route('logout') }}" class="w-full">
+        <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full cursor-pointer"
-                data-test="logout-button">
-                {{ __('Log Out') }}
-            </flux:menu.item>
+
+            <button type="submit" class="menu-theme-item w-full cursor-pointer" data-test="logout-button">
+
+                <flux:icon name="arrow-right-start-on-rectangle" class="menu-theme-icon w-5 h-5" />
+
+                <span class="menu-theme-label">
+                    {{ __('Log Out') }}
+                </span>
+
+            </button>
         </form>
     </flux:menu>
 
