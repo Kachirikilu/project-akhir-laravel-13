@@ -1,11 +1,11 @@
-<div x-data="{ activeTable: '{{ $switchTable ?? 'jadwal-card' }}' }"
+<div x-data="{ activeTable: '{{ $switchTable ?? 'card' }}' }"
     @table-switched.window="
         activeTable = $event.detail.switchTable;
         window.history.pushState({}, '', $event.detail.targetUrl);
      "
     @navigate.window="
         let segment = window.location.pathname.split('/').pop();
-        activeTable = (segment === {{ $isJadwalOnly ?? null ? 'jadwal-kelas' : 'jadwal-management' }} || segment === '') ? 'jadwal-card' : segment;
+        activeTable = (segment === {{ $isJadwalOnly ?? null ? 'jadwal-kelas' : 'jadwal-management' }} || segment === '') ? 'card' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
@@ -31,9 +31,9 @@
         @if ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] == 0)
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message')
         @endif
-        @if ($this->switchTable == 'jadwal-card' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
+        @if ($this->switchTable == 'card' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-card')
-        @elseif ($this->switchTable == 'jadwal-table')
+        @elseif ($this->switchTable == 'table')
             @include('livewire.all-role.kelas-management.jadwal-management.jadwal-table')
         @endif
     </div>

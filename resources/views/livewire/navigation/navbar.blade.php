@@ -9,13 +9,21 @@
         </a>
     </div>
 
-    <div x-show="$store.theme_manager.activeWallpaper !== null"
+    {{-- <div x-show="$store.theme_manager.activeWallpaper !== null"
         class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
         :style="{
             'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
             'opacity': $store.theme_manager.opacity,
             'filter': 'brightness(' + $store.theme_manager.brightness + ')'
         }">
+    </div> --}}
+    <div x-show="$store.theme_manager.activeWallpaper !== null"
+        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
+        :style="$store.theme_manager.activeWallpaper ? {
+            'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
+            'opacity': $store.theme_manager.opacity,
+            'filter': 'brightness(' + $store.theme_manager.brightness + ')'
+        } : {}">
     </div>
     <nav x-data="{
         openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
@@ -371,12 +379,11 @@
                         ],
                         [
                             'label' => 'Daftar Jadwal Kelas',
-                            'url' => route('jadwal-kelas'),
+                            'url' => route('jadwal-kelas', ['switchTable' => 'card']),
                             'param' => 'jadwal-kelas',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-amber-600 dark:text-amber-400',
-                            'active' =>
-                                $isJadwalMainActive && in_array($currentSwitch, ['', 'jadwal-card', 'jadwal-table']),
+                            'active' => $isJadwalMainActive && in_array($currentSwitch, ['', 'card', 'table']),
                             'active-sub' => request()->routeIs('sesi-jadwal-kelas'),
                         ],
                     ];
@@ -394,7 +401,7 @@
                                 array_filter([
                                     'kode_kelas' => $kodeKelas,
                                     'kode_jadwal_short' => $kodeJadwal,
-                                    'switchTable' => ($switchTable ?? 'sesi-hari-ini') ? '' : $switchTable,
+                                    'switchTable' => $switchTable ?? 'hari-ini' ? '' : $switchTable,
                                 ]),
                             ),
                             'param' => 'sesi-jadwal-kelas',
@@ -585,12 +592,11 @@
                         }
                     }
 
-                    // --- MENU UTAMA: MAHASISWA ---
                     $subMenus = [
                         [
                             'label' => 'Daftar Mahasiswa',
-                            'url' => route('nilai-management'),
-                            'param' => '',
+                            'url' => route('nilai-management', ['switchTable' => 'mahasiswa']),
+                            'param' => 'mahasiswa',
                             'icon' => 'user-group',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
                             'active' =>

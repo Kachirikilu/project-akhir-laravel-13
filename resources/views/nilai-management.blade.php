@@ -12,7 +12,7 @@
     <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
             @if(request()->routeIs('nilai-management'))
-                <livewire:staff.nilai-management :switch-table="request()->route('switchTable') ?? 'mahasiswa'" />
+                <livewire:staff.nilai-management :switch-table="request()->route('switchTable')" />
             @elseif (request()->routeIs('nilai-mahasiswa-management'))
                 <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" />
             @elseif (request()->routeIs('rps-mahasiswa-management'))

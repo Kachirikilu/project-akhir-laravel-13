@@ -59,7 +59,7 @@
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
                 'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
-                'tabString' => 'kelas-table',
+                'tabString' => 'table',
                 'tabNameString' => 'Tabel Kelas',
                 'icon' => 'table-cells',
             ])
@@ -241,8 +241,8 @@
                         {{ $k->trashed()
                             ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
                             : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
-                    {{ $k->trashed() ? 'disabled' : 'href=' . route('jadwal-management', $k->kode) . ' wire:navigate' }}
-                    href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
+                    {{ $k->trashed() ? 'disabled' : 'href=' . route('jadwal-management', $k->kode, 'card') . ' wire:navigate' }}
+                    href="{{ route('jadwal-management', $k->kode, 'card') }}" wire:navigate>
                     <flux:icon name="rectangle-group" class="w-3.5 h-3.5" />
                     <span>Lihat Kelas</span>
                 </button>

@@ -3,8 +3,8 @@
         {{ $slot }}
     </flux:main>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script>
+    {{-- <script>
         const savedTheme = localStorage.getItem('app-theme') || 'blue';
         document.documentElement.setAttribute('data-theme', savedTheme);
-    </script>
+    </script> --}}
 </x-layouts::app.sidebar>

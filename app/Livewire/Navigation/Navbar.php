@@ -4,7 +4,7 @@ namespace App\Livewire\Navigation;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
+// use Livewire\Attributes\Url;
 
 class Navbar extends Component
 {

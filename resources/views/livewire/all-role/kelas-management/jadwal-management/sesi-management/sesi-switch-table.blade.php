@@ -8,7 +8,7 @@
 
         <div class="shrink-0 flex lg:hidden">
             @if ($haveSesiDay == false)
-                <div x-show="activeTab === 'sesi-hari-ini'">
+                <div x-show="activeTab === 'hari-ini'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [2, 4, 8, 16],
                         'alpine' => 'sesi',
@@ -17,7 +17,7 @@
                     ])
                 </div>
             @endif
-            <div x-show="activeTab === 'sesi-card'">
+            <div x-show="activeTab === 'card'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [2, 4, 8, 16],
                     'alpine' => 'sesi',
@@ -25,7 +25,7 @@
                     'withB' => 0,
                 ])
             </div>
-            <div x-show="activeTab === 'sesi-table'">
+            <div x-show="activeTab === 'table'">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [2, 4, 8, 16],
                     'key' => 'page-control-sesi-table',
@@ -52,7 +52,7 @@
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
                     'tabFilter' => $stats['sesi-hari-ini'] ?? null,
-                    'tabString' => 'sesi-hari-ini',
+                    'tabString' => 'hari-ini',
                     'tabNameString' => 'Sesi Hari Ini',
                     'icon' => 'academic-cap',
                 ])
@@ -60,7 +60,7 @@
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
                     'tabFilter' => $stats['sesi'] ?? null,
-                    'tabString' => 'sesi-card',
+                    'tabString' => 'card',
                     'tabNameString' => 'Pertemuan',
                     'icon' => 'academic-cap',
                 ])
@@ -69,7 +69,7 @@
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
                     'tabFilter' => $stats['sesi'] ?? null,
-                    'tabString' => 'sesi-table',
+                    'tabString' => 'table',
                     'tabNameString' => 'Tabel Pertemuan',
                     'icon' => 'table-cells',
                 ])
@@ -103,7 +103,7 @@
             </div> --}}
             <div class="shrink-0 hidden lg:flex">
                 @if ($haveSesiDay == false)
-                    <div x-show="activeTab === 'sesi-hari-ini'">
+                    <div x-show="activeTab === 'hari-ini'">
                         @include('livewire.global.search-and-filters.page-control', [
                             'perPageOptions' => [2, 4, 8, 16],
                             'alpine' => 'sesi',
@@ -112,7 +112,7 @@
                         ])
                     </div>
                 @endif
-                <div x-show="activeTab === 'sesi-card'">
+                <div x-show="activeTab === 'card'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [2, 4, 8, 16],
                         'alpine' => 'sesi',
@@ -120,7 +120,7 @@
                         'withB' => 0,
                     ])
                 </div>
-                <div x-show="activeTab === 'sesi-table'">
+                <div x-show="activeTab === 'table'">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [2, 4, 8, 16],
                         'key' => 'page-control-sesi-table',

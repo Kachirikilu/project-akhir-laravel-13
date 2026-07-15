@@ -9,7 +9,7 @@
                 <div
                     class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
                     <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                    <p wire:stream="import-progress" class="mt-4 text-sm font-medium text-gray-600 italic">
+                    <p wire:stream="import-progress" class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">
                         Menyinkronkan...
                     </p>
                 </div>

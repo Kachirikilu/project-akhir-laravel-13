@@ -218,12 +218,10 @@
 
     .chart-header-title {
         font-size: 14px;
-        line-height: 20px;
     }
 
     .chart-header-subtitle {
         font-size: 11px;
-        margin-top: 2px;
     }
 
     .chart-header-kelas {

@@ -144,7 +144,7 @@
                 @include('livewire.global.modal-form.input-array.partial.search-cpmk-dropdown')
             @empty
                 <div class="p-8 text-center">
-                    <p class="text-xs sm:text-sm text-gray-500 italic">Data tidak ditemukan!</p>
+                    <p class="text-xs sm:text-sm text-[var(--contrast-third-text)] italic">Data tidak ditemukan!</p>
                 </div>
             @endforelse
         </div>

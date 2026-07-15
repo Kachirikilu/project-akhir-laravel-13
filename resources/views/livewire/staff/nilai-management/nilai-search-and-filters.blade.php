@@ -19,7 +19,7 @@
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByStatus',
                     'filterString' => 'filterStatus',
-                    'totalTab' => $stats['mahasiswa'] ?? null,
+                    'totalTab' => $stats['mahasiswa-prodi'] ?? null,
                     'totalTab1' => $stats['mahasiswa-opsi'] ?? null,
                     'totalTab2' => $stats['mahasiswa-aktif'] ?? null,
                     'totalTab3' => $stats['mahasiswa-non-aktif'] ?? null,

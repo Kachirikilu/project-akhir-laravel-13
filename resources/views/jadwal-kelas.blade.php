@@ -9,10 +9,10 @@
     <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
             @if (request()->routeIs('jadwal-kelas'))
-                <livewire:all-role.kelas-management.jadwal-management :isJadwalOnly="true" :switchTable="request()->route('switchTable') ?? 'jadwal-card'" />
+                <livewire:all-role.kelas-management.jadwal-management :isJadwalOnly="true" :kode_kelas="false" :switchTable="request()->route('switchTable')" />
             @elseif(request()->routeIs('sesi-jadwal-kelas'))
                 <livewire:all-role.kelas-management.jadwal-management.sesi-management :kode_kelas="request()->route('kode_kelas')"
-                    :kode_jadwal_short="request()->route('kode_jadwal_short')" :isJadwalOnly="true" :switchTable="request()->route('switchTable') ?? 'sesi-hari-ini'" />
+                    :kode_jadwal_short="request()->route('kode_jadwal_short')" :isJadwalOnly="true" :switchTable="request()->route('switchTable') ?? 'hari-ini'" />
             @endif
         </div>
     </div>

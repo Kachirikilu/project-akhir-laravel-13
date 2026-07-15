@@ -22,9 +22,9 @@
         @else
             @include('livewire.all-role.kelas-management.kelas-table')
         @endif --}}
-        @if ($switchTable2 == 'kelas-card')
+        @if ($switchTable2 == 'card')
             @include('livewire.all-role.kelas-management.kelas-card')
-        @elseif ($switchTable2 == 'kelas-table')
+        @elseif ($switchTable2 == 'table')
             @include('livewire.all-role.kelas-management.kelas-table')
         @endif
 

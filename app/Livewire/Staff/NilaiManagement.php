@@ -102,8 +102,11 @@ class NilaiManagement extends Component
         'showDeleted' => ['except' => false],
     ];
 
-    public function mount($switchTable = 'mahasiswa')
+    public function mount($switchTable)
     {
+        if (empty($switchTable)) {
+            return redirect()->route('nilai-management', ['switchTable' => 'mahasiswa']);
+        }
         $this->switchTable = $switchTable;
         $this->updatedShowDeleted();
 
@@ -251,7 +254,8 @@ class NilaiManagement extends Component
         }
 
 
-        $suffix = ($table && $table !== 'mahasiswa') ? "/{$table}" : '';
+        // $suffix = ($table && $table !== 'mahasiswa') ? "/{$table}" : '';
+        $suffix = $table ? "/{$table}" : '';
 
         $targetPath = "/nilai-management{$suffix}";
 
@@ -357,14 +361,13 @@ class NilaiManagement extends Component
                 'mahasiswa-aktif' => '🟢',
                 'mahasiswa-non-aktif' => '🔴',
             ];
+            $stats = array_merge($stats, $this->getStatsObe($this->showDeleted));
+                    $stats = array_merge($stats, $this->getStatsMahasiswa($this->showDeleted));
+
 
             switch ($this->switchTable) {
                 case 'rps':
-                    $stats = array_merge($stats, $this->getStatsObe($this->showDeleted));
                     $stats = array_merge($stats, $this->getStatsRps($this->showDeleted));
-                    break;
-                case 'mahasiswa':
-                    $stats = array_merge($stats, $this->getStatsMahasiswa($this->showDeleted));
                     break;
             }
 

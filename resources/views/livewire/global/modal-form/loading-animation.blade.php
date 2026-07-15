@@ -1,16 +1,5 @@
 @if ($heightContainer ?? false)
-    @php
-        $heightClass = match((string) $heightContainer) {
-            '10' => 'h-10',
-            '16' => 'h-16',
-            '20' => 'h-20',
-            '32' => 'h-32',
-            '40' => 'h-40',
-            'complex' => 'h-full',
-            default => '',
-        };
-    @endphp
-    <div wire:loading wire:target="{{ $wireLoading ?? null }}" class="{{ $heightClass }}">
+    <div wire:loading wire:target="{{ $wireLoading ?? null }}" class="{{ $heightContainer }}">
 @endif
 <div wire:loading wire:target="{{ $wireLoading ?? null }}"
     class="absolute inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-[2px] rounded-lg">

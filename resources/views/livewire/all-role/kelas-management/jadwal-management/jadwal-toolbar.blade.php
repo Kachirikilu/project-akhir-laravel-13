@@ -26,7 +26,7 @@
                             'xString' => 'switchingTable',
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['jadwal'] ?? null,
-                            'tabString' => 'jadwal-card',
+                            'tabString' => 'card',
                             'tabNameString' => 'Jadwal Kelas',
                             'icon' => 'academic-cap',
                         ])
@@ -35,7 +35,7 @@
                             'xString' => 'switchingTable',
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['jadwal'] ?? null,
-                            'tabString' => 'jadwal-table',
+                            'tabString' => 'table',
                             'tabNameString' => 'Tabel Jadwal',
                             'icon' => 'table-cells',
                         ])
@@ -51,7 +51,7 @@
                 @unless ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
                 <div></div>
                 @endunless
-                @if ($this->switchTable == 'jadwal-card' || $this->switchTable == 'jadwal-table' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
+                @if ($this->switchTable == 'card' || $this->switchTable == 'table' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
                     <div class="shrink-0">
                         @include('livewire.global.search-and-filters.page-control', [
                             'perPageOptions' => [2, 4, 6, 8, 12],
@@ -99,7 +99,7 @@
 
             </div>
 
-            @if ($switchTable == 'jadwal-table')
+            @if ($switchTable == 'table')
                 <div class="w-full md:w-96 xl:w-108">
                     @include('livewire.global.search-and-filters.main-search', [
                         'placeholder' => 'Cari Jadwal Kelas...',

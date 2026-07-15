@@ -3,10 +3,11 @@
     {{-- 1. UPLOAD EXCEL FILE --}}
     {{-- ***********************F******************************* --}}
     <div
-        class="form-container">
+        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border
+            shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Upload File Excel Nilai</h4>
 
         {{-- 📁 File Input --}}
@@ -27,16 +28,16 @@
     {{-- ****************************************************** --}}
 
     <div
-        class="form-container-excel">
+        class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
         <h4
-            class="mx-2 sm:mx-0 text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Nilai Mahasiswa
         </h4>
 
         <div class="relative">
             @if (empty($parsedNilaiRows))
-                <div class="mx-2 sm:mx-0 text-sm text-[var(--contrast-third-text)] italic h-16">
+                <div class="text-sm text-[var(--contrast-third-text)] italic h-16">
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
@@ -53,6 +54,10 @@
                                 ];
                             })
                             ->values();
+
+                        $arrBobotJson = json_encode(
+                            collect($subCpmks)->map(fn($sub) => (float) ($sub['bobot'] ?? 0))->toArray(),
+                        );
 
                         $widthColumn = $subCpmks->count() + 11;
 
@@ -76,7 +81,7 @@
                                 <th rowspan="3" class="{{ $headColumn }}">Nama Kelas</th>
 
                                 <th rowspan="3"
-                                    class="{{ $headColumn }} lg:sticky lg:left-0 lg:z-20">
+                                    class="{{ $headColumn }} sticky left-0 z-20">
                                     NIM
                                 </th>
                                 <th rowspan="3" class="{{ $headColumn }}">Nama Mahasiswa</th>
@@ -131,10 +136,51 @@
                                 @php
                                     $i = $row['_index'] ?? 0;
                                 @endphp
-                                <tr wire:key="nilai-row-{{ $i }}">
+                                <tr x-data="{
+                                    bobotList: {{ $arrBobotJson }},
+                                    nilaiInputs: {{ json_encode(collect($row['sub_cpmk'] ?? [])->map(fn($n) => $n['nilai'] ?? 0)->toArray()) }},
+                                
+                                    // 1. GETTER NILAI ANGKA
+                                    get nilaiAngka() {
+                                        let total = 0;
+                                        this.nilaiInputs.forEach((nilai, idx) => {
+                                            let bbt = this.bobotList[idx] || 0;
+                                            total += (parseFloat(nilai) || 0) * bbt;
+                                        });
+                                        return parseFloat(total.toFixed(2));
+                                    },
+                                
+                                    // 2. GETTER NILAI INDEX
+                                    get nilaiIndex() {
+                                        let na = this.nilaiAngka;
+                                        if (na >= 86) return 4.00;
+                                        if (na >= 80) return 3.70;
+                                        if (na >= 75) return 3.30;
+                                        if (na >= 70) return 3.00;
+                                        if (na >= 65) return 2.70;
+                                        if (na >= 60) return 2.30;
+                                        if (na >= 56) return 2.00;
+                                        if (na >= 40) return 1.00;
+                                        return 0.0;
+                                    },
+                                
+                                    // 3. GETTER NILAI HURUF
+                                    get nilaiMutu() {
+                                        let na = this.nilaiAngka;
+                                        if (na >= 86) return 'A';
+                                        if (na >= 80) return 'A-';
+                                        if (na >= 75) return 'B+';
+                                        if (na >= 70) return 'B';
+                                        if (na >= 65) return 'B-';
+                                        if (na >= 60) return 'C+';
+                                        if (na >= 56) return 'C';
+                                        if (na >= 40) return 'D';
+                                        return 'E';
+                                    }
+                                }">
                                     <td
                                         class="bg-white dark:bg-neutral-600 px-2 py-1 text-center font-semibold border border-gray-200 dark:border-neutral-800">
-                                        {{ $i + 1 }}
+                                        {{ $i + 1 }}21
                                     </td>
 
                                     @include('livewire.global.modal-form.table.excel-input-form', [
@@ -176,11 +222,15 @@
                                     ])
 
                                     @foreach ($row['sub_cpmk'] ?? [] as $nilai)
-                                        <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-800 align-top">
+                                        <td class="p-0 border border-gray-200 dark:border-neutral-800 align-top">
                                             <div class="flex flex-col h-full min-h-[34px]">
                                                 <input type="number" step="0.01" min="0" max="100"
-                                                    wire:key="nilai-cell-{{ $i }}-{{ $loop->index }}"
-                                                    wire:model.live.debounce.150ms="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"
+                                                    x-model="nilaiInputs[{{ $loop->index }}]"
+                                                    @input="
+                                                        $el.value = $store.sesi?.normalizeFloat($el.value);
+                                                        nilaiInputs[{{ $loop->index }}] = $el.value;
+                                                    "
+                                                    wire:model.blur="parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai"
                                                     class="{{ isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : 'bg-white dark:bg-neutral-600' }} w-full h-full border-0 rounded-none px-3 py-2 text-xs text-center outline-none focus:bg-blue-50/30 focus:ring-1 focus:ring-blue-500">
 
                                                 @if (isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']))
@@ -195,19 +245,22 @@
 
 
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => data_get($this->parsedNilaiRows, $i.'.nilai_angka') ?? '',
+                                        'model' => $this->parsedNilaiRows[$i]['nilai_angka'] ?? '',
+                                        'modelAlpine' => 'nilaiAngka',
                                         'wireModel' => "parsedNilaiRows.$i.nilai_angka",
                                         'message' => $rowNilaiErrors[$i]['nilai_angka'] ?? null,
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => data_get($this->parsedNilaiRows, $i.'.nilai_index') ?? '',
+                                        'model' => $this->parsedNilaiRows[$i]['nilai_index'] ?? '',
+                                        'modelAlpine' => 'nilaiIndex.toFixed(2)',
                                         'wireModel' => "parsedNilaiRows.$i.nilai_index",
                                         'message' => $rowNilaiErrors[$i]['nilai_index'] ?? null,
                                         'isReadonly' => 1,
                                     ])
                                     @include('livewire.global.modal-form.table.excel-input-form', [
-                                        'model' => data_get($this->parsedNilaiRows, $i.'.nilai_mutu') ?? '',
+                                        'model' => $this->parsedNilaiRows[$i]['nilai_mutu'] ?? '',
+                                        'modelAlpine' => 'nilaiMutu',
                                         'wireModel' => "parsedNilaiRows.$i.nilai_mutu",
                                         'message' => $rowNilaiErrors[$i]['nilai_mutu'] ?? null,
                                         'isReadonly' => 1,

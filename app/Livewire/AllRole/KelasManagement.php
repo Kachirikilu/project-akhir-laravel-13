@@ -27,7 +27,7 @@ class KelasManagement extends Component
 
     public $switchTable = '';
 
-    public $switchTable2 = 'kelas-card';
+    public $switchTable2 = 'card';
 
     public $search = '';
 
@@ -69,7 +69,7 @@ class KelasManagement extends Component
         'showDeleted' => ['except' => false],
     ];
 
-    public function mount($switchTable = '', $switchTable2 = 'kelas-card')
+    public function mount($switchTable = '', $switchTable2 = 'card')
     {
         $this->switchTable = $switchTable;
         $this->switchTable2 = $switchTable2;
@@ -152,8 +152,8 @@ class KelasManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'kelas-card' => [1 => 'kode', 2 => 'kode_rps', 3 => 'kelas', 4 => 'mk', 5 => 'semester'],
-            'kelas-table' => [1 => 'id', 2 => 'kode', 3 => 'kode_rps', 4 => 'kelas', 5 => 'program_studi', 6 => 'hari_pelaksanaan', 7 => 'jam_pelaksanaan', 8 => 'kapasitas', 9 => 'tanggal_pelaksanaan', 10 => 'kode_mk', 11 => 'mk', 12 => 'semester', 13 => 'sks', 14 => 'pembelajaran', 15 => 'wajib', 16 => 'created_at', 17 => 'updated_at'],
+            'card' => [1 => 'kode', 2 => 'kode_rps', 3 => 'kelas', 4 => 'mk', 5 => 'semester'],
+            'table' => [1 => 'id', 2 => 'kode', 3 => 'kode_rps', 4 => 'kelas', 5 => 'program_studi', 6 => 'hari_pelaksanaan', 7 => 'jam_pelaksanaan', 8 => 'kapasitas', 9 => 'tanggal_pelaksanaan', 10 => 'kode_mk', 11 => 'mk', 12 => 'semester', 13 => 'sks', 14 => 'pembelajaran', 15 => 'wajib', 16 => 'created_at', 17 => 'updated_at'],
         ];
         $aliases = [
             'kode' => ['kode'],
@@ -174,7 +174,7 @@ class KelasManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        if ($table == 'kelas-card') {
+        if ($table == 'card') {
             $table = '';
         }
 

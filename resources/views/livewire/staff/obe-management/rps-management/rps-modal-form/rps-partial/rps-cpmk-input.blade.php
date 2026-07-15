@@ -30,7 +30,7 @@
 
         @include('livewire.global.modal-form.loading-animation', [
             'wireLoading' => 'addRPS, editRPS',
-            'heightContainer' => 32,
+            'heightContainer' => 'h-24',
         ])
 
         <div class="space-y-4">

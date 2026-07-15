@@ -2,19 +2,18 @@
 
 namespace App\Exports;
 
-use App\Models\Akademik\SubCPMK;
-use App\Models\Kelas\KelasJadwal;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
 // 🌟 1. WAJIB IMPORT CONCERN WITHTITLE DI SINI:
-use Maatwebsite\Excel\Concerns\WithTitle; 
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -27,7 +26,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
 
     protected $sesis;
 
-    protected $sheetName; 
+    protected $sheetName;
 
     public function __construct($jadwal, $sheetName = null)
     {
@@ -48,111 +47,100 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
     public function array(): array
     {
         $rows = [];
+        $cpmkGroups = collect($this->sesis)->groupBy('kode_cpmk');
+        $totalSubCpmk = count($this->sesis);
+        $totalGroups = $cpmkGroups->count();
 
-        // ==========================
-        // HEADER 3 LAPIS ASLI
-        // ==========================
-        $header1 = [
-            'Kode RPS',
-            'Nama Mata Kuliah',
-            'Kode Kelas',
-            'NIM',
-            'Nama Mahasiswa',
-            'Angkatan',
-        ];
-
+        // ==========================================
+        // 1. HEADER (Disusun Ulang agar tidak duplikat)
+        // ==========================================
+        $header1 = ['NIM', 'Kode RPS', 'Nama MK', 'Kode Kelas', 'Nama Mahasiswa', 'Angkatan'];
         $header2 = ['', '', '', '', '', ''];
         $header3 = ['', '', '', '', '', ''];
 
-        $totalBobotAsli = 0;
+        // Menambahkan kolom Sub-CPMK (Sesi)
         foreach ($this->sesis as $sesi) {
             $scpmk = $sesi->scpmk_atr;
-            $totalBobotAsli += $scpmk->bobot ?? 0;
-        }
-
-        foreach ($this->sesis as $sesi) {
-            $scpmk = $sesi->scpmk_atr;
-
-            // if ($scpmk instanceof SubCPMK) {
-            //     $cpmkKode = $scpmk->cpmks
-            //         ?->first()
-            //         ?->kode ?? null;
-            // }
-
             $header1[] = 'CPMK '.$sesi->kode_cpmk;
             $header2[] = ($scpmk->kode ?? $scpmk->kode_scpmk).' (P-'.$sesi->pertemuan_ke.')';
-
-            $bobotAsli = $scpmk->bobot ?? 0;
-            $bobotNormalisasi = $totalBobotAsli > 0 ? ($bobotAsli / $totalBobotAsli) : 0;
-
-            $header3[] = $bobotNormalisasi;
+            $header3[] = $sesi->bobot_normalisasi / 100;
         }
 
-        $header1[] = 'Nilai Angka';
-        $header1[] = 'Nilai Index';
-        $header1[] = 'Nilai Mutu';
-        $header2[] = '';
-        $header2[] = '';
-        $header2[] = '';
-        $header3[] = '';
-        $header3[] = '';
-        $header3[] = '';
+        foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
+            $pertemuans = $sesiGroup->pluck('pertemuan_ke')->sort();
+            $minP = $pertemuans->first();
+            $maxP = $pertemuans->last();
+            $rangePertemuan = ($minP == $maxP) ? "P-{$minP}" : "P{$minP}-P{$maxP}";
+
+            $totalBobot = $sesiGroup->sum('bobot_normalisasi');
+
+            $header1[] = 'CPMK '.$kodeCpmk;
+            $header2[] = $rangePertemuan;
+            $header3[] = $totalBobot / 100;
+        }
+
+        // Menambahkan Nilai Akhir
+        $header1 = array_merge($header1, ['Nilai Angka', 'Nilai Index', 'Nilai Mutu']);
+        $header2 = array_merge($header2, ['', '', '']);
+        $header3 = array_merge($header3, ['', '', '']);
 
         $rows[] = $header1;
         $rows[] = $header2;
         $rows[] = $header3;
 
         // ==========================
-        // DATA MAHASISWA
+        // 2. DATA MAHASISWA
         // ==========================
-        $mahasiswas = $this->jadwal
-            ->mahasiswas()
-            ->with([
-                'nilai_mahasiswas' => function ($q) {
-                    $q->where('kj_id', $this->jadwalId)
+        $mahasiswas = $this->jadwal->mahasiswas()
+            ->with(['nilai_mahasiswas' => function ($q) {
+                $q->where('kj_id', $this->jadwalId)
                     ->where('ganjil_genap', $this->jadwal->ganjil_genap)
                     ->where('tahun_akademik', $this->jadwal->tahun_akademik);
-                },
-            ])
-            ->distinct()
-            ->get();
+            }])
+            ->distinct()->get();
 
         $startRow = 4;
+        $totalSubCpmk = count($this->sesis);
+
         foreach ($mahasiswas as $index => $mhs) {
             $currentRow = $startRow + $index;
-
-            $nilai_mahasiswas =
-                $mhs->nilai_mahasiswas->first();
-
-            $nilaiArray =
-                $nilai_mahasiswas?->nilai_array
-                ?? [];
+            $nilaiArray = $mhs->nilai_mahasiswas->first()?->nilai_array ?? [];
 
             $row = [
+                $mhs->nim,
                 $this->jadwal->kode_rps,
                 $this->jadwal->mk,
                 $this->jadwal->kode,
-                $mhs->nim,
                 $mhs->user?->name,
                 $mhs->user?->mahasiswa->angkatan,
             ];
 
-            foreach ($this->sesis as $index => $sesi) {
+            // Rumus CPMK (Rekap per grup, dibagi SUM bobot agar skala tetap 100)
+            $currentSesiCol = 7;
+            foreach ($this->sesis as $i => $sesi) {
+                $row[] = $nilaiArray[$i] ?? '';
+            }
+            foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
+                $count = count($sesiGroup);
+                $startColLetter = Coordinate::stringFromColumnIndex($currentSesiCol);
+                $endColLetter = Coordinate::stringFromColumnIndex($currentSesiCol + $count - 1);
 
-                $nilai =
-                    $nilaiArray[$index]
-                    ?? '';
+                $startRange = "{$startColLetter}{$currentRow}";
+                $endRange = "{$endColLetter}{$currentRow}";
 
-                $row[] = $nilai;
+                // Rumus menggunakan pembagi SUM bobot (baris ke-3)
+                $row[] = "=SUMPRODUCT({$startRange}:{$endRange}, {$startColLetter}3:{$endColLetter}3) / SUM({$startColLetter}3:{$endColLetter}3)";
+
+                $currentSesiCol += $count;
             }
 
-            $startSesiCol = Coordinate::stringFromColumnIndex(7);
-            $endSesiCol = Coordinate::stringFromColumnIndex(6 + count($this->sesis));
+            $subCpmkEndColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk);
+            $nilaiAngkaColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk + $totalGroups + 1);
 
-            $nilaiAngkaCoordinate = Coordinate::stringFromColumnIndex(7 + count($this->sesis)).$currentRow;
-            $row[] = "=SUMPRODUCT({$startSesiCol}{$currentRow}:{$endSesiCol}{$currentRow}, {$startSesiCol}3:{$endSesiCol}3)";
-            $row[] = "=IF({$nilaiAngkaCoordinate}>=86,4.00,IF({$nilaiAngkaCoordinate}>=80,3.70,IF({$nilaiAngkaCoordinate}>=75,3.30,IF({$nilaiAngkaCoordinate}>=70,3.00,IF({$nilaiAngkaCoordinate}>=65,2.70,IF({$nilaiAngkaCoordinate}>=60,2.30,IF({$nilaiAngkaCoordinate}>=56,2.00,IF({$nilaiAngkaCoordinate}>=40,1.00,0.00))))))))";
-            $row[] = "=IF({$nilaiAngkaCoordinate}>=86,\"A\",IF({$nilaiAngkaCoordinate}>=80,\"A-\",IF({$nilaiAngkaCoordinate}>=75,\"B+\",IF({$nilaiAngkaCoordinate}>=70,\"B\",IF({$nilaiAngkaCoordinate}>=65,\"B-\",IF({$nilaiAngkaCoordinate}>=60,\"C+\",IF({$nilaiAngkaCoordinate}>=56,\"C\",IF({$nilaiAngkaCoordinate}>=40,\"D\",\"E\"))))))))";
+            $row[] = "=SUMPRODUCT(G{$currentRow}:{$subCpmkEndColLetter}{$currentRow}, G3:{$subCpmkEndColLetter}3) / SUM(G3:{$subCpmkEndColLetter}3)";
+            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=86,4.00,IF({$nilaiAngkaColLetter}{$currentRow}>=80,3.70,IF({$nilaiAngkaColLetter}{$currentRow}>=75,3.30,IF({$nilaiAngkaColLetter}{$currentRow}>=70,3.00,IF({$nilaiAngkaColLetter}{$currentRow}>=65,2.70,IF({$nilaiAngkaColLetter}{$currentRow}>=60,2.30,IF({$nilaiAngkaColLetter}{$currentRow}>=56,2.00,IF({$nilaiAngkaColLetter}{$currentRow}>=40,1.00,0.00))))))))";
+            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=86,\"A\",IF({$nilaiAngkaColLetter}{$currentRow}>=80,\"A-\",IF({$nilaiAngkaColLetter}{$currentRow}>=75,\"B+\",IF({$nilaiAngkaColLetter}{$currentRow}>=70,\"B\",IF({$nilaiAngkaColLetter}{$currentRow}>=65,\"B-\",IF({$nilaiAngkaColLetter}{$currentRow}>=60,\"C+\",IF({$nilaiAngkaColLetter}{$currentRow}>=56,\"C\",IF({$nilaiAngkaColLetter}{$currentRow}>=40,\"D\",\"E\"))))))))";
+
             $rows[] = $row;
         }
 
@@ -162,120 +150,54 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
     public function styles(Worksheet $sheet)
     {
         $highestRow = $sheet->getHighestRow();
-        $highestColumn = $sheet->getHighestColumn();
         $totalSesis = count($this->sesis);
+        $cpmkGroups = collect($this->sesis)->groupBy('kode_cpmk');
+        $totalGroups = $cpmkGroups->count();
 
-        // ==========================
-        // KONFIGURASI ROW
-        // ==========================
-        $headerTop = 1;
-        $headerMid = 2;
-        $headerBottom = 3;
-        $dataStart = 4;
+        // Kalkulasi index kolom
+        $colSubCpmkStart = 7;
+        $colSubCpmkEnd = 6 + $totalSesis;
+        $colRekapStart = $colSubCpmkEnd + 1;
+        $colRekapEnd = $colRekapStart + $totalGroups - 1;
+        $colAkhir = $colRekapEnd + 3;
 
-        // ==========================
-        // PROTECTION
-        // ==========================
-        $sheet->getProtection()->setPassword(env('PW_EXCEL') ?? 'Wildan121104');
-        $sheet->getProtection()->setSheet(true);
-
-        // ==========================
-        // HEADER STYLE
-        // ==========================
-        $sheet->getStyle(
-            "A{$headerTop}:{$highestColumn}{$headerBottom}"
-        )->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
-            ],
-
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-                'wrapText' => true,
-            ],
-
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => [
-                    'rgb' => '075985',
-                ],
-            ],
+        // 1. Header Utama Style
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}3")->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '075985']],
         ]);
 
-        // ==========================
-        // ANGKATAN RATA KIRI
-        // ==========================
-        $angkatanCol = Coordinate::stringFromColumnIndex(6);
+        $lastCol = $sheet->getHighestColumn();
+        $lastRow = $sheet->getHighestRow();
 
-        $sheet->getStyle(
-            "{$angkatanCol}{$dataStart}:{$angkatanCol}{$highestRow}"
-        )
+        // 2. Mengatur Angkatan (Kolom F) ke Tengah
+        $sheet->getStyle("F4:F{$lastRow}")
             ->getAlignment()
-            ->setHorizontal(
-                Alignment::HORIZONTAL_LEFT
-            );
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        // Tinggi header
-        $sheet->getRowDimension(1)->setRowHeight(28);
-        $sheet->getRowDimension(2)->setRowHeight(26);
-        $sheet->getRowDimension(3)->setRowHeight(24);
+        $colIndex = Coordinate::columnIndexFromString($lastCol);
 
-        // ==========================
-        // FORMAT BOBOT (%)
-        // ==========================
-        $startSesiCol = Coordinate::stringFromColumnIndex(7);
-        $endSesiCol = Coordinate::stringFromColumnIndex(
-            6 + $totalSesis
-        );
+        $rangeNilai = Coordinate::stringFromColumnIndex($colIndex - 2).'4:'.
+                      $lastCol.$lastRow;
 
-        $sheet->getStyle("{$startSesiCol}3:{$endSesiCol}3")->getNumberFormat()->setFormatCode('0.00%');
+        $sheet->getStyle($rangeNilai)
+            ->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        // ==========================
-        // NILAI AKHIR CENTER
-        // ==========================
-        $startFinalCol = Coordinate::stringFromColumnIndex(
-            7 + $totalSesis
-        );
+        $sheet->getStyle("A4:F{$highestRow}")->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('D1D5DB');
 
-        $sheet->getStyle(
-            "{$startFinalCol}{$dataStart}:{$highestColumn}{$highestRow}"
-        )->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // CPMK Rekap (Abu-abu Terang)
+        $sheet->getStyle(Coordinate::stringFromColumnIndex($colRekapStart).'4:'.Coordinate::stringFromColumnIndex($colRekapEnd)."{$highestRow}")
+            ->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('D1D5DB');
 
-        // ==========================================
-        // PERUBAHAN UTAMA: FORMAT 2 DIGIT BELAKANG KOMA (.00)
-        // ==========================================
-        $nilaiAngkaColLetter = Coordinate::stringFromColumnIndex(7 + $totalSesis);
-        $nilaiIndexColLetter = Coordinate::stringFromColumnIndex(8 + $totalSesis);
+        // Nilai Akhir (Abu-abu Sedikit Gelap)
+        $sheet->getStyle('G4:'.Coordinate::stringFromColumnIndex($colAkhir)."{$highestRow}")
+            ->getNumberFormat()->setFormatCode('0.00');
 
-        // Terapkan mask format '0.00' ke seluruh baris data Nilai Angka & Nilai Index
-        $sheet->getStyle("{$nilaiAngkaColLetter}{$dataStart}:{$nilaiAngkaColLetter}{$highestRow}")->getNumberFormat()->setFormatCode('0.00');
-        $sheet->getStyle("{$nilaiIndexColLetter}{$dataStart}:{$nilaiIndexColLetter}{$highestRow}")->getNumberFormat()->setFormatCode('0.00');
-
-        // ==========================
-        // INPUT NILAI EDITABLE
-        // ==========================
-        if ($totalSesis > 0) {
-            $editableRange = "{$startSesiCol}{$dataStart}:{$endSesiCol}{$highestRow}";
-            $sheet->getStyle($editableRange)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-            // background editable
-            $sheet->getStyle($editableRange)
-                ->getFill()
-                ->setFillType(Fill::FILL_SOLID)
-                ->getStartColor()
-                ->setRGB('F8FAFC');
-        }
-
-        // ==========================
-        // BORDER
-        // ==========================
-        $sheet->getStyle(
-            "A1:{$highestColumn}{$highestRow}"
-        )
-            ->getBorders()
-            ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN);
+        // 4. Border
+        $sheet->getStyle("A1:{$sheet->getHighestColumn()}{$highestRow}")
+            ->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
         return [];
     }
@@ -283,67 +205,57 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function (
-                AfterSheet $event
-            ) {
-
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
+
+                $sheet->getStyle('A4:A'.$sheet->getHighestRow())
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_TEXT);
+
+                // Memaksa rata kiri (Left Alignment)
+                $sheet->getStyle('A4:A'.$sheet->getHighestRow())
+                    ->getAlignment()
+                    ->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+                $highestColumn = $sheet->getHighestColumn();
+
+                $sheet->getStyle("G3:{$highestColumn}3")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_PERCENTAGE_0);
+
                 $totalSesis = count($this->sesis);
+                $cpmkGroups = collect($this->sesis)->groupBy('kode_cpmk');
+                $totalGroups = $cpmkGroups->count();
 
-                // HEADER FIX
-                $headerTop = 1;
-                $headerBottom = 3;
+                $sheet->freezePane('B4');
 
-                // ==========================
-                // ROWSPAN IDENTITAS
-                // ==========================
-                $columnsToRowspan = [1, 2, 3, 4, 5, 6,
-                    7 + $totalSesis,
-                    8 + $totalSesis,
-                    9 + $totalSesis,
-                ];
+                $sheet->getProtection()->setPassword(env('PW_EXCEL') ?? 'Wildan121104');
+                $sheet->getProtection()->setSheet(true);
 
-                foreach ($columnsToRowspan as $colIndex) {
-                    $letter = Coordinate::stringFromColumnIndex($colIndex);
-                    $sheet->mergeCells("{$letter}{$headerTop}:{$letter}{$headerBottom}");
+                $subStart = 7;
+                // $subEnd = 6 + $totalSesis + $totalGroups;
+                $subEnd = 6 + $totalSesis;
+
+                $sheet->getStyle(Coordinate::stringFromColumnIndex($subStart).'4:'.
+                                 Coordinate::stringFromColumnIndex($subEnd).$sheet->getHighestRow())
+                    ->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+
+                $colRekapStart = $subEnd + 1;
+                $colAkhirStart = $colRekapStart + $totalGroups;
+
+                $columnsToRowspan = [1, 2, 3, 4, 5, 6, $colAkhirStart, $colAkhirStart + 1, $colAkhirStart + 2];
+                foreach ($columnsToRowspan as $col) {
+                    $letter = Coordinate::stringFromColumnIndex($col);
+                    $sheet->mergeCells("{$letter}1:{$letter}3");
                 }
 
-                // ==========================
-                // MERGE CPMK
-                // ==========================
-                $startCol = 7;
-                $endCol = 6 + $totalSesis;
-
-                if ($totalSesis > 0) {
-                    $currentLeft = $startCol;
-
-                    $currentValue = $sheet->getCell(Coordinate::stringFromColumnIndex($startCol).'1')->getValue();
-
-                    for ($c = $startCol + 1; $c <= $endCol; $c++) {
-                        $checkValue =
-                            $sheet->getCell(
-                                Coordinate::stringFromColumnIndex(
-                                    $c
-                                ).'1'
-                            )->getValue();
-
-                        if ($checkValue !== $currentValue) {
-                            if ($c - 1 > $currentLeft) {
-                                $left = Coordinate::stringFromColumnIndex($currentLeft);
-                                $right = Coordinate::stringFromColumnIndex($c - 1);
-                                $sheet->mergeCells("{$left}1:{$right}1");
-                            }
-                            $currentLeft = $c;
-                            $currentValue = $checkValue;
-                        }
-                    }
-
-                    // merge terakhir
-                    if ($endCol > $currentLeft) {
-                        $left = Coordinate::stringFromColumnIndex($currentLeft);
-                        $right = Coordinate::stringFromColumnIndex($endCol);
-                        $sheet->mergeCells("{$left}1:{$right}1");
-                    }
+                $currentCol = 7;
+                foreach ($cpmkGroups as $group) {
+                    $count = count($group);
+                    $start = Coordinate::stringFromColumnIndex($currentCol);
+                    $end = Coordinate::stringFromColumnIndex($currentCol + $count - 1);
+                    $sheet->mergeCells("{$start}1:{$end}1");
+                    $currentCol += $count;
                 }
             },
         ];

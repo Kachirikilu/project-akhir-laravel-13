@@ -37,7 +37,7 @@
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
                 'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
-                'tabString' => 'kelas-card',
+                'tabString' => 'card',
                 'tabNameString' => 'Daftar Kelas',
                 'icon' => 'rectangle-group',
             ])
@@ -46,7 +46,7 @@
                 'xString' => 'switchingTable2',
                 'xFilter' => 'switchTable2',
                 'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
-                'tabString' => 'kelas-table',
+                'tabString' => 'table',
                 'tabNameString' => 'Tabel Kelas',
                 'icon' => 'table-cells',
             ])
@@ -202,7 +202,7 @@
             <td class="table-second table-border-x text-center whitespace-nowrap">
                 @if (!$k->trashed())
                     <x-button-action color="emerald"
-                        href="{{ route('jadwal-management', $k->kode) }}" wire:navigate>
+                        href="{{ route('jadwal-management', $k->kode, 'card') }}" wire:navigate>
                         <flux:icon name="calendar-days" class="w-3.5 h-3.5" />
                         <span>Lihat Kelas
                     </x-button-action>

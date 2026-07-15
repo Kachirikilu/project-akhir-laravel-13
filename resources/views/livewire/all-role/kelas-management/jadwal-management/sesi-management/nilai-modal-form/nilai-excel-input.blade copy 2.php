@@ -118,7 +118,7 @@
                             <tr class="text-left">
                                 @foreach ($subCpmks as $sub)
                                     <th
-                                        class="{{ $headColumn }}">
+                                        class="{{ $headColumn }} min-w-24">
                                         {{ number_format(($sub['bobot'] ?? 0) * 100, 2) }}%
                                     </th>
                                 @endforeach

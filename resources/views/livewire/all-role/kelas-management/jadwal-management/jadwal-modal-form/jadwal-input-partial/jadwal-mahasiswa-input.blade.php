@@ -20,7 +20,7 @@
 
         @include('livewire.global.modal-form.loading-animation', [
             'wireLoading' => 'addJadwal, editJadwal',
-            'heightContainer' => 32,
+            'heightContainer' => 'h-24',
         ])
 
         @if ($this->showJadwalModal)

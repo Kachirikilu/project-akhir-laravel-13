@@ -38,6 +38,10 @@ trait WithUserExcel
 
     public $excelUserPerPage = 20;
 
+    public $noPreview = true;
+
+    public $uploadedFileNames = [];
+
     public function exportUserExcel()
     {
         $queryUser = $this->inputUserSearch();
@@ -262,19 +266,9 @@ trait WithUserExcel
         );
     }
 
-    public function clearUserExcelFile()
+    public function togglePreview()
     {
-        $this->excel_user_file = null;
-        $this->reset([
-            'parsedUserRows',
-            'rowUserErrors',
-        ]);
-        if (method_exists($this, 'setPage')) {
-            $this->setPage(1, 'excelPage');
-        }
-        $this->dispatch('reset-file-input', id: 'excel_user_file');
-
-        $this->toast(type: 'info', text: 'File berkas user berhasil dihapus.');
+        $this->noPreview = ! $this->noPreview;
     }
 
     public function updatedExcelUserFile()
@@ -291,8 +285,36 @@ trait WithUserExcel
             $this->importUserExcel();
         } catch (\Throwable $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
-
         }
+        $files = is_array($this->excel_user_file) ? $this->excel_user_file : [$this->excel_user_file];
+        foreach ($files as $file) {
+            $fileName = $file->getClientOriginalName();
+            if (!in_array($fileName, $this->uploadedFileNames)) {
+                $this->uploadedFileNames[] = $fileName;
+                
+                try {
+                    $this->importUserExcel($file);
+                } catch (\Throwable $e) {
+                    $this->toast(text: "Gagal memproses {$fileName}: ".$e->getMessage(), variant: 'danger');
+                }
+            }
+        }
+    }
+
+    public function clearUserExcelFile()
+    {
+        $this->excel_user_file = null;
+        $this->reset([
+            'parsedUserRows',
+            'rowUserErrors',
+            'uploadedFileNames'
+        ]);
+        if (method_exists($this, 'setPage')) {
+            $this->setPage(1, 'excelPage');
+        }
+        $this->dispatch('reset-file-input', id: 'excel_user_file');
+
+        $this->toast(type: 'info', text: 'File berkas user berhasil dihapus.');
     }
 
     public function removeParsedUserRow($index)
@@ -405,7 +427,8 @@ trait WithUserExcel
         $this->rowUserErrors = $newRowErrors;
 
         $failCount = count($this->parsedUserRows);
-        $messageText = "Import selesai | Berhasil: $successCount | Gagal: $failCount";
+        $messageText = "Import Data Pengguna Selesai | Sukses: $successCount | Gagal: $failCount";
+        $this->uploadedFileNames = [];
 
         if ($failCount === 0) {
             $this->toast(text: $messageText);

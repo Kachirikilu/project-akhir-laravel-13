@@ -57,7 +57,7 @@
 
         <div class="relative">
             @if (empty($parsedUserRows))
-                <div class="text-sm text-gray-500 italic h-16">
+                <div class="text-sm text-[var(--contrast-third-text)] italic h-16">
                     Data dari Excel akan tampil di sini setelah file diunggah.
                 </div>
             @else
@@ -312,7 +312,7 @@
             <div>
                 @include('livewire.global.modal-form.loading-animation', [
                     'wireLoading' => 'excel_user_file, parseExcelUserFile, removeParsedUserRow',
-                    // 'heightContainer' => 32,
+                    'heightContainer' => 'h-24',
                     'textString' => 'Memproses data dari file Excel...',
                 ])
             </div>

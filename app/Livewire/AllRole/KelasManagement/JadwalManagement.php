@@ -56,7 +56,7 @@ class JadwalManagement extends Component
 
     public $showDeleted = false;
 
-    public $switchTable = 'jadwal-card';
+    public $switchTable = 'card';
 
     protected $listeners = [
         'refresh-table' => 'refreshKelasList',
@@ -97,8 +97,13 @@ class JadwalManagement extends Component
         $this->toast(text: 'Data Statistik Kelas berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
-    public function mount($isJadwalOnly = false, $kode_kelas = null, $switchTable = 'jadwal-card')
+    public function mount($isJadwalOnly = false, $kode_kelas = null, $switchTable)
     {
+        if ((empty($switchTable) || $switchTable == 'null') && !$isJadwalOnly) {
+            return redirect()->route('jadwal-management', ['kode_kelas' => $kode_kelas, 'switchTable' => 'card']);
+        } elseif (empty($switchTable) && $isJadwalOnly) {
+            return redirect()->route('jadwal-kelas', ['switchTable' => 'card']);
+        }
         $this->isJadwalOnly = $isJadwalOnly;
         $this->switchTable = $switchTable;
 
@@ -181,7 +186,8 @@ class JadwalManagement extends Component
         $this->resetPage();
 
         $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
-        $suffix = ($table && $table !== 'jadwal-card') ? "/{$table}" : '';
+        // $suffix = ($table && $table !== 'card') ? "/{$table}" : '';
+        $suffix = $table ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal{$suffix}";
         $targetPath = preg_replace('#(?<!:)/+#', '/', $targetPath);

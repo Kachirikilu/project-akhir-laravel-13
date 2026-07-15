@@ -1,11 +1,11 @@
-<div x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
+<div x-data="{ activeTable: '{{ $switchTable ?? 'mahasiswa' }}' }"
     @table-switched.window="
         activeTable = $event.detail.switchTable;
         window.history.pushState({}, '', $event.detail.targetUrl);
      "
     @navigate.window="
         let segment = window.location.pathname.split('/').pop();
-        activeTable = (segment === 'nilai-management' || segment === '') ? '' : segment;
+        activeTable = (segment === 'nilai-management' || segment === '') ? 'mahasiswa' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
@@ -67,7 +67,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable,
-                        'tabFilter' => null,
+                        'tabFilter' => $stats['mahasiswa-opsi'] ?? null,
                         'tabString' => 'mahasiswa',
                         // 'tabNameString' => 's',
                         'icon' => 'users',
@@ -76,7 +76,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable,
-                        'tabFilter' => null,
+                        'tabFilter' => $stats['rps'] ?? null,
                         'tabString' => 'rps',
                         'tabNameString' => 'Rencana Pembelajaran Semester',
                         'icon' => 'clipboard-document-list',

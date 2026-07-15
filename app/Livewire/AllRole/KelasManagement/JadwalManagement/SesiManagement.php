@@ -76,7 +76,7 @@ class SesiManagement extends Component
 
     public $showDeleted = false;
 
-    public $switchTable = 'sesi-card';
+    public $switchTable = 'card';
 
     public $mapping_pertemuan;
 
@@ -100,7 +100,7 @@ class SesiManagement extends Component
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'sortField' => ['except' => 'pertemuan_ke'],
-        // 'switchTable' => ['except' => 'sesi-card'],
+        // 'switchTable' => ['except' => 'card'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted' => ['except' => false],
     ];
@@ -145,7 +145,7 @@ class SesiManagement extends Component
         $isJadwalOnly = false,
         $kode_kelas = null,
         $kode_jadwal_short = null,
-        $switchTable = 'sesi-hari-ini'
+        $switchTable = 'hari-ini'
     ) {
         $this->updatedShowDeleted();
 
@@ -264,8 +264,8 @@ class SesiManagement extends Component
             $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'angkatan', 5 => 'status', 6 => 'program_studi'];
         }
         $columns = [
-            'sesi-card' => [1 => 'pertemuan_ke', 2 => 'total_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
-            'sesi-table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'total_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
+            'card' => [1 => 'pertemuan_ke', 2 => 'total_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
+            'table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'total_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
             'mahasiswa' => $mahasiswa,
             'cpmk' => [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_nilai_akhir', 5 => 'mhs_nilai_index', 6 => 'mhs_nilai_mutu', 7 => 'angkatan', 8 => 'status', 9 => 'program_studi'],
         ];
@@ -298,7 +298,7 @@ class SesiManagement extends Component
             }
         }
 
-        $currentTable = $table ?? $this->table ?? 'sesi-table';
+        $currentTable = $table ?? $this->table ?? 'table';
 
         if ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk') {
             if ($this->perPage == 2) {
@@ -308,7 +308,7 @@ class SesiManagement extends Component
             } elseif ($this->perPage == 16) {
                 $this->perPage = 15;
             }
-        } elseif ($this->switchTable == 'sesi-card' || $this->switchTable == 'sesi-table') {
+        } elseif ($this->switchTable == 'card' || $this->switchTable == 'table') {
             if ($this->perPage == 3) {
                 $this->perPage = 2;
             } elseif ($this->perPage == 5) {
@@ -325,7 +325,7 @@ class SesiManagement extends Component
         }
 
         $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
-        $suffix = ($table && $table !== 'sesi-hari-ini') ? "/{$table}" : '';
+        $suffix = ($table && $table !== 'hari-ini') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}/sesi{$suffix}";
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
@@ -338,7 +338,7 @@ class SesiManagement extends Component
 
     public function updatedShowDeleted()
     {
-        if ($this->switchTable == '' || $this->switchTable == 'sesi-hari-ini' || $this->switchTable == 'sesi-card' || $this->switchTable == 'sesi-table' || (Auth::user()->dosen && ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk')) || Auth::user()->mahasiswa) {
+        if ($this->switchTable == '' || $this->switchTable == 'hari-ini' || $this->switchTable == 'card' || $this->switchTable == 'table' || (Auth::user()->dosen && ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk')) || Auth::user()->mahasiswa) {
             $this->showDeleted = false;
         }
     }
@@ -355,9 +355,9 @@ class SesiManagement extends Component
 
             switch ($this->switchTable) {
                 // case '':
-                // case 'sesi-hari-ini':
-                // case 'sesi-card':
-                // case 'sesi-table':
+                // case 'hari-ini':
+                // case 'card':
+                // case 'table':
                 //     break;
                 case 'mahasiswa':
                 case 'cpmk':
@@ -427,9 +427,9 @@ class SesiManagement extends Component
 
                 switch ($this->switchTable) {
                     case '':
-                    case 'sesi-hari-ini':
-                    case 'sesi-card':
-                    case 'sesi-table':
+                    case 'hari-ini':
+                    case 'card':
+                    case 'table':
                         $this->addAbsenSesi($querySesi, $jadwalId, 'mhs_absensi');
                         break;
                     case 'mahasiswa':
@@ -466,9 +466,9 @@ class SesiManagement extends Component
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 switch ($this->switchTable) {
                     // case '':
-                    // case 'sesi-hari-ini':
-                    // case 'sesi-card':
-                    // case 'sesi-table':
+                    // case 'hari-ini':
+                    // case 'card':
+                    // case 'table':
                     //     $querySesi->onlyTrashed();
                     //     // $countSesi->onlyTrashed();
                     //     $countSesi = 0;
@@ -511,7 +511,7 @@ class SesiManagement extends Component
              * =========================
              */
             switch ($this->switchTable) {
-                case 'sesi-hari-ini':
+                case 'hari-ini':
                     $sesis = (clone $querySesi)->whereDate('tanggal', today())->get();
                     if ($sesis->count() === 0) {
                         $sesis = $querySesi->get();
@@ -520,10 +520,10 @@ class SesiManagement extends Component
                         $haveSesiDay = true;
                     }
                     break;
-                case 'sesi-card':
+                case 'card':
                     $sesis = $querySesi->get();
                     break;
-                case 'sesi-table':
+                case 'table':
                     if ($this->searchMode == 'complex') {
                         $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
                     } else {

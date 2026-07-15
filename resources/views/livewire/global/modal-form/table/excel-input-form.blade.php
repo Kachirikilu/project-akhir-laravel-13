@@ -30,7 +30,10 @@
 
                 </select>
             @else
-                <input type="{{ $inputType ?? 'text' }}" wire:model.blur="{{ $wireModel }}"
+                <input type="{{ $inputType ?? 'text' }}" 
+                    @if ($wireModel ?? false)
+                        wire:model="{{ $wireModel }}"
+                    @endif
                     {{ isset($isReadonly) && $isReadonly ? 'readonly' : '' }}
                     @if ($modelAlpine ?? null) :value="{{ $modelAlpine }}" @endif
                     @if (isset($numberOnly) && $numberOnly) inputmode="numeric"

@@ -133,12 +133,29 @@
 
         <div
             class="ml-16 flex items-center gap-8 bg-gray-50 dark:bg-zinc-950/50 px-4 py-2 rounded-lg border border-gray-100 dark:border-zinc-800 shrink-0">
+            <button class="cursor-pointer" wire:click="refreshCapaiansList"
+                x-on:click="
+                        $el.querySelector('svg').animate(
+                            [
+                                { transform: 'rotate(0deg)' },
+                                { transform: 'rotate(720deg)' }
+                            ],
+                            {
+                                duration: 600,
+                                easing: 'cubic-bezier(.22,1,.36,1)'
+                            }
+                        );
+                    ">
+                <flux:icon name="arrow-path"
+                    class="w-4 h-4 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-200" />
+            </button>
             @foreach ($daftarCpmk as $index => $kodeCpmk)
                 @php
                     $currentColor = $colorPalette[$index % count($colorPalette)];
                     $bobot = $bobotCpmkLegend[$kodeCpmk] ?? 0;
                     $keberhasilan = $rataKeberhasilanCpmk[$kodeCpmk] ?? 0;
                 @endphp
+
                 <div class="flex items-center gap-3 shrink-0">
                     <div class="w-4 h-4 rounded-sm shrink-0" style="background-color: {{ $currentColor }};"></div>
                     <div class="flex flex-col">
@@ -156,7 +173,8 @@
             <div class="flex-shrink-0">
                 @include('livewire.global.table.export-button', [
                     'nameXString' => 'Export Grafik',
-                    'xString' => 'printPDFCpmkGrafik(' . ($jadwal_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
+                    'xString' =>
+                        'printPDFCpmkGrafik(' . ($jadwal_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
                     'icon' => 'arrow-down-tray',
                     'isFull' => 1,
                     'valuePx' => 'px-6',
@@ -251,7 +269,7 @@
                     },
                     legend: {
                         labels: {
-                            colors: isDark() ? '#e4e4e7' : '#18181b'
+                            colors: '[var(--contrast-main-text)]'
                         }
                     },
                     annotations: {

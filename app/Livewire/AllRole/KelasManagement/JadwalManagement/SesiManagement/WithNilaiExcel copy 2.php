@@ -333,6 +333,24 @@ trait WithNilaiExcel
         );
     }
 
+    private function getColumnIndexes(array $header1): array
+    {
+        return [
+            'rps' => $this->getColumnIndex($header1, ['kode rps', 'rps']),
+            'jadwal' => $this->getColumnIndex($header1, ['nama kelas', 'kode kelas', 'kode jadwal', 'keals jadwal', 'kode jadwal kelas']),
+            'mk' => $this->getColumnIndex($header1, ['nama mk', 'nama mata kuliah', 'mata kuliah']),
+            'nim' => $this->getColumnIndex($header1, ['nim', 'id mahasiswa', 'nomor induk mahasiswa']),
+            'nama' => $this->getColumnIndex($header1, ['nama mahasiswa', 'nama mhs']),
+            'ang' => $this->getColumnIndex($header1, ['angkatan', 'tahun angkatan', 'tahun masuk']),
+            'angka' => $this->getColumnIndex($header1, ['nilai angka']),
+        ];
+    }
+
+    private function getColumnIndex(array $header, array $aliases): int|false
+    {
+        return collect($header)->search(fn ($v) => in_array(Str::lower(trim((string) $v)), $aliases));
+    }
+
     public function importNilaiExcel()
     {
         if (! $this->AuthCheck('staff')) {
@@ -455,16 +473,15 @@ trait WithNilaiExcel
                     $this->parsedNilaiRows[] = [
                         '_index' => count($this->parsedNilaiRows),
                         'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
-                        'nama_mk' => trim((string) ($row[1] ?? '')),
-                        'kode_jadwal' => trim((string) ($row[2] ?? '')),
-                        'nim' => trim((string) ($row[3] ?? '')),
+                        'nama_mk' => trim((string) ($row[2] ?? '')),
+                        'kode_jadwal' => trim((string) ($row[3] ?? '')),
+                        'nim' => trim((string) ($row[0] ?? '')),
                         'nama' => trim((string) ($row[4] ?? '')),
                         'angkatan' => trim((string) ($row[5] ?? '')),
                         'sub_cpmk' => $subCpmk,
                         'nilai_angka' => is_numeric($row[$nilaiAngkaIndex] ?? null) ? (float) $row[$nilaiAngkaIndex] : 0,
                         'nilai_index' => is_numeric($row[$nilaiIndexIndex] ?? null) ? (float) $row[$nilaiIndexIndex] : null,
                         'nilai_mutu' => strtoupper(trim((string) ($row[$nilaiMutuIndex] ?? ''))),
-                        'role' => 'mahasiswa',
                     ];
 
                 }
@@ -999,30 +1016,35 @@ trait WithNilaiExcel
                 $subCpmkColumns = [];
                 $currentCPMK = null;
 
+                $subCpmkColumns = [];
+                $currentCPMK = null;
+
                 for ($col = $startNilaiIndex; $col < $nilaiAngkaIndex; $col++) {
                     $rawCpmk = trim((string) ($header1[$col] ?? ''));
-                    if ($rawCpmk !== '') {
+                    if ($rawCpmk !== '' && !str_contains(strtolower($rawCpmk), 'rekap')) {
                         $currentCPMK = $rawCpmk;
                     }
-
                     $rawSub = trim((string) ($header2[$col] ?? ''));
-                    if ($rawSub === '') {
+                    
+                    if ($rawSub === '' || str_contains(strtolower($rawSub), 'rekap')) {
                         continue;
                     }
-
                     preg_match('/([A-Za-z0-9\-]+)\s*\(P\-(\d+)\)/i', $rawSub, $matches);
+                    
                     $kodeSCPMK = $matches[1] ?? $rawSub;
                     $pertemuan = $matches[2] ?? null;
-                    $bobot = (float) ($header3[$col] ?? 0);
+                    $bobotRaw = $header3[$col] ?? 0;
+                    $bobot = (float) $bobotRaw;
                     if ($bobot > 1) {
                         $bobot /= 100;
                     }
 
+                    // 5. Simpan ke daftar kolom
                     $subCpmkColumns[$col] = [
-                        'cpmk' => $currentCPMK,
-                        'kode_scpmk' => $kodeSCPMK,
-                        'pertemuan' => $pertemuan,
-                        'bobot' => $bobot,
+                        'cpmk'        => $currentCPMK,
+                        'kode_scpmk'  => $kodeSCPMK,
+                        'pertemuan'   => $pertemuan,
+                        'bobot'       => $bobot,
                     ];
                 }
 
@@ -1059,11 +1081,11 @@ trait WithNilaiExcel
 
                     $mockRowData = [
                         'kode_rps' => trim((string) ($row[$nilaiRPSIndex] ?? '')),
-                        'nama_mk' => trim((string) ($row[1] ?? '')),
-                        'kode_jadwal' => trim((string) ($row[2] ?? '')),
-                        'nim' => trim((string) ($row[3] ?? '')),
-                        'nama' => trim((string) ($row[4] ?? '')),
-                        'angkatan' => trim((string) ($row[5] ?? '')),
+                        // 'nama_mk' => trim((string) ($row[2] ?? '')),
+                        'kode_jadwal' => trim((string) ($row[3] ?? '')),
+                        'nim' => trim((string) ($row[0] ?? '')),
+                        // 'nama' => trim((string) ($row[4] ?? '')),
+                        // 'angkatan' => trim((string) ($row[5] ?? '')),
                         'sub_cpmk' => $subCpmk,
                         'nilai_angka' => $average,
                     ];
