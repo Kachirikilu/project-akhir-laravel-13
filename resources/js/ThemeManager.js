@@ -91,35 +91,15 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        // wallpapers: [
-        //     { id: 'none', path: null, isCustom: false },
-        //     { id: 'default-1', path: '/images/bg-unsri.webp', isCustom: false },
-        //     { id: 'waifu-1', path: '/wallpapers/my-alya.png', isCustom: false },
-        //     { id: 'waifu-2', path: '/wallpapers/my-masha.png', isCustom: false },
-        //     { id: 'waifu-3', path: '/wallpapers/my-waguri.png', isCustom: false }
-        // ],
-
-// activeWallpaper: (() => {
-//     const saved = localStorage.getItem("user-active-wp");
-//     return (saved && saved !== "null") ? saved : "/images/bg-unsri.webp";
-// })(),
-
         activeWallpaper: (() => {
             const saved = localStorage.getItem("user-active-wp");
-            if (!saved || saved === "null") return "/images/bg-unsri.webp";
+            if (!saved || saved === "null") return "";
             if (saved === "none") return null;
             return saved;
         })(),
         
-        // activeWallpaper:
-        //     localStorage.getItem("user-active-wp") || "/images/bg-unsri.webp",
         opacity: parseFloat(localStorage.getItem("wp-opacity")) || 0.3,
         brightness: parseFloat(localStorage.getItem("wp-brightness")) || 0.5,
-
-        // setWallpaper(path) {
-        //     this.activeWallpaper = path;
-        //     localStorage.setItem("user-active-wp", path);
-        // },
 
         setWallpaper(path) {
             if (path === null) {

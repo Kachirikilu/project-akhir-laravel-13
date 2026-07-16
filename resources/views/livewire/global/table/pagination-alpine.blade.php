@@ -1,5 +1,5 @@
 <div x-show="totalFilteredItems > perPage"
-    class="mt-4 mb-4 px-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    class="{{ $mx ?? 'mx-3' }} my-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
     {{-- INFO --}}
     <div>

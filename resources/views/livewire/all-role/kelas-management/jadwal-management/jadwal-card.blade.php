@@ -1,4 +1,4 @@
-<x-global.main-layout-card :paginator="$jadwals">
+<x-global.main-layout-card :paginator="$jadwals" :mx="''">
 
     {{-- 1. Isi Bagian Sortir Kiri (Arahkan slot ke nama yang sesuai di komponen Anda, misal: sortir) --}}
     <x-slot:sortir>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Global;
 
+use App\Models\Kelas\KelasSesi;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -134,12 +135,12 @@ trait WithKelasSesiSearchFilters
             if ($exactMatch) {
                 $this->sesi_id = $exactMatch->id;
                 $this->sesi_items = $this->itemsSesi($exactMatch);
-                $this->sesiNameSearch = $exactMatch->deskripsi;
+                $this->sesiNameSearch = $exactMatch->kode;
                 $this->sesiResults = [];
             }
             if ($exactMatch) {
                 if ($this->modeSesi == 'single') {
-                    $this->sesiNameSearch = $exactMatch->deskripsi;
+                    $this->sesiNameSearch = $exactMatch->kode;
                     $this->sesi_id = $exactMatch->id;
                     $this->sesi_items = $this->itemsSesi($exactMatch);
                     $this->sesiResults = [];
@@ -210,13 +211,19 @@ trait WithKelasSesiSearchFilters
             : $this->mapSesi($mainResults);
     }
 
-    public function fetchSesi($query = '', $mode = 'single')
+
+    public function fetchSesi($mode = 'single')
     {
         $this->modeSesi = $mode;
-        if (empty($query) || (! empty($this->sesi_id) || ! empty($this->sesi_id_array))) {
+        if ($this->sesi_id) {
+            $sesi = KelasSesi::find($this->sesi_id);
+            if ($sesi) {
+                $this->sesiNameSearch = $sesi->kode;
+                $this->sesi_items = $this->itemsSesi($sesi);
+            }
             $this->sesiResults = $this->getSesibyUser();
+            return;
         }
-
     }
 
     public function selectSesi($id, $sesiName)
@@ -233,7 +240,7 @@ trait WithKelasSesiSearchFilters
         }
 
         if (method_exists($this, 'fetchSesi')) {
-            $this->fetchSesi('');
+            $this->fetchSesi();
         }
 
         $this->resetErrorBag(['sesi_id', 'sesiNameSearch']);

@@ -11,7 +11,7 @@
 
     @include('livewire.global.header.tag-user')
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
+    {{-- <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
 
         <h2 class="text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] min-w-0 break-words">
             Manajemen Nilai Mahasiswa
@@ -57,7 +57,6 @@
 
         </div>
     </div>
-
     <div class="flex items-center w-full mt-2 mb-2" x-data="{ activeTab: @entangle('switchTable') }">
         <div class="w-full">
 
@@ -85,7 +84,9 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
+    @include('livewire.staff.nilai-management.nilai-toolbar')
+
 
     @include('livewire.staff.nilai-management.nilai-search-and-filters')
 

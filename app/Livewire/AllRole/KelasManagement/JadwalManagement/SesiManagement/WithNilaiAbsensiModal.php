@@ -153,13 +153,13 @@ trait WithNilaiAbsensiModal
         }
     }
 
-    public function editNilaiAbsensi($id, $jadwal_id)
+    public function editNilaiAbsensi($id, $kj_id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        $jadwal = KelasJadwal::with('kelas_rel', 'kelas_rel.rps_rel')->find($jadwal_id);
+        $jadwal = KelasJadwal::with('kelas_rel', 'kelas_rel.rps_rel')->find($kj_id);
         $this->jadwal = $jadwal;
 
         $this->resetInputAbsen();
@@ -172,7 +172,7 @@ trait WithNilaiAbsensiModal
             return;
         }
 
-        if (empty($jadwal_id)) {
+        if (empty($kj_id)) {
             $this->toast(message: 'Jadwal Kelas', type: 'unfound', variant: 'danger');
 
             return;
@@ -183,9 +183,9 @@ trait WithNilaiAbsensiModal
             'kehadirans' => function ($query) use ($id) {
                 $query->where('mahasiswa_id', $id);
             },
-        ])->where('kj_id', $jadwal_id)->orderBy('pertemuan_ke', 'asc')->get();
+        ])->where('kj_id', $kj_id)->orderBy('pertemuan_ke', 'asc')->get();
 
-        $this->selected_id_jadwal = $jadwal_id;
+        $this->selected_id_jadwal = $kj_id;
         $this->selected_id_rps = $jadwal->kelas_rel->rps_id;
 
         // 2. Cari data NilaiMahasiswa

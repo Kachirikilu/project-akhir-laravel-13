@@ -409,8 +409,8 @@
 
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
-            @include('livewire.global.table.pagination-alpine')
-            @include('livewire.global.table.trash-delete')
+            @include('livewire.global.table.pagination-alpine', ['mx' => ''])
+            @include('livewire.global.table.trash-delete', ['mx' => ''])
         </x-slot:footer>
 
     </x-global.main-layout-card>

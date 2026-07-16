@@ -309,9 +309,9 @@
 
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
-            @include('livewire.global.table.pagination-alpine')
+            @include('livewire.global.table.pagination-alpine', ['mx' => ''])
             @if (Auth::user()->admin)
-                @include('livewire.global.table.trash-delete')
+                @include('livewire.global.table.trash-delete', ['mx' => ''])
             @endif
         </x-slot:footer>
 

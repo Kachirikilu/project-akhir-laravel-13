@@ -294,13 +294,18 @@ trait WithSubCPMKSearchFilters
             : $this->mapSCPMK($mainResults);
     }
 
-    public function fetchSCPMK($query = '', $mode = 'single')
+    public function fetchSCPMK($mode = 'single')
     {
         $this->modeSCPMK = $mode;
-        if (empty($query) || $this->scpmk_id) {
+        if ($this->scpmk_id) {
+            $scpmk = SubCPMK::find($this->scpmk_id);
+            if ($scpmk) {
+                $this->scpmkNameSearch = $scpmk->deskripsi;
+                $this->scpmk_items = $this->itemsSCPMK($scpmk);
+            }
             $this->scpmkResults = $this->getSCPMKbyUser();
+            return;
         }
-
     }
 
     public function selectSCPMK($id, $scpmkName)

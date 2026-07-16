@@ -24,14 +24,13 @@
         @if ($this->showSCPMKModal)
             @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'scpmk',
-                'xResults' => $refResults['scpmk'] ?? [],
+                'xResults' => $refResults['scpmk'],
                 'selectX' => 'selectRefArray',
-                'modelString' => 'nama_ref_search_scpmk',
-                'key' => 'scpmk',
+                'modelString' => 'nama_ref_search',
             
-                'idString' => 'ref_id_array.scpmk',
+                'idString' => 'ref_id_array',
                 'id2String' => 'ref_id_array',
-                'itemsAllString' => 'ref_items_array.scpmk',
+                'itemsAllString' => 'ref_items_array',
             
                 'typeXString' => 'judul',
                 'typeX2String' => 'penulis_tahun',
@@ -39,7 +38,7 @@
                 'typeLinkString' => 'link',
             
                 'nameXString' => 'Referensi',
-                'nameSearchString' => 'refNameSearch.scpmk',
+                'nameSearchString' => 'refNameSearch',
                 'fetchString' => 'fetchRef',
                 'iconString' => 'book-open',
                 'wireLoading' => 'fetchRef',

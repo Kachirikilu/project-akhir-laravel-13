@@ -99,9 +99,9 @@ class ModalCpmkManagement extends Component
         if (! $ref) {
             return;
         }
-        if (! in_array($ref->id, $this->ref_id_array['cpmk'] ?? [])) {
-            $this->ref_id_array['cpmk'][] = $ref->id;
-            $this->ref_items_array['cpmk'][] = $this->itemsRef($ref);
+        if (! in_array($ref->id, $this->ref_id_array ?? [])) {
+            $this->ref_id_array[] = $ref->id;
+            $this->ref_items_array[] = $this->itemsRef($ref);
         }
     }
 

@@ -87,36 +87,31 @@ trait WithMKModal
                     $this->dp_id = $firstProdi->dp_id;
 
                     if ($firstProdi->dp_rel) {
-                        $this->dp_items = $this->itemsDp($firstProdi->dp_rel);
-                        $this->dpNameSearch = $firstProdi->departemen_dp;
+                        $this->fetchDp();
                     }
                 }
                 if ($tingkatan == 3) {
                     $this->fk_id = $firstProdi->fk_id;
 
                     if ($firstProdi->dp_rel?->fk_rel) {
-                        $this->fk_items = $this->itemsFk($firstProdi->dp_rel->fk_rel);
-                        $this->fkNameSearch = $firstProdi->fakultas_fk;
+                        $this->fetchFk();
                     }
                 }
                 if (in_array($tingkatan, [1, 4])) {
                     $this->pr_id = $firstProdi->id;
                 }
                 if ($tingkatan == 1) {
-                    $this->prNameSearch = $firstProdi->prodi;
-                    $this->fetchPr($this->prNameSearch);
+                    $this->fetchPr();
                 }
             }
 
-            if ($tingkatan == 4) {
-                $this->updatedPrNameSearch($this->prNameSearch);
-            } elseif ($tingkatan == 2) {
-                $this->updatedDpNameSearch($this->dpNameSearch);
-                $this->fetchDp();
-            } elseif ($tingkatan == 3) {
-                $this->updatedFkNameSearch($this->fkNameSearch);
-                $this->fetchFk();
-            }
+            // if ($tingkatan == 4) {
+            //     $this->updatedPrNameSearch($this->prNameSearch);
+            // } elseif ($tingkatan == 2) {
+            //     $this->updatedDpNameSearch($this->dpNameSearch);
+            // } elseif ($tingkatan == 3) {
+            //     $this->updatedFkNameSearch($this->fkNameSearch);
+            // }
 
             $this->showMKModal = true;
 

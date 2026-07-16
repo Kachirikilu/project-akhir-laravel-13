@@ -22,7 +22,7 @@ trait WithJadwalModal
     use HasErrorCount;
     use HasToast;
 
-    public $selected_jadwal_id;
+    public $selected_kj_id;
 
     public $isEditingJadwal = false;
 
@@ -122,12 +122,12 @@ trait WithJadwalModal
 
                 return;
             }
-            if (empty($data['jadwal_id'])) {
+            if (empty($data['kj_id'])) {
                 $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
 
                 return;
             }
-            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $data['jadwal_id'])->first();
+            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $data['kj_id'])->first();
 
             $pw = $jadwal->password;
             $message = "Kelas {$jadwal->label_extra} dengan Kode {$jadwal->kode}";
@@ -172,12 +172,12 @@ trait WithJadwalModal
 
                 return;
             }
-            if (! property_exists($this, 'jadwal_id') || empty($this->jadwal_id)) {
+            if (! property_exists($this, 'kj_id') || empty($this->kj_id)) {
                 $this->toast(message: 'Kelas', type: 'unfound', variant: 'danger');
 
                 return;
             }
-            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $this->jadwal_id)->first();
+            $jadwal = KelasJadwal::with(['sesis', 'mahasiswas'])->where('id', $this->kj_id)->first();
             if ($jadwal->mahasiswas()->detach($mahasiswa_id)) {
                 $compositeKey = $jadwal->kode;
                 $historyJadwal = session('jadwal.history', []);
@@ -221,7 +221,7 @@ trait WithJadwalModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->selected_jadwal_id = $id;
+        $this->selected_kj_id = $id;
         $this->isEditingJadwal = true;
         $this->showEditJadwal = true;
 
@@ -439,7 +439,7 @@ trait WithJadwalModal
                 $query->where(
                     'id',
                     '!=',
-                    $this->selected_jadwal_id
+                    $this->selected_kj_id
                 );
             }
 
@@ -599,7 +599,7 @@ trait WithJadwalModal
             DB::transaction(function () use ($validated, $data, $isRestartSesi, &$kodeKelas, &$kodeJadwal) {
 
                 $jadwal = KelasJadwal::findOrFail(
-                    $this->selected_jadwal_id
+                    $this->selected_kj_id
                 );
 
                 // =========================================
@@ -798,7 +798,7 @@ trait WithJadwalModal
     private function resetInputJadwal()
     {
         $fields = [
-            'selected_jadwal_id',
+            'selected_kj_id',
             'jadwal_input',
         ];
 

@@ -66,13 +66,11 @@ trait WithKelasModal
 
             $this->pr_id = $kelas->pr_id;
             $this->pr_id_2 = $kelas->pr_id;
-            $this->pr_items = $this->itemsPr($kelas->pr_rel);
-            $this->prNameSearch = $kelas->prodi;
+            $this->fetchPr();
 
             $this->rps_id = $kelas->rps_id;
             $this->rps_id_2 = $kelas->rps_id;
-            $this->rps_items = $this->itemsRPS($kelas->rps_rel);
-            $this->rpsNameSearch = $kelas->rps_rel?->rps;
+            $this->fetchRPS();
 
             $this->dispatch('fill-modal-kelas', kelas: $kelas);
             $this->dispatch('refresh-component');

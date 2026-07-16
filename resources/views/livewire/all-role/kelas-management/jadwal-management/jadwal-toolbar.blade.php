@@ -1,4 +1,4 @@
-<div class="flex flex-wrap items-center gap-6 mb-4">
+<div class="flex flex-wrap items-center gap-6 mb-2">
 
     <h3 class="text-xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
         <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
@@ -26,7 +26,7 @@
                             'xString' => 'switchingTable',
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['jadwal'] ?? null,
-                            'tabString' => 'card',
+                            'tabString' =>'card',
                             'tabNameString' => 'Jadwal Kelas',
                             'icon' => 'academic-cap',
                         ])
@@ -36,7 +36,7 @@
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['jadwal'] ?? null,
                             'tabString' => 'table',
-                            'tabNameString' => 'Tabel Jadwal',
+                            'tabNameStrin g' => 'Tabel Jadwal',
                             'icon' => 'table-cells',
                         ])
                     </div>
@@ -49,9 +49,12 @@
             <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
 
                 @unless ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
-                <div></div>
+                    <div></div>
                 @endunless
-                @if ($this->switchTable == 'card' || $this->switchTable == 'table' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
+                @if (
+                    $this->switchTable == 'card' ||
+                        $this->switchTable == 'table' ||
+                        ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
                     <div class="shrink-0">
                         @include('livewire.global.search-and-filters.page-control', [
                             'perPageOptions' => [2, 4, 6, 8, 12],
@@ -64,6 +67,9 @@
                 @endif
 
                 @if ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
+                    @if ($switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] == 0)
+                        <div></div>
+                    @endif
                     <div class="shrink-0">
                         <flux:dropdown>
                             <flux:button variant="primary" icon="plus" size="sm"

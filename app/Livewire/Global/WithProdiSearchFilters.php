@@ -112,7 +112,6 @@ trait WithProdiSearchFilters
         $input = str($value)->lower()->trim();
         if (empty($input->toString())) {
             $this->prResults = $this->getPrbyUser();
-
             return;
         }
 
@@ -253,20 +252,16 @@ trait WithProdiSearchFilters
         return $this->mapPr($mainResults);
     }
 
-    public function fetchPr($query = '', $mode = 'single')
+    public function fetchPr($mode = 'single')
     {
         $this->modePr = $mode;
-
-        if ($this->pr_id && empty($this->pr_items)) {
-            $prodi = Prodi::find($this->pr_id);
-            if ($prodi) {
-                $this->pr_items = $this->itemsPr($prodi);
+        if ($this->pr_id) {
+            $pr = Prodi::find($this->pr_id);
+            if ($pr) {
+                $this->prNameSearch = $pr->prodi;
+                $this->pr_items = $this->itemsPr($pr);
             }
-        }
-
-        if (empty($query) || $this->pr_id) {
             $this->prResults = $this->getPrbyUser();
-
             return;
         }
     }

@@ -38,6 +38,12 @@ document.addEventListener("alpine:init", () => {
         nama: "",
         nim: "",
 
+        tanggal_unlock: "",
+        ganjil_genap: "",
+        akademik: "",
+        akademik_1: "",
+        akademik_2: "",
+
         kode_rps: 0,
         mk: 0,
         sks: "",
@@ -50,7 +56,7 @@ document.addEventListener("alpine:init", () => {
             rps,
             mk,
             sks,
-     
+
             nilaiArray,
             bobotArray,
             cpmkArray,
@@ -120,6 +126,18 @@ document.addEventListener("alpine:init", () => {
             return data;
         },
 
+        getDataLockNilai() {
+            const data = {
+                tanggal_unlock: this.tanggal_unlock,
+                ganjil_genap: this.ganjil_genap,
+                akademik: this.akademik,
+                akademik: this.akademik,
+                akademik_1: this.akademik_1,
+                akademik_2: this.akademik_2,
+            };
+            return data;
+        },
+
         setDeleteNilai(name, nim, rps, mk, forceDelete) {
             this.name_delete = name;
             this.nim_delete = nim;
@@ -154,6 +172,12 @@ document.addEventListener("alpine:init", () => {
                 this.nim_delete = "";
                 this.kode_rps_delete = "";
                 this.mk_delete = "";
+
+                this.tanggal_unlock = "";
+                this.ganjil_genap = "";
+                this.akademik = "";
+                this.akademik_1 = "";
+                this.akademik_2 = "";
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

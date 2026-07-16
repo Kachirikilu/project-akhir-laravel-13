@@ -34,21 +34,7 @@
         'wireLoading' => 'fetchMK',
     ])
 
-    {{-- <div class="relative" x-data="{
-        mk_items_display: null
-    }"
-        x-effect="
-                const config = $store.rps;
-
-                if (config?.mk_items && Object.keys(config.mk_items).length > 0) {
-                    mk_items_display = config.mk_items;
-                } else {
-                    mk_items_display = null;
-                }
-                
-            "> --}}
-
-    <div class="relative">
+<div class="relative">
         <div class="space-y-4">
 
 
@@ -81,38 +67,7 @@
                         ])
                     </div>
                 </div>
-                {{-- @error('kode_pr')
-                    <span class="text-xs sm:text-sm text-red-500 mt-1 block">{{ $errors->first('kode_pr') }}</span>
-                @enderror --}}
             </div>
-
-            
-            {{-- <div class="grid sm:grid-cols-6 gap-2 sm:gap-3 items-end">
-                <div class="sm:col-span-2">
-                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-digit-akademik')
-                </div>
-                <div class="sm:col-span-1">
-                    @include('livewire.global.modal-form.kode-input', [
-                        'alpine' => 'rps',
-                        'pathString' => 'mk_items',
-                        'modelString' => 'slot2',
-                        'placeholder' => '--',
-                        'iconString' => 'variable',
-                        'noLabel' => 1,
-                    ])
-                </div>
-
-                <div class="sm:col-span-3">
-                    @include('livewire.global.modal-form.kode-input', [
-                        'alpine' => 'rps',
-                        'pathString' => 'mk_items',
-                        'modelString' => 'kode',
-                        'placeholder' => '--------',
-                        'iconString' => 'clipboard-document-list',
-                        'noLabel' => 1,
-                    ])
-                </div>
-            </div> --}}
 
             <div class="space-y-4">
                 <div>
@@ -136,7 +91,6 @@
                                 $store.rps.akademik = '';
                             }
                         ">
-
                         <div class="col-span-2">
                             @include('livewire.global.modal-form.input-form', [
                                 'alpine' => 'rps',
@@ -150,7 +104,6 @@
                             ])
                         </div>
                         <div class="col-span-2">
-                            {{-- @include('livewire.staff.rps-management.modal-form.partial.tahun-akademik-2') --}}
                             @include('livewire.global.modal-form.input-form', [
                                 'alpine' => 'rps',
                                 'nameXString' => 'Tahun Akademik',

@@ -40,14 +40,12 @@
             @if ($this->showCPMKModal)
                 @include('livewire.global.modal-form.input-array.search-input-array-form', [
                     'alpine' => 'cpmk',
-                    'xResults' => $refResults['cpmk'] ?? [],
+                    'xResults' => $refResults,
                     'selectX' => 'selectRefArray',
-                    'modelString' => 'nama_ref_search_cpmk',
-                    'key' => 'cpmk',
+                    'modelString' => 'nama_ref_search',
                 
-                    'idString' => 'ref_id_array.cpmk',
-                    'id2String' => 'ref_id_array',
-                    'itemsAllString' => 'ref_items_array.cpmk',
+                    'idString' => 'ref_id_array',
+                    'itemsAllString' => 'ref_items_array',
                 
                     'typeXString' => 'judul',
                     'typeX2String' => 'penulis_tahun',
@@ -56,7 +54,7 @@
                 
                     'nameXString' => 'Referensi',
                     'nameX2String' => 'Tambah Referensi Baru',
-                    'nameSearchString' => 'refNameSearch.cpmk',
+                    'nameSearchString' => 'refNameSearch',
                     'fetchString' => 'fetchRef',
                     'iconString' => 'book-open',
                 

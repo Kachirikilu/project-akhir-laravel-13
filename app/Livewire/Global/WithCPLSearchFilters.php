@@ -228,13 +228,18 @@ trait WithCPLSearchFilters
             : $this->mapCPL($mainResults);
     }
 
-    public function fetchCPL($query = '', $mode = 'single')
+    public function fetchCPL($mode = 'single')
     {
         $this->modeCPL = $mode;
-        if (empty($query) || (! empty($this->cpl_id) || ! empty($this->cpl_id_array))) {
+        if ($this->cpl_id) {
+            $cpl = CPL::find($this->cpl_id);
+            if ($cpl) {
+                $this->cplNameSearch = $cpl->deskripsi;
+                $this->cpl_items = $this->itemsCPL($cpl);
+            }
             $this->cplResults = $this->getCPLbyUser();
+            return;
         }
-
     }
 
     public function selectCPL($id, $cplName)
@@ -251,7 +256,7 @@ trait WithCPLSearchFilters
         }
 
         if (method_exists($this, 'fetchCPL')) {
-            $this->fetchCPL('');
+            $this->fetchCPL();
         }
 
         $this->resetErrorBag(['cpl_id', 'cplNameSearch']);

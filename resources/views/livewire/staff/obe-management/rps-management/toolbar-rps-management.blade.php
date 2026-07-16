@@ -99,7 +99,7 @@
                             '{{ $data['kode_mk'] ?? '' }}',
                             '{{ $data['mk'] ?? '' }}',
                             '{{ $data['akademik'] ?? '' }}',
-                            '{{ $data['draf'] ?? '' }}',
+                            '{{ $data['is_draf'] ?? '' }}',
                             '{{ $data['count_scpmk'] ?? '' }}',
                             '{{ $data['bobot_uts'] ?? '' }}',
                             '{{ $data['bobot_uas'] ?? '' }}',

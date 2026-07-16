@@ -27,10 +27,10 @@
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @if ($this->switchTable == 'hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini', ['mb' => 'mb-6'])
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini')
         @elseif ($this->switchTable == 'card' || ($this->switchTable == 'hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
             @if ($this->switchTable == 'hari-ini' && $stats['sesi-hari-ini'] == 0)
-                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message')
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', ['mb' => 'mb-6'])
             @endif
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
         @elseif ($this->switchTable == 'table')

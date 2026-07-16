@@ -174,7 +174,7 @@
                 @include('livewire.global.table.export-button', [
                     'nameXString' => 'Export Grafik',
                     'xString' =>
-                        'printPDFCpmkGrafik(' . ($jadwal_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
+                        'printPDFCpmkGrafik(' . ($kj_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
                     'icon' => 'arrow-down-tray',
                     'isFull' => 1,
                     'valuePx' => 'px-6',

@@ -1,6 +1,6 @@
 <div>
     <flux:modal name="rps-detail-modal" wire:model="detailRPSModal" x-data flyout x-on:close="$store.rps.pr_id_show = null"
-        class="w-full md:w-[95vw] max-w-7xl h-[98vh] !p-8 scrollbar-large">
+        class="w-full md:w-[95vw] max-w-7xl h-[98vh] !p-4 sm:!p-6 md:!p-8 scrollbar-large">
 
         @if ($isReady)
             <div class="flex flex-col xl:flex-row gap-5 my-9">

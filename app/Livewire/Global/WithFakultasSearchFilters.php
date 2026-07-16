@@ -171,14 +171,21 @@ trait WithFakultasSearchFilters
             : $this->mapFk($mainResults);
     }
 
-    public function fetchFk($query = '')
+    public function fetchFk($mode = 'single')
     {
-        if (empty($query) || $this->fk_id) {
+        // $this->modeFk = $mode;
+        if ($this->fk_id) {
+            $fk = Fakultas::find($this->fk_id);
+            if ($fk) {
+                $this->fkNameSearch = $fk->fakultas_fk;
+                $this->fk_items = $this->itemsFk($fk);
+            }
             $this->fkResults = $this->getFkbyUser();
-
             return;
         }
     }
+
+
 
     public function selectFk($id, $fakultasName)
     {
@@ -210,8 +217,14 @@ trait WithFakultasSearchFilters
 
     public function haveFkChild()
     {
-        if (property_exists($this, 'showMKModal') && property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->showMKModal == true && $this->mkType == 3) {
+        $showMK = property_exists($this, 'showMKModal') && $this->showMKModal;
+        $showCPL = property_exists($this, 'showCPLModal') && $this->showCPLModal;
+        
+        $mkType = property_exists($this, 'mkType') ? $this->mkType : null;
+        $cplType = property_exists($this, 'cplType') ? $this->cplType : null;
+
+        if (($showMK || $showCPL) && ($mkType == 3 || $cplType == 3)) {
+            if (method_exists($this, 'resetPrArray')) {
                 $this->resetPrArray();
             }
         }

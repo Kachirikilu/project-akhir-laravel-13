@@ -280,7 +280,7 @@ trait WithCPMKModal
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
         $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             // 1. Jalankan validasi & pembersihan
@@ -350,7 +350,7 @@ trait WithCPMKModal
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
         $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             $validated = $this->inputModalCPMK(true, $data);
@@ -551,7 +551,7 @@ trait WithCPMKModal
     {
         $this->scpmkNameSearch = '';
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
+        $this->refNameSearch = '';
 
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];

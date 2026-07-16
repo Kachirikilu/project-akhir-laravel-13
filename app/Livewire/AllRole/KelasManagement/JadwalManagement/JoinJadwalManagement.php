@@ -13,7 +13,7 @@ class JoinJadwalManagement extends Component
     use HasToast;
     use WithJadwalModal;
 
-    public $jadwal_id;
+    public $kj_id;
 
     public $isReady;
 

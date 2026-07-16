@@ -58,7 +58,7 @@ class SesiManagement extends Component
 
     public $tim_dosen;
 
-    public $jadwal_id_url;
+    public $kj_id_url;
 
     public $kode_jadwal_url;
 
@@ -189,7 +189,7 @@ class SesiManagement extends Component
         }
 
         $this->jadwal = $jadwal;
-        $this->jadwal_id_url = $this->jadwal->id;
+        $this->kj_id_url = $this->jadwal->id;
         $this->kode_jadwal_url = $this->jadwal->kode;
         $this->rps_id_url = $this->jadwal->rps_id;
         $this->kode_rps_url = $this->jadwal->kode_rps;
@@ -205,7 +205,7 @@ class SesiManagement extends Component
         $currentKode = $kelas->kode;
         $compositeKey = $jadwal->kode;
 
-        $existingKey = array_search($jadwal->id, array_column($sesiHistory, 'jadwal_id'));
+        $existingKey = array_search($jadwal->id, array_column($sesiHistory, 'kj_id'));
         if ($existingKey !== false) {
             $actualKeys = array_keys($sesiHistory);
             unset($sesiHistory[$actualKeys[$existingKey]]);
@@ -215,7 +215,7 @@ class SesiManagement extends Component
 
         $sesiHistory[$compositeKey] = [
             'kelas_id' => $kelas->id,
-            'jadwal_id' => $jadwal->id,
+            'kj_id' => $jadwal->id,
             'kode_kelas' => $currentKode,
             'kode_jadwal_short' => $jadwal->kode_jadwal,
             'switchTable' => $switchTable,
@@ -346,7 +346,7 @@ class SesiManagement extends Component
     public function render()
     {
         try {
-            $jadwalId = $this->jadwal_id_url;
+            $jadwalId = $this->kj_id_url;
 
             $querySesi = collect();
             $queryUser = collect();

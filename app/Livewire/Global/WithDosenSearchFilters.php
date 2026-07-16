@@ -243,13 +243,19 @@ trait WithDosenSearchFilters
             : $this->mapDosen($mainResults);
     }
 
-    public function fetchDosen($query = '', $mode = 'single')
+  
+    public function fetchDosen($mode = 'single')
     {
         $this->modeDosen = $mode;
-        if (empty($query) || $this->dosen_id) {
+        if ($this->dosen_id) {
+            $dosen = Dosen::find($this->dosen_id);
+            if ($dosen) {
+                $this->dosenNameSearch = $dosen->name;
+                $this->dosen_items = $this->itemsDosen($dosen);
+            }
             $this->dosenResults = $this->getDosenbyUser();
+            return;
         }
-
     }
 
     public function selectDosen($id, $dosenName)
@@ -264,7 +270,7 @@ trait WithDosenSearchFilters
         }
 
         if (method_exists($this, 'fetchDosen')) {
-            $this->fetchDosen('');
+            $this->fetchDosen();
         }
 
         $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);

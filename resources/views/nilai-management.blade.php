@@ -24,6 +24,9 @@
         </div>
     </div>
 
+    @if(request()->routeIs('nilai-management'))
+        <livewire:staff.nilai-management.lock-nilai-management />
+    @endif
     @if(request()->routeIs('nilai-management') && Auth::user()->admin)
         <livewire:admin.user-management.modal-user-management />
         <livewire:admin.user-management.delete-user-management />

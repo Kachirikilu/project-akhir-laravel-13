@@ -148,7 +148,7 @@ trait WithUserModal
         $this->isEditingUser = true;
 
         try {
-            $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
+            $user = User::with(['admin', 'dosen', 'mahasiswa', 'admin.pr_rel', 'dosen.pr_rel', 'mahasiswa.pr_rel'])->findOrFail($id);
             $this->selected_id_user = $user->id;
 
             // $this->user_input['email'] = $user->email;
@@ -181,13 +181,23 @@ trait WithUserModal
                 $this->user_input['kode_wilayah'] = $user->mahasiswa->kode_wilayah ?? null;
             }
 
+
+                //            $this->dpNameSearch = $prodi->departemen ?? '';
+
+                // if ($this->dp_id) {
+                //     $departemen = Departemen::find($this->dp_id);
+                //     $this->dpNameSearch = $departemen ? $departemen->departemenDp : '';
+                // } else {
+                //     $this->dpNameSearch = '';
+                // }
+                // $this->fetchDp($this->dpNameSearch);
+
             $this->pr_id = $user->pr_id;
             if (! $isRPS) {
                 // $this->pr_id_2 = $user->pr_id;
                 // $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
-                $this->prNameSearch = $user->prodi;
-                $this->fetchPr($this->prNameSearch);
                 // $this->updatedPrNameSearch($this->prNameSearch);
+                $this->fetchPr();
             }
             $this->roleType = strtolower($user->role);
 

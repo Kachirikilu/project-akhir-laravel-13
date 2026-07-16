@@ -37,13 +37,13 @@
                 {{-- gotoPage, previousPage, nextPage, page --}}
             ",
     'layoutGrid' => true,
+    'mx' => 'mx-3',
 ])
 
 <div class="space-y-6">
 
     @if (isset($leftHead) || isset($rightHead))
-        <div
-            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
             <div class="flex flex-row items-center gap-2">
                 @if (isset($leftHead))
                     {{ $leftHead }}
@@ -58,8 +58,7 @@
     @endif
 
     @if (isset($sortir) || isset($search))
-        <div
-            class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
             <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
                 @if (isset($sortir))
                     {{ $sortir }}
@@ -76,7 +75,8 @@
 
     @php
         if ($layoutGrid) {
-            $layout_grid = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
+            $layout_grid =
+                'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
         } else {
             $layout_grid = 'space-y-4';
         }
@@ -87,10 +87,10 @@
     </div>
 
     @if (isset($emptys))
-    <div class="max-w-[4500px]"
-        wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
-        {{ $emptys }}
-    </div>
+        <div class="max-w-[4500px]" wire:loading.class="opacity-50 pointer-events-none transition-opacity"
+            wire:target="{{ $targetLoading }}">
+            {{ $emptys }}
+        </div>
     @endif
 
     @if (isset($footer))
@@ -102,6 +102,7 @@
             @include('livewire.global.table.footer-table', [
                 'typeXString' => $paginator,
                 'onlyAdmin' => $onlyAdmin,
+                'mx' => $mx,
             ])
         </div>
     @endif

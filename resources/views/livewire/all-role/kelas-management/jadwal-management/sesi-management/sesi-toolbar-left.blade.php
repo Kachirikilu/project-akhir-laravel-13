@@ -13,7 +13,7 @@
                     '{{ $jadwal->label_extra ?? '' }}',
                 );
                 $flux.modal('left-jadwal-modal').show();
-                $dispatch('open-left-jadwal-modal', { jadwal_id: {{ $jadwal->id }} });
+                $dispatch('open-left-jadwal-modal', { kj_id: {{ $jadwal->id }} });
             "
             variant="ghost"
             class="cursor-pointer text-red-600 hover:text-red-700 dark:hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">

@@ -85,29 +85,29 @@ trait WithDepartemenSearchFilters
         }
     }
 
-    public function inputDpFilter3()
-    {
-        $search = trim($this->dpSearchQuery);
+    // public function inputDpFilter3()
+    // {
+    //     $search = trim($this->dpSearchQuery);
 
-        // 1. Jika teks query yang diketik BERBEDA dengan nama yang sedang terselect,
-        //    artinya user sedang mengetik pencarian baru. Hancurkan status select lama!
-        if ($this->dp_name && $search !== $this->dp_name) {
-            $this->dp_name = null;
-            $this->selectedDpId = null;
-            $this->dp_items = null;
-        }
+    //     // 1. Jika teks query yang diketik BERBEDA dengan nama yang sedang terselect,
+    //     //    artinya user sedang mengetik pencarian baru. Hancurkan status select lama!
+    //     if ($this->dp_name && $search !== $this->dp_name) {
+    //         $this->dp_name = null;
+    //         $this->selectedDpId = null;
+    //         $this->dp_items = null;
+    //     }
 
-        // 2. Sekarang filter pencarian dapat dievaluasi dengan bersih tanpa intervensi dp_name lama
-        if (strlen($search) > 1 || is_numeric($search)) {
-            $this->dpSearchResults = $this->mapDpSearch(
-                $this->searchOutputPr($this->dpQuery(), $search, 12)
-            );
-        } elseif (empty($search) || $this->dp_name) {
-            $this->dpSearchResults = $this->getDpbyUser('search');
-        } else {
-            $this->dpSearchResults = [];
-        }
-    }
+    //     // 2. Sekarang filter pencarian dapat dievaluasi dengan bersih tanpa intervensi dp_name lama
+    //     if (strlen($search) > 1 || is_numeric($search)) {
+    //         $this->dpSearchResults = $this->mapDpSearch(
+    //             $this->searchOutputPr($this->dpQuery(), $search, 12)
+    //         );
+    //     } elseif (empty($search) || $this->dp_name) {
+    //         $this->dpSearchResults = $this->getDpbyUser('search');
+    //     } else {
+    //         $this->dpSearchResults = [];
+    //     }
+    // }
 
     public function resetDpFilter()
     {
@@ -212,11 +212,17 @@ trait WithDepartemenSearchFilters
             : $this->mapDp($mainResults);
     }
 
-    public function fetchDp($query = '')
-    {
-        if (empty($query) || $this->dp_id) {
-            $this->dpResults = $this->getDpbyUser();
 
+    public function fetchDp($mode = 'single')
+    {
+        // $this->modeDp = $mode;
+        if ($this->dp_id) {
+            $dp = Departemen::find($this->dp_id);
+            if ($dp) {
+                $this->dpNameSearch = $dp->departemen_dp;
+                $this->dp_items = $this->itemsDp($dp);
+            }
+            $this->dpResults = $this->getDpbyUser();
             return;
         }
     }
@@ -255,9 +261,17 @@ trait WithDepartemenSearchFilters
 
     public function haveDpChild()
     {
-        if (property_exists($this, 'showMKModal') && property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->showMKModal == true && $this->mkType == 2) {
-                $this->resetPrArray();
+        $showMK = property_exists($this, 'showMKModal') && $this->showMKModal;
+        $mkType = property_exists($this, 'mkType') ? $this->mkType : null;
+
+        $showCPL = property_exists($this, 'showCPLModal') && $this->showCPLModal;
+        $cplType = property_exists($this, 'cplType') ? $this->cplType : null;
+
+        if (property_exists($this, 'pr_id_array')) {
+            if (($showMK && $mkType == 2) || ($showCPL && $cplType == 2)) {
+                if (method_exists($this, 'resetPrArray')) {
+                    $this->resetPrArray();
+                }
             }
         }
     }

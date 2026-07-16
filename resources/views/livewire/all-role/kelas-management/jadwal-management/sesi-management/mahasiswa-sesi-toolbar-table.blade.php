@@ -1,10 +1,10 @@
 <flux:menu
     class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-    @if ($jadwal_id_url ?? false)
+    @if ($kj_id_url ?? false)
         <livewire:all-role.kelas-management.jadwal-management.sesi-management.toolbar-mahasiswa-sesi-management lazy
             :data="[
                 'id' => $user->mahasiswa->id,
-                'jadwal_id' => $jadwal_id_url ?? null,
+                'kj_id' => $kj_id_url ?? null,
                 'nim' => $user->mahasiswa->nim,
                 'name' => $user->mahasiswa->name,
                 'count_sesi' => $stats['sesi'] ?? 16,

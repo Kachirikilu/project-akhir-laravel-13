@@ -89,9 +89,9 @@ class ModalRpsManagement extends Component
         if (! $ref) {
             return;
         }
-        if (! in_array($ref->id, $this->ref_id_array['rps'] ?? [])) {
-            $this->ref_id_array['rps'][] = $ref->id;
-            $this->ref_items_array['rps'][] = $this->itemsRef($ref);
+        if (! in_array($ref->id, $this->ref_id_array ?? [])) {
+            $this->ref_id_array[] = $ref->id;
+            $this->ref_items_array[] = $this->itemsRef($ref);
         }
     }
 

@@ -31,12 +31,24 @@ x-data="{
                 itemsAll = null;
             } else {
                 let currentId = config?.['{{ $idString }}'];
-                if (currentId) {
+
+                if (!currentId) {
+                    if (!isManual) {
+                        search = '';
+                        items = null;
+                        itemsAll = null;
+                    }
+                } else {
                     search = config?.['{{ $modelString }}'];
                     items = config?.['{{ $idString }}'];
                     itemsAll = config?.['{{ $itemsAllString }}'];
                 }
             };
+
+            {{-- if (icon) {
+                const color = isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400';
+                icon.className = icon.className.replace(/text-[a-z0-9-]+/g, color);
+            } --}}
         "
        x-init="checkReady(); $watch('parentSelectedId', () => checkReady())">
 

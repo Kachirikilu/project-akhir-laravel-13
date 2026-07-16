@@ -5,7 +5,7 @@
     <button type="button" x-cloak @click.stop="toggleExpanded()"
         class="cursor-pointer bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90 lg:hidden fixed z-90 top-4 left-4 p-2 text-white rounded-lg shadow-md border active:scale-95 transition-all duration-300 ease-out"
         aria-label="Toggle Menu">
-        <flux:icon name="bars-3" variant="outline" class="w-7 h-7" />
+        <flux:icon name="bars-3" variant="outline" class="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11" />
     </button>
 
     {{-- Overlay Backdrop --}}

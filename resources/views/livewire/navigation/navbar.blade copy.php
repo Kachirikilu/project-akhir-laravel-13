@@ -230,7 +230,7 @@
                     foreach ($sesiHistory as $sesi) {
                         $kodeKelas = $sesi['kode_kelas'];
                         $kodeJadwal = $sesi['kode_jadwal_url'];
-                        $jadwalId = $sesi['jadwal_id'] ?? null;
+                        $jadwalId = $sesi['kj_id'] ?? null;
                         $switchTable = $sesi['switchTable'] ?? null;
 
                         $subMenus[] = [
@@ -240,7 +240,7 @@
                                 array_filter([
                                     'kode_kelas' => $kodeKelas,
                                     'kode_jadwal_url' => $kodeJadwal,
-                                    'jadwal_id' => $jadwalId,
+                                    'kj_id' => $jadwalId,
                                     'switchTable' => $switchTable,
                                 ]),
                             ),

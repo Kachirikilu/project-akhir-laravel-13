@@ -59,7 +59,7 @@ class RememberKelasNavigation
 
             $currentKode = $request->route('kode');
             $currentKodeJadwal = $request->route('kode_jadwal');
-            $currentIdJadwal = $request->route('jadwal_id');
+            $currentIdJadwal = $request->route('kj_id');
             $sesiHistory = session('jadwal.history', []);
             $currentKodeDb = str_replace('-', '', $currentKode);
 
@@ -110,12 +110,12 @@ class RememberKelasNavigation
             $sesiHistory[$compositeKey] = [
                 'kode' => $currentKode,
                 'kode_jadwal' => $currentKodeJadwal,
-                'jadwal_id' => $currentIdJadwal,
+                'kj_id' => $currentIdJadwal,
                 'switchTable' => $request->route('switchTable'),
                 'url' => route('sesi-management', [
                     'kode' => $currentKode,
                     'kode_jadwal' => $currentKodeJadwal,
-                    'jadwal_id' => $currentIdJadwal,
+                    'kj_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
                 ]),
             ];

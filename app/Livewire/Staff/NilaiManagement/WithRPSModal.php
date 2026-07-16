@@ -74,9 +74,7 @@ trait WithRPSModal
         $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
-        // $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
         $this->updatedRefNameSearch($this->refNameSearch);
-
         $this->updatedTimDosenNameSearch($this->timDosenNameSearch);
     }
 
@@ -107,9 +105,9 @@ trait WithRPSModal
                 'refs',
             ])->findOrFail($id);
 
+            $this->mkNameSearch = $rps->mk_rel?->mk;
             $this->mk_id = $rps->mk_id;
             $this->mk_id_2 = $rps->mk_id;
-            $this->fetchMK();
             // $this->mk_items = $this->itemsMK($rps->mk_rel);
 
             // 2. Fill Data Dosen
@@ -126,13 +124,36 @@ trait WithRPSModal
             })->toArray();
             $this->cpmk_sub_items_array = $this->mapCPMK($rps->cpmks);
 
-            $this->ref_id_array = collect($this->ref_id_array)
-                ->merge($rps->refs->pluck('id'))->unique()->values()->all();
-            $this->ref_items_array = collect($this->ref_items_array)
-                ->merge(
-                    $rps->refs->map(fn ($r) => $this->itemsRef($r))
-                )->unique('id')->values()->all();
+            // $totalSubCPMK = 0;
+            // foreach ($this->cpmk_sub_items_array as $group) {
+            //     $totalSubCPMK += count($group['scpmk'] ?? []);
+            // }
+            // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $rps->is_draf;
 
+            // 2. Fill Data CPL & Referensi Tambahan (Manual)
+            // $this->cpl_id_array = array_merge(
+            //     array_map(fn () => [], $this->cpl_id_array),
+            //     [$key => $rps->cpls->pluck('id')->toArray()]
+            // );
+            // $this->cpl_items_array = array_merge(
+            //     array_map(fn () => [], $this->cpl_items_array),
+            //     [$key => $rps->cpls->map(function ($c) {
+            //         return $this->itemsCPL($c);
+            //     })->toArray()]
+            // );
+
+            $this->ref_id_array = array_merge(
+                array_map(fn () => [], $this->ref_id_array),
+                [$key => $rps->refs->pluck('id')->toArray()]
+            );
+            $this->ref_items_array = array_merge(
+                array_map(fn () => [], $this->ref_items_array),
+                [$key => $rps->refs->map(function ($r) {
+                    return $this->itemsRef($r);
+                })->toArray()]
+            );
+
+            $this->fetchMK($this->mkNameSearch);
             $this->updatedCPMKNameSearch($this->cpmkNameSearch);
             // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
             $this->updatedRefNameSearch($this->refNameSearch);
@@ -400,7 +421,7 @@ trait WithRPSModal
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
         $data['tim_dosen_id_array'] = $this->tim_dosen_id_array ?? [];
         $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
 
@@ -518,7 +539,7 @@ trait WithRPSModal
         $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             $validated = $this->inputModalRPS(true, $data);

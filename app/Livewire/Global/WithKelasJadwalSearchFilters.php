@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Global;
 
+use App\Models\Kelas\KelasJadwal;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ trait WithKelasJadwalSearchFilters
 
     public $modeJadwal = [];
 
-    public $jadwal_id = [];
+    public $kj_id = [];
 
     public $jadwal_name = [];
 
@@ -31,7 +32,7 @@ trait WithKelasJadwalSearchFilters
     public $selectedJadwalId = [];
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
-    public $jadwal_id_array = [];
+    public $kj_id_array = [];
 
     public $jadwal_items_array = [];
 
@@ -113,9 +114,9 @@ trait WithKelasJadwalSearchFilters
 
     public function updatedJadwalNameSearch($value)
     {
-        $this->jadwal_id = null;
+        $this->kj_id = null;
         $this->jadwal_items = null;
-        $this->resetErrorBag(['jadwal_id', 'jadwalNameSearch']);
+        $this->resetErrorBag(['kj_id', 'jadwalNameSearch']);
 
         $query = $this->jadwalQuery();
 
@@ -132,22 +133,22 @@ trait WithKelasJadwalSearchFilters
             });
 
             if ($exactMatch) {
-                $this->jadwal_id = $exactMatch->id;
+                $this->kj_id = $exactMatch->id;
                 $this->jadwal_items = $this->itemsJadwal($exactMatch);
-                $this->jadwalNameSearch = $exactMatch->deskripsi;
+                $this->jadwalNameSearch = $exactMatch->kode;
                 $this->jadwalResults = [];
             }
             if ($exactMatch) {
                 if ($this->modeJadwal == 'single') {
-                    $this->jadwalNameSearch = $exactMatch->deskripsi;
-                    $this->jadwal_id = $exactMatch->id;
+                    $this->jadwalNameSearch = $exactMatch->kode;
+                    $this->kj_id = $exactMatch->id;
                     $this->jadwal_items = $this->itemsJadwal($exactMatch);
                     $this->jadwalResults = [];
                 } else {
                     $this->jadwalNameSearch = '';
-                    $this->jadwal_id_array[] = $exactMatch->id;
+                    $this->kj_id_array[] = $exactMatch->id;
                     $this->jadwal_items_array[] = $this->itemsJadwal($exactMatch);
-                    $this->jadwal_id_array = collect($this->jadwal_id_array)
+                    $this->kj_id_array = collect($this->kj_id_array)
                         ->unique()
                         ->values()
                         ->all();
@@ -210,18 +211,23 @@ trait WithKelasJadwalSearchFilters
             : $this->mapJadwal($mainResults);
     }
 
-    public function fetchJadwal($query = '', $mode = 'single')
+    public function fetchJadwal($mode = 'single')
     {
         $this->modeJadwal = $mode;
-        if (empty($query) || (! empty($this->jadwal_id) || ! empty($this->jadwal_id_array))) {
+        if ($this->kj_id) {
+            $jadwal = KelasJadwal::find($this->kj_id);
+            if ($jadwal) {
+                $this->jadwalNameSearch = $jadwal->kode;
+                $this->jadwal_items = $this->itemsJadwal($jadwal);
+            }
             $this->jadwalResults = $this->getJadwalbyUser();
+            return;
         }
-
     }
 
     public function selectJadwal($id, $jadwalName)
     {
-        $this->jadwal_id = $id;
+        $this->kj_id = $id;
         $this->jadwalNameSearch = $jadwalName;
         $this->jadwalResults = $this->getJadwalbyUser();
 
@@ -236,14 +242,14 @@ trait WithKelasJadwalSearchFilters
             $this->fetchJadwal('');
         }
 
-        $this->resetErrorBag(['jadwal_id', 'jadwalNameSearch']);
+        $this->resetErrorBag(['kj_id', 'jadwalNameSearch']);
     }
 
     public function selectJadwalArray($id)
     {
         $data = $this->jadwalQuery()->find($id);
-        if ($data && ! in_array($id, $this->jadwal_id_array)) {
-            $this->jadwal_id_array[] = $id;
+        if ($data && ! in_array($id, $this->kj_id_array)) {
+            $this->kj_id_array[] = $id;
             $this->jadwal_items_array[] = $this->itemsJadwal($data);
 
             $mappedResults = $this->mapJadwal(collect([$data]));
@@ -253,13 +259,13 @@ trait WithKelasJadwalSearchFilters
 
     public function resetJadwalInput()
     {
-        $this->reset(['jadwal_id', 'jadwal_items', 'jadwalNameSearch']);
+        $this->reset(['kj_id', 'jadwal_items', 'jadwalNameSearch']);
         $this->jadwalResults = $this->getJadwalbyUser();
     }
 
     public function resetJadwalArray()
     {
-        $this->jadwal_id_array = [];
+        $this->kj_id_array = [];
         $this->jadwal_items_array = [];
         $this->jadwalNameSearch = '';
     }

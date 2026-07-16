@@ -227,13 +227,18 @@ trait WithUserSearchFilters
             : $this->mapUser($mainResults);
     }
 
-    public function fetchUser($query = '', $mode = 'single')
+    public function fetchUser($mode = 'single')
     {
         $this->modeUser = $mode;
-        if (empty($query) || $this->user_id) {
+        if ($this->user_id) {
+            $user = User::find($this->user_id);
+            if ($user) {
+                $this->userNameSearch = $user->name;
+                $this->user_items = $this->itemsUser($user);
+            }
             $this->userResults = $this->getUserbyUser();
+            return;
         }
-
     }
 
     public function selectUser($id, $userName)
@@ -248,7 +253,7 @@ trait WithUserSearchFilters
         }
 
         if (method_exists($this, 'fetchUser')) {
-            $this->fetchUser('');
+            $this->fetchUser();
         }
 
         $this->resetErrorBag(['user_id', 'userNameSearch']);

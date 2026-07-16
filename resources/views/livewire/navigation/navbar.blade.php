@@ -391,7 +391,7 @@
                     foreach ($sesiHistory as $sesi) {
                         $kodeKelas = $sesi['kode_kelas_url'] ?? ($sesi['kode_kelas'] ?? null);
                         $kodeJadwal = $sesi['kode_jadwal_short_url'] ?? ($sesi['kode_jadwal_short'] ?? null);
-                        $jadwalId = $sesi['jadwal_id'] ?? null;
+                        $jadwalId = $sesi['kj_id'] ?? null;
                         $switchTable = $sesi['switchTable'] ?? null;
 
                         $subMenus[] = [

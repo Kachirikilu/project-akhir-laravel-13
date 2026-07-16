@@ -74,34 +74,14 @@ trait WithProdiModal
                 $this->selected_id_pr = $prodi->id;
                 $this->dp_id = $prodi->dp_id ?? null;
                 $this->dp_id_2 = $prodi->dp_id ?? null;
-
-                $this->dpNameSearch = $prodi->departemen ?? '';
-
-                if ($this->dp_id) {
-                    $departemen = Departemen::find($this->dp_id);
-                    $this->dpNameSearch = $departemen ? $departemen->departemenDp : '';
-                } else {
-                    $this->dpNameSearch = '';
-                }
-                $this->getDpbyUser();
-                $this->fetchDp($this->dpNameSearch);
-
+                $this->fetchDp();
             } elseif ($type === 'departemen') {
                 $departemen = Departemen::with('fk_rel')->findOrFail($id);
                 $this->selected_id_pr = $departemen->id;
 
                 $this->fk_id = $departemen->fk_id;
                 $this->fk_id_2 = $departemen->fk_id;
-                $this->fkNameSearch = $departemen->fakultas ?? '';
-
-                if ($this->fk_id) {
-                    $fakultas = Fakultas::find($this->fk_id);
-                    $this->fkNameSearch = $fakultas ? $fakultas->fakultasFk : '';
-                } else {
-                    $this->fkNameSearch = '';
-                }
-                $this->getFkbyUser();
-                $this->fetchFk($this->fkNameSearch);
+                $this->fetchFk();
 
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);

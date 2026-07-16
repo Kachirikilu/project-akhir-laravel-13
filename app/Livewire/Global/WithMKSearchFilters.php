@@ -223,20 +223,16 @@ trait WithMKSearchFilters
             : $this->mapMK($mainResults);
     }
 
-    public function fetchMK($query = '', $mode = 'single')
+    public function fetchMK($mode = 'single')
     {
         $this->modeMK = $mode;
-
-        if ($this->mk_id && empty($this->mk_items)) {
+        if ($this->mk_id) {
             $mk = MataKuliah::find($this->mk_id);
             if ($mk) {
+                $this->mkNameSearch = $mk->mk;
                 $this->mk_items = $this->itemsMK($mk);
             }
-        }
-
-        if (empty($query) || $this->mk_id) {
             $this->mkResults = $this->getMKbyUser();
-
             return;
         }
     }
@@ -251,9 +247,9 @@ trait WithMKSearchFilters
             $this->mk_items = $this->itemsMK($data);
         }
 
-        // if (method_exists($this, 'fetchMK')) {
-        //     $this->fetchMK('');
-        // }
+        if (method_exists($this, 'fetchMK')) {
+            $this->fetchMK();
+        }
 
         $this->mkResults = $this->getMKbyUser();
         $this->resetErrorBag(['mk_id', 'mkNameSearch']);

@@ -75,13 +75,22 @@
 
     .menu-theme-item:active {
         background: color-mix(in srgb, var(--focus-color) 48%, transparent);
-        /* color: var(--main-text); */
         transform: scale(.985);
     }
 
     .menu-theme-item:active .menu-theme-icon,
     .menu-theme-item:active .menu-theme-label {
         color: inherit;
+    }
+
+    .menu-theme-item.active {
+        background: color-mix(in srgb, var(--focus-color) 20%, transparent);
+        color: var(--focus-color);
+        font-weight: 600;
+    }
+
+    .menu-theme-item.active .menu-theme-icon {
+        color: var(--focus-color);
     }
 
     .menu-theme-icon {
@@ -178,7 +187,7 @@
 
     /* Header Utama */
     .table-head {
-        @apply px-6 py-4 text-[9px] sm:text-xs uppercase;
+        @apply px-6 py-4 text-xs sm:text-sm uppercase;
         @apply border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
         @apply text-[var(--contrast-main-text)];

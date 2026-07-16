@@ -250,13 +250,18 @@ trait WithCPMKSearchFilters
             : $this->mapCPMK($mainResults);
     }
 
-    public function fetchCPMK($query = '', $mode = 'single')
+    public function fetchCPMK($mode = 'single')
     {
         $this->modeCPMK = $mode;
-        if (empty($query) || $this->cpmk_id) {
+        if ($this->cpmk_id) {
+            $cpmk = CPMK::find($this->cpmk_id);
+            if ($cpmk) {
+                $this->cpmkNameSearch = $cpmk->deskripsi_cpl;
+                $this->cpmk_items = $this->itemsCPMK($cpmk);
+            }
             $this->cpmkResults = $this->getCPMKbyUser();
+            return;
         }
-
     }
 
     public function selectCPMK($id, $cpmkName)
@@ -273,7 +278,7 @@ trait WithCPMKSearchFilters
         }
 
         if (method_exists($this, 'fetchCPMK')) {
-            $this->fetchCPMK('');
+            $this->fetchCPMK();
         }
 
         $this->resetErrorBag(['cpmk_id', 'cpmkNameSearch']);

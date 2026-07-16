@@ -259,13 +259,26 @@ trait WithTimDosenSearchFilters
             : $this->mapTimDosen($mainResults);
     }
 
-    public function fetchTimDosen($query = '', $mode = 'single')
+    // public function fetchTimDosen($query = '', $mode = 'single')
+    // {
+    //     $this->modeTimDosen = $mode;
+    //     if (empty($query) || (! empty($this->timDosen_id) || ! empty($this->tim_dosen_id_array))) {
+    //         $this->timDosenResults = $this->getTimDosenbyUser();
+    //     }
+    // }
+
+    public function fetchTimDosen($mode = 'single')
     {
         $this->modeTimDosen = $mode;
-        if (empty($query) || (! empty($this->timDosen_id) || ! empty($this->tim_dosen_id_array))) {
+        if ($this->timDosen_id) {
+            $timDosen = TimDosen::find($this->timDosen_id);
+            if ($timDosen) {
+                $this->timDosenNameSearch = $timDosen->tim;
+                $this->timDosen_items = $this->itemsTimDosen($timDosen);
+            }
             $this->timDosenResults = $this->getTimDosenbyUser();
+            return;
         }
-
     }
 
     public function selectTimDosen($id, $timDosenName)
@@ -282,7 +295,7 @@ trait WithTimDosenSearchFilters
         }
 
         if (method_exists($this, 'fetchTimDosen')) {
-            $this->fetchTimDosen('');
+            $this->fetchTimDosen();
         }
 
         $this->resetErrorBag(['timDosen_id', 'timDosenNameSearch']);

@@ -69,12 +69,10 @@ trait WithSubCPMKModal
 
         $this->showEditSCPMK = false;
 
-        $this->refNameSearch['scpmk'] = '';
-
         $this->ref_id_array[$key] = [];
         $this->ref_items_array[$key] = [];
 
-        $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
+        $this->updatedRefNameSearch($this->refNameSearch);
     }
 
     public function editSCPMK($id, $key = 'scpmk')
@@ -97,18 +95,14 @@ trait WithSubCPMKModal
                 'cpmks.rps',
             ])->findOrFail($id);
 
-            $this->ref_id_array = array_merge(
-                array_map(fn () => [], $this->ref_id_array),
-                [$key => $scpmk->refs->pluck('id')->toArray()]
-            );
-            $this->ref_items_array = array_merge(
-                array_map(fn () => [], $this->ref_items_array),
-                [$key => $scpmk->refs->map(function ($c) {
-                    return $this->itemsRef($c);
-                })->toArray()]
-            );
+            $this->ref_id_array = collect($this->ref_id_array)
+                ->merge($scpmk->refs->pluck('id'))->unique()->values()->all();
+            $this->ref_items_array = collect($this->ref_items_array)
+                ->merge(
+                    $scpmk->refs->map(fn ($r) => $this->itemsRef($r))
+                )->unique('id')->values()->all();
 
-            $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
+            $this->updatedRefNameSearch($this->refNameSearch);
 
             $this->scpmk_rps_id = $scpmk->id;
             $this->resetPage('scpmk_rps_modal_page');
@@ -231,7 +225,7 @@ trait WithSubCPMKModal
             $data['metode'] = 'Teori';
         }
 
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             // 1. Jalankan validasi & pembersihan
@@ -298,7 +292,7 @@ trait WithSubCPMKModal
             $data['metode'] = 'Teori';
         }
 
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             $validated = $this->inputModalSCPMK(true, $data);
@@ -536,7 +530,7 @@ trait WithSubCPMKModal
 
     private function resetInputSCPMK()
     {
-        $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
+        $this->refNameSearch = '';
 
         $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
         $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);

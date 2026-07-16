@@ -354,13 +354,18 @@ trait WithRPSSearchFilters
             : $this->mapRPS($mainResults);
     }
 
-    public function fetchRPS($query = '', $mode = 'single')
+    public function fetchRPS($mode = 'single')
     {
         $this->modeRPS = $mode;
-        if (empty($query) || $this->rps_id) {
+        if ($this->rps_id) {
+            $rps = RPS::find($this->rps_id);
+            if ($rps) {
+                $this->rpsNameSearch = $rps->rps;
+                $this->rps_items = $this->itemsRPS($rps);
+            }
             $this->rpsResults = $this->getRPSbyUser();
+            return;
         }
-
     }
 
     public function selectRPS($id, $rpsName)
@@ -375,7 +380,7 @@ trait WithRPSSearchFilters
         }
 
         if (method_exists($this, 'fetchRPS')) {
-            $this->fetchRPS('');
+            $this->fetchRPS();
         }
 
         $this->resetErrorBag(['rps_id', 'rpsNameSearch']);

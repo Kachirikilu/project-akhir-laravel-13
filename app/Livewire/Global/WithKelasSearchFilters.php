@@ -38,30 +38,32 @@ trait WithKelasSearchFilters
 
     private function mapKelas($collection)
     {
-        return $collection->map(fn ($c) => [
-            'id' => $c->id,
-            'kode' => $c->kode,
-            'deskripsi' => $c->deskripsi,
-            'rps' => $c->rps_rel?->rps,
-            'kode_rps' => $c->rps_rel?->kode,
-            'prodi' => $c->pr_rel?->prodi,
-            'fakultas' => $c->pr_rel?->fakultasFk,
+        return $collection->map(fn ($k) => [
+            'id' => $k->id,
+            'kode' => $k->kode,
+            'kelas' => $k->kelas,
+            'deskripsi' => $k->deskripsi,
+            'rps' => $k->rps_rel?->rps,
+            'kode_rps' => $k->rps_rel?->kode,
+            'prodi' => $k->pr_rel?->prodi,
+            'fakultas' => $k->pr_rel?->fakultasFk,
         ])->toArray();
     }
 
     private function mapKelasSearch($collection)
     {
-        return $collection->map(fn ($c) => [
-            'id' => $c->id,
-            'kode' => $c->kode,
-            'kode_text' => 'Kode: '.$c->kode,
-            'rps' => $c->rps_rel?->rps,
-            'kode_rps' => $c->rps_rel?->kode,
-            'prodi' => $c->pr_rel?->prodi,
-            'departemen' => $c->pr_rel?->departemenDp,
-            'fakultas' => $c->pr_rel?->fakultasFk,
-            'kode_pr' => $c->pr_rel?->kode,
-            'deskripsi' => $c->deskripsi,
+        return $collection->map(fn ($k) => [
+            'id' => $k->id,
+            'kode' => $k->kode,
+            'kode_text' => 'Kode: '.$k->kode,
+            'rps' => $k->rps_rel?->rps,
+            'kode_rps' => $k->rps_rel?->kode,
+            'prodi' => $k->pr_rel?->prodi,
+            'departemen' => $k->pr_rel?->departemenDp,
+            'fakultas' => $k->pr_rel?->fakultasFk,
+            'kode_pr' => $k->pr_rel?->kode,
+            'kelas' => $k->kelas,
+            'deskripsi' => $k->deskripsi,
         ])->toArray();
     }
 
@@ -114,8 +116,8 @@ trait WithKelasSearchFilters
 
         if ($data) {
             $this->selectedKelasId = $id;
-            $this->kelas_name = $data->deskripsi;
-            $this->kelasSearchQuery = $data->deskripsi;
+            $this->kelas_name = $data->kelas;
+            $this->kelasSearchQuery = $data->kelas;
             $this->kelas_items = $this->itemsKelas($data);
             $this->kelasSearchResults = [];
             $this->resetPage();
@@ -146,12 +148,12 @@ trait WithKelasSearchFilters
             if ($exactMatch) {
                 $this->kelas_id = $exactMatch->id;
                 $this->kelas_items = $this->itemsKelas($exactMatch);
-                $this->kelasNameSearch = $exactMatch->deskripsi;
+                $this->kelasNameSearch = $exactMatch->kelas;
                 $this->kelasResults = [];
             }
             if ($exactMatch) {
                 if ($this->modeKelas == 'single') {
-                    $this->kelasNameSearch = $exactMatch->deskripsi;
+                    $this->kelasNameSearch = $exactMatch->kelas;
                     $this->kelas_id = $exactMatch->id;
                     $this->kelas_items = $this->itemsKelas($exactMatch);
                     $this->kelasResults = [];
@@ -222,13 +224,18 @@ trait WithKelasSearchFilters
             : $this->mapKelas($mainResults);
     }
 
-    public function fetchKelas($query = '', $mode = 'single')
+    public function fetchKelas($mode = 'single')
     {
         $this->modeKelas = $mode;
-        if (empty($query) || (! empty($this->kelas_id) || ! empty($this->kelas_id_array))) {
+        if ($this->kelas_id) {
+            $kelas = Kelas::find($this->kelas_id);
+            if ($kelas) {
+                $this->kelasNameSearch = $kelas->kelas;
+                $this->kelas_items = $this->itemsKelas($kelas);
+            }
             $this->kelasResults = $this->getKelasbyUser();
+            return;
         }
-
     }
 
     public function selectKelas($id, $kelasName)
@@ -245,7 +252,7 @@ trait WithKelasSearchFilters
         }
 
         if (method_exists($this, 'fetchKelas')) {
-            $this->fetchKelas('');
+            $this->fetchKelas();
         }
 
         $this->resetErrorBag(['kelas_id', 'kelasNameSearch']);

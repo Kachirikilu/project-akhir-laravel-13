@@ -85,28 +85,22 @@
         <flux:menu.separator />
 
         <div class="space-y-1">
-
-            <a href="{{ route('dashboard') }}" wire:navigate class="menu-theme-item">
+            <a href="{{ route('dashboard') }}" wire:navigate
+                class="menu-theme-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <flux:icon name="squares-2x2" class="menu-theme-icon w-5 h-5" />
-                <span class="menu-theme-label">
-                    {{ __('Dashboard') }}
-                </span>
+                <span class="menu-theme-label">{{ __('Dashboard') }}</span>
             </a>
 
-            <a href="/" wire:navigate class="menu-theme-item">
+            <a href="/" wire:navigate class="menu-theme-item {{ request()->is('/') ? 'active' : '' }}">
                 <flux:icon name="computer-desktop" class="menu-theme-icon w-5 h-5" />
-                <span class="menu-theme-label">
-                    {{ __('Front Page') }}
-                </span>
+                <span class="menu-theme-label">{{ __('Front Page') }}</span>
             </a>
 
-            <a href="{{ route('profile.edit') }}" wire:navigate class="menu-theme-item">
+            <a href="{{ route('profile.edit') }}" wire:navigate
+                class="menu-theme-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                 <flux:icon name="cog" class="menu-theme-icon w-5 h-5" />
-                <span class="menu-theme-label">
-                    {{ __('Settings') }}
-                </span>
+                <span class="menu-theme-label">{{ __('Settings') }}</span>
             </a>
-
         </div>
 
         <flux:menu.separator />

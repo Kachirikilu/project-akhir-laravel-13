@@ -21,11 +21,11 @@ class NilaiAbsensiSesiManagement extends Component
     public $isReady;
 
     #[On('open-edit-nilai-absensi-modal')]
-    public function handleEditNilaiAbsensi($id, $jadwal_id, $count_sesi)
+    public function handleEditNilaiAbsensi($id, $kj_id, $count_sesi)
     {
         $this->isReady = true;
         $this->count_sesi = $count_sesi;
-        $this->editNilaiAbsensi($id, $jadwal_id);
+        $this->editNilaiAbsensi($id, $kj_id);
     }
 
     public function render()

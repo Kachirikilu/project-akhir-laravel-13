@@ -440,7 +440,7 @@ trait WithRPSModal
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
         $data['dosen_pertemuan_array'] = $this->dosen_pertemuan_array ?? [];
@@ -561,7 +561,7 @@ trait WithRPSModal
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
+       $data['ref_id_array'] = $this->ref_id_array ?? [];
         $data['dosen_pertemuan_array'] = array_filter($this->dosen_pertemuan_array) ?? [];
 
         try {
@@ -741,7 +741,7 @@ trait WithRPSModal
     {
         $this->cpmkNameSearch = '';
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
+        $this->refNameSearch = '';
 
         $this->mkNameSearch = '';
         // ambil id untuk simpan ke rps_pivot_cpmk

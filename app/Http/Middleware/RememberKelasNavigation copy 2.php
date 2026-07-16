@@ -47,7 +47,7 @@ class RememberKelasNavigation
         if ($routeName === 'sesi-management' || $routeName === 'sesi-jadwal-kelas') {
             $currentKode = $request->route('kode_kelas');
             $currentKodeJadwal = $request->route('kode_jadwal_url');
-            $currentIdJadwal = $request->route('jadwal_id');
+            $currentIdJadwal = $request->route('kj_id');
             $currentKodeDb = str_replace('-', '', $currentKode);
 
             $jadwalExists = KelasJadwal::query()
@@ -80,12 +80,12 @@ class RememberKelasNavigation
             $sesiHistory[$compositeKey] = [
                 'kode_kelas' => $currentKode,
                 'kode_jadwal_url' => $currentKodeJadwal,
-                'jadwal_id' => $currentIdJadwal,
+                'kj_id' => $currentIdJadwal,
                 'switchTable' => $request->route('switchTable'),
                 'url' => route($routeName, array_filter([
                     'kode_kelas' => $currentKode,
                     'kode_jadwal_url' => $currentKodeJadwal,
-                    'jadwal_id' => $currentIdJadwal,
+                    'kj_id' => $currentIdJadwal,
                     'switchTable' => $request->route('switchTable'),
                 ])),
             ];

@@ -26,7 +26,7 @@ document.addEventListener("alpine:init", () => {
         currentPage: 1,
         totalPages: 1,
 
-        jadwal_id: "",
+        kj_id: "",
         kode: "",
         kode_kelas: "",
         label_extra: "",
@@ -122,7 +122,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         setValueJoinJadwal(id, kode, kodeKelas, labelExtra) {
-            this.jadwal_id = id;
+            this.kj_id = id;
             this.kode = kode;
             this.kode_kelas = kodeKelas;
             this.label_extra = labelExtra;
@@ -130,7 +130,7 @@ document.addEventListener("alpine:init", () => {
 
         getDataJoinJadwal() {
             let data = {
-                jadwal_id: this.jadwal_id,
+                kj_id: this.kj_id,
                 password: this.password,
             };
             return data;
@@ -152,7 +152,7 @@ document.addEventListener("alpine:init", () => {
                 this.restart_sesi = 0;
                 this.restart_absensi = 0;
 
-                this.jadwal_id = "";
+                this.kj_id = "";
                 this.kode = "";
                 this.kode_kelas = "";
                 this.label_extra = "";

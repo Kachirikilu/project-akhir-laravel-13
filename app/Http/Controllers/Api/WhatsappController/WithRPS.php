@@ -343,11 +343,11 @@ trait WithRPS
     //             throw new ModelNotFoundException("Jadwal spesifik '{$kode_jadwal}' tidak ditemukan untuk Kelas ini.");
     //         }
 
-    //         $this->jadwal_id = $this->jadwal->id;
+    //         $this->kj_id = $this->jadwal->id;
     //     } else {
     //         // Kosongkan properti jadwal jika request murni pencarian tingkat kelas
     //         $this->jadwal = null;
-    //         $this->jadwal_id = null;
+    //         $this->kj_id = null;
     //     }
     // }
 }

@@ -1,4 +1,4 @@
-<x-global.main-layout-card :paginator="$kelas">
+<x-global.main-layout-card :paginator="$kelas" :mx="''">
 
     {{-- 1. Isi bagian Sortir --}}
     <x-slot:sortir>

@@ -13,14 +13,14 @@ class LeftJadwalManagement extends Component
     use HasToast;
     use WithJadwalModal;
 
-    public $jadwal_id;
+    public $kj_id;
 
     public $isReady;
 
     #[On('open-left-jadwal-modal')]
-    public function handleLeftJadwal($jadwal_id) {
+    public function handleLeftJadwal($kj_id) {
         $this->isReady = true;
-        $this->jadwal_id = $jadwal_id;
+        $this->kj_id = $kj_id;
     }
 
     public function render()

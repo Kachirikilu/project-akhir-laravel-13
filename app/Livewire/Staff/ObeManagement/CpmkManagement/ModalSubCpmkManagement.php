@@ -57,9 +57,9 @@ class ModalSubCpmkManagement extends Component
         if (! $ref) {
             return;
         }
-        if (! in_array($ref->id, $this->ref_id_array['scpmk'] ?? [])) {
-            $this->ref_id_array['scpmk'][] = $ref->id;
-            $this->ref_items_array['scpmk'][] = $this->itemsRef($ref);
+        if (! in_array($ref->id, $this->ref_id_array ?? [])) {
+            $this->ref_id_array[] = $ref->id;
+            $this->ref_items_array[] = $this->itemsRef($ref);
         }
     }
 

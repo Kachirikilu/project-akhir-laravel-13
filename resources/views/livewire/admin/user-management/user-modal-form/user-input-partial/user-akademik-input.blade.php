@@ -23,15 +23,15 @@
 
     @include('livewire.global.modal-form.input-array.search-input-form', [
         'alpine' => 'user',
-        'isLivewire' => 1,
         'xResults' => $prResults,
         'selectX' => 'selectPr',
-        'modelString' => 'nama_pr',
+        'modelString' => 'nama_pr_search',
     
         'idString' => 'pr_id',
         'itemsAllString' => 'pr_items',
     
         'resetXInput' => 'resetPrInput()',
+    
         'typeXString' => 'prodi',
         // 'typeX2String' => 'departemen',
         'typeX2String' => 'fakultas',

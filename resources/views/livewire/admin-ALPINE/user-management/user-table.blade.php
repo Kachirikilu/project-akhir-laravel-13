@@ -282,7 +282,7 @@
                     $users = User::with(['mahasiswa'])
                         ->withCount(['kehadirans' => function ($query) use ($jadwalId) {
                             $query->whereHas('sesi', function ($q) use ($jadwalId) {
-                                $q->where('jadwal_id', $jadwalId);
+                                $q->where('kj_id', $jadwalId);
                             });
                         }])
                         ->get();

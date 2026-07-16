@@ -348,15 +348,20 @@ trait WithMahasiswaSearchFilters
             : $this->mapMahasiswa($mainResults);
     }
 
-    public function fetchMahasiswa($query = '', $mode = 'single')
+    public function fetchMahasiswa($mode = 'single')
     {
         $this->modeMahasiswa = $mode;
-        if (empty($query) || $this->mahasiswa_id) {
+        if ($this->mahasiswa_id) {
+            $mahasiswa = Mahasiswa::find($this->mahasiswa_id);
+            if ($mahasiswa) {
+                $this->mahasiswaNameSearch = $mahasiswa->name;
+                $this->mahasiswa_items = $this->itemsMahasiswa($mahasiswa);
+            }
             $this->mahasiswaResults = $this->getMahasiswabyUser();
+            return;
         }
-
     }
-
+    
     public function selectMahasiswa($id, $mahasiswaName)
     {
         $this->mahasiswa_id = $id;
@@ -369,7 +374,7 @@ trait WithMahasiswaSearchFilters
         }
 
         if (method_exists($this, 'fetchMahasiswa')) {
-            $this->fetchMahasiswa('');
+            $this->fetchMahasiswa();
         }
 
         $this->resetErrorBag(['mahasiswa_id', 'mahasiswaNameSearch']);

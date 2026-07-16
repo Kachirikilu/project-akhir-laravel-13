@@ -187,7 +187,7 @@
                         '{{ $jadwal->password ?? '' }}',
                     );
                     $flux.modal('jadwal-modal').show();
-                    $dispatch('open-edit-jadwal-modal', { id: {{ $jadwal_id_url }}, kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' });
+                    $dispatch('open-edit-jadwal-modal', { id: {{ $kj_id_url }}, kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' });
                 "
                     icon="pencil-square" size="sm"
                     class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
