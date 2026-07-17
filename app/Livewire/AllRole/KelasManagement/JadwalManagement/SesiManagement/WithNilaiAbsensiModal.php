@@ -188,36 +188,47 @@ trait WithNilaiAbsensiModal
         $this->selected_id_jadwal = $kj_id;
         $this->selected_id_rps = $jadwal->kelas_rel->rps_id;
 
-        // 2. Cari data NilaiMahasiswa
         $nilai_mahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
             ->where('rps_id', $jadwal->kelas_rel->rps_id)
+            ->where('kj_id', $kj_id)
             ->where('ganjil_genap', (string) $jadwal->ganjil_genap)
-            ->where('tahun_akademik', (string) $jadwal->tahun_akademik)
+            ->where('akademik', (string) $jadwal->akademik)
             ->first();
 
-        // 3. JIKA NULL, BUAT DATA BARU SECARA OTOMATIS
+        if (! $nilai_mahasiswa) {
+            $nilai_mahasiswa = NilaiMahasiswa::where('mahasiswa_id', $id)
+                ->where('rps_id', $jadwal->kelas_rel->rps_id)
+                ->where('ganjil_genap', (string) $jadwal->ganjil_genap)
+                ->where('akademik', (string) $jadwal->akademik)
+                ->first();
+
+            if ($nilai_mahasiswa) {
+                $nilai_mahasiswa->update([
+                    'kj_id' => $kj_id,
+                ]);
+            }
+        }
+
         if (! $nilai_mahasiswa) {
             $newNilaiArray = [];
             $newBobotArray = [];
 
             foreach ($sesis as $sesi) {
                 $index = $sesi->pertemuan_ke - 1;
-                $newNilaiArray[$index] = 0; // Nilai default diganti menjadi 0 sesuai request
+                $newNilaiArray[$index] = 0;
 
-                // Ambil nilai dari accessor bobotNormalisasi (dibagi 100 karena accessor menghasilkan angka * 100)
                 $bobotNorm = $sesi->bobot_normalisasi ?? 0;
                 $newBobotArray[$index] = $bobotNorm > 0 ? round($bobotNorm / 100, 4) : 0;
             }
 
-            // Daftarkan baris record baru ke database
             $nilai_mahasiswa = NilaiMahasiswa::create([
                 'mahasiswa_id' => $id,
-                'rps_id' => $jadwal->kelas_rel->rps_id,
-                'ganjil_genap' => (string) $jadwal->ganjil_genap,
-                'tahun_akademik' => (string) $jadwal->tahun_akademik,
+                'rps_id' => $this->selected_id_rps,
+                // 'kj_id' => $this->selected_id_jadwal,
+                'ganjil_genap' => $jadwal->ganjil_genap,
+                'akademik' => $jadwal->akademik,
                 'nilai_array' => $newNilaiArray,
                 'bobot_array' => $newBobotArray,
-                // tambahkan field mandatory lain jika ada, contoh: 'nilai_akhir' => 0
             ]);
         }
 
@@ -310,32 +321,33 @@ trait WithNilaiAbsensiModal
         */
         $nilai_mahasiswa = NilaiMahasiswa::where('mahasiswa_id', $this->selected_id_mahasiswa)
             ->where('rps_id', $this->jadwal->kelas_rel->rps_id)
+            // ->where('kj_id', $this->jadwal->id)
             ->where('ganjil_genap', (string) $this->jadwal->ganjil_genap)
-            ->where('tahun_akademik', (string) $this->jadwal->tahun_akademik)
+            ->where('akademik', (string) $this->jadwal->akademik)
             ->first();
 
-        if (! $nilai_mahasiswa) {
-            $initNilaiArray = [];
-            $initBobotArray = [];
+        // if (! $nilai_mahasiswa) {
+        //     $initNilaiArray = [];
+        //     $initBobotArray = [];
 
-            foreach ($this->sesi_input['list_absensi_array'] as $index => $item) {
-                $initNilaiArray[$index] = 0;
+        //     foreach ($this->sesi_input['list_absensi_array'] as $index => $item) {
+        //         $initNilaiArray[$index] = 0;
 
-                $sesiModel = KelasSesi::find($item['sesi_id']);
-                $bobotNorm = $sesiModel?->bobot_normalisasi ?? 0;
-                $initBobotArray[$index] = $bobotNorm > 0 ? round($bobotNorm / 100, 4) : 0;
-            }
+        //         $sesiModel = KelasSesi::find($item['sesi_id']);
+        //         $bobotNorm = $sesiModel?->bobot_normalisasi ?? 0;
+        //         $initBobotArray[$index] = $bobotNorm > 0 ? round($bobotNorm / 100, 4) : 0;
+        //     }
 
-            $nilai_mahasiswa = new NilaiMahasiswa;
-            $nilai_mahasiswa->mahasiswa_id = $this->selected_id_mahasiswa;
-            $nilai_mahasiswa->ganjil_genap = (string) $this->jadwal->ganjil_genap;
-            $nilai_mahasiswa->tahun_akademik = (string) $this->jadwal->tahun_akademik;
-            $nilai_mahasiswa->nilai_array = $initNilaiArray;
-            $nilai_mahasiswa->bobot_array = $initBobotArray;
-        }
+        //     $nilai_mahasiswa = new NilaiMahasiswa;
+        //     $nilai_mahasiswa->mahasiswa_id = $this->selected_id_mahasiswa;
+        //     $nilai_mahasiswa->ganjil_genap = (string) $this->jadwal->ganjil_genap;
+        //     $nilai_mahasiswa->akademik = (string) $this->jadwal->akademik;
+        //     $nilai_mahasiswa->nilai_array = $initNilaiArray;
+        //     $nilai_mahasiswa->bobot_array = $initBobotArray;
+        // }
 
-        $nilai_mahasiswa->kj_id = $this->jadwal->id;
-        $nilai_mahasiswa->rps_id = $this->jadwal->kelas_rel->rps_id;
+        // $nilai_mahasiswa->kj_id = $this->jadwal->id;
+        // $nilai_mahasiswa->rps_id = $this->jadwal->kelas_rel->rps_id;
 
         /*
         |--------------------------------------------------------------------------

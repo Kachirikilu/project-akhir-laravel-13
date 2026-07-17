@@ -110,7 +110,6 @@ class SesiManagement extends Component
     #[On('refresh-table')]
     public function refreshSesiList()
     {
-        $this->resetPage();
     }
 
     #[On('refresh-data-rps-mahasiswa')]
@@ -244,16 +243,6 @@ class SesiManagement extends Component
     {
         $this->reset(['search', 'filterSesi']);
         $this->resetPage();
-    }
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
     }
 
     private function syncSortField($table, $sortField)

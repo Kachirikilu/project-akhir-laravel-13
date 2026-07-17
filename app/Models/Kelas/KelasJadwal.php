@@ -157,7 +157,7 @@ class KelasJadwal extends Model
         });
     }
 
-    protected function tahunAkademik(): Attribute
+    protected function akademik(): Attribute
     {
         return Attribute::get(function () {
 

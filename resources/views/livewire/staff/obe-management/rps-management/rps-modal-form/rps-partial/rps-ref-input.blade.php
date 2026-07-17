@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
 

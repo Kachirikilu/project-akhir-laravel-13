@@ -45,7 +45,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
                         $query->where('ganjil_genap', $ganjil_genap);
                     }
                     if (! is_null($akademik)) {
-                        $query->where('tahun_akademik', $akademik);
+                        $query->where('akademik', $akademik);
                     }
                 },
                 'nilai_mahasiswas.rps_rel.mk_rel',
@@ -103,7 +103,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
         /** @var NilaiMahasiswa $row */
 
         // Ambil tahun akademik dari relasi jadwal jika ada, atau gunakan default text fallback
-        $ta = $row->ganjil_genap.' '.$row->tahun_akademik;
+        $ta = $row->ganjil_genap.' '.$row->akademik;
 
         $data = [
             $row->digit_mk ?? '',

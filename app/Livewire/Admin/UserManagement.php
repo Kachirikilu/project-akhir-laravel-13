@@ -199,16 +199,16 @@ class UserManagement extends Component
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
-        $this->resetPage();
-    }
+    // public function sortBy($field)
+    // {
+    //     if ($this->sortField === $field) {
+    //         $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+    //     } else {
+    //         $this->sortField = $field;
+    //         $this->sortDirection = 'asc';
+    //     }
+    //     $this->resetPage();
+    // }
 
     // public function placeholder()
     // {

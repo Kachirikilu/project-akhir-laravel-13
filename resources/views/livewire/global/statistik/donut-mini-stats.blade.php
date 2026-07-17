@@ -4,6 +4,8 @@
     $r = 28;
     $c = 2 * M_PI * $r;
     $vb = 64;
+    $value = $value ?? $mainValue;
+    $max = $max ?? $value ?? $mainValue;
     $rawPct = ($max ?? 0) > 0 ? min(100, ($value / $max) * 100) : 0;
     $offset = $c - ($rawPct / 100) * $c;
     $pctDisplay = round($rawPct, 1);
@@ -38,7 +40,7 @@
             </svg>
             <div class="absolute inset-0 flex items-center justify-center">
                 <span class="{{ $pctSize }} font-black leading-none text-[var(--contrast-main-text)]">
-                    {{ $pctDisplay }}%
+                    {{ $mainValue ?? ($pctDisplay . '%') }}
                 </span>
             </div>
         </div>

@@ -428,7 +428,7 @@
                     @if ($jadwal)
                         <div class="text-right">
                             <span class="chart-header-kelas">
-                                {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $tahun_akademik }}
+                                {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $akademik }}
                             </span>
                             <span class="chart-header-meta">
                                 Kode RPS: {{ $rps->kode ?? '---- -- ----' }}

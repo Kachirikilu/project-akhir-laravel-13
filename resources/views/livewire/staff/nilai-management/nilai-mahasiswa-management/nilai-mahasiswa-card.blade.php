@@ -12,6 +12,7 @@
                 'semester' => (int) $p->semester,
                 'akademik' => $akademik,
                 'ganjil_genap' => $ganjilGenap,
+                'total_mk' => (int) ($p->total_mk ?? 0),
                 'total_sks' => (int) ($p->total_sks ?? 0),
                 'nilai_semester' => $p->nilai_semester ?? '0.00',
                 'ip_semester' => $p->ip_semester ?? '0.00',
@@ -85,6 +86,16 @@
             filtered = filtered.filter(item => {
                 let itemCleanAkademik = item.akademik.replace(/[^a-z0-9]/g, '');
 
+                let mkNum = String(item.total_mk);
+                let mkVariations = [
+                    mkNum,
+                    mkNum + 'mk',
+                    mkNum + ' mk',
+                    mkNum + 'mata kuliah',
+                    mkNum + ' kuliah',
+                    mkNum + ' kuliahan',
+                ].join(' ');
+
                 let sksNum = String(item.total_sks);
                 let sksVariations = [
                     sksNum,
@@ -106,7 +117,8 @@
                     item.mutu_semester.toLowerCase(),
                     String(item.ip_semester),
                     String(item.nilai_semester),
-                    sksVariations, // Masukkan variasi SKS yang sudah diperkaya ke sini
+                    mkVariations,
+                    sksVariations,
                     'semester ' + item.semester,
                     's' + item.semester
                 ].join(' ');
@@ -130,6 +142,11 @@
                         String(item.nilai_semester).includes(cleanDataQuery) ||
                         String(item.nilai_semester).includes(dotCleanDataQuery)
                     )) {
+                    return true;
+                }
+
+                let cleanMkQuery = query.replace(/(mk|mata kuliah|kuliah|kuliahan)/g, '').trim();
+                if (cleanMkQuery && String(item.total_mk) === cleanMkQuery) {
                     return true;
                 }
 
@@ -215,6 +232,10 @@
                     'alpine' => 'periode',
                 ])
                 @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'total_mk',
+                    'alpine' => 'periode',
+                ])
+                @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'total_sks',
                     'alpine' => 'periode',
                 ])
@@ -276,6 +297,17 @@
                     {{-- ═══ BODY ═══ --}}
                     <div class="flex flex-1 flex-col gap-2.5 p-4">
 
+                        <div class="flex flex-col gap-1.5">
+                        <div
+                            class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
+                            <flux:icon name="rectangle-stack" class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Total
+                                Mata Kuliah</span>
+                            <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
+                                {{ $p->total_mk }} MK
+                            </span>
+                        </div>
                         <div
                             class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
                             <flux:icon name="document-text" class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
@@ -285,6 +317,7 @@
                             <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
                                 {{ $p->total_sks }} SKS
                             </span>
+                        </div>
                         </div>
 
 

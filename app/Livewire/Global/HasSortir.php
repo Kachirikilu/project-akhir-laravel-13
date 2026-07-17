@@ -4,6 +4,25 @@ namespace App\Livewire\Global;
 
 trait HasSortir
 {
+
+    public function sortBy($field, $direction = null)
+    {
+        if ($direction !== null) {
+            $this->sortField = $field;
+            $this->sortDirection = $direction;
+            return;
+        }
+
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc'
+                ? 'desc'
+                : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+    
     public function sortField($table, $sortField, $columns, $aliases)
     {
         if (! isset($columns[$table])) {

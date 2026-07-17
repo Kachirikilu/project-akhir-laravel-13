@@ -436,12 +436,12 @@ trait WithUserExcel
             $this->resetInputUser();
             $this->showUserExcelModal = false;
             $this->dispatch('refresh-data-user');
-            $this->dispatch('refresh-stats-user');
         } else {
             $this->toast(text: $messageText, variant: 'warning');
 
         }
-
+        $this->dispatch('refresh-table');
+        $this->dispatch('refresh-stats-user');
     }
 
     private function saveUserFromExcel($validated, $role)

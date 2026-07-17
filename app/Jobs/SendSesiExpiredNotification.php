@@ -50,7 +50,7 @@ class SendSesiExpiredNotification implements ShouldQueue
                 ->timeout(10)
                 ->post($url, [
                     'whatsapp_number' => $this->noWA,
-                    'whatsapp_message' => "🔒 *Sesi Upload Nilai Ditutup*\n\nBatas waktu pengunggahan nilai *10 menit* telah habis. Sesi input otomatis Anda telah dinonaktifkan demi keamanan!",
+                    'whatsapp_message' => "🔒 *Sesi Input Nilai Ditutup*\n\nBatas waktu pengunggahan nilai *10 menit* telah habis. Sesi input otomatis Anda telah dinonaktifkan demi keamanan!",
                 ]);
 
             if ($response->successful()) {

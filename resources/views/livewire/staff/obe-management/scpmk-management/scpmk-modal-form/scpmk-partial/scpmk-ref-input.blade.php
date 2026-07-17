@@ -24,7 +24,7 @@
         @if ($this->showSCPMKModal)
             @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'scpmk',
-                'xResults' => $refResults['scpmk'],
+                'xResults' => $refResults,
                 'selectX' => 'selectRefArray',
                 'modelString' => 'nama_ref_search',
             

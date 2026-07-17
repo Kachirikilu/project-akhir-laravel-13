@@ -37,7 +37,7 @@ trait WithNilaiRPSFilters
 
         if ($this->akademik) {
             $fixAkademik = str_replace('-', '/', $this->akademik);
-            $queryNilai->where('tahun_akademik', $fixAkademik);
+            $queryNilai->where('akademik', $fixAkademik);
         }
 
         return $queryNilai;

@@ -559,19 +559,24 @@ trait WithRPSModal
                 $rps->cpmks()->sync($syncCpmk);
 
                 // 4. Sync CPL (Manual/Tambahan)
-                // $syncCpl = [];
-                // foreach ($validated['cpl_id_array'] as $index => $id) {
-                //     $syncCpl[(int) $id] = ['sort_order' => $index];
-                // }
-                // $rps->cpls()->sync($syncCpl);
+                $refsDariCpmk = $rps->cpmks->flatMap->refs->pluck('id')->toArray();
+                $refsDariScpmk = $rps->cpmks->flatMap->scpmks->flatMap->refs->pluck('id')->toArray();
+                $forbiddenIds = array_unique(array_merge($refsDariCpmk, $refsDariScpmk));
 
-                // 5. Sync Referensi (Manual/Tambahan)
+                $forbiddenIds = $rps->cpmks->flatMap(function ($cpmk) {
+                        $ids = $cpmk->refs->pluck('id');
+                        $scpmkIds = $cpmk->scpmks->flatMap->refs->pluck('id');
+                        return $ids->merge($scpmkIds);
+                    })->unique()->toArray();
+
+                $inputIds = array_map('intval', $validated['ref_id_array']);
+                $finalRefIds = array_diff($inputIds, $forbiddenIds);
+
                 $syncRef = [];
-                foreach ($validated['ref_id_array'] as $index => $id) {
+                foreach ($finalRefIds as $index => $id) {
                     $syncRef[(int) $id] = ['sort_order' => $index];
                 }
                 $rps->refs()->sync($syncRef);
-
             });
 
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
@@ -705,8 +710,8 @@ trait WithRPSModal
         // $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
         // $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
-        $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
-        $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
+        $this->ref_id_array = [];
+        $this->ref_items_array = [];
 
         $this->tim_dosen_id_array = [];
         $this->tim_dosen_items_array = [];

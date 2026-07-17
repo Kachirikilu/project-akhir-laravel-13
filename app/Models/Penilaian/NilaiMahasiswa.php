@@ -20,9 +20,11 @@ class NilaiMahasiswa extends Model
 
     protected $fillable = [
         'mahasiswa_id',
+        'rps_id',
         'kj_id',
         'nilai',
-        'nilai_array',
+        'ganjil_genap',
+        'akademik',
         'bobot_array',
         'is_locked',
     ];

@@ -101,7 +101,7 @@ foreach ($this->sesis as $sesi) {
                 'nilai_mahasiswas' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
                     ->where('ganjil_genap', $this->jadwal->ganjil_genap)
-                    ->where('tahun_akademik', $this->jadwal->tahun_akademik);
+                    ->where('akademik', $this->jadwal->akademik);
                 },
             ])
             ->distinct()

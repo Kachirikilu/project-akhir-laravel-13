@@ -110,13 +110,15 @@ class CPMK extends Model
     {
         return $this->belongsToMany(SubCPMK::class, 'cpmk_pivot_scpmk', 'cpmk_id', 'scpmk_id')
             ->withPivot('sort_order')
+            ->orderBy('sort_order')
             ->withTimestamps();
     }
 
     public function refs(): BelongsToMany
     {
         return $this->belongsToMany(Referensi::class, 'cpmk_pivot_ref', 'cpmk_id', 'ref_id')
-            ->withPivot('sort_order');
+            ->withPivot('sort_order')
+            ->orderBy('sort_order');
     }
 
     public function scopeSearchCPMK($query, $search, $withBobot = false)

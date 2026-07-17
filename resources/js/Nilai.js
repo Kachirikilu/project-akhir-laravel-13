@@ -131,7 +131,6 @@ document.addEventListener("alpine:init", () => {
                 tanggal_unlock: this.tanggal_unlock,
                 ganjil_genap: this.ganjil_genap,
                 akademik: this.akademik,
-                akademik: this.akademik,
                 akademik_1: this.akademik_1,
                 akademik_2: this.akademik_2,
             };

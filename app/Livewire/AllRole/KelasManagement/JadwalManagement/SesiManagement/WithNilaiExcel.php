@@ -47,7 +47,11 @@ trait WithNilaiExcel
 
     public array $parsedNilaiHeaders = [];
 
-    public array $jadwalQueue = [];
+    // public array $jadwalQueue = [];
+
+    private array $jadwalCache = [];
+    private array $rpsCache = [];
+    private array $excelKodeCache = [];
 
     public function exportNilaiExcel($idJadwal = null)
     {
@@ -523,16 +527,21 @@ trait WithNilaiExcel
         foreach (array_chunk($rows, 20, true) as $chunk) {
             foreach ($chunk as $rowIndex => $row) {
                 try {
-                    $validatedData = $this->inputModalNilai($row);
-                    // dd($validatedData);
-                    $this->saveNilaiFromExcel($validatedData);
+
+                    $this->processParsedNilai($row);
 
                     $successfulIndices[] = $rowIndex;
                     $successCount++;
+
                 } catch (ValidationException $e) {
+
                     $this->rowNilaiErrors[$rowIndex] = $e->errors();
+
                 } catch (\Throwable $e) {
-                    $this->rowNilaiErrors[$rowIndex] = ['general' => [$e->getMessage()]];
+
+                    $this->rowNilaiErrors[$rowIndex] = [
+                        'general' => [$e->getMessage()]
+                    ];
                 }
             }
 
@@ -560,14 +569,13 @@ trait WithNilaiExcel
         $this->uploadedFileNames = [];
         if ($failCount === 0) {
             $this->toast(text: $messageText);
+            $this->dispatch('refresh-data-sesi');
             $this->reset('excel_nilai_file');
             $this->showNilaiExcelModal = false;
         } else {
             $this->toast(text: $messageText, variant: 'warning');
         }
-
-        $this->dispatch('refresh-nilai-data');
-        $this->dispatch('refresh-data-sesi');
+        $this->dispatch('refresh-table');
     }
 
     private function getSesiImportNilai($jadwalId)
@@ -575,71 +583,271 @@ trait WithNilaiExcel
         return $this->inputSesiSearch($jadwalId)->get()->sortBy('pertemuan_ke')->values();
     }
 
+    // private function saveNilaiFromExcel($validated)
+    // {
+    //     $nim = trim($validated['nim']);
+    //     $nilaiAkhir = $validated['nilai_angka'] ?? null;
+    //     // \Log::info("DEBUG NIM: {$nim} | NilaiAkhir: {$nilaiAkhir} | SubCPMK Count: ".count($validated['sub_cpmk'] ?? []));
+    //     DB::transaction(function () use ($validated) {
+    //         $nim = trim($validated['nim']);
+    //         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
+
+    //         if (! $mahasiswa) {
+    //             throw new \Exception("Mahasiswa dengan NIM {$nim} tidak ditemukan!");
+    //         }
+
+    //         $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
+    //         $rps = $jadwal ? $jadwal->kelas_rel?->rps_rel : $this->getRPSByKode($validated['kode_rps']);
+
+    //         if (! $rps) {
+    //             throw new \Exception("RPS untuk NIM {$nim} tidak ditemukan.");
+    //         }
+
+    //         $ganjilGenap = $jadwal ? (string) $jadwal->ganjil_genap : ($now = now()->month >= 2 && now()->month <= 7 ? 'Genap' : 'Ganjil');
+    //         $tahunAkademik = $jadwal ? (string) $jadwal->tahun_akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1));
+    //         $jadwalId = $jadwal?->id;
+
+    //         $strukturRPS = $rps->scpmkAtr ?? [];
+    //         $mapScpmk = [];
+    //         foreach ($strukturRPS as $idx => $item) {
+    //             $kode = preg_replace('/[^A-Za-z0-9]/', '', $item->kode ?? '');
+    //             if ($kode !== '') {
+    //                 $mapScpmk[$kode][] = $idx;
+    //             }
+    //         }
+
+    //         $len = max(16, count($strukturRPS));
+    //         $nArr = array_fill(0, $len, 0);
+    //         $bArr = array_fill(0, $len, 0);
+
+    //         foreach ($validated['sub_cpmk'] ?? [] as $sub) {
+    //             $k = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+    //             if (isset($mapScpmk[$k])) {
+    //                 foreach ($mapScpmk[$k] as $idx) {
+    //                     $nArr[$idx] = (float) ($sub['nilai'] ?? 0);
+    //                     $bArr[$idx] = (float) ($sub['bobot'] ?? 0);
+    //                 }
+    //             }
+    //         }
+
+    //         \DB::table('nilai_mahasiswa')->updateOrInsert(
+    //             [
+    //                 'mahasiswa_id' => $mahasiswa->id,
+    //                 'rps_id' => $rps->id,
+    //                 'ganjil_genap' => $ganjilGenap,
+    //                 'tahun_akademik' => $tahunAkademik,
+    //             ],
+    //             [
+    //                 'kj_id' => $jadwalId,
+    //                 'nilai_array' => json_encode($nArr),
+    //                 'bobot_array' => json_encode($bArr),
+    //                 'nilai' => round(is_numeric($validated['nilai_angka'] ?? null) ? $validated['nilai_angka'] : $this->calculateFinal($nArr, $bArr), 2),
+    //                 'updated_at' => now(),
+    //             ]
+    //         );
+
+    //     });
+    // }
+
     private function saveNilaiFromExcel($validated)
     {
-        $nim = trim($validated['nim']);
-        $nilaiAkhir = $validated['nilai_angka'] ?? null;
-        // \Log::info("DEBUG NIM: {$nim} | NilaiAkhir: {$nilaiAkhir} | SubCPMK Count: ".count($validated['sub_cpmk'] ?? []));
         DB::transaction(function () use ($validated) {
+
             $nim = trim($validated['nim']);
+
             $mahasiswa = Mahasiswa::where('nim', $nim)->first();
 
             if (! $mahasiswa) {
                 throw new \Exception("Mahasiswa dengan NIM {$nim} tidak ditemukan!");
             }
 
-            $jadwal = $this->getJadwalByKode($validated['kode_jadwal']);
-            $rps = $jadwal ? $jadwal->kelas_rel?->rps_rel : $this->getRPSByKode($validated['kode_rps']);
+            $kodeJadwal = trim($validated['kode_jadwal'] ?? '');
+            $kodeRps = trim($validated['kode_rps'] ?? '');
 
-            if (! $rps) {
-                throw new \Exception("RPS untuk NIM {$nim} tidak ditemukan.");
+            // Cache key
+            $cacheKey = $kodeJadwal !== ''
+                ? "jadwal:{$kodeJadwal}"
+                : "rps:{$kodeRps}";
+
+            if (! isset($this->excelKodeCache[$cacheKey])) {
+                if ($kodeJadwal !== '') {
+                    $jadwal = $this->getJadwalByKode($kodeJadwal);
+                    if (! $jadwal) {
+                        throw new \Exception("Jadwal '{$kodeJadwal}' tidak ditemukan.");
+                    }
+                    $rps = $jadwal->kelas_rel?->rps_rel;
+                    if (! $rps) {
+                        throw new \Exception("RPS pada jadwal '{$kodeJadwal}' tidak ditemukan.");
+                    }
+                    $ganjilGenap = (string) $jadwal->ganjil_genap;
+                    $tahunAkademik = (string) $jadwal->akademik;
+                    $jadwalId = $jadwal->id;
+                } else {
+                    $jadwalId = null;
+                    $rps = $this->getRPSByKode($kodeRps);
+                    if (! $rps) {
+                        throw new \Exception("RPS '{$kodeRps}' tidak ditemukan.");
+                    }
+                    $now = now();
+                    $ganjilGenap = $now->month >= 2 && $now->month <= 7
+                        ? 'Genap'
+                        : 'Ganjil';
+                    $tahunAkademik = $now->month >= 2 && $now->month <= 7
+                        ? ($now->year - 1).'/'.$now->year
+                        : $now->year.'/'.($now->year + 1);
+                }
+
+                $this->excelKodeCache[$cacheKey] = [
+                    'kj_id' => $jadwalId,
+                    'rps' => $rps,
+                    'rps_id' => $rps->id,
+                    'ganjil_genap' => $ganjilGenap,
+                    'akademik' => $tahunAkademik,
+                ];
             }
 
-            $ganjilGenap = $jadwal ? (string) $jadwal->ganjil_genap : ($now = now()->month >= 2 && now()->month <= 7 ? 'Genap' : 'Ganjil');
-            $tahunAkademik = $jadwal ? (string) $jadwal->tahun_akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1));
-            $jadwalId = $jadwal?->id;
+            $cache = $this->excelKodeCache[$cacheKey];
+            $rps = $cache['rps'];
 
             $strukturRPS = $rps->scpmkAtr ?? [];
+
             $mapScpmk = [];
+
             foreach ($strukturRPS as $idx => $item) {
                 $kode = preg_replace('/[^A-Za-z0-9]/', '', $item->kode ?? '');
+
                 if ($kode !== '') {
                     $mapScpmk[$kode][] = $idx;
                 }
             }
 
             $len = max(16, count($strukturRPS));
+
             $nArr = array_fill(0, $len, 0);
             $bArr = array_fill(0, $len, 0);
 
             foreach ($validated['sub_cpmk'] ?? [] as $sub) {
-                $k = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
-                if (isset($mapScpmk[$k])) {
-                    foreach ($mapScpmk[$k] as $idx) {
-                        $nArr[$idx] = (float) ($sub['nilai'] ?? 0);
-                        $bArr[$idx] = (float) ($sub['bobot'] ?? 0);
-                    }
+
+                $kode = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+
+                if (! isset($mapScpmk[$kode])) {
+                    continue;
+                }
+
+                foreach ($mapScpmk[$kode] as $idx) {
+
+                    $nArr[$idx] = (float) ($sub['nilai'] ?? 0);
+                    $bArr[$idx] = (float) ($sub['bobot'] ?? 0);
+
                 }
             }
 
-            \DB::table('nilai_mahasiswa')->updateOrInsert(
+            DB::table('nilai_mahasiswa')->updateOrInsert(
                 [
                     'mahasiswa_id' => $mahasiswa->id,
-                    'rps_id' => $rps->id,
-                    'ganjil_genap' => $ganjilGenap,
-                    'tahun_akademik' => $tahunAkademik,
+                    'rps_id' => $cache['rps_id'],
+                    'ganjil_genap' => $cache['ganjil_genap'],
+                    'akademik' => $cache['akademik'],
                 ],
                 [
-                    'kj_id' => $jadwalId,
+                    'kj_id' => $cache['kj_id'],
                     'nilai_array' => json_encode($nArr),
                     'bobot_array' => json_encode($bArr),
-                    'nilai' => round(is_numeric($validated['nilai_angka'] ?? null) ? $validated['nilai_angka'] : $this->calculateFinal($nArr, $bArr), 2),
+                    'nilai' => round(
+                        is_numeric($validated['nilai_angka'] ?? null)
+                            ? $validated['nilai_angka']
+                            : $this->calculateFinal($nArr, $bArr),
+                        2
+                    ),
                     'updated_at' => now(),
                 ]
             );
-
         });
     }
+
+    // private function saveNilaiFromExcel($validated)
+    // {
+    //     $nim = trim($validated['nim']);
+    //     $nilaiAkhir = $validated['nilai_angka'] ?? null;
+
+    //     DB::transaction(function () use ($validated) {
+    //         $nim = trim($validated['nim']);
+    //         $mahasiswa = Mahasiswa::where('nim', $nim)->first();
+
+    //         if (! $mahasiswa) {
+    //             throw new \Exception("Mahasiswa dengan NIM {$nim} tidak ditemukan!");
+    //         }
+
+    //         $kodeJadwal = trim($validated['kode_jadwal'] ?? '');
+    //         $kodeRps = trim($validated['kode_rps'] ?? '');
+
+    //         if ($kodeJadwal !== '') {
+    //             if (!isset($this->jadwalCache[$kodeJadwal])) {
+    //                 $this->jadwalCache[$kodeJadwal] = $this->getJadwalByKode($kodeJadwal);
+    //             }
+    //             $jadwal = $this->jadwalCache[$kodeJadwal];
+    //             $rps = $jadwal?->kelas_rel?->rps_rel;
+    //         } else {
+    //             $jadwal = null;
+    //             if (!isset($this->rpsCache[$kodeRps])) {
+    //                 $this->rpsCache[$kodeRps] = $this->getRPSByKode($kodeRps);
+    //             }
+    //             $rps = $this->rpsCache[$kodeRps];
+    //         }
+
+    //         if (! $rps) {
+    //             throw new \Exception("RPS untuk NIM {$nim} tidak ditemukan.");
+    //         }
+
+    //         $this->excelKodeCache[$kodeJadwal] = [
+    //             'kj_id' => $jadwal?->id,
+    //             'rps' => $rps,
+    //             'rps_id' => $rps?->id,
+    //             'ganjil_genap' => $jadwal ? (string) $jadwal->ganjil_genap : ($now = now()->month >= 2 && now()->month <= 7 ? 'Genap' : 'Ganjil'),
+    //             'akademik' => $jadwal ? (string) $jadwal->akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1)),
+    //         ];
+
+    //         $strukturRPS = $rps->scpmkAtr ?? [];
+    //         $mapScpmk = [];
+    //         foreach ($strukturRPS as $idx => $item) {
+    //             $kode = preg_replace('/[^A-Za-z0-9]/', '', $item->kode ?? '');
+    //             if ($kode !== '') {
+    //                 $mapScpmk[$kode][] = $idx;
+    //             }
+    //         }
+
+    //         $len = max(16, count($strukturRPS));
+    //         $nArr = array_fill(0, $len, 0);
+    //         $bArr = array_fill(0, $len, 0);
+
+    //         foreach ($validated['sub_cpmk'] ?? [] as $sub) {
+    //             $k = preg_replace('/[^A-Za-z0-9]/', '', $sub['kode_scpmk'] ?? '');
+    //             if (isset($mapScpmk[$k])) {
+    //                 foreach ($mapScpmk[$k] as $idx) {
+    //                     $nArr[$idx] = (float) ($sub['nilai'] ?? 0);
+    //                     $bArr[$idx] = (float) ($sub['bobot'] ?? 0);
+    //                 }
+    //             }
+    //         }
+
+    //         \DB::table('nilai_mahasiswa')->updateOrInsert(
+    //             [
+    //                 'mahasiswa_id' => $mahasiswa->id,
+    //                 'rps_id' =>  $cache['rps_id'],
+    //                 'ganjil_genap' => $cache['ganjil_genap'],
+    //                 'akademik' => $cache['akademik'],
+    //             ],
+    //             [
+    //                 'kj_id' => $cache['kj_id'],
+    //                 'nilai_array' => json_encode($nArr),
+    //                 'bobot_array' => json_encode($bArr),
+    //                 'nilai' => round(is_numeric($validated['nilai_angka'] ?? null) ? $validated['nilai_angka'] : $this->calculateFinal($nArr, $bArr), 2),
+    //                 'updated_at' => now(),
+    //             ]
+    //         );
+
+    //     });
+    // }
 
     private function calculateFinal($nArr, $bArr)
     {
@@ -705,7 +913,7 @@ trait WithNilaiExcel
     //         return [
     //             'rps' => null,
     //             'ganjil_genap' => null,
-    //             'tahun_akademik' => null,
+    //             'akademik' => null,
     //         ];
     //     }
 
@@ -716,7 +924,7 @@ trait WithNilaiExcel
     //     return [
     //         'rps' => $rps,
     //         'ganjil_genap' => $this->getRPSGanjilGenap($rps),
-    //         'tahun_akademik' => $this->getRPSTahunAkademik($kelas),
+    //         'akademik' => $this->getRPSTahunAkademik($kelas),
     //     ];
     // }
 

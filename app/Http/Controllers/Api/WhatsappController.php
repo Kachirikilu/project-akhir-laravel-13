@@ -41,7 +41,12 @@ class WhatsappController extends Controller
 
     public $kelasHariKey = ['HARI INI', 'KELAS HARI'];
 
-    public $excelNilaiKey = ['EXCEL NILAI', 'INPUT NILAI', 'UPLOAD NILAI', 'INPUT FILE NILAI', 'FILE NILAI'];
+    public $excelNilaiKey = ['EXCEL NILAI',
+        'INPUT NILAI EXCEL',
+        'UPLOAD NILAI EXCEL',
+        'INPUT FILE NILAI',
+        'FILE NILAI'
+    ];
 
     public $excelGetNilaiKey = ['DOWNLOAD NILAI', 'DOWNLOAD EXCEL NILAI', 'GET EXCEL NILAI', 'GET NILAI', 'DOWNLOAD EXCEL NILAI'];
 
@@ -62,6 +67,13 @@ class WhatsappController extends Controller
     {
         $pesanUpper = strtoupper($pesan);
         return Str::startsWith($pesanUpper, $key);
+    }
+
+    private function isTriggerPas(string $pesan, array $key): bool
+    {
+        $pesanBersih = trim(strtoupper($pesan));
+        $keyUpper = array_map('strtoupper', $key);
+        return in_array($pesanBersih, $keyUpper);
     }
 
     // private function isTrigger(string $pesan, array $key): bool
@@ -116,7 +128,7 @@ class WhatsappController extends Controller
         if ($this->isTrigger($pesan, $this->pdfGetCapaianKey)) {
             return $this->processGetCapaianNilai($noWA, $nameWA, $pesan, $this->pdfGetCapaianKey);
         }
-        if ($this->isTrigger($pesan, $this->excelNilaiKey)) {
+        if ($this->isTriggerPas($pesan, $this->excelNilaiKey)) {
             return $this->processGateAwayExcelNilai($noWA, $nameWA, $pesan);
         }
         if ($request->hasFile('excel_file')) {

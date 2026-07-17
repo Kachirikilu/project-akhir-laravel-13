@@ -1,7 +1,7 @@
 <div>
     <flux:modal name="lock-nilai-modal" wire:model.live="showLockNilaiModal" x-data
         @refresh-data-nilai.window="$store.nilai.reset()" wire:key="lock-nilai-modal"
-        class="w-full md:w-[90vw] max-w-3xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="w-full md:w-[90vw] max-w-3xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
         @if ($isReady)
             <div class="flex flex-col h-full relative">
@@ -11,7 +11,7 @@
 
                     <h3 class="text-xl font-semibold">
 
-                        <flux:badge icon="chart-pie" color="orange" size="lg">
+                        <flux:badge icon="chart-pie" color="blue" size="lg">
                             <span>Pengaturan Kunci Nilai Mahasiswa</span>
                         </flux:badge>
 
@@ -26,45 +26,20 @@
                         <div class="form-container">
                             <h4
                                 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
-                                Input Pengaturan Kunci Nilai</h4>
+                                Input Nilai yang Tidak Ditampilkan</h4>
 
                             <div class="relative">
                                 <div class="space-y-4">
-
-                                    @include('livewire.global.modal-form.input-form', [
-                                        'alpine' => 'nilai',
-                                        'isLivewire' => 1,
-                                        'nameXString' => 'Tahun Akademik',
-                                        'modelString' => 'akademik_t',
-                                        'numberOnly' => 1,
-                                        'maxLength' => 4,
-                                        'iconString' => 'calendar-days',
-                                        'placeholder' => 'Contoh: 2025',
-                                        'isFocusSelect' => 1,
-                                        'message' => $errors->first('akademik_t'),
-                                    ])
-
-                                    @include('livewire.global.modal-form.input-form', [
-                                        'alpine' => 'nilai',
-                                        'isLivewire' => 1,
-                                        'nameXString' => 'Tahun Angkatan',
-                                        'modelString' => 'angkatan',
-                                        // 'numberOnly' => 1,
-                                        // 'maxLength' => 4,
-                                        'iconString' => 'calendar-days',
-                                        'placeholder' => 'Masukkan Tahun Angkatan (Contoh: 2022)',
-                                        'message' => $errors->first('angkatan'),
-                                    ])
 
 
                                     @include('livewire.global.modal-form.select-form', [
                                         'alpine' => 'nilai',
                                         'isLivewire' => 1,
-                                        'modelString' => 'jenis_kelamin',
-                                        'xOptions' => ['Laki-laki', 'Perempuan'],
+                                        'modelString' => 'ganjil_genap',
+                                        'xOptions' => ['Ganjil', 'Genap'],
                                         'iconString' => 'users',
-                                        'placeholder' => 'Pilih Gender...',
-                                        'message' => $errors->first('jenis_kelamin'),
+                                        'placeholder' => 'Ganjil/Genap...',
+                                        'message' => $errors->first('ganjil_genap'),
                                     ])
                                     <div class="space-y-4">
                                         <div>
@@ -92,6 +67,7 @@
                                                     @include('livewire.global.modal-form.input-form', [
                                                         'alpine' => 'nilai',
                                                         'isLivewire' => 1,
+                                                        'isXModal' => 1,
                                                         'nameXString' => 'Tahun Akademik',
                                                         'modelString' => 'akademik_1',
                                                         'numberOnly' => 1,
@@ -105,6 +81,7 @@
                                                     @include('livewire.global.modal-form.input-form', [
                                                         'alpine' => 'nilai',
                                                         'isLivewire' => 1,
+                                                        'isXModal' => 1,
                                                         'nameXString' => 'Tahun Akademik',
                                                         'modelString' => 'akademik_2',
                                                         'numberOnly' => 1,
@@ -128,8 +105,17 @@
                                 </div>
                             </div>
 
-                        </div>
+                            @include('livewire.global.modal-form.input-form', [
+                                'alpine' => 'nilai',
+                                'isLivewire' => 1,
+                                'nameXString' => 'Tanggal Dibuka',
+                                'modelString' => 'tanggal_unlock',
+                                'iconString' => 'calendar-days',
+                                'isDate' => 1,
+                                'message' => $errors->first('tanggal_unlock'),
+                            ])
 
+                        </div>
 
                         <div class="form-message-container">
 
@@ -137,6 +123,7 @@
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'targetX' => 'editLockNilai, updateLockNilai',
                                     'isLeft' => 0,
+                                    'mt' => '',
                                 ])
                             </div>
                         </div>

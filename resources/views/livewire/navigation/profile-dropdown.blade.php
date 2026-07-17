@@ -91,33 +91,42 @@
                 <span class="menu-theme-label">{{ __('Dashboard') }}</span>
             </a>
 
+
+
+            <a href="{{ route('profile.edit') }}" wire:navigate
+                class="menu-theme-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                <flux:icon name="user" class="menu-theme-icon w-5 h-5" />
+                <span class="menu-theme-label">{{ __('Profile') }}</span>
+            </a>
+
+            <a href="{{ route('theme.edit') }}" wire:navigate
+                class="menu-theme-item {{ request()->routeIs('theme.edit') ? 'active' : '' }}">
+                <flux:icon name="paint-brush" class="menu-theme-icon w-5 h-5" />
+                <span class="menu-theme-label">{{ __('Theme') }}</span>
+            </a>
+
+            <flux:menu.separator />
+
             <a href="/" wire:navigate class="menu-theme-item {{ request()->is('/') ? 'active' : '' }}">
                 <flux:icon name="computer-desktop" class="menu-theme-icon w-5 h-5" />
                 <span class="menu-theme-label">{{ __('Front Page') }}</span>
             </a>
 
-            <a href="{{ route('profile.edit') }}" wire:navigate
-                class="menu-theme-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                <flux:icon name="cog" class="menu-theme-icon w-5 h-5" />
-                <span class="menu-theme-label">{{ __('Settings') }}</span>
-            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+
+                <button type="submit" class="menu-theme-item w-full cursor-pointer" data-test="logout-button">
+
+                    <flux:icon name="arrow-right-start-on-rectangle" class="menu-theme-icon w-5 h-5" />
+
+                    <span class="menu-theme-label">
+                        {{ __('Log Out') }}
+                    </span>
+
+                </button>
+            </form>
         </div>
 
-        <flux:menu.separator />
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="menu-theme-item w-full cursor-pointer" data-test="logout-button">
-
-                <flux:icon name="arrow-right-start-on-rectangle" class="menu-theme-icon w-5 h-5" />
-
-                <span class="menu-theme-label">
-                    {{ __('Log Out') }}
-                </span>
-
-            </button>
-        </form>
     </flux:menu>
 
 </flux:dropdown>

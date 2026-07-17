@@ -135,8 +135,6 @@ trait WithUserModal
         $this->resetInputUser();
         $this->resetValidation();
 
-        $this->resetErrorBag();
-
         if ($isRPS) {
             $this->showUserRPSModal = true;
             $this->showUserModal = false;
@@ -181,16 +179,6 @@ trait WithUserModal
                 $this->user_input['kode_wilayah'] = $user->mahasiswa->kode_wilayah ?? null;
             }
 
-
-                //            $this->dpNameSearch = $prodi->departemen ?? '';
-
-                // if ($this->dp_id) {
-                //     $departemen = Departemen::find($this->dp_id);
-                //     $this->dpNameSearch = $departemen ? $departemen->departemenDp : '';
-                // } else {
-                //     $this->dpNameSearch = '';
-                // }
-                // $this->fetchDp($this->dpNameSearch);
 
             $this->pr_id = $user->pr_id;
             if (! $isRPS) {

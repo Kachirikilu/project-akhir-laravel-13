@@ -1,7 +1,7 @@
 <div>
     <flux:modal name="rps-modal" wire:model.live="showRPSModal" x-data :flyout="!!$isFlyout"
         wire:key="rps-modal-{{ $parent }}" @refresh-data-rps.window="$store.rps.reset()"
-        class="w-full md:w-[90vw] max-w-5xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="w-full md:w-[90vw] max-w-5xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
 
         @if ($isReady)
             <div class="flex flex-col h-full relative">

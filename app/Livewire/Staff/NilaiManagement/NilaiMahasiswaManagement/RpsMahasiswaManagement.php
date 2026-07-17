@@ -6,7 +6,6 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithNilaiSearchFilters;
 use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RpsMahasiswaManagement\WithRPSMahasiswaDelete;
 use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RpsMahasiswaManagement\WithRPSMahasiswaModal;
-use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RpsMahasiswaManagement\WithRPSMahasiswaFilters;
 // use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\WithNilaiMahasiswaFilters;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Models\Penilaian\NilaiMahasiswa;
@@ -36,8 +35,8 @@ class RpsMahasiswaManagement extends Component
 
     use WithPagination;
     // use WithKelasDelete;
-    use WithRPSMahasiswaFilters;
     use WithRPSShow;
+    use WithNilaiMahasiswaFilters;
 
 
 
@@ -127,7 +126,7 @@ class RpsMahasiswaManagement extends Component
         
         $nilai = NilaiMahasiswa::where('mahasiswa_id', $user->mahasiswa->id)
             ->where('ganjil_genap', $ganjil_genap)
-            ->where('tahun_akademik', $akademik_fix)
+            ->where('akademik', $akademik_fix)
             ->first();
             
         if (! $nilai) {
@@ -148,7 +147,7 @@ class RpsMahasiswaManagement extends Component
             'mahasiswa_id' => $user->mahasiswa->id,
             'nim' => $nim,
             'ganjil_genap' => $ganjil_genap,
-            'tahun_akademik' => $akademik_fix,
+            'akademik' => $akademik_fix,
             'url' => url()->current(),
         ];
 
@@ -190,17 +189,6 @@ class RpsMahasiswaManagement extends Component
         $this->resetPage();
     }
 
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
-        $this->resetPage();
-    }
-
     // private function syncSortField($table, $sortField)
     // {
     //     $map = [
@@ -235,7 +223,7 @@ class RpsMahasiswaManagement extends Component
     public function render()
     {
         try {
-            $queryNilai = $this->inputRPSMahasiswaSearch($this->mahasiswa_id_url);
+            $queryNilai = $this->inputNilaiSearch($this->mahasiswa_id_url, $this->ganjil_genap_url, $this->akademik_url);
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryNilai->onlyTrashed();
@@ -261,7 +249,6 @@ class RpsMahasiswaManagement extends Component
             
 
             return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management', [
-                // 'nilais' => $paginatedRps,
                 'nilais' => $nilais ,
             ]);
 

@@ -91,7 +91,7 @@ class ObeManagement extends Component
 
     public $sortField = 'kode';
 
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
 
     public $selectedPrId;
 
@@ -358,17 +358,6 @@ class ObeManagement extends Component
 
     public function updatedSearch()
     {
-        $this->resetPage();
-    }
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
         $this->resetPage();
     }
 

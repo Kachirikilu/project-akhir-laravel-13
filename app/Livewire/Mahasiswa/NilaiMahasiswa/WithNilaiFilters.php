@@ -47,7 +47,7 @@ trait WithNilaiFilters
     public function indexIPK($allNilai, $angkatan)
     {
         $groupedBySemester = $allNilai->groupBy(function ($item) {
-            return $item->tahun_akademik.'|'.strtolower($item->ganjil_genap);
+            return $item->akademik.'|'.strtolower($item->ganjil_genap);
         });
 
         $processedPeriode = collect();

@@ -71,8 +71,8 @@ trait WithExcelCapaianNilai
 
         return response()->json([
             'status' => true,
-            'head' => '*✅ Silahkan Upload File Excel Nilai!*',
-            'message' => 'Mode Input Nilai `Aktif` selama *10 menit*. Silakan kirim ```File Excel``` lagi!',
+            'head' => '*✅ Silahkan Kirim File Excel Nilai!*',
+            'message' => 'Mode Input Nilai Excel `Aktif` selama *10 menit*. Silakan kirim ```File Excel``` lagi!',
         ]);
     }
 
@@ -105,7 +105,7 @@ trait WithExcelCapaianNilai
             return response()->json([
                 'status' => false,
                 'head' => '*⚠️ Menghentikan Proses File Excel!*',
-                'message' => "Sebelum mengirim file Excel, silahkan ketik:\n`UPLOAD NILAI`\n\nAkses upload ```File Excel``` berlaku selama 10 menit!",
+                'message' => "Sebelum mengirim file Excel, silahkan ketik:\n`INPUT NILAI EXCEL`\n\nAkses upload ```File Excel``` berlaku selama 10 menit!",
             ], 403);
         }
 

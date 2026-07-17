@@ -382,7 +382,7 @@ trait WithNilaiSearchFilters
                 'semester' => fn ($n) => $n->semester,
                 'sks' => fn ($n) => $n->total_sks,
                 'sks', 'total_sks' => fn ($n) => $n->total_sks,
-                'akademik', 'tahun_akademik' => fn ($n) => $n->akademik,
+                'akademik', 'akademik' => fn ($n) => $n->akademik,
                 default => fn ($n) => $n->akademik.$n->ganjil_genap,
             };
 

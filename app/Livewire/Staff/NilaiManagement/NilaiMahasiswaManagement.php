@@ -149,65 +149,24 @@ class NilaiMahasiswaManagement extends Component
         $this->resetPage();
     }
 
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
-        $this->resetPage();
-    }
-
-    // private function syncSortField($table, $sortField)
-    // {
-    //     $map = [
-    //         'tatap_muka' => 'sks_tm',
-    //         'praktikum' => 'sks_pr',
-    //         'praktek_lapangan' => 'sks_pl',
-    //         'simulasi' => 'sks_sm',
-    //     ];
-
-    //     if (isset($map[$table]) && str_starts_with($sortField, 'sks_')) {
-    //         $this->sortField = $map[$table];
-    //     }
-    // }
-
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-    //     $this->syncSortField($table, $this->sortField);
-
-    //     $this->resetPage();
-
-    //     $targetUrl = route('nilai-mahasiswa-management', ['switchTable' => $table]);
-    //     if ($table == '' || $table == null) {
-    //         $targetPath = '/nilai-mahasiswa-management';
-    //     } else {
-    //         $targetPath = '/nilai-mahasiswa-management/'.$table;
-    //     }
-
-    //     $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
-    // }
 
     public function render()
     {
         try {
             $angkatan = $this->mahasiswa?->angkatan ? (int) $this->mahasiswa->angkatan : null;
 
-            $queryNilai = $this->inputNilaiSemesterSearch($this->mahasiswa_id_url);
+            $queryNilai = $this->inputNilaiSearch($this->mahasiswa_id_url);
 
             if ($this->showDeleted && $this->AuthCheck('staff')) {
                 $queryNilai->onlyTrashed();
             }
 
             $allNilaiRaw = $queryNilai->get();
-            $calculatedPeriode = $this->addIPSemester($allNilaiRaw, $angkatan);
+            $periodes = $this->addIPSemester($allNilaiRaw, $angkatan);
 
             // $perPage = $this->perPage ?? 8;
             // $paginatedPeriode = $this->searchOutputNilai(
-            //     $calculatedPeriode,
+            //     $periodes,
             //     // $this->search,
             //     null,
             //     $perPage,
@@ -217,7 +176,7 @@ class NilaiMahasiswaManagement extends Component
             // );
 
             return view('livewire.staff.nilai-management.nilai-mahasiswa-management', [
-                'periodes' => $calculatedPeriode,
+                'periodes' => $periodes,
             ]);
 
         } catch (QueryException $e) {

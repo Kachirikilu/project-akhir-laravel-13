@@ -100,7 +100,7 @@ trait WithNilaiMahasiswa
             $queryNilai->where('ganjil_genap', $filterSemester);
         }
         if ($filterTA) {
-            $queryNilai->where('tahun_akademik', $filterTA);
+            $queryNilai->where('akademik', $filterTA);
         }
         $isFilter = false;
         if ($filterSemester || $filterTA) {
@@ -108,7 +108,7 @@ trait WithNilaiMahasiswa
         }
 
         $daftarNilai = $queryNilai->with(['rps_rel.mk_rel'])
-            ->orderBy('tahun_akademik', 'desc')
+            ->orderBy('akademik', 'desc')
             ->orderBy('ganjil_genap', 'desc')
             ->get();
 
@@ -190,7 +190,7 @@ trait WithNilaiMahasiswa
 
         $teksNilai = '';
         $groupedNilai = $daftarNilai->groupBy(function ($item) {
-            return $item->tahun_akademik.' -  '.$item->ganjil_genap;
+            return $item->akademik.' -  '.$item->ganjil_genap;
         });
 
         foreach ($groupedNilai as $periode => $listNilai) {

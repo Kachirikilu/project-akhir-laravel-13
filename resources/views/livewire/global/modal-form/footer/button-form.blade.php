@@ -3,7 +3,7 @@
     $justifyClass = $isLeft ?? false ? 'sm:justify-start' : 'sm:justify-end';
 @endphp
 <div class="flex flex-col-reverse sm:flex-row {{ $justifyClass }} sm:items-start gap-2 w-full sm:w-auto mt-auto">
-    <div class="flex flex-col sm:flex-row gap-2 mt-2">
+    <div class="flex flex-col sm:flex-row gap-2 {{ $mt ?? 'mt-2' }}">
 
         {{-- Button Simpan Excel (Green) --}}
         <template x-if="$store.{{ $alpine ?? 'config' }}?.typeModal == 'excel'" x-cloak>

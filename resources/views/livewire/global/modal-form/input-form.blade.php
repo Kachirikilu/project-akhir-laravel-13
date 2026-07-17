@@ -102,12 +102,14 @@ store.{{ $modelString }} = valueInput ?? '';
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 @if (($typeString ?? '') === 'password')
                     <template x-if="!showPassword">
-                        <flux:icon icon="{{ $iconString ?? 'lock-closed' }}" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
+                        <flux:icon icon="{{ $iconString ?? 'lock-closed' }}" variant="mini"
+                            x-bind:class="$store.{{ $alpineState }}?.colorIcon"
                             class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                     </template>
 
                     <template x-if="showPassword">
-                        <flux:icon icon="{{ $icon2String ?? 'lock-open' }}" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
+                        <flux:icon icon="{{ $icon2String ?? 'lock-open' }}" variant="mini"
+                            x-bind:class="$store.{{ $alpineState }}?.colorIcon"
                             class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                     </template>
                 @else
@@ -131,7 +133,7 @@ store.{{ $modelString }} = valueInput ?? '';
                 @endif
             @endif
 
-            @if (!$isLivewireState) @if (isset($itemsString))
+            @if (!$isLivewireState || ($isXModal ?? false)) @if (isset($itemsString))
                     x-model="valueInput"
                 @else
                     x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif

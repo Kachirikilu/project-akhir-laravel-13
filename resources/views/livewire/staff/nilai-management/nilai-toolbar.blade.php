@@ -53,9 +53,9 @@
 
                                 <flux:menu.item
                                     @click="
-                                        $store.jadwal?.setEdit(0);
-                                        $store.jadwal?.setColor('text-blue-700 dark:text-blue-400');
-                                        $store.jadwal?.reset(1);
+                                        $store.nilai?.reset();
+                                        $store.nilai?.setEdit(1);
+                                        $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
                                         $flux.modal('lock-nilai-modal').show();
                                         $dispatch('open-edit-lock-nilai-modal')
                                     "

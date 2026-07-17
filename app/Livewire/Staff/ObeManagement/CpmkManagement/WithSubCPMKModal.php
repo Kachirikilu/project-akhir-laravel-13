@@ -532,8 +532,8 @@ trait WithSubCPMKModal
     {
         $this->refNameSearch = '';
 
-        $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
-        $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
+        $this->ref_id_array = [];
+        $this->ref_items_array = [];
 
         $this->resetErrorBag();
     }

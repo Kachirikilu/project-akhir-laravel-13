@@ -535,7 +535,7 @@
                     foreach ($rpsHistory as $rps) {
                         $nim = $rps['nim'] ?? null;
                         $ganjilGenap = $rps['ganjil_genap'] ?? null;
-                        $akademik = $rps['tahun_akademik'] ?? null;
+                        $akademik = $rps['akademik'] ?? null;
                         // Ganti kembali '/' menjadi '-' untuk kebutuhan parameter rute URL
                         $akademikUrl = str_replace('/', '-', $akademik);
 
@@ -633,7 +633,7 @@
                             foreach ($groupedRps[$nim] as $rps) {
                                 $subMenus[] = [
                                     'label' =>
-                                        ucfirst($rps['ganjil_genap'] ?? '') . ' ' . ($rps['tahun_akademik'] ?? ''),
+                                        ucfirst($rps['ganjil_genap'] ?? '') . ' ' . ($rps['akademik'] ?? ''),
                                     'url' => $rps['url'] ?? '#',
                                     'param' => 'rps-mahasiswa-management',
                                     'icon' => 'chart-bar',
@@ -643,7 +643,7 @@
                                         request()->routeIs('rps-mahasiswa-management') &&
                                         request()->route('nim') == $nim &&
                                         request()->route('akademik') ==
-                                            str_replace('/', '-', $rps['tahun_akademik'] ?? ''),
+                                            str_replace('/', '-', $rps['akademik'] ?? ''),
                                 ];
                             }
                         }

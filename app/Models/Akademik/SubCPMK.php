@@ -43,7 +43,8 @@ class SubCPMK extends Model
     public function refs(): BelongsToMany
     {
         return $this->belongsToMany(Referensi::class, 'scpmk_pivot_ref', 'scpmk_id', 'ref_id')
-            ->withPivot('sort_order');
+            ->withPivot('sort_order')
+            ->orderBy('sort_order');
     }
 
     // public function dosens(): BelongsToMany

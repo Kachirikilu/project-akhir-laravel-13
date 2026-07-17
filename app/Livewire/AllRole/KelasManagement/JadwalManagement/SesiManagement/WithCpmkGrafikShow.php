@@ -255,7 +255,7 @@ trait WithCpmkGrafikShow
     //         'chunk_users' => $chunk_users,
     //         'jadwal' => $jadwal ?? null,
     //         'rps' => $rps,
-    //         'tahun_akademik' => $tahunAkademik,
+    //         'akademik' => $tahunAkademik,
 
     //         'angkatan' => $angkatan ?? null,
     //         'pr_name' => $prName ?? null,
@@ -326,7 +326,7 @@ trait WithCpmkGrafikShow
             'chunk_users' => $chunk_users,
             'jadwal' => $jadwal ?? null,
             'rps' => $rps,
-            'tahun_akademik' => $tahunAkademik,
+            'akademik' => $tahunAkademik,
             'angkatan' => $angkatan ?? null,
             'pr_name' => $prName ?? null,
             'dp_name' => $dpName ?? null,

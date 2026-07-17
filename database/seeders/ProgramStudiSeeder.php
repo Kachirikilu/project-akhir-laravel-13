@@ -55,10 +55,9 @@ class ProgramStudiSeeder extends Seeder
                     ]);
 
                     foreach ($strataOptions as $strata) {
-                        // 3. Create Prodi (S1, S2, S3)
                         Prodi::create([
                             'dp_id' => $departemen->id,
-                            'nama_pr' => $j['nama'], // Nama prodi sama dengan nama departemen sesuai request
+                            'nama_pr' => $j['nama'],
                             'strata' => $strata,
                         ]);
                     }

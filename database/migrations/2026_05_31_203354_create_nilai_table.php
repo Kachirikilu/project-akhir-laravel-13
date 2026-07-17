@@ -22,13 +22,13 @@ return new class extends Migration
             $table->index('kj_id');
 
             $table->enum('ganjil_genap', ['Ganjil', 'Genap'])->nullable();
-            $table->string('tahun_akademik', 20)->nullable();
+            $table->string('akademik', 9)->nullable();
 
             $table->decimal('nilai', 5, 2)->nullable();
             $table->json('nilai_array')->nullable();
             $table->json('bobot_array')->nullable();
 
-            $table->boolean('is_loocked')->default(false);
+            // $table->boolean('is_loocked')->default(false);
 
             $table->softDeletes();
             $table->timestamps();
@@ -37,9 +37,18 @@ return new class extends Migration
                 'mahasiswa_id',
                 'rps_id',
                 'ganjil_genap',
-                'tahun_akademik',
+                'akademik',
             ], 'nm_mhs_rps_sem_ta_unique'
             );
+        });
+
+        Schema::create('lock_nilai', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
+            $table->enum('ganjil_genap', ['Ganjil', 'Genap'])->nullable();
+            $table->string('akademik');
+            $table->dateTime('tanggal_unlock');
+            $table->timestamps();
         });
 
         Schema::create('rekap_nilai_mahasiswa', function (Blueprint $table) {
@@ -113,8 +122,6 @@ return new class extends Migration
         //     $table->timestamps();
         //     $table->softDeletes();
         // });
-
-
 
         Schema::create('rekap_cpmk_prodi', function (Blueprint $table) {
             $table->id();
@@ -191,6 +198,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('nilai_mahasiswa');
+        Schema::dropIfExists('lock_nilai');
 
         Schema::dropIfExists('rekap_rps_prodi');
 

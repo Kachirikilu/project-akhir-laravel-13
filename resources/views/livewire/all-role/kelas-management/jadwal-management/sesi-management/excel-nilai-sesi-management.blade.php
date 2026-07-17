@@ -1,7 +1,7 @@
 <div>
     <flux:modal name="nilai-excel-modal" wire:model.live="showNilaiExcelModal" flyout wire:key="nilai-excel-modal-flyout"
         @refresh-data-rps-mahasiswa.window="if (!$wire.showNilaiExcelModal) $store.sesi.reset()"
-        class="w-full md:w-screen-2xl max-w-screen-2xl h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="w-full md:w-screen-2xl max-w-screen-2xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
         @if ($isReady)
             {{-- Loading Overlay --}}
             <div wire:loading wire:target="saveNilaiExcel">
@@ -39,10 +39,11 @@
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'xType' => 'excel',
                                     'wireLoading' =>
-                                        'excel_nilai_file, parseExcelNilaiFile, procesImportNilaiExcel',
+                                    'excel_nilai_file, parseExcelNilaiFile, procesImportNilaiExcel',
                                     'wireLoading2' => 'saveNilaiExcel',
                                     'targetX' => 'addNilai, saveNilai, editNilai, updateNilai',
                                     'isLeft' => 1,
+                                    'mt' => '',
                                 ])
                             </div>
 

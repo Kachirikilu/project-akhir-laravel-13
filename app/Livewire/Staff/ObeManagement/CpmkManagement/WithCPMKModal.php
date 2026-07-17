@@ -121,7 +121,7 @@ trait WithCPMKModal
                 ->merge($cpmk->refs->pluck('id'))->unique()->values()->all();
             $this->ref_items_array = collect($this->ref_items_array)
                 ->merge(
-                    $cpmk->refs->map(fn ($r) => $this->itemsRef($c))
+                    $cpmk->refs->map(fn ($r) => $this->itemsRef($r))
                 )->unique('id')->values()->all();
 
             $this->updatedSCPMKNameSearch($this->scpmkNameSearch);
@@ -466,9 +466,13 @@ trait WithCPMKModal
                 }
                 $cpmk->cpls()->sync($syncCpl);
 
-                // 5. Sync Referensi (Manual/Tambahan)
+                $scpmkIds = $cpmk->scpmks->flatMap->refs->pluck('id')->toArray();
+                $forbiddenIds = array_unique(array_map('intval', $scpmkIds));
+                $inputIds = array_map('intval', $validated['ref_id_array']);
+                $finalRefIds = array_diff($inputIds, $forbiddenIds);
+
                 $syncRef = [];
-                foreach ($validated['ref_id_array'] as $index => $id) {
+                foreach ($finalRefIds as $index => $id) {
                     $syncRef[(int) $id] = ['sort_order' => $index];
                 }
                 $cpmk->refs()->sync($syncRef);
@@ -565,8 +569,8 @@ trait WithCPMKModal
         // $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
         // $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
-        $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
-        $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
+        $this->ref_id_array = [];
+        $this->ref_items_array = [];
 
         $this->resetErrorBag();
     }

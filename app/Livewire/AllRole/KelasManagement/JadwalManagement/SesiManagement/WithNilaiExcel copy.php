@@ -746,7 +746,7 @@ trait WithNilaiExcel
             }
 
             $ganjilGenap = $jadwal ? (string) $jadwal->ganjil_genap : ($now = now()->month >= 2 && now()->month <= 7 ? 'Genap' : 'Ganjil');
-            $tahunAkademik = $jadwal ? (string) $jadwal->tahun_akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1));
+            $tahunAkademik = $jadwal ? (string) $jadwal->akademik : ($now = now()->month >= 2 && now()->month <= 7 ? (now()->year - 1).'/'.now()->year : now()->year.'/'.(now()->year + 1));
             $jadwalId = $jadwal?->id;
 
             $strukturRPS = $rps->scpmkAtr ?? [];
@@ -777,7 +777,7 @@ trait WithNilaiExcel
                     'mahasiswa_id' => $mahasiswa->id,
                     'rps_id' => $rps->id,
                     'ganjil_genap' => $ganjilGenap,
-                    'tahun_akademik' => $tahunAkademik,
+                    'akademik' => $tahunAkademik,
                 ],
                 [
                     'kj_id' => $jadwalId,
@@ -828,7 +828,7 @@ trait WithNilaiExcel
     // if ($jadwal) {
     //     $rpsId = $jadwal->kelas_rel?->rps_id;
     //     $ganjilGenap = (string) $jadwal->ganjil_genap;
-    //     $tahunAkademik = (string) $jadwal->tahun_akademik;
+    //     $tahunAkademik = (string) $jadwal->akademik;
     //     $jadwalId = $jadwal->id;
     // } else {
     //     $rps = $this->getRPSByKode($validated['kode_rps']);
@@ -865,7 +865,7 @@ trait WithNilaiExcel
     //             ->where('mahasiswa_id', $mahasiswa->id)
     //             ->where('rps_id', $rpsId)
     //             ->where('ganjil_genap', $ganjilGenap)
-    //             ->where('tahun_akademik', $tahunAkademik)
+    //             ->where('akademik', $tahunAkademik)
     //             ->lockForUpdate()
     //             ->first();
 
@@ -873,7 +873,7 @@ trait WithNilaiExcel
     //             $nilai_mahasiswa = new NilaiMahasiswa;
     //             $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
     //             $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
-    //             $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
+    //             $nilai_mahasiswa->akademik = $tahunAkademik;
     //         }
 
     //         $nilai_mahasiswa->rps_id = $rpsId;
@@ -1132,7 +1132,7 @@ trait WithNilaiExcel
     //         if ($jadwal) {
     //             $rpsId = $jadwal->kelas_rel?->rps_id;
     //             $ganjilGenap = (string) $jadwal->ganjil_genap;
-    //             $tahunAkademik = (string) $jadwal->tahun_akademik;
+    //             $tahunAkademik = (string) $jadwal->akademik;
     //             $jadwalId = $jadwal->id;
     //         } else {
     //             $rps = RPS::query()
@@ -1165,7 +1165,7 @@ trait WithNilaiExcel
     //             ->where('mahasiswa_id', $mahasiswa->id)
     //             ->where('rps_id', $rpsId)
     //             ->where('ganjil_genap', $ganjilGenap)
-    //             ->where('tahun_akademik', $tahunAkademik)
+    //             ->where('akademik', $tahunAkademik)
     //             ->lockForUpdate()
     //             ->first();
 
@@ -1173,7 +1173,7 @@ trait WithNilaiExcel
     //             $nilai_mahasiswa = new NilaiMahasiswa;
     //             $nilai_mahasiswa->mahasiswa_id = $mahasiswa->id;
     //             $nilai_mahasiswa->ganjil_genap = $ganjilGenap;
-    //             $nilai_mahasiswa->tahun_akademik = $tahunAkademik;
+    //             $nilai_mahasiswa->akademik = $tahunAkademik;
     //         }
 
     //         $nilai_mahasiswa->rps_id = $rpsId;
@@ -1254,7 +1254,7 @@ trait WithNilaiExcel
     //             ->where('mahasiswa_id', $mahasiswa->id)
     //             ->where('rps_id', $jadwal->kelas_rel->rps_id)
     //             ->where('ganjil_genap', (string) $jadwal->ganjil_genap)
-    //             ->where('tahun_akademik', (string) $jadwal->tahun_akademik)
+    //             ->where('akademik', (string) $jadwal->akademik)
     //             ->lockForUpdate()
     //             ->first();
 
@@ -1262,7 +1262,7 @@ trait WithNilaiExcel
     //             $nilai_mahasiswa = new NilaiMahasiswa();
     //             $nilai_mahasiswa->mahasiswa_id   = $mahasiswa->id;
     //             $nilai_mahasiswa->ganjil_genap   = (string) $jadwal->ganjil_genap;
-    //             $nilai_mahasiswa->tahun_akademik = (string) $jadwal->tahun_akademik;
+    //             $nilai_mahasiswa->akademik = (string) $jadwal->akademik;
     //         }
 
     //         $nilai_mahasiswa->rps_id = $jadwal->kelas_rel->rps_id;
@@ -1364,7 +1364,7 @@ trait WithNilaiExcel
     //         return [
     //             'rps' => null,
     //             'ganjil_genap' => null,
-    //             'tahun_akademik' => null,
+    //             'akademik' => null,
     //         ];
     //     }
 
@@ -1375,7 +1375,7 @@ trait WithNilaiExcel
     //     return [
     //         'rps' => $rps,
     //         'ganjil_genap' => $this->getRPSGanjilGenap($rps),
-    //         'tahun_akademik' => $this->getRPSTahunAkademik($kelas),
+    //         'akademik' => $this->getRPSTahunAkademik($kelas),
     //     ];
     // }
 

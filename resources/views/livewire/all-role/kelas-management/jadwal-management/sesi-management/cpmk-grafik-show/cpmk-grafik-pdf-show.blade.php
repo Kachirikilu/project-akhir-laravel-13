@@ -502,7 +502,7 @@
                             @if ($jadwal)
                                 <td class="text-right">
                                     <span class="block font-bold text-gray-800 chart-header-kelas">
-                                        {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $tahun_akademik }}
+                                        {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $akademik }}
                                     </span>
                                     <span class="block text-gray-500 uppercase tracking-wider chart-header-meta">
                                         Kode RPS: {{ $rps->kode ?? '---- -- ----' }}

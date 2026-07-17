@@ -1,42 +1,48 @@
 @php
-    // --- 1. DEKLARASI VARIABEL UTAMA DENGAN FALLBACK DEFAULT (MODE PERIODE) ---
-    $totalSks = $mahasiswa->total_sks ?? ($user->total_sks ?? 0);
-    $matakuliahLulusCount = $mahasiswa->count_rps ?? ($user->count_rps ?? 0);
-    $calculatedIndex = $mahasiswa->ipk_mhs ?? '0.00';
-    $mutuMhs = $mahasiswa->mutu_mhs ?? 'E';
+    // $totalSks = $mahasiswa->total_sks;
+    // $totalMk = $mahasiswa->count_rps;
+    // $calculatedIndex = $mahasiswa->ipk_mhs ?? '0.00';
+    // $mutuMhs = $mahasiswa->mutu_mhs ?? 'E';
 
-    // --- 2. OVERWRITE JIKA MODE 'NILAI' (HITUNG DARI $nilais) ---
     if ($alpine === 'nilai') {
         $safeNilais = collect($nilais ?? []);
 
-        // Menyaring rps_id unik nilai tertinggi untuk cakupan semester ini
         $nilaiUnik = $safeNilais->groupBy('rps_id')->map(function ($group) {
             return collect($group)->sortByDesc('nilai')->first();
         });
 
         $totalSks = $nilaiUnik->sum('sks');
-        $matakuliahLulusCount = $nilaiUnik->where('nilai', '>=', 50)->count();
+        // $totalMk = $nilaiUnik->where('nilai', '>=', 50)->count();
+        $totalMk = $nilaiUnik->count();
 
-        // Hitung IPS (Indeks Prestasi Semester)
         $totalBobotSks = $nilaiUnik->sum(function ($n) {
             return ($n->sks ?? 0) * (float) ($n->nilai_index ?? 0);
         });
-        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
 
-        // Tentukan Predikat Mutu Semester
-        // Tentukan Predikat Mutu berdasarkan hasil kalkulasi index mhs (IPS / IPK)
-        $mutuMhs = match (true) {
-            $calculatedIndex >= 4.0 => 'A',
-            $calculatedIndex >= 3.7 => 'A-',
-            $calculatedIndex >= 3.3 => 'B+',
-            $calculatedIndex >= 3.0 => 'B',
-            $calculatedIndex >= 2.7 => 'B-',
-            $calculatedIndex >= 2.3 => 'C+',
-            $calculatedIndex >= 2.0 => 'C',
-            $calculatedIndex >= 1.0 => 'D',
-            default => 'E',
-        };
+        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
+    } else {
+        $safePeriodes = collect($periodes ?? []);
+        $totalSks = $safePeriodes->sum('total_sks');
+        $totalMk = $safePeriodes->sum('total_mk');;
+
+        $calculatedIndex = (float) ($safePeriodes->avg('ip_semester') ?? 0);
+
+        $totalBobotSks = $safePeriodes->sum(function ($n) {
+            return ($n->total_sks ?? 0) * (float) ($n->ip_semester ?? 0);
+        });
+        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
     }
+
+    $mutuMhs = match (true) {
+        $calculatedIndex >= 3.75 => 'A', 
+        $calculatedIndex >= 3.5 => 'A-',
+        $calculatedIndex >= 3.0 => 'B+',
+        $calculatedIndex >= 2.75 => 'B',
+        $calculatedIndex >= 2.0 => 'C',
+        $calculatedIndex >= 1.0 => 'D',
+        default => 'E',
+    };
+    // dump(collect($nilais ?? $periodes));
 
     // --- 3. LOGIKA WARNA BERDASARKAN MUTU AKTIF ---
     $colorClass = 'text-zinc-500';
@@ -164,8 +170,7 @@
         $sksSub = $isIps ? 'Kredit terdaftar KHS' : 'Terakumulasi di transkrip';
 
         // MK
-        $mkValue = (int) ($matakuliahLulusCount ?? 0);
-        $mkDisplay = $mkValue . ' MK';
+        $mkValue = (int) ($totalMk ?? 0);
         $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Rencana Pembelajaran Semester';
 
         // IPK / IPS
@@ -182,11 +187,11 @@
         $mutuSub = 'Bobot Standar Akademik';
         // Warna accent predikat
         $mutuAccent = match (strtoupper($mutuDisplay)) {
-            'A', 'A+' => '#10b981',           // 4.0
-            'A-', 'B+', 'B' => '#1d6fb8',     // 3.0 - 3.7
-            'B-', 'C+', 'C' => '#f59e0b',     // 2.0 - 2.7
-            'D' => '#ef4444',                 // 1.0 (D)
-            default => '#991b1b',             // E (Merah Gelap)
+            'A', 'A+' => '#10b981', // 4.0
+            'A-', 'B+', 'B' => '#1d6fb8', // 3.0 - 3.7
+            'B-', 'C+', 'C' => '#f59e0b', // 2.0 - 2.7
+            'D' => '#ef4444', // 1.0 (D)
+            default => '#991b1b', // E (Merah Gelap)
         };
 
         $mutuSoftBg =
@@ -225,11 +230,10 @@
         {{-- 2. MATA KULIAH — tidak ada rasio, angka saja di tengah --}}
         @include('livewire.global.statistik.donut-mini-stats', [
             'icon' => 'rectangle-stack',
-            'title' => $isIps ? 'Mata Kuliah Diambil' : 'Mata Kuliah Lulus',
+            'title' => $isIps ? 'Mata Kuliah Diambil' : 'Mata Kuliah',
             'sub' => $mkSub,
-            'value' => $mkValue,
-            'max' => 0, // max=0 → ring tidak tampil, hanya angka di tengah
-            'display' => $mkDisplay,
+            'mainValue' => $mkValue,
+            'display' => 'Mata Kuliah',
             'accent' => 'var(--focus-color)',
             'softBg' => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
             'textColor' => 'var(--focus-color)',

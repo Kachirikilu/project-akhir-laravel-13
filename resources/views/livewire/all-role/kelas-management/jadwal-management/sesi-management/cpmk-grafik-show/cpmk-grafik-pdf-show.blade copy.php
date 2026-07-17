@@ -139,7 +139,7 @@
                     @if ($jadwal)
                         <div class="text-right">
                             <span class="block text-[11px] font-bold text-gray-800 dark:text-zinc-100">
-                                {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $tahun_akademik }}
+                                {{ $jadwal->kode ?? 'Kelas Tidak Diketahui' }} {{ $akademik }}
                             </span>
                             <span class="block text-[10px] text-gray-500 uppercase tracking-wider">
                                 Kode RPS: {{ $rps->kode ?? '---- -- ----' }}
