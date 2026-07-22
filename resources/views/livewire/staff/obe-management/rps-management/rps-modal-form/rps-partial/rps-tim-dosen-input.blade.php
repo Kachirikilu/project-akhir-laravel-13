@@ -15,14 +15,7 @@
         @endif
     </div>
 
-    <div class="relative">
 
-        @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'addRPS, editRPS',
-            'heightContainer' => '32',
-        ])
-
-        @if ($this->showRPSModal)
             @include('livewire.global.modal-form.input-array.search-input-tim-dosen-form', [
                 'alpine' => 'rps',
                 'xResults' => $timDosenResults,
@@ -66,8 +59,4 @@
                 'iconString' => 'user',
                 'wireLoading' => 'fetchTimDosen',
             ]) --}}
-        @endif
-
-    </div>
-
 </div>

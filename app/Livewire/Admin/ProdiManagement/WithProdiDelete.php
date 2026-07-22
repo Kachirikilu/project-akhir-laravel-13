@@ -147,6 +147,10 @@ trait WithProdiDelete
                 throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki Mata Kuliah!');
             }
 
+            if ($data->cpls()->exists()) {
+                throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki CPL!');
+            }
+
             if (Kelas::where('pr_id', $data->id)->exists()) {
                 throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki Kelas!');
             }

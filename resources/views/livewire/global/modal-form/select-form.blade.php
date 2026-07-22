@@ -194,9 +194,9 @@ setNestedValue(
 
             <div wire:key="option-{{ $i }}"
                 @click="
-                    const selectedValue =
-                        {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }};
-
+                    {{-- const selectedValue =
+                        {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }}; --}}
+                    const selectedValue = '{{ $selectedValue }}';
                     value = '{{ $label }}';
 
                     setNestedValue(

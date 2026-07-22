@@ -18,7 +18,7 @@ trait WithUserSearchFilters
 
     public $userSearchResults = [];
 
-    public $modeUser = '';
+    public $modeUser = 'single';
 
     public $user_id;
 

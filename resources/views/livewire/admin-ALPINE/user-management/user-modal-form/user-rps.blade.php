@@ -55,7 +55,7 @@
                         class="p-3 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
                         <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Index (0-4)</span>
                         <span class="block text-xl font-bold text-blue-800 dark:text-blue-300 mt-0.5">
-                            <span x-text="$store.user?.index_mhs"></span>
+                            <span x-text="$store.user?.ipk_mhs"></span>
                         </span>
                     </div>
 

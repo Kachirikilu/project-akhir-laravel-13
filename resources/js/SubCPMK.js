@@ -41,6 +41,24 @@ document.addEventListener("alpine:init", () => {
         setValueSCPMK(
             kode,
             deskripsi,
+        ) {
+            this.kode_scpmk = kode;
+            this.deskripsi = deskripsi;
+
+            if (kode) {
+                const mutu = kode.match(/[a-zA-Z]+/g);
+                this.kode_scpmk_1 = mutu ? mutu[0] : "";
+                const angka = kode.match(/\d+/g);
+                this.kode_scpmk_2 = angka ? angka[0] : "";
+            } else {
+                this.kode_scpmk_1 = "";
+                this.kode_scpmk_2 = "";
+            }
+        },
+
+        setValueSCPMKFull(
+            kode,
+            deskripsi,
             materi,
             metodologi,
             indikator,
@@ -76,14 +94,14 @@ document.addEventListener("alpine:init", () => {
             return {
                 kode_scpmk: this.kode_scpmk,
                 deskripsi: this.deskripsi,
-                materi: this.materi,
-                metodologi: this.metodologi,
-                indikator: this.indikator,
-                metode: this.metode,
-                deskripsi_tugas: this.deskripsi_tugas,
-                waktu_tugas: this.waktu_tugas,
-                waktu_mandiri: this.waktu_mandiri,
-                bobot: this.bobot,
+                // materi: this.materi,
+                // metodologi: this.metodologi,
+                // indikator: this.indikator,
+                // metode: this.metode,
+                // deskripsi_tugas: this.deskripsi_tugas,
+                // waktu_tugas: this.waktu_tugas,
+                // waktu_mandiri: this.waktu_mandiri,
+                // bobot: this.bobot,
                 kode_scpmk: this.kode_scpmk,
                 kode_scpmk_1: this.kode_scpmk_1,
                 kode_scpmk_2: this.kode_scpmk_2,

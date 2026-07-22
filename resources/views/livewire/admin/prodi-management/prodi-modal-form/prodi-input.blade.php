@@ -17,27 +17,28 @@
         'message' => $errors->first('nama_pr'),
     ])
 
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'prodi',
-        'xResults' => $dpResults,
-        'selectX' => 'selectDp',
-        'modelString' => 'nama_dp_search',
-    
-        'idString' => 'dp_id',
-        'itemsAllString' => 'dp_items',
-    
-        'resetXInput' => 'resetDpInput()',
-        'typeXString' => 'departemen',
-        'typeX2String' => 'fakultas',
-    
-        'nameXString' => 'Departemen',
-        'nameSearchString' => 'dpNameSearch',
-        'fetchString' => 'fetchDp',
-        'iconString' => 'book-open',
-        'wireLoading' => 'fetchDp',
-    ])
 
-
+    @if (Auth::user()->tingkat < 3)
+        @include('livewire.global.modal-form.input-array.search-input-form', [
+            'alpine' => 'prodi',
+            'xResults' => $dpResults,
+            'selectX' => 'selectDp',
+            'modelString' => 'nama_dp_search',
+        
+            'idString' => 'dp_id',
+            'itemsAllString' => 'dp_items',
+        
+            'resetXInput' => 'resetDpInput()',
+            'typeXString' => 'departemen',
+            'typeX2String' => 'fakultas',
+        
+            'nameXString' => 'Departemen',
+            'nameSearchString' => 'dpNameSearch',
+            'fetchString' => 'fetchDp',
+            'iconString' => 'book-open',
+            'wireLoading' => 'fetchDp',
+        ])
+    @endif
 
     <div> 
         @include('livewire.global.modal-form.partial.label', [

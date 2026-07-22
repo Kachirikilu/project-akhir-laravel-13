@@ -66,7 +66,7 @@
                     </div>
                 @endif
 
-                @if ((Auth::user()->admin || Auth::user()->dosen) && !$isJadwalOnly)
+                @if ($canAccess && !$isJadwalOnly)
                     @if ($switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] == 0)
                         <div></div>
                     @endif

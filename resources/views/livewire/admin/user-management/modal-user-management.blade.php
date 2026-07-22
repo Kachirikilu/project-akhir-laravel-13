@@ -1,13 +1,14 @@
 <div>
     <flux:modal name="user-modal" wire:model.live="showUserModal" :flyout="!!$parent"
         wire:key="user-modal-{{ $parent }}" @refresh-data-user.window="$store.user.reset()"
-        class="w-full md:w-3xl max-w-4xl max-h-[98vh] !p-4 sm:!px-6 md:!px-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm">
+        class="modal-flux md:w-3xl max-w-4xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-        @if ($isReady)
-            <div class="flex flex-col h-full">
+        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'saveUser, updateUser'])
 
+        <div class="modal-flux-main scrollbar-large">
+            @if ($isReady)
                 {{-- 1. Header Modal (Tetap di Atas) --}}
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+                <div class="modal-flux-header">
 
                     <h3 class="text-xl font-semibold">
                         <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
@@ -32,7 +33,7 @@
                 </div>
 
                 {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                <div class="modal-flux-body">
 
                     <form
                         x-on:submit.prevent="$store.user.isEdit ? $wire.updateUser($store.user.getDataUser()) : $wire.saveUser($store.user.getDataUser())"
@@ -56,10 +57,10 @@
                         </div>
                     </form>
                 </div>
+            @else
+                @include('livewire.global.livewire-skeletons.modal-skeleton')
+            @endif
+        </div>
 
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-skeleton')
-        @endif
     </flux:modal>
 </div>

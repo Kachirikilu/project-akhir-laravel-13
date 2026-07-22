@@ -68,11 +68,11 @@ document.addEventListener("alpine:init", () => {
             // namaDepartemen,
             // namaFakultas,
             semester,
-            sksKuliah,
-            tipeSKS,
-            isWajib,
-            deskripsi,
-            bahanKajian,
+            // sksKuliah,
+            // tipeSKS,
+            // isWajib,
+            // deskripsi,
+            // bahanKajian,
         ) {
             this.typeModal = tingkatanMode;
             this.nama_mk = namaMK;
@@ -82,12 +82,12 @@ document.addEventListener("alpine:init", () => {
             this.digit_mk = digitMK;
 
             this.semester = semester;
-            this.sks_kuliah = sksKuliah;
-            this.tipe_sks = tipeSKS;
-            this.is_wajib = isWajib;
+            // this.sks_kuliah = sksKuliah;
+            // this.tipe_sks = tipeSKS;
+            // this.is_wajib = isWajib;
 
-            this.deskripsi = deskripsi;
-            this.bahan_kajian = bahanKajian;
+            // this.deskripsi = deskripsi;
+            // this.bahan_kajian = bahanKajian;
         },
 
         getDataMK() {
@@ -98,11 +98,11 @@ document.addEventListener("alpine:init", () => {
                 digit_semester: this.digit_semester,
                 digit_mk: this.digit_mk,
                 semester: this.semester,
-                sks_kuliah: this.sks_kuliah,
-                tipe_sks: this.tipe_sks,
-                is_wajib: this.is_wajib,
-                deskripsi: this.deskripsi,
-                bahan_kajian: this.bahan_kajian,
+                // sks_kuliah: this.sks_kuliah,
+                // tipe_sks: this.tipe_sks,
+                // is_wajib: this.is_wajib,
+                // deskripsi: this.deskripsi,
+                // bahan_kajian: this.bahan_kajian,
             };
         },
 

@@ -10,6 +10,7 @@
 
             @include('livewire.global.modal-form.textarea-form', [
                 'alpine' => 'scpmk',
+                'isLivewire' => 1,
                 'modelString' => 'materi',
                 'iconString' => 'book-open',
                 'placeholder' => 'Masukkan Materi Sub-CPMK...',
@@ -17,6 +18,7 @@
             ])
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'scpmk',
+                'isLivewire' => 1,
                 'modelString' => 'metodologi',
                 'iconString' => 'beaker',
                 'placeholder' => 'Masukkan Metodologi Sub-CPMK...',
@@ -24,6 +26,7 @@
             ])
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'scpmk',
+                'isLivewire' => 1,
                 'modelString' => 'indikator',
                 'iconString' => 'clipboard-document-check',
                 'placeholder' => 'Masukkan Indikator Sub-CPMK...',

@@ -12,7 +12,7 @@ trait WithCPLSearchFilters
 
     public $cplSearchQuery = '';
     public $cplSearchResults = [];
-    public $modeCPL = '';
+    public $modeCPL = 'single';
     public $cpl_id;
     public $cpl_name = '';
     public $cpl_items = [];

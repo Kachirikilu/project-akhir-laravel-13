@@ -38,11 +38,16 @@ document.addEventListener("alpine:init", () => {
         nama: "",
         nim: "",
 
-        tanggal_unlock: "",
-        ganjil_genap: "",
-        akademik: "",
-        akademik_1: "",
-        akademik_2: "",
+        // tanggal_unlock: "",
+        // ganjil_genap: "",
+        // akademik: "",
+        // akademik_1: "",
+        // akademik_2: "",
+
+        tanggal_ganjil: "",
+        tanggal_genap: "",
+        bulan_ganjil: "",
+        bulan_genap: "",
 
         kode_rps: 0,
         mk: 0,
@@ -128,11 +133,15 @@ document.addEventListener("alpine:init", () => {
 
         getDataLockNilai() {
             const data = {
-                tanggal_unlock: this.tanggal_unlock,
-                ganjil_genap: this.ganjil_genap,
-                akademik: this.akademik,
-                akademik_1: this.akademik_1,
-                akademik_2: this.akademik_2,
+                // tanggal_unlock: this.tanggal_unlock,
+                // ganjil_genap: this.ganjil_genap,
+                // akademik: this.akademik,
+                // akademik_1: this.akademik_1,
+                // akademik_2: this.akademik_2,
+                tanggal_ganjil: this.tanggal_ganjil,
+                tanggal_genap: this.tanggal_genap,
+                bulan_ganjil: this.bulan_ganjil,
+                bulan_genap: this.bulan_genap,
             };
             return data;
         },
@@ -172,11 +181,11 @@ document.addEventListener("alpine:init", () => {
                 this.kode_rps_delete = "";
                 this.mk_delete = "";
 
-                this.tanggal_unlock = "";
-                this.ganjil_genap = "";
-                this.akademik = "";
-                this.akademik_1 = "";
-                this.akademik_2 = "";
+                // this.tanggal_unlock = "";
+                // this.ganjil_genap = "";
+                // this.akademik = "";
+                // this.akademik_1 = "";
+                // this.akademik_2 = "";
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

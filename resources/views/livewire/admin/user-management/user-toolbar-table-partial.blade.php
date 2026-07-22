@@ -1,6 +1,18 @@
-@if (!$data['isTrashed'])
-    {{-- Tombol RPS --}}
-    @if (Auth::user()?->admin)
+@php
+    $user = Auth::user();
+    if ($user->admin) {
+        $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($data['fk_id'] ?? null);
+        $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($data['dp_id'] ?? null);
+        $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($data['pr_id'] ?? null);
+        $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
+    } else {
+        $canAccess = false;
+    }
+@endphp
+
+@if ($canAccess)
+    @if (!$data['isTrashed'])
+        {{-- Tombol RPS --}}
         @if (Auth::id() != $data['id'])
             <flux:menu.separator />
 
@@ -21,9 +33,7 @@
                 </div>
             </flux:menu.item>
         @endif
-    @endif
-@else
-    @if (Auth::user()?->admin)
+    @else
         {{-- Tombol Restore --}}
         <flux:menu.item wire:click="$dispatch('restore-user', { id: {{ $data['id'] }} })"
             class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">

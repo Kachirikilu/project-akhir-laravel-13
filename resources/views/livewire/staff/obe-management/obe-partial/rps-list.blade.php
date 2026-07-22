@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Rencana Pembelajaran Semester</h4>
@@ -18,7 +17,8 @@
                     <flux:icon.clipboard-document-list variant="solid" class="size-4 text-green-300" />
                 </div>
                 <div>
-                    <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-xs sm:text-sm">RPS Terhubung</h3>
+                    <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-xs sm:text-sm">RPS Terhubung
+                    </h3>
                     <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">
                         Daftar RPS yang menggunakan {{ $nameXString }} ini
                     </p>
@@ -73,7 +73,8 @@
 
                                     <div class="flex-grow min-w-0">
                                         <div class="flex items-center gap-3">
-                                            <p class="text-xs sm:text-sm font-bold truncate text-zinc-800 dark:text-zinc-200">
+                                            <p
+                                                class="text-xs sm:text-sm font-bold truncate text-zinc-800 dark:text-zinc-200">
                                                 {{ $r['mk'] }}</p>
                                             <span
                                                 class="shrink-0 text-xs font-mono px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
@@ -163,36 +164,36 @@
                                                         $store.rps?.setShowRPS(
                                                             '{{ $r['id'] ?? '' }}',
                                                             '{{ $r['kode'] ?? '' }}',
-                                                            '{{ $pr_id ?? $prodi->id ?? '' }}'
+                                                            '{{ $pr_id ?? ($prodi->id ?? '') }}'
                                                         );
                                                         $store.rps?.setColor('text-green-700 dark:text-green-400');
                                                         $flux.modal('rps-detail-modal').show();
                                                         $dispatch('open-show-rps-modal', { id: {{ $r['id'] }} });
                                                     "
-                                                    {{-- wire:click="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})" --}}
-                                                    >
+                                                    {{-- wire:click="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})" --}}>
                                                     <div
                                                         class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30 transition-colors">
                                                         <flux:icon name="eye" variant="micro" class="w-3.5 h-3.5" />
                                                     </div>
                                                     <span>Show RPS</span>
-                                                    <flux:icon wire:loading wire:target="showRPS({{ $r['id'] }}, {{ $pr_id ?? $prodi->id ?? '' }})"
+                                                    <flux:icon wire:loading
+                                                        wire:target="showRPS({{ $r['id'] }}, {{ $pr_id ?? ($prodi->id ?? '') }})"
                                                         name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                 </button>
 
-                                                <button type="button"
-                                                    x-data="{ isWaiting: false }"
+                                                <button type="button" x-data="{ isWaiting: false }"
                                                     @click="isWaiting = true; setTimeout(() => isWaiting = false, 1000)"
                                                     @dblclick="isWaiting = false"
                                                     wire:dblclick="printPDFRPS({{ $r['id'] }})"
                                                     :class="isWaiting ? 'ring-2 ring-rose-300 rounded-md px-1' : ''"
                                                     class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all duration-200">
-                                                    
+
                                                     <div class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors"
                                                         :class="isWaiting ? 'bg-rose-100' : ''">
-                                                        <flux:icon name="arrow-down-tray" variant="micro" class="w-3.5 h-3.5" />
+                                                        <flux:icon name="arrow-down-tray" variant="micro"
+                                                            class="w-3.5 h-3.5" />
                                                     </div>
-                                                    
+
                                                     <span x-text="isWaiting ? 'Double click...' : 'Export RPS'"></span>
 
                                                     <flux:icon wire:loading
@@ -200,54 +201,59 @@
                                                         name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                                 </button>
 
-                                                @if (!($noModalRPS ?? null))
-                                                    {{-- @unless (
-                                                        $this->showRPSModal &&
-                                                            !(
-                                                                ($this->isEditingCPMK && !$this->isFlyoutCPMK) ||
-                                                                ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) ||
-                                                                ($this->isEditingCPL && !$this->isFlyoutCPL) ||
-                                                                ($this->isEditingRef && !$this->isFlyoutRef)
-                                                            )) --}}
+                                                @php
+                                                    $user = Auth::user();
+                                                    $isSuperUser = $user->tingkat <= 1;
+
+                                                    $isFkAccess = $user->tingkat <= 2 && ($r['fk_id'] ?? null) == $user->fk_id && ($r['level_mk'] ?? null) == 3;
+                                                    $isDpAccess = $user->tingkat <= 3 && ($r['dp_id'] ?? null) == $user->dp_id && ($r['level_mk'] ?? null) == 2;
+                                                    $isPrAccess = $user->tingkat <= 4 && ($r['pr_id'] ?? null) == $user->pr_id && ($r['level_mk'] ?? null) == 1;
+
+                                                    $canAccess = $isSuperUser || $isFkAccess || $isDpAccess || $isPrAccess;
+                                                @endphp
+
+                                                @if ($canAccess)
+                                                    @if (!($noModalRPS ?? null))
+                                                        {{-- @unless ($this->showRPSModal && !(($this->isEditingCPMK && !$this->isFlyoutCPMK) || ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) || ($this->isEditingCPL && !$this->isFlyoutCPL) || ($this->isEditingRef && !$this->isFlyoutRef))) --}}
                                                         {{-- Action Link: Edit --}}
                                                         <button type="button"
                                                             class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
                                                             @click="
-                                                                $store.rps?.reset();
-                                                                $store.rps?.setEdit(1);
-                                                                $store.rps?.setFlyout(true);
-                                                                $store.rps?.setColor('text-green-700 dark:text-green-400');
-                                                                $store.rps?.setValueRPS(
-                                                                    '{{ $r['digit_akademik'] ?? '' }}',
-                                                                    '{{ $r['deskripsi'] ?? '' }}',
-                                                                    '{{ $r['mk_id'] ?? '' }}',
-                                                                    '{{ $r['kode_mk'] ?? '' }}',
-                                                                    '{{ $r['mk'] ?? '' }}',
-                                                                    '{{ $r['akademik'] ?? '' }}',
-                                                                    '{{ $r['draf'] ?? '' }}',
-                                                                    '{{ $r['count_scpmk'] }}',
-                                                                    '{{ $r['bobot_uts'] }}',
-                                                                    '{{ $r['bobot_uas'] }}',
-                                                                    '{{ $r['total_bobot'] }}',
-                                                                    '{{ $r['kode_semester'] ?? '' }}',
-                                                                );
-                                                                $flux.modal('rps-modal').show();
-                                                                $dispatch('open-edit-rps-modal', { id: {{ $r['id'] }}, parent: '{{ $parent ?? '' }}', isFlyout: '{{ $isFlyout ?? '' }}' });
-                                                            "
-                                                            {{-- wire:click="editRPS('{{ $r['id'] }}') --}}
-                                                        ">
-                                                            <div
-                                                                class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
-                                                                <flux:icon name="pencil-square" variant="micro"
-                                                                    class="w-3.5 h-3.5" />
-                                                            </div>
-                                                            <span>Edit RPS</span>
-                                                            <flux:icon wire:loading
-                                                                wire:target="editRPS({{ $r['id'] }})"
-                                                                name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
-                                                        </button>
-                                                    {{-- @endunless --}}
-                                                @endif
+                                                                    $store.rps?.reset();
+                                                                    $store.rps?.setEdit(1);
+                                                                    $store.rps?.setFlyout(true);
+                                                                    $store.rps?.setColor('text-green-700 dark:text-green-400');
+                                                                    $store.rps?.setValueRPS(
+                                                                        '{{ $r['digit_akademik'] ?? '' }}',
+                                                                        '{{ $r['deskripsi'] ?? '' }}',
+                                                                        '{{ $r['mk_id'] ?? '' }}',
+                                                                        '{{ $r['kode_mk'] ?? '' }}',
+                                                                        '{{ $r['mk'] ?? '' }}',
+                                                                        '{{ $r['akademik'] ?? '' }}',
+                                                                        '{{ $r['draf'] ?? '' }}',
+                                                                        '{{ $r['count_scpmk'] }}',
+                                                                        '{{ $r['bobot_uts'] }}',
+                                                                        '{{ $r['bobot_uas'] }}',
+                                                                        '{{ $r['total_bobot'] }}',
+                                                                        '{{ $r['kode_semester'] ?? '' }}',
+                                                                    );
+                                                                    $flux.modal('rps-modal').show();
+                                                                    $dispatch('open-edit-rps-modal', { id: {{ $r['id'] }}, parent: '{{ $parent ?? '' }}', isFlyout: '{{ $isFlyout ?? '' }}' });
+                                                                "
+                                                            {{-- wire:click="editRPS('{{ $r['id'] }}') --}} ">
+                                                                <div
+                                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
+                                                                    <flux:icon name="pencil-square" variant="micro"
+                                                                        class="w-3.5 h-3.5" />
+                                                                </div>
+                                                                <span>Edit RPS</span>
+                                                                <flux:icon wire:loading
+                                                                    wire:target="editRPS({{ $r['id'] }})"
+                                                                    name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
+                                                            </button>
+                                                        {{-- @endunless --}}
+ @endif
+                                                    @endif
                                             </div>
 
                                         </div>
@@ -261,21 +267,13 @@
                                 {{-- <div
                                 wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}"> --}}
                                 {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSsList',
+                                    'typeXLoading' => 'loadingRPSsList()',
                                     'isSmall' => 1,
-                                    'maxButtons' => 8
+                                    'maxButtons' => 8,
                                 ]) }}
                                 {{-- </div> --}}
                             </div>
                         @endif
-                        {{-- <div class="py-4" id="pagination-links-container" wire:ignore
-                            wire:key="secure-pagination-zone">
-                            @if (!empty($rps_modal_paginator) && $rps_modal_paginator->hasPages())
-                                {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSsList',
-                                ]) }}
-                            @endif
-                        </div> --}}
                     @endif
 
                 </div>

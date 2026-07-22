@@ -1,26 +1,15 @@
 <div>
     <flux:modal name="prodi-modal" wire:model.live="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
-        class="w-full md:w-3xl max-w-4xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="modal-flux md:w-3xl max-w-4xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-        @if ($isReady)
-            {{-- Loading Overlay --}}
-            <div wire:loading wire:target="saveProdi, updateProdi">
-                <div
-                    class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
-                    <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                    <p class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">Menyinkronkan...</p>
-                </div>
-            </div>
+        @include('livewire.global.modal-form.loading-animation', [
+            'wireLoading' => 'saveProdi, updateProdi',
+        ])
 
+        <div class="modal-flux-main scrollbar-large">
+            @if ($isReady)
+                <div class="modal-flux-header">
 
-            <div class="flex flex-col h-full relative">
-
-                {{-- @php
-            $targetLoading = 'editProdi'
-        @endphp --}}
-
-                {{-- 1. Header Modal --}}
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
                     <h3 class="text-xl font-semibold">
 
@@ -47,7 +36,8 @@
                 </div>
 
                 {{-- 2. Konten & Form --}}
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                <div class="modal-flux-body">
+
                     <form
                         x-on:submit.prevent="$store.prodi.isEdit ? $wire.updateProdi($store.prodi.getDataProdi()) : $wire.saveProdi($store.prodi.getDataProdi())"
                         enctype="multipart/form-data" id="prodiForm">
@@ -77,9 +67,10 @@
                         </div>
                     </form>
                 </div>
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-skeleton')
-        @endif
+            @else
+                @include('livewire.global.livewire-skeletons.modal-skeleton')
+            @endif
+        </div>
+
     </flux:modal>
 </div>

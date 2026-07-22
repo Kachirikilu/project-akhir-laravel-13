@@ -1,30 +1,50 @@
-{{-- <flux:menu
-    class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-    <livewire:admin.prodi-management.toolbar-prodi-management lazy :id="$x->id" :dp_id="$x->dp_id ?? null" :fk_id="$x->fk_id ?? null"
-        :strata="$x->strata ?? null" :kode="$x->kode ?? null" :kode_short="$x->kode_short ?? null" :kode_dp="$x->kode_dp ?? null" :kode_fk="$x->kode_fk ?? null" :prodi="$x->prodi ?? null"
-        :departemen="$x->departemen ?? null" :fakultas="$x->fakultas ?? null" :departemen_dp="$x->departemen_dp ?? null" :fakultas_fk="$x->fakultas_fk ?? null" :switchTable="$switchTable" :isTrashed="$x->trashed()"
-        wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}" />
-</flux:menu> --}}
 <flux:menu
     class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-    <livewire:admin.prodi-management.toolbar-prodi-management lazy 
-        :data="[
+    @if (Auth::user()->tingkat > 4)
+        <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
             'id' => $x->id,
-            'dp_id' => $x->dp_id,
-            'fk_id' => $x->fk_id,
-            'target_sks' => $x->target_sks,
-            'strata' => $x->strata,
             'kode' => $x->kode,
-            'kode_short' => $x->kode_short,
-            'kode_dp' => $x->kode_dp,
-            'kode_fk' => $x->kode_fk,
-            'prodi' => $x->prodi,
-            'departemen' => $x->departemen,
-            'fakultas' => $x->fakultas,
-            'departemen_dp' => $x->departemen_dp,
-            'fakultas_fk' => $x->fakultas_fk,
-            'switchTable' => $switchTable,
-            'isTrashed' => $x->trashed(),
         ]"
-        wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}-{{ $switchTable }}" />
+            wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}-{{ $switchTable }}" />
+    @else
+        @if ($switchTable == '' || $switchTable == 'prodi')
+            <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'pr_id' => $x->id,
+                'dp_id' => $x->dp_id,
+                'fk_id' => $x->fk_id,
+                'strata' => $x->strata,
+                'kode' => $x->kode,
+                'kode_short' => $x->kode_short,
+                'kode_dp' => $x->kode_dp,
+                'prodi' => $x->prodi,
+                'departemen_dp' => $x->departemen_dp,
+                'fakultas_fk' => $x->fakultas_fk,
+                'target_sks' => $x->target_sks,
+                'switchTable' => '',
+                'isTrashed' => $x->trashed(),
+            ]"
+                wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}" />
+        @elseif ($switchTable == 'departemen')
+            <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'dp_id' => $x->id,
+                'fk_id' => $x->fk_id,
+                'kode_dp' => $x->kode_dp,
+                'kode_fk' => $x->kode_fk,
+                'departemen_dp' => $x->departemen_dp,
+                'fakultas_fk' => $x->fakultas_fk,
+                'switchTable' => 'departemen',
+                'isTrashed' => $x->trashed(),
+            ]"
+                wire:key="toolbar-departemen-{{ $x->id }}-{{ $key }}" />
+        @elseif ($switchTable == 'fakultas')
+            <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'fk_id' => $x->id,
+                'kode_fk' => $x->kode_fk,
+                'fakultas_fk' => $x->fakultas_fk,
+                'switchTable' => 'fakultas',
+                'isTrashed' => $x->trashed(),
+            ]"
+                wire:key="toolbar-fakultas-{{ $x->id }}-{{ $key }}" />
+        @endif
+    @endif
 </flux:menu>

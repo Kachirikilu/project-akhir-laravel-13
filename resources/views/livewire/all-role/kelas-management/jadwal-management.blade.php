@@ -9,6 +9,28 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
+    @php
+        $user = Auth::user();
+        if ($user->admin || $user->dosen) {
+            $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($kelas->pr_id ?? null);
+            $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($kelas->pr_rel->dp_id ?? null);
+            $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($kelas->pr_rel->fk_id ?? null);
+
+            if ($user->dosen) {
+                if (!$isJadwalOnly) {
+                    $isDosenClass = $tim_dosen->flatMap->dosens?->contains('id', optional($user->dosen)->id) ?? false;
+                } else {
+                    $isDosenClass = false;
+                }
+            } else {
+                $isDosenClass = false;
+            }
+            $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr || $isDosenClass;
+        } else {
+            $canAccess = false;
+        }
+    @endphp
+
     @include('livewire.global.header.tag-user')
 
     @if (!$isJadwalOnly)

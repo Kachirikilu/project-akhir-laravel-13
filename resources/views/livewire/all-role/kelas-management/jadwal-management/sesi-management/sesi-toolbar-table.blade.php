@@ -9,15 +9,9 @@
                 'jam_berakhir' => $s->jam_berakhir,
                 'pertemuan_ke' => $s->pertemuan_ke,
                 'tanggal_fix' => $s->tanggal_fix,
-                'deskripsi' => $s->deskripsi,
-                'materi' => $s->materi,
-                'metodologi' => $s->metodologi,
-                'indikator' => $s->indikator,
-                'tugas' => $s->tugas,
-                'w_tugas' => $s->w_tugas,
-                'w_mandiri' => $s->w_mandiri,
                 'sks' => $kelas->sks,
                 'sent' => $s->sent,
+                'canAccess'         => $canAccess,
                 'isTrashed' => $s->trashed(),
             ]" wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
     @elseif (Auth::user()->mahasiswa)

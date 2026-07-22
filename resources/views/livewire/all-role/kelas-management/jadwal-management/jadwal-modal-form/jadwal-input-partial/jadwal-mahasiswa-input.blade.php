@@ -7,6 +7,7 @@
 
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'jadwal',
+        'isLivewire' => 1,
         'nameXString' => 'Kapasitas Kelas',
         'modelString' => 'kapasitas',
         'numberOnly' => 1,

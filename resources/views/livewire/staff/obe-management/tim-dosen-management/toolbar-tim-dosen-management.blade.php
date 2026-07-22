@@ -3,11 +3,18 @@
         'xType' => $data['kode'],
         'typeXString' => 'Kode Tim Dosen',
     ])
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
-
-        <flux:menu.separator />
-
+    @php
+        $user = Auth::user();
+    @endphp
+    @if ($user->admin || $user->dosen)
+        @php
+            $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($data['fk_id'] ?? null);
+            $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($data['dp_id'] ?? null);
+            $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($data['pr_id'] ?? null);
+            $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
+        @endphp
         @if (!$data['isTrashed'])
+            <flux:menu.separator />
             <flux:menu.item
                 @click="
                 $store.tim_dosen?.reset();
@@ -36,12 +43,13 @@
                     <span>Show RPS</span>
                 </div>
             </flux:menu.item>
-            
-            <flux:menu.separator />
 
-            {{-- Tombol Edit --}}
-            <flux:menu.item
-                @click="
+            @if ($canAccess)
+                <flux:menu.separator />
+
+                {{-- Tombol Edit --}}
+                <flux:menu.item
+                    @click="
                     $store.tim_dosen?.reset();
                     $store.tim_dosen?.setFlyout(false);
 
@@ -50,25 +58,25 @@
                     $store.tim_dosen?.setColor('text-blue-700 dark:text-blue-400');
 
                     $store.tim_dosen?.setValueTimDosen(
-                            '{{ $data['kode_tim_dosen'] ?? '' }}',
+                            '{{ $data['kode'] ?? '' }}',
                             '{{ $data['tim'] ?? '' }}',
                         );
 
                     $flux.modal('tim-dosen-modal').show();
                     $dispatch('open-edit-tim-dosen-modal', { id: {{ $data['id'] }} });
                 "
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Edit Tim Dosen</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Edit Tim Dosen</span>
+                    </div>
+                </flux:menu.item>
 
-            <flux:menu.separator />
+                <flux:menu.separator />
 
-            <flux:menu.item
-                @click="
+                <flux:menu.item
+                    @click="
                     $store.tim_dosen?.setDeleteTimDosen(
                         '{{ $data['tim'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}',
@@ -77,29 +85,32 @@
                     $flux.modal('tim-dosen-delete').show();
                     $dispatch('open-delete-tim-dosen-modal', { id: {{ $data['id'] }} });
                 "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Tim Dosen</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus Tim Dosen</span>
+                    </div>
+                </flux:menu.item>
+            @endif
         @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="$dispatch('restore-tim-dosen', { id: {{ $data['id'] }} })"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+            @if ($canAccess)
+                <flux:menu.separator />
+                {{-- Tombol Restore --}}
+                <flux:menu.item wire:click="$dispatch('restore-tim-dosen', { id: {{ $data['id'] }} })"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                    <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore Tim Dosen</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Restore Tim Dosen</span>
+                    </div>
+                </flux:menu.item>
 
-            <flux:menu.separator />
+                <flux:menu.separator />
 
-            {{-- Tombol Delete Permanent --}}
-            <flux:menu.item
-                @click="
+                {{-- Tombol Delete Permanent --}}
+                <flux:menu.item
+                    @click="
                     $store.tim_dosen?.setDeleteTimDosen(
                         '{{ $data['tim'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}',
@@ -108,13 +119,15 @@
                     $flux.modal('tim-dosen-delete').show();
                     $dispatch('open-delete-tim-dosen-modal', { id: {{ $data['id'] }}, isTrash: {{ $data['isTrashed'] }} } );
                 "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen Tim Dosen</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus Permanen Tim Dosen</span>
+                    </div>
+                </flux:menu.item>
+            @endif
+
         @endif
     @endif
 

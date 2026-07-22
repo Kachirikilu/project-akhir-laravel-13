@@ -5,8 +5,9 @@
     ])
 
 
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
+    @if ($data['canAccess'] ?? false)
         @if ($data['kj_id'] ?? false)
+            <flux:menu.separator />
             <flux:menu.item
                 @click="
                 $store.sesi?.reset();
@@ -43,11 +44,11 @@
                         '{{ $data['mk'] ?? '' }}',
                         '{{ $data['sks'] ?? '' }}',
 
-                        JSON.parse('{{ json_encode($data['nilai_array'] ?? []) }}'),
+                        {{-- JSON.parse('{{ json_encode($data['nilai_array'] ?? []) }}'),
                         JSON.parse('{{ json_encode($data['bobot_rps_array'] ?? []) }}'),
                         JSON.parse('{{ json_encode($data['kode_cpmk_array'] ?? []) }}'),
                         JSON.parse('{{ json_encode($data['kode_scpmk_array'] ?? []) }}'),
-                        JSON.parse('{{ json_encode($data['metode_array'] ?? []) }}'),
+                        JSON.parse('{{ json_encode($data['metode_array'] ?? []) }}'), --}}
                     );
                     $flux.modal('rps-mahasiswa-modal').show();
                     $dispatch('open-edit-rps-mahasiswa-modal');

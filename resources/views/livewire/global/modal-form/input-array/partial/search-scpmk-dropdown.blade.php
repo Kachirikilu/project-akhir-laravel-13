@@ -26,14 +26,14 @@
                                                 id: {{ $x['id'] }},
                                                 kode: '{{ $x['kode'] }}',
                                                 deskripsi: '{{ $x['deskripsi'] }}',
-                                                materi: '{{ $x['materi'] }}',
-                                                metodologi: '{{ $x['metodologi'] }}',
-                                                indikator: '{{ $x['indikator'] }}',
-                                                metode: '{{ $x['metode'] }}',
-                                                bobot: {{ $x['bobot'] }},
-                                                w_tugas: '{{ $x['w_tugas'] }}',
-                                                w_mandiri: '{{ $x['w_mandiri'] }}',
-                                                tugas: '{{ $x['deskripsi'] }}',
+                                                {{-- materi: '{{ $x['materi'] }}', --}}
+                                                {{-- metodologi: '{{ $x['metodologi'] }}', --}}
+                                                {{-- indikator: '{{ $x['indikator'] }}', --}}
+                                                {{-- metode: '{{ $x['metode'] }}', --}}
+                                                {{-- bobot: {{ $x['bobot'] }}, --}}
+                                                {{-- w_tugas: '{{ $x['w_tugas'] }}', --}}
+                                                {{-- w_mandiri: '{{ $x['w_mandiri'] }}', --}}
+                                                {{-- tugas: '{{ $x['deskripsi'] }}', --}}
                                                 ref: {{ json_encode($x['ref']) }},
                                             }
                                         ]

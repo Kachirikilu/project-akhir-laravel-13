@@ -131,7 +131,7 @@
                 {{-- Footer Aksi --}}
                 <div class="flex items-center gap-2 pt-1">
                     <flux:modal.close>
-                        <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center">Batal</flux:button>
+                        <flux:button variant="ghost" class="cursor-pointer flex-1 justify-center transition-all">Batal</flux:button>
                     </flux:modal.close>
                     <a href="{{ $waLink }}" target="_blank" class="flex-1">
                         <button

@@ -5,6 +5,9 @@
         </div>
     </div>
 
-    <livewire:staff.mk-management.modal-mk-management />
-    <livewire:staff.mk-management.delete-mk-management />
+
+    @if (Auth::user()->tingkat < 5)
+        <livewire:staff.mk-management.modal-mk-management />
+        <livewire:staff.mk-management.delete-mk-management />
+    @endif
 </x-layouts::app>

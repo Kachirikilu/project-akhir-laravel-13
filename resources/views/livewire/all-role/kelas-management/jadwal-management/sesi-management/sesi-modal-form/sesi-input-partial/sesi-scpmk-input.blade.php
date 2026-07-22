@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
@@ -10,15 +9,18 @@
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'sesi',
+            'isLivewire' => 1,
             'nameXString' => 'Deskripsi',
             'modelString' => 'deskripsi',
             'iconString' => 'document-text',
             'placeholder' => 'Masukkan deskripsi ringkas tentang Sub-CPMK...',
             'message' => $errors->first('deskripsi'),
+            'isRequired' => 0,
         ])
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'sesi',
+            'isLivewire' => 1,
             'modelString' => 'materi',
             'iconString' => 'book-open',
             'placeholder' => 'Masukkan Materi Sub-CPMK...',
@@ -27,6 +29,7 @@
         ])
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'sesi',
+            'isLivewire' => 1,
             'modelString' => 'metodologi',
             'iconString' => 'beaker',
             'placeholder' => 'Masukkan Metodologi Sub-CPMK...',
@@ -35,6 +38,7 @@
         ])
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'sesi',
+            'isLivewire' => 1,
             'modelString' => 'indikator',
             'iconString' => 'clipboard-document-check',
             'placeholder' => 'Masukkan Indikator Sub-CPMK...',
@@ -46,8 +50,7 @@
 
 </div>
 
-<div
-    class="form-container">
+<div class="form-container">
 
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
@@ -58,6 +61,7 @@
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'sesi',
+            'isLivewire' => 1,
             'nameXString' => 'Deskripsi Tugas',
             'modelString' => 'deskripsi_tugas',
             'iconString' => 'book-open',
@@ -71,6 +75,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'sesi',
+                    'isLivewire' => 1,
                     'nameXString' => 'Waktu Tugas (Menit)',
                     'modelString' => 'waktu_tugas',
                     'numberOnly' => 1,
@@ -84,6 +89,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'sesi',
+                    'isLivewire' => 1,
                     'nameXString' => 'Waktu Mandiri (Menit)',
                     'modelString' => 'waktu_mandiri',
                     'numberOnly' => 1,

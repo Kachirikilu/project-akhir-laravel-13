@@ -17,7 +17,7 @@ trait WithReferensiSearchFilters
 
     public $refSearchResults = [];
 
-    public $modeRef = '';
+    public $modeRef = 'single';
 
     public $ref_id;
 

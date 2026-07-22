@@ -17,11 +17,15 @@ trait WithLockNilai
     public $showLockNilaiModal;
 
     public $nilai_input = [
-        'ganjil_genap' => '',
-        'akademik' => '',
-        'akademik_1' => '',
-        'akademik_2' => '',
-        'tanggal_unlock' => '',
+        // 'ganjil_genap' => '',
+        // 'akademik' => '',
+        // 'akademik_1' => '',
+        // 'akademik_2' => '',
+        // 'tanggal_unlock' => '',
+        'tanggal_ganjil' => '',
+        'tanggal_genap' => '',
+        'bulan_ganjil' => '',
+        'bulan_genap' => '',
     ];
 
     public function editLockNilai()
@@ -39,23 +43,24 @@ trait WithLockNilai
                 ->first();
 
             if ($data) {
-                $this->nilai_input['ganjil_genap'] = $data->ganjil_genap;
-                $this->nilai_input['akademik'] = $data->akademik;
-                $this->nilai_input['tanggal_unlock'] = $data->tanggal_unlock->format('Y-m-d');
+                if ($data->ganjil_unlock) {
+                    $pecahGanjil = explode('-', $data->ganjil_unlock);
+                    $this->nilai_input['bulan_ganjil'] = $pecahGanjil[0] ?? '';
+                    $this->nilai_input['tanggal_ganjil'] = ltrim($pecahGanjil[1] ?? '', '0');
+                } else {
+                    $this->nilai_input['bulan_ganjil'] = '';
+                    $this->nilai_input['tanggal_ganjil'] = '';
+                }
 
-                $pecahAkademik = explode('/', $data->akademik);
-
-                $this->nilai_input['akademik_1'] = $pecahAkademik[0] ?? '';
-                $this->nilai_input['akademik_2'] = $pecahAkademik[1] ?? '';
-            } else {
-                $bulan = (int) date('n');
-                $this->nilai_input['ganjil_genap'] = ($bulan >= 1 && $bulan <= 6) ? 'Genap' : 'Ganjil';
-                $this->nilai_input['akademik'] = '';
-                $this->nilai_input['akademik_1'] = '';
-                $this->nilai_input['akademik_2'] = '';
-                $this->nilai_input['tanggal_unlock'] = date('Y-m-d');
+                if ($data->genap_unlock) {
+                    $pecahGenap = explode('-', $data->genap_unlock);
+                    $this->nilai_input['bulan_genap'] = $pecahGenap[0] ?? '';
+                    $this->nilai_input['tanggal_genap'] = ltrim($pecahGenap[1] ?? '', '0');
+                } else {
+                    $this->nilai_input['bulan_genap'] = '';
+                    $this->nilai_input['tanggal_genap'] = '';
+                }
             }
-
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
         }
@@ -66,58 +71,77 @@ trait WithLockNilai
         $this->resetErrorBag();
         $this->resetValidation();
 
+        $getMaxDays = function($month) {
+            if (in_array($month, ['04', '06', '09', '11'])) return 30;
+            if ($month === '02') return 28;
+            return 31;
+        };
+        if (!empty($data['bulan_ganjil']) && !empty($data['tanggal_ganjil'])) {
+            $maxDaysGanjil = $getMaxDays($data['bulan_ganjil']);
+            if ((int)$data['tanggal_ganjil'] > $maxDaysGanjil) {
+                $data['tanggal_ganjil'] = $maxDaysGanjil;
+            } elseif ((int)$data['tanggal_ganjil'] < 1) {
+                $data['tanggal_ganjil'] = 1;
+            }
+        }
+        if (!empty($data['bulan_genap']) && !empty($data['tanggal_genap'])) {
+            $maxDaysGenap = $getMaxDays($data['bulan_genap']);
+            if ((int)$data['tanggal_genap'] > $maxDaysGenap) {
+                $data['tanggal_genap'] = $maxDaysGenap;
+            } elseif ((int)$data['tanggal_genap'] < 1) {
+                $data['tanggal_genap'] = 1;
+            }
+        }
+
+        $ganjilUnlock = (!empty($data['bulan_ganjil']) && !empty($data['tanggal_ganjil'])) 
+            ? $data['bulan_ganjil'] . '-' . str_pad($data['tanggal_ganjil'], 2, '0', STR_PAD_LEFT) 
+            : null;
+
+        $genapUnlock = (!empty($data['bulan_genap']) && !empty($data['tanggal_genap'])) 
+            ? $data['bulan_genap'] . '-' . str_pad($data['tanggal_genap'], 2, '0', STR_PAD_LEFT) 
+            : null;
+
+        $data['ganjil_unlock'] = $ganjilUnlock;
+        $data['genap_unlock'] = $genapUnlock;
+
         $rules = [
-            'ganjil_genap' => 'required|in:Ganjil,Genap',
-            'akademik' => ['required', 'string', 'regex:/^\d{4}\/\d{4}$/'],
-            'akademik_1' => 'required|integer|min:1970',
-            'akademik_2' => 'required|integer|min:1971',
-            'tanggal_unlock' => 'required|date',
+            'ganjil_unlock' => ['required', 'regex:/^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/'],
+            'genap_unlock' => ['required', 'regex:/^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/'],
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesLockNilai());
 
         if ($validator->fails()) {
-            $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
-            $isThnEmpty = empty($data['akademik']) && empty($data['akademik_1']) && empty($data['akademik_2']);
-            $formattedErrors = [];
-
-            foreach ($validator->errors()->toArray() as $key => $messages) {
-                if (in_array($key, ['akademik', 'akademik_1', 'akademik_2'])) {
-                    if (! $hasDuplicateError && ! isset($formattedErrors['akademik'])) {
-                        $formattedErrors['akademik'][] = $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama;
-                    }
-                }
-            }
-            throw ValidationException::withMessages($formattedErrors);
+            throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
         $validated = $validator->validated();
 
-        return $validated;
+        return [
+            'ganjil_unlock' => $validated['ganjil_unlock'],
+            'genap_unlock' => $validated['genap_unlock'],
+        ];
     }
-
-    public function updateLockNilai($data)
+    
+    public function updateLockNilai($dataAlpine)
     {
+        $data = array_merge($this->nilai_input, $dataAlpine);
+
         try {
-            $validated = $this->inputModalLockNilai($data);
+           $validated = $this->inputModalLockNilai($data);
 
             DB::transaction(function () use ($validated) {
                 LockNilai::updateOrCreate(
                     ['pr_id' => Auth::user()->pr_id],
                     [
-                        'ganjil_genap' => $validated['ganjil_genap'],
-                        'akademik' => $validated['akademik'],
-                        'tanggal_unlock' => $validated['tanggal_unlock'],
+                        'ganjil_unlock' => $validated['ganjil_unlock'],
+                        'genap_unlock' => $validated['genap_unlock'],
                     ]
                 );
             });
 
             $prodi = Auth::user()->prodi_pr;
-            $gg = $validated['ganjil_genap'];
-            $aka = $validated['akademik'];
-            $tgl = Carbon::parse($validated['tanggal_unlock'])->translatedFormat('d F Y');
-
-            $text = "Nilai {$gg} {$aka} akan dibuka pada tanggal $tgl, untuk $prodi";
+            $text = "Pengaturan tanggal unlock nilai untuk prodi $prodi berhasil disimpan!";
 
             $this->toast(text: $text, type: 'update');
             $this->showLockNilaiModal = false;
@@ -127,6 +151,9 @@ trait WithLockNilai
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
+            // $firstError = collect($e->errors())->flatten()->first() ?? 'Terjadi kesalahan validasi!';
+            // $this->toast(text: 'Validasi Gagal: '.$firstError, variant: 'danger');
+            // throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data-nilai');
@@ -134,19 +161,19 @@ trait WithLockNilai
         }
     }
 
-    private function validationMessagesLockNilai()
+private function validationMessagesLockNilai()
     {
         return [
-            'ganjil_genap.required' => 'Pilih Ganjil atau Genap!',
-            'ganjil_genap.in' => "Pilih antara 'Ganjil' atau 'Genap'!",
+            'ganjil_unlock.required' => 'Tanggal & Bulan Unlock Ganjil wajib diisi lengkap!',
+            'ganjil_unlock.regex' => 'Format Tanggal & Bulan Unlock Ganjil tidak valid!',
+            'genap_unlock.required' => 'Tanggal & Bulan Unlock Genap wajib diisi lengkap!',
+            'genap_unlock.regex' => 'Format Tanggal & Bulan Unlock Genap tidak valid!',
             'akademik.required' => 'Tahun Akademik wajib diisi!',
             'akademik.regex' => 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!',
             'akademik_1.required' => 'Tahun awal (input kiri) wajib diisi!',
             'akademik_1.min' => 'Tahun awal minimal adalah 1970!',
             'akademik_2.required' => 'Tahun akhir (input kanan) wajib diisi!',
             'akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
-            'tanggal_unlock.required' => 'Tanggal Nilai Dibuka pertemuan wajib diisi!',
-            'tanggal_unlock.date' => 'Format Tanggal Nilai Dibuka tidak valid!',
         ];
     }
 

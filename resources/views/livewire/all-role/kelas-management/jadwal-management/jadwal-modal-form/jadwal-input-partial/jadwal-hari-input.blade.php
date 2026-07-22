@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Sesi Kelas</h4>
@@ -8,6 +7,7 @@
 
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'jadwal',
+        'isLivewire' => 1,
         'nameXString' => 'Hari Pelaksanaan',
         'modelString' => 'hari_pelaksanaan',
         'xOptions' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
@@ -20,6 +20,8 @@
         <div class="sm:col-span-2">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
+                'isLivewire' => 1,
+                'isXModal' => 1,
                 'nameXString' => 'Jam Mulai',
                 'modelString' => 'jam_mulai',
                 'iconString' => 'clock',
@@ -30,6 +32,8 @@
         <div class="sm:col-span-2 mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
+                'isLivewire' => 1,
+                'isXModal' => 1,
                 'nameXString' => 'Jam Berakhir (Default: +' . $sks * 50 . ' Menit)',
                 'modelString' => 'jam_berakhir',
                 'iconString' => 'clock',
@@ -45,6 +49,8 @@
             <template x-if="$store.jadwal.isEdit == 0">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'jadwal',
+                    'isLivewire' => 1,
+                    'isXModal' => 1,
                     'nameXString' => 'Tanggal Mulai',
                     'modelString' => 'tanggal_mulai',
                     'iconString' => 'calendar-days',
@@ -55,6 +61,8 @@
             <template x-if="$store.jadwal.isEdit == 1">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'jadwal',
+                    'isLivewire' => 1,
+                    'isXModal' => 1,
                     'nameXString' => 'Tanggal Mulai',
                     'modelString' => 'tanggal_mulai',
                     'iconString' => 'calendar-days',
@@ -67,7 +75,8 @@
         <div class="sm:col-span-2  mt-1 sm:mt-0">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
-                // 'isLivewire' => 1,
+                'isLivewire' => 1,
+                'isXModal' => 1,
                 'nameXString' => 'Tanggal Berakhir (Default: +6 Bulan)',
                 'modelString' => 'tanggal_berakhir',
                 'iconString' => 'calendar-days',

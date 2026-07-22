@@ -1,17 +1,30 @@
+@php
+    $user = Auth::user();
+    if ($user->admin || $user->dosen) {
+        $isFkOwner =
+            $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['level_cpl'] ?? null) == 3;
+        $isDpOwner =
+            $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['level_cpl'] ?? null) == 2;
+        $isPrOwner =
+            $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['level_cpl'] ?? null) == 1;
+        $canAccess = $user->tingkat <= 1 || $isFkOwner || $isDpOwner || $isPrOwner;
+    } else {
+        $canAccess = false;
+    }
+@endphp
 <div>
     @include('livewire.global.table.text-copy', [
         'xType' => $data['kode'],
         'typeXString' => 'Kode CPL',
     ])
 
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
 
-        <flux:menu.separator />
+    @if (!$data['isTrashed'])
+    <flux:menu.separator />
 
-        @if (!$data['isTrashed'])
-            {{-- Tombol Detail --}}
-            <flux:menu.item
-                @click="
+        {{-- Tombol Detail --}}
+        <flux:menu.item
+            @click="
                     $store.cpl?.reset();
                     const type = '{{ $data['level_cpl'] }}';
                     $store.cpl?.setEdit(1);
@@ -31,16 +44,15 @@
                     $flux.modal('cpl-rps-modal').show();
                     $dispatch('open-list-rps-cpl-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_cpl'] }}, isRPS: 1 });
                 "
-                {{-- wire:click="editCPL({{ $id }}, {{ $level_cpl }}, 1)" --}}
-                color="emerald"
-                class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
-                <flux:icon name="eye" class="mr-2 h-4 w-4" />
+            {{-- wire:click="editCPL({{ $id }}, {{ $level_cpl }}, 1)" --}} color="emerald"
+            class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
+            <flux:icon name="eye" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Show RPS</span>
-                </div>
-            </flux:menu.item>
-
+            <div class="flex justify-between items-center w-full">
+                <span>Show RPS</span>
+            </div>
+        </flux:menu.item>
+        @if ($canAccess)
             <flux:menu.separator />
 
             {{-- Tombol Edit --}}
@@ -64,7 +76,7 @@
 
                     $store.cpl?.setValueCPL(
                         '{{ $data['level_cpl'] ?? '' }}',
-                        '{{ $data['kode_cpl'] ?? '' }}',
+                        '{{ $data['kode'] ?? '' }}',
                         '{{ $data['deskripsi'] ?? '' }}',
                     );
 
@@ -98,7 +110,11 @@
                     <span>Hapus CPL</span>
                 </div>
             </flux:menu.item>
-        @else
+        @endif
+    @else
+        @if ($canAccess)
+    <flux:menu.separator />
+
             {{-- Tombol Restore --}}
             <flux:menu.item wire:click="$dispatch('restore-cpl', { id: {{ $data['id'] }} })"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">

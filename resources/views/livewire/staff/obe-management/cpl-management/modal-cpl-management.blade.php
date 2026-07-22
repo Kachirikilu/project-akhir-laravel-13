@@ -1,16 +1,15 @@
 <div>
     <flux:modal name="cpl-modal" wire:model.live="showCPLModal" x-data @refresh-data-cpl.window="$store.cpl.reset()"
         :flyout="!!$parent" wire:key="cpl-modal-{{ $parent }}"
-        class="w-full md:w-[90vw] max-w-3xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="modal-flux md:w-[90vw] max-w-3xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-        @if ($isReady)
-            <div class="flex flex-col h-full relative">
+        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'saveCPL, updateCPL'])
 
+        <div class="modal-flux-main scrollbar-large">
+            @if ($isReady)
                 {{-- 1. Header Modal --}}
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
-
+                <div class="modal-flux-header">
                     <h3 class="text-xl font-semibold">
-
                         <template x-if="$store.cpl?.typeModal == '1'" x-cloak>
                             <flux:badge icon="academic-cap" color="sky" size="lg">
                                 <span
@@ -38,12 +37,12 @@
                                     x-text="$store.cpl?.isEdit ? 'Edit CPL - Universitas' : 'Tambah CPL - Universitas'"></span>
                             </flux:badge>
                         </template>
-
                     </h3>
                 </div>
 
                 {{-- 2. Konten & Form --}}
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                <div class="modal-flux-body">
+
                     <form
                         x-on:submit.prevent="$store.cpl.isEdit ? $wire.updateCPL($store.cpl.getDataCPL()) : $wire.saveCPL($store.cpl.getDataCPL())"
                         enctype="multipart/form-data" id="cplForm">
@@ -65,9 +64,9 @@
                         </div>
                     </form>
                 </div>
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
-        @endif
+            @else
+                @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+            @endif
+        </div>
     </flux:modal>
 </div>

@@ -17,7 +17,7 @@ trait WithCPLSearchFilters
 
     public $cplSearchResults = [];
 
-    public $modeCPL = '';
+    public $modeCPL = 'single';
 
     public $cpl_id;
 

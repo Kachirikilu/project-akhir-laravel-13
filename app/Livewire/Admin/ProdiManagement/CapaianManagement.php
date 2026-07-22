@@ -403,8 +403,6 @@ class CapaianManagement extends Component
 
     }
 
-    public function loadingTable() {}
-
     public function loadingRPSssList() {}
 
     public function updatedPerPage()

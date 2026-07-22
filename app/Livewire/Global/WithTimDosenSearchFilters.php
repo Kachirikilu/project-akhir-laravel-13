@@ -17,7 +17,7 @@ trait WithTimDosenSearchFilters
 
     public $timDosenSearchResults = [];
 
-    public $modeTimDosen = '';
+    public $modeTimDosen = 'single';
 
     public $timDosen_id;
 

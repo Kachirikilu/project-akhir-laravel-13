@@ -14,6 +14,7 @@
     // } elseif (request()->route('switchTable') == 'dosen') {
     //     $pageTitle = __('Dosen Management');
     // }
+
 @endphp
 
 <x-layouts::app :title="$pageTitle">
@@ -23,28 +24,33 @@
         </div>
     </div>
 
-    <livewire:staff.obe-management.rps-management.modal-rps-management />
+    @if (Auth::user()->tingkat < 5)
+        <livewire:staff.obe-management.rps-management.modal-rps-management />
+        <livewire:staff.obe-management.rps-management.delete-rps-management />
+
+
+        <livewire:staff.obe-management.cpl-management.modal-cpl-management />
+        <livewire:staff.obe-management.cpl-management.delete-cpl-management />
+
+        <livewire:staff.obe-management.cpmk-management.modal-cpmk-management />
+        <livewire:staff.obe-management.cpmk-management.delete-cpmk-management />
+
+        <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management />
+        <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management />
+
+        <livewire:staff.obe-management.referensi-management.modal-referensi-management />
+        <livewire:staff.obe-management.referensi-management.delete-referensi-management />
+
+        <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management />
+        <livewire:staff.obe-management.tim-dosen-management.delete-tim-dosen-management />
+
+        <livewire:admin.user-management.modal-user-management />
+        <livewire:admin.user-management.delete-user-management />
+    @endif
+
     <livewire:staff.obe-management.rps-management.show-rps-management />
-    <livewire:staff.obe-management.rps-management.delete-rps-management />
-
-    <livewire:staff.obe-management.cpl-management.modal-cpl-management />
     <livewire:staff.obe-management.cpl-management.list-rps-cpl-management />
-    <livewire:staff.obe-management.cpl-management.delete-cpl-management />
-
-    <livewire:staff.obe-management.cpmk-management.modal-cpmk-management />
-    <livewire:staff.obe-management.cpmk-management.delete-cpmk-management />
-
-    <livewire:staff.obe-management.cpmk-management.modal-sub-cpmk-management />
-    <livewire:staff.obe-management.cpmk-management.delete-sub-cpmk-management />
-
-    <livewire:staff.obe-management.referensi-management.modal-referensi-management />
-    <livewire:staff.obe-management.referensi-management.delete-referensi-management />
-
-    <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management />
     <livewire:staff.obe-management.tim-dosen-management.list-rps-tim-dosen-management />
-    <livewire:staff.obe-management.tim-dosen-management.delete-tim-dosen-management />
-
-    <livewire:admin.user-management.modal-user-management />
     <livewire:admin.user-management.list-rps-user-management />
-    <livewire:admin.user-management.delete-user-management />
+
 </x-layouts::app>

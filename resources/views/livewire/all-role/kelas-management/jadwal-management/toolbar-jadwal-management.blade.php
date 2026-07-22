@@ -57,7 +57,7 @@
 
     @endif
 
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
+    @if ($data['canAccess'])
         <flux:menu.separator />
 
         @if (!$data['isTrashed'])
@@ -90,13 +90,13 @@
                         '{{ $data['label_kelas'] ?? '' }}',
                         '{{ $data['kode_wilayah'] ?? '' }}',
 
-                        '{{ $data['hari_pelaksanaan'] ?? '' }}',
-                        '{{ $data['jam_mulai'] ?? '' }}',
-                        '{{ $data['jam_berakhir'] ?? '' }}',
+                        {{-- '{{ $data['hari_pelaksanaan'] ?? '' }}', --}}
+                        {{-- '{{ $data['jam_mulai'] ?? '' }}', --}}
+                        {{-- '{{ $data['jam_berakhir'] ?? '' }}', --}}
                         '{{ $data['tanggal_mulai'] ?? '' }}',
-                        '{{ $data['tanggal_berakhir'] ?? '' }}',
+                        {{-- '{{ $data['tanggal_berakhir'] ?? '' }}', --}}
 
-                        '{{ $data['kapasitas'] ?? '' }}',
+                        {{-- '{{ $data['kapasitas'] ?? '' }}', --}}
                         '{{ $data['password'] ?? '' }}',
                     );
 

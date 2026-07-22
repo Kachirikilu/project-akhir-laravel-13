@@ -1,21 +1,23 @@
 <div class="space-y-4">
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'cpl',
-        'xResults' => $fkResults,
-        'selectX' => 'selectFk',
-        'modelString' => 'nama_fk_search',
-    
-        'idString' => 'fk_id',
-        'itemsAllString' => 'fk_items',
-    
-        'resetXInput' => 'resetFkInput()',
-        'typeXString' => 'fakultas',
-        'nameXString' => 'Fakultas',
-        'nameSearchString' => 'fkNameSearch',
-        'fetchString' => 'fetchFk',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchFk',
-    ])
+    @if (Auth::user()->tingkat < 2)
+        @include('livewire.global.modal-form.input-array.search-input-form', [
+            'alpine' => 'cpl',
+            'xResults' => $fkResults,
+            'selectX' => 'selectFk',
+            'modelString' => 'nama_fk_search',
+        
+            'idString' => 'fk_id',
+            'itemsAllString' => 'fk_items',
+        
+            'resetXInput' => 'resetFkInput()',
+            'typeXString' => 'fakultas',
+            'nameXString' => 'Fakultas',
+            'nameSearchString' => 'fkNameSearch',
+            'fetchString' => 'fetchFk',
+            'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchFk',
+        ])
+    @endif
 
     @if ($cplType == 3)
         @include('livewire.global.modal-form.input-array.search-input-array-form', [

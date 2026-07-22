@@ -20,8 +20,6 @@
 
         <div class="space-y-4">
 
-            @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
-
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
 
                 {{-- 1. REFERENSI UTAMA (CPMK) --}}
@@ -49,7 +47,6 @@
                 </div>
             </div>
 
-            @if ($this->showRPSModal)
                 {{-- @include('livewire.global.modal-form.input-array.search-input-array-form', [
                     'alpine' => 'rps',
                     'xResults' => $refResults['rps'] ?? [],
@@ -104,7 +101,6 @@
                 
                     'isRequired' => 0,
                 ])
-            @endif
 
         </div>
 

@@ -25,41 +25,26 @@
 
     </div>
 
-    <div class="relative">
-
-
-        @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'addRPS, editRPS',
-            'heightContainer' => 'h-24',
-        ])
-
-        <div class="space-y-4">
-            @if ($this->showRPSModal)
-                @include('livewire.global.modal-form.input-array.search-input-cpmk-form', [
-                    'alpine' => 'rps',
-                    'xResults' => $cpmkResults,
-                    'selectX' => 'selectCPMKArray',
-                    'modelString' => 'nama_cpmk_search',
-                
-                    'idString' => 'cpmk_id_array',
-                    'itemsAllString' => 'cpmk_items_array',
-                    'subItemsString' => 'cpmk_sub_items_array',
-                
-                    'typeXString' => 'deskripsi',
-                    'typeX2String' => 'count_scpmk',
-                    'typeX3String' => 'total_bobot',
-                    'withParent' => 'rps',
-                
-                    'nameXString' => 'Capaian Pembelajaran Mata Kuliah (CPMK)',
-                    'nameSearchString' => 'cpmkNameSearch',
-                    'fetchString' => 'fetchCPMK',
-                    'iconString' => 'academic-cap',
-                    'wireLoading' => 'fetchCPMK',
-                ])
-            @endif
-        </div>
-
-    </div>
-
+    @include('livewire.global.modal-form.input-array.search-input-cpmk-form', [
+        'alpine' => 'rps',
+        'xResults' => $cpmkResults,
+        'selectX' => 'selectCPMKArray',
+        'modelString' => 'nama_cpmk_search',
+    
+        'idString' => 'cpmk_id_array',
+        'itemsAllString' => 'cpmk_items_array',
+        'subItemsString' => 'cpmk_sub_items_array',
+    
+        'typeXString' => 'deskripsi',
+        'typeX2String' => 'count_scpmk',
+        'typeX3String' => 'total_bobot',
+        'withParent' => 'rps',
+    
+        'nameXString' => 'Capaian Pembelajaran Mata Kuliah (CPMK)',
+        'nameSearchString' => 'cpmkNameSearch',
+        'fetchString' => 'fetchCPMK',
+        'iconString' => 'academic-cap',
+        'wireLoading' => 'fetchCPMK',
+    ])
 
 </div>

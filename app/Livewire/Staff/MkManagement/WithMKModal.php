@@ -8,6 +8,7 @@ use App\Models\Akademik\MataKuliah;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -27,7 +28,15 @@ trait WithMKModal
 
     public $mkType = '';
 
-    public function addMK($tingkatan)
+    public $mk_input = [
+        'is_wajib' => '',
+        'tipe_sks' => '',
+        'sks_kuliah' => '',
+        'deskripsi' => '',
+        'bahan_kajian' => '',
+    ];
+
+    public function addMK($level)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -36,24 +45,36 @@ trait WithMKModal
         if ($this->showEditMK == true) {
             $this->resetInputMK();
         }
-
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingMK = false;
-        $this->mkType = $tingkatan;
+        $this->mkType = $level;
+        $this->prLevel = $level;
         $this->showMKModal = true;
         $this->showEditMK = false;
 
-        if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedPrNameSearch($this->prNameSearch);
-        } elseif ($tingkatan == 2) {
-            $this->updatedDpNameSearch($this->dpNameSearch);
-        } elseif ($tingkatan == 3) {
-            $this->updatedFkNameSearch($this->fkNameSearch);
+        if ($level == 1 || $level == 4) {
+            if (Auth::user()->tingkat < 4) {
+                $this->updatedPrNameSearch($this->prNameSearch);
+            } else {
+                $this->pr_id = Auth::user()->pr_id;
+            }
+        } elseif ($level == 2) {
+            if (Auth::user()->tingkat < 3) {
+                $this->updatedDpNameSearch($this->dpNameSearch);
+            } else {
+                $this->dp_id = Auth::user()->dp_id;
+            }
+        } elseif ($level == 3) {
+            if (Auth::user()->tingkat < 2) {
+                $this->updatedFkNameSearch($this->fkNameSearch);
+            } else {
+                $this->fk_id = Auth::user()->fk_id;
+            }
         }
     }
 
-    public function editMK($id, $tingkatan)
+    public function editMK($id, $level)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -64,7 +85,8 @@ trait WithMKModal
         $this->resetErrorBag();
 
         $this->selected_id_mk = $id;
-        $this->mkType = $tingkatan;
+        $this->mkType = $level;
+        $this->prLevel = $level;
         $this->isEditingMK = true;
         $this->showEditMK = true;
 
@@ -83,39 +105,47 @@ trait WithMKModal
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
-                if ($tingkatan == 2) {
+                if ($level == 2) {
                     $this->dp_id = $firstProdi->dp_id;
 
                     if ($firstProdi->dp_rel) {
                         $this->fetchDp();
                     }
                 }
-                if ($tingkatan == 3) {
+                if ($level == 3) {
                     $this->fk_id = $firstProdi->fk_id;
 
                     if ($firstProdi->dp_rel?->fk_rel) {
                         $this->fetchFk();
                     }
                 }
-                if (in_array($tingkatan, [1, 4])) {
+                if (in_array($level, [1, 4])) {
                     $this->pr_id = $firstProdi->id;
                 }
-                if ($tingkatan == 1) {
+                if ($level == 1) {
                     $this->fetchPr();
                 }
             }
 
-            // if ($tingkatan == 4) {
+            $this->mk_input = array_merge($this->mk_input, [
+                'is_wajib' => $mk->is_wajib,
+                'tipe_sks' => $mk->tipe_sks,
+                'sks_kuliah' => $mk->sks_kuliah,
+                'deskripsi' => $mk->deskripsi,
+                'bahan_kajian' => $mk->bahan_kajian,
+            ]);
+
+            // if ($level == 4) {
             //     $this->updatedPrNameSearch($this->prNameSearch);
-            // } elseif ($tingkatan == 2) {
+            // } elseif ($level == 2) {
             //     $this->updatedDpNameSearch($this->dpNameSearch);
-            // } elseif ($tingkatan == 3) {
+            // } elseif ($level == 3) {
             //     $this->updatedFkNameSearch($this->fkNameSearch);
             // }
 
             $this->showMKModal = true;
 
-            $this->dispatch('fill-modal-mk', mk: $mk);
+            // $this->dispatch('fill-modal-mk', mk: $mk);
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
@@ -135,8 +165,8 @@ trait WithMKModal
         $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
         $data['bahan_kajian'] = $this->normalizeText($data['bahan_kajian'] ?? '');
 
-        $tingkatan = $this->mkType ?? 1;
-        $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+        $level = $this->mkType ?? 1;
+        $targetProdiIds = ($level === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
 
         $rules = [
             'nama_mk' => 'required|string|max:255',
@@ -183,10 +213,10 @@ trait WithMKModal
             'bahan_kajian' => 'required|string|min:5|max:1000',
         ];
 
-        if ($tingkatan == 1) {
+        if ($level == 1) {
             $rules['pr_id'] = 'required|integer|exists:prodis,id';
         } else {
-            if ($tingkatan == 2) {
+            if ($level == 2) {
                 $dpId = $data['dp_id'] ?? null;
                 $rules['dp_id'] = [
                     'required', 'integer',
@@ -206,7 +236,7 @@ trait WithMKModal
                         }
                     },
                 ];
-            } elseif ($tingkatan == 3) {
+            } elseif ($level == 3) {
                 $fkId = $data['fk_id'] ?? null;
                 $rules['fk_id'] = [
                     'required', 'integer',
@@ -245,25 +275,26 @@ trait WithMKModal
         return $validator->validated();
     }
 
-    private function generateKodePrefix($data, $tingkatan)
+    private function generateKodePrefix($data, $level)
     {
-        if ($tingkatan === 1) { // Prodi
+        if ($level === 1) { // Prodi
             return $this->prodi_kode ?? $this->departemen_kode ?? $this->fakultas_kode ?? 'UNI';
-        } elseif ($tingkatan === 2) { // Departemen
+        } elseif ($level === 2) { // Departemen
             return $this->departemen_kode ?? $this->fakultas_kode ?? 'UNI';
-        } elseif ($tingkatan === 3) { // Fakultas
+        } elseif ($level === 3) { // Fakultas
             return $this->fakultas_kode ?? 'UNI';
-        } elseif ($tingkatan === 4) {
+        } elseif ($level === 4) {
             return 'UNI';
         }
     }
 
-    public function saveMK($data)
+    public function saveMK($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
+        $data = array_merge($this->mk_input, $dataAlpine);
         $data['pr_id'] = $this->pr_id;
         $data['pr_id_array'] = $this->pr_id_array;
 
@@ -275,14 +306,14 @@ trait WithMKModal
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
         try {
-            $tingkatan = $this->mkType;
+            $level = $this->mkType;
             $validated = $this->inputModalMK(false, $data);
-            $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
+            $kodePrefix = $this->generateKodePrefix($data, $level);
 
-            DB::transaction(function () use ($validated, $tingkatan) {
+            DB::transaction(function () use ($validated, $level) {
 
                 $mk = MataKuliah::create([
-                    'level_mk' => $tingkatan,
+                    'level_mk' => $level,
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
@@ -295,7 +326,7 @@ trait WithMKModal
                     'bahan_kajian' => $validated['bahan_kajian'],
                 ]);
 
-                $targetIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+                $targetIds = ($level === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
                 $targetIds = array_filter($targetIds);
                 if (! empty($targetIds)) {
                     $mk->prodis()->attach($targetIds);
@@ -319,11 +350,13 @@ trait WithMKModal
         }
     }
 
-    public function updateMK($data)
+    public function updateMK($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
+        $data = array_merge($this->mk_input, $dataAlpine);
         $data['pr_id'] = $this->pr_id;
         $data['pr_id_array'] = $this->pr_id_array;
 
@@ -336,10 +369,10 @@ trait WithMKModal
 
         try {
             $validated = $this->inputModalMK(true, $data);
-            $tingkatan = $this->mkType;
-            $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
+            $level = $this->mkType;
+            $kodePrefix = $this->generateKodePrefix($data, $level);
 
-            DB::transaction(function () use ($validated, $tingkatan) {
+            DB::transaction(function () use ($validated, $level) {
                 $mk = MataKuliah::findOrFail($this->selected_id_mk);
 
                 // 3. UPDATE DATA UTAMA
@@ -356,7 +389,7 @@ trait WithMKModal
                     'bahan_kajian' => $validated['bahan_kajian'],
                 ]);
 
-                $targetIds = ($tingkatan === 1)
+                $targetIds = ($level === 1)
                             ? [$this->pr_id]
                             : ($this->pr_id_array ?: []);
                 $cleanIds = array_values(array_filter($targetIds));
@@ -447,16 +480,19 @@ trait WithMKModal
             1 => $this->getErrorCount([
                 'nama_mk',
                 'digit_mk',
-                'semester',
-                'tipe_sks',
-                'sks_kuliah',
                 'fk_id',
                 'dp_id',
                 'pr_id',
                 'pr_id_array',
-                'is_wajib',
+
             ]),
             2 => $this->getErrorCount([
+                'semester',
+                'is_wajib',
+                'tipe_sks',
+                'sks_kuliah',
+            ]),
+            3 => $this->getErrorCount([
                 'deskripsi',
                 'bahan_kajian',
             ]),
@@ -467,9 +503,11 @@ trait WithMKModal
     {
         $fields = [
             'selected_id_mk',
+            'mk_input',
             'pr_id', 'dp_id', 'fk_id',
             'pr_items', 'dp_items', 'fk_items',
             'pr_id_array', 'pr_items_array',
+            'prLevel',
             'prNameSearch', 'dpNameSearch', 'fkNameSearch',
         ];
 

@@ -62,27 +62,33 @@ trait WithNilaiMahasiswaFilters
         }
 
         if (Auth::user()->mahasiswa) {
-            $today = Carbon::now()->toDateString();
-            $locks = LockNilai::where('pr_id', Auth::user()->pr_id)
-                ->where('tanggal_unlock', '>=', $today)
-                ->get();
-                foreach ($locks as $lock) {
-                    $lockYear = (int) explode('/', $lock->akademik)[0];
-                    $lockGg = $lock->ganjil_genap;
+            $now = Carbon::now();
+            $tahunAktif = $now->year;
+            $bulanAktif = $now->month;
 
-                    $queryNilai->where(function ($q) use ($lockYear, $lockGg) {
-                        $q->whereRaw("CAST(SUBSTRING_INDEX(akademik, '/', 1) AS UNSIGNED) < ?", [$lockYear])
-                        ->orWhere(function ($sub) use ($lockYear, $lockGg) {
-                            $sub->whereRaw("CAST(SUBSTRING_INDEX(akademik, '/', 1) AS UNSIGNED) = ?", [$lockYear])
-                                ->when($lockGg === 'Ganjil', function ($w) {
-                                    $w->whereRaw('1 = 0'); 
-                                }, function ($w) {
-                                    $w->where('ganjil_genap', '!=', 'Genap');
-                                });
-                        });
+            $lock = LockNilai::where('pr_id', Auth::user()->pr_id)->first();
+
+            if ($lock) {
+                $tahunGanjil = ($bulanAktif == 1) ? $tahunAktif - 1 : $tahunAktif;
+                $tglGanjilUnlock = Carbon::parse($tahunGanjil . '-' . $lock->ganjil_unlock);
+
+                $tglGenapUnlock = Carbon::parse($tahunAktif . '-' . $lock->genap_unlock);
+
+                $queryNilai->where(function ($q) use ($now, $tglGanjilUnlock, $tglGenapUnlock) {
+                    $q->where(function ($sub) use ($now, $tglGanjilUnlock) {
+                        if ($now->lessThan($tglGanjilUnlock)) {
+                            $sub->where('ganjil_genap', '!=', 'Ganjil');
+                        }
+                    })
+                    ->where(function ($sub) use ($now, $tglGenapUnlock) {
+                        if ($now->lessThan($tglGenapUnlock)) {
+                            $sub->where('ganjil_genap', '!=', 'Genap');
+                        }
                     });
-                }
+                });
+            }
         }
+
         return $queryNilai;
     }
 

@@ -11,9 +11,9 @@
         </div>
 
         {{-- Menu Items Skeleton --}}
-        <div class="border-t border-zinc-200 dark:border-white/10 pt-2 space-y-2">
+        {{-- <div class="border-t border-zinc-200 dark:border-white/10 pt-2 space-y-2">
             <div class="h-8 w-full bg-zinc-200 dark:bg-zinc-700/50 rounded-md"></div>
             <div class="h-8 w-full bg-zinc-200 dark:bg-zinc-700/50 rounded-md"></div>
-        </div>
+        </div> --}}
     </div>
 </div>

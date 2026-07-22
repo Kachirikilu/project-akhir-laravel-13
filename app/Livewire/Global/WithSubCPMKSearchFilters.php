@@ -17,7 +17,7 @@ trait WithSubCPMKSearchFilters
 
     public $scpmkSearchResults = [];
 
-    public $modeSCPMK = '';
+    public $modeSCPMK = 'single';
 
     public $scpmk_id;
 

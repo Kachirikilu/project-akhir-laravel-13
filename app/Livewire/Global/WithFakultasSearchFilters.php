@@ -217,13 +217,7 @@ trait WithFakultasSearchFilters
 
     public function haveFkChild()
     {
-        $showMK = property_exists($this, 'showMKModal') && $this->showMKModal;
-        $showCPL = property_exists($this, 'showCPLModal') && $this->showCPLModal;
-        
-        $mkType = property_exists($this, 'mkType') ? $this->mkType : null;
-        $cplType = property_exists($this, 'cplType') ? $this->cplType : null;
-
-        if (($showMK || $showCPL) && ($mkType == 3 || $cplType == 3)) {
+        if (property_exists($this, 'prLevel') && $this->prLevel == 3) {
             if (method_exists($this, 'resetPrArray')) {
                 $this->resetPrArray();
             }

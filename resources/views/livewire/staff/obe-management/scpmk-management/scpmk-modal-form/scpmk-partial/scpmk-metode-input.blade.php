@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
 
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
@@ -13,6 +12,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'scpmk',
+                    'isLivewire' => 1,
                     'modelString' => 'metode',
                     'xOptions' => [
                         'Teori',
@@ -43,6 +43,7 @@
 
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'scpmk',
+                    'isLivewire' => 1,
                     'modelString' => 'bobot',
                     'iconString' => 'variable',
                     'floatOnly' => 1,
@@ -55,6 +56,7 @@
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'scpmk',
+            'isLivewire' => 1,
             'nameXString' => 'Deskripsi Tugas',
             'modelString' => 'deskripsi_tugas',
             'iconString' => 'book-open',
@@ -68,6 +70,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'scpmk',
+                    'isLivewire' => 1,
                     'nameXString' => 'Waktu Tugas (Menit)',
                     'modelString' => 'waktu_tugas',
                     'numberOnly' => 1,
@@ -81,6 +84,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'scpmk',
+                    'isLivewire' => 1,
                     'nameXString' => 'Waktu Mandiri (Menit)',
                     'modelString' => 'waktu_mandiri',
                     'numberOnly' => 1,

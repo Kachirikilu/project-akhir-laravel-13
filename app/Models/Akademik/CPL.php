@@ -36,7 +36,6 @@ class CPL extends Model
         return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'pr_id')
             ->withPivot('sort_order');
     }
-    
 
     // public function rps(): BelongsToMany
     // {
@@ -64,11 +63,11 @@ class CPL extends Model
             $prefix = 'UNI';
             if ($prodi) {
                 if ($this->level_cpl == 1) { // Tingkat Prodi
-                    $prefix = $prodi->kode_pr ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->kode;
                 } elseif ($this->level_cpl == 2) { // Tingkat Departemen
-                    $prefix = $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->dp_rel?->kode;
                 } elseif ($this->level_cpl == 3) { // Tingkat Fakultas
-                    $prefix = $prodi->dp_rel?->fk_rel?->kode_fk ?? 'UNI';
+                    $prefix = $prodi->dp_rel?->fk_rel?->kode;
                 } elseif ($this->level_cpl == 4) { // Tingkat Universitas
                     $prefix = 'UNI';
                 }
@@ -158,43 +157,45 @@ class CPL extends Model
                     if ($kodePart) {
                         $sub->orWhere('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
                     }
-                    $sub->where(function ($low) use ($prefixPart) {
+                    $sub->where(function ($low) use ($prefixPart, $kodePart) {
 
                         // 1. CPL Level 1: Prodi
-                        $low->orWhere(function ($q) use ($prefixPart) {
+                        $low->orWhere(function ($q) use ($prefixPart, $kodePart) {
+
                             $q->where('cpls.level_cpl', 1)
+                                ->when($kodePart, function ($q) use ($kodePart) {
+                                    $q->where('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
+                                })
                                 ->whereHas('prodis', function ($pro) use ($prefixPart) {
+
                                     $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                                         ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
                                         ->where(function ($x) use ($prefixPart) {
-                                            $normalizedPrefix = str_replace('-', '', $prefixPart);
-                                            $x->whereRaw("REPLACE(COALESCE(NULLIF(prodis.kode_pr, ''), NULLIF(departemens.kode_dp, ''), NULLIF(fakultas.kode_fk, ''), 'UNI'), '-', '') LIKE ?", [$normalizedPrefix.'%'])
-                                                ->orWhereRaw("REPLACE(CONCAT(CASE WHEN prodis.strata = 'Sarjana' THEN 'S1' WHEN prodis.strata = 'Magister' THEN 'S2' WHEN prodis.strata = 'Doktor' THEN 'S3' ELSE '' END, COALESCE(NULLIF(prodis.kode_pr, ''), NULLIF(departemens.kode_dp, ''), NULLIF(fakultas.kode_fk, ''), 'UNI')), '-', '') LIKE ?", [$normalizedPrefix.'%']);
+
+                                            $x->whereRaw("
+                                            REPLACE(
+                                                CONCAT(
+                                                    CASE
+                                                        WHEN prodis.strata='Sarjana' THEN 'S1'
+                                                        WHEN prodis.strata='Magister' THEN 'S2'
+                                                        WHEN prodis.strata='Doktor' THEN 'S3'
+                                                        ELSE ''
+                                                    END,
+                                                    COALESCE(
+                                                        NULLIF(prodis.kode_pr,''),
+                                                        NULLIF(departemens.kode_dp,''),
+                                                        NULLIF(fakultas.kode_fk,''),
+                                                        'UNI'
+                                                    )
+                                                ),
+                                            '-','')
+                                            LIKE ?
+                                        ", [$prefixPart.'%']);
+
                                         });
-                                });
-                        });
 
-                        // 2. CPL Level 2: Departemen
-                        $low->orWhere(function ($q) use ($prefixPart) {
-                            $q->where('cpls.level_cpl', 2)
-                                ->whereHas('prodis.dp_rel', function ($dp) use ($prefixPart) {
-                                    $dp->where('kode_dp', 'LIKE', $prefixPart.'%');
                                 });
-                        });
 
-                        // 3. CPL Level 3: Fakultas
-                        $low->orWhere(function ($q) use ($prefixPart) {
-                            $q->where('cpls.level_cpl', 3)
-                                ->whereHas('prodis.dp_rel.fk_rel', function ($fk) use ($prefixPart) {
-                                    $fk->where('kode_fk', 'LIKE', $prefixPart.'%');
-                                });
-                        });
-
-                        // 4. CPL Level 4: Universitas (UNI)
-                        $low->orWhere(function ($q) use ($prefixPart) {
-                            $q->where('cpls.level_cpl', 4);
-                            if ($prefixPart !== 'UNI') {
-                            }
                         });
                     });
                 });
@@ -213,12 +214,12 @@ class CPL extends Model
             $targetRps = (int) $matches[1];
 
             $query->where(function ($q) use ($targetRps) {
-                $q->whereRaw("(
+                $q->whereRaw('(
                     SELECT COUNT(DISTINCT rps_pivot_cpmk.rps_id)
                     FROM cpmk_pivot_cpl
                     JOIN rps_pivot_cpmk ON cpmk_pivot_cpl.cpmk_id = rps_pivot_cpmk.cpmk_id
                     WHERE cpmk_pivot_cpl.cpl_id = cpls.id
-                ) = ?", [$targetRps]);
+                ) = ?', [$targetRps]);
             });
         }
 

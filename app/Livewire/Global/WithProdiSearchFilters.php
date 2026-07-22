@@ -17,7 +17,7 @@ trait WithProdiSearchFilters
 
     public $prSearchResults = [];
 
-    public $modePr = '';
+    public $modePr = 'single';
 
     public $pr_id;
 
@@ -35,11 +35,14 @@ trait WithProdiSearchFilters
 
     public $pr_items_array = [];
 
+    public $prLevel = 1;
+
     private function mapPr($collection)
     {
         return $collection->map(fn ($p) => [
             'id' => $p->id,
             'kode' => $p->kode,
+            'kode_short' => $p->kode_short,
             'prodi' => $p->prodi,
             'departemen' => $p->departemenDp,
             'fakultas' => $p->fakultasFk,
@@ -61,6 +64,7 @@ trait WithProdiSearchFilters
         return [
             'id' => $p->id,
             'kode' => $p->kode,
+            'kode_short' => $p->kode_short,
             'slot1' => $p->prodi,
             // 'slot2' => $p->departemenDp,
             'slot2' => $p->fakultasFk,
@@ -112,6 +116,7 @@ trait WithProdiSearchFilters
         $input = str($value)->lower()->trim();
         if (empty($input->toString())) {
             $this->prResults = $this->getPrbyUser();
+
             return;
         }
 
@@ -119,7 +124,7 @@ trait WithProdiSearchFilters
 
         $this->havePrParent($query);
 
-        if ($this->modePr !== 'single' && $input->toString() === 'uni' && ($this->mkType == 4 || $this->cplType == 4)) {
+        if ($this->modePr !== 'single' && $input->toString() === 'uni' && $this->prLevel == 4) {
             $allProdis = $query->get();
             foreach ($allProdis as $p) {
                 if (! in_array($p->id, $this->pr_id_array)) {
@@ -146,18 +151,16 @@ trait WithProdiSearchFilters
             $kodeDepartemen = $kodeProdi;
             $kodeFakultas = $kodeProdi;
 
-            if (property_exists($this, 'mkType') || property_exists($this, 'cplType')) {
-                if ($prodi) {
-                    $dpKode = $prodi->dp_rel?->kode ?? '';
-                    $fkKode = $prodi->dp_rel?->fk_rel?->kode ?? '';
+            if ($prodi) {
+                $dpKode = $prodi->dp_rel?->kode ?? '';
+                $fkKode = $prodi->dp_rel?->fk_rel?->kode ?? '';
 
-                    if (($this->mkType ?? 0) >= 2 || ($this->cplType ?? 0) >= 2) {
-                        $kodeDepartemen = str($dpKode)->lower()->trim();
-                    }
+                if ($this->prLevel >= 2) {
+                    $kodeDepartemen = str($dpKode)->lower()->trim();
+                }
 
-                    if (($this->mkType ?? 0) >= 3 || ($this->cplType ?? 0) >= 3) {
-                        $kodeFakultas = str($fkKode)->lower()->trim();
-                    }
+                if ($this->prLevel >= 3) {
+                    $kodeFakultas = str($fkKode)->lower()->trim();
                 }
             }
             $namaStrata = str($prodi->strata)->lower()->trim();
@@ -165,19 +168,20 @@ trait WithProdiSearchFilters
                 'sarjana' => 's1', 'magister' => 's2', 'doktor' => 's3', default => ''
             };
 
+            $inisialKode = str($kodeProdi)->replace($kodeDepartemen, '')->trim()->toString();
+            $kodeProdiTanpaDash = str($kodeProdi)->replace('-', '')->toString();
+
             $possibilities = [
                 $namaProdi->toString(),
                 $kodeProdi->toString(),
+                $kodeProdiTanpaDash, // Mengakomodasi S1TKE
                 $kodeDepartemen->toString(),
                 $kodeFakultas->toString(),
-                "$inisialStrata $namaProdi",
-                "$namaStrata $namaProdi",
-                "$inisialStrata$namaProdi",
             ];
 
-            return in_array($input->toString(), $possibilities);
+            // Pastikan kita membandingkan dengan $input yang sudah di-trim dan lower
+            return in_array($input->toString(), array_map('strtolower', $possibilities));
         });
-
         // 4. Eksekusi Hasil Match
         if ($matches->isNotEmpty()) {
             if ($this->modePr == 'single') {
@@ -240,13 +244,15 @@ trait WithProdiSearchFilters
             return 3;
         })->take(12);
 
-        if ($mainResults->count() < 12) {
-            $extra = $this->prQuery()
-                ->whereHas('dp_rel', fn ($q) => $q->where('fk_id', '!=', $fakultasId))
-                ->whereNotIn('id', $mainResults->pluck('id'))
-                ->limit(12 - $mainResults->count())
-                ->get();
-            $mainResults = $mainResults->concat($extra);
+        if ($this->prLevel <= 1 || empty($this->prLevel)) {
+            if ($mainResults->count() < 12) {
+                $extra = $this->prQuery()
+                    ->whereHas('dp_rel', fn ($q) => $q->where('fk_id', '!=', $fakultasId))
+                    ->whereNotIn('id', $mainResults->pluck('id'))
+                    ->limit(12 - $mainResults->count())
+                    ->get();
+                $mainResults = $mainResults->concat($extra);
+            }
         }
 
         return $this->mapPr($mainResults);
@@ -262,6 +268,7 @@ trait WithProdiSearchFilters
                 $this->pr_items = $this->itemsPr($pr);
             }
             $this->prResults = $this->getPrbyUser();
+
             return;
         }
     }
@@ -317,8 +324,8 @@ trait WithProdiSearchFilters
 
     public function havePrChild()
     {
-        if (property_exists($this, 'showKelasModal') && property_exists($this, 'rps_id')) {
-            if ($this->showKelasModal == true) {
+        if (property_exists($this, 'rpsLevel') && $this->rpsLevel == 2) {
+            if (method_exists($this, 'resetRPSArray')) {
                 $this->resetRPSArray();
             }
         }
@@ -326,20 +333,10 @@ trait WithProdiSearchFilters
 
     public function havePrParent($query)
     {
-        if (property_exists($this, 'showMKModal') && property_exists($this, 'mkType')) {
-            if ($this->showMKModal == true && $this->mkType == 2 && filled($this->dp_id)) {
-                $query->where('dp_id', $this->dp_id);
-            } elseif ($this->showMKModal == true && $this->mkType == 3 && filled($this->fk_id)) {
-                $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
-            }
-        }
-
-        if (property_exists($this, 'showCPLModal') && property_exists($this, 'cplType')) {
-            if ($this->showCPLModal == true && $this->cplType == 2 && filled($this->dp_id)) {
-                $query->where('dp_id', $this->dp_id);
-            } elseif ($this->showCPLModal == true && $this->cplType == 3 && filled($this->fk_id)) {
-                $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
-            }
+        if ($this->prLevel == 2 && filled($this->dp_id)) {
+            $query->where('dp_id', $this->dp_id);
+        } elseif ($this->prLevel == 3 && filled($this->fk_id)) {
+            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         }
 
         return $query;
@@ -614,7 +611,6 @@ trait WithProdiSearchFilters
                 'count_rps' => fn ($pr) => $pr->count_rps ?? 0,
                 'count_rps_aktif' => fn ($pr) => $pr->count_rps_aktif ?? 0,
                 'count_rps_draf' => fn ($pr) => $pr->count_rps_draf ?? 0,
-
 
                 'created_at' => fn ($pr) => $pr->created_at,
                 'updated_at' => fn ($pr) => $pr->updated_at,

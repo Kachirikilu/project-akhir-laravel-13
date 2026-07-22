@@ -303,7 +303,7 @@
                     <div class="mt-6"
                         wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedUserRows->getPageName() }}">
                         {{ $this->paginatedUserRows->links('vendor.pagination.tailwind', [
-                            'typeXLoading' => 'loadingUserExcel',
+                            'typeXLoading' => 'loadingUserExcel()',
                         ]) }}
                     </div>
                 @endif

@@ -9,6 +9,24 @@
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
+    @php
+        $user = Auth::user();
+        if ($user->admin || $user->dosen) {
+            $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($kelas->pr_id ?? null);
+            $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($kelas->pr_rel->dp_id ?? null);
+            $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($kelas->pr_rel->fk_id ?? null);
+
+            if ($user->dosen) {
+                $isDosenClass = $tim_dosen->flatMap->dosens?->contains('id', optional($user->dosen)->id) ?? false;
+            } else {
+                $isDosenClass = false;
+            }
+            $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr || $isDosenClass;
+        } else {
+            $canAccess = false;
+        }
+    @endphp
+
     @include('livewire.global.header.tag-user')
 
     @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
@@ -28,9 +46,13 @@
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @if ($this->switchTable == 'hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini')
-        @elseif ($this->switchTable == 'card' || ($this->switchTable == 'hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
+        @elseif (
+            $this->switchTable == 'card' ||
+                ($this->switchTable == 'hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
             @if ($this->switchTable == 'hari-ini' && $stats['sesi-hari-ini'] == 0)
-                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', ['mb' => 'mb-6'])
+                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', [
+                    'mb' => 'mb-6',
+                ])
             @endif
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
         @elseif ($this->switchTable == 'table')

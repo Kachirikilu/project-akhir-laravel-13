@@ -84,14 +84,14 @@ document.addEventListener("alpine:init", () => {
             pertemuan,
             tanggal,
 
-            deskripsi,
-            materi,
-            metodologi,
-            indikator,
-            tugas,
-            wTugas,
-            wMandiri,
-            sks,
+            // deskripsi,
+            // materi,
+            // metodologi,
+            // indikator,
+            // tugas,
+            // wTugas,
+            // wMandiri,
+            // sks,
 
             sent,
         ) {
@@ -102,14 +102,14 @@ document.addEventListener("alpine:init", () => {
             this.pertemuan_ke_name = "Pertemuan " + pertemuan;
             this.tanggal = tanggal;
 
-            this.deskripsi = deskripsi;
-            this.materi = materi;
-            this.metodologi = metodologi;
-            this.indikator = indikator;
-            this.deskripsi_tugas = tugas;
-            this.waktu_tugas = wTugas;
-            this.waktu_mandiri = wMandiri;
-            this.sks = sks;
+            // this.deskripsi = deskripsi;
+            // this.materi = materi;
+            // this.metodologi = metodologi;
+            // this.indikator = indikator;
+            // this.deskripsi_tugas = tugas;
+            // this.waktu_tugas = wTugas;
+            // this.waktu_mandiri = wMandiri;
+            // this.sks = sks;
 
             this.sent = sent;
         },
@@ -148,13 +148,13 @@ document.addEventListener("alpine:init", () => {
                 pertemuan_ke: this.pertemuan_ke,
                 pertemuan_ke_name: this.pertemuan_ke_name,
                 tanggal: this.tanggal,
-                deskripsi: this.deskripsi,
-                materi: this.materi,
-                metodologi: this.metodologi,
-                indikator: this.indikator,
-                deskripsi_tugas: this.deskripsi_tugas,
-                waktu_tugas: this.waktu_tugas,
-                waktu_mandiri: this.waktu_mandiri,
+                // deskripsi: this.deskripsi,
+                // materi: this.materi,
+                // metodologi: this.metodologi,
+                // indikator: this.indikator,
+                // deskripsi_tugas: this.deskripsi_tugas,
+                // waktu_tugas: this.waktu_tugas,
+                // waktu_mandiri: this.waktu_mandiri,
                 sks: this.sks,
                 sent: this.sent,
             };
@@ -343,13 +343,13 @@ document.addEventListener("alpine:init", () => {
                 this.pertemuan_ke_name = "";
                 this.tanggal = "";
 
-                this.deskripsi = "";
-                this.materi = "";
-                this.metodologi = "";
-                this.indikator = "";
-                this.deskripsi_tugas = "";
-                this.waktu_tugas = "";
-                this.waktu_mandiri = "";
+                // this.deskripsi = "";
+                // this.materi = "";
+                // this.metodologi = "";
+                // this.indikator = "";
+                // this.deskripsi_tugas = "";
+                // this.waktu_tugas = "";
+                // this.waktu_mandiri = "";
 
                 this.sks = "";
                 this.sent = 1;

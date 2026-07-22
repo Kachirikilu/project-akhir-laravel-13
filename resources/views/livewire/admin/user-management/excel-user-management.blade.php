@@ -1,23 +1,15 @@
 <div>
     <flux:modal name="user-excel-modal" wire:model.live="showUserExcelModal" flyout
         @refresh-data-user.window="if (!$wire.showUserExcelModal) $store.user.reset()"
-        class="w-full md:w-screen-2xl max-w-screen-2xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="modal-flux  md:w-screen-2xl max-w-screen-2xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-        @if ($isReady)
-            {{-- Loading Overlay --}}
-            <div wire:loading wire:target="saveUserExcel">
-                <div
-                    class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
-                    <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                    <p wire:stream="import-progress" class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">
-                        Menyinkronkan...
-                    </p>
-                </div>
-            </div>
+        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'saveUserExcel', 'stream' => 'import-progress'])
 
-            <div class="flex flex-col h-full">
+        <div class="modal-flux-main scrollbar-large">
 
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+            @if ($isReady)
+                {{-- Loading Overlay --}}
+                <div class="modal-flux-header">
 
                     <h3 class="text-xl font-semibold">
                         <flux:badge icon="cog-6-tooth" color="green" size="lg">
@@ -26,7 +18,7 @@
                     </h3>
                 </div>
 
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                <div class="modal-flux-body">
 
                     <form wire:submit.prevent="saveUserExcel" enctype="multipart/form-data" id="userForm">
 
@@ -50,11 +42,10 @@
                         </div>
                     </form>
                 </div>
+            @else
+                @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+            @endif
+        </div>
 
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
-        @endif
     </flux:modal>
-
 </div>

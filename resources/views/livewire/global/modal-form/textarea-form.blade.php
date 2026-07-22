@@ -1,4 +1,23 @@
+@php
+    $alpineState = $alpine ?? 'config';
+    $isLivewireState = $isLivewire ?? null;
+    $modelLivewire = "{$alpineState}_input.{$modelString}";
+        $noEntangle = $noEntangle ?? false;
+        $isBlur = $isLivewireBlur ?? false;
+@endphp
+
 <div x-data="{ 
+        @if (!$noEntangle)
+            @if ($isLivewireState)
+                @if (isset($itemsString))
+                    valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
+                @else
+                    valueInput: @entangle($modelLivewire).live,
+                @endif
+            @endif
+        @else
+            valueInput: '',
+        @endif
     parentSelected: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
     hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
     
@@ -9,8 +28,8 @@
     }
 }"
 x-effect="
-    if($store.{{ $alpine ?? 'config' }}?.isEdit === 0 && !hasParent){
-        $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
+    if($store.{{ $alpineState }}?.isEdit === 0 && !hasParent){
+        $store.{{ $alpineState }}.{{ $modelString }} = '';
     }
 " 
 wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
@@ -21,11 +40,26 @@ wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
     <div class="relative {{ $noLabel ?? false ? '' : 'mt-1' }}">
         <div class="absolute top-3 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString }}" variant="mini" 
-                x-bind:class="isParentReady ? ($store.{{ $alpine ?? 'config' }}?.colorIcon ?? 'text-blue-500') : 'text-gray-400'" />
+                x-bind:class="isParentReady ? ($store.{{ $alpineState }}?.colorIcon ?? 'text-blue-500') : 'text-gray-400'" />
         </div>
 
         <textarea 
-            x-model.debounce.500ms="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
+                @if (!$noEntangle) @if ($isLivewireState)
+                    @if (isset($itemsString))
+                        wire:model="{{ $modelLivewire . '.' . $itemsString }}"
+                    @elseif ($isBlur)
+                        wire:model.live.blur="{{ $modelLivewire }}"
+                    @else
+                        wire:model="{{ $modelLivewire }}" @endif
+                    @endif
+                @endif
+
+                @if (!$isLivewireState || ($isXModal ?? false)) @if (isset($itemsString))
+                        x-model="valueInput"
+                    @else
+                        x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
+                @endif
+            {{-- x-model="$store.{{ $alpineState }}.{{ $modelString }}" --}}
             id="{{ $modelString }}"
             :disabled="!isParentReady"
             :placeholder="isParentReady 

@@ -8,12 +8,6 @@
     </div>
 
     <div class="relative">
-
-
-        @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'editNilaiAbsensi, updateNilaiAbsensi',
-        ])
-
         <div class="space-y-4">
             @forelse(array_slice($sesi_input['list_absensi_array'], $indexStart, $indexLenght, true) as $index => $item)
                 <div

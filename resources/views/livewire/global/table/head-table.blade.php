@@ -46,7 +46,7 @@
                     'text-[var(--focus-color)]': sortField === '{{ $sortFieldString }}' &&
                         sortDirection === 'asc',
                 
-                    'opacity-50 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
+                    'opacity-30 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'asc')
                 }"
@@ -65,7 +65,7 @@
                     'text-[var(--focus-color)]': sortField === '{{ $sortFieldString }}' &&
                         sortDirection === 'desc',
                 
-                    'opacity-50 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
+                    'opacity-30 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'desc')
                 }"

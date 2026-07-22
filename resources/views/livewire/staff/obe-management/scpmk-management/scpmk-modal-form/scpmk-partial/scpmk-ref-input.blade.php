@@ -17,10 +17,6 @@
     </div>
 
 
-    <div class="relative">
-
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addSCPMK, editSCPMK'])
-
         @if ($this->showSCPMKModal)
             @include('livewire.global.modal-form.input-array.search-input-array-form', [
                 'alpine' => 'scpmk',
@@ -45,8 +41,5 @@
                 // 'message' => $errors->first('referensi'),
             ])
         @endif
-
-
-    </div>
 
 </div>

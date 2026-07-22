@@ -103,6 +103,15 @@ trait WithUserModal
         $this->isEditingUser = false;
         $this->roleType = $role;
 
+        if (Auth::user()->tingkat == 2) {
+            $this->fk_id = Auth::user()->fk_id;
+            $this->prLevel = 3;
+        } elseif (Auth::user()->tingkat == 3) {
+            $this->dp_id = Auth::user()->dp_id;
+            $this->prLevel = 2;
+        } elseif (Auth::user()->tingkat == 4) {
+            $this->pr_id = Auth::user()->pr_id;
+        }
         if ($role == 'excel') {
             $this->showUserExcelModal = true;
             $this->showUserModal = false;
@@ -117,7 +126,9 @@ trait WithUserModal
         ];
         $color = $colors[$role] ?? 'text-gray-700 dark:text-gray-400';
         $this->dispatch('prepare-add-user-modal', type: $role, color: $color);
-        $this->updatedPrNameSearch($this->prNameSearch);
+        if (Auth::user()->tingkat < 4) {
+            $this->updatedPrNameSearch($this->prNameSearch);
+        }
     }
 
     public function editUser($id, $withRPS = false, $isRPS = false)
@@ -149,55 +160,50 @@ trait WithUserModal
             $user = User::with(['admin', 'dosen', 'mahasiswa', 'admin.pr_rel', 'dosen.pr_rel', 'mahasiswa.pr_rel'])->findOrFail($id);
             $this->selected_id_user = $user->id;
 
-            // $this->user_input['email'] = $user->email;
-            $this->user_input['name'] = $user->name;
-            $this->user_input['nik'] = $user->nik;
-            $this->user_input['status'] = $user->status;
-            $this->user_input['tempat_lahir'] = $user->tmt_lahir;
-            $this->user_input['tanggal_lahir'] = $user->tanggal_lahir;
-            $this->user_input['agama'] = $user->agama;
-            $this->user_input['jenis_kelamin'] = $user->gender;
-            $this->user_input['role'] = $user->role;
+            $this->user_input = array_merge($this->user_input, [
+                'name' => $user->name,
+                'nik' => $user->nik,
+                'status' => $user->status,
+                'tempat_lahir' => $user->tmt_lahir,
+                'tanggal_lahir' => $user->tanggal_lahir,
+                'agama' => $user->agama,
+                'jenis_kelamin' => $user->gender,
+                'role' => $user->role,
+            ]);
 
-            $formattedPhone = $this->formatNomorHP($user->no_hp);
-            $this->user_input['no_hp_back'] = $formattedPhone['no_hp_back'];
-            $this->user_input['kode_no_hp'] = $formattedPhone['kode_no_hp'];
+            $phone = $this->formatNomorHP($user->no_hp);
+            $this->user_input['no_hp_back'] = $phone['no_hp_back'];
+            $this->user_input['kode_no_hp'] = $phone['kode_no_hp'];
 
-            $role = strtolower($user->role);
+            $relasi = match (strtolower($user->role)) {
+                'admin' => ['nip', 'nitk', 'kode_wilayah'],
+                'dosen' => ['nip', 'nidn', 'nidk'],
+                'mahasiswa' => ['nim', 'angkatan', 'kode_wilayah'],
+                default => []
+            };
 
-            if ($role == 'admin') {
-                $this->user_input['nip'] = $user->admin->nip ?? null;
-                $this->user_input['nitk'] = $user->admin->nitk ?? null;
-                $this->user_input['kode_wilayah'] = $user->admin->kode_wilayah ?? null;
-            } elseif ($role == 'dosen') {
-                $this->user_input['nip'] = $user->dosen->nip ?? null;
-                $this->user_input['nidn'] = $user->dosen->nidn ?? null;
-                $this->user_input['nidk'] = $user->dosen->nidk ?? null;
-            } elseif ($role == 'mahasiswa') {
-                $this->user_input['nim'] = $user->mahasiswa->nim ?? null;
-                $this->user_input['angkatan'] = $user->mahasiswa->angkatan ?? null;
-                $this->user_input['kode_wilayah'] = $user->mahasiswa->kode_wilayah ?? null;
+            foreach ($relasi as $field) {
+                $this->user_input[$field] = $user->{strtolower($user->role)}->$field ?? null;
             }
 
-
-            $this->pr_id = $user->pr_id;
-            if (! $isRPS) {
-                // $this->pr_id_2 = $user->pr_id;
-                // $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
-                // $this->updatedPrNameSearch($this->prNameSearch);
-                $this->fetchPr();
+            if (Auth::user()->tingkat == 2) {
+                $this->fk_id = Auth::user()->fk_id;
+                $this->prLevel = 3;
+            } elseif (Auth::user()->tingkat == 3) {
+                $this->dp_id = Auth::user()->dp_id;
+                $this->prLevel = 2;
+            } elseif (Auth::user()->tingkat == 4) {
+                $this->pr_id = Auth::user()->pr_id;
+            }
+            if (Auth::user()->tingkat < 4) {
+                $this->pr_id = $user->pr_id;
+                if (! $isRPS) {
+                    $this->fetchPr();
+                }
             }
             $this->roleType = strtolower($user->role);
 
             if ($withRPS) {
-                // if ($user->dosen) {
-                //     $this->user_rps_id = $user->dosen->id;
-                //     // $this->loadDosenRPSPagination();
-                // }
-                // if ($user->mahasiswa) {
-                //     $this->user_rps_id = $user->mahasiswa->id;
-                //     // $this->loadMahasiswaRPSPagination();
-                // }
                 $this->user_rps_id = $user->role_id;
                 $this->resetPage('user_rps_modal_page');
                 $this->loadUserRPSPagination();

@@ -37,17 +37,17 @@ document.addEventListener("alpine:init", () => {
             kode,
             kelas,
             deskripsi,
-            prId,
-            kodePr,
-            prodi,
-            departemen,
-            fakultas,
-            idRPS,
-            kodeRPS,
-            rps,
-            sksRPS,
-            wajibRPS,
-            drafRPS,
+            // prId,
+            // kodePr,
+            // prodi,
+            // departemen,
+            // fakultas,
+            // idRPS,
+            // kodeRPS,
+            // rps,
+            // sksRPS,
+            // wajibRPS,
+            // drafRPS,
         ) {
             this.kode_kelas = kode;
             this.nama_kelas = kelas;
@@ -63,26 +63,26 @@ document.addEventListener("alpine:init", () => {
                 this.kode_kelas_2 = "";
             }
 
-            this.pr_id = prId;
-            this.nama_pr_search = prodi;
-            this.pr_items = {
-                id: prId,
-                kode: kodePr,
-                slot1: prodi,
-                slot2: departemen,
-                slot3: fakultas,
-            };
+            // this.pr_id = prId;
+            // this.nama_pr_search = prodi;
+            // this.pr_items = {
+            //     id: prId,
+            //     kode: kodePr,
+            //     slot1: prodi,
+            //     slot2: departemen,
+            //     slot3: fakultas,
+            // };
 
-            this.rps_id = idRPS;
-            this.nama_rps_search = rps;
-            this.rps_items = {
-                id: idRPS,
-                kode: kodeRPS,
-                slot1: rps,
-                slot2: sksRPS,
-                slot3: wajibRPS,
-                slot4: drafRPS,
-            };
+            // this.rps_id = idRPS;
+            // this.nama_rps_search = rps;
+            // this.rps_items = {
+            //     id: idRPS,
+            //     kode: kodeRPS,
+            //     slot1: rps,
+            //     slot2: sksRPS,
+            //     slot3: wajibRPS,
+            //     slot4: drafRPS,
+            // };
         },
 
         getDataKelas() {
@@ -93,12 +93,12 @@ document.addEventListener("alpine:init", () => {
                 kode_kelas: this.kode_kelas,
                 kode_kelas_1: this.kode_kelas_1,
                 kode_kelas_2: this.kode_kelas_2,
-                pr_id: this.pr_id,
-                nama_pr_search: this.nama_pr_search,
-                pr_items: this.pr_items,
-                rps_id: this.rps_id,
-                nama_rps_search: this.nama_rps_search,
-                rps_items: this.rps_items,
+                // pr_id: this.pr_id,
+                // nama_pr_search: this.nama_pr_search,
+                // pr_items: this.pr_items,
+                // rps_id: this.rps_id,
+                // nama_rps_search: this.nama_rps_search,
+                // rps_items: this.rps_items,
             };
         },
 

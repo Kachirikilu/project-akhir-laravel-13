@@ -2,21 +2,12 @@
     <div wire:loading wire:target="{{ $wireLoading ?? null }}" class="{{ $heightContainer }}">
 @endif
 <div wire:loading wire:target="{{ $wireLoading ?? null }}"
-    class="absolute inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-[2px] rounded-lg">
+    class="absolute inset-0 z-50 flex items-center justify-center bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-xl h-full w-full">
 
     <div class="h-full flex flex-col items-center justify-center">
-        <svg class="animate-spin h-10 w-10 text-[var(--focus-color)]" xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-            </circle>
-            <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-        </svg>
-
-        <p class="text-xs sm:text-sm mt-3 text-sm font-semibold text-[var(--focus-color)] tracking-wide animate-pulse">
-            {{ $textString ?? 'Sedang Memproses...' }}
-        </p>
+        <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
+        <p wire:stream="{{ $stream ?? '' }}" class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">
+            {{ $textString ?? 'Menyinkronkan...' }}</p>
     </div>
 </div>
 @if ($heightContainer ?? false)

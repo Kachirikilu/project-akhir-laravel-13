@@ -79,6 +79,9 @@ class ProgramStudiManagement extends Component
     public function mount($switchTable = '')
     {
         $this->switchTable = $switchTable;
+
+        // $this->dpNameSearch = Auth::user()->departemen_dp;
+        // $this->selectedDpId = Auth::user()->dp_id;
     }
 
     #[On('switch-table-updated')]
@@ -122,8 +125,6 @@ class ProgramStudiManagement extends Component
     {
         $this->resetPage();
     }
-
-    public function loadingTable() {}
 
     public function updatedPerPage()
     {

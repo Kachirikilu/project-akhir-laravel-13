@@ -29,6 +29,8 @@ trait WithDepartemenSearchFilters
 
     public $selectedDpId = null;
 
+    public $dpLevel = 1;
+
     private function mapDp($collection)
     {
         return $collection->map(fn ($j) => [
@@ -137,6 +139,8 @@ trait WithDepartemenSearchFilters
 
         $query = $this->dpQuery()->select('departemens.*');
 
+        $this->haveDpParent($query);
+
         if (trim(strlen($value)) > 0) {
             $results = $query->searchDepartemen($value)->limit(12)->get();
             // $results = $this->searchOutputPr($query, $value, 12);
@@ -181,6 +185,8 @@ trait WithDepartemenSearchFilters
 
         $query = $this->dpQuery();
 
+        $this->haveDpParent($query);
+
         if (! $departemenId) {
             $defaultDepartemens = $this->dpQuery()
                 ->orderBy('nama_dp', 'asc')
@@ -198,20 +204,21 @@ trait WithDepartemenSearchFilters
             ->sortBy(fn ($j) => $j->id === $departemenId ? 0 : 1)
             ->take(12);
 
-        if ($mainResults->count() < 12) {
-            $extra = $this->dpQuery()
-                ->whereHas('fk_rel', fn ($q) => $q->where('id', '!=', $fakultasId))
-                ->whereNotIn('id', $mainResults->pluck('id'))
-                ->limit(12 - $mainResults->count())
-                ->get();
-            $mainResults = $mainResults->concat($extra);
+        if ($this->dpLevel <= 1 || empty($this->dpLevel)) {
+            if ($mainResults->count() < 12) {
+                $extra = $this->dpQuery()
+                    ->whereHas('fk_rel', fn ($q) => $q->where('id', '!=', $fakultasId))
+                    ->whereNotIn('id', $mainResults->pluck('id'))
+                    ->limit(12 - $mainResults->count())
+                    ->get();
+                $mainResults = $mainResults->concat($extra);
+            }
         }
 
         return $type === 'search'
             ? $this->mapDpSearch($mainResults)
             : $this->mapDp($mainResults);
     }
-
 
     public function fetchDp($mode = 'single')
     {
@@ -223,6 +230,7 @@ trait WithDepartemenSearchFilters
                 $this->dp_items = $this->itemsDp($dp);
             }
             $this->dpResults = $this->getDpbyUser();
+
             return;
         }
     }
@@ -261,20 +269,21 @@ trait WithDepartemenSearchFilters
 
     public function haveDpChild()
     {
-        $showMK = property_exists($this, 'showMKModal') && $this->showMKModal;
-        $mkType = property_exists($this, 'mkType') ? $this->mkType : null;
-
-        $showCPL = property_exists($this, 'showCPLModal') && $this->showCPLModal;
-        $cplType = property_exists($this, 'cplType') ? $this->cplType : null;
-
-        if (property_exists($this, 'pr_id_array')) {
-            if (($showMK && $mkType == 2) || ($showCPL && $cplType == 2)) {
-                if (method_exists($this, 'resetPrArray')) {
-                    $this->resetPrArray();
-                }
+        if (property_exists($this, 'prLevel') && $this->prLevel == 2) {
+            if (method_exists($this, 'resetPrArray')) {
+                $this->resetPrArray();
             }
         }
     }
+
+    public function haveDpParent($query)
+    {
+        if ($this->dpLevel == 2 && filled($this->fk_id)) {
+            $query->where('fk_id', $this->fk_id);
+        }
+        return $query;
+    }
+
 
     // public function searchOutputDp($queryDp, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
     // {

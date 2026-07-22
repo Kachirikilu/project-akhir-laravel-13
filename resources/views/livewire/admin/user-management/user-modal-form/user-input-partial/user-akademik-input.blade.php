@@ -21,27 +21,29 @@
         ])
     </template>
 
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'user',
-        'xResults' => $prResults,
-        'selectX' => 'selectPr',
-        'modelString' => 'nama_pr_search',
-    
-        'idString' => 'pr_id',
-        'itemsAllString' => 'pr_items',
-    
-        'resetXInput' => 'resetPrInput()',
-    
-        'typeXString' => 'prodi',
-        // 'typeX2String' => 'departemen',
-        'typeX2String' => 'fakultas',
-    
-        'nameXString' => 'Program Studi',
-        'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchPr',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr',
-    ])
+    @if (Auth::user()->tingkat < 4)
+        @include('livewire.global.modal-form.input-array.search-input-form', [
+            'alpine' => 'user',
+            'xResults' => $prResults,
+            'selectX' => 'selectPr',
+            'modelString' => 'nama_pr_search',
+        
+            'idString' => 'pr_id',
+            'itemsAllString' => 'pr_items',
+        
+            'resetXInput' => 'resetPrInput()',
+        
+            'typeXString' => 'prodi',
+            // 'typeX2String' => 'departemen',
+            'typeX2String' => 'fakultas',
+        
+            'nameXString' => 'Program Studi',
+            'nameSearchString' => 'prNameSearch',
+            'fetchString' => 'fetchPr',
+            'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchPr',
+        ])
+    @endif
     {{-- <livewire:global.input-search.prodi-search-input /> --}}
 
 

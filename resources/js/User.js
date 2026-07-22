@@ -51,7 +51,7 @@ document.addEventListener("alpine:init", () => {
         total_sks: "",
 
         rekap_mhs: "",
-        index_mhs: "",
+        ipk_mhs: "",
         mutu_mhs: "",
 
         kode_wilayah: "",
@@ -70,7 +70,7 @@ document.addEventListener("alpine:init", () => {
 
         pr_id_show: "",
 
-        setValueUserLite(email, label1, id1, rps, sks, rekap, index, mutu) {
+        setValueUser(email, label1, id1, rps, sks, rekap, index, mutu) {
             this.email = email;
             this.label_id1 = label1;
             this.identity1 = id1;
@@ -78,7 +78,7 @@ document.addEventListener("alpine:init", () => {
             this.count_rps = rps;
             this.total_sks = sks;
             this.rekap_mhs = rekap;
-            this.index_mhs = index;
+            this.ipk_mhs = index;
             this.mutu_mhs = mutu;
         },
         getDataUser() {
@@ -87,12 +87,12 @@ document.addEventListener("alpine:init", () => {
                 // count_rps: this.count_rps,
                 // total_sks: this.total_sks,
                 // rekap_mhs: this.rekap_mhs,
-                // index_mhs: this.index_mhs,
+                // ipk_mhs: this.ipk_mhs,
                 // mutu_mhs: this.mutu_mhs,
             };
         },
 
-        setValueUser(
+        setValueUserFull(
             email,
             password,
             name,
@@ -149,7 +149,7 @@ document.addEventListener("alpine:init", () => {
             this.total_sks = sks;
 
             this.rekap_mhs = rekap;
-            this.index_mhs = index;
+            this.ipk_mhs = index;
             this.mutu_mhs = mutu;
 
             this.jenis_kelamin = jk;
@@ -189,7 +189,7 @@ document.addEventListener("alpine:init", () => {
             this.total_sks = sks;
 
             this.rekap_mhs = rekap;
-            this.index_mhs = index;
+            this.ipk_mhs = index;
             this.mutu_mhs = mutu;
 
             this.angkatan_mhs = angkatan;
@@ -219,7 +219,7 @@ document.addEventListener("alpine:init", () => {
         //     this.total_sks = sks;
 
         //     this.rekap_mhs = rekap;
-        //     this.index_mhs = index;
+        //     this.ipk_mhs = index;
         //     this.mutu_mhs = mutu;
         //     this.pr_id_show = prId;
         // },
@@ -268,7 +268,7 @@ document.addEventListener("alpine:init", () => {
                 this.total_sks = "";
 
                 this.rekap_mhs = "";
-                this.index_mhs = "";
+                this.ipk_mhs = "";
                 this.mutu_mhs = "";
                 this.pr_id_show = "";
 

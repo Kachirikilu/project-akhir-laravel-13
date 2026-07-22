@@ -17,7 +17,7 @@ trait WithRPSMahasiswaDelete
 
     public function deleteNilai($id, $isTrashed = false)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return; 
         }
 
@@ -36,7 +36,7 @@ trait WithRPSMahasiswaDelete
 
     public function destroyNilai()
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return; 
         }
 
@@ -73,7 +73,7 @@ trait WithRPSMahasiswaDelete
     #[On('restore-rps-mahasiswa')]
     public function restoreNilai($id)
     {
-        if (! $this->AuthCheck()) {
+        if (! $this->AuthCheck('staff')) {
             return; 
         }
 

@@ -32,6 +32,8 @@ trait WithJadwalFilters
             }
         };
 
+        
+
         if (! empty($idKelas)) {
             $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)
                 ->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
@@ -54,16 +56,17 @@ trait WithJadwalFilters
                 $query->whereDate('tanggal', today());
             });
         }
+        // dump($queryJadwal->count(), $idKelas);
 
-        if ($user->dosen) {
-            $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
-                $q->where('dosens.id', $user->dosen->id);
-            });
-        } elseif ($user->mahasiswa) {
-            $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
-                $q->where('mahasiswas.id', $user->mahasiswa->id);
-            });
-        }
+        // if ($user->dosen) {
+        //     $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
+        //         $q->where('dosens.id', $user->dosen->id);
+        //     });
+        // } elseif ($user->mahasiswa) {
+        //     $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
+        //         $q->where('mahasiswas.id', $user->mahasiswa->id);
+        //     });
+        // }
 
         if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
             $search = $this->search;

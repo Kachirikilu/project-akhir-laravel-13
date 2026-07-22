@@ -178,8 +178,6 @@ class NilaiManagement extends Component
         $this->resetPage();
     }
 
-    public function loadingTable() {}
-
     public function loadingRPSsList() {}
 
     public function updatedPerPage()

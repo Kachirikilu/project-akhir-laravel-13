@@ -1,23 +1,17 @@
 <div>
     <flux:modal name="nilai-excel-modal" wire:model.live="showNilaiExcelModal" flyout wire:key="nilai-excel-modal-flyout"
         @refresh-data-rps-mahasiswa.window="if (!$wire.showNilaiExcelModal) $store.sesi.reset()"
-        class="w-full md:w-screen-2xl max-w-screen-2xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
-        @if ($isReady)
-            {{-- Loading Overlay --}}
-            <div wire:loading wire:target="saveNilaiExcel">
-                <div
-                    class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
-                    <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                    <p wire:stream="import-progress" class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">
-                        Menyinkronkan...
-                    </p>
-                </div>
-            </div>
+        class="modal-flux md:w-screen-2xl max-w-screen-2xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-            <div class="flex flex-col h-full">
+        @include('livewire.global.modal-form.loading-animation', [
+            'wireLoading' => 'saveNilaiExcel',
+            'stream' => 'import-progress',
+        ])
 
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+        <div class="modal-flux-main scrollbar-large">
 
+            @if ($isReady)
+                <div class="modal-flux-header">
                     <h3 class="text-xl font-semibold">
                         <flux:badge icon="cog-6-tooth" color="green" size="lg">
                             <span>Input Nilai Mahasiswa - Excel</span>
@@ -25,12 +19,9 @@
                     </h3>
                 </div>
 
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
-
+                <div class="modal-flux-body">
                     <form wire:submit.prevent="saveNilaiExcel" enctype="multipart/form-data" id="nilaiForm">
-
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-modal-form.nilai-excel-input')
-
                         {{-- 3. Footer/Tombol --}}
                         <div class="form-message-container">
 
@@ -39,7 +30,7 @@
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'xType' => 'excel',
                                     'wireLoading' =>
-                                    'excel_nilai_file, parseExcelNilaiFile, procesImportNilaiExcel',
+                                        'excel_nilai_file, parseExcelNilaiFile, procesImportNilaiExcel',
                                     'wireLoading2' => 'saveNilaiExcel',
                                     'targetX' => 'addNilai, saveNilai, editNilai, updateNilai',
                                     'isLeft' => 1,
@@ -50,10 +41,9 @@
                         </div>
                     </form>
                 </div>
-
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
-        @endif
+            @else
+                @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+            @endif
+        </div>
     </flux:modal>
 </div>

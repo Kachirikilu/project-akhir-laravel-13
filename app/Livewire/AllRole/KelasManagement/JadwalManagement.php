@@ -153,8 +153,6 @@ class JadwalManagement extends Component
         }
     }
 
-    public function loadingTable() {}
-
     public function updatingSearch()
     {
         $this->resetPage();

@@ -232,8 +232,6 @@ class SesiManagement extends Component
         session([$sessionKey => $sesiHistory]);
     }
 
-    public function loadingTable() {}
-
     public function updatingSearch()
     {
         $this->resetPage();

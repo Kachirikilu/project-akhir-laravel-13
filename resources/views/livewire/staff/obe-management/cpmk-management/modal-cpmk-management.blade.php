@@ -1,25 +1,22 @@
 <div>
     <flux:modal name="cpmk-modal" wire:model.live="showCPMKModal" x-data :flyout="!!$parent"
         wire:key="cpmk-modal-{{ $parent }}" @refresh-data-cpmk.window="$store.cpmk.reset()"
-        class="w-full md:w-[90vw] max-w-5xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+        class="modal-flux md:w-[90vw] max-w-5xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
-        @if ($isReady)
-            <div class="flex flex-col h-full relative">
+        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'saveCPMK, updateCPMK'])
 
-                {{-- 1. Header Modal --}}
-                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
-
+        <div class="modal-flux-main scrollbar-large">
+            @if ($isReady)
+                <div class="modal-flux-header">
                     <h3 class="text-xl font-semibold">
-
                         <flux:badge icon="academic-cap" color="violet" size="lg">
                             <span x-text="$store.cpmk?.isEdit ? 'Edit OBE - CPMK' : 'Tambah OBE - CPMK'"></span>
                         </flux:badge>
-
                     </h3>
                 </div>
 
                 {{-- 2. Konten & Form --}}
-                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                <div class="modal-flux-body">
                     <form
                         x-on:submit.prevent="$store.cpmk.isEdit ? $wire.updateCPMK($store.cpmk.getDataCPMK()) : $wire.saveCPMK($store.cpmk.getDataCPMK())"
                         enctype="multipart/form-data" id="cpmkForm">
@@ -41,9 +38,10 @@
                         </div>
                     </form>
                 </div>
-            </div>
-        @else
-            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
-        @endif
+            @else
+                @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+            @endif
+        </div>
+
     </flux:modal>
 </div>

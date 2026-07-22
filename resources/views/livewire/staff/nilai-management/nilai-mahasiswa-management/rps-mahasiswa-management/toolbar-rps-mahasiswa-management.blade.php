@@ -6,6 +6,8 @@
 
     @if (!$data['isTrashed'])
         {{-- Tombol RPS --}}
+        <flux:menu.separator />
+
         <flux:menu.item
             @click="
                 $store.rps?.resetShow();
@@ -43,7 +45,7 @@
             <flux:icon wire:loading wire:target="printPDFRPS()" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
         </div>
 
-        @if (Auth::user()?->admin || Auth::user()?->dosen)
+        @if ($data['canAccess'])
             <flux:menu.separator />
             {{-- Tombol Edit --}}
             <flux:menu.item
@@ -101,7 +103,8 @@
             </flux:menu.item>
         @endif
     @else
-        @if (Auth::user()?->admin || Auth::user()?->dosen)
+        @if ($data['canAccess'])
+            <flux:menu.separator />
             {{-- Tombol Restore --}}
             <flux:menu.item wire:click="$dispatch('restore-rps-mahasiswa', { id: {{ $data['id'] }} })"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">

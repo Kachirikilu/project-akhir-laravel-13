@@ -6,6 +6,7 @@ use App\Livewire\Global\HasToast;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -47,9 +48,21 @@ trait WithProdiModal
         $this->prodiType = $type;
         $this->showProdiModal = true;
         if ($type === 'prodi') {
-            $this->updatedDpNameSearch($this->dpNameSearch);
+            if (Auth::user()->tingkat < 3) {
+                if (Auth::user()->tingkat == 2) {
+                    $this->fk_id = Auth::user()->fk_id;
+                    $this->dpLevel = 2;
+                }
+                $this->updatedDpNameSearch($this->fkNameSearch);
+            } else {
+                $this->dp_id = Auth::user()->dp_id;
+            }
         } elseif ($type === 'departemen') {
-            $this->updatedFkNameSearch($this->fkNameSearch);
+            if (Auth::user()->tingkat < 2) {
+                $this->updatedFkNameSearch($this->fkNameSearch);
+            } else {
+                $this->fk_id = Auth::user()->fk_id;
+            }
         }
     }
 
@@ -72,17 +85,27 @@ trait WithProdiModal
             if ($type === 'prodi') {
                 $prodi = Prodi::with('dp_rel')->findOrFail($id);
                 $this->selected_id_pr = $prodi->id;
-                $this->dp_id = $prodi->dp_id ?? null;
-                $this->dp_id_2 = $prodi->dp_id ?? null;
-                $this->fetchDp();
+                if (Auth::user()->tingkat < 3) {
+                    if (Auth::user()->tingkat == 2) {
+                        $this->fk_id = Auth::user()->fk_id;
+                        $this->dpLevel = 2;
+                    }
+                    $this->dp_id = $prodi->dp_id ?? null;
+                    $this->dp_id_2 = $prodi->dp_id ?? null;
+                    $this->fetchDp();
+                } else {
+                    $this->dp_id = Auth::user()->dp_id;
+                }
             } elseif ($type === 'departemen') {
                 $departemen = Departemen::with('fk_rel')->findOrFail($id);
                 $this->selected_id_pr = $departemen->id;
-
-                $this->fk_id = $departemen->fk_id;
-                $this->fk_id_2 = $departemen->fk_id;
-                $this->fetchFk();
-
+                if (Auth::user()->tingkat < 2) {
+                    $this->fk_id = $departemen->fk_id;
+                    $this->fk_id_2 = $departemen->fk_id;
+                    $this->fetchFk();
+                } else {
+                    $this->fk_id = Auth::user()->fk_id;
+                }
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
                 $this->selected_id_pr = $fakultas->id;
@@ -139,9 +162,9 @@ trait WithProdiModal
                         $departemen = DB::table('departemens')->find($data['dp_id']);
                         $fakultasId = $departemen ? $departemen->fk_id : null;
 
-                        $otherDp = DB::table('departemens')->where('kode_dp', $value)->exists(); 
+                        $otherDp = DB::table('departemens')->where('kode_dp', $value)->exists();
                         $otherFk = DB::table('fakultas')->where('kode_fk', $value)->exists();
-                        
+
                         $otherPr = DB::table('prodis')
                             ->where('kode_pr', $value)
                             ->where('id', '!=', $this->selected_id_pr)

@@ -17,7 +17,7 @@ trait WithMKSearchFilters
 
     public $mkSearchResults = [];
 
-    public $modeMK = '';
+    public $modeMK = 'single';
 
     public $mk_id;
 
@@ -34,6 +34,8 @@ trait WithMKSearchFilters
     public $mk_id_array = [];
 
     public $mk_items_array = [];
+
+    public $mkLevel = 1;
 
     // public $skipMkNameSearchUpdate = false;
 
@@ -132,6 +134,8 @@ trait WithMKSearchFilters
 
         $query = $this->mkQuery();
 
+        $this->haveMKParent($query);
+
         if (trim(strlen($value)) > 0) {
             $results = $query->searchMK($value)->limit(12)->get();
             // $results = $this->searchOutputMK($this->mkQuery(), $value, 12);
@@ -200,6 +204,8 @@ trait WithMKSearchFilters
                 : $this->mapMK($defaultMK);
         }
 
+        $this->haveMKParent($query);
+
         $mainResults = $query
             ->whereHas('prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
@@ -208,14 +214,16 @@ trait WithMKSearchFilters
             ->limit(12)
             ->get();
 
-        if ($mainResults->count() < 12) {
-            $extra = $this->mkQuery()
-                ->whereNotIn('id', $mainResults->pluck('id'))
-                ->orderBy('nama_mk', 'asc')
-                ->limit(12 - $mainResults->count())
-                ->get();
+        if ($this->mkLevel <= 1 || empty($this->mkLevel)) {
+            if ($mainResults->count() < 12) {
+                $extra = $this->mkQuery()
+                    ->whereNotIn('id', $mainResults->pluck('id'))
+                    ->orderBy('nama_mk', 'asc')
+                    ->limit(12 - $mainResults->count())
+                    ->get();
 
-            $mainResults = $mainResults->concat($extra);
+                $mainResults = $mainResults->concat($extra);
+            }
         }
 
         return $mode === 'search'
@@ -280,6 +288,20 @@ trait WithMKSearchFilters
         $this->mk_id_array = [];
         $this->mk_items_array = [];
         $this->mkNameSearch = '';
+    }
+
+    public function haveMKParent($query)
+    {
+        if ($this->mkLevel == 2 && filled($this->pr_id)) {
+            $query->where('level_mk', '<=', 3)->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->pr_id));
+        } 
+        elseif ($this->mkLevel == 3 && filled($this->dp_id)) {
+            $query->where('level_mk', '<=', 2)->whereHas('prodis.dp_rel', fn ($q) => $q->where('departemens.id', $this->dp_id));
+        } 
+        elseif ($this->mkLevel == 4 && filled($this->fk_id)) {
+            $query->where('level_mk', 1)->whereHas('prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+        }
+        return $query;
     }
 
     public function searchOutputMK($queryMK, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

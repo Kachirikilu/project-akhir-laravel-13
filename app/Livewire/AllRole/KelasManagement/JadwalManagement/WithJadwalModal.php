@@ -34,41 +34,12 @@ trait WithJadwalModal
 
     public $showJadwalLeft = false;
 
-    // public $sesi_1;
-
-    // public $sesi_2;
-
-    // public $sesi_3;
-
-    // public $sesi_4;
-
-    // public $sesi_5;
-
-    // public $sesi_6;
-
-    // public $sesi_7;
-
-    // public $sesi_8;
-
-    // public $sesi_9;
-
-    // public $sesi_10;
-
-    // public $sesi_11;
-
-    // public $sesi_12;
-
-    // public $sesi_13;
-
-    // public $sesi_14;
-
-    // public $sesi_15;
-
-    // public $sesi_16;
-
-    // public $tanggal_berakhir;
-
     public $jadwal_input = [
+        'hari_pelaksanaan' => '',
+        'jam_mulai' => '',
+        'jam_berakhir' => '',
+        'tanggal_mulai' => '',
+        'tanggal_berakhir' => '',
         'sesi_1' => '',
         'sesi_2' => '',
         'sesi_3' => '',
@@ -85,7 +56,7 @@ trait WithJadwalModal
         'sesi_14' => '',
         'sesi_15' => '',
         'sesi_16' => '',
-        'tanggal_berakhir' => '',
+        'kapasitas' => '',
     ];
 
     public function addJadwal()
@@ -240,8 +211,16 @@ trait WithJadwalModal
             for ($i = 1; $i <= 16; $i++) {
                 $this->{'sesi_'.$i} = null;
             }
+            $this->jadwal_input['hari_pelaksanaan'] = $jadwal->hari_pelaksanaan ?? null;
+            $this->jadwal_input['jam_mulai'] = $jadwal->jam_mulai
+                ? Carbon::parse($jadwal->jam_mulai)->format('H:i')
+                : null;
+            $this->jadwal_input['jam_berakhir'] = $jadwal->jam_berakhir
+                ? Carbon::parse($jadwal->jam_berakhir)->format('H:i')
+                : null;
 
             $this->jadwal_input['tanggal_berakhir'] = $jadwal->tanggal_berakhir ?? null;
+            $this->jadwal_input['kapasitas'] = $jadwal->kapasitas ?? null;
 
             foreach ($jadwal->sesis as $sesi) {
                 $index = $sesi->pertemuan_ke;
@@ -272,6 +251,7 @@ trait WithJadwalModal
         $this->resetErrorBag();
         $this->resetValidation();
 
+
         $kelas = Kelas::with('jadwals')->find($kelasId);
 
         if (! $kelas) {
@@ -297,28 +277,27 @@ trait WithJadwalModal
                 $data['base_sesi_1']
             )->format('Y-m-d');
         }
-        // dd($data);
 
-        if (! empty($data['tanggal_berakhir'])) {
-            [$yearPart, $weekPart] = explode(
-                '-W',
-                $data['tanggal_berakhir']
-            );
-            $year = (int) $yearPart;
-            $week = (int) $weekPart;
-            $data['tanggal_berakhir'] = Carbon::now()
-                ->setISODate($year, $week, 7)
-                ->format('Y-m-d');
+        // if (! empty($data['tanggal_berakhir'])) {
+        //     [$yearPart, $weekPart] = explode(
+        //         '-W',
+        //         $data['tanggal_berakhir']
+        //     );
+        //     $year = (int) $yearPart;
+        //     $week = (int) $weekPart;
+        //     $data['tanggal_berakhir'] = Carbon::now()
+        //         ->setISODate($year, $week, 7)
+        //         ->format('Y-m-d');
 
+        // } else {
+        if ($this->isEditingJadwal == true) {
+            $data['tanggal_berakhir'] = $this->jadwal_input['tanggal_berakhir'];
         } else {
-            if ($this->isEditingJadwal == true) {
-                $data['tanggal_berakhir'] = $this->jadwal_input['tanggal_berakhir'];
-            } else {
-                $data['tanggal_berakhir'] = Carbon::parse(
-                    $data['tanggal_mulai']
-                )->addMonths(6)->format('Y-m-d');
-            }
+            $data['tanggal_berakhir'] = Carbon::parse(
+                $data['tanggal_mulai']
+            )->addMonths(6)->format('Y-m-d');
         }
+        // }
 
         // ==========================================
         // RULES
@@ -460,11 +439,13 @@ trait WithJadwalModal
         return $validator->validated();
     }
 
-    public function saveJadwal($data, $kelasId)
+    public function saveJadwal($dataAlpine, $kelasId)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
+        $data = array_merge($this->jadwal_input, $dataAlpine);
 
         $data['mahasiswa_id_array'] = $this->mahasiswa_id_array ?? [];
 
@@ -561,13 +542,13 @@ trait WithJadwalModal
         }
     }
 
-    public function updateJadwal($data, $kelasId)
+    public function updateJadwal($dataAlpine, $kelasId)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        // dd($data);
+        $data = array_merge($this->jadwal_input, $dataAlpine);
 
         $data['mahasiswa_id_array'] =
             $this->mahasiswa_id_array ?? [];
@@ -732,7 +713,7 @@ trait WithJadwalModal
             'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi!',
             'tanggal_berakhir.after' => 'Tanggal berakhir harus setelah tanggal mulai!',
 
-            'kode_wilayah.required' => 'Wilayah wajib dipilih!',
+            'kode_wilayah.required' => 'Kode Wilayah wajib dipilih!',
             'label_kelas.required' => 'Label kelas wajib diisi!',
             'hari_pelaksanaan.required' => 'Hari pelaksanaan wajib dipilih!',
 

@@ -53,8 +53,6 @@ class DashboardManagement extends Component
         $this->toast(text: 'Data Statistik Dashboard berhasil diperbarui!', type: 'info', variant: 'info');
     }
 
-    // public function loadingTable() {}
-
     // public function updatedPerPage()
     // {
     //     $this->resetPage();

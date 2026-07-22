@@ -1,41 +1,40 @@
 @props([
     'paginator' => null,
     'onlyAdmin' => false,
-    'targetLoading' => "
-                filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
-                filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByTimDosen, filterByDosen,
-                filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
-                showDeleted, searchMode,
-                saveUserExcel, procesImportUserExcel,
-                saveUser, updateUser, destroyUser, restoreUser,
-                saveProdi, updateProdi, destroyProdi, restoreProdi,
-                saveMK, updateMK, destroyMK, restoreMK,
-                saveRPS, updateRPS, destroyRPS, restoreRPS,
-                saveCPMK, updateCPMK, destroyCPMK, restoreCPMK,
-                saveSCPMK, updateSCPMK, destroySCPMK, restoreSCPMK,
-                saveCPL, updateCPL, destroyCPL, restoreCPL,
-                saveRef, updateRef, destroyRef, restoreRef,
-                search,
-                generateRekapCapaian, generateRekapRPSProdi,
-                generateRekapCPLProdi, generateRekapCPMKProdi, generateRekapSCPMKProdi,
-                generateRekapCPLMahasiswa, generateRekapCPMKMahasiswa, generateRekapSCPMKMahasiswa,
-                selectPrForFilter, resetPrFilter,
-                selectDpForFilter, resetDpFilter,
-                selectFkForFilter, resetFkFilter,
-                selectMKForFilter, resetMKFilter,
-                selectRPSForFilter, resetRPSFilter,
-                selectCPMKForFilter, resetCPMKFilter,
-                selectSCPMKForFilter, resetSCPMKFilter,
-                selectCPLForFilter, resetCPLFilter,
-                selectTimDosenForFilter, resetTimDosenFilter,
-                selectDosenForFilter, resetDosenFilter,
-                resetInputFilter, searchAngkatan, resetInputAngkatan,
-                searchBobotRPS, resetInputBobotRPS,
-                searchBobotCPMK, resetInputBobotCPMK,
-                searchBobotSCPMK, resetInputBobotSCPMK,
-                perPage, loadingTable, sortBy
-                {{-- gotoPage, previousPage, nextPage, page --}}
-            ",
+    // 'targetLoading' => "
+    //             filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
+    //             filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByTimDosen, filterByDosen,
+    //             filterByKelas, filterByMKgg, filterByRPSgg, filterByKelasgg,
+    //             showDeleted, searchMode,
+    //             saveUserExcel, procesImportUserExcel,
+    //             saveUser, updateUser, destroyUser, restoreUser,
+    //             saveProdi, updateProdi, destroyProdi, restoreProdi,
+    //             saveMK, updateMK, destroyMK, restoreMK,
+    //             saveRPS, updateRPS, destroyRPS, restoreRPS,
+    //             saveCPMK, updateCPMK, destroyCPMK, restoreCPMK,
+    //             saveSCPMK, updateSCPMK, destroySCPMK, restoreSCPMK,
+    //             saveCPL, updateCPL, destroyCPL, restoreCPL,
+    //             saveRef, updateRef, destroyRef, restoreRef,
+    //             search,
+    //             generateRekapCapaian, generateRekapRPSProdi,
+    //             generateRekapCPLProdi, generateRekapCPMKProdi, generateRekapSCPMKProdi,
+    //             generateRekapCPLMahasiswa, generateRekapCPMKMahasiswa, generateRekapSCPMKMahasiswa,
+    //             selectPrForFilter, resetPrFilter,
+    //             selectDpForFilter, resetDpFilter,
+    //             selectFkForFilter, resetFkFilter,
+    //             selectMKForFilter, resetMKFilter,
+    //             selectRPSForFilter, resetRPSFilter,
+    //             selectCPMKForFilter, resetCPMKFilter,
+    //             selectSCPMKForFilter, resetSCPMKFilter,
+    //             selectCPLForFilter, resetCPLFilter,
+    //             selectTimDosenForFilter, resetTimDosenFilter,
+    //             selectDosenForFilter, resetDosenFilter,
+    //             resetInputFilter, searchAngkatan, resetInputAngkatan,
+    //             searchBobotRPS, resetInputBobotRPS,
+    //             searchBobotCPMK, resetInputBobotCPMK,
+    //             searchBobotSCPMK, resetInputBobotSCPMK,
+    //             perPage, loadingTable, sortBy
+    //         ",
     'layoutGrid' => true,
     'mx' => 'mx-3',
 ])
@@ -81,14 +80,18 @@
             $layout_grid = 'space-y-4';
         }
     @endphp
-    <div class="max-w-[4600px] {{ $layout_grid ?? null }}"
-        wire:loading.class="opacity-50 pointer-events-none transition-opacity" wire:target="{{ $targetLoading }}">
+    <div class="max-w-[4600px] {{ $layout_grid ?? null }}" x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });
+    window.addEventListener('stop-loading-trigger', () => { isLoading = false; });"
+        x-bind:class="isLoading ? 'opacity-50 pointer-events-none' : ''"
+        wire:loading.class="opacity-50 pointer-events-none transition-opacity">
         {{ $slot }}
     </div>
 
     @if (isset($emptys))
-        <div class="max-w-[4500px]" wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-            wire:target="{{ $targetLoading }}">
+        <div class="max-w-[4500px]" x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });
+        window.addEventListener('stop-loading-trigger', () => { isLoading = false; });"
+            x-bind:class="isLoading ? 'opacity-50 pointer-events-none' : ''"
+            wire:loading.class="opacity-50 pointer-events-none transition-opacity">
             {{ $emptys }}
         </div>
     @endif

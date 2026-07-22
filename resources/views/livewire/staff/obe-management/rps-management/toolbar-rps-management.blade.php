@@ -10,8 +10,15 @@
             'typeXString' => 'Kode RPS',
         ])
     @endif
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
 
+    @php
+        $user = Auth::user();
+        $isSameFk = $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['level_mk'] ?? null) == 3;
+        $isSameDp = $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['level_mk'] ?? null) == 2;
+        $isSamePr = $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['level_mk'] ?? null) == 1;
+        $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
+    @endphp
+    @if ($user->admin || $user->dosen)
         @if (!$data['isTrashed'] && $data['noData'])
             <flux:menu.separator />
 
@@ -25,9 +32,10 @@
             </flux:menu.item>
         @endif
 
-        <flux:menu.separator />
 
         @if (!$data['isTrashed'])
+            <flux:menu.separator />
+
             {{-- Tombol Detail --}}
             <flux:menu.item
                 @click="
@@ -67,24 +75,25 @@
                     class="animate-spin h-4 w-4 ml-2" />
             </div>
 
-            @if ($data['noData'])
-                <flux:menu.separator />
-                <flux:menu.item wire:navigate
-                    href="{{ route('obe-management', ['switchTable' => 'rps']) . '?search=' . urlencode($data['kode']) }}"
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+            @if ($canAccess)
+                @if ($data['noData'])
+                    <flux:menu.separator />
+                    <flux:menu.item wire:navigate
+                        href="{{ route('obe-management', ['switchTable' => 'rps']) . '?search=' . urlencode($data['kode']) }}"
+                        class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
 
-                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                        <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-                    <div class="flex justify-between items-center w-full">
-                        <span>Edit RPS di OBE</span>
-                    </div>
-                </flux:menu.item>
-            @else
-                <flux:menu.separator />
+                        <div class="flex justify-between items-center w-full">
+                            <span>Edit RPS di OBE</span>
+                        </div>
+                    </flux:menu.item>
+                @else
+                    <flux:menu.separator />
 
-                {{-- Tombol Edit --}}
-                <flux:menu.item
-                    @click="
+                    {{-- Tombol Edit --}}
+                    <flux:menu.item
+                        @click="
                         $store.rps?.reset();
                         $store.rps?.setFlyout(false);
 
@@ -110,18 +119,18 @@
                         $flux.modal('rps-modal').show();
                         $dispatch('open-edit-rps-modal', { id: {{ $data['id'] }} });
                     "
-                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                        class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                        <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-                    <div class="flex justify-between items-center w-full">
-                        <span>Edit RPS</span>
-                    </div>
-                </flux:menu.item>
+                        <div class="flex justify-between items-center w-full">
+                            <span>Edit RPS</span>
+                        </div>
+                    </flux:menu.item>
 
-                <flux:menu.separator />
+                    <flux:menu.separator />
 
-                <flux:menu.item
-                    @click="
+                    <flux:menu.item
+                        @click="
                         $store.rps?.setDeleteRPS(
                             '{{ $data['mk'] ?? '' }}',
                             '{{ $data['kode'] ?? '' }}',
@@ -130,31 +139,36 @@
                         $flux.modal('rps-delete').show();
                         $dispatch('open-delete-rps-modal', { id: {{ $data['id'] }} });
                     "
-                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                        class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                        <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                    <div class="flex justify-between items-center w-full">
-                        <span>Hapus RPS</span>
-                    </div>
-                </flux:menu.item>
+                        <div class="flex justify-between items-center w-full">
+                            <span>Hapus RPS</span>
+                        </div>
+                    </flux:menu.item>
+                @endif
+
             @endif
         @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="$dispatch('restore-rps', { id: {{ $data['id'] }} })"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore RPS</span>
-                </div>
-            </flux:menu.item>
-
-            @if (!$data['noData'])
+            @if ($canAccess)
                 <flux:menu.separator />
 
-                {{-- Tombol Delete Permanent --}}
-                <flux:menu.item
-                    @click="
+                {{-- Tombol Restore --}}
+                <flux:menu.item wire:click="$dispatch('restore-rps', { id: {{ $data['id'] }} })"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                    <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Restore RPS</span>
+                    </div>
+                </flux:menu.item>
+
+                @if (!$data['noData'])
+                    <flux:menu.separator />
+
+                    {{-- Tombol Delete Permanent --}}
+                    <flux:menu.item
+                        @click="
                     $store.rps?.setDeleteRPS(
                         '{{ $data['mk'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}',
@@ -163,14 +177,16 @@
                     $flux.modal('rps-delete').show();
                     $dispatch('open-delete-rps-modal', { id: {{ $data['id'] }}, isTrash: {{ $data['isTrashed'] }} } );
                 "
-                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                        class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                        <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                    <div class="flex justify-between items-center w-full">
-                        <span>Hapus Permanen RPS</span>
-                    </div>
-                </flux:menu.item>
+                        <div class="flex justify-between items-center w-full">
+                            <span>Hapus Permanen RPS</span>
+                        </div>
+                    </flux:menu.item>
+                @endif
             @endif
         @endif
+
     @endif
 </div>

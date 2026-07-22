@@ -1,13 +1,37 @@
 <div>
     <flux:modal name="mk-modal" wire:model.live="showMKModal" x-data @refresh-data-mk.window="$store.mk.reset()"
         wire:key="mk-modal"
-        class="modal-flux md:w-4xl max-w-5xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
+        class="w-full md:w-4xl max-w-5xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-large">
 
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'saveMK, updateMK'])
 
-        <div class="modal-flux-main scrollbar-large">
-            @if ($isReady)
-                <div class="modal-flux-header">
+
+        {{-- <div class="absolute bg-red-100/30 w-full h-full z-50 sm:-my-8 sm:-mx-8 md:-my-8 md:-mx-8"> --}}
+
+
+
+        {{-- <div wire:loading wire:target="saveMK, updateMK"
+            class="sticky inset-0 z-[100] h-max w-full flex flex-col items-center justify-center bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-xl -my-8 -mx-8">
+            <div class="flex flex-col items-center justify-center">
+                <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
+                <p class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">Menyinkronkan...</p>
+            </div>
+        </div> --}}
+
+
+        @if ($isReady)
+            <div class="flex flex-col h-full relative">
+                <div
+                     {{-- wire:loading wire:target="saveMK, updateMK" --}}
+                    class="absolute  w-full h-full z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-xl">
+                    <div class="flex flex-col items-center justify-center">
+                        <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
+                        <p class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">Menyinkronkan...
+                        </p>
+                    </div>
+                </div>
+
+                {{-- 1. Header Modal --}}
+                <div class="md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
 
                     <h3 class="text-xl font-semibold">
 
@@ -43,8 +67,10 @@
                 </div>
 
                 {{-- 2. Konten & Form --}}
-                <div class="modal-flux-body">
-                    <form x-on:submit.prevent="$store.mk.isEdit ? $wire.updateMK($store.mk.getDataMK()) : $wire.saveMK($store.mk.getDataMK())"
+                <div class="flex-1 overflow-y-auto sm:p-6 py-6 scrollbar-large">
+                    {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $mkType --}}
+                    <form
+                        x-on:submit.prevent="$store.mk.isEdit ? $wire.updateMK($store.mk.getDataMK()) : $wire.saveMK($store.mk.getDataMK())"
                         enctype="multipart/form-data" id="mkForm">
 
                         @include('livewire.staff.mk-management.mk-modal-form.mk-input')
@@ -63,11 +89,10 @@
                         </div>
                     </form>
                 </div>
-            @else
-                @include('livewire.global.livewire-skeletons.modal-full-skeleton')
-            @endif
-        </div>
-
+            </div>
+        @else
+            @include('livewire.global.livewire-skeletons.modal-full-skeleton')
+        @endif
 
     </flux:modal>
 

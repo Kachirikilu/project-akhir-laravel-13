@@ -17,7 +17,7 @@ trait WithDosenSearchFilters
 
     public $dosenSearchResults = [];
 
-    public $modeDosen = '';
+    public $modeDosen = 'single';
 
     public $dosen_id;
 

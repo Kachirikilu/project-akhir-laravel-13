@@ -53,7 +53,7 @@
 
                                 <flux:menu.item
                                     @click="
-                                        $store.nilai?.reset();
+                                        {{-- $store.nilai?.reset(); --}}
                                         $store.nilai?.setEdit(1);
                                         $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
                                         $flux.modal('lock-nilai-modal').show();

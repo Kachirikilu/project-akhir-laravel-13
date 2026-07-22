@@ -12,7 +12,7 @@ trait WithProdiSearchFilters
 
     public $prSearchQuery = '';
     public $prSearchResults = [];
-    public $modePr = '';
+    public $modePr = 'single';
     public $pr_id;
     public $pr_name;
     public $pr_items;

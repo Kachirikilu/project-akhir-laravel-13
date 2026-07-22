@@ -6,6 +6,7 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -23,9 +24,9 @@ trait WithKelasModal
 
     public $showKelasModal = false;
 
-    public $pr_id_2;
+    // public $pr_id_2;
 
-    public $rps_id_2;
+    // public $rps_id_2;
 
     public function addKelas()
     {
@@ -43,8 +44,26 @@ trait WithKelasModal
         $this->showKelasModal = true;
         $this->showEditKelas = false;
 
+        if (Auth::user()->tingkat == 2) {
+            $this->fk_id = Auth::user()->fk_id;
+            $this->prLevel = 3;
+        } elseif (Auth::user()->tingkat == 3) {
+            $this->dp_id = Auth::user()->dp_id;
+            $this->prLevel = 2;
+        } elseif (Auth::user()->tingkat == 4 || Auth::user()->tingkat == 5) {
+            $this->pr_id = Auth::user()->pr_id;
+        }
+
+        if (Auth::user()->tingkat < 5) {
+            $this->rpsLevel = 2;
+        } else {
+            $this->rpsLevel = 3;
+        }
+
+        if (Auth::user()->tingkat < 4) {
+            $this->updatedPrNameSearch($this->prNameSearch);
+        }
         $this->updatedRPSNameSearch($this->dpNameSearch);
-        $this->updatedPrNameSearch($this->prNameSearch);
     }
 
     public function editKelas($id)
@@ -60,19 +79,30 @@ trait WithKelasModal
         $this->selected_id_kelas = $id;
         $this->isEditingKelas = true;
         $this->showEditKelas = true;
+        $this->rpsLevel = 2;
 
         try {
             $kelas = Kelas::find($id);
 
-            $this->pr_id = $kelas->pr_id;
-            $this->pr_id_2 = $kelas->pr_id;
-            $this->fetchPr();
+            if (Auth::user()->tingkat == 2) {
+                $this->fk_id = Auth::user()->fk_id;
+                $this->prLevel = 3;
+            } elseif (Auth::user()->tingkat == 3) {
+                $this->dp_id = Auth::user()->dp_id;
+                $this->prLevel = 2;
+            } 
+            // elseif (Auth::user()->tingkat == 4) {
+            //     $this->pr_id = Auth::user()->pr_id;
+            // }
+            if (Auth::user()->tingkat < 6) {
+                $this->pr_id = $kelas->pr_id;
+                $this->fetchPr();
+            }
 
             $this->rps_id = $kelas->rps_id;
-            $this->rps_id_2 = $kelas->rps_id;
             $this->fetchRPS();
 
-            $this->dispatch('fill-modal-kelas', kelas: $kelas);
+            // $this->dispatch('fill-modal-kelas', kelas: $kelas);
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
@@ -208,14 +238,14 @@ trait WithKelasModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
-            ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
-            $data['pr_id'] = $this->pr_id;
-        }
-        if ((empty($data['rps_id']) && $this->rps_id !== $this->rps_id_2) ||
-            ($this->rps_id == $this->rps_id_2) || ($this->rps_id !== $this->rps_id_2)) {
-            $data['rps_id'] = $this->rps_id;
-        }
+        // if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
+        //     ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
+        $data['pr_id'] = $this->pr_id;
+        // }
+        // if ((empty($data['rps_id']) && $this->rps_id !== $this->rps_id_2) ||
+        //     ($this->rps_id == $this->rps_id_2) || ($this->rps_id !== $this->rps_id_2)) {
+        $data['rps_id'] = $this->rps_id;
+        // }
 
         try {
             $validated = $this->inputModalKelas(true, $data);
@@ -307,6 +337,7 @@ trait WithKelasModal
             'selected_id_kelas',
             'pr_id',
             'rps_id',
+            'rpsLevel',
         ];
 
         $this->reset($fields);

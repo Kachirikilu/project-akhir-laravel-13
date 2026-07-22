@@ -24,7 +24,8 @@
             <span
                 class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
                 {{ $mainHead }}</span>
-            <span class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
+            <span
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
 
             @if ($subLabel ?? false)
                 <span
@@ -71,35 +72,46 @@
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-header')
         @endif
 
-        @foreach ($tim_dosen->flatMap->dosens as $dosen)
-            <div class="flex flex-col gap-1">
-                <span
-                    class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
-                    {{ $loop->first ? 'Dosen Pengampu' : 'Tim Dosen' }}
-                </span>
-
-                <div class="flex items-center gap-3 mb-1">
-                    <span class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">
-                        {{ $dosen->name }}
+        @foreach ($tim_dosen as $tim)
+            @foreach ($tim->dosens as $dosen)
+                <div class="flex flex-col gap-1">
+                    <span
+                        class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
+                        @if ($user->admin || $user->dosen)
+                            {{ $loop->first ? 'Tim ' . $tim->kode : 'Tim Dosen' }}
+                        @else
+                            {{ $loop->first ? 'Dosen Pengampu' : 'Tim Dosen' }}
+                        @endif
                     </span>
-             
-                </div>
 
-                <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
-                    NIP: {{ $dosen->nip }}
-                    <strong class="px-1">|</strong>
-                    <span class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>
-                    @if ($dosen->pivot->is_ketua)
-                        <span class="px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                    <div class="flex items-center gap-3 mb-1">
+                        <span
+                            class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">
+                            {{ $dosen->name }}
+                        </span>
+
+                    </div>
+
+                    <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
+                        NIP: {{ $dosen->nip }}
+                        <strong class="px-1">|</strong>
+                        <span
+                            class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>
+                        @if ($dosen->pivot->is_ketua)
+                            <span
+                                class="px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                        @endif
+                    </span>
+
+                    @if ($dosen->no_hp)
+                        <span class="mt-1 flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
+                            <flux:icon.phone variant="micro" />
+                            {{ $dosen->no_wa_full }}
+                        </span>
                     @endif
-                </span>
 
-                <span class="mt-1 flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
-                    <flux:icon.phone variant="micro" />
-                    {{ $dosen->no_wa_full }}
-                </span>
-                       
-            </div>
+                </div>
+            @endforeach
         @endforeach
     </div>
 
@@ -137,9 +149,10 @@
         </div>
 
 
-        @if ($alpine == 'jadwal' && (Auth::user()?->admin || Auth::user()?->dosen))
-            <flux:button
-                @click="
+        @if ($canAccess)
+            @if ($alpine == 'jadwal')
+                <flux:button
+                    @click="
                 $store.kelas?.reset();
                 $store.kelas?.setEdit(1);
                 $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
@@ -147,7 +160,7 @@
                     '{{ $kelas->kode ?? '' }}',
                     '{{ $kelas->kelas ?? '' }}',
                     '{{ $kelas->deskripsi_kelas ?? '' }}',
-                    '{{ $kelas->pr_id ?? '' }}',
+                    {{-- '{{ $kelas->pr_id ?? '' }}',
                     '{{ $kelas->kode_pr ?? '' }}',
                     '{{ $kelas->prodi ?? '' }}',
                     '{{ $kelas->pr_rel?->departemen_dp ?? '' }}',
@@ -157,18 +170,16 @@
                     '{{ $x->rps_rel?->rps ?? '' }}',
                     '{{ $x->rps_rel?->sks_full ?? '' }}',
                     '{{ $x->wajib_text ?? '' }}',
-                    '{{ $x->rps_rel?->draf_full ?? '' }}',
+                    '{{ $x->rps_rel?->draf_full ?? '' }}', --}}
                 );
                 $flux.modal('kelas-modal').show();
                 $dispatch('open-edit-kelas-modal', { id: {{ $kelas->id }} });
             "
-                icon="pencil-square" size="sm"
-                class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
-                <span>Edit Kelas</span>
-            </flux:button>
-        @endif
-
-        @if (Auth::user()?->admin || Auth::user()?->dosen)
+                    icon="pencil-square" size="sm"
+                    class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                    <span>Edit Kelas</span>
+                </flux:button>
+            @endif
             @if ($alpine == 'sesi')
                 <flux:button
                     @click="
@@ -178,12 +189,12 @@
                     $store.jadwal?.setValueJadwal(
                         '{{ $jadwal->label_kelas ?? '' }}',
                         '{{ $jadwal->kode_wilayah ?? '' }}',
-                        '{{ $jadwal->hari_pelaksanaan ?? '' }}',
-                        '{{ $jadwal->jam_mulai ?? '' }}',
-                        '{{ $jadwal->jam_berakhir ?? '' }}',
+                        {{-- '{{ $jadwal->hari_pelaksanaan ?? '' }}', --}}
+                        {{-- '{{ $jadwal->jam_mulai ?? '' }}', --}}
+                        {{-- '{{ $jadwal->jam_berakhir ?? '' }}', --}}
                         '{{ $jadwal->tanggal_mulai ?? '' }}',
-                        '{{ $jadwal->tanggal_berakhir ?? '' }}',
-                        '{{ $jadwal->kapasitas ?? '' }}',
+                        {{-- '{{ $jadwal->tanggal_berakhir ?? '' }}', --}}
+                        {{-- '{{ $jadwal->kapasitas ?? '' }}', --}}
                         '{{ $jadwal->password ?? '' }}',
                     );
                     $flux.modal('jadwal-modal').show();

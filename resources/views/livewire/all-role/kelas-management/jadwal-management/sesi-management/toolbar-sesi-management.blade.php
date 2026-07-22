@@ -88,7 +88,7 @@
                 <flux:badge color="zinc" size="sm" class="opacity-70">Belum Presensi</flux:badge>
             </div>
         @endif
-    @elseif (Auth::user()?->admin || Auth::user()?->dosen)
+    @elseif ($data['canAccess'])
         @if (!$data['isTrashed'])
             <flux:menu.separator />
             {{-- Tombol Edit --}}
@@ -104,15 +104,6 @@
 
                         '{{ $data['pertemuan_ke'] ?? '' }}',
                         '{{ $data['tanggal_fix'] ?? '' }}',
-
-                        '{{ $data['deskripsi'] ?? '' }}',
-                        '{{ $data['materi'] ?? '' }}',
-                        '{{ $data['metodologi'] ?? '' }}',
-                        '{{ $data['indikator'] ?? '' }}',
-                        '{{ $data['tugas'] ?? '' }}',
-                        '{{ $data['w_tugas'] ?? '' }}',
-                        '{{ $data['w_mandiri'] ?? '' }}',
-                        '{{ $data['sks'] ?? '' }}',
 
                         '{{ $data['sent'] ?? '' }}',
                     );

@@ -27,28 +27,30 @@
 
     <div class="form-container-excel">
 
-        <div class="mx-2 sm:mx-0">
-            @include('livewire.global.modal-form.input-array.search-input-form', [
-                'alpine' => 'user',
-                'xResults' => $prResults,
-                'selectX' => 'selectPr',
-                'modelString' => 'nama_pr',
-            
-                'idString' => 'pr_id',
-                'itemsAllString' => 'pr_items',
-            
-                'resetXInput' => 'resetPrInput()',
-                'typeXString' => 'prodi',
-                // 'typeX2String' => 'departemen',
-                'typeX2String' => 'fakultas',
-            
-                'nameXString' => 'Program Studi',
-                'nameSearchString' => 'prNameSearch',
-                'fetchString' => 'fetchPr',
-                'iconString' => 'academic-cap',
-                'wireLoading' => 'fetchPr',
-            ])
-        </div>
+        @if (Auth::user()->tingkat < 4)
+            <div class="mx-2 sm:mx-0">
+                @include('livewire.global.modal-form.input-array.search-input-form', [
+                    'alpine' => 'user',
+                    'xResults' => $prResults,
+                    'selectX' => 'selectPr',
+                    'modelString' => 'nama_pr',
+                
+                    'idString' => 'pr_id',
+                    'itemsAllString' => 'pr_items',
+                
+                    'resetXInput' => 'resetPrInput()',
+                    'typeXString' => 'prodi',
+                    // 'typeX2String' => 'departemen',
+                    'typeX2String' => 'fakultas',
+                
+                    'nameXString' => 'Program Studi',
+                    'nameSearchString' => 'prNameSearch',
+                    'fetchString' => 'fetchPr',
+                    'iconString' => 'academic-cap',
+                    'wireLoading' => 'fetchPr',
+                ])
+            </div>
+        @endif
         <div class="mx-2 sm:mx-0">
             @include('livewire.global.modal-form.select-form', [
                 'alpine' => 'user',
@@ -362,7 +364,7 @@
                         <div class="mt-6"
                             wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedUserRows->getPageName() }}">
                             {{ $this->paginatedUserRows->links('vendor.pagination.tailwind', [
-                                'typeXLoading' => 'loadingUserExcel',
+                                'typeXLoading' => 'loadingUserExcel()',
                             ]) }}
                         </div>
                     @endif

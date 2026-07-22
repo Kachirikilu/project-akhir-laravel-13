@@ -10,12 +10,7 @@ class LockNilai extends Model
 
     protected $fillable = [
         'pr_id',
-        'ganjil_genap',
-        'akademik',
-        'tanggal_unlock',
-    ];
-
-    protected $casts = [
-        'tanggal_unlock' => 'datetime',
+        'ganjil_unlock',
+        'genap_unlock',
     ];
 }

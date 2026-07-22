@@ -10,6 +10,9 @@ use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
 use App\Livewire\Global\WithTimDosenSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\SubCPMK;
 use App\Models\Akademik\Referensi;
@@ -28,6 +31,9 @@ class ModalRpsManagement extends Component
     use WithRPSModal;
     use WithSubCPMKSearchFilters;
     use WithTimDosenSearchFilters;
+    use WithDepartemenSearchFilters;
+    use WithFakultasSearchFilters;
+    use WithProdiSearchFilters;
 
     public $parent;
     public $isFlyout;

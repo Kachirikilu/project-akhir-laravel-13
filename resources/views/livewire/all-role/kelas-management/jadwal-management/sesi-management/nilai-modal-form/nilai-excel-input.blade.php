@@ -356,7 +356,7 @@
                         <div class="mt-6"
                             wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedNilaiRows->getPageName() }}">
                             {{ $this->paginatedNilaiRows->links('vendor.pagination.tailwind', [
-                                'typeXLoading' => 'loadingNilaiExcel',
+                                'typeXLoading' => 'loadingNilaiExcel()',
                             ]) }}
                         </div>
                     @endif

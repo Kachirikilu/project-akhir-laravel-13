@@ -18,7 +18,7 @@ trait WithRPSSearchFilters
 
     public $rpsSearchResults = [];
 
-    public $modeRPS = '';
+    public $modeRPS = 'single';
 
     public $rps_id;
 
@@ -36,6 +36,8 @@ trait WithRPSSearchFilters
 
     public $rps_items_array = [];
 
+    public $rpsLevel = 1;
+
     private function mapRPS($collection)
     {
         if ($collection instanceof AbstractPaginator) {
@@ -46,8 +48,12 @@ trait WithRPSSearchFilters
             'id' => $r->id,
             'mk_id' => $r->mk_id,
             'kode_mk' => $r->kode_mk,
-            'digit_akademik' => $r->digit_akademik,
             'kode' => $r->kode,
+            'level_mk' => $r->level_mk,
+            'pr_id' => $r->mk_rel->prodis->first()?->id,
+            'dp_id' => $r->mk_rel->prodis->first()?->dp_id,
+            'fk_id' => $r->mk_rel->prodis->first()?->fk_id,
+            'digit_akademik' => $r->digit_akademik,
             'rps' => $r->rps,
             'rps_with_kode' => $r->rps_with_kode,
             'mk' => $r->mk,
@@ -68,7 +74,6 @@ trait WithRPSSearchFilters
             'bobot_uas' => $r->bobot_uas,
             'total_bobot' => $r->total_bobot,
             'kode_semester' => $r->kode_semester,
-            'level_mk' => $r->level_mk,
         ])->toArray();
     }
 
@@ -340,13 +345,15 @@ trait WithRPSSearchFilters
             ->limit(12)
             ->get();
 
-        if ($mainResults->count() < 12) {
-            $extra = $this->rpsQuery()->whereNotIn('id', $mainResults->pluck('id'))
-                ->orderBy('id', 'desc')
-                ->limit(12 - $mainResults->count())
-                ->get();
+        if ($this->rpsLevel <= 1 || empty($this->rpsLevel)) {
+            if ($mainResults->count() < 12) {
+                $extra = $this->rpsQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                    ->orderBy('id', 'desc')
+                    ->limit(12 - $mainResults->count())
+                    ->get();
 
-            $mainResults = $mainResults->concat($extra);
+                $mainResults = $mainResults->concat($extra);
+            }
         }
 
         return $mode === 'search'
@@ -364,6 +371,7 @@ trait WithRPSSearchFilters
                 $this->rps_items = $this->itemsRPS($rps);
             }
             $this->rpsResults = $this->getRPSbyUser();
+
             return;
         }
     }
@@ -410,16 +418,33 @@ trait WithRPSSearchFilters
 
     public function haveRPSParent($query)
     {
-        if (property_exists($this, 'showKelasModal')) {
-            if ($this->showKelasModal == true && filled($this->pr_id)) {
-                $query->whereHas('mk_rel.prodis', function ($q) {
-                    $q->where('prodis.id', $this->pr_id);
-                });
-            }
+        if ($this->rpsLevel == 2 && filled($this->pr_id)) {
+            $query->whereHas('mk_rel.prodis', function ($q) {
+                $q->where('prodis.id', $this->pr_id);
+            });
+        } elseif ($this->rpsLevel == 3 && filled($this->pr_id) && Auth::user()->dosen?->id) {
+            $dosenId = Auth::user()->dosen->id;
+
+            $query->whereHas('mk_rel.prodis', function ($q) {
+                $q->where('prodis.id', $this->pr_id);
+            })->whereHas('tim_dosens.dosens', function ($q) use ($dosenId) {
+                $q->where('dosens.id', $dosenId);
+            });
         }
 
         return $query;
     }
+    // public function haveRPSParent($query)
+    // {
+    //     if (property_exists($this, 'showKelasModal')) {
+    //         if ($this->showKelasModal == true && filled($this->pr_id)) {
+    //             $query->whereHas('mk_rel.prodis', function ($q) {
+    //                 $q->where('prodis.id', $this->pr_id);
+    //             });
+    //         }
+    //     }
+    //     return $query;
+    // }
 
     public function searchOutputRPS($queryRPS, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')
     {

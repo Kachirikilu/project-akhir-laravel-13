@@ -6,10 +6,7 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasSesi;
-use App\Models\Kelas\MahasiswaKehadiran;
-use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -31,6 +28,18 @@ trait WithSesiModal
     public $showSesiModal = false;
 
     public $showSesiAbsen = false;
+
+    public $sesi_input = [
+        'deskripsi' => '',
+        'materi' => '',
+        'metodologi' => '',
+        'indikator' => '',
+        'metode' => '',
+        'bobot' => '',
+        'deskripsi_tugas' => '',
+        'waktu_tugas' => '',
+        'waktu_mandiri' => '',
+    ];
 
     public function addSesi()
     {
@@ -61,9 +70,24 @@ trait WithSesiModal
 
         $this->selected_id_sesi = $id;
         $this->isEditingSesi = true;
-        $this->showEditSesi = true;
 
-        $this->dispatch('refresh-component');
+        try {
+            $sesi = KelasSesi::findOrFail($id);
+
+            $this->sesi_input = array_merge($this->sesi_input, $sesi->only([
+                'deskripsi', 'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas',
+            ]), [
+                'waktu_tugas' => $sesi->w_tugas,
+                'waktu_mandiri' => $sesi->w_mandiri,
+            ]);
+            $this->showEditSesi = true;
+
+            // $this->dispatch('fill-modal-sesi', scpmk: $sesi);
+            $this->dispatch('refresh-component');
+
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
     }
 
     private function inputModalSesi($isUpdate, $data, $kelasId = null)
@@ -223,9 +247,9 @@ trait WithSesiModal
 
         $sentValue = isset($data['sent']) ? (int) $data['sent'] : 0;
 
-        if (!empty($validated['tanggal'])) {
-            $jamMulai = !empty($validated['jam_mulai']) ? $validated['jam_mulai'] : '00:00';
-            $waktuSesi = \Carbon\Carbon::parse($validated['tanggal'] . ' ' . $jamMulai);
+        if (! empty($validated['tanggal'])) {
+            $jamMulai = ! empty($validated['jam_mulai']) ? $validated['jam_mulai'] : '00:00';
+            $waktuSesi = Carbon::parse($validated['tanggal'].' '.$jamMulai);
             if ($waktuSesi->isPast()) {
                 $sentValue = 1;
             }
@@ -235,18 +259,19 @@ trait WithSesiModal
             'main_data' => [
                 'pertemuan_ke' => $validated['pertemuan_ke'],
                 'tanggal' => $validated['tanggal'] ?? null,
-                'reminder_sent' => $sentValue
+                'reminder_sent' => $sentValue,
             ],
             'override_data' => $overridePayload,
             'has_override' => $hasOverrideContent,
         ];
     }
 
-    public function saveSesi($data)
+    public function saveSesi($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+        $data = array_merge($this->sesi_input, $dataAlpine);
 
         $data['kj_id'] = $data['kj_id'] ?? $this->selected_kj_id ?? null;
         $kelasId = $this->selected_kelas_id ?? null;
@@ -281,11 +306,12 @@ trait WithSesiModal
         }
     }
 
-    public function updateSesi($data)
+    public function updateSesi($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+        $data = array_merge($this->sesi_input, $dataAlpine);
 
         try {
             $validated = $this->inputModalSesi(true, $data);
@@ -388,6 +414,7 @@ trait WithSesiModal
         $fields = [
             'selected_id_sesi',
             'selected_id_mahasiswa',
+            'sesi_input',
         ];
 
         $this->reset($fields);

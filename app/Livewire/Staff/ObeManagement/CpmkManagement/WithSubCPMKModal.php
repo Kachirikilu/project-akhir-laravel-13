@@ -34,7 +34,16 @@ trait WithSubCPMKModal
 
     protected $scpmk_rps_modal_paginator;
 
-    // public $isFlyoutSCPMK = false;
+    public $scpmk_input = [
+        'materi' => '',
+        'metodologi' => '',
+        'indikator' => '',
+        'metode' => '',
+        'bobot' => '',
+        'deskripsi_tugas' => '',
+        'waktu_tugas' => '',
+        'waktu_mandiri' => '',
+    ];
 
     public function updatedShowSCPMKModal($value)
     {
@@ -66,16 +75,12 @@ trait WithSubCPMKModal
         $this->isEditingSCPMK = false;
 
         $this->showSCPMKModal = true;
-
         $this->showEditSCPMK = false;
-
-        $this->ref_id_array[$key] = [];
-        $this->ref_items_array[$key] = [];
 
         $this->updatedRefNameSearch($this->refNameSearch);
     }
 
-    public function editSCPMK($id, $key = 'scpmk')
+    public function editSCPMK($id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -95,6 +100,13 @@ trait WithSubCPMKModal
                 'cpmks.rps',
             ])->findOrFail($id);
 
+            $this->scpmk_input = array_merge($this->scpmk_input, $scpmk->only([
+                'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas'
+            ]), [
+                'waktu_tugas'   => $scpmk->w_tugas,
+                'waktu_mandiri' => $scpmk->w_mandiri,
+            ]);
+            
             $this->ref_id_array = collect($this->ref_id_array)
                 ->merge($scpmk->refs->pluck('id'))->unique()->values()->all();
             $this->ref_items_array = collect($this->ref_items_array)
@@ -110,7 +122,7 @@ trait WithSubCPMKModal
 
             $this->showSCPMKModal = true;
 
-            $this->dispatch('fill-modal-scpmk', scpmk: $scpmk);
+            // $this->dispatch('fill-modal-scpmk', scpmk: $scpmk);
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
@@ -215,11 +227,13 @@ trait WithSubCPMKModal
         return $validated;
     }
 
-    public function saveSCPMK($data, $key = 'scpmk')
+    public function saveSCPMK($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
+        $data = array_merge($this->scpmk_input, $dataAlpine);
 
         if (empty($data['metode'])) {
             $data['metode'] = 'Teori';
@@ -282,11 +296,15 @@ trait WithSubCPMKModal
         }
     }
 
-    public function updateSCPMK($data, $key = 'scpmk')
+    public function updateSCPMK($dataAlpine)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
+        // dump($dataAlpine, $this->scpmk_input);
+
+        $data = array_merge($this->scpmk_input, $dataAlpine);
 
         if (empty($data['metode'])) {
             $data['metode'] = 'Teori';
@@ -535,6 +553,11 @@ trait WithSubCPMKModal
         $this->ref_id_array = [];
         $this->ref_items_array = [];
 
+        $fields = [
+            'scpmk_input',
+        ];
+
+        $this->reset($fields);
         $this->resetErrorBag();
     }
 }

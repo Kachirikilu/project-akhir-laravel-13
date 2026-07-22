@@ -17,13 +17,6 @@
 
     </div>
 
-    <div class="relative">
-
-        @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'addCPMK, editCPMK',
-            'heightContainer' => 'h-24',
-        ])
-
         <div class="space-y-4">
 
             @if ($this->showCPMKModal)
@@ -49,7 +42,6 @@
                     'wireLoading' => 'fetchSCPMK',
                 ])
             @endif
-        </div>
     </div>
 
 

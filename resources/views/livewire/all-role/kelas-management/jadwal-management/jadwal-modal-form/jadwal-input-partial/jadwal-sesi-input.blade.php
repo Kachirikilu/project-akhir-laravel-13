@@ -58,13 +58,12 @@
 
     <div class="grid sm:grid-cols-2 gap-4">
 
-
-
         @for ($i = 1; $i <= 16; $i++)
             <div class="relative">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'jadwal',
                     'isLivewire' => 1,
+                    'isXModal' => 1,
                     'nameXString' => 'Pertemuan ' . $i,
                     'modelString' => 'sesi_' . $i,
                     'iconString' => 'calendar-days',

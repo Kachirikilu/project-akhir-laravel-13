@@ -55,17 +55,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware(['is_dosen'])->group(function () {
         Route::view('program-studi/{switchTable?}', 'program-studi-dosen')->name('program-studi-dosen');
-
-        Route::view('jadwal-kelas/jadwal/{switchTable?}', 'jadwal-kelas')->name('jadwal-kelas');
-        Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
     });
 
     Route::middleware(['is_mahasiswa'])->group(function () {
-        // Route::view('jadwal-kelas/jadwal/{switchTable?}', 'jadwal-kelas')->name('jadwal-kelas');
-        // Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
-
         Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
         Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('rps-mahasiswa');
+    });
+
+    Route::middleware(['is_dsn_mhs'])->group(function () {
+        Route::view('jadwal-kelas/jadwal/{switchTable?}', 'jadwal-kelas')->name('jadwal-kelas');
+        Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
     });
 
     Route::view('kelas-management/{switchTable2?}/{switchTable?}', 'kelas-management')->name('kelas-management');

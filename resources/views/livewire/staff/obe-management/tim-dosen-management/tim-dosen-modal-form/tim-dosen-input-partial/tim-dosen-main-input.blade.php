@@ -49,26 +49,28 @@
         'placeholder' => 'Masukkan Nama Tim Dosen...',
         'message' => $errors->first('nama_tim'),
     ])
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'tim_dosen',
-        'xResults' => $prResults,
-        'selectX' => 'selectPr',
-        'modelString' => 'nama_pr',
-    
-        'idString' => 'pr_id',
-        'itemsAllString' => 'pr_items',
-    
-        'resetXInput' => 'resetPrInput()',
-        'typeXString' => 'prodi',
-        // 'typeX2String' => 'departemen',
-        'typeX2String' => 'fakultas',
-    
-        'nameXString' => 'Program Studi',
-        'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchPr',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr',
-    ])
+    @if (Auth::user()->tingkat < 4)
+        @include('livewire.global.modal-form.input-array.search-input-form', [
+            'alpine' => 'tim_dosen',
+            'xResults' => $prResults,
+            'selectX' => 'selectPr',
+            'modelString' => 'nama_pr',
+        
+            'idString' => 'pr_id',
+            'itemsAllString' => 'pr_items',
+        
+            'resetXInput' => 'resetPrInput()',
+            'typeXString' => 'prodi',
+            // 'typeX2String' => 'departemen',
+            'typeX2String' => 'fakultas',
+        
+            'nameXString' => 'Program Studi',
+            'nameSearchString' => 'prNameSearch',
+            'fetchString' => 'fetchPr',
+            'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchPr',
+        ])
+    @endif
 
     {{-- <div x-text="$store.tim_dosen.pr_id"></div>
                 <div x-text="$store.tim_dosen.nama_pr_search"></div>

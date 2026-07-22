@@ -1,4 +1,4 @@
-@props([
+{{-- @props([
     'paginator' => null,
     'onlyAdmin' => false,
     'targetLoading' => "
@@ -33,10 +33,15 @@
         searchBobotRPS, resetInputBobotRPS,
         searchBobotCPMK, resetInputBobotCPMK,
         searchBobotSCPMK, resetInputBobotSCPMK,
-        perPage, loadingTable, sortBy
-        {{-- gotoPage, previousPage, nextPage, page --}}
+        perPage, loadingTable, sortBy,
     ",
+]) --}}
+
+@props([
+    'paginator' => null,
+    'onlyAdmin' => false,
 ])
+
 
 @if (isset($leftHead) || isset($rightHead))
     <div
@@ -77,8 +82,16 @@
             <thead class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
-            <tbody wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-                wire:target="{{ $targetLoading }}" class="bg-[var(--second-table-color)] table-border divide-y">
+            <tbody 
+                x-data="{ isLoading: false }"
+                x-init="
+                    window.addEventListener('table-loading-trigger', () => { isLoading = true; });
+                    window.addEventListener('stop-loading-trigger', () => { isLoading = false; });
+                "
+                x-bind:class="isLoading ? 'opacity-50 pointer-events-none' : ''"
+                wire:loading.class="opacity-50 pointer-events-none transition-opacity"
+                class="bg-[var(--second-table-color)] table-border divide-y"
+            >
                 {{ $slot }}
             </tbody>
         </table>

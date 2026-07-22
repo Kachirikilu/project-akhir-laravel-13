@@ -6,6 +6,7 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use Illuminate\Database\QueryException;
 use Livewire\Component;
+// use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
 class DepartemenSearchFilter extends Component
@@ -16,6 +17,12 @@ class DepartemenSearchFilter extends Component
         resetDpFilter as traitResetDpFilter;
     }
     use WithPagination;
+
+    // public function mount()
+    // {
+    //     $this->dpNameSearch = Auth::user()->departemen_dp;
+    //     $this->selectedDpId = Auth::user()->dp_id;
+    // }
 
     public function selectDpForFilter($id)
     {

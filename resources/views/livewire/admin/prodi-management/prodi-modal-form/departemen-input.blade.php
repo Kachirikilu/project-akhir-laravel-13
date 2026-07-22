@@ -17,24 +17,26 @@
         'message' => $errors->first('nama_dp'),
     ])
 
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'prodi',
-        'xResults' => $fkResults,
-        'selectX' => 'selectFk',
-        'modelString' => 'nama_fk_search',
-    
-        'idString' => 'fk_id',
-        'itemsAllString' => 'fk_items',
-    
-        'resetXInput' => 'resetFkInput()',
-        'typeXString' => 'fakultas',
-    
-        'nameXString' => 'Fakultas',
-        'nameSearchString' => 'fkNameSearch',
-        'fetchString' => 'fetchFk',
-        'iconString' => 'building-library',
-        'wireLoading' => 'fetchFk',
-    ])
+    @if (Auth::user()->tingkat < 2)
+        @include('livewire.global.modal-form.input-array.search-input-form', [
+            'alpine' => 'prodi',
+            'xResults' => $fkResults,
+            'selectX' => 'selectFk',
+            'modelString' => 'nama_fk_search',
+        
+            'idString' => 'fk_id',
+            'itemsAllString' => 'fk_items',
+        
+            'resetXInput' => 'resetFkInput()',
+            'typeXString' => 'fakultas',
+        
+            'nameXString' => 'Fakultas',
+            'nameSearchString' => 'fkNameSearch',
+            'fetchString' => 'fetchFk',
+            'iconString' => 'building-library',
+            'wireLoading' => 'fetchFk',
+        ])
+    @endif
 
     {{-- 📧 Kode Departemen Input --}}
     @include('livewire.global.modal-form.input-form', [

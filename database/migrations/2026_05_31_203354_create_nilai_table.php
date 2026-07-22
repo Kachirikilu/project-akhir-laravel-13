@@ -45,9 +45,8 @@ return new class extends Migration
         Schema::create('lock_nilai', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pr_id')->nullable()->constrained('prodis')->nullOnDelete();
-            $table->enum('ganjil_genap', ['Ganjil', 'Genap'])->nullable();
-            $table->string('akademik');
-            $table->dateTime('tanggal_unlock');
+            $table->char('ganjil_unlock', 5)->nullable()->comment('Format MM-DD');
+            $table->char('genap_unlock', 5)->nullable()->comment('Format MM-DD');
             $table->timestamps();
         });
 

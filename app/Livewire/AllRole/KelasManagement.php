@@ -86,8 +86,6 @@ class KelasManagement extends Component
         $this->resetPage();
     }
 
-    public function loadingTable() {}
-
     public function updatedPerPage()
     {
         $this->resetPage();

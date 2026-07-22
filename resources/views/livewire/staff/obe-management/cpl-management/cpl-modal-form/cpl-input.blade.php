@@ -114,9 +114,11 @@
                             'placeholder' => 'Masukkan deskripsi CPL...',
                             'message' => $errors->first('deskripsi'),
                         ])
-                        <template x-if="$store.cpl?.typeModal == 1" x-cloak>
-                            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-prodi-input')
-                        </template>
+                        @if (Auth::user()->tingkat < 4)
+                            <template x-if="$store.cpl?.typeModal == 1" x-cloak>
+                                @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-prodi-input')
+                            </template>
+                        @endif
 
                         <template x-if="$store.cpl?.typeModal == 2" x-cloak>
                             @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input-partial.cpl-departemen-input')

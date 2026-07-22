@@ -6,6 +6,7 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\TimDosen;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -44,7 +45,7 @@ trait WithTimDosenModal
         if (! $value) {
             // $this->isFlyoutTimDosen = false;
             $this->isEditingTimDosen = false;
-        } 
+        }
         // else {
         //     $this->isFlyoutTimDosen =
         //         (property_exists($this, 'showRPSModal') && $this->showRPSModal) ||
@@ -64,8 +65,22 @@ trait WithTimDosenModal
             $this->resetInputTimDosen();
         }
 
-        $this->updatedPrNameSearch($this->prNameSearch);
         $this->updatedDosenNameSearch($this->dosenNameSearch);
+
+        if (Auth::user()->tingkat == 2) {
+            $this->fk_id = Auth::user()->fk_id;
+            $this->prLevel = 3;
+        } elseif (Auth::user()->tingkat == 3) {
+            $this->dp_id = Auth::user()->dp_id;
+            $this->prLevel = 2;
+        // } elseif (Auth::user()->tingkat == 4 || Auth::user()->tingkat == 5) {
+        } elseif (Auth::user()->tingkat == 4) {
+            $this->pr_id = Auth::user()->pr_id;
+        }
+
+        if (Auth::user()->tingkat < 4) {
+            $this->updatedPrNameSearch($this->prNameSearch);
+        }
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -106,9 +121,22 @@ trait WithTimDosenModal
             ])->findOrFail($id);
 
             if (! $isRPS) {
-                $this->pr_id = $tim_dosen->pr_id;
-                $this->pr_items = $this->itemsPr($tim_dosen->pr_rel);
-                $this->prNameSearch = $tim_dosen->prodi;
+
+                if (Auth::user()->tingkat == 2) {
+                    $this->fk_id = Auth::user()->fk_id;
+                    $this->prLevel = 3;
+                } elseif (Auth::user()->tingkat == 3) {
+                    $this->dp_id = Auth::user()->dp_id;
+                    $this->prLevel = 2;
+                } elseif (Auth::user()->tingkat == 4 || Auth::user()->tingkat == 5) {
+                    $this->pr_id = Auth::user()->pr_id;
+                }
+
+                if (Auth::user()->tingkat < 4) {
+                    $this->pr_id = $tim_dosen->pr_id;
+                    $this->fetchPr();
+                }
+
 
                 $dosens = $tim_dosen->dosens->sortBy('pivot.sort_order');
                 $this->dosen_id_array = $dosens->pluck('id')->toArray();

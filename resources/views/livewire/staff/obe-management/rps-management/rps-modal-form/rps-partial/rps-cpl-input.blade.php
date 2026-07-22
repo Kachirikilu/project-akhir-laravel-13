@@ -5,13 +5,15 @@
         <h4 class="text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium mr-2">
             Capaian Pembelajaran Lulusan</h4>
 
-        @if ($parent !== 'cpl')
-            @include('livewire.staff.obe-management.obe-toolbar', [
-                'typeXString' => 'cpl',
-                'isFlyout' => 1,
-                'isSmall' => 1,
-                'parent' => 'rps',
-            ])
+        @if (Auth::user()->tingkat < 5)
+            @if ($parent !== 'cpl')
+                @include('livewire.staff.obe-management.obe-toolbar', [
+                    'typeXString' => 'cpl',
+                    'isFlyout' => 1,
+                    'isSmall' => 1,
+                    'parent' => 'rps',
+                ])
+            @endif
         @endif
     </div>
 

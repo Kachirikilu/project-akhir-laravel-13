@@ -32,6 +32,7 @@ document.addEventListener("alpine:init", () => {
         nama_dp_search: "",
         kodePr: "",
         strata: "",
+        strata_short: "",
 
         // Departemen
         nama_dp: "",

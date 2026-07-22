@@ -74,15 +74,24 @@
         <flux:icon wire:loading wire:target="printPDFRPS()" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
     </div>
 
+    @php
+        $user = Auth::user();
+    @endphp
+    @if ($user->admin || $user->dosen)
+        @php
+            $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($data['fk_id'] ?? null);
+            $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($data['dp_id'] ?? null);
+            $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($data['pr_id'] ?? null);
+            $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr || $data['isDosenClass'];
+        @endphp
+        @if ($canAccess)
 
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
+            <flux:menu.separator />
 
-        <flux:menu.separator />
-
-        @if (!$data['isTrashed'])
-            {{-- Tombol Edit --}}
-            <flux:menu.item
-                @click="
+            @if (!$data['isTrashed'])
+                {{-- Tombol Edit --}}
+                <flux:menu.item
+                    @click="
                     $store.kelas?.reset();
                     $store.kelas?.setEdit(1);
 
@@ -97,18 +106,18 @@
                     $flux.modal('kelas-modal').show();
                     $dispatch('open-edit-kelas-modal', { id: {{ $data['id'] }} });
                 "
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Edit Kelas</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Edit Kelas</span>
+                    </div>
+                </flux:menu.item>
 
-            <flux:menu.separator />
+                <flux:menu.separator />
 
-            <flux:menu.item
-                @click="
+                <flux:menu.item
+                    @click="
                     $store.kelas?.setDeleteKelas(
                         '{{ $data['kelas'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}'
@@ -116,28 +125,28 @@
                     $flux.modal('kelas-delete').show();
                     $dispatch('open-delete-kelas-modal', { id: {{ $data['id'] }} });
                 "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Kelas</span>
-                </div>
-            </flux:menu.item>
-        @else
-            {{-- Tombol Restore --}}
-            <flux:menu.item wire:click="$dispatch('restore-kelas', { id: {{ $data['id'] }} })"
-                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
-                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
-                <div class="flex justify-between items-center w-full">
-                    <span>Restore Kelas</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus Kelas</span>
+                    </div>
+                </flux:menu.item>
+            @else
+                {{-- Tombol Restore --}}
+                <flux:menu.item wire:click="$dispatch('restore-kelas', { id: {{ $data['id'] }} })"
+                    class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
+                    <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
+                    <div class="flex justify-between items-center w-full">
+                        <span>Restore Kelas</span>
+                    </div>
+                </flux:menu.item>
 
-            <flux:menu.separator />
+                <flux:menu.separator />
 
-            {{-- Tombol Delete Permanent --}}
-            <flux:menu.item
-                @click="
+                {{-- Tombol Delete Permanent --}}
+                <flux:menu.item
+                    @click="
                     $store.kelas?.setDeleteKelas(
                         '{{ $data['kelas'] ?? '' }}',
                         '{{ $data['kode'] ?? '' }}',
@@ -146,13 +155,14 @@
                     $flux.modal('kelas-delete').show();
                     $dispatch('open-delete-kelas-modal', { id: {{ $data['id'] }}, isTrash: {{ $data['isTrashed'] }} });
                 "
-                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
-                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+                    class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 active:!bg-red-200 dark:active:!bg-red-900 transition-colors">
+                    <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
-                <div class="flex justify-between items-center w-full">
-                    <span>Hapus Permanen Kelas</span>
-                </div>
-            </flux:menu.item>
+                    <div class="flex justify-between items-center w-full">
+                        <span>Hapus Permanen Kelas</span>
+                    </div>
+                </flux:menu.item>
+            @endif
         @endif
 
     @endif

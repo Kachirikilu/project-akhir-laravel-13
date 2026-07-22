@@ -3,9 +3,9 @@
 namespace App\Livewire\Staff\ObeManagement\CplManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use Livewire\Attributes\On;

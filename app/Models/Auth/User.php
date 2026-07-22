@@ -200,6 +200,13 @@ class User extends Authenticatable
         });
     }
 
+    protected function tingkat(): Attribute
+    {
+        return Attribute::get(function () {
+            return data_get($this->getProfile(), 'tingkat');
+        });
+    }
+
     protected function roleId(): Attribute
     {
         return Attribute::get(function () {

@@ -6,6 +6,8 @@ use App\Livewire\Global\HasToast;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -15,6 +17,8 @@ class ModalUserManagement extends Component
     use WithRPSShow;
     use WithRPSSearchFilters;
     use WithProdiSearchFilters;
+    use WithDepartemenSearchFilters;
+    use WithFakultasSearchFilters;
     use WithUserModal;
 
     public $withRPS;
@@ -47,10 +51,6 @@ class ModalUserManagement extends Component
         $this->addUser($role);
         // $this->fetchPr();
     }
-
-    // $this->userIdModal = $id;
-    // \Log::info("Modal menerima ID: " . $this->userIdModal);
-    // $this->fetchPr();
 
     #[On('open-edit-user-modal')]
     public function handleEditUser($id, $withRPS = false, $isRPS = false, $parent = null)

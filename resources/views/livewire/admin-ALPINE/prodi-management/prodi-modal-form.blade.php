@@ -1,5 +1,5 @@
 <flux:modal name="prodi-modal" wire:model.live="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
-    class="w-full md:w-3xl max-w-4xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm no-scrollbar">
+    class="w-full md:w-3xl max-w-4xl max-h-[98vh] !p-4 sm:!p-6 md:!p-8 !bg-[var(--second-pop-up-color)] !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-large">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveProdi, updateProdi">

@@ -25,24 +25,28 @@
                 if(isParentReady) {
                     open = true; 
                     $event.target.select();
-                    $wire.{{ $fetchString }}(null, 'single'); 
+                    $wire.{{ $fetchString }}('single'); 
                 }
             "
-        @else
-            @focus="open = true; @isset($nameSearchString) $wire.set({{ json_encode($nameSearchString) }}, search); @endisset $wire.{{ $fetchString }}(search, '{{ addslashes($typeInput) }}', '{{ addslashes($searchKey ?? 'default') }}');" @endif
-            @input.debounce.300ms="open = true; @isset($nameSearchString) $wire.set({{ json_encode($nameSearchString) }}, search); @endisset $wire.{{ $fetchString }}(search, '{{ addslashes($typeInput) }}', '{{ addslashes($searchKey ?? 'default') }}');"
-            @click.outside="open = false"
-            :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString ?? ucfirst($modelString) }}...' :
-                'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
-            :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
-                'bg-[var(--second-table-color)]'"
-            class="placeholder-shown:pr-2 text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none table-border text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 transition-all">
+            @else
+                @focus="open = true; @isset($nameSearchString) $wire.set({{ json_encode($nameSearchString) }}, search); @endisset 
+                $wire.{{ $fetchString }}('array');" 
+            @endif
+                @input.debounce.300ms="open = true;
+                @isset($nameSearchString) $wire.set({{ json_encode($nameSearchString) }}, search); @endisset 
+                "
+                @click.outside="open = false"
+                :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString ?? ucfirst($modelString) }}...' :
+                    'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
+                :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
+                    'bg-[var(--second-table-color)]'"
+                class="placeholder-shown:pr-2 text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none table-border text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 transition-all">
 
         @include('livewire.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
             'xClick' => "search = ''",
             'xWire' => $resetXInput ?? null,
-            'xWire2' => $typeInput === 'single' && $fetchString ? $fetchString . '(null, "single")' : null,
+            'xWire2' => $typeInput === 'single' && $fetchString ? $fetchString . '("single")' : null,
             'xAlpine1' => $idString ?? null,
             'xAlpine2' => $itemsAllString ?? null,
         ])

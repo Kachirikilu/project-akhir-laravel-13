@@ -8,10 +8,11 @@
     @endphp
 
     <div x-data="{
-        @if (!$noEntangle) @if ($isLivewireState) @if (isset($itemsString))
-                valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
-            @else
-                valueInput: @entangle($modelLivewire).live, @endif
+        @if (!$noEntangle) @if ($isLivewireState)
+                @if (isset($itemsString))
+                    valueInput: @entangle($modelLivewire.'.'.$itemsString).live,
+                @else
+                    valueInput: @entangle($modelLivewire).live, @endif
         @endif
         @else
         valueInput: '',
@@ -29,6 +30,8 @@
                 'time'
             @elseif ($isWeek ?? false)
                 'week'
+            @elseif (($typeString ?? '') == 'password')
+                '{{ $showPassword ?? false ? 'text' : 'password' }}'
             @else
                 '{{ $typeString ?? 'text' }}' @endif
     }"
@@ -79,7 +82,6 @@ store.{{ $modelString }} = '';
     }
 
     @if ($isLivewireState)
-
         @if (isset($itemsString))
             setNestedValue(
                 store,
@@ -88,7 +90,7 @@ store.{{ $modelString }} = '';
             );
 @else
 store.{{ $modelString }} = valueInput ?? '';
-        @endif
+    @endif
 
             @endif
         "
@@ -124,19 +126,19 @@ store.{{ $modelString }} = valueInput ?? '';
 
             <input @if ($isReadonly ?? null) readonly @endif
                 @if (!$noEntangle) @if ($isLivewireState)
-                @if (isset($itemsString))
-                    wire:model="{{ $modelLivewire . '.' . $itemsString }}"
-                @elseif ($isBlur)
-                    wire:model.live.blur="{{ $modelLivewire }}"
-                @else
-                    wire:model="{{ $modelLivewire }}" @endif
+                    @if (isset($itemsString))
+                        wire:model="{{ $modelLivewire . '.' . $itemsString }}"
+                    @elseif ($isBlur)
+                        wire:model.live.blur="{{ $modelLivewire }}"
+                    @else
+                        wire:model="{{ $modelLivewire }}" @endif
                 @endif
             @endif
 
             @if (!$isLivewireState || ($isXModal ?? false)) @if (isset($itemsString))
-                    x-model="valueInput"
-                @else
-                    x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
+                        x-model="valueInput"
+                    @else
+                        x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
             @endif
 
             name="{{ $modelString }}"
@@ -237,29 +239,62 @@ store.{{ $modelString }} = valueInput ?? '';
                         } @endif
             this.value = val;
             "
-        @elseif (isset($numberOnly) && $numberOnly)
+      @elseif (isset($numberOnly) && $numberOnly)
             inputmode="numeric"
-
-            oninput=" let val = this.value;
-                        val = val.replace(/[^0-9]/g, '');
-                        @if ($maxLength ?? null) if (val.length > {{ $maxLength }}) {
-                                val = val.slice(0, {{ $maxLength }});
-                            } @endif
-
-                        @if ($maxValue ?? null) let numVal = parseInt(val || 0);
-                            let maxVal = {{ $maxValue }};
-
-                            if (numVal > maxVal) {
-                                val = maxVal.toString();
-                            } @endif
-                        this.value = val;
-                    "
-
+            x-data="{
+                getMax() {
+                    @if (isset($maxMonth))
+                        let store = $store.{{ $alpineState }};
+                        if (!store) return {{ $maxValue ?? 31 }};
+                        let bulan = store.{{ $maxMonth }};
+                        
+                        if (['04', '06', '09', '11'].includes(bulan)) return 30;
+                        if (bulan === '02') return 28;
+                    @endif
+                    return {{ $maxValue ?? 31 }};
+                },
+                validateTanggal() {
+                    @if (isset($maxMonth))
+                        let store = $store.{{ $alpineState }};
+                        if (!store) return;
+                        let max = this.getMax();
+                        let currentVal = parseInt(store.{{ $modelString }} || 0);
+                        
+                        if (currentVal > max) {
+                            store.{{ $modelString }} = max.toString();
+                            this.$el.value = max.toString();
+                        }
+                    @endif
+                }
+            }"
+            @if (isset($maxMonth))
+                x-init="$watch('$store.{{ $alpineState }}.{{ $maxMonth }}', () => validateTanggal())"
+            @endif
+            @input="
+                let val = $el.value.replace(/[^0-9]/g, '');
+                @if ($maxLength ?? null)
+                    if (val.length > {{ $maxLength }}) val = val.slice(0, {{ $maxLength }});
+                @endif
+                
+                let numVal = parseInt(val || 0);
+                let max = getMax();
+                
+                if (numVal > max) {
+                    val = max.toString();
+                } else if (numVal < 1 && val !== '') {
+                    val = '1';
+                }
+                
+                $el.value = val;
+                @if ($isLivewireState && !isset($itemsString))
+                    $store.{{ $alpineState }}.{{ $modelString }} = val;
+                @endif
+            "
             onkeydown="
-                    if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
-                        event.preventDefault();
-                    }
-                "
+                if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
+                    event.preventDefault();
+                }
+            "
         @else
             maxLength="{{ $maxLength ?? 255 }}"
             @endif>
@@ -273,15 +308,13 @@ store.{{ $modelString }} = valueInput ?? '';
                     "
                     class="absolute inset-y-0 right-0 flex items-center pr-3 group focus:outline-none">
 
-                    {{-- Icon Mata Terbuka --}}
                     <template x-if="!showPassword">
-                        <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
+                        <flux:icon icon="eye-slash" variant="mini" x-bind:class="$store.{{ $alpineState }}?.colorIcon"
                             class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                     </template>
 
-                    {{-- Icon Mata Tertutup --}}
                     <template x-if="showPassword">
-                        <flux:icon icon="eye-slash" variant="mini"
+                        <flux:icon icon="eye" variant="mini"
                             class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
                     </template>
 
@@ -289,15 +322,6 @@ store.{{ $modelString }} = valueInput ?? '';
             @endif
 
         </div>
-
-        {{-- Error Message --}}
-        {{-- @if ($message ?? null)
-        @error($modelString)
-            <span class="text-xs sm:text-sm text-red-500 mt-1 block">
-                {{ $message }}
-            </span>
-        @enderror
-    @endif --}}
 
         @if (!empty($message))
             <span class="text-xs sm:text-sm text-red-500 mt-1 block">

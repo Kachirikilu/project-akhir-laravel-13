@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsDosen;
 use App\Http\Middleware\IsMahasiswa;
+use App\Http\Middleware\IsDsnMhs;
 use App\Http\Middleware\IsStaff;
 use Carbon\CarbonImmutable;
 use Illuminate\Routing\Router;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $router->aliasMiddleware('is_admin', IsAdmin::class);
         $router->aliasMiddleware('is_dosen', IsDosen::class);
         $router->aliasMiddleware('is_staff', IsStaff::class);
+        $router->aliasMiddleware('is_dsn_mhs', IsDsnMhs::class);
         $router->aliasMiddleware('is_mahasiswa', IsMahasiswa::class);
     }
 

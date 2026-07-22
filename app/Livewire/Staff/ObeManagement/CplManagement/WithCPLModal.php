@@ -5,12 +5,13 @@ namespace App\Livewire\Staff\ObeManagement\CplManagement;
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
-use App\Models\Akademik\Departemen;
-use App\Models\Akademik\Fakultas;
 use App\Models\Akademik\RPS;
 use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithPagination;
 
@@ -56,7 +57,7 @@ trait WithCPLModal
         // }
     }
 
-    public function addCPL($tingkatan)
+    public function addCPL($level)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -69,22 +70,35 @@ trait WithCPLModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingCPL = false;
-        $this->cplType = $tingkatan;
+        $this->cplType = $level;
+        $this->prLevel = $level;
 
         $this->showCPLModal = true;
         $this->showRPSCPLModal = true;
         $this->showEditCPL = false;
 
-        if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedPrNameSearch($this->prNameSearch);
-        } elseif ($tingkatan == 2) {
-            $this->updatedDpNameSearch($this->dpNameSearch);
-        } elseif ($tingkatan == 3) {
-            $this->updatedFkNameSearch($this->fkNameSearch);
+        if ($level == 1 || $level == 4) {
+            if (Auth::user()->tingkat < 4) {
+                $this->updatedPrNameSearch($this->prNameSearch);
+            } else {
+                $this->pr_id = Auth::user()->pr_id;
+            }
+        } elseif ($level == 2) {
+            if (Auth::user()->tingkat < 3) {
+                $this->updatedDpNameSearch($this->dpNameSearch);
+            } else {
+                $this->dp_id = Auth::user()->dp_id;
+            }
+        } elseif ($level == 3) {
+            if (Auth::user()->tingkat < 2) {
+                $this->updatedFkNameSearch($this->fkNameSearch);
+            } else {
+                $this->fk_id = Auth::user()->fk_id;
+            }
         }
     }
 
-    public function editCPL($id, $tingkatan, $isRPS = false)
+    public function editCPL($id, $level, $isRPS = false)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -96,7 +110,8 @@ trait WithCPLModal
 
         $this->selected_id_cpl = $id;
         $this->isEditingCPL = true;
-        $this->cplType = $tingkatan;
+        $this->cplType = $level;
+        $this->prLevel = $level;
         $this->showEditCPL = true;
 
         // $this->showCPLModal = true;
@@ -133,19 +148,19 @@ trait WithCPLModal
                 // dd($firstProdi);
 
                 if ($firstProdi) {
-                    if ($tingkatan == 2) {
+                    if ($level == 2) {
                         $this->dp_id = $firstProdi->dp_id;
                         $this->fetchDp();
                     }
-                    if ($tingkatan == 3) {
+                    if ($level == 3) {
                         $this->fk_id = $firstProdi->fk_id;
                         $this->fetchFk();
 
                     }
-                    if (in_array($tingkatan, [1, 4])) {
+                    if (in_array($level, [1, 4])) {
                         $this->pr_id = $firstProdi->id;
                     }
-                    if ($tingkatan == 1) {
+                    if ($level == 1) {
                         $this->fetchPr();
                     }
                 }
@@ -211,8 +226,8 @@ trait WithCPLModal
 
     //     $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
-    //     $tingkatan = $this->cplType ?? 1;
-    //     $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+    //     $level = $this->cplType ?? 1;
+    //     $targetProdiIds = ($level === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
 
     //     $rules = [
     //         'kode_cpl_1' => 'required|alpha|max:10',
@@ -303,10 +318,10 @@ trait WithCPLModal
     //             }
     //         }
 
-    //         if ($tingkatan == 1) {
+    //         if ($level == 1) {
     //             $rules['pr_id'] = 'required|integer|exists:prodis,id';
     //         } else {
-    //             if ($tingkatan == 2) {
+    //             if ($level == 2) {
     //                 $dpId = $data['dp_id'] ?? null;
     //                 $rules['dp_id'] = [
     //                     'required', 'integer',
@@ -326,7 +341,7 @@ trait WithCPLModal
     //                         }
     //                     },
     //                 ];
-    //             } elseif ($tingkatan == 3) {
+    //             } elseif ($level == 3) {
     //                 $fkId = $data['fk_id'] ?? null;
     //                 $rules['fk_id'] = [
     //                     'required', 'integer',
@@ -367,8 +382,8 @@ trait WithCPLModal
         $this->resetValidation();
 
         $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
-        $tingkatan = (int) ($this->cplType ?? 1);
-        $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($data['pr_id_array'] ?? []);
+        $level = (int) ($this->cplType ?? 1);
+        $targetProdiIds = ($level === 1) ? [$this->pr_id] : ($data['pr_id_array'] ?? []);
         $targetProdiIds = array_filter(array_map('intval', $targetProdiIds));
 
         // =========================================================================
@@ -394,9 +409,9 @@ trait WithCPLModal
         // =========================================================================
         // 2. STRUKTUR RULES BERDASARKAN TINGKATAN (1, 2, 3, 4) + RELASI PRODI
         // =========================================================================
-        if ($tingkatan === 1) {
+        if ($level === 1) {
             $rules['pr_id'] = 'required|integer|exists:prodis,id';
-        } elseif ($tingkatan === 2) {
+        } elseif ($level === 2) {
             $rules['dp_id'] = [
                 'required', 'integer', 'exists:departemens,id',
                 function ($attribute, $value, $fail) use ($targetProdiIds) {
@@ -416,7 +431,7 @@ trait WithCPLModal
                 },
             ];
             $rules['pr_id_array'] = 'required|array|min:1';
-        } elseif ($tingkatan === 3) {
+        } elseif ($level === 3) {
             $rules['fk_id'] = [
                 'required', 'integer', 'exists:fakultas,id',
                 function ($attribute, $value, $fail) use ($targetProdiIds) {
@@ -441,7 +456,7 @@ trait WithCPLModal
                 },
             ];
             $rules['pr_id_array'] = 'required|array|min:1';
-        } elseif ($tingkatan === 4) {
+        } elseif ($level === 4) {
             $rules['pr_id_array'] = 'nullable|array';
         }
 
@@ -450,12 +465,12 @@ trait WithCPLModal
         // =========================================================================
         $rules['kode_cpl'] = [
             'required', 'alpha_num',
-            function ($attribute, $value, $fail) use ($tingkatan, $targetProdiIds, $data, $isEditingCPL) {
+            function ($attribute, $value, $fail) use ($level, $targetProdiIds, $data, $isEditingCPL) {
                 if (empty($value)) {
                     return;
                 }
 
-                if ($tingkatan === 1) {
+                if ($level === 1) {
                     // Tingkat 1: Gak boleh sama di 1 prodi yang sama & tingkatan 1
                     foreach ($targetProdiIds as $pId) {
                         $query = DB::table('cpls')
@@ -477,7 +492,7 @@ trait WithCPLModal
                             break;
                         }
                     }
-                } elseif ($tingkatan === 2) {
+                } elseif ($level === 2) {
                     // Tingkat 2: Gak boleh sama di 1 departemen yang sama & tingkatan 2
                     $dpId = $data['dp_id'] ?? null;
                     if ($dpId) {
@@ -500,7 +515,7 @@ trait WithCPLModal
                             $fail("Kode CPL penuh ***{$fullKode}*** sudah terpakai di Departemen: {$dept->nama_dp}.");
                         }
                     }
-                } elseif ($tingkatan === 3) {
+                } elseif ($level === 3) {
                     // Tingkat 3: Gak boleh sama di 1 fakultas yang sama & tingkatan 3
                     $fkId = $data['fk_id'] ?? null;
                     if ($fkId) {
@@ -524,7 +539,7 @@ trait WithCPLModal
                             $fail("Kode CPL penuh ***{$fullKode}*** sudah terpakai di Fakultas: {$fak->nama_fk}.");
                         }
                     }
-                } elseif ($tingkatan === 4) {
+                } elseif ($level === 4) {
                     $query = DB::table('cpls')
                         ->where('kode_cpl', $value)
                         ->where('cpls.level_cpl', 4);
@@ -588,12 +603,12 @@ trait WithCPLModal
         $data['fk_id'] = $this->fk_id;
 
         try {
-            $tingkatan = $this->cplType;
+            $level = $this->cplType;
             $validated = $this->inputModalCPL(false, $data);
 
             $fullKodeCpl = '';
 
-            DB::transaction(function () use ($data, $validated, $tingkatan, &$fullKodeCpl) {
+            DB::transaction(function () use ($data, $validated, $level, &$fullKodeCpl) {
                 $cpl = CPL::create([
                     'kode_cpl' => strtoupper($validated['kode_cpl']),
                     'deskripsi' => $validated['deskripsi'],
@@ -601,20 +616,20 @@ trait WithCPLModal
 
                 $kodePrefix = '';
 
-                if ($tingkatan === 1) {
+                if ($level === 1) {
                     $kodePrefix = data_get($data, 'pr_items.kode', '');
-                } elseif ($tingkatan === 2) {
+                } elseif ($level === 2) {
                     $kodePrefix = data_get($data, 'dp_items.kode', '');
-                } elseif ($tingkatan === 3) {
+                } elseif ($level === 3) {
                     $kodePrefix = data_get($data, 'fk_items.kode', '');
-                } elseif ($tingkatan === 4) {
+                } elseif ($level === 4) {
                     $kodePrefix = 'UNI';
                 }
 
                 $kodeCpl = $validated['kode_cpl'] ?? '';
                 $fullKodeCpl = $kodePrefix ? "{$kodePrefix}-{$kodeCpl}" : $kodeCpl;
 
-                $targetIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
+                $targetIds = ($level === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
                 $targetIds = array_filter($targetIds);
                 if (! empty($targetIds)) {
                     $cpl->prodis()->attach($targetIds);
@@ -685,10 +700,10 @@ trait WithCPLModal
         $data['fk_id'] = $this->fk_id;
 
         try {
-            $tingkatan = $this->cplType;
+            $level = $this->cplType;
             $validated = $this->inputModalCPL(true, $data);
 
-            DB::transaction(function () use ($validated, $tingkatan) {
+            DB::transaction(function () use ($validated, $level) {
                 $cpl = CPL::findOrFail($this->selected_id_cpl);
 
                 // 1. Update Data Utama CPL
@@ -697,7 +712,7 @@ trait WithCPLModal
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
-                $targetIds = ($tingkatan === 1)
+                $targetIds = ($level === 1)
                             ? [$this->pr_id]
                             : ($this->pr_id_array ?: []);
                 $cleanIds = array_values(array_filter($targetIds));
@@ -794,6 +809,7 @@ trait WithCPLModal
                 'dp_id',
                 'pr_id',
                 'pr_id_array',
+                'prLevel',
                 'deskripsi',
             ]),
             2 => $this->getErrorCount([

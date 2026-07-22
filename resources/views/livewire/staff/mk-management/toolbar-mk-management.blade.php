@@ -3,8 +3,22 @@
         'xType' => $data['kode'],
         'typeXString' => 'Kode MK',
     ])
-    
-    @if (Auth::user()?->admin || Auth::user()?->dosen)
+
+    @php
+        $user = Auth::user();
+    @endphp
+
+    @if ($user->admin || $user->dosen)
+        @php
+            $isSameFk =
+                $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['level_mk'] ?? null) == 3;
+            $isSameDp =
+                $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['level_mk'] ?? null) == 2;
+            $isSamePr =
+                $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['level_mk'] ?? null) == 1;
+            $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
+        @endphp
+        @if ($canAccess)
             <flux:menu.separator />
 
             @if (!$data['isTrashed'])
@@ -33,11 +47,11 @@
                         '{{ $data['digit_semester'] ?? '' }}',
                         '{{ $data['digit_mk'] ?? '' }}',
                         '{{ $data['semester'] ?? '' }}',
-                        '{{ $data['sks'] ?? '' }}',
-                        '{{ $data['tipe_sks'] ?? '' }}',
-                        '{{ $data['wajib'] ?? '' }}',
-                        '{{ $data['deskripsi'] ?? '' }}',
-                        '{{ $data['bahan_kajian'] ?? '' }}',
+                        {{-- '{{ $data['sks'] ?? '' }}', --}}
+                        {{-- '{{ $data['tipe_sks'] ?? '' }}', --}}
+                        {{-- '{{ $data['wajib'] ?? '' }}', --}}
+                        {{-- '{{ $data['deskripsi'] ?? '' }}', --}}
+                        {{-- '{{ $data['bahan_kajian'] ?? '' }}', --}}
                     );
                     $flux.modal('mk-modal').show();
                     $dispatch('open-edit-mk-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_mk'] }} });
@@ -101,5 +115,6 @@
                     </div>
                 </flux:menu.item>
             @endif
+        @endif
     @endif
 </div>

@@ -9,7 +9,7 @@
 >
     {{-- 🔹 HEADER TAB CONTAINER --}}
     @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'Mata Kuliah', 2 => 'Deskripsi & Bahan Kajian'],
+        'tabs' => [1 => 'Mata Kuliah', 2 => 'Semester & SKS', 3 => 'Deskripsi & Bahan Kajian'],
         'errorsCount' => $this->getMKErrorSections(),
     ])
 
@@ -19,13 +19,15 @@
             @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-main-input')
         </div>
         <div x-show="step === 2">
-
+            @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-semester-sks-input')
+        </div>
+        <div x-show="step === 3">
             @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-kajian-input')
         </div>
     </div>
 
     {{-- 🔹 FOOTER STEPPER --}}
     @include('livewire.global.modal-form.paginate.stepper-form', [
-        'maxStep' => 2,
+        'maxStep' => 3,
     ])
 </div>

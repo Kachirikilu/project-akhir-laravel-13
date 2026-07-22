@@ -17,7 +17,7 @@ trait WithCPMKSearchFilters
 
     public $cpmkSearchResults = [];
 
-    public $modeCPMK = '';
+    public $modeCPMK = 'single';
 
     public $cpmk_id;
 

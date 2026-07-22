@@ -17,7 +17,7 @@ trait WithNilaiSearchFilters
 
     public $nilaiSearchResults = [];
 
-    public $modeNilai = '';
+    public $modeNilai = 'single';
 
     public $nilai_id;
 

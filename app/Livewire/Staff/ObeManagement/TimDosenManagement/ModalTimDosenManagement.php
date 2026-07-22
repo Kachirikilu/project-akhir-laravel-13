@@ -5,6 +5,8 @@ namespace App\Livewire\Staff\ObeManagement\TimDosenManagement;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSShow;
 use App\Models\Auth\Dosen;
@@ -18,6 +20,9 @@ class ModalTimDosenManagement extends Component
     use WithProdiSearchFilters;
     use WithRPSSearchFilters;
     use WithRPSShow;
+    use WithDepartemenSearchFilters;
+    use WithFakultasSearchFilters;
+    use WithProdiSearchFilters;
     use WithTimDosenModal;
 
     public $parent;

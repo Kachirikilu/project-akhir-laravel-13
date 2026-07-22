@@ -10,7 +10,7 @@
                 </span>
             @else
                 <button type="button"
-                    wire:click="previousPage('{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                    wire:click="previousPage('{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                     rel="prev"
                     class="cursor-pointer inline-flex items-center px-4 py-2 text-xs sm:text-sm font-medium text-gray-800 bg-white border border-gray-300 leading-5 rounded-md hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-200 transition ease-in-out duration-150">
                     {!! __('pagination.previous') !!}
@@ -19,7 +19,7 @@
 
             @if ($paginator->hasMorePages())
                 <button type="button"
-                    wire:click="nextPage('{{ $pageName }}'); {{ $typeXLoading ?? '' }}" rel="next"
+                    wire:click="nextPage('{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()" rel="next"
                     class="cursor-pointer inline-flex items-center px-4 py-2 text-xs sm:text-sm font-medium text-gray-800 bg-white border border-gray-300 leading-5 rounded-md hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-200 transition ease-in-out duration-150">
                     {!! __('pagination.next') !!}
                 </button>
@@ -85,7 +85,7 @@
                         </span>
                     @else
                         <button type="button"
-                            wire:click="previousPage('{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                            wire:click="previousPage('{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                             rel="prev"
                             class="cursor-pointer inline-flex items-center px-2 py-2 text-xs sm:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md leading-5 hover:text-gray-400 active:text-gray-500 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150"
                             aria-label="{{ __('pagination.previous') }}">
@@ -116,7 +116,7 @@
                     {{-- Halaman pertama --}}
                     @if ($start > 1)
                         <button type="button"
-                            wire:click="gotoPage(1, '{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                            wire:click="gotoPage(1, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                             class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
                             1
                         </button>
@@ -140,7 +140,7 @@
                             </span>
                         @else
                             <button type="button"
-                                wire:click="gotoPage({{ $page }}, '{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                                wire:click="gotoPage({{ $page }}, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                                 class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
                                 {{ $page }}
                             </button>
@@ -157,7 +157,7 @@
                         @endif
 
                         <button type="button"
-                            wire:click="gotoPage({{ $last }}, '{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                            wire:click="gotoPage({{ $last }}, '{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                             class="cursor-pointer inline-flex items-center px-4 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:bg-gray-100/80 hover:dark:bg-gray-600/50 active:bg-gray-100/200 active:dark:bg-gray-600/100 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150">
                             {{ $last }}
                         </button>
@@ -165,7 +165,7 @@
 
                     @if ($paginator->hasMorePages())
                         <button type="button"
-                            wire:click="nextPage('{{ $pageName }}'); {{ $typeXLoading ?? '' }}"
+                            wire:click="nextPage('{{ $pageName }}'); {{ $typeXLoading ?? 'loadingTable' }}()"
                             rel="next"
                             class="cursor-pointer inline-flex items-center px-2 py-2 -ml-px text-xs sm:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 active:text-gray-500 dark:bg-neutral-800 dark:border-neutral-600 dark:text-gray-300 dark:hover:bg-gray-900 dark:active:bg-gray-800 transition ease-in-out duration-150"
                             aria-label="{{ __('pagination.next') }}">

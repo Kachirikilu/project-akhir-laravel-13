@@ -1,6 +1,14 @@
 <flux:menu
     class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
-    @if ($noData ?? false)
+    @if (Auth::user()->tingkat > 4)
+            <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
+            'id' => $r->id,
+            'kode' => $r->kode,
+            'noData' => 0,
+            'isTrashed' => $r->trashed(),
+        ]"
+            wire:key="toolbar-rps-{{ $r->id }}-{{ $key }}" />
+    @elseif ($noData ?? false)
         <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
             'id' => $r->id,
             'kode' => $r->kode,
@@ -12,6 +20,10 @@
         <livewire:staff.obe-management.rps-management.toolbar-rps-management lazy :data="[
             'id' => $r->id,
             'kode' => $r->kode,
+            'level_mk'      => $r->mk_rel->level_mk,
+            'pr_id'         => $r->mk_rel->prodis->first()?->id,
+            'dp_id'         => $r->mk_rel->prodis->first()?->dp_id,
+            'fk_id'         => $r->mk_rel->prodis->first()?->fk_id,
             // 'rps' => $r->rps,
             // 'level_mk' => $r->level_mk,
             'is_draf' => $r->is_draf,

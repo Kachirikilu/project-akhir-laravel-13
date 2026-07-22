@@ -4,9 +4,10 @@ namespace App\Livewire\Staff\ObeManagement\RpsManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
+use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -71,6 +72,17 @@ trait WithRPSModal
         $this->ref_id_array[$key] = [];
         $this->ref_items_array[$key] = [];
 
+        if (Auth::user()->tingkat == 2) {
+            $this->fk_id = Auth::user()->fk_id;
+            $this->mkLevel = 4;
+        } elseif (Auth::user()->tingkat == 3) {
+            $this->dp_id = Auth::user()->dp_id;
+            $this->mkLevel = 3;
+        } elseif (Auth::user()->tingkat == 4) {
+            $this->pr_id = Auth::user()->pr_id;
+            $this->mkLevel = 2;
+        }
+
         $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         // $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
@@ -106,6 +118,17 @@ trait WithRPSModal
                 // 'cpls',
                 'refs',
             ])->findOrFail($id);
+
+            if (Auth::user()->tingkat == 2) {
+                $this->fk_id = Auth::user()->fk_id;
+                $this->mkLevel = 4;
+            } elseif (Auth::user()->tingkat == 3) {
+                $this->dp_id = Auth::user()->dp_id;
+                $this->mkLevel = 3;
+            } elseif (Auth::user()->tingkat == 4) {
+                $this->pr_id = Auth::user()->pr_id;
+                $this->mkLevel = 2;
+            }
 
             $this->mk_id = $rps->mk_id;
             $this->mk_id_2 = $rps->mk_id;
@@ -330,12 +353,12 @@ trait WithRPSModal
                 function ($attribute, $value, $fail) {
                     $validations = collect($value)
                         ->pluck('validation')
-                        ->filter(fn($item) => !is_null($item))
-                        ->map(fn($item) => (string) $item);
+                        ->filter(fn ($item) => ! is_null($item))
+                        ->map(fn ($item) => (string) $item);
 
                     $counts = array_count_values($validations->toArray());
-                    $duplicates = array_filter($counts, fn($count) => $count > 1);
-                    if (!empty($duplicates)) {
+                    $duplicates = array_filter($counts, fn ($count) => $count > 1);
+                    if (! empty($duplicates)) {
                         $fail('Tidak boleh menggunakan lebih dari satu Tim Dosen dari Program Studi yang sama!');
                     }
                 },
@@ -364,7 +387,7 @@ trait WithRPSModal
                     }
                 } elseif ($key === 'tim_dosen_items_array') {
                     $formattedErrors['tim_dosen_id_array'] = array_merge(
-                        $formattedErrors['tim_dosen_id_array'] ?? [], 
+                        $formattedErrors['tim_dosen_id_array'] ?? [],
                         $messages
                     );
                 } else {
@@ -400,7 +423,7 @@ trait WithRPSModal
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
         $data['tim_dosen_id_array'] = $this->tim_dosen_id_array ?? [];
         $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
 
@@ -518,7 +541,7 @@ trait WithRPSModal
         $data['tim_dosen_items_array'] = $this->tim_dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             $validated = $this->inputModalRPS(true, $data);
@@ -564,10 +587,11 @@ trait WithRPSModal
                 $forbiddenIds = array_unique(array_merge($refsDariCpmk, $refsDariScpmk));
 
                 $forbiddenIds = $rps->cpmks->flatMap(function ($cpmk) {
-                        $ids = $cpmk->refs->pluck('id');
-                        $scpmkIds = $cpmk->scpmks->flatMap->refs->pluck('id');
-                        return $ids->merge($scpmkIds);
-                    })->unique()->toArray();
+                    $ids = $cpmk->refs->pluck('id');
+                    $scpmkIds = $cpmk->scpmks->flatMap->refs->pluck('id');
+
+                    return $ids->merge($scpmkIds);
+                })->unique()->toArray();
 
                 $inputIds = array_map('intval', $validated['ref_id_array']);
                 $finalRefIds = array_diff($inputIds, $forbiddenIds);
