@@ -49,7 +49,7 @@
         <template x-if="$store.user?.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'user',
-                'isLivewire' => 1,
+                // 'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'showPassword' => 1,
@@ -63,7 +63,7 @@
         <template x-if="$store.user?.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'user',
-                'isLivewire' => 1,
+                // 'isLivewire' => 1,
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'showPassword' => 1,
@@ -77,7 +77,7 @@
     <template x-if="$store.user?.isEdit == 1" x-cloak>
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'user',
-            'isLivewire' => 1,
+            // 'isLivewire' => 1,
             'modelString' => 'password',
             'typeString' => 'password',
             'showPassword' => 1,

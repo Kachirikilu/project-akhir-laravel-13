@@ -395,25 +395,25 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
     public function bindValue(Cell $cell, $value)
     {
         if ($this->switchTable == 'admin') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'Q'])) {
+            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'O'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } elseif ($this->switchTable == 'dosen') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'Q'])) {
+            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'O'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } elseif ($this->switchTable == 'mahasiswa') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'Q'])) {
+            if (in_array($cell->getColumn(), ['F', 'G', 'O'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } else {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'J', 'K', 'U'])) {
+            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'J', 'K', 'S'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
@@ -430,7 +430,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 'F' => NumberFormat::FORMAT_TEXT,
                 'G' => NumberFormat::FORMAT_TEXT,
                 'H' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
+                'O' => NumberFormat::FORMAT_TEXT,
             ];
         } elseif ($this->switchTable == 'dosen') {
             return [
@@ -438,13 +438,13 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 'G' => NumberFormat::FORMAT_TEXT,
                 'H' => NumberFormat::FORMAT_TEXT,
                 'I' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
+                'O' => NumberFormat::FORMAT_TEXT,
             ];
         } elseif ($this->switchTable == 'mahasiswa') {
             return [
                 'F' => NumberFormat::FORMAT_TEXT,
                 'G' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
+                'O' => NumberFormat::FORMAT_TEXT,
             ];
         } else {
             return [
@@ -454,7 +454,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 'I' => NumberFormat::FORMAT_TEXT,
                 'J' => NumberFormat::FORMAT_TEXT,
                 'K' => NumberFormat::FORMAT_TEXT,
-                'U' => NumberFormat::FORMAT_TEXT,
+                'S' => NumberFormat::FORMAT_TEXT,
             ];
         }
     }
@@ -477,23 +477,26 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         $highestColumn = $sheet->getHighestColumn();
 
         if ($this->switchTable == 'admin') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'I', 'L', 'M', 'N', 'O', 'P', 'Q'];
-            $horizontalMerges = ['F4:H4', 'J4:K4', 'R4:V4', 'W4:X4', 'Y4:AB4', 'AC4:AF4', 'AG4:AJ4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'AA', 'AB', 'AE', 'AF', 'AI', 'AJ'];
+            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+            $horizontalMerges = ['F4:H4', 'Q4:U4', 'V4:W4', 'X4:AA4', 'AB4:AE4', 'AF4:AI4'];
+            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'K', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Z', 'AA', 'AD', 'AE', 'AG', 'AH'];
+            $headerRange = 'A4:AI5';
         } elseif ($this->switchTable == 'dosen') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
-            $horizontalMerges = ['F4:I4', 'K4:L4', 'S4:W4', 'X4:Y4', 'Z4:AC4', 'AD4:AG4', 'AH4:AK4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'K', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'Y', 'AB', 'AC', 'AF', 'AG', 'AJ', 'AK'];
+            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+            $horizontalMerges = ['F4:I4', 'R4:V4', 'W4:X4', 'Y4:AB4', 'AC4:AF4', 'AG4:AJ4'];
+            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'AA', 'AB', 'AE', 'AE', 'AH', 'AJ'];
+            $headerRange = 'A4:AJ5';
         } elseif ($this->switchTable == 'mahasiswa') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q'];
-            $horizontalMerges = ['F4:G4', 'J4:K4', 'R4:S4', 'T4:W4', 'X4:AA4', 'AB4:AE4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'L', 'N', 'O', 'Q', 'S', 'V', 'W', 'Z', 'AA', 'AD', 'AE'];
+            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+            $horizontalMerges = ['F4:G4', 'Q4:R4', 'S4:V4', 'W4:Z4', 'AA4:AD4'];
+            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'K', 'M', 'N', 'O', 'R', 'U', 'V', 'Y', 'Z', 'AC', 'AD'];
+            $headerRange = 'A4:AD5';
         } else {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'L', 'M', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
-            $horizontalMerges = ['F4:K4', 'N4:O4', 'W4:AA4', 'AB4:AF4', 'AG4:AH4', 'AI4:AL4', 'AM4:AP4', 'AQ4:AT4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AH', 'AK', 'AL', 'AO', 'AP', 'AS', 'AT'];
+            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'L', 'M', 'P', 'Q', 'R', 'S', 'T', 'U'];
+            $horizontalMerges = ['F4:K4', 'N4:O4', 'V4:Z4', 'AA4:AE4', 'AF4:AG4', 'AH4:AK4', 'AL4:AO4', 'AP4:AS4'];
+            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'O', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AG', 'AJ', 'AK', 'AN', 'AO', 'AR', 'AS'];
+            $headerRange = 'A4:AS5';
         }
-        $headerRange = "A4:{$highestColumn}5";
 
         foreach ($verticalMerges as $col) {
             $sheet->mergeCells("{$col}4:{$col}5");

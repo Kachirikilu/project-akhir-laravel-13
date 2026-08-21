@@ -34,44 +34,46 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-stretch md:items-end gap-3 mb-5 w-full md:w-auto shrink-0">
-            <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+        @if (Auth::user()->tingkat < 4 && (Auth::user()->admin?->pr_rel || Auth::user()->dosen?->pr_rel))
+            <div class="flex flex-col items-stretch md:items-end gap-3 mb-5 w-full md:w-auto shrink-0">
+                <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
 
-                    <div></div>
-             
-                    <div class="shrink-0">
-                        <flux:dropdown>
-                            <flux:button variant="primary" icon="plus" size="sm"
-                                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
-                                Atur Kunci Nilai
-                            </flux:button>
+                        <div></div>
+                
+                        <div class="shrink-0">
+                            <flux:dropdown>
+                                <flux:button variant="primary" icon="plus" size="sm"
+                                    class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
+                                    Atur Kunci Nilai
+                                </flux:button>
 
-                            <flux:menu
-                                class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
-                                <flux:menu.heading>Atur Kunci Nilai</flux:menu.heading>
-                                <flux:menu.separator />
+                                <flux:menu
+                                    class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
+                                    <flux:menu.heading>Atur Kunci Nilai</flux:menu.heading>
+                                    <flux:menu.separator />
 
-                                <flux:menu.item
-                                    @click="
-                                        {{-- $store.nilai?.reset(); --}}
-                                        $store.nilai?.setEdit(1);
-                                        $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
-                                        $flux.modal('lock-nilai-modal').show();
-                                        $dispatch('open-edit-lock-nilai-modal')
-                                    "
-                                    class="text-xs sm:text-sm cursor-pointer !text-blue-600 dark:!text-blue-400 hover:!bg-blue-100 dark:hover:!bg-blue-900/30 active:!bg-blue-200 dark:active:!bg-blue-900">
-                                    <flux:icon name="chart-pie"
-                                        class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
-                                    <div class="flex justify-between items-center w-full">
-                                        <span class="mr-7 whitespace-nowrap">Kunci Nilai</span>
-                                    </div>
-                                </flux:menu.item>
-                            </flux:menu>
-                        </flux:dropdown>
-                    </div>
+                                    <flux:menu.item
+                                        @click="
+                                            {{-- $store.nilai?.reset(); --}}
+                                            $store.nilai?.setEdit(1);
+                                            $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
+                                            $flux.modal('lock-nilai-modal').show();
+                                            $dispatch('open-edit-lock-nilai-modal')
+                                        "
+                                        class="text-xs sm:text-sm cursor-pointer !text-blue-600 dark:!text-blue-400 hover:!bg-blue-100 dark:hover:!bg-blue-900/30 active:!bg-blue-200 dark:active:!bg-blue-900">
+                                        <flux:icon name="chart-pie"
+                                            class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
+                                        <div class="flex justify-between items-center w-full">
+                                            <span class="mr-7 whitespace-nowrap">Kunci Nilai</span>
+                                        </div>
+                                    </flux:menu.item>
+                                </flux:menu>
+                            </flux:dropdown>
+                        </div>
+
+                </div>
 
             </div>
-
-        </div>
+        @endif
     </div>
 </div>

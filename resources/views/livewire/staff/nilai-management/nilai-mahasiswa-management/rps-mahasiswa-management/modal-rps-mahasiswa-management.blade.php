@@ -24,13 +24,11 @@
 
                         @if (Auth::user()->admin || Auth::user()->dosen)
                             <div class="form-message-container">
-                                <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                     @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-modal-form.rps-mhs-message-form')
                                     @include('livewire.global.modal-form.footer.button-form', [
                                         'targetX' => 'updateNilai',
                                         'isLeft' => 0,
                                     ])
-                                </div>
                             </div>
                         @endif
                     </form>

@@ -167,6 +167,7 @@
         @apply border-[var(--border-table-color)];
         @apply p-4 mt-4 gap-4 rounded-lg shadow-sm border-t transition-colors duration-300;
         @apply bg-[var(--second-table-trans)] sm:bg-[var(--sub-table-color)];
+        @apply flex-1 text-xs text-[var(--second-text)] space-y-3;
     }
 
     .table-border {

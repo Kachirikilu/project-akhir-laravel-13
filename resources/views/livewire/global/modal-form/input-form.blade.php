@@ -239,62 +239,80 @@ store.{{ $modelString }} = valueInput ?? '';
                         } @endif
             this.value = val;
             "
-      @elseif (isset($numberOnly) && $numberOnly)
+            {{-- 1. KHUSUS INPUT TANGGAL BERBASIS BULAN --}}
+        @elseif (isset($monthDateOnly) && $monthDateOnly)
             inputmode="numeric"
             x-data="{
                 getMax() {
-                    @if (isset($maxMonth))
-                        let store = $store.{{ $alpineState }};
-                        if (!store) return {{ $maxValue ?? 31 }};
-                        let bulan = store.{{ $maxMonth }};
-                        
-                        if (['04', '06', '09', '11'].includes(bulan)) return 30;
-                        if (bulan === '02') return 28;
-                    @endif
-                    return {{ $maxValue ?? 31 }};
-                },
-                validateTanggal() {
-                    @if (isset($maxMonth))
-                        let store = $store.{{ $alpineState }};
-                        if (!store) return;
-                        let max = this.getMax();
-                        let currentVal = parseInt(store.{{ $modelString }} || 0);
-                        
-                        if (currentVal > max) {
-                            store.{{ $modelString }} = max.toString();
-                            this.$el.value = max.toString();
-                        }
-                    @endif
-                }
+                        @if (isset($maxMonth)) let store = $store.{{ $alpineState }};
+                if (!store) return {{ $maxValue ?? 31 }};
+                let bulan = store.{{ $maxMonth }};
+                
+                if (['04', '06', '09', '11'].includes(bulan)) return 30;
+                if (bulan === '02') return 28; @endif
+                        return {{ $maxValue ?? 31 }};
+                    },
+                    validateTanggal() {
+                        @if (isset($maxMonth)) let store = $store.{{ $alpineState }};
+                if (!store) return;
+                let max = this.getMax();
+                let currentVal = parseInt(store.{{ $modelString }} || 0);
+                
+                if (currentVal > max) {
+                    store.{{ $modelString }} = max.toString();
+                    this.$el.value = max.toString();
+                } @endif
+                    }
             }"
-            @if (isset($maxMonth))
-                x-init="$watch('$store.{{ $alpineState }}.{{ $maxMonth }}', () => validateTanggal())"
-            @endif
+            @if (isset($maxMonth)) x-init="$watch('$store.{{ $alpineState }}.{{ $maxMonth }}', () => validateTanggal())" @endif
             @input="
-                let val = $el.value.replace(/[^0-9]/g, '');
-                @if ($maxLength ?? null)
-                    if (val.length > {{ $maxLength }}) val = val.slice(0, {{ $maxLength }});
-                @endif
-                
-                let numVal = parseInt(val || 0);
-                let max = getMax();
-                
-                if (numVal > max) {
-                    val = max.toString();
-                } else if (numVal < 1 && val !== '') {
-                    val = '1';
-                }
-                
-                $el.value = val;
-                @if ($isLivewireState && !isset($itemsString))
-                    $store.{{ $alpineState }}.{{ $modelString }} = val;
-                @endif
-            "
+        let val = $el.value.replace(/[^0-9]/g, '');
+        @if ($maxLength ?? null) if (val.length > {{ $maxLength }}) val = val.slice(0, {{ $maxLength }}); @endif
+        
+        let numVal = parseInt(val || 0);
+        let max = getMax();
+        
+        if (numVal > max) {
+            val = max.toString();
+        } else if (numVal < 1 && val !== '') {
+            val = '1';
+        }
+        
+        $el.value = val;
+        @if ($isLivewireState && !isset($itemsString))
+            $store.{{ $alpineState }}.{{ $modelString }} = val;
+        @endif
+    "
             onkeydown="
-                if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
-                    event.preventDefault();
-                }
-            "
+        if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
+            event.preventDefault();
+        }
+    "
+
+            {{-- 2. KHUSUS INPUT ANGKA BIASA (NIK, NOMOR HP, JUMLAH, DLL) --}}
+        @elseif (isset($numberOnly) && $numberOnly)
+            inputmode="numeric"
+            @input="
+        let val = $el.value.replace(/[^0-9]/g, '');
+        
+        @if ($maxLength ?? null)
+            if (val.length > {{ $maxLength }}) val = val.slice(0, {{ $maxLength }});
+        @endif
+        
+        @if (isset($maxValue))
+            if (parseInt(val || 0) > {{ $maxValue }}) val = '{{ $maxValue }}';
+        @endif
+        
+        $el.value = val;
+        @if ($isLivewireState && !isset($itemsString))
+            $store.{{ $alpineState }}.{{ $modelString }} = val;
+        @endif
+    "
+            onkeydown="
+        if (event.key === 'e' || event.key === 'E' || event.key === '.' || event.key === ',') {
+            event.preventDefault();
+        }
+    "
         @else
             maxLength="{{ $maxLength ?? 255 }}"
             @endif>

@@ -23,13 +23,11 @@
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-input')
 
                         <div class="form-message-container">
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-modal-form.absensi-message-form')
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'targetX' => 'editNilaiAbsensi, updateNilaiAbsensi',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

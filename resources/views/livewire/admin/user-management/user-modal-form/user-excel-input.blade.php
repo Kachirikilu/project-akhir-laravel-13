@@ -27,46 +27,77 @@
 
     <div class="form-container-excel">
 
-        @if (Auth::user()->tingkat < 4)
-            <div class="mx-2 sm:mx-0">
-                @include('livewire.global.modal-form.input-array.search-input-form', [
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-y-4 gap-x-2 sm:gap-x-4">
+            <div class="col-span-4">
+                @if (Auth::user()->tingkat < 4)
+                    <div class="mx-2 sm:mx-0">
+                        @include('livewire.global.modal-form.input-array.search-input-form', [
+                            'alpine' => 'user',
+                            'xResults' => $prResults,
+                            'selectX' => 'selectPr',
+                            'modelString' => 'nama_pr',
+                        
+                            'idString' => 'pr_id',
+                            'itemsAllString' => 'pr_items',
+                        
+                            'resetXInput' => 'resetPrInput()',
+                            'typeXString' => 'prodi',
+                            // 'typeX2String' => 'departemen',
+                            'typeX2String' => 'fakultas',
+                        
+                            'nameXString' => 'Program Studi',
+                            'nameSearchString' => 'prNameSearch',
+                            'fetchString' => 'fetchPr',
+                            'iconString' => 'academic-cap',
+                            'wireLoading' => 'fetchPr',
+                        ])
+                    </div>
+                @endif
+            </div>
+            <div class="col-span-4">
+                <div class="mx-2 sm:mx-0">
+                    @include('livewire.global.modal-form.select-form', [
+                        'alpine' => 'user',
+                        'isLivewire' => 1,
+                        'modelString' => 'role',
+                        'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
+                        'iconString' => 'users',
+                        'placeholder' => 'Pilih Role Utama ketika data tidak memiliki Role...',
+                        'isRequired' => 0,
+                        'message' => $errors->first('role'),
+                    ])
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-2">
+            <flux:checkbox wire:model="update_or_create_mode"
+                x-on:change="$store.user.update_or_create_mode = $el.checked ? 1 : 0" :value="1"
+                label="Update or Create"
+                description="Jika memiliki data yang identik dengan data yang sudah ada, sistem hanya memperbarui data yang sudah ada."
+                class="cursor-pointer" />
+        </div>
+
+        <template x-if="$store.user.update_or_create_mode == 1">
+            <div class="mt-2">
+                @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'user',
-                    'xResults' => $prResults,
-                    'selectX' => 'selectPr',
-                    'modelString' => 'nama_pr',
-                
-                    'idString' => 'pr_id',
-                    'itemsAllString' => 'pr_items',
-                
-                    'resetXInput' => 'resetPrInput()',
-                    'typeXString' => 'prodi',
-                    // 'typeX2String' => 'departemen',
-                    'typeX2String' => 'fakultas',
-                
-                    'nameXString' => 'Program Studi',
-                    'nameSearchString' => 'prNameSearch',
-                    'fetchString' => 'fetchPr',
-                    'iconString' => 'academic-cap',
-                    'wireLoading' => 'fetchPr',
+                    'isLivewire' => 1,
+                    'modelString' => 'update_or_create',
+                    'xOptions' => ['Berdasarkan NIP/NIM', 'Berdasarkan NIK', 'Berdasarkan Email'],
+                    'xValues' => ['identity1', 'nik', 'email'],
+                    'iconString' => 'users',
+                    'placeholder' => 'Default berdasarkan NIP/NIM...',
+                    'isRequired' => 0,
+                    'message' => $errors->first('update_or_create'),
                 ])
             </div>
-        @endif
-        <div class="mx-2 sm:mx-0">
-            @include('livewire.global.modal-form.select-form', [
-                'alpine' => 'user',
-                'isLivewire' => 1,
-                'modelString' => 'role',
-                'xOptions' => ['Admin', 'Dosen', 'Mahasiswa'],
-                'iconString' => 'users',
-                'placeholder' => 'Pilih Role Utama ketika data tidak memiliki Role...',
-                'isRequired' => 0,
-                'message' => $errors->first('role'),
-            ])
-        </div>
+        </template>
 
         <br>
 
-        <div class="flex justify-between items-end mx-2 sm:mx-0 mb-6 border-b border-[var(--contrast-second-text)] pb-2">
+        <div
+            class="flex justify-between items-end mx-2 sm:mx-0 mb-6 border-b border-[var(--contrast-second-text)] pb-2">
             <h4 class="text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium">
                 {{ $noPreview ? 'Mode Tanpa Preview Data Pengguna' : 'Preview & Edit Data Pengguna' }}
             </h4>

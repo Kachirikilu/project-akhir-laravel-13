@@ -24,8 +24,6 @@
                         @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-input')
 
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include(
                                     'livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form',
                                     ['show' => $showRPSModal]
@@ -34,7 +32,6 @@
                                     'targetX' => 'addRPS, saveRPS, editRPS, updateRPS',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

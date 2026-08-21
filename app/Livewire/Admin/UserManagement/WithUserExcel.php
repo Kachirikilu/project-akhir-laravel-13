@@ -42,6 +42,8 @@ trait WithUserExcel
 
     public $uploadedFileNames = [];
 
+    public $update_or_create_mode = false;
+
     public function exportUserExcel()
     {
         $queryUser = $this->inputUserSearch();
@@ -231,11 +233,11 @@ trait WithUserExcel
                     }
 
                     $rawGender = $data['jenis kelamin'] ?? $data['jenis_kelamin'] ?? $data['gender'] ?? '';
-                    $gender = trim((string)$rawGender);
+                    $gender = trim((string) $rawGender);
                     $genderFormatted = match (strtoupper($gender)) {
                         'L', 'LAKI', 'LAKI-LAKI' => 'Laki-laki',
-                        'P', 'PEREMPUAN'         => 'Perempuan',
-                        default                  => ''
+                        'P', 'PEREMPUAN' => 'Perempuan',
+                        default => ''
                     };
 
                     $this->parsedUserRows[] = [
@@ -289,9 +291,9 @@ trait WithUserExcel
         $files = is_array($this->excel_user_file) ? $this->excel_user_file : [$this->excel_user_file];
         foreach ($files as $file) {
             $fileName = $file->getClientOriginalName();
-            if (!in_array($fileName, $this->uploadedFileNames)) {
+            if (! in_array($fileName, $this->uploadedFileNames)) {
                 $this->uploadedFileNames[] = $fileName;
-                
+
                 try {
                     $this->importUserExcel($file);
                 } catch (\Throwable $e) {
@@ -307,7 +309,7 @@ trait WithUserExcel
         $this->reset([
             'parsedUserRows',
             'rowUserErrors',
-            'uploadedFileNames'
+            'uploadedFileNames',
         ]);
         if (method_exists($this, 'setPage')) {
             $this->setPage(1, 'excelPage');
@@ -349,6 +351,57 @@ trait WithUserExcel
         }
     }
 
+    private function resolveExistingUserId(array $row, string $role): ?int
+    {
+        $mode = $this->user_input['update_or_create'] ?? 'identity1';
+        $lowerRole = strtolower($role);
+
+        if ($mode === 'email') {
+            $email = $row['email'] ?? null;
+            if (! empty($email)) {
+                $user = User::where('email', $email)->first();
+
+                return $user ? $user->id : null;
+            }
+
+            return null;
+        }
+
+        $modelClass = match ($lowerRole) {
+            'admin' => Admin::class,
+            'dosen' => Dosen::class,
+            'mahasiswa' => Mahasiswa::class,
+            default => null,
+        };
+
+        if (! $modelClass) {
+            return null;
+        }
+
+        $query = $modelClass::query();
+
+        if ($mode === 'identity1') {
+            $identityColumn = ($lowerRole === 'mahasiswa') ? 'nim' : 'nip';
+            $searchValue = $row[$identityColumn] ?? null;
+
+            if ($searchValue) {
+                $record = $query->where($identityColumn, $searchValue)->first();
+
+                return $record ? $record->user_id : null;
+            }
+        } elseif ($mode === 'nik') {
+            $searchValue = $row['nik'] ?? null;
+
+            if ($searchValue) {
+                $record = $query->where('nik', $searchValue)->first();
+
+                return $record ? $record->user_id : null;
+            }
+        }
+
+        return null;
+    }
+
     public function procesImportUserExcel()
     {
         $successCount = 0;
@@ -357,6 +410,10 @@ trait WithUserExcel
         $originalRoleType = $this->roleType;
 
         $total = count($this->parsedUserRows);
+
+        if ($this->update_or_create_mode) {
+
+        }
 
         LazyCollection::make($this->parsedUserRows)
             ->chunk(20)
@@ -383,14 +440,19 @@ trait WithUserExcel
                         $this->roleType = $role;
                         $this->selected_id_user = null;
 
-                        $dataToValidate = $row;
-                        $dataToValidate['pr_id'] = $this->pr_id;
-                        if (empty($dataToValidate['status'])) {
-                            $dataToValidate['status'] = 'Aktif';
+                        $row['pr_id'] = $this->pr_id;
+                        if (empty($row['status'])) {
+                            $row['status'] = 'Aktif';
                         }
 
-                        $validatedData = $this->inputModalUser(false, $dataToValidate, strtolower($role));
-                        $this->saveUserFromExcel($validatedData, strtolower($role));
+                        if ($this->update_or_create_mode) {
+                            $this->selected_id_user = $this->resolveExistingUserId($row, $role);
+                            $validatedData = $this->inputModalUser(true, $row, strtolower($role));
+                            $this->saveUserFromExcelUpdateOrCreate($validatedData, strtolower($role));
+                        } else {
+                            $validatedData = $this->inputModalUser(false, $row, strtolower($role));
+                            $this->saveUserFromExcel($validatedData, strtolower($role));
+                        }
 
                         $successfulIndices[] = $index;
                         $successCount++;
@@ -507,20 +569,123 @@ trait WithUserExcel
                     'status' => $validated['status'],
                 ]);
             }
+        });
+    }
 
-            // $team = Team::forceCreate([
-            //     'id' => $user->id,
-            //     'name' => explode(' ', $validated['name'])[0]."'s Team",
-            //     'is_personal' => true,
-            // ]);
+    private function saveUserFromExcelUpdateOrCreate($validated, $role)
+    {
+        DB::transaction(function () use ($validated, $role) {
+            $userMatchAttributes = $this->selected_id_user
+                ? ['id' => $this->selected_id_user]
+                : ['email' => $validated['email']];
 
-            // Membership::create([
-            //     'team_id' => $team->id,
-            //     'user_id' => $user->id,
-            //     'role' => 'owner',
-            // ]);
+        $userData = [
+            'email' => $validated['email'],
+        ];
+        if (!empty($validated['password'])) {
+            $userData['password'] = Hash::make($validated['password']);
+        } else {
+            if (!$this->selected_id_user) {
+                $defaultPass = $validated['nip'] ?? $validated['nim'] ?? $validated['nik'] ?? $validated['email'] ?? 'defaultpassword';
+                $userData['password'] = Hash::make($defaultPass);
+            }
+        }
 
-            // $user->forceFill(['current_team_id' => $team->id])->save();
+        $user = User::updateOrCreate(
+            $userMatchAttributes,
+            $userData
+        );
+
+            $mode = $this->user_input['update_or_create'] ?? 'identity1';
+
+            if ($role === 'admin') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nip',
+                };
+
+                $adminMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Admin::updateOrCreate(
+                    $adminMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'name' => $validated['name'],
+                        'nip' => $validated['nip'],
+                        'nitk' => $validated['nitk'] ?? null,
+                        'nik' => $validated['nik'],
+                        'pr_id' => $validated['pr_id'],
+                        'kode_wilayah' => $validated['kode_wilayah'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            } elseif ($role === 'dosen') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nip',
+                };
+
+                $dosenMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Dosen::updateOrCreate(
+                    $dosenMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'name' => $validated['name'],
+                        'nip' => $validated['nip'],
+                        'nidn' => $validated['nidn'] ?? null,
+                        'nidk' => $validated['nidk'] ?? null,
+                        'nik' => $validated['nik'],
+                        'pr_id' => $validated['pr_id'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            } elseif ($role === 'mahasiswa') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nim',
+                };
+
+                $mahasiswaMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Mahasiswa::updateOrCreate(
+                    $mahasiswaMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'name' => $validated['name'],
+                        'nim' => $validated['nim'],
+                        'nik' => $validated['nik'],
+                        'angkatan' => $validated['angkatan'],
+                        'pr_id' => $validated['pr_id'],
+                        'kode_wilayah' => $validated['kode_wilayah'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            }
         });
     }
 

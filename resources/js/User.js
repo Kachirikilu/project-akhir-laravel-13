@@ -42,6 +42,8 @@ document.addEventListener("alpine:init", () => {
         angkatan_mhs: "",
         status: "",
 
+        update_or_create_mode: false,
+
         // Prodi
         pr_id: "",
         nama_pr_search: "",
@@ -84,6 +86,7 @@ document.addEventListener("alpine:init", () => {
         getDataUser() {
             return {
                 email: this.email,
+                password: this.password,
                 // count_rps: this.count_rps,
                 // total_sks: this.total_sks,
                 // rekap_mhs: this.rekap_mhs,

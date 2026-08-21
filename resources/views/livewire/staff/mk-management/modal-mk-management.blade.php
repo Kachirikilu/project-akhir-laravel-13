@@ -51,15 +51,12 @@
 
                         {{-- 3. Footer / Button Action --}}
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include('livewire.staff.mk-management.mk-modal-form.mk-message-form')
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'xType' => $mkType,
                                     'targetX' => 'addMK, saveMK, editMK, updateMK',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

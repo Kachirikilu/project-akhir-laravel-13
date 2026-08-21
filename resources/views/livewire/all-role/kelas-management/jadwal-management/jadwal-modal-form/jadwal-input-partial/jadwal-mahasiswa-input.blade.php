@@ -33,12 +33,18 @@
             
                 'idString' => 'mahasiswa_id_array',
                 'itemsAllString' => 'mahasiswa_items_array',
+
+                'kodeHeadString' => 'NIM:',
+
+                'x4HeadString' => 'Angkatan',
+                'x5HeadString' => 'Status:',
+
             
                 'typeXString' => 'name',
                 'typeX2String' => 'prodi',
                 'typeX3String' => 'wilayah',
-                'typeX4String' => 'angkatan_full',
-                'typeX5String' => 'status_full',
+                'typeX4String' => 'angkatan',
+                'typeX5String' => 'status',
             
                 'nameXString' => 'Mahasiswa',
                 'nameSearchString' => 'mahasiswaNameSearch',

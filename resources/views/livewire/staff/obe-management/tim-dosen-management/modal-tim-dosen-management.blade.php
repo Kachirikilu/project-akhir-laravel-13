@@ -28,8 +28,6 @@
                         @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-form.tim-dosen-input')
 
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include(
                                     'livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal-form.tim-dosen-message-form',
                                     ['show' => $showTimDosenModal]
@@ -38,7 +36,6 @@
                                     'targetX' => 'addTimDosen, saveTimDosen, editTimDosen, updateTimDosen',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

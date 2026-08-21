@@ -155,15 +155,10 @@
 
                             <div class="flex flex-col gap-1 flex-1">
                                 <div class="flex items-center gap-2">
-                                    @if ($idString == 'mahasiswa_id_array')
-                                        <span
-                                            class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
-                                            x-text="'NIM: ' + itemsAll[index]?.kode"></span>
-                                    @else
-                                        <span
-                                            class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
-                                            x-text="itemsAll[index]?.kode"></span>
-                                    @endif
+                                        <span class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white">
+                                            {{ $kodeHeadString ?? '' }}
+                                            <span x-text="itemsAll[index]?.kode"></span>
+                                        </span>
                                     <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                                     @include('livewire.global.modal-form.partial.action-buttons')
                                 </div>
@@ -192,7 +187,7 @@
                                         <span x-text="itemsAll[index]?.slot4"></span>
                                     @endif
 
-                                    @if ($typeX4String ?? null)
+                                    @if ($typeX5String ?? null)
                                         <span class="mx-1.5 opacity-50">|</span>
                                         <span x-text="itemsAll[index]?.slot5"></span>
                                     @endif

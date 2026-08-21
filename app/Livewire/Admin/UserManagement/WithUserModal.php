@@ -52,7 +52,7 @@ trait WithUserModal
     public $user_input = [
         'role' => '',
         // 'email' => '',
-        'password' => '',
+        // 'password' => '',
         'name' => '',
         'nip' => '',
         'nitk' => '',
@@ -70,6 +70,7 @@ trait WithUserModal
         'no_hp' => '',
         'tanggal_lahir' => '',
         'tempat_lahir' => '',
+        'update_or_create' => 'identity1',
     ];
 
     protected $rules = [

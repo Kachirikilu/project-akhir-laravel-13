@@ -33,8 +33,6 @@
                             @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-input')
 
                             <div class="form-message-container">
-
-                                <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                     @include(
                                         'livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-message-form',
                                         ['show' => $showSCPMKModal]
@@ -43,7 +41,6 @@
                                         'targetX' => 'addSCPMK, saveSCPMK, editSCPMK, updateSCPMK',
                                         'isLeft' => 0,
                                     ])
-                                </div>
                             </div>
                         </form>
                     </div>

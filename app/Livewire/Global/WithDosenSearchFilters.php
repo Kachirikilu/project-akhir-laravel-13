@@ -94,6 +94,7 @@ trait WithDosenSearchFilters
             'slot3' => $d->nidk,
             'slot4' => $d->status,
             'slot5' => $d->prodi,
+            // 'slot6' => $d->fakultasFk,
             'peran' => $d->pivot->peran ?? 'Pengajar',
             'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
         ];

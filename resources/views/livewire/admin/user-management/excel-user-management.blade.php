@@ -26,8 +26,6 @@
 
                         {{-- 3. Footer/Tombol --}}
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include('livewire.admin.user-management.user-modal-form.user-message-form')
 
                                 @include('livewire.global.modal-form.footer.button-form', [
@@ -37,8 +35,6 @@
                                     'targetX' => 'addUser, saveUser, editUser, updateUser',
                                     'isLeft' => 1,
                                 ])
-                            </div>
-
                         </div>
                     </form>
                 </div>

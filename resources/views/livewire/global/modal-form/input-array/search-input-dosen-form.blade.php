@@ -250,7 +250,7 @@
                                     <div
                                         class="mt-1 flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
                                         {{-- NIP --}}
-                                        -<span class="ml-1 font-bold text-[var(--hover-focus-color)]"
+                                        - <span class="ml-1 font-bold text-[var(--hover-focus-color)]"
                                             x-text="'NIP: ' + itemsAll[index]?.kode"></span>
 
                                         {{-- NIDN --}}

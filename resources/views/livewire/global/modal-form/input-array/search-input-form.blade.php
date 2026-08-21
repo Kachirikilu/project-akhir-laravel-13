@@ -54,19 +54,27 @@ x-data="{
                 Terpilih:
                 <span x-text="itemsAll?.slot1" class="ml-1"></span>
                 <span class="mx-1">|</span>
-                Kode: <span x-text="itemsAll?.kode"></span>
+                {{ $kodeHeadString ?? 'Kode:' }} <span x-text="itemsAll?.kode"></span>
 
                 @if ($typeX2String ?? null)
                     <span class="mx-1">|</span>
+                    <span>{{ $x2HeadString ?? '' }}</span>
                     <span x-text="itemsAll?.slot2"></span>
                 @endif
                 @if ($typeX3String ?? null)
                     <span class="mx-1">|</span>
+                    <span>{{ $x3HeadString ?? '' }}</span>
                     <span x-text="itemsAll?.slot3"></span>
                 @endif
                 @if ($typeX4String ?? null)
                     <span class="mx-1">|</span>
+                    <span>{{ $x4HeadString ?? '' }}</span>
                     <span x-text="itemsAll?.slot4"></span>
+                @endif
+                @if ($typeX5String ?? null)
+                    <span class="mx-1">|</span>
+                    <span>{{ $x5HeadString ?? '' }}</span>
+                    <span x-text="itemsAll?.slot5"></span>
                 @endif
                 <span class="mx-1">|</span>
                 ID: <span x-text="itemsAll?.id"></span>

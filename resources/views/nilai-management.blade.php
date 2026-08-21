@@ -25,7 +25,9 @@
     </div>
 
     @if(request()->routeIs('nilai-management'))
-        <livewire:staff.nilai-management.lock-nilai-management />
+        @if (Auth::user()->tingkat < 4 && (Auth::user()->admin?->pr_rel || Auth::user()->dosen?->pr_rel))
+            <livewire:staff.nilai-management.lock-nilai-management />
+        @endif
     @endif
     @if(request()->routeIs('nilai-management') && Auth::user()->admin)
         <livewire:admin.user-management.modal-user-management />

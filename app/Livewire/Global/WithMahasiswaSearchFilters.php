@@ -46,9 +46,9 @@ trait WithMahasiswaSearchFilters
             'prodi' => $m->pr_rel?->prodi,
             'wilayah' => $m->wilayah,
             'angkatan' => $m->angkatan,
-            'angkatan_full' => $m->angkatan_full,
+            // 'angkatan_full' => $m->angkatan_full,
             'status' => $m->status,
-            'status_full' => $m->status_full,
+            // 'status_full' => $m->status_full,
         ])->toArray();
     }
 
@@ -61,9 +61,9 @@ trait WithMahasiswaSearchFilters
             'name' => $m->name,
             'prodi' => $m->pr_rel?->prodi,
             'angkatan' => $m->angkatan,
-            'angkatan_full' => $m->angkatan_full,
+            // 'angkatan_full' => $m->angkatan_full,
             'status' => $m->status,
-            'status_full' => $m->status_full,
+            // 'status_full' => $m->status_full,
         ])->toArray();
     }
 
@@ -84,8 +84,8 @@ trait WithMahasiswaSearchFilters
             'slot1' => $m->name,
             'slot2' => $m->pr_rel?->prodi,
             'slot3' => $m->wilayah,
-            'slot4' => $m->angkatan_full,
-            'slot5' => $m->status_full,
+            'slot4' => $m->angkatan,
+            'slot5' => $m->status,
         ];
     }
 

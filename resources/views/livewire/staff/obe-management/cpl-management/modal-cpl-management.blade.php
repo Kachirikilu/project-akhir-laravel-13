@@ -50,8 +50,6 @@
                         @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input')
 
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include(
                                     'livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-message-form',
                                     ['show' => $showCPLModal]
@@ -60,7 +58,6 @@
                                     'targetX' => 'addCPL, saveCPL, editCPL, updateCPL',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

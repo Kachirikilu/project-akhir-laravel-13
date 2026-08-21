@@ -24,9 +24,6 @@
                         @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-modal-form.nilai-excel-input')
                         {{-- 3. Footer/Tombol --}}
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                                {{-- @include('livewire.admin.nilai-management.nilai-modal-form.nilai-message-form') --}}
                                 @include('livewire.global.modal-form.footer.button-form', [
                                     'xType' => 'excel',
                                     'wireLoading' =>
@@ -36,8 +33,6 @@
                                     'isLeft' => 1,
                                     'mt' => '',
                                 ])
-                            </div>
-
                         </div>
                     </form>
                 </div>

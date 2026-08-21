@@ -35,8 +35,66 @@
             'fetchString' => 'fetchFk',
             'iconString' => 'building-library',
             'wireLoading' => 'fetchFk',
+            'isRequired' => 0,
         ])
     @endif
+
+    @include('livewire.global.modal-form.input-array.search-input-form', [
+        'alpine' => 'prodi',
+        'xResults' => $dosenResults,
+        'selectX' => 'selectDosen',
+        'modelString' => 'nama_dosen_search',
+    
+        'idString' => 'dosen_id[0]',
+        'itemsAllString' => 'dosen_items[0]',
+
+        'kodeHeadString' => 'NIP:',
+        'x2HeadString' => 'NIDN:',
+        'x3HeadString' => 'NIDK:',
+        'x4HeadString' => 'Status:',
+
+        'resetXInput' => 'resetDosenInput()',
+        'typeXString' => 'name',
+        'typeX2String' => 'nidn',
+        'typeX3String' => 'nidk',
+        'typeX4String' => 'status',
+        'typeX5String' => 'prodi',
+    
+        'nameXString' => 'Ketua Departemen (Kadep)',
+        'nameSearchString' => 'dosenNameSearch[0]',
+        'fetchString' => 'fetchDosen',
+        'iconString' => 'user',
+        'wireLoading' => 'fetchDosen',
+        'isRequired' => 0,
+    ])
+
+    @include('livewire.global.modal-form.input-array.search-input-form', [
+        'alpine' => 'prodi',
+        'xResults' => $dosenResults,
+        'selectX' => 'selectDosen',
+        'modelString' => 'nama_dosen_search',
+    
+        'idString' => 'dosen_id[1]',
+        'itemsAllString' => 'dosen_items[1]',
+
+        'kodeHeadString' => 'NIP:',
+        'x2HeadString' => 'NIDN:',
+        'x3HeadString' => 'NIDK:',
+        'x4HeadString' => 'Status:',
+
+        'resetXInput' => 'resetDosenInput()',
+        'typeXString' => 'name',
+        'typeX2String' => 'nidn',
+        'typeX3String' => 'nidk',
+        'typeX4String' => 'status',
+        'typeX5String' => 'prodi',
+    
+        'nameXString' => 'Sekretaris Departemen (Sekdep)',
+        'nameSearchString' => 'dosenNameSearch[1]',
+        'fetchString' => 'fetchDosen',
+        'iconString' => 'user',
+        'wireLoading' => 'fetchDosen',
+    ])
 
     {{-- 📧 Kode Departemen Input --}}
     @include('livewire.global.modal-form.input-form', [

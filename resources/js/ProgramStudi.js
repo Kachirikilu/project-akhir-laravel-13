@@ -94,6 +94,7 @@ document.addEventListener("alpine:init", () => {
         getDataProdi() {
             return {
                 nama_pr: this.nama_pr,
+                dosen_id: this.dosen_id,
                 dp_id: this.dp_id,
                 nama_dp_search: this.nama_dp_search,
                 kode_pr: this.kode_pr,
@@ -109,6 +110,8 @@ document.addEventListener("alpine:init", () => {
 
                 dp_items: this.dp_items,
                 fk_items: this.fk_items,
+
+                dosen_items: this.dosen_items,
 
                 target_sks: this.target_sks,
             };

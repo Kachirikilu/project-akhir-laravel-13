@@ -90,6 +90,10 @@ class Dosen extends Model
         });
     }
 
+    protected function statusFull(): Attribute
+    {
+        return Attribute::get(fn () => 'Status: '.$this->status);
+    }
     // protected function countRps(): Attribute
     // {
     //     return Attribute::get(function () {

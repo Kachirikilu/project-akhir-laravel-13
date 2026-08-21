@@ -24,8 +24,6 @@
                         @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-input')
 
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include(
                                     'livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-message-form',
                                     ['show' => $showCPMKModal]
@@ -34,7 +32,6 @@
                                     'targetX' => 'addCPMK, saveCPMK, editCPMK, updateCPMK',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

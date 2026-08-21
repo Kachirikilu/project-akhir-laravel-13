@@ -25,8 +25,6 @@
                         @include('livewire.staff.obe-management.ref-management.ref-modal-form.ref-input')
 
                         <div class="form-message-container">
-
-                            <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                                 @include(
                                     'livewire.staff.obe-management.ref-management.ref-modal-form.ref-message-form',
                                     ['show' => $showRefModal]
@@ -35,7 +33,6 @@
                                     'targetX' => 'addRef, saveRef, editRef, updateRef',
                                     'isLeft' => 0,
                                 ])
-                            </div>
                         </div>
                     </form>
                 </div>

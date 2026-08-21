@@ -53,7 +53,7 @@ trait WithProdiModal
                     $this->fk_id = Auth::user()->fk_id;
                     $this->dpLevel = 2;
                 }
-                $this->updatedDpNameSearch($this->fkNameSearch);
+                $this->updatedDpNameSearch($this->dpNameSearch);
             } else {
                 $this->dp_id = Auth::user()->dp_id;
             }
@@ -64,6 +64,7 @@ trait WithProdiModal
                 $this->fk_id = Auth::user()->fk_id;
             }
         }
+        $this->updatedDosenNameSearch($this->dosenNameSearch);
     }
 
     public function editProdi($id, $type)
@@ -318,8 +319,13 @@ trait WithProdiModal
             return;
         }
 
+
         $data['dp_id'] = $this->dp_id;
         $data['fk_id'] = $this->fk_id;
+        $data['dosen_id'] = $this->dosen_id;
+
+        dd($data);
+
 
         if (empty($data['strata'])) {
             $data['strata'] = 'Sarjana';

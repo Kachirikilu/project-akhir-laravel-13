@@ -14,7 +14,8 @@
                 slot1: '{{ $x[$typeXString] ?? '' }}',
                 slot2: '{{ isset($typeX2String) ? $x[$typeX2String] ?? '' : '' }}',
                 slot3: '{{ isset($typeX3String) ? $x[$typeX3String] ?? '' : '' }}',
-                slot4: '{{ isset($typeX4String) ? $x[$typeX4String] ?? '' : '' }}'
+                slot4: '{{ isset($typeX4String) ? $x[$typeX4String] ?? '' : '' }}',
+                slot5: '{{ isset($typeX5String) ? $x[$typeX5String] ?? '' : '' }}'
             };
 
             $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;

@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\ProdiManagement;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithDosenSearchFilters;
+
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -13,6 +15,8 @@ class ModalProdiManagement extends Component
     use HasToast;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
+    use WithDosenSearchFilters;
+
     use WithProdiModal;
 
     public $isReady;
