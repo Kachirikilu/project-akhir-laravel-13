@@ -1,11 +1,38 @@
 <x-global.main-layout-table :paginator="$ref">
 
+    @php
+        $showMore = $showMore ?? false;
+    @endphp
+    <x-slot:leftSecHead>
+        <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode',
+                'headString' => 'Kode Referensi',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'citation',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'judul',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'penulis',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'tahun',
+            ])
+        </div>
+    </x-slot:leftSecHead>
+
+    <x-slot:rightSecHead>
+        @include('livewire.global.table.detail-view-switch')
+    </x-slot:rightSecHead>
+
     <x-slot:header>
         <tr>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
                 'isCenter' => 1,
-                'rowSpan' => 2,
             ])
 
 
@@ -13,51 +40,46 @@
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
                 'isCenter' => 1,
-                'rowSpan' => 2,
                 'isSticky' => 1,
             ])
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'citation',
-                'rowSpan' => 2,
                 'isBorderR' => 1,
             ])
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'judul',
-                'rowSpan' => 2,
-                'isBorderR' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'penulis',
-                'rowSpan' => 2,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'penerbit',
-                'rowSpan' => 2,
-            ])
+            @if ($showMore)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'judul',
+                    'isBorderR' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'penulis',
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'penerbit',
+                ])
+            @endif
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'tahun',
                 'isMain' => 1,
                 'isCenter' => 1,
-                'rowSpan' => 2,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'link',
-                'rowSpan' => 2,
             ])
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+            @if ($showMore)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'isCenter' => 1,
+                ])
+            @endif
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
                 'isCenter' => 1,
-                'rowSpan' => 2,
             ])
 
         </tr>
@@ -77,13 +99,17 @@
                         <flux:badge icon="book-open" color="orange" size="sm">{{ $r->kode ?? '---' }}
                         </flux:badge>
                     </button>
-                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', [
+                        'key' => 1,
+                    ])
                 </flux:dropdown>
             </td>
             <td class="table-second table-border-r min-w-100">{{ $r->citation ?? '-' }}</td>
-            <td class="table-second table-border-r min-w-84">{{ $r->judul ?? '-' }}</td>
-            <td class="table-second min-w-48">{{ $r->penulis ?? '-' }}</td>
-            <td class="table-sub min-w-48">{{ $r->penerbit ?? '-' }}</td>
+            @if ($showMore)
+                <td class="table-second table-border-r min-w-84">{{ $r->judul ?? '-' }}</td>
+                <td class="table-second min-w-48">{{ $r->penulis ?? '-' }}</td>
+                <td class="table-sub min-w-48">{{ $r->penerbit ?? '-' }}</td>
+            @endif
             <td class="table-main text-center">{{ $r->tahun ?? '-' }}</td>
             <td class="table-second min-w-48">
                 @if ($r->link)
@@ -100,15 +126,19 @@
 
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost"
-                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                        inset="top bottom">
                     </flux:button>
-                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', ['key' => 2])
+                    @include('livewire.staff.obe-management.ref-management.ref-toolbar-table', [
+                        'key' => 2,
+                    ])
                 </flux:dropdown>
             </td>
 
 
-            <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+            @if ($showMore)
+                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+            @endif
             <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
         </tr>
     @empty

@@ -1,5 +1,10 @@
 <x-global.main-layout-table :paginator="$rps">
-    <x-slot:sortir>
+    @php
+        $showMore = $showMore ?? false;
+        $withCapaian = $withCapaian ?? false;
+    @endphp
+
+    <x-slot:leftSecHead>
         <div x-data="{ activeTab: @entangle('filterRPSgg') }"
             class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
@@ -29,7 +34,13 @@
                 'icon' => 'calendar-days',
             ])
         </div>
-    </x-slot:sortir>
+
+
+    </x-slot:leftSecHead>
+
+    <x-slot:rightSecHead>
+        @include('livewire.global.table.detail-view-switch')
+    </x-slot:rightSecHead>
 
     <x-slot:header>
 
@@ -59,21 +70,25 @@
 
             <th rowspan="2" class="table-head border-x">Show</th>
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <th colspan="3" class="table-head-sub">
                     Nilai Capaian
                 </th>
             @endif
 
-            <th colspan="6" class="table-head-sub">
-                Mata Kuliah
-            </th>
-
-            @if (!($withCapaian ?? false))
-                <th colspan="3" class="table-head-sub">
-                    Capaian Pebelajaran Mata Kuliah
+            @if ($showMore)
+                <th colspan="6" class="table-head-sub">
+                    Mata Kuliah
                 </th>
+
+                @if (!$withCapaian)
+                    <th colspan="3" class="table-head-sub">
+                        Capaian Pebelajaran Mata Kuliah
+                    </th>
+                @endif
+
             @endif
+
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'is_draf',
@@ -91,12 +106,15 @@
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @if (!($withCapaian ?? false))
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'created_at',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                ])
+
+            @if (!$withCapaian)
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'created_at',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                    ])
+                @endif
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'updated_at',
                     'isCenter' => 1,
@@ -107,7 +125,7 @@
         </tr>
 
         <tr class="bg-gray-50">
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'rekap_rps_pr',
                     'headString' => 'Nilai',
@@ -126,60 +144,64 @@
                     'isMain' => 1,
                 ])
             @endif
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'kode_mk',
-                'isMain' => 1,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'mk',
-                'headString' => 'Mata Kuliah',
-                'isBorderR' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'semester',
-            ])
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'sks',
-                'isCenter' => 1,
-            ])
+            @if ($showMore)
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'pembelajaran',
-                'isCenter' => 1,
-                'isBorderR' => 1,
-            ])
-
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'wajib',
-                'isMain' => 1,
-                'isCenter' => 1,
-            ])
-
-            @if (!($withCapaian ?? false))
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_cpmk',
-                    'headString' => 'CPMK',
+                    'sortFieldString' => 'kode_mk',
+                    'isMain' => 1,
                     'isCenter' => 1,
-                    'isBorderL' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mk',
+                    'headString' => 'Mata Kuliah',
+                    'isBorderR' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'semester',
                 ])
 
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_scpmk',
-                    'headString' => 'Sub-CPMK',
+                    'sortFieldString' => 'sks',
                     'isCenter' => 1,
                 ])
-                @include('livewire.global.search-and-filters.table-search', [
-                    'sortFieldString' => 'total_bobot',
-                    'modelString' => 'searchBobotRPS',
-                    'resetXFilter' => 'resetInputBobotRPS()',
-                    'maxLength' => 3,
-                    'withSimbol' => 1,
-                    'wInput' => 20,
-                    'placeholder' => 'Bobot',
-                    'pTop' => 5,
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'pembelajaran',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
                 ])
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'wajib',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                ])
+
+                @if (!$withCapaian)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'count_cpmk',
+                        'headString' => 'CPMK',
+                        'isCenter' => 1,
+                        'isBorderL' => 1,
+                    ])
+
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'count_scpmk',
+                        'headString' => 'Sub-CPMK',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.search-and-filters.table-search', [
+                        'sortFieldString' => 'total_bobot',
+                        'modelString' => 'searchBobotRPS',
+                        'resetXFilter' => 'resetInputBobotRPS()',
+                        'maxLength' => 3,
+                        'withSimbol' => 1,
+                        'wInput' => 20,
+                        'placeholder' => 'Bobot',
+                        'pTop' => 5,
+                    ])
+                @endif
             @endif
 
         </tr>
@@ -233,7 +255,7 @@
                 @endif
             </td>
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $r->rekap_rps_pr ?? '0.00' }}</td>
                 <td class="table-second whitespace-nowrap text-center">
@@ -252,103 +274,105 @@
                 </td>
             @endif
 
-            <td class="table-second table-border-x text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.level-mk-badge', [
-                            'xValue' => $r->kode_mk,
-                            'sortir' => $r->level_mk,
-                            'noIcon' => 1,
-                        ])
-                    </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                        'key' => 3,
-                        'isMK' => 1,
-                    ])
-                </flux:dropdown>
-            </td>
-            <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
-            <td class="table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
-            <td class="table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
-            <td class="table-main table-border-r text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.wajib-badge', [
-                            'xValue' => $r->wajib_text,
-                            'sortir' => $r->wajib,
-                        ])
-                    </button>
-                    @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                        'key' => 4,
-                        'isMK' => 1,
-                    ])
-                </flux:dropdown>
-            </td>
-
-            @if (!($withCapaian ?? false))
-                <td class="table-second table-border-l whitespace-nowrap text-center">
-                    {{-- {{ $r->cpmks_count . ' CPMK' ?? '-' }} --}}
-                    {{ $r->count_cpmk . ' CPMK' ?? '-' }}
-                </td>
-                <td class="table-second whitespace-nowrap text-center">
-
+            @if ($showMore)
+                <td class="table-second table-border-x text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if ($r->count_scpmk >= 14 && $r->count_scpmk <= 16)
-                                <flux:badge color="green" size="sm">
-                                    {{ $r->count_scpmk }} Sub-CPMK
-                                </flux:badge>
-                            @elseif ($r->count_scpmk >= 7 && $r->count_scpmk < 14)
-                                <flux:badge color="yellow" size="sm">
-                                    {{ $r->count_scpmk }} Sub-CPMK
-                                </flux:badge>
-                            @elseif ($r->count_scpmk >= 4 && $r->count_scpmk < 7)
-                                <flux:badge color="orange" size="sm">
-                                    {{ $r->count_scpmk }} Sub-CPMK
-                                </flux:badge>
-                            @else
-                                <flux:badge color="red" size="sm">
-                                    {{ $r->count_scpmk ?? 0 }} Sub-CPMK
-                                </flux:badge>
-                            @endif
+                            @include('livewire.global.table.badge.level-mk-badge', [
+                                'xValue' => $r->kode_mk,
+                                'sortir' => $r->level_mk,
+                                'noIcon' => 1,
+                            ])
                         </button>
-
                         @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                            'key' => 5,
+                            'key' => 3,
+                            'isMK' => 1,
+                        ])
+                    </flux:dropdown>
+                </td>
+                <td class="table-sub table-border-r whitespace-nowrap">{{ $r->mk ?? '-' }}</td>
+                <td class="table-sub whitespace-nowrap">Semester {{ $r->semester ?? '-' }}</td>
+                <td class="table-sub whitespace-nowrap text-center">{{ $r->sks ?? '-' }} SKS</td>
+                <td class="table-second whitespace-nowrap text-center">{{ $r->sks_text ?? '-' }}</td>
+                <td class="table-main table-border-r text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @include('livewire.global.table.badge.wajib-badge', [
+                                'xValue' => $r->wajib_text,
+                                'sortir' => $r->wajib,
+                            ])
+                        </button>
+                        @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                            'key' => 4,
+                            'isMK' => 1,
                         ])
                     </flux:dropdown>
                 </td>
 
-                <td class="table-second table-border-r text-center">
+                @if (!$withCapaian)
+                    <td class="table-second table-border-l whitespace-nowrap text-center">
+                        {{-- {{ $r->cpmks_count . ' CPMK' ?? '-' }} --}}
+                        {{ $r->count_cpmk . ' CPMK' ?? '-' }}
+                    </td>
+                    <td class="table-second whitespace-nowrap text-center">
 
-                    <flux:dropdown>
-                        <button class="cursor-pointer">
-                            @if ($r->total_bobot >= 70 && $r->total_bobot < 200)
-                                <flux:badge icon="check-circle" color="green" size="sm">
-                                    {{ $r->total_bobot }}%
-                                </flux:badge>
-                            @elseif ($r->total_bobot >= 200)
-                                <flux:badge icon="exclamation-triangle" color="blue" size="sm">
-                                    {{ $r->total_bobot }}%
-                                </flux:badge>
-                            @elseif ($r->total_bobot > 20 && $r->total_bobot < 70)
-                                <flux:badge icon="clock" color="orange" size="sm">
-                                    {{ $r->total_bobot }}%
-                                </flux:badge>
-                            @else
-                                <flux:badge icon="no-symbol" color="red" size="sm">
-                                    {{ $r->total_bobot ?? 0 }}%
-                                </flux:badge>
-                            @endif
-                        </button>
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @if ($r->count_scpmk >= 14 && $r->count_scpmk <= 16)
+                                    <flux:badge color="green" size="sm">
+                                        {{ $r->count_scpmk }} Sub-CPMK
+                                    </flux:badge>
+                                @elseif ($r->count_scpmk >= 7 && $r->count_scpmk < 14)
+                                    <flux:badge color="yellow" size="sm">
+                                        {{ $r->count_scpmk }} Sub-CPMK
+                                    </flux:badge>
+                                @elseif ($r->count_scpmk >= 4 && $r->count_scpmk < 7)
+                                    <flux:badge color="orange" size="sm">
+                                        {{ $r->count_scpmk }} Sub-CPMK
+                                    </flux:badge>
+                                @else
+                                    <flux:badge color="red" size="sm">
+                                        {{ $r->count_scpmk ?? 0 }} Sub-CPMK
+                                    </flux:badge>
+                                @endif
+                            </button>
 
-                        @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
-                            'key' => 6,
-                        ])
-                    </flux:dropdown>
+                            @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                                'key' => 5,
+                            ])
+                        </flux:dropdown>
+                    </td>
 
-                </td>
+                    <td class="table-second table-border-r text-center">
+
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @if ($r->total_bobot >= 70 && $r->total_bobot < 200)
+                                    <flux:badge icon="check-circle" color="green" size="sm">
+                                        {{ $r->total_bobot }}%
+                                    </flux:badge>
+                                @elseif ($r->total_bobot >= 200)
+                                    <flux:badge icon="exclamation-triangle" color="blue" size="sm">
+                                        {{ $r->total_bobot }}%
+                                    </flux:badge>
+                                @elseif ($r->total_bobot > 20 && $r->total_bobot < 70)
+                                    <flux:badge icon="clock" color="orange" size="sm">
+                                        {{ $r->total_bobot }}%
+                                    </flux:badge>
+                                @else
+                                    <flux:badge icon="no-symbol" color="red" size="sm">
+                                        {{ $r->total_bobot ?? 0 }}%
+                                    </flux:badge>
+                                @endif
+                            </button>
+
+                            @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [
+                                'key' => 6,
+                            ])
+                        </flux:dropdown>
+
+                    </td>
+                @endif
             @endif
 
             <td class="table-main text-center">
@@ -377,14 +401,16 @@
                 </flux:dropdown>
             </td>
 
-            @if (!($withCapaian ?? false))
-                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+            @if (!$withCapaian)
+                @if ($showMore)
+                    <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+                @endif
                 <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 14 : 18 }}"
+            <td colspan="{{ $withCapaian ? 14 : 18 }}"
                 class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Rencana Pembelajaran Semester (RPS) ditemukan!
             </td>

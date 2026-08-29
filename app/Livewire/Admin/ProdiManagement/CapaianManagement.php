@@ -61,6 +61,8 @@ class CapaianManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = 'capaian';
 
     public $search = '';
@@ -122,6 +124,7 @@ class CapaianManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'filterRPS' => ['except' => ''],
         'filterCPL' => ['except' => ''],
         'filterCPMK' => ['except' => ''],

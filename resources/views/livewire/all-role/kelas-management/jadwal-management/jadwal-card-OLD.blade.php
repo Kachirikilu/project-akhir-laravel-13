@@ -1,7 +1,7 @@
 <x-global.main-layout-card :paginator="$jadwals">
 
     {{-- 1. Isi Bagian Sortir Kiri (Arahkan slot ke nama yang sesuai di komponen Anda, misal: sortir) --}}
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'kode',
             'headString' => 'Kode',
@@ -21,7 +21,7 @@
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'kapasitas',
         ])
-    </x-slot:sortir>
+    </x-slot:leftSecHead>
 
     {{-- 2. Isi Utama (Looping Card) --}}
     @forelse($jadwals as $j)

@@ -1,7 +1,7 @@
 <x-global.main-layout-card :paginator="$kelas" :mx="''">
 
     {{-- 1. Isi bagian Sortir --}}
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         <div x-data="{ activeTab: @entangle('filterKelasgg') }"
             class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
@@ -31,9 +31,9 @@
                 'icon' => 'calendar-days',
             ])
         </div>
-    </x-slot:sortir>
+    </x-slot:leftSecHead>
 
-    <x-slot:search>
+    <x-slot:rightSecHead>
         <div x-data="{ activeTab: @entangle('switchTable2') }"
             class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
             @include('livewire.global.table.head-sortir', [
@@ -64,7 +64,7 @@
                 'icon' => 'table-cells',
             ])
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
     {{-- @for ($i = 0; $i < 8; $i++)
                 <div wire:loading

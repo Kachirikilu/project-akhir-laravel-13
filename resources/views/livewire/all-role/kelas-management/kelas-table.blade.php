@@ -1,6 +1,6 @@
 <x-global.main-layout-table :paginator="$kelas">
 
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         <div x-data="{ activeTab: @entangle('filterKelasgg') }"
             class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
@@ -30,8 +30,8 @@
                 'icon' => 'calendar-days',
             ])
         </div>
-    </x-slot:sortir>
-    <x-slot:search>
+    </x-slot:leftSecHead>
+    <x-slot:rightSecHead>
         <div x-data="{ activeTab: @entangle('switchTable2') }" class="pb-1 scrollbar-tiny flex space-x-4 overflow-x-auto">
             @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                 'xString' => 'switchingTable2',
@@ -51,7 +51,7 @@
                 'icon' => 'table-cells',
             ])
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
     <x-slot:header>
         {{-- BARIS PERTAMA --}}

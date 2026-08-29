@@ -161,7 +161,7 @@
     <x-global.main-layout-card>
 
         {{-- Slot Sortir --}}
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             <div
                 class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
 
@@ -184,10 +184,10 @@
                     'alpine' => 'sesi',
                 ])
             </div>
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
 
         {{-- Slot Search --}}
-        <x-slot:search>
+        <x-slot:rightSecHead>
             <div class="w-full md:w-96 xl:w-108">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Sesi Pertemuan Kelas...',
@@ -196,7 +196,7 @@
                     'isBorder' => 2,
                 ])
             </div>
-        </x-slot:search>
+        </x-slot:rightSecHead>
 
         {{-- GRID UTAMA KARTU --}}
         {{-- @php
@@ -311,7 +311,7 @@
         <x-slot:footer>
             @include('livewire.global.table.pagination-alpine', ['mx' => ''])
             @if (Auth::user()->admin)
-                @include('livewire.global.table.trash-delete', ['mx' => ''])
+                @include('livewire.global.table.trash-delete-switch', ['mx' => ''])
             @endif
         </x-slot:footer>
 

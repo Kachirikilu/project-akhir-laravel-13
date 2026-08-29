@@ -39,6 +39,8 @@ class ProgramStudiManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = '';
 
     public $search = '';
@@ -69,6 +71,8 @@ class ProgramStudiManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
+        'showDeleted' => ['except' => false],
         'filterPr' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],

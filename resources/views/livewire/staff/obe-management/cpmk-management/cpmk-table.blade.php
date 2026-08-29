@@ -1,5 +1,37 @@
 <x-global.main-layout-table :paginator="$cpmk">
 
+    @php
+        $showMore = $showMore ?? false;
+        $withCapaian = $withCapaian ?? false;
+    @endphp
+    <x-slot:leftSecHead>
+        <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode',
+                'headString' => 'Kode CPMK',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'deskripsi',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'count_cpl',
+                'headString' => 'Total CPL',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'count_scpmk',
+                'headString' => 'Total Sub-CPMK',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'total_bobot',
+            ])
+        </div>
+    </x-slot:leftSecHead>
+
+    <x-slot:rightSecHead>
+        @include('livewire.global.table.detail-view-switch')
+    </x-slot:rightSecHead>
+
+
     <x-slot:header>
 
         <tr>
@@ -25,33 +57,38 @@
                 'rowSpan' => 2,
             ])
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <th colspan="3" class="table-head-sub">
                     Nilai Capaian
                 </th>
             @endif
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'count_cpl',
-                'headString' => 'Total CPL',
-                'isMain' => 1,
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-            @if (!($withCapaian ?? false))
-                <th colspan="2" class="table-head-sub">
-                    Sub-CPMK
-                </th>
+            @if ($showMore)
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_cpl',
+                    'headString' => 'Total CPL',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+                @if (!$withCapaian)
+                    <th colspan="2" class="table-head-sub">
+                        Sub-CPMK
+                    </th>
+                @endif
             @endif
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @if (!($withCapaian ?? false))
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'created_at',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                ])
+            @if (!$withCapaian)
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'created_at',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                    ])
+                @endif
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'updated_at',
                     'isCenter' => 1,
@@ -62,7 +99,7 @@
         </tr>
 
         <tr class="bg-gray-50">
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'rekap_cpmk_pr',
                     'headString' => 'Nilai',
@@ -81,22 +118,24 @@
                     'isMain' => 1,
                 ])
             @endif
-            @if (!($withCapaian ?? false))
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_scpmk',
-                    'headString' => 'Sub-CPMK',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.search-and-filters.table-search', [
-                    'sortFieldString' => 'total_bobot',
-                    'modelString' => 'searchBobotCPMK',
-                    'resetXFilter' => 'resetInputBobotCPMK()',
-                    'maxLength' => 2,
-                    'withSimbol' => 1,
-                    'wInput' => 20,
-                    'placeholder' => 'Bobot',
-                    'pTop' => 5,
-                ])
+            @if (!$withCapaian)
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'count_scpmk',
+                        'headString' => 'Sub-CPMK',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.search-and-filters.table-search', [
+                        'sortFieldString' => 'total_bobot',
+                        'modelString' => 'searchBobotCPMK',
+                        'resetXFilter' => 'resetInputBobotCPMK()',
+                        'maxLength' => 2,
+                        'withSimbol' => 1,
+                        'wInput' => 20,
+                        'placeholder' => 'Bobot',
+                        'pTop' => 5,
+                    ])
+                @endif
             @endif
         </tr>
     </x-slot:header>
@@ -114,7 +153,9 @@
                         <flux:badge icon="academic-cap" color="violet" size="sm">{{ $c->kode ?? '---' }}
                         </flux:badge>
                     </button>
-                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', [
+                        'key' => 1,
+                    ])
                 </flux:dropdown>
             </td>
 
@@ -123,7 +164,7 @@
                 {{ $c->deskripsi_cpl ?? '-' }}</td>
 
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $c->rekap_cpmk_pr ?? '0.00' }}</td>
                 <td class="table-second whitespace-nowrap text-center">
@@ -135,36 +176,43 @@
                                 'xValue' => $c->mutu_cpmk_pr ?? 'E',
                             ])
                         </button>
-                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 2])
+                        @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', [
+                            'key' => 2,
+                        ])
                     </flux:dropdown>
                 </td>
             @endif
 
-            <td class="table-second table-border-x whitespace-nowrap text-center">
-                {{ $c->count_cpl ?? '-' }} CPL</td>
-            @if (!($withCapaian ?? false))
-                <td class="table-sub whitespace-nowrap text-center">
-                    {{ $c->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
-                <td class="table-sub text-center">{{ $c->total_bobot ? $c->total_bobot . '%' : '-' }}</td>
+            @if ($showMore)
+                <td class="table-second table-border-x whitespace-nowrap text-center">
+                    {{ $c->count_cpl ?? '-' }} CPL</td>
+                @if (!$withCapaian)
+                    <td class="table-sub whitespace-nowrap text-center">
+                        {{ $c->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
+                    <td class="table-sub text-center">{{ $c->total_bobot ? $c->total_bobot . '%' : '-' }}</td>
+                @endif
             @endif
             <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
                     </flux:button>
-                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', ['key' => 3])
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar-table', [
+                        'key' => 3,
+                    ])
                 </flux:dropdown>
             </td>
 
-            @if (!($withCapaian ?? false))
-                <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+            @if (!$withCapaian)
+                @if ($showMore)
+                    <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+                @endif
                 <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 8 : 9 }}"
-                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+            <td colspan="{{ $withCapaian ? 8 : 9 }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Capaian Pembelajaran Mata Kuliah (CPMK) ditemukan!
             </td>
         </tr>

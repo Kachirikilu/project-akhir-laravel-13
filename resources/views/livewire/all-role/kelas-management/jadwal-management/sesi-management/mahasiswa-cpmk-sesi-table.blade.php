@@ -2,7 +2,7 @@
 {{-- @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-show.cpmk-grafik-pdf-show') --}}
 
 <x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         @if ($isRPS ?? false)
             <div x-data="{ activeTab: @entangle('filterAngkatan') }"
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
@@ -51,8 +51,8 @@
                 ])
             </div>
         @endif
-    </x-slot:sortir>
-    <x-slot:search>
+    </x-slot:leftSecHead>
+    <x-slot:rightSecHead>
         <div class="w-full md:w-110 xl:w-124">
             <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
                 <div class="flex-shrink-0">
@@ -76,7 +76,7 @@
                 </div>
             </div>
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
     <x-slot:header>
         <tr>

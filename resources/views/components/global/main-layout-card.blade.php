@@ -56,16 +56,16 @@
         </div>
     @endif
 
-    @if (isset($sortir) || isset($search))
+    @if (isset($leftSecHead) || isset($rightSecHead))
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
             <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
-                @if (isset($sortir))
-                    {{ $sortir }}
+                @if (isset($leftSecHead))
+                    {{ $leftSecHead }}
                 @endif
             </div>
             <div class="flex items-center w-full lg:w-auto justify-end lg:justify-end">
-                @if (isset($search))
-                    {{ $search }}
+                @if (isset($rightSecHead))
+                    {{ $rightSecHead }}
                 @endif
             </div>
 

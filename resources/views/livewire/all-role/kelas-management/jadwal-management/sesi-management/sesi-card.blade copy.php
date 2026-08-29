@@ -1,7 +1,7 @@
 <x-global.main-layout-card :paginator="$sesis">
 
     {{-- 1. Isi bagian Sortir --}}
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'pertemuan_ke',
             'headString' => 'Pertemuan',
@@ -15,8 +15,8 @@
             'headString' => 'Tanggal',
         ])
         @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
-    </x-slot:sortir>
-    <x-slot:search>
+    </x-slot:leftSecHead>
+    <x-slot:rightSecHead>
         <div class="w-full md:w-96 xl:w-108">
             <div class="col-start-1 row-start-1 w-full">
                 {{-- @include('livewire.global.search-and-filters.main-search', [
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
 
 

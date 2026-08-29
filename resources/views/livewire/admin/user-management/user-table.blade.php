@@ -1,7 +1,7 @@
 <x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
 
     @if ($switchTable == 'mahasiswa')
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             <div x-data="{ activeTab: @entangle('filterAngkatan') }"
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
 
@@ -43,7 +43,7 @@
                     ])
                 @endforeach --}}
             </div>
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
     @endif
 
     <x-slot:header>

@@ -1,6 +1,6 @@
 <x-global.main-layout-table :paginator="$sesis" :onlyAdmin="!Auth::user()->admin">
 
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         <div
             class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
 
@@ -15,8 +15,8 @@
             @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
             @include('livewire.global.table.head-sortir', ['sortFieldString' => 'bobot'])
         </div>
-    </x-slot:sortir>
-    <x-slot:search>
+    </x-slot:leftSecHead>
+    <x-slot:rightSecHead>
         <div class="w-full md:w-96 xl:w-108">
             <div class="col-start-1 row-start-1 w-full">
                 {{-- @include('livewire.global.search-and-filters.main-search', [
@@ -33,7 +33,7 @@
                 ])
             </div>
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
     <x-slot:header>
         {{-- BARIS PERTAMA --}}

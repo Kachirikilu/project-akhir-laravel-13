@@ -28,6 +28,8 @@ class MataKuliahManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = '';
 
     public $search = '';
@@ -58,6 +60,7 @@ class MataKuliahManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'filterMK' => ['except' => ''],
         'filterMKgg' => ['except' => ''],
         // 'switchTable' => ['except' => ''],

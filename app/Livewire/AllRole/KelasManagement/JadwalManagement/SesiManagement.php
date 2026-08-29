@@ -45,6 +45,8 @@ class SesiManagement extends Component
     public $search = '';
 
     public $searchMode = 'simple';
+    
+    public $showMore = false;
 
     public $isJadwalOnly = false;
 
@@ -99,6 +101,7 @@ class SesiManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'sortField' => ['except' => 'pertemuan_ke'],
         // 'switchTable' => ['except' => 'card'],
         'sortDirection' => ['except' => 'asc'],

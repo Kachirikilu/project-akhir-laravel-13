@@ -27,7 +27,7 @@
     @endphp
 
     @if ($this->switchTable == 'rps')
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             <div x-data="{ activeTab: @entangle('filterRPSgg') }"
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
@@ -57,7 +57,7 @@
                     'icon' => 'calendar-days',
                 ])
             </div>
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
     @endif
 
     <x-slot:header>

@@ -25,6 +25,8 @@ class KelasManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = '';
 
     public $switchTable2 = 'card';
@@ -61,6 +63,7 @@ class KelasManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'filterKelas' => ['except' => ''],
         'filterKelasgg' => ['except' => ''],
         // 'switchTable' => ['except' => ''],

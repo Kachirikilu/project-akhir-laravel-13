@@ -25,6 +25,8 @@ class UserManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     protected $paginationTheme = 'tailwind';
 
     public $sortField = 'name';
@@ -66,6 +68,7 @@ class UserManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'filter' => ['except' => ''],
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc'],

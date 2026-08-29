@@ -58,6 +58,8 @@ class NilaiManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = 'mahasiswa';
 
     public $search = '';
@@ -94,6 +96,7 @@ class NilaiManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         // 'switchTable' => ['except' => 'cpl'],
         'filterStatus' => ['except' => ''],
 

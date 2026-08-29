@@ -1,7 +1,7 @@
 <x-global.main-layout-card :paginator="$jadwals" :mx="''">
 
     {{-- 1. Isi Bagian Sortir Kiri (Arahkan slot ke nama yang sesuai di komponen Anda, misal: sortir) --}}
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         <div class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
             @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'kode',
@@ -32,9 +32,9 @@
                 'sortFieldString' => 'kapasitas',
             ])
         </div>
-    </x-slot:sortir>
+    </x-slot:leftSecHead>
 
-    <x-slot:search>
+    <x-slot:rightSecHead>
         <div class="w-full md:w-96 xl:w-108">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Jadwal Kelas...',
@@ -45,7 +45,7 @@
                 'isBorder' => 2,
             ])
         </div>
-    </x-slot:search>
+    </x-slot:rightSecHead>
 
     {{-- 2. Isi Utama (Looping Card) --}}
     @forelse($jadwals as $j)

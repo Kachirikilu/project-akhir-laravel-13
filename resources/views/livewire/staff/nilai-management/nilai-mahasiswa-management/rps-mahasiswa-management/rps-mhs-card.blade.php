@@ -180,7 +180,7 @@
     <x-global.main-layout-card>
 
         {{-- Slot Sortir --}}
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             <div
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.table.head-sortir', [
@@ -206,10 +206,10 @@
                     'alpine' => 'nilai',
                 ])
             </div>
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
 
         {{-- Slot Search --}}
-        <x-slot:search>
+        <x-slot:rightSecHead>
             <div class="w-full md:w-96 xl:w-108">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Mutu...',
@@ -218,7 +218,7 @@
                     'isBorder' => 2,
                 ])
             </div>
-        </x-slot:search>
+        </x-slot:rightSecHead>
 
         {{-- CONTAINER UTAMA WAJIB MEMILIKI CLASS flex ATAU grid UNTUK MENDUKUNG CSS ORDER --}}
         @foreach ($nilais as $index => $n)
@@ -410,7 +410,7 @@
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
             @include('livewire.global.table.pagination-alpine', ['mx' => ''])
-            @include('livewire.global.table.trash-delete', ['mx' => ''])
+            @include('livewire.global.table.trash-delete-switch', ['mx' => ''])
         </x-slot:footer>
 
     </x-global.main-layout-card>

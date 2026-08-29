@@ -1,11 +1,11 @@
 <x-global.main-layout-card :paginator="$nilais">
 
     {{-- 1. Bagian Judul Sesi & Pencarian --}}
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
         @include('livewire.global.table.head-sortir', [
             'sortFieldString' => 'created_at',
         ])
-    </x-slot:sortir>
+    </x-slot:leftSecHead>
 
     {{-- 2. Looping Data Nilai Mata Kuliah (Per RPS) --}}
     @forelse($nilais as $n)

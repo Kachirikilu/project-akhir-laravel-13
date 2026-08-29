@@ -5,5 +5,5 @@
         </div>
     @endif
 
-    @include('livewire.global.table.trash-delete', ['mx' => $mx ?? 'mx-3'])
+    @include('livewire.global.table.trash-delete-switch', ['mx' => $mx ?? 'mx-3'])
 </div>

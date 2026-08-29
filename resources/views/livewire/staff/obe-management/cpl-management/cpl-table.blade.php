@@ -1,16 +1,36 @@
 <x-global.main-layout-table :paginator="$cpl">
 
+    @php
+        $showMore = $showMore ?? false;
+        $withCapaian = $withCapaian ?? false;
+    @endphp
+    <x-slot:leftSecHead>
+        <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'kode',
+                'headString' => 'Kode CPL',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'deskripsi',
+            ])
+            @include('livewire.global.table.head-sortir', [
+                'sortFieldString' => 'count_rps',
+                'headString' => 'Total RPS',
+            ])
+        </div>
+    </x-slot:leftSecHead>
+
+    <x-slot:rightSecHead>
+        @include('livewire.global.table.detail-view-switch')
+    </x-slot:rightSecHead>
+
     <x-slot:header>
-
         <tr>
-
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
-
-
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
@@ -24,29 +44,30 @@
                 'rowSpan' => 2,
             ])
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <th colspan="3" class="table-head-sub">
                     Nilai Capaian
                 </th>
             @endif
-            <th colspan="{{ $withCapaian ?? null ? 3 : 2 }}" class="table-head-sub">
-                Rencana Pembelajaran Semester
-            </th>
-            {{-- @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
-                    'isBorderL' => 1,
-                    'isCenter' => 1,
-                ]) --}}
+
+            @if ($showMore)
+                <th colspan="{{ $withCapaian ? 3 : 2 }}" class="table-head-sub">
+                    Rencana Pembelajaran Semester
+                </th>
+            @else
+                <th rowspan="2" class="table-head border-x">RPS</th>
+            @endif
 
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
-            @if (!($withCapaian ?? false))
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'created_at',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                ])
+            @if (!$withCapaian)
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'created_at',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                    ])
+                @endif
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'updated_at',
                     'isCenter' => 1,
@@ -57,7 +78,7 @@
         </tr>
 
         <tr class="bg-gray-50">
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'rekap_cpl_pr',
                     'headString' => 'Nilai',
@@ -77,19 +98,25 @@
                 ])
             @endif
 
-            <th class="table-head text-center border-x">Show</th>
-            @if ($withCapaian ?? null)
+            @if ($showMore)
+                <th class="table-head text-center border-x">Show</th>
+            @endif
+
+            @if ($withCapaian)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps_pr',
                     'headString' => 'RPS ' . ($kode_pr_url ?? 'UNI'),
                     'isCenter' => 1,
                 ])
             @endif
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'count_rps',
-                'headString' => 'Total RPS',
-                'isCenter' => 1,
-            ])
+
+            @if ($showMore)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_rps',
+                    'headString' => 'Total RPS',
+                    'isCenter' => 1,
+                ])
+            @endif
         </tr>
     </x-slot:header>
 
@@ -106,7 +133,9 @@
                         <flux:badge icon="beaker" color="sky" size="sm">{{ $c->kode ?? '---' }}
                         </flux:badge>
                     </button>
-                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 1])
+                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', [
+                        'key' => 1,
+                    ])
                 </flux:dropdown>
             </td>
 
@@ -114,7 +143,7 @@
             <td class="table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
                 {{ $c->deskripsi ?? '-' }}</td>
 
-            @if ($withCapaian ?? null)
+            @if ($withCapaian)
                 <td class="table-second table-border-l whitespace-nowrap text-center">
                     {{ $c->rekap_cpl_pr ?? '0.00' }}</td>
                 <td class="table-second whitespace-nowrap text-center">
@@ -126,7 +155,9 @@
                                 'xValue' => $c->mutu_cpl_pr ?? 'E',
                             ])
                         </button>
-                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 2])
+                        @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', [
+                            'key' => 2,
+                        ])
                     </flux:dropdown>
                 </td>
 
@@ -165,8 +196,7 @@
                             $flux.modal('cpl-rps-modal').show();
                             $dispatch('open-list-rps-cpl-modal', { id: {{ $c->id }}, tingkatan: {{ $c->level_cpl }}, isRPS: 1 });
                         "
-                        color="emerald"
-                        >
+                        color="emerald">
                         <flux:icon name="eye" class="w-3.5 h-3.5" />
                         <span>RPS</span>
                     </x-button-action>
@@ -177,30 +207,37 @@
                     </code>
                 @endif
             </td>
-            @if ($withCapaian ?? null)
+
+            @if ($withCapaian)
                 <td class="table-sub whitespace-nowrap text-center">
                     {{ $c->count_rps_pr ?? '-' }} RPS</td>
             @endif
-            <td class="table-sub whitespace-nowrap text-center">
-                {{ $c->count_rps ?? '-' }} RPS</td>
+
+            @if ($showMore)
+                <td class="table-sub whitespace-nowrap text-center">
+                    {{ $c->count_rps ?? '-' }} RPS</td>
+            @endif
             <td class="table-main text-center">
                 <flux:dropdown>
-                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-cpl-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
+                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-cpl-modal')" variant="ghost"
+                        size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
-                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', ['key' => 3])
+                    @include('livewire.staff.obe-management.cpl-management.cpl-toolbar-table', [
+                        'key' => 3,
+                    ])
                 </flux:dropdown>
             </td>
 
-            @if (!($withCapaian ?? false))
-                <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+            @if (!$withCapaian)
+                @if ($showMore)
+                    <td class="table-second whitespace-nowrap text-center">{{ $c->created_day ?? '-' }}</td>
+                @endif
                 <td class="table-second whitespace-nowrap text-center">{{ $c->updated_day ?? '-' }}</td>
             @endif
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $withCapaian ?? null ? 10 : 8 }}"
-                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+            <td colspan="{{ $withCapaian ? 10 : 8 }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                 Tidak ada data Capaian Pembelajaran Lulusan (CPL) ditemukan!
             </td>
         </tr>

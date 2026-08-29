@@ -1,6 +1,6 @@
 <x-global.main-layout-table :paginator="$mks">
 
-    <x-slot:sortir>
+    <x-slot:leftSecHead>
 
         <div x-data="{ activeTab: @entangle('filterMKgg') }"
             class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
@@ -32,7 +32,7 @@
             ])
         </div>
 
-    </x-slot:sortir>
+    </x-slot:leftSecHead>
 
     <x-slot:header>
         {{-- BARIS PERTAMA --}}

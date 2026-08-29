@@ -1,6 +1,6 @@
    <x-global.main-layout-card :paginator="$periodes">
 
-       <x-slot:sortir>
+       <x-slot:leftSecHead>
            @include('livewire.global.table.head-sortir', [
                'sortFieldString' => 'semester',
            ])
@@ -10,9 +10,9 @@
            @include('livewire.global.table.head-sortir', [
                'sortFieldString' => 'total_sks',
            ])
-       </x-slot:sortir>
+       </x-slot:leftSecHead>
 
-       <x-slot:search>
+       <x-slot:rightSecHead>
            <div class="w-full md:w-96 xl:w-108">
                @include('livewire.global.search-and-filters.main-search', [
                    'placeholder' => 'Cari Nilai Semester...',
@@ -20,7 +20,7 @@
                    'isBorder' => 2,
                ])
            </div>
-       </x-slot:search>
+       </x-slot:rightSecHead>
 
        @forelse($periodes as $p)
            <div wire:key="nilai-periode-{{ Str::slug($p->akademik . '-' . $p->ganjil_genap) }}"

@@ -34,6 +34,8 @@ class JadwalManagement extends Component
 
     public $searchMode = 'simple';
 
+    public $showMore = false;
+
     public $isJadwalOnly = false;
 
     public $kode_kelas_url;
@@ -71,6 +73,7 @@ class JadwalManagement extends Component
         'search' => ['except' => ''],
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted' => ['except' => false],

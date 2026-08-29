@@ -82,7 +82,7 @@
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
             @if (Auth::user()->admin)
-                @include('livewire.global.table.trash-delete', ['mx' => ''])
+                @include('livewire.global.table.trash-delete-switch', ['mx' => ''])
             @endif
         </x-slot:footer>
 

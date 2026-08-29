@@ -41,7 +41,7 @@
     <x-global.main-layout-card :paginator="$sesis">
 
         {{-- Isi bagian Sortir --}}
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'pertemuan_ke',
                 'headString' => 'Pertemuan',
@@ -55,10 +55,10 @@
                 'headString' => 'Tanggal',
             ])
             @include('livewire.global.table.head-sortir', ['sortFieldString' => 'metode'])
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
 
         {{-- Isi bagian Search --}}
-        <x-slot:search>
+        <x-slot:rightSecHead>
             <div class="w-full md:w-96 xl:w-108">
                 <div class="col-start-1 row-start-1 w-full">
                     <div class="relative w-full max-w-md">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-        </x-slot:search>
+        </x-slot:rightSecHead>
 
         {{-- 2. GRID UTAMA KARTU SESI --}}
         @forelse($sesis as $index => $s)

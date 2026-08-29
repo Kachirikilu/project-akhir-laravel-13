@@ -100,7 +100,7 @@ trait WithTimDosenFilters
             'nama_tim' => $queryTimDosen->orderBy('nama_tim', $this->sortDirection),
 
             'ketua_tim', 'nama_ketua' => $this->applyKetuaSort($queryTimDosen, 'name'),
-            'nip_ketua' => $this->applyKetuaSort($queryTimDosen, 'nip'),
+            'nip_ketua_tim' => $this->applyKetuaSort($queryTimDosen, 'nip'),
 
             'count_dosen' => $queryTimDosen->orderByRaw('(
                 SELECT count(*) 

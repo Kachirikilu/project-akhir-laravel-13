@@ -137,7 +137,7 @@
     <x-global.main-layout-card>
 
         {{-- Slot Sortir --}}
-        <x-slot:sortir>
+        <x-slot:leftSecHead>
             @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'pertemuan_ke',
                 'alpine' => 'sesi',
@@ -156,10 +156,10 @@
                 'sortFieldString' => 'bobot',
                 'alpine' => 'sesi',
             ])
-        </x-slot:sortir>
+        </x-slot:leftSecHead>
 
         {{-- Slot Search --}}
-        <x-slot:search>
+        <x-slot:rightSecHead>
             <div class="w-full md:w-96 xl:w-108">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Sesi Pertemuan Kelas...',
@@ -168,7 +168,7 @@
                     'isBorder' => 2,
                 ])
             </div>
-        </x-slot:search>
+        </x-slot:rightSecHead>
 
         {{-- GRID UTAMA KARTU --}}
         @foreach ($sesis as $index => $s)
@@ -459,7 +459,7 @@
         {{-- Slot Footer Pagination --}}
         <x-slot:footer>
             @include('livewire.global.table.pagination-alpine')
-            @include('livewire.global.table.trash-delete')
+            @include('livewire.global.table.trash-delete-switch')
         </x-slot:footer>
 
     </x-global.main-layout-card>
