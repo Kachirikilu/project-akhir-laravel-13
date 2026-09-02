@@ -1,3 +1,4 @@
+<div wire:key="view-table-ref">
 <x-global.main-layout-table :paginator="$ref">
 
     @php
@@ -150,3 +151,4 @@
     @endforelse
 
     </x-admin.global.table.main-layout-table>
+</div>

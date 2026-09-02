@@ -278,6 +278,15 @@
 
 @layer utilities {
 
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px var(--hover-pop-up-color) inset !important;
+        -webkit-text-fill-color: var(--contrast-main-text) !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
     thead.sticky th {
         border-bottom: none !important;
         background-color: var(--main-table-color) !important;

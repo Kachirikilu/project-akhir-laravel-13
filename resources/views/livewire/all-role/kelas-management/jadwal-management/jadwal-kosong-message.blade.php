@@ -1,4 +1,4 @@
-<div
+<div wire:key="jadwal-kosong-message"
     class="{{ $mb ?? '' }} col-span-6 flex flex-col items-center justify-center py-7 px-6 rounded-2xl bg-[var(--main-table-trans)]/50 backdrop-blur-sm transition-all animate-in fade-in duration-500 border-2 border-dashed border-[var(--focus-color)]/30">
     <div class="bg-[var(--focus-color)] p-4 rounded-full mb-4">
         <x-heroicon-o-calendar-days class="w-8 h-8 text-white" />

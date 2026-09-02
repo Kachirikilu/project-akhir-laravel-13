@@ -1,3 +1,4 @@
+<div wire:key="view-table-scpmk">
 <x-global.main-layout-table :paginator="$scpmk">
 
     @php
@@ -64,11 +65,9 @@
                     Pembelajaran
                 </th>
 
-                @if (!$withCapaian)
                     <th colspan="4" class="table-head-sub">
                         Tugas
                     </th>
-                @endif
             @else
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'metode',
@@ -87,7 +86,6 @@
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
 
-            @if (!$withCapaian)
                 @if ($showMore)
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'created_at',
@@ -95,6 +93,7 @@
                         'rowSpan' => 2,
                     ])
                 @endif
+            @if (!$withCapaian || $showMore)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'updated_at',
                     'isCenter' => 1,
@@ -147,7 +146,6 @@
                     'isMain' => 1,
                     'isCenter' => 1,
                 ]) --}}
-                @if (!$withCapaian)
                     @include('livewire.global.search-and-filters.table-search', [
                         'sortFieldString' => 'bobot',
                         'modelString' => 'searchBobotSCPMK',
@@ -175,7 +173,6 @@
                         'isCenter' => 1,
                     ])
                 @endif
-            @endif
         </tr>
     </x-slot:header>
 
@@ -239,7 +236,6 @@
                 <td class="table-sub min-w-48">{{ $sc->metodologi ?? '-' }}</td>
                 <td class="table-second min-w-48">{{ $sc->indikator ?? '-' }}</td>
             @endif
-            @if (!$withCapaian)
                 <td class="{{ $showMore ? 'table-main' : 'table-sub' }} text-center">
                     {{ $sc->bobot_format ? $sc->bobot_format . '%' : '-' }}
                 </td>
@@ -250,7 +246,6 @@
                     <td class="table-sub whitespace-nowrap text-center">
                         {{ $sc->waktu_mandiri ? $sc->w_mandiri . ' menit' : '60 m/SKS' }}</td>
                 @endif
-            @endif
             <td class="table-main text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
@@ -262,10 +257,10 @@
                 </flux:dropdown>
             </td>
 
-            @if (!$withCapaian)
                 @if ($showMore)
                     <td class="table-second whitespace-nowrap text-center">{{ $sc->created_day ?? '-' }}</td>
                 @endif
+            @if (!$withCapaian || $showMore)
                 <td class="table-second whitespace-nowrap text-center">{{ $sc->updated_day ?? '-' }}</td>
             @endif
         </tr>
@@ -279,3 +274,4 @@
     @endforelse
 
     </x-admin.global.table.main-layout-table>
+</div>

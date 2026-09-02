@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
+use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
@@ -15,6 +16,7 @@ use Illuminate\Validation\ValidationException;
 trait WithProdiModal
 {
     use HasToast;
+    use HasErrorCount;
 
     public $selected_id_pr;
 
@@ -488,6 +490,34 @@ trait WithProdiModal
             'kode_fk.max' => 'Kode Fakultas tidak boleh lebih dari 3 karakter!',
             'kode_fk.unique' => 'Kode Fakultas sudah terdaftar di database!',
             'kode_fk.string' => 'Kode Fakultas harus berupa teks!',
+
+            'dosen_id_array[0].required' => 'Dekan wajib dipilih!',
+            'dosen_id_array[1].required' => 'Wakil Dekan (Wadek) wajib dipilih!',
+            'dosen_id_array[2].required' => 'Ketua Departemen (Kadep) wajib dipilih!',
+            'dosen_id_array[3].required' => 'Sekretaris Departemen (Sekdep) wajib dipilih!',
+            'dosen_id_array[4].required' => 'Ketua Program Studi (Kaprodi) wajib dipilih!',
+            'dosen_id_array[5].required' => 'Sekretaris Program Studi (Sekprodi) wajib dipilih!',
+        ];
+    }
+
+    public function getProdiErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'nama_pr', 'nama_dp', 'nama_fk',
+                'kode_pr', 'kode_dp', 'kode_fk',
+                'strata',
+                'dp_id', 'fk_id',
+                'target_sks'
+            ]),
+            2 => $this->getErrorCount([
+                'dosen_id_array[0]',
+                'dosen_id_array[1]',
+                'dosen_id_array[2]',
+                'dosen_id_array[3]',
+                'dosen_id_array[4]',
+                'dosen_id_array[5]',
+            ]),
         ];
     }
 
@@ -504,6 +534,8 @@ trait WithProdiModal
         //     // , 'prResults'
         //     ]);
         // }
+        $this->dosen_id_array = [];
+        $this->dosen_items_array = [];
 
         $this->reset($fields);
         $this->resetErrorBag();

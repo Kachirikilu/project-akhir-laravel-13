@@ -1,8 +1,8 @@
-@php
-    $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
-@endphp
+<div wire:key="view-card-sesi-hari-ini">
 
-<div wire:key="sesi-wrapper-hari-ini" class="w-full">
+    @php
+        $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
+    @endphp
 
     <x-global.main-layout-card>
 
@@ -16,11 +16,10 @@
                     : null;
             @endphp
 
-            <div 
-                class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
+            <div class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
                 <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{
                     expanded: false,
-                        hasLoaded: false
+                    hasLoaded: false
                 }"
                     @click="expanded = !expanded; hasLoaded = true"
                     class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer
@@ -29,7 +28,8 @@
                     @php
                         if ($isUjian) {
                             $mainColor = 'bg-[var(--main-color-special)]';
-                            $bgBorder = 'border-[var(--border-table-color-special)] bg-[var(--second-table-color-special)]';
+                            $bgBorder =
+                                'border-[var(--border-table-color-special)] bg-[var(--second-table-color-special)]';
                             $mainText = 'text-[var(--contrast-main-text-special)]';
                             $secondText = 'text-[var(--contrast-second-text-special)]';
                             $thirdText = 'text-[var(--contrast-third-text-special)]';

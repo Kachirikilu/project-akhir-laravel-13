@@ -4,6 +4,7 @@ namespace App\Models\ProgramStudi;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,6 +21,17 @@ class Departemen extends Model
         'created_at' => 'date',
         'updated_at' => 'date',
     ];
+
+    public function kadep_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'kadep_id')->withTrashed();
+    }
+
+    public function sekdep_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'sekdep_id')->withTrashed();
+    }
+
 
     public function fk_rel()
     {
@@ -84,6 +96,24 @@ class Departemen extends Model
                 };
             }
         );
+    }
+
+    protected function nama_kadep(): Attribute
+    {
+        return Attribute::get(fn () => $this->kadep_rel->name ?? '-');
+    }
+    protected function nip_kadep(): Attribute
+    {
+        return Attribute::get(fn () => $this->kadep_rel->nip ?? '-');
+    }
+
+    protected function nama_sekdep(): Attribute
+    {
+        return Attribute::get(fn () => $this->sekdep_rel->name ?? '-');
+    }
+    protected function nip_sekdep(): Attribute
+    {
+        return Attribute::get(fn () => $this->sekdep_rel->nip ?? '-');
     }
 
     protected function kode(): Attribute

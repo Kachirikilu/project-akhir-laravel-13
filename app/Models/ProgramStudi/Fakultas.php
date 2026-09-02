@@ -5,6 +5,7 @@ namespace App\Models\ProgramStudi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -37,6 +38,16 @@ class Fakultas extends Model
             'id',
             'id'
         );
+    }
+
+    public function dekan_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'dekan_id')->withTrashed();
+    }
+
+    public function wadek_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'wadek_id')->withTrashed();
     }
 
     protected function rekapFk(): Attribute
@@ -87,6 +98,24 @@ class Fakultas extends Model
                 };
             }
         );
+    }
+
+    protected function nama_dekan(): Attribute
+    {
+        return Attribute::get(fn () => $this->dekan_rel->name ?? '-');
+    }
+    protected function nip_dekan(): Attribute
+    {
+        return Attribute::get(fn () => $this->dekan_rel->nip ?? '-');
+    }
+
+    protected function nama_wadek(): Attribute
+    {
+        return Attribute::get(fn () => $this->wadek_rel->name ?? '-');
+    }
+    protected function nip_wadek(): Attribute
+    {
+        return Attribute::get(fn () => $this->wadek_rel->nip ?? '-');
     }
 
     protected function kode(): Attribute

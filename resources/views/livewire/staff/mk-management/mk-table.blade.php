@@ -1,227 +1,252 @@
-<x-global.main-layout-table :paginator="$mks">
+<div wire:key="view-table-mk">
 
-    <x-slot:leftSecHead>
+    <x-global.main-layout-table :paginator="$mks">
 
-        <div x-data="{ activeTab: @entangle('filterMKgg') }"
-            class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
-            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKgg',
-                'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGanjilMK + $totalGenapMK,
-                'tabString' => '',
-                'tabNameString' => 'Semua',
-                'icon' => 'table-cells',
-            ])
+        @php
+            $showMore = $showMore ?? false;
+        @endphp
 
-            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKgg',
-                'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGanjilMK,
-                'tabString' => 'mk-ganjil',
-                'tabNameString' => 'Ganjil',
-                'icon' => 'calendar-days',
-            ])
 
-            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                'xString' => 'filterByMKgg',
-                'xFilter' => 'filterMKgg',
-                'tabFilter' => $totalGenapMK,
-                'tabString' => 'mk-genap',
-                'tabNameString' => 'Genap',
-                'icon' => 'calendar-days',
-            ])
-        </div>
+        <x-slot:leftSecHead>
 
-    </x-slot:leftSecHead>
+            <div x-data="{ activeTab: @entangle('filterMKgg') }"
+                class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByMKgg',
+                    'xFilter' => 'filterMKgg',
+                    'tabFilter' => $totalGanjilMK + $totalGenapMK,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua',
+                    'icon' => 'table-cells',
+                ])
 
-    <x-slot:header>
-        {{-- BARIS PERTAMA --}}
-        <tr>
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByMKgg',
+                    'xFilter' => 'filterMKgg',
+                    'tabFilter' => $totalGanjilMK,
+                    'tabString' => 'mk-ganjil',
+                    'tabNameString' => 'Ganjil',
+                    'icon' => 'calendar-days',
+                ])
 
-            {{-- Kolom yang ditarik ke bawah (Tinggi 2 baris) --}}
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'no_mk',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'kode',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-                'isMain' => 1,
-                'isSticky' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'mk',
-                'rowSpan' => 2,
-                'headString' => 'Mata Kuliah',
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'semester',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByMKgg',
+                    'xFilter' => 'filterMKgg',
+                    'tabFilter' => $totalGenapMK,
+                    'tabString' => 'mk-genap',
+                    'tabNameString' => 'Genap',
+                    'icon' => 'calendar-days',
+                ])
+            </div>
 
-            {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
-            <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub table-border-l">
-                Bobot Mata Kuliah (SKS)
-            </th>
+        </x-slot:leftSecHead>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'wajib',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-                'isBorderL' => 1,
-            ])
+        <x-slot:rightSecHead>
+            @include('livewire.global.table.detail-view-switch')
+        </x-slot:rightSecHead>
 
-            <th rowspan="2" class="table-head border-x">Aksi</th>
+        <x-slot:header>
+            {{-- BARIS PERTAMA --}}
+            <tr>
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'rowSpan' => 2,
-                'isCenter' => 1,
-            ])
-        </tr>
-
-        {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
-        <tr class="bg-gray-50">
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'sks',
-                'headString' => 'Total',
-                // 'isSubHeader' => 1,
-                'isCenter' => 1,
-                'isMain' => 1,
-            ])
-            @if ($switchTable == 'tatap-muka' || $switchTable == '')
+                {{-- Kolom yang ditarik ke bawah (Tinggi 2 baris) --}}
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks_tm',
-                    'headString' => 'Tatap Muka',
-                    'isSubHeader' => 1,
+                    'sortFieldString' => 'id',
+                    'rowSpan' => 2,
                     'isCenter' => 1,
                 ])
-            @endif
-            @if ($switchTable == 'praktikum' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks_pr',
-                    'headString' => 'Praktikum',
-                    // 'isSubHeader' => 1,
+                    'sortFieldString' => 'no_mk',
+                    'rowSpan' => 2,
                     'isCenter' => 1,
                 ])
-            @endif
-            @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks_pl',
-                    'headString' => 'Praktek Lapangan',
-                    // 'isSubHeader' => 1,
+                    'sortFieldString' => 'kode',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                    'isSticky' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mk',
+                    'rowSpan' => 2,
+                    'headString' => 'Mata Kuliah',
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'semester',
+                    'rowSpan' => 2,
                     'isCenter' => 1,
                 ])
-            @endif
-            @if ($switchTable == 'simulasi' || $switchTable == '')
+
+                {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
+                @if ($showMore)
+                    <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub table-border-l">
+                        Bobot Mata Kuliah (SKS)
+                    </th>
+                @else
+                    <th rowspan="2" class="table-head border-x">SKS</th>
+                @endif
+
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks_sm',
-                    'headString' => 'Simulasi',
-                    // 'isSubHeader' => 1,
+                    'sortFieldString' => 'wajib',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                    'isBorderL' => 1,
+                ])
+
+                <th rowspan="2" class="table-head border-x">Aksi</th>
+
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'created_at',
+                        'rowSpan' => 2,
+                        'isCenter' => 1,
+                    ])
+                @endif
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'updated_at',
+                    'rowSpan' => 2,
                     'isCenter' => 1,
                 ])
-            @endif
-        </tr>
-    </x-slot:header>
+            </tr>
 
+            {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
+            @if ($showMore)
 
-    @forelse($mks as $mk)
-        <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
-
-            <td class="table-second text-center">{{ $mk->id }}</td>
-            <td class="table-second text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
-                        @include('livewire.global.table.badge.level-mk-badge', [
-                            'xValue' => $mk->digit_mk,
-                            'sortir' => $mk->level_mk,
+                <tr class="bg-gray-50">
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'sks',
+                        'headString' => 'Total',
+                        // 'isSubHeader' => 1,
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                    @if ($switchTable == 'tatap-muka' || $switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'sks_tm',
+                            'headString' => 'Tatap Muka',
+                            'isSubHeader' => 1,
+                            'isCenter' => 1,
                         ])
-                    </button>
-                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 1])
-                </flux:dropdown>
-            </td>
-
-            <td class="table-main-sticky text-center" wire:click="$dispatch('trigger-mk-modal')">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.semester-badge', [
-                            'xValue' => $mk->kode,
-                            'sortir' => $mk->semester,
+                    @endif
+                    @if ($switchTable == 'praktikum' || $switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'sks_pr',
+                            'headString' => 'Praktikum',
+                            // 'isSubHeader' => 1,
+                            'isCenter' => 1,
                         ])
-                    </button>
-                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 2])
-                </flux:dropdown>
-            </td>
-
-            <td class="table-second min-w-84">{{ $mk->mk ?? '-' }}</td>
-            <td class="table-second text-center">{{ $mk->semester ?? '-' }}</td>
-
-            <td class="table-main text-center table-border-x">{{ $mk->sks ?? '-' }}</td>
-
-            @if ($switchTable == 'tatap-muka' || $switchTable == '')
-                <td class="table-sub text-center">{{ $mk->sks_tm ?? '-' }}</td>
-            @endif
-
-            @if ($switchTable == 'praktikum' || $switchTable == '')
-                <td class="table-sub text-center">
-                    {{ $mk->sks_pr ?? '-' }}</td>
-            @endif
-
-            @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
-                <td class="table-sub text-center">
-                    {{ $mk->sks_pl ?? '-' }}</td>
-            @endif
-
-            @if ($switchTable == 'simulasi' || $switchTable == '')
-                <td class="table-sub text-center">
-                    {{ $mk->sks_sm ?? '-' }}</td>
-            @endif
-
-            <td class="table-second table-border-l text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
-                        @include('livewire.global.table.badge.wajib-badge', [
-                            'xValue' => $mk->wajib_text,
-                            'sortir' => $mk->wajib,
+                    @endif
+                    @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'sks_pl',
+                            'headString' => 'Praktek Lapangan',
+                            // 'isSubHeader' => 1,
+                            'isCenter' => 1,
                         ])
-                    </button>
-                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 3])
-                </flux:dropdown>
-            </td>
+                    @endif
+                    @if ($switchTable == 'simulasi' || $switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'sks_sm',
+                            'headString' => 'Simulasi',
+                            // 'isSubHeader' => 1,
+                            'isCenter' => 1,
+                        ])
+                    @endif
+                </tr>
+            @endif
+        </x-slot:header>
 
-            <td class="table-main text-center table-border-x">
-                <flux:dropdown>
-                    <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
-                    </flux:button>
-                    @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 4])
-                </flux:dropdown>
-            </td>
 
-            <td class="table-second whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
-            <td class="table-second whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
-                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                Tidak ada data Mata Kuliah ditemukan!
-            </td>
-        </tr>
-    @endforelse
+        @forelse($mks as $mk)
+            <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-    </x-admin.global.table.main-layout-table>
+                <td class="table-second text-center">{{ $mk->id }}</td>
+                <td class="table-second text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
+                            @include('livewire.global.table.badge.level-mk-badge', [
+                                'xValue' => $mk->digit_mk,
+                                'sortir' => $mk->level_mk,
+                            ])
+                        </button>
+                        @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 1])
+                    </flux:dropdown>
+                </td>
+
+                <td class="table-main-sticky text-center" wire:click="$dispatch('trigger-mk-modal')">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @include('livewire.global.table.badge.semester-badge', [
+                                'xValue' => $mk->kode,
+                                'sortir' => $mk->semester,
+                            ])
+                        </button>
+                        @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 2])
+                    </flux:dropdown>
+                </td>
+
+                <td class="table-second min-w-84">{{ $mk->mk ?? '-' }}</td>
+                <td class="table-second text-center">{{ $mk->semester ?? '-' }}</td>
+
+                <td class="table-main text-center table-border-x">{{ $mk->sks ?? '-' }}</td>
+
+                @if ($showMore)
+                    @if ($switchTable == 'tatap-muka' || $switchTable == '')
+                        <td class="table-sub text-center">{{ $mk->sks_tm ?? '-' }}</td>
+                    @endif
+
+                    @if ($switchTable == 'praktikum' || $switchTable == '')
+                        <td class="table-sub text-center">
+                            {{ $mk->sks_pr ?? '-' }}</td>
+                    @endif
+
+                    @if ($switchTable == 'praktek-lapangan' || $switchTable == '')
+                        <td class="table-sub text-center">
+                            {{ $mk->sks_pl ?? '-' }}</td>
+                    @endif
+
+                    @if ($switchTable == 'simulasi' || $switchTable == '')
+                        <td class="table-sub text-center">
+                            {{ $mk->sks_sm ?? '-' }}</td>
+                    @endif
+                @endif
+
+                <td class="table-second table-border-l text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
+                            @include('livewire.global.table.badge.wajib-badge', [
+                                'xValue' => $mk->wajib_text,
+                                'sortir' => $mk->wajib,
+                            ])
+                        </button>
+                        @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 3])
+                    </flux:dropdown>
+                </td>
+
+                <td class="table-main text-center table-border-x">
+                    <flux:dropdown>
+                        <flux:button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')" variant="ghost"
+                            size="sm" icon="ellipsis-horizontal" inset="top bottom">
+                        </flux:button>
+                        @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 4])
+                    </flux:dropdown>
+                </td>
+
+                @if ($showMore)
+                    <td class="table-second whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
+                @endif
+                <td class="table-second whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
+                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                    Tidak ada data Mata Kuliah ditemukan!
+                </td>
+            </tr>
+        @endforelse
+
+        </x-admin.global.table.main-layout-table>
+</div>

@@ -1,88 +1,69 @@
-{{-- ****************************************************** --}}
-{{-- 3. INPUT FAKULTAS --}}
-{{-- ****************************************************** --}}
-<div
-    class="form-container">
-    <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
-        Input Fakultas</h4>
+<div x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showProdiModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showProdiModal
+    ">
 
-    {{-- 📧 Fakultas Input --}}
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'prodi',
-        'nameXString' => 'Nama Fakultas',
-        'modelString' => 'nama_fk',
-        'iconString' => 'building-library',
-        'placeholder' => 'Masukkan nama Fakultas',
-        'message' => $errors->first('nama_fk')
-    ])
+    {{-- 🔹 HEADER TAB CONTAINER --}}
+    <template x-if="$store.user.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [
+                1 => 'Fakultas',
+                2 => 'Dekan & Wakil Dekan',
+            ],
+            'errorsCount' => $this->getProdiErrorSections(),
+        ])
+    </template>
+    <template x-if="$store.user.isEdit == 0" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [1 => 'Fakultas', 2 => 'Dekan & Wakil Dekan'],
+            'errorsCount' => $this->getProdiErrorSections(),
+        ])
+    </template>
 
-    {{-- 📧 Kode Fakultas Input --}}
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'prodi',
-        'nameXString' => 'Kode Fakultas',
-        'modelString' => 'kode_fk',
-        'iconString' => 'hashtag',
-        'placeholder' => 'Masukkan 3 huruf Kode Fakultas',
-        'message' => $errors->first('kode_fk'),
-        'isKode' => 3,
-        'isFocusSelect' => 1,
-    ])
+    {{-- ****************************************************** --}}
+    {{-- 3. INPUT FAKULTAS --}}
+    {{-- ****************************************************** --}}
+    <div class="mt-4">
 
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'prodi',
-        'xResults' => $dosenResults,
-        'selectX' => 'selectDosen',
-        'modelString' => 'nama_dosen_search',
-    
-        'idString' => 'dosen_id[0]',
-        'itemsAllString' => 'dosen_items[0]',
+        <div x-show="step === 1">
+            <div class="form-container">
+                <h4
+                    class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
+                    Input Fakultas</h4>
 
-        'kodeHeadString' => 'NIP:',
-        'x2HeadString' => 'NIDN:',
-        'x3HeadString' => 'NIDK:',
-        'x4HeadString' => 'Status:',
+                {{-- 📧 Fakultas Input --}}
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'prodi',
+                    'nameXString' => 'Nama Fakultas',
+                    'modelString' => 'nama_fk',
+                    'iconString' => 'building-library',
+                    'placeholder' => 'Masukkan nama Fakultas',
+                    'message' => $errors->first('nama_fk'),
+                ])
 
-        'resetXInput' => 'resetDosenInput()',
-        'typeXString' => 'name',
-        'typeX2String' => 'nidn',
-        'typeX3String' => 'nidk',
-        'typeX4String' => 'status',
-        'typeX5String' => 'prodi',
-    
-        'nameXString' => 'Dekan',
-        'nameSearchString' => 'dosenNameSearch[0]',
-        'fetchString' => 'fetchDosen',
-        'iconString' => 'user',
-        'wireLoading' => 'fetchDosen',
-        'isRequired' => 0,
-    ])
+                {{-- 📧 Kode Fakultas Input --}}
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'prodi',
+                    'nameXString' => 'Kode Fakultas',
+                    'modelString' => 'kode_fk',
+                    'iconString' => 'hashtag',
+                    'placeholder' => 'Masukkan 3 huruf Kode Fakultas',
+                    'message' => $errors->first('kode_fk'),
+                    'isKode' => 3,
+                    'isFocusSelect' => 1,
+                ])
 
-    @include('livewire.global.modal-form.input-array.search-input-form', [
-        'alpine' => 'prodi',
-        'xResults' => $dosenResults,
-        'selectX' => 'selectDosen',
-        'modelString' => 'nama_dosen_search',
-    
-        'idString' => 'dosen_id[1]',
-        'itemsAllString' => 'dosen_items[1]',
+            </div>
+        </div>
 
-        'kodeHeadString' => 'NIP:',
-        'x2HeadString' => 'NIDN:',
-        'x3HeadString' => 'NIDK:',
-        'x4HeadString' => 'Status:',
+        <div x-show="step === 2">
+            @include('livewire.admin.prodi-management.prodi-modal-form.prodi-input-partial.fakultas-dekan-input')
+        </div>
 
-        'resetXInput' => 'resetDosenInput()',
-        'typeXString' => 'name',
-        'typeX2String' => 'nidn',
-        'typeX3String' => 'nidk',
-        'typeX4String' => 'status',
-        'typeX5String' => 'prodi',
-    
-        'nameXString' => 'Wakil Dekan (Wadek)',
-        'nameSearchString' => 'dosenNameSearch[1]',
-        'fetchString' => 'fetchDosen',
-        'iconString' => 'user',
-        'wireLoading' => 'fetchDosen',
-        'isRequired' => 0,
-    ])
+
+
+    </div>
 </div>

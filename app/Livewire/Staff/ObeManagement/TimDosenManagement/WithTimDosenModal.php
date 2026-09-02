@@ -514,7 +514,6 @@ trait WithTimDosenModal
             'dosen_items_array.required' => 'Data detail Dosen tidak boleh kosong!',
             'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
             'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
-            'dosen_id_array.required' => 'Dosen pengampu wajib diisi!',
         ];
     }
 

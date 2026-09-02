@@ -49,20 +49,24 @@
         @elseif (
             $this->switchTable == 'card' ||
                 ($this->switchTable == 'hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
-            @if ($this->switchTable == 'hari-ini' && $stats['sesi-hari-ini'] == 0)
-                @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', [
-                    'mb' => 'mb-6',
-                ])
-            @endif
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
+            <div wire:key="view-card-sesi-and-jadwal-kosong-message">
+                @if ($this->switchTable == 'hari-ini' && $stats['sesi-hari-ini'] == 0)
+                    @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', [
+                        'mb' => 'mb-6',
+                    ])
+                @endif
+                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
+            </div>
         @elseif ($this->switchTable == 'table')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table')
         @elseif ($this->switchTable == 'mahasiswa')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-table')
         @elseif ($this->switchTable == 'cpmk')
-            @if (Auth::user()->admin || Auth::user()->dosen)
-                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-cpmk-sesi-table')
-            @endif
+            <div wire:key="view-table-mahasiswa-cpmk-sesi-and-grafik">
+                @if (Auth::user()->admin || Auth::user()->dosen)
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-cpmk-sesi-table')
+                @endif
+            </div>
         @endif
     </div>
 

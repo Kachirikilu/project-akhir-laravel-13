@@ -1,3 +1,4 @@
+<div wire:key="view-table-rps">
 <x-global.main-layout-table :paginator="$rps">
     @php
         $showMore = $showMore ?? false;
@@ -34,8 +35,6 @@
                 'icon' => 'calendar-days',
             ])
         </div>
-
-
     </x-slot:leftSecHead>
 
     <x-slot:rightSecHead>
@@ -81,7 +80,7 @@
                     Mata Kuliah
                 </th>
 
-                @if (!$withCapaian)
+                @if (!$withCapaian || $showMore)
                     <th colspan="3" class="table-head-sub">
                         Capaian Pebelajaran Mata Kuliah
                     </th>
@@ -107,14 +106,15 @@
             <th rowspan="2" class="table-head border-x">Aksi</th>
 
 
-            @if (!$withCapaian)
-                @if ($showMore)
-                    @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'created_at',
-                        'isCenter' => 1,
-                        'rowSpan' => 2,
-                    ])
-                @endif
+            @if ($showMore)
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'created_at',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
+
+            @if (!$withCapaian || $showMore)
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'updated_at',
                     'isCenter' => 1,
@@ -178,7 +178,7 @@
                     'isCenter' => 1,
                 ])
 
-                @if (!$withCapaian)
+                @if (!$withCapaian || $showMore)
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'count_cpmk',
                         'headString' => 'CPMK',
@@ -309,7 +309,7 @@
                     </flux:dropdown>
                 </td>
 
-                @if (!$withCapaian)
+                @if (!$withCapaian || $showMore)
                     <td class="table-second table-border-l whitespace-nowrap text-center">
                         {{-- {{ $r->cpmks_count . ' CPMK' ?? '-' }} --}}
                         {{ $r->count_cpmk . ' CPMK' ?? '-' }}
@@ -401,10 +401,11 @@
                 </flux:dropdown>
             </td>
 
-            @if (!$withCapaian)
-                @if ($showMore)
-                    <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
-                @endif
+            @if ($showMore)
+                <td class="table-second whitespace-nowrap text-center">{{ $r->created_day ?? '-' }}</td>
+            @endif
+
+            @if (!$withCapaian || $showMore)
                 <td class="table-second whitespace-nowrap text-center">{{ $r->updated_day ?? '-' }}</td>
             @endif
         </tr>
@@ -418,3 +419,4 @@
     @endforelse
 
     </x-admin.global.table.main-layout-table>
+</div>

@@ -187,7 +187,7 @@ class UserManagement extends Component
             'updated_at' => ['updated_at'],
         ];
 
-        // $this->sortField($table, $sortField, $columns, $aliases);
+        $this->sortField($table, $sortField, $columns, $aliases);
     }
 
     public function switchingTable($table)

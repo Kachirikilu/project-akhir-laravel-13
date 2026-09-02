@@ -112,7 +112,7 @@ NODEJS_URL=https://jmntvb5f-3000.asse.devtunnels.ms/wa-api
 # NODEJS_URL=https://cool-plums-rest.loca.lt/wa-api
 NODEJS_TOKEN=Wildan12TokenWhatsAppNodeJSQWERTYUIOPLKJHGFDSAZXCVBNM
 OCTANE_SERVER=frankenphp
-# OCTANE_SERVER=roadrunnder
+# OCTANE_SERVER=roadrunner
 FRANKENPHP_ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 FRANKENPHP_CADDY_GLOBAL_OPTIONS="local_certs"
 

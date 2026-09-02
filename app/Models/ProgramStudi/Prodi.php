@@ -37,6 +37,16 @@ class Prodi extends Model
         return $this->hasMany(Dosen::class, 'pr_id', 'id');
     }
 
+    public function kaprodi_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'kaprodi_id')->withTrashed();
+    }
+
+    public function sekprodi_rel()
+    {
+        return $this->belongsTo(Dosen::class, 'sekprodi_id')->withTrashed();
+    }
+
     public function dp_rel()
     {
         return $this->belongsTo(Departemen::class, 'dp_id')->withTrashed();
@@ -110,6 +120,24 @@ class Prodi extends Model
             'pr_id',
             'mk_id'
         )->withTimestamps();
+    }
+
+    protected function nama_kaprodi(): Attribute
+    {
+        return Attribute::get(fn () => $this->kaprodi_rel->name ?? '-');
+    }
+    protected function nip_kaprodi(): Attribute
+    {
+        return Attribute::get(fn () => $this->kaprodi_rel->nip ?? '-');
+    }
+
+    protected function nama_sekprodi(): Attribute
+    {
+        return Attribute::get(fn () => $this->sekprodi_rel->name ?? '-');
+    }
+    protected function nip_sekprodi(): Attribute
+    {
+        return Attribute::get(fn () => $this->sekprodi_rel->nip ?? '-');
     }
 
     protected function strataS(): Attribute

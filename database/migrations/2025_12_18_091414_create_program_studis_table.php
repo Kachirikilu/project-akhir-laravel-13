@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('kode_fk')->unique();
             $table->string('nama_fk');
+            $table->foreignId('dekan_id')->nullable()->constrained('dosens')->onDelete('set null');
+            $table->foreignId('wadek_id')->nullable()->constrained('dosens')->onDelete('set null');
             $table->decimal('nilai_fk', 5, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
@@ -22,10 +24,13 @@ return new class extends Migration
             $table->index('fk_id');
             $table->string('kode_dp')->nullable();
             $table->string('nama_dp');
+            $table->foreignId('kadep_id')->nullable()->constrained('dosens')->onDelete('set null');
+            $table->foreignId('sekdep_id')->nullable()->constrained('dosens')->onDelete('set null');
             $table->decimal('nilai_dp', 5, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
+
         Schema::create('prodis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('dp_id')->nullable() ->constrained('departemens')->onDelete('set null');
@@ -35,6 +40,8 @@ return new class extends Migration
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
             $table->tinyInteger('target_sks')->unsigned()->default(144);
             $table->decimal('nilai_pr', 5, 2)->default(0);
+            $table->foreignId('kaprodi_id')->nullable()->constrained('dosens')->onDelete('set null');
+            $table->foreignId('sekprodi_id')->nullable()->constrained('dosens')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['strata', 'nama_pr']);

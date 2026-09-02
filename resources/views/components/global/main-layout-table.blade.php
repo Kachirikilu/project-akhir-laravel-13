@@ -44,8 +44,7 @@
 
 
 @if (isset($leftHead) || isset($rightHead))
-    <div
-        class="pb-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-1 mb-4">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
         <div class="flex flex-row items-center gap-2">
             @if (isset($leftHead))
                 {{ $leftHead }}
@@ -82,16 +81,11 @@
             <thead class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
-            <tbody 
-                x-data="{ isLoading: false }"
-                x-init="
-                    window.addEventListener('table-loading-trigger', () => { isLoading = true; });
-                    window.addEventListener('stop-loading-trigger', () => { isLoading = false; });
-                "
+            <tbody x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });
+            window.addEventListener('stop-loading-trigger', () => { isLoading = false; });"
                 x-bind:class="isLoading ? 'opacity-50 pointer-events-none' : ''"
                 wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-                class="bg-[var(--second-table-color)] table-border divide-y"
-            >
+                class="bg-[var(--second-table-color)] table-border divide-y">
                 {{ $slot }}
             </tbody>
         </table>
