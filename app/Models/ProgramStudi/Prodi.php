@@ -23,6 +23,9 @@ class Prodi extends Model
         'nama_pr',
         'strata',
         'nilai_pr',
+        'target_sks',
+        'kaprodi_id',
+        'sekprodi_id',
     ];
 
     protected $appends = ['kode', 'prodi', 'departemen', 'fakultas'];
@@ -39,17 +42,17 @@ class Prodi extends Model
 
     public function kaprodi_rel()
     {
-        return $this->belongsTo(Dosen::class, 'kaprodi_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'kaprodi_id');
     }
 
     public function sekprodi_rel()
     {
-        return $this->belongsTo(Dosen::class, 'sekprodi_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'sekprodi_id');
     }
 
     public function dp_rel()
     {
-        return $this->belongsTo(Departemen::class, 'dp_id')->withTrashed();
+        return $this->belongsTo(Departemen::class, 'dp_id');
     }
 
     protected function rekapPr(): Attribute
@@ -122,20 +125,22 @@ class Prodi extends Model
         )->withTimestamps();
     }
 
-    protected function nama_kaprodi(): Attribute
+    protected function namaKaprodi(): Attribute
     {
         return Attribute::get(fn () => $this->kaprodi_rel->name ?? '-');
     }
-    protected function nip_kaprodi(): Attribute
+
+    protected function nipKaprodi(): Attribute
     {
         return Attribute::get(fn () => $this->kaprodi_rel->nip ?? '-');
     }
 
-    protected function nama_sekprodi(): Attribute
+    protected function namaSekprodi(): Attribute
     {
         return Attribute::get(fn () => $this->sekprodi_rel->name ?? '-');
     }
-    protected function nip_sekprodi(): Attribute
+
+    protected function nipSekprodi(): Attribute
     {
         return Attribute::get(fn () => $this->sekprodi_rel->nip ?? '-');
     }
@@ -459,6 +464,24 @@ class Prodi extends Model
         $searchLower = strtolower($search);
 
         return $query->orWhere(function ($q) use ($search, $searchCleaned, $searchTerm, $searchLower) {
+
+            $searchDigits = preg_replace('/[^0-9]/', '', $search);
+
+            $q->orWhereHas('kaprodi_rel', function ($dq) use ($searchTerm, $searchDigits) {
+                $dq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (!empty($searchDigits)) {
+                    $dq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            })->orWhereHas('sekprodi_rel', function ($wq) use ($searchTerm, $searchDigits) {
+                $wq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (!empty($searchDigits)) {
+                    $wq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            });
 
             // ===== Nilai / Index =====
             $q->orWhere(function ($sub) use ($searchCleaned) {

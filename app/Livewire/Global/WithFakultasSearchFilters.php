@@ -20,7 +20,7 @@ trait WithFakultasSearchFilters
 
     public $fk_items = [];
 
-    public $fkNameSearch = '';
+    public $fkNameSearch;
 
     public $fkResults = [];
 
@@ -207,7 +207,7 @@ trait WithFakultasSearchFilters
     {
         $this->fk_id = null;
         $this->fk_items = null;
-        $this->fkNameSearch = '';
+        $this->fkNameSearch;
 
         $this->haveFkChild();
 

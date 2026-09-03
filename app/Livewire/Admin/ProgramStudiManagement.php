@@ -3,39 +3,39 @@
 namespace App\Livewire\Admin;
 
 use App\Http\Services\RekapCapaian;
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithDepartemenSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Global\HasSortir;
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasStats;
+use App\Livewire\Global\HasToast;
+use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class ProgramStudiManagement extends Component
 {
     use HasSortir;
-    use HasToast;
     use HasStats;
+    use HasToast;
     use RekapCapaian;
-    use WithProdiSearchFilters;
-    use WithDepartemenSearchFilters;
-    use WithFakultasSearchFilters;
     use WithDepartemenFilters;
+    use WithDepartemenSearchFilters;
     use WithFakultasFilters;
+    use WithFakultasSearchFilters;
     use WithPagination;
     use WithProdiDelete;
     use WithProdiExcel;
     use WithProdiFilters;
+    use WithProdiSearchFilters;
 
     public $perPage = 8;
 
@@ -64,7 +64,7 @@ class ProgramStudiManagement extends Component
         'refresh-data-prodi' => 'refreshDataProdisList',
         'refresh-stats-prodi' => 'refreshStatsProdisList',
         'loadDraft' => 'loadDraft',
-        'saveToDraft' => 'saveToDraft'
+        'saveToDraft' => 'saveToDraft',
     ];
 
     protected $queryString = [
@@ -119,7 +119,8 @@ class ProgramStudiManagement extends Component
         $this->clearProdiStatsCache();
     }
 
-    public function refreshStats() {
+    public function refreshStats()
+    {
         $this->refreshStatsProdisList();
         $this->resetPage();
         $this->toast(text: 'Data Statistik Program Studi berhasil diperbarui!', type: 'info', variant: 'info');
@@ -144,9 +145,49 @@ class ProgramStudiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            '' => [1 => 'id', 2 => 'kode', 3 => 'program_studi', 4 => 'rekap_pr', 5 => 'index_pr', 6 => 'count_mk', 6 => 'count_rps_aktif', 6 => 'count_rps_draf', 7 => 'akreditas_pr', 8 => 'departemen', 9 => 'fakultas', 10 => 'strata', 11 => 'created_at', 12 => 'updated_at'],
-            'departemen' => [1 => 'id', 2 => 'kode', 3 => 'departemen', 4 => 'rekap_dp', 5 => 'index_dp', 6 => 'akreditas_dp', 7 => 'fakultas', 8 => 'created_at', 9 => 'updated_at'],
-            'fakultas' => [1 => 'id', 2 => 'kode', 3 => 'fakultas', 4 => 'rekap_fk', 5 => 'index_fk', 6 => 'akreditas_fk', 7 => 'created_at', 8 => 'updated_at'],
+            '' => [
+                1 => 'id',
+                2 => 'kode',
+                3 => 'program_studi',
+                4 => 'kaprodi',
+                5 => 'sekprodi',
+                6 => 'rekap_pr',
+                7 => 'index_pr',
+                8 => 'count_mk',
+                9 => 'count_rps_aktif',
+                10 => 'count_rps_draf',
+                11 => 'akreditas_pr',
+                12 => 'departemen',
+                13 => 'fakultas',
+                14 => 'strata',
+                15 => 'created_at',
+                16 => 'updated_at',
+            ],
+            'departemen' => [
+                1 => 'id',
+                2 => 'kode',
+                3 => 'departemen',
+                4 => 'kadep',
+                5 => 'sekdep',
+                6 => 'rekap_dp',
+                7 => 'index_dp',
+                8 => 'akreditas_dp',
+                9 => 'fakultas',
+                10 => 'created_at',
+                11 => 'updated_at',
+            ],
+            'fakultas' => [
+                1 => 'id',
+                2 => 'kode',
+                3 => 'fakultas',
+                4 => 'dekan',
+                5 => 'wadek',
+                6 => 'rekap_fk',
+                7 => 'index_fk',
+                8 => 'akreditas_fk',
+                9 => 'created_at',
+                10 => 'updated_at',
+            ],
         ];
         $aliases = [
             'kode' => ['kode'],
@@ -161,6 +202,8 @@ class ProgramStudiManagement extends Component
             'akreditas_pr' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
             // 'akreditas_dp' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
             // 'akreditas_fk' => ['akreditas_pr', 'akreditas_dp', 'akreditas_fk'],
+            'dekan' => ['dekan', 'kadep', 'kaprodi'],
+            'wadek' => ['wadek', 'sekdep', 'sekprodi'],
 
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at'],
@@ -280,7 +323,6 @@ class ProgramStudiManagement extends Component
                 $countDp->onlyTrashed();
                 $countFk->onlyTrashed();
             }
-
 
             return view('livewire.admin.prodi-management', [
                 'prodis' => $prodis,

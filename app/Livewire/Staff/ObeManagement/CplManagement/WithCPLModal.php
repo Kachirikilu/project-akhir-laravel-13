@@ -430,7 +430,7 @@ trait WithCPLModal
                     }
                 },
             ];
-            $rules['pr_id_array'] = 'required|array|min:1';
+            $rules['pr_id_array'] = 'required|array|min:1|exists:prodis,id';
         } elseif ($level === 3) {
             $rules['fk_id'] = [
                 'required', 'integer', 'exists:fakultas,id',
@@ -455,9 +455,9 @@ trait WithCPLModal
                     }
                 },
             ];
-            $rules['pr_id_array'] = 'required|array|min:1';
+            $rules['pr_id_array'] = 'required|array|min:1|exists:prodis,id';
         } elseif ($level === 4) {
-            $rules['pr_id_array'] = 'nullable|array';
+            $rules['pr_id_array'] = 'nullable|array|exists:prodis,id';
         }
 
         // =========================================================================
@@ -763,17 +763,18 @@ trait WithCPLModal
         return [
             'fk_id.required' => 'Fakultas wajib diisi!',
             'fk_id.integer' => 'ID Fakultas harus berupa angka!',
-            'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
+            'fk_id.exists' => 'Fakultas yang dipilih tidak tersedia!',
             'dp_id.required' => 'Departemen wajib diisi!',
             'dp_id.integer' => 'ID Departemen harus berupa angka!',
-            'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
+            'dp_id.exists' => 'Departemen yang dipilih tidak tersedia!',
             'pr_id.required' => 'Program Studi wajib diisi!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
-            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak tersedia!',
 
             'pr_id_array.required' => 'Program Studi wajib diisi!',
             'pr_id_array.array' => 'Program Studi dalam bentuk Array!',
             'pr_id_array.min' => 'Program Studi minimal berisi satu data!',
+            'pr_id_array.exists' => 'Program Studi yang dipilih tidak tersedia!',
 
             'kode_cpl_1.required' => 'Kode awalan (input kiri) wajib diisi!',
             'kode_cpl_1.alpha' => 'Kode awalan harus berupa huruf!',

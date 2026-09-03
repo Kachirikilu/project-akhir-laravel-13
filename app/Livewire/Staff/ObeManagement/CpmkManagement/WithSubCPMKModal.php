@@ -196,7 +196,7 @@ trait WithSubCPMKModal
             'waktu_tugas' => 'nullable|integer|min:60',
             'waktu_mandiri' => 'nullable|integer|min:60',
             'bobot' => 'required|numeric|min:0.5|max:100',
-            'ref_id_array' => 'required|array|min:1',
+            'ref_id_array' => 'required|array|min:1|exists:referensis,id',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesSCPMK());
@@ -516,6 +516,7 @@ trait WithSubCPMKModal
             'ref_id_array.required' => 'Minimal pilih satu Referensi untuk Sub-CPMK ini!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
             'ref_id_array.min' => 'Minimal harus ada satu Referensi yang dipilih!',
+            'ref_id_array.exists' => 'Referensi yang dipilih tidak tersedia!',
         ];
     }
 
@@ -548,7 +549,7 @@ trait WithSubCPMKModal
 
     private function resetInputSCPMK()
     {
-        $this->refNameSearch = '';
+        $this->refNameSearch;
 
         $this->ref_id_array = [];
         $this->ref_items_array = [];

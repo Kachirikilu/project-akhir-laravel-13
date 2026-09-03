@@ -156,10 +156,17 @@ trait WithDepartemenFilters
                 ->orderBy('fakultas.kode_fk', $this->sortDirection),
             'departemen' => $queryDp->orderBy('nama_dp', $this->sortDirection),
             'fakultas' => $queryDp->orderBy('fakultas.nama_fk', $this->sortDirection),
+
+            // ===== Pimpinan Khusus Departemen =====
+            'kadep' => $queryDp->leftJoin('dosens as d_kadep', 'departemens.kadep_id', '=', 'd_kadep.id')
+                ->orderBy('d_kadep.name', $this->sortDirection),
+            'sekdep' => $queryDp->leftJoin('dosens as d_sekdep', 'departemens.sekdep_id', '=', 'd_sekdep.id')
+                ->orderBy('d_sekdep.name', $this->sortDirection),
+
             'nilai_dp', 'rekap_dp', 'index_dp', 'akreditas_dp' => $queryDp->orderBy('nilai_dp', $this->sortDirection),
             'created_at' => $queryDp->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryDp->orderBy('updated_at', $this->sortDirection),
-            default => $queryDp->orderBy('id', $this->sortDirection),
+            default => $queryDp->orderBy('departemens.id', $this->sortDirection),
         };
     }
 }

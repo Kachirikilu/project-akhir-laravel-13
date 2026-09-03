@@ -2,10 +2,10 @@
 
 namespace App\Models\ProgramStudi;
 
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +14,7 @@ class Fakultas extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['kode_fk', 'nama_fk', 'nilai_fk'];
+    protected $fillable = ['kode_fk', 'nama_fk', 'nilai_fk', 'dekan_id', 'wadek_id'];
 
     protected $appends = ['kode', 'fakultas'];
 
@@ -42,12 +42,12 @@ class Fakultas extends Model
 
     public function dekan_rel()
     {
-        return $this->belongsTo(Dosen::class, 'dekan_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'dekan_id');
     }
 
     public function wadek_rel()
     {
-        return $this->belongsTo(Dosen::class, 'wadek_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'wadek_id');
     }
 
     protected function rekapFk(): Attribute
@@ -100,20 +100,22 @@ class Fakultas extends Model
         );
     }
 
-    protected function nama_dekan(): Attribute
+    protected function namaDekan(): Attribute
     {
         return Attribute::get(fn () => $this->dekan_rel->name ?? '-');
     }
-    protected function nip_dekan(): Attribute
+
+    protected function nipDekan(): Attribute
     {
         return Attribute::get(fn () => $this->dekan_rel->nip ?? '-');
     }
 
-    protected function nama_wadek(): Attribute
+    protected function namaWadek(): Attribute
     {
         return Attribute::get(fn () => $this->wadek_rel->name ?? '-');
     }
-    protected function nip_wadek(): Attribute
+
+    protected function nipWadek(): Attribute
     {
         return Attribute::get(fn () => $this->wadek_rel->nip ?? '-');
     }
@@ -208,25 +210,44 @@ class Fakultas extends Model
 
         return $query->orWhere(function ($q) use ($searchCleaned, $searchTerm, $searchLower) {
 
+            $searchDigits = preg_replace('/[^0-9]/', '', $search);
+
+            $q->orWhereHas('dekan_rel', function ($dq) use ($searchTerm, $searchDigits) {
+                $dq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (! empty($searchDigits)) {
+                    $dq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            })->orWhereHas('wadek_rel', function ($wq) use ($searchTerm, $searchDigits) {
+                $wq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (! empty($searchDigits)) {
+                    $wq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            });
+
             // ===== Nilai / Index =====
             $q->orWhere(function ($sub) use ($searchCleaned) {
 
                 $mapHuruf = [
-                    'A'  => [85,100],
-                    'A-' => [80,84.99],
-                    'B+' => [75,79.99],
-                    'B'  => [70,74.99],
-                    'B-' => [65,69.99],
-                    'C+' => [60,64.99],
-                    'C'  => [55,59.99],
-                    'D'  => [40,54.99],
-                    'E'  => [0,39.99],
+                    'A' => [85, 100],
+                    'A-' => [80, 84.99],
+                    'B+' => [75, 79.99],
+                    'B' => [70, 74.99],
+                    'B-' => [65, 69.99],
+                    'C+' => [60, 64.99],
+                    'C' => [55, 59.99],
+                    'D' => [40, 54.99],
+                    'E' => [0, 39.99],
                 ];
 
                 $upper = strtoupper($searchCleaned);
 
                 if (isset($mapHuruf[$upper])) {
                     $sub->orWhereBetween('nilai_fk', $mapHuruf[$upper]);
+
                     return;
                 }
 
@@ -243,15 +264,15 @@ class Fakultas extends Model
                         );
 
                         $mapIndex = [
-                            '4.00'=>[85,100],
-                            '3.70'=>[80,84.99],
-                            '3.30'=>[75,79.99],
-                            '3.00'=>[70,74.99],
-                            '2.70'=>[65,69.99],
-                            '2.30'=>[60,64.99],
-                            '2.00'=>[55,59.99],
-                            '1.00'=>[40,54.99],
-                            '0.00'=>[0,39.99],
+                            '4.00' => [85, 100],
+                            '3.70' => [80, 84.99],
+                            '3.30' => [75, 79.99],
+                            '3.00' => [70, 74.99],
+                            '2.70' => [65, 69.99],
+                            '2.30' => [60, 64.99],
+                            '2.00' => [55, 59.99],
+                            '1.00' => [40, 54.99],
+                            '0.00' => [0, 39.99],
                         ];
 
                         $key = number_format($value, 2, '.', '');

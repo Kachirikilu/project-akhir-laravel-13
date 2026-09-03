@@ -654,13 +654,6 @@ trait WithProdiSearchFilters
                 'target_sks' => fn ($pr) => $pr->target_sks,
                 'strata' => fn ($pr) => $pr->strata,
 
-                'dekan' => fn ($pr) => $pr->nama_dekan ?? ($pr->dekan_rel->name ?? null),
-                'wadek' => fn ($pr) => $pr->nama_wadek ?? ($pr->wadek_rel->name ?? null),
-                'kadep' => fn ($pr) => $pr->nama_kadep ?? ($pr->kadep_rel->name ?? null),
-                'sekdep' => fn ($pr) => $pr->nama_sekdep ?? ($pr->sekdep_rel->name ?? null),
-                'kaprodi' => fn ($pr) => $pr->nama_kaprodi ?? ($pr->kaprodi_rel->name ?? null),
-                'sekprodi' => fn ($pr) => $pr->nama_sekprodi ?? ($pr->sekprodi_rel->name ?? null),
-
                 'rekap_pr',
                 'nilai_pr',
                 'rekap_dp',

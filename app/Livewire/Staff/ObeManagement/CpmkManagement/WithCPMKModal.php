@@ -229,9 +229,9 @@ trait WithCPMKModal
                 },
             ],
             'deskripsi' => 'nullable|string|min:1|max:1000',
-            'scpmk_id_array' => 'required|array|min:1',
-            'cpl_id_array' => 'required|array|min:1',
-            'ref_id_array' => 'nullable|array',
+            'scpmk_id_array' => 'required|array|min:1|exists:sub_cpmks,id',
+            'cpl_id_array' => 'required|array|min:1|exists:cpls,id',
+            'ref_id_array' => 'nullable|array|exists:referensis,id',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesCPMK());
@@ -524,12 +524,15 @@ trait WithCPMKModal
             'scpmk_id_array.required' => 'Minimal pilih satu Sub-CPMK untuk CPMK ini!',
             'scpmk_id_array.array' => 'Format data Sub-CPMK tidak valid!',
             'scpmk_id_array.min' => 'Minimal harus ada satu Sub-CPMK yang dipilih!',
+            'scpmk_id_array.exists' => 'Sub-CPMK yang dipilih tidak tersedia!',
 
             'cpl_id_array.required' => 'Minimal pilih satu CPL untuk CPMK ini!',
             'cpl_id_array.array' => 'Format data CPL tidak valid!',
             'cpl_id_array.min' => 'Minimal harus ada satu CPL yang dipilih!',
+            'cpl_id_array.exists' => 'CPL yang dipilih tidak tersedia!',
 
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
+            'ref_id_array.exists' => 'Referensi yang dipilih tidak tersedia!',
         ];
     }
 
@@ -554,10 +557,10 @@ trait WithCPMKModal
 
     private function resetInputCPMK()
     {
-        $this->scpmkNameSearch = '';
-        $this->cplNameSearch = '';
+        $this->scpmkNameSearch;
+        $this->cplNameSearch;
         // $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = '';
+        $this->refNameSearch;
 
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];

@@ -98,7 +98,7 @@ trait WithJadwalDelete
     private function checkJadwalSafety($jadwal)
     {
         if ($jadwal->mahasiswas()->exists()) {
-            throw new \Exception('Gagal hapus permanen: Jadwal Kelas masih memiliki Mahasiswa!');
+            throw new \Exception('Gagal Hapus Permanen: Jadwal Kelas masih memiliki Mahasiswa!');
         }
     }
 

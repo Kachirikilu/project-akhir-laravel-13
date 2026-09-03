@@ -421,13 +421,13 @@ trait WithMKModal
         return [
             'fk_id.required' => 'Fakultas wajib diisi!',
             'fk_id.integer' => 'ID Fakultas harus berupa angka!',
-            'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
+            'fk_id.exists' => 'Fakultas yang dipilih tidak tersedia!',
             'dp_id.required' => 'Departemen wajib diisi!',
             'dp_id.integer' => 'ID Departemen harus berupa angka!',
-            'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
+            'dp_id.exists' => 'Departemen yang dipilih tidak tersedia!',
             'pr_id.required' => 'Program Studi wajib diisi!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
-            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak tersedia!',
 
             'pr_id_array.required' => 'Program Studi wajib diisi!',
             'pr_id_array.array' => 'Program Studi dalam bentuk Array!',
@@ -458,7 +458,7 @@ trait WithMKModal
 
             // Tipe SKS & Status Wajib
             'tipe_sks.required' => 'Tipe SKS wajib dipilih!',
-            'tipe_sks.in' => 'Tipe SKS yang dipilih tidak valid!',
+            'tipe_sks.in' => 'Tipe SKS yang dipilih tidak tersedia!',
             'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan!',
             'is_wajib.boolean' => 'Format status wajib tidak valid!',
 

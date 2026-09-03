@@ -10,35 +10,44 @@
             $param4 = isset($typeX4String) ? "'" . addslashes($itemLabel4) . "'" : 'null';
             $param5 = isset($typeX5String) ? "'" . addslashes($itemLabel5) . "'" : 'null';
             $paramLink = isset($typeLinkString) ? "'" . addslashes($itemLink) . "'" : 'null';
+
+            $selectPayload = isset($sendLabelAsValue) && $sendLabelAsValue 
+                ? "'" . addslashes($itemLabel) . "'" 
+                : $itemId;
         @endphp
+
         <button type="button"
             @click="
-                            if (items.includes({{ $itemId }})) {
-                                let index = items.indexOf({{ $itemId }});
-                                if (index !== -1) {
-                                    items.splice(index, 1);
-                                    itemsAll.splice(index, 1);
-                                }
-                            } else {
-                               addItem(
-                                    {{ $itemId }}, 
-                                    '{{ addslashes($itemKode) }}', 
-                                    '{{ addslashes($itemLabel) }}', 
-                                    {{ $param2 }}, 
-                                    {{ $param3 }},
-                                    {{ $param4 }},
-                                    {{ $param5 }},
-                                    {{ $paramLink }}
-                                );
-                                @isset($selectX)
-                                    $wire.{{ $selectX }}({{ $itemId }}@isset($key), '{{ addslashes($key) }}'@endisset);
-                                @endisset
-                            }
-                            "
+                if (items.includes({{ $itemId }})) {
+                    let index = items.indexOf({{ $itemId }});
+                    if (index !== -1) {
+                        items.splice(index, 1);
+                        itemsAll.splice(index, 1);
+                    }
+                } else {
+                    addItem(
+                        {{ $itemId }}, 
+                        '{{ addslashes($itemKode) }}', 
+                        '{{ addslashes($itemLabel) }}', 
+                        {{ $param2 }}, 
+                        {{ $param3 }},
+                        {{ $param4 }},
+                        {{ $param5 }},
+                        {{ $paramLink }}
+                    );
+
+                    @if(isset($selectX) && filled($selectX))
+                        @if(isset($key) && $key !== '')
+                            $wire.call('{{ $selectX }}', {{ $selectPayload }}, '{{ addslashes($key) }}');
+                        @else
+                            $wire.call('{{ $selectX }}', {{ $selectPayload }});
+                        @endif
+                    @endif
+                }
+            "
             :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500 active:bg-red-600' :
                 'bg-[var(--focus-color)] text-white'"
             class="p-1.5 rounded-md transition-all group">
-
 
             @include('livewire.global.modal-form.partial.dropdown-select')
 

@@ -1,52 +1,27 @@
 <div>
-    @php
-        $idEntangle = !empty($idString ?? null) ? str_replace(['[', ']'], ['.', ''], $idString) : null;
-        $itemAllEntangle = !empty($itemsAllString ?? null) ? str_replace(['[', ']'], ['.', ''], $itemsAllString) : null;
-        $parentIdEntangle = !empty($parentIdString ?? null)
-            ? str_replace(['[', ']'], ['.', ''], $parentIdString)
-            : null;
+    <div class="relative"
+        wire:key="input-array.search-input-form-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
+x-data="{
+    open: false,
+    search: @entangle($nameSearchString).live,
+    items: @entangle($idString).live,
+    itemsAll: @entangle($itemsAllString).live,
+    isManual: false,
 
-        $isArrayInput = !empty($nameSearchString) && str_contains($nameSearchString, '[');
-        $nameSearchEntangle = !empty($nameSearchString ?? null)
-            ? str_replace(['[', ']'], ['.', ''], $nameSearchString)
-            : null;
+    hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
+    parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
+    isParentReady: false,
 
-        // Menghasilkan key unik yang aman untuk DOM Livewire
-        // Sertakan selectIndex (jika ada) agar multiple inputs using same selectX tetap unik per-slot
-        $uniqueKey = str_replace(
-            ['[', ']', '.'],
-            '-',
-            ($nameSearchEntangle ?? 'search-input') . '-' . ($typeXString ?? 'type') . '-' . ($selectX ?? '0') . '-' . ($selectIndex ?? ''),
-        );
-    @endphp
-
-    <div class="relative" wire:key="input-search-{{ $uniqueKey }}" x-data="{
-        open: false,
-    
-        search: @if (!$isArrayInput && !empty($nameSearchString)) @entangle($nameSearchString).live 
-                @elseif($nameSearchEntangle) 
-                    @entangle($nameSearchEntangle).live 
-                @else 
-                    '' @endif,
-    
-        items: @if ($idEntangle) @entangle($idEntangle).live @else null @endif,
-        itemsAll: @if ($itemAllEntangle) @entangle($itemAllEntangle).live @else null @endif,
-        isManual: false,
-    
-        hasParent: {{ isset($parentIdEntangle) ? 'true' : 'false' }},
-        parentSelectedId: @if (!empty($parentIdEntangle)) @entangle($parentIdEntangle).live @else null @endif,
-        isParentReady: false,
-    
-        checkReady() {
-            if (!this.hasParent) {
-                this.isParentReady = true;
-            } else if (Array.isArray(this.parentSelectedId)) {
-                this.isParentReady = this.parentSelectedId.length > 0;
-            } else {
-                this.isParentReady = this.parentSelectedId != null && this.parentSelectedId !== '';
-            }
+    checkReady() {
+        if (!this.hasParent) {
+            this.isParentReady = true;
+        } else if (Array.isArray(this.parentSelectedId)) {
+            this.isParentReady = this.parentSelectedId.length > 0;
+        } else {
+            this.isParentReady = this.parentSelectedId != null && this.parentSelectedId !== '';
         }
-    }"
+    }
+}"
         x-effect="
             const config = $store.{{ $alpine ?? 'config' }};
             
@@ -57,15 +32,13 @@
             } else {
                 let currentId = config?.['{{ $idString }}'];
                 if (currentId) {
-                    // Prefer per-index nameSearchString in the store when available
-                    search = config?.['{{ $nameSearchString ?? $modelString }}'];
+                    search = config?.['{{ $modelString }}'];
                     items = config?.['{{ $idString }}'];
                     itemsAll = config?.['{{ $itemsAllString }}'];
                 }
             };
         "
-        x-init="checkReady();
-        $watch('parentSelectedId', () => checkReady());">
+       x-init="checkReady(); $watch('parentSelectedId', () => checkReady())">
 
         @include('livewire.global.modal-form.partial.label')
         @include('livewire.global.modal-form.input-array.partial.input-search', [
@@ -141,7 +114,7 @@
                 @endforelse
             </div>
         </div>
-        @error($idEntangle)
+        @error($idString)
             <span class="text-red-500 text-xs sm:text-sm mt-1 block">{{ $message }}</span>
         @enderror
     </div>

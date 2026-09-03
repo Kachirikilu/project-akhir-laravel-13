@@ -26,7 +26,7 @@ trait WithUserSearchFilters
 
     public $user_items = [];
 
-    public $userNameSearch = '';
+    public $userNameSearch;
 
     public $userResults = [];
 
@@ -163,7 +163,7 @@ trait WithUserSearchFilters
                     $this->user_id = $exactMatch->id;
                     $this->user_items = $this->itemsUser($exactMatch);
                 } else {
-                    $this->userNameSearch = '';
+                    $this->userNameSearch;
                     $this->user_id_array[] = $exactMatch->id;
                     $this->user_items_array[] = $this->itemsUser($exactMatch);
 
@@ -278,7 +278,7 @@ trait WithUserSearchFilters
     {
         $this->user_id_array = [];
         $this->user_items_array = [];
-        $this->userNameSearch = '';
+        $this->userNameSearch;
     }
 
     public function searchOutputUser($queryUser, $searchRaw, $searchAngkatan, $perPage, $sortField = null, $sortDirection = 'asc', $idJadwal = null, $withRPS = false)

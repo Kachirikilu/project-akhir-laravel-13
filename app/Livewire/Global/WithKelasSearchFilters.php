@@ -158,7 +158,7 @@ trait WithKelasSearchFilters
                     $this->kelas_items = $this->itemsKelas($exactMatch);
                     $this->kelasResults = [];
                 } else {
-                    $this->kelasNameSearch = '';
+                    $this->kelasNameSearch;
                     $this->kelas_id_array[] = $exactMatch->id;
                     $this->kelas_items_array[] = $this->itemsKelas($exactMatch);
                     $this->kelas_id_array = collect($this->kelas_id_array)
@@ -280,7 +280,7 @@ trait WithKelasSearchFilters
     {
         $this->kelas_id_array = [];
         $this->kelas_items_array = [];
-        $this->kelasNameSearch = '';
+        $this->kelasNameSearch;
     }
 
     public function searchOutputKelas($queryKelas, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

@@ -49,42 +49,90 @@ trait WithProdiFilters
         string $aliasMk = 'count_mk',
         string $aliasRps = 'count_rps',
         string $aliasRpsAktif = 'count_rps_aktif',
-        string $aliasRpsDraf = 'count_rps_draf',
+        string $aliasRpsDraf = 'count_rps_draf'
     ) {
+        // 1. PENTING: Pastikan kolom utama prodis tetap di-SELECT
+        if (empty($queryPr->getQuery()->columns)) {
+            $queryPr->select('prodis.*');
+        }
+
+        // 2. Subquery Count MK
         $queryPr->selectSub(function ($query) {
             $query->from('prodi_pivot_mk')
                 ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
-                ->selectRaw('COUNT(*)');
+                ->selectRaw('COUNT(DISTINCT prodi_pivot_mk.mk_id)');
         }, $aliasMk);
 
+        // 3. Subquery Count Total RPS
         $queryPr->selectSub(function ($query) {
             $query->from('rps')
-                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'rps.mk_id')
                 ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
-                ->selectRaw('COUNT(rps.id)');
+                ->selectRaw('COUNT(DISTINCT rps.id)');
         }, $aliasRps);
 
+        // 4. Subquery Count RPS Aktif
         $queryPr->selectSub(function ($query) {
             $query->from('rps')
-                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'rps.mk_id')
                 ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
                 ->where('rps.is_draf', 0)
-                ->selectRaw('COUNT(rps.id)');
+                ->selectRaw('COUNT(DISTINCT rps.id)');
         }, $aliasRpsAktif);
 
+        // 5. Subquery Count RPS Draf
         $queryPr->selectSub(function ($query) {
             $query->from('rps')
-                ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
-                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+                ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'rps.mk_id')
                 ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
                 ->where('rps.is_draf', 1)
-                ->selectRaw('COUNT(rps.id)');
+                ->selectRaw('COUNT(DISTINCT rps.id)');
         }, $aliasRpsDraf);
 
         return $queryPr;
     }
+
+    // protected function addMataKuliahProdiPr(
+    //     $queryPr,
+    //     string $aliasMk = 'count_mk',
+    //     string $aliasRps = 'count_rps',
+    //     string $aliasRpsAktif = 'count_rps_aktif',
+    //     string $aliasRpsDraf = 'count_rps_draf',
+    // ) {
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('prodi_pivot_mk')
+    //             ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+    //             ->selectRaw('COUNT(*)');
+    //     }, $aliasMk);
+
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rps')
+    //             ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+    //             ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+    //             ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+    //             ->selectRaw('COUNT(rps.id)');
+    //     }, $aliasRps);
+
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rps')
+    //             ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+    //             ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+    //             ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+    //             ->where('rps.is_draf', 0)
+    //             ->selectRaw('COUNT(rps.id)');
+    //     }, $aliasRpsAktif);
+
+    //     $queryPr->selectSub(function ($query) {
+    //         $query->from('rps')
+    //             ->join('mata_kuliahs', 'mata_kuliahs.id', '=', 'rps.mk_id')
+    //             ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'mata_kuliahs.id')
+    //             ->whereColumn('prodi_pivot_mk.pr_id', 'prodis.id')
+    //             ->where('rps.is_draf', 1)
+    //             ->selectRaw('COUNT(rps.id)');
+    //     }, $aliasRpsDraf);
+
+    //     return $queryPr;
+    // }
 
     // protected function addRekapProdiPr(
     //     $queryPr,
@@ -203,6 +251,11 @@ trait WithProdiFilters
                 ->orderBy('fakultas.nama_fk', $this->sortDirection),
             'target_sks' => $queryPr->orderBy('prodis.target_sks', $this->sortDirection),
             'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
+
+            'kaprodi' => $queryPr->leftJoin('dosens as d_kaprodi', 'prodis.kaprodi_id', '=', 'd_kaprodi.id')
+                ->orderBy('d_kaprodi.name', $this->sortDirection),
+            'sekprodi' => $queryPr->leftJoin('dosens as d_sekprodi', 'prodis.sekprodi_id', '=', 'd_sekprodi.id')
+                ->orderBy('d_sekprodi.name', $this->sortDirection),
 
             'nilai_pr', 'rekap_pr', 'index_pr', 'akreditas_pr' => $queryPr->orderBy('nilai_pr', $this->sortDirection),
 

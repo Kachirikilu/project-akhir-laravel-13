@@ -26,7 +26,7 @@ trait WithRPSSearchFilters
 
     public $rps_items = [];
 
-    public $rpsNameSearch = '';
+    public $rpsNameSearch;
 
     public $rpsResults = [];
 
@@ -193,7 +193,7 @@ trait WithRPSSearchFilters
                     $this->rps_items = $this->itemsRPS($exactMatch);
                     $this->rpsResults = [];
                 } else {
-                    $this->rpsNameSearch = '';
+                    $this->rpsNameSearch;
                     $this->rps_id_array[] = $exactMatch->id;
                     $this->rps_items_array[] = $this->itemsRPS($exactMatch);
 
@@ -248,7 +248,7 @@ trait WithRPSSearchFilters
     //                 $this->rps_items_array[] = $this->itemsRPS($p);
     //             }
     //         }
-    //         $this->rpsNameSearch = '';
+    //         $this->rpsNameSearch;
     //         $this->rpsResults = $this->getRPSbyUser();
 
     //         return;
@@ -301,7 +301,7 @@ trait WithRPSSearchFilters
     //             $this->rps_id = $exactMatch->id;
     //             $this->rps_items = $this->itemsRPS($exactMatch);
     //         } else {
-    //             $this->rpsNameSearch = '';
+    //             $this->rpsNameSearch;
     //             $this->rps_id_array[] = $exactMatch->id;
     //             $this->rps_items_array[] = $this->itemsRPS($exactMatch);
 
@@ -413,7 +413,7 @@ trait WithRPSSearchFilters
     {
         $this->rps_id_array = [];
         $this->rps_items_array = [];
-        $this->rpsNameSearch = '';
+        $this->rpsNameSearch;
     }
 
     public function haveRPSParent($query)

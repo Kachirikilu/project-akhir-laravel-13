@@ -59,12 +59,15 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode FK', 'Fakultas',
+                    'Dekan', '', 'Wakil Dekan', '',
                     'Nilai Capaian Fakultas', '', '',
                     'Program Studi', '',
                     'Departemen', '',
+
                 ],
                 [
                     '', '', '',
+                    'Nama', 'NIP', 'Nama', 'NIP',
                     'Nilai', 'Index', 'Akreditas',
                     'Kode PR', 'Jumlah Program Studi',
                     'Kode DP', 'Jumlah Departemen',
@@ -74,12 +77,14 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode DP', 'Departemen',
+                    'Ketua Departemen', '', 'Sekretaris Departemen', '',
                     'Nilai Capaian Departemen', '', '',
                     'Program Studi', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
+                    'Nama', 'NIP', 'Nama', 'NIP',
                     'Nilai', 'Index', 'Akreditas',
                     'Kode PR', 'Jumlah Program Studi',
                     'Kode FK', 'Nama Fakultas',
@@ -89,6 +94,7 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
             return [
                 [
                     'ID', 'Kode PR', 'Program Studi',
+                    'Ketua Program Studi', '', 'Sekretaris Program Studi', '',
                     'Nilai Capaian Program Studi', '', '', '',
                     'Mata Kuliah & Rencana Pembelajaran Semester', '', '', '',
                     'Departemen', '',
@@ -96,6 +102,7 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
                 ],
                 [
                     '', '', '',
+                    'Nama', 'NIP', 'Nama', 'NIP',
                     'Nilai', 'Index', 'Akreditas', 'Target SKS',
                     'Jumlah MK', 'Jumlah RPS', 'Jumlah RPS Aktif', 'Jumlah RPS Draf',
                     'Kode DP', 'Nama Departemen',
@@ -109,56 +116,80 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
     {
         if ($this->switchTable == 'fakultas') {
             return [
-                $pr->id ?? '', // A
-                $pr->kode ?? '', // B
-                $pr->fakultas_fk ?? '', // C
-                $pr->rekap_fk ?? 0,
-                $pr->index_fk ?? 0,
-                $pr->akreditas_fk ?? 0,
+                $pr->id ?? '',          // A: ID
+                $pr->kode ?? '',        // B: Kode
+                $pr->fakultas_fk ?? '', // C: Nama Fakultas
+
+                // Kolom Baru D, E, F, G
+                $pr->nama_dekan ?? '',  // D: Nama Dekan
+                $pr->nip_dekan ?? '',   // E: NIP Dekan
+                $pr->nama_wadek ?? '',  // F: Nama Wadek
+                $pr->nip_wadek ?? '',   // G: NIP Wadek
+
+                // Kolom Bergeser (H, I, J, K, ...)
+                $pr->rekap_fk ?? 0,     // H
+                $pr->index_fk ?? 0,     // I
+                $pr->akreditas_fk ?? 0, // J
                 $pr->prodis
                     ->map(fn ($prodi) => $prodi->kode)
                     ->unique()
-                    ->implode(' / '),
-                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0',
+                    ->implode(' / '),   // K
+                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0', // L
 
-                $pr->departemens->pluck('kode')->unique()->implode(' / '),
-                $pr->departemens->count() > 0 ? $pr->departemens->count() : '0',
+                $pr->departemens->pluck('kode')->unique()->implode(' / '), // M
+                $pr->departemens->count() > 0 ? $pr->departemens->count() : '0', // N
             ];
         } elseif ($this->switchTable == 'departemen') {
             return [
-                $pr->id ?? '', // A
-                $pr->kode ?? '', // B
-                $pr->departemen ?? '', // C
-                $pr->rekap_dp ?? 0,
-                $pr->index_dp ?? 0,
-                $pr->akreditas_dp ?? 0,
+                $pr->id ?? '',          // A: ID
+                $pr->kode ?? '',        // B: Kode
+                $pr->departemen ?? '',  // C: Nama Departemen
+
+                // Kolom Baru D, E, F, G
+                $pr->nama_kadep ?? '',  // D: Nama Kadep
+                $pr->nip_kadep ?? '',   // E: NIP Kadep
+                $pr->nama_sekdep ?? '', // F: Nama Sekdep
+                $pr->nip_sekdep ?? '',  // G: NIP Sekdep
+
+                // Kolom Bergeser (H, I, J, K, ...)
+                $pr->rekap_dp ?? 0,     // H
+                $pr->index_dp ?? 0,     // I
+                $pr->akreditas_dp ?? 0, // J
                 $pr->prodis
                     ->map(fn ($prodi) => $prodi->kode)
                     ->unique()
-                    ->implode(' / '),
-                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0',
+                    ->implode(' / '),   // K
+                $pr->prodis->count() > 0 ? $pr->prodis->count() : '0', // L
 
-                $pr->kode_fk ?? '', // I: Kode FK
-                $pr->fakultas_fk ?? '', // J: Nama Fakultas
+                $pr->kode_fk ?? '',     // M: Kode FK
+                $pr->fakultas_fk ?? '', // N: Nama Fakultas
             ];
         } else {
             return [
-                $pr->id ?? '', // A
-                $pr->kode ?? '', // B
-                $pr->prodi ?? '', // C
-                $pr->rekap_pr ?? 0,
-                $pr->index_pr ?? 0,
-                $pr->akreditas_pr ?? 0,
-                $pr->target_sks ?? 0,
-                $pr->count_mk ?? 0,
-                $pr->count_rps ?? 0,
-                $pr->count_rps_aktif ?? 0,
-                $pr->count_rps_draf ?? 0,
+                $pr->id ?? '',           // A: ID
+                $pr->kode ?? '',         // B: Kode
+                $pr->prodi ?? '',        // C: Nama Prodi
 
-                $pr->kode_dp ?? '', // G
-                $pr->departemen_dp ?? '', // H
-                $pr->kode_fk ?? '', // I
-                $pr->fakultas_fk ?? '', // J
+                // Kolom Baru D, E, F, G
+                $pr->nama_kaprodi ?? '', // D: Nama Kaprodi
+                $pr->nip_kaprodi ?? '',  // E: NIP Kaprodi
+                $pr->nama_sekprodi ?? '', // F: Nama Sekprodi
+                $pr->nip_sekprodi ?? '', // G: NIP Sekprodi
+
+                // Kolom Bergeser (H, I, J, K, ...)
+                $pr->rekap_pr ?? 0,      // H
+                $pr->index_pr ?? 0,      // I
+                $pr->akreditas_pr ?? 0,  // J
+                $pr->target_sks ?? 0,    // K
+                $pr->count_mk ?? 0,      // L
+                $pr->count_rps ?? 0,     // M
+                $pr->count_rps_aktif ?? 0, // N
+                $pr->count_rps_draf ?? 0,  // O
+
+                $pr->kode_dp ?? '',      // P: Kode DP
+                $pr->departemen_dp ?? '', // Q: Nama DP
+                $pr->kode_fk ?? '',      // R: Kode FK
+                $pr->fakultas_fk ?? '',  // S: Nama FK
             ];
         }
     }
@@ -181,31 +212,35 @@ class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAu
         foreach ($verticalMerges as $col) {
             $sheet->mergeCells("{$col}4:{$col}5");
         }
-
         if ($this->switchTable == '' || $this->switchTable == 'prodi') {
-            $sheet->mergeCells('D4:G4');
-            $sheet->mergeCells('H4:K4');
-            $sheet->mergeCells('L4:M4');
-            $sheet->mergeCells('N4:O4');
+            $sheet->mergeCells('D4:E4'); // Kaprodi (Nama & NIP)
+            $sheet->mergeCells('F4:G4'); // Sekprodi (Nama & NIP)
+
+            $sheet->mergeCells('H4:K4'); // Rekap / Index / Akreditas / Target SKS
+            $sheet->mergeCells('L4:O4'); // Count MK & RPS
+            $sheet->mergeCells('P4:Q4'); // Departemen (Kode & Nama)
+            $sheet->mergeCells('R4:S4'); // Fakultas (Kode & Nama)
         } else {
-            $sheet->mergeCells('D4:F4');
-            $sheet->mergeCells('G4:H4');
-            $sheet->mergeCells('I4:J4');
+            $sheet->mergeCells('D4:E4'); // Dekan / Kadep (Nama & NIP)
+            $sheet->mergeCells('F4:G4'); // Wadek / Sekdep (Nama & NIP)
+
+            $sheet->mergeCells('H4:J4'); // Rekap / Index / Akreditas
+            $sheet->mergeCells('K4:L4'); // Rekap Prodi & Jumlah Prodi
+            $sheet->mergeCells('M4:N4'); // Fakultas / Departemen Terkait
         }
 
-
         if ($this->switchTable == 'fakultas') {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'J'];
+            $alignmentMerges = ['A', 'B', 'E', 'G', 'H', 'I', 'J', 'L', 'N'];
         } elseif ($this->switchTable == 'departemen') {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'H', 'I'];
+            $alignmentMerges = ['A', 'B', 'E', 'G', 'H', 'I', 'J', 'L', 'M'];
         } else {
-            $alignmentMerges = ['A', 'B', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'N'];
+            $alignmentMerges = ['A', 'B', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R'];
         }
 
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
 
-        foreach (['D', 'E'] as $col) {
+        foreach (['H', 'I'] as $col) {
             $sheet->getStyle("{$col}6:{$col}{$highestRow}")
                 ->getNumberFormat()
                 ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);

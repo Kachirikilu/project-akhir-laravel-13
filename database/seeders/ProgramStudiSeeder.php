@@ -14,7 +14,6 @@ class ProgramStudiSeeder extends Seeder
     {
         DB::transaction(function () {
             
-            // --- DATA STRUKTUR ---
             $data = [
                 [
                     'nama' => 'Teknik',

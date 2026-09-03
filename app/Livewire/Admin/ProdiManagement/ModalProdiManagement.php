@@ -19,6 +19,16 @@ class ModalProdiManagement extends Component
 
     use WithProdiModal;
 
+
+    public function mount()
+    {
+        for ($i = 0; $i < 6; $i++) {
+            $this->dosenNameSearchArray[$i] = $this->dosenNameSearchArray[$i] ?? '';
+            $this->dosen_id_array[$i] = $this->dosen_id_array[$i] ?? null;
+            $this->dosen_items_array[$i] = $this->dosen_items_array[$i] ?? null;
+        }
+    }
+
     public $isReady;
 
     #[On('trigger-prodi-modal')]

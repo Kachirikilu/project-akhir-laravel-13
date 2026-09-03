@@ -299,11 +299,11 @@ trait WithKelasModal
 
             'pr_id.required' => 'Program Studi wajib diisi!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
-            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak tersedia!',
 
             'rps_id.required' => 'RPS wajib diisi!',
             'rps_id.integer' => 'ID RPS harus berupa angka!',
-            'rps_id.exists' => 'RPS yang dipilih tidak valid!',
+            'rps_id.exists' => 'RPS yang dipilih tidak tersedia!',
 
             // Nama Kelas
             'nama_kelas.required' => 'Nama Kelas wajib diisi!',

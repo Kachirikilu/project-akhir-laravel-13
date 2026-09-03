@@ -9,6 +9,7 @@
     @else
         @if ($switchTable == '' || $switchTable == 'prodi')
             <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'id' => $x->id,
                 'pr_id' => $x->id,
                 'dp_id' => $x->dp_id,
                 'fk_id' => $x->fk_id,
@@ -26,6 +27,7 @@
                 wire:key="toolbar-prodi-{{ $x->id }}-{{ $key }}" />
         @elseif ($switchTable == 'departemen')
             <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'id' => $x->id,
                 'dp_id' => $x->id,
                 'fk_id' => $x->fk_id,
                 'kode_dp' => $x->kode_dp,
@@ -38,6 +40,7 @@
                 wire:key="toolbar-departemen-{{ $x->id }}-{{ $key }}" />
         @elseif ($switchTable == 'fakultas')
             <livewire:admin.prodi-management.toolbar-prodi-management lazy :data="[
+                'id' => $x->id,
                 'fk_id' => $x->id,
                 'kode_fk' => $x->kode_fk,
                 'fakultas_fk' => $x->fakultas_fk,

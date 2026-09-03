@@ -2,9 +2,9 @@
 
 namespace App\Models\ProgramStudi;
 
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +13,7 @@ class Departemen extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['fk_id', 'kode_dp', 'nama_dp', 'nilai_dp'];
+    protected $fillable = ['fk_id', 'kode_dp', 'nama_dp', 'nilai_dp', 'kadep_id', 'sekdep_id'];
 
     protected $appends = ['kode', 'departemen', 'fakultas'];
 
@@ -24,18 +24,17 @@ class Departemen extends Model
 
     public function kadep_rel()
     {
-        return $this->belongsTo(Dosen::class, 'kadep_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'kadep_id');
     }
 
     public function sekdep_rel()
     {
-        return $this->belongsTo(Dosen::class, 'sekdep_id')->withTrashed();
+        return $this->belongsTo(Dosen::class, 'sekdep_id');
     }
-
 
     public function fk_rel()
     {
-        return $this->belongsTo(Fakultas::class, 'fk_id')->withTrashed();
+        return $this->belongsTo(Fakultas::class, 'fk_id');
     }
 
     public function prodis(): HasMany
@@ -98,20 +97,22 @@ class Departemen extends Model
         );
     }
 
-    protected function nama_kadep(): Attribute
+    protected function namaKadep(): Attribute
     {
         return Attribute::get(fn () => $this->kadep_rel->name ?? '-');
     }
-    protected function nip_kadep(): Attribute
+
+    protected function nipKadep(): Attribute
     {
         return Attribute::get(fn () => $this->kadep_rel->nip ?? '-');
     }
 
-    protected function nama_sekdep(): Attribute
+    protected function namaSekdep(): Attribute
     {
         return Attribute::get(fn () => $this->sekdep_rel->name ?? '-');
     }
-    protected function nip_sekdep(): Attribute
+
+    protected function nipSekdep(): Attribute
     {
         return Attribute::get(fn () => $this->sekdep_rel->nip ?? '-');
     }
@@ -245,25 +246,44 @@ class Departemen extends Model
 
         return $query->orWhere(function ($q) use ($search, $searchCleaned, $searchTerm, $searchLower) {
 
+            $searchDigits = preg_replace('/[^0-9]/', '', $search);
+
+            $q->orWhereHas('kadep_rel', function ($dq) use ($searchTerm, $searchDigits) {
+                $dq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (! empty($searchDigits)) {
+                    $dq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            })->orWhereHas('sekdep_rel', function ($wq) use ($searchTerm, $searchDigits) {
+                $wq->where('name', 'LIKE', $searchTerm)
+                    ->orWhere('nip', 'LIKE', $searchTerm);
+
+                if (! empty($searchDigits)) {
+                    $wq->orWhereRaw("REPLACE(REPLACE(nip, ' ', ''), '.', '') LIKE ?", ["{$searchDigits}%"]);
+                }
+            });
+
             // ===== Nilai / Index =====
             $q->orWhere(function ($sub) use ($searchCleaned) {
 
                 $mapHuruf = [
-                    'A'  => [85,100],
-                    'A-' => [80,84.99],
-                    'B+' => [75,79.99],
-                    'B'  => [70,74.99],
-                    'B-' => [65,69.99],
-                    'C+' => [60,64.99],
-                    'C'  => [55,59.99],
-                    'D'  => [40,54.99],
-                    'E'  => [0,39.99],
+                    'A' => [85, 100],
+                    'A-' => [80, 84.99],
+                    'B+' => [75, 79.99],
+                    'B' => [70, 74.99],
+                    'B-' => [65, 69.99],
+                    'C+' => [60, 64.99],
+                    'C' => [55, 59.99],
+                    'D' => [40, 54.99],
+                    'E' => [0, 39.99],
                 ];
 
                 $upper = strtoupper($searchCleaned);
 
                 if (isset($mapHuruf[$upper])) {
                     $sub->orWhereBetween('nilai_dp', $mapHuruf[$upper]);
+
                     return;
                 }
 
@@ -280,15 +300,15 @@ class Departemen extends Model
                         );
 
                         $mapIndex = [
-                            '4.00'=>[85,100],
-                            '3.70'=>[80,84.99],
-                            '3.30'=>[75,79.99],
-                            '3.00'=>[70,74.99],
-                            '2.70'=>[65,69.99],
-                            '2.30'=>[60,64.99],
-                            '2.00'=>[55,59.99],
-                            '1.00'=>[40,54.99],
-                            '0.00'=>[0,39.99],
+                            '4.00' => [85, 100],
+                            '3.70' => [80, 84.99],
+                            '3.30' => [75, 79.99],
+                            '3.00' => [70, 74.99],
+                            '2.70' => [65, 69.99],
+                            '2.30' => [60, 64.99],
+                            '2.00' => [55, 59.99],
+                            '1.00' => [40, 54.99],
+                            '0.00' => [0, 39.99],
                         ];
 
                         $key = number_format($value, 2, '.', '');

@@ -783,7 +783,7 @@ trait WithUserModal
             'angkatan.max' => 'Tahun angkatan tidak boleh melebihi tahun sekarang!',
             'pr_id.required' => 'Program Studi wajib dipilih!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
-            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak tersedia!',
             'excel_user_file.required' => 'File Excel Data Pengguna wajib diunggah!',
             'excel_user_file.array' => 'Format unggahan tidak valid!',
             'excel_user_file.*.file' => 'Salah satu file Excel Data Pengguna harus berupa file yang valid!',

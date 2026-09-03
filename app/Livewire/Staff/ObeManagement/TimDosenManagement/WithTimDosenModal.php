@@ -300,9 +300,10 @@ trait WithTimDosenModal
             'nama_tim' => 'required|string|min:5|max:255',
             'pr_id' => 'required|exists:prodis,id',
             'dosen_pertemuan_array' => 'nullable|array',
-            'dosen_id_array' => 'required|array|min:1',
+            'dosen_id_array' => 'required|array|min:1|exists:dosens,id',
             'dosen_items_array' => [
                 'array',
+                'required',
                 function ($attribute, $value, $fail) use ($data) {
                     $hasKetua = collect($value)->contains(function ($item) {
                         return isset($item['is_ketua']) && ($item['is_ketua'] === 1 || $item['is_ketua'] === '1' || $item['is_ketua'] === true);
@@ -507,13 +508,17 @@ trait WithTimDosenModal
 
             'pr_id.required' => 'Program Studi wajib dipilih!',
             'pr_id.integer' => 'ID Program Studi harus berupa angka!',
-            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak tersedia!',
             // Dosen Pengampu
             'dosen_id_array.required' => 'Dosen pengampu wajib dipilih!',
             'dosen_id_array.min' => 'Minimal harus ada satu Dosen pengampu!',
+            'dosen_id_array.array' => 'Format data Dosen pengampu tidak valid!',
+            'dosen_id_array.exists' => 'Dosen pengampu yang dipilih tidak tersedia!',
             'dosen_items_array.required' => 'Data detail Dosen tidak boleh kosong!',
             'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
             'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
+            'dosen_pertemuan_array.array' => 'Format data Pertemuan Dosen tidak valid!',
+            'dosen_pertemuan_array.*.array' => 'Format data Pertemuan Dosen tidak valid!',
         ];
     }
 

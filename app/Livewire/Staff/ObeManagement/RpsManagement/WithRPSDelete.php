@@ -61,7 +61,7 @@ trait WithRPSDelete
             if ($this->isPermanentDelete) {
                 // Safety Check: Kelas
                 if (Kelas::where('rps_id', $rps->id)->exists()) {
-                    throw new \Exception('Gagal hapus permanen: RPS masih terhubung ke data Kelas!');
+                    throw new \Exception('Gagal Hapus Permanen: RPS masih terhubung ke data Kelas!');
                 }
 
                 $type = 'permanent';

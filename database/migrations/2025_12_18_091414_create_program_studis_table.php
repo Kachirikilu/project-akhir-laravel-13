@@ -44,8 +44,7 @@ return new class extends Migration
             $table->foreignId('sekprodi_id')->nullable()->constrained('dosens')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
-            $table->unique(['strata', 'nama_pr']);
-            $table->unique(['strata', 'kode_pr']);
+            $table->unique(['strata', 'kode_pr', 'nama_pr']);
         });
     }
 

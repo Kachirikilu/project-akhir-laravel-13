@@ -3,15 +3,18 @@
 namespace App\Models\Auth;
 
 use App\Models\Akademik\RPS;
-use App\Models\Akademik\SubCPMK;
-use App\Models\Kelas\KelasSesi;
+// use App\Models\Akademik\SubCPMK;
+// use App\Models\Kelas\KelasSesi;
 use App\Models\Akademik\TimDosen;
 use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class Dosen extends Model
@@ -45,31 +48,41 @@ class Dosen extends Model
         'status',
     ];
 
+    public function dekan_rels(): HasMany
+    {
+        return $this->hasMany(Fakultas::class, 'dekan_id');
+    }
+
+    public function wadek_rels(): HasMany
+    {
+        return $this->hasMany(Fakultas::class, 'wadek_id');
+    }
+
+    public function kadep_rels(): HasMany
+    {
+        return $this->hasMany(Departemen::class, 'kadep_id');
+    }
+
+    public function sekdep_rels(): HasMany
+    {
+        return $this->hasMany(Departemen::class, 'sekdep_id');
+    }
+
+    public function kaprodi_rels(): HasMany
+    {
+        return $this->hasMany(Prodi::class, 'kaprodi_id');
+    }
+
+    public function sekprodi_rels(): HasMany
+    {
+        return $this->hasMany(Prodi::class, 'sekprodi_id');
+    }
+
     public function tim_dosens(): BelongsToMany
     {
         return $this->belongsToMany(TimDosen::class, 'tim_dosen_pivot_dosen', 'dosen_id', 'tim_dosen_id')
-                    ->withPivot(['peran', 'is_ketua', 'pertemuan_ke']);
+            ->withPivot(['peran', 'is_ketua', 'pertemuan_ke']);
     }
-
-    // public function rps(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(RPS::class, 'rps_pivot_dosen', 'dosen_id', 'rps_id')
-    //         ->withPivot(['peran', 'is_ketua', 'sort_order'])
-    //         ->withTimestamps();
-    // }
-
-    // public function scpmks(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(SubCPMK::class, 'dosen_pivot_scpmk', 'dosen_id', 'scpmk_id')
-    //         ->withPivot(['rps_id', 'sort_order'])
-    //         ->withTimestamps();
-    // }
-
-    // public function sesiMengajars(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(KelasSesi::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
-    //         ->withPivot(['peran', 'is_ketua', 'sort_order']);
-    // }
 
     public function user(): BelongsTo
     {
@@ -86,6 +99,7 @@ class Dosen extends Model
         return Attribute::get(function () {
             $nidn = $this->nidn ?? '---';
             $nidk = $this->nidk ?? '---';
+
             return "NIDN: {$nidn} / NIDK: {$nidk}";
         });
     }
@@ -124,12 +138,14 @@ class Dosen extends Model
             return $phone;
         });
     }
+
     protected function waAktif(): Attribute
     {
         return Attribute::get(function () {
             return $this->is_wa_active;
         });
     }
+
     protected function noWaFull(): Attribute
     {
         return Attribute::get(function () {
@@ -148,8 +164,10 @@ class Dosen extends Model
             $rest = substr($body, 3);
             if ($rest !== false && $rest !== '') {
                 $chunks = str_split($rest, 4);
+
                 return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
             }
+
             return '+'.$countryCode.'-'.$firstThree;
         });
     }
@@ -179,7 +197,7 @@ class Dosen extends Model
         $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
+        return $query->where(function ($q) use ($search, $searchTerm) {
             $fields = ['name', 'nip', 'nidn', 'nidk', 'nik', 'status'];
             foreach ($fields as $field) {
                 $q->orWhere("dosens.$field", 'like', $searchTerm);
@@ -187,7 +205,7 @@ class Dosen extends Model
             if (is_numeric($search)) {
                 $q->orWhere('dosens.id', $search);
             }
-            $q->orWhereHas('user', function ($u) use ($searchTerm, $searchLower) {
+            $q->orWhereHas('user', function ($u) use ($searchTerm) {
                 $u->where('email', 'like', $searchTerm);
             });
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {

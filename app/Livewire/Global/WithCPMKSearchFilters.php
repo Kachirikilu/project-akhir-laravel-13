@@ -25,7 +25,7 @@ trait WithCPMKSearchFilters
 
     public $cpmk_items = [];
 
-    public $cpmkNameSearch = '';
+    public $cpmkNameSearch;
 
     public $cpmkResults = [];
 
@@ -183,7 +183,7 @@ trait WithCPMKSearchFilters
                     }
                     $this->cpmkResults = [];
                 } else {
-                    $this->cpmkNameSearch = '';
+                    $this->cpmkNameSearch;
                     $this->cpmk_id_array[] = $exactMatch->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($exactMatch);
 
@@ -307,7 +307,7 @@ trait WithCPMKSearchFilters
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
-        $this->cpmkNameSearch = '';
+        $this->cpmkNameSearch;
     }
 
     public function searchOutputCPMK($queryCPMK, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')

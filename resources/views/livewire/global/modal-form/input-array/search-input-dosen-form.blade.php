@@ -175,6 +175,23 @@
                         @include('livewire.global.modal-form.input-array.partial.search-dosen-dropdown')
                     @endif
                 @empty
+
+                    {{-- @forelse ($xResults as $x)
+                    @php
+                        $itemId = data_get($x, 'id');
+                        $itemKode = data_get($x, 'kode', '');
+                        $itemLabel = data_get($x, $typeXString, '');
+                        $itemLabel2 = isset($typeX2String) ? data_get($x, $typeX2String, '') : null;
+                        $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
+                        $itemLabel4 = isset($typeX4String) ? data_get($x, $typeX4String, '') : null;
+                        $itemLabel5 = isset($typeX5String) ? data_get($x, $typeX5String, '') : null;
+                        $itemLink = isset($typeLinkString) ? data_get($x, $typeLinkString, '') : null;
+                    @endphp
+
+                    @if ($itemId !== null)
+                        @include('livewire.global.modal-form.input-array.partial.search-array-dropdown')
+                    @endif
+                @empty --}}
                     <div class="p-4 text-center">
                         <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
                             <p class="text-xs sm:text-sm text-[var(--focus-color)] font-medium animate-pulse">
@@ -246,58 +263,18 @@
                                     <span class="text-xs sm:text-sm font-bold text-[var(--contrast-main-text)]"
                                         x-text="itemsAll[index]?.slot1"></span>
 
-                                    {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
-                                    <div
-                                        class="mt-1 flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
-                                        {{-- NIP --}}
-                                        - <span class="ml-1 font-bold text-[var(--hover-focus-color)]"
-                                            x-text="'NIP: ' + itemsAll[index]?.kode"></span>
 
-                                        {{-- NIDN --}}
-                                        <template x-if="itemsAll[index]?.slot2">
-                                            <div class="flex items-center">
-                                                <span class="mx-1.5 opacity-50">|</span>
-                                                <span x-text="'NIDN: ' + itemsAll[index]?.slot2"></span>
-                                            </div>
-                                        </template>
+                                    @include('livewire.global.modal-form.input-array.partial.select-items')
 
-                                        {{-- NIDK --}}
-                                        <template x-if="itemsAll[index]?.slot3">
-                                            <div class="flex items-center">
-                                                <span class="mx-1.5 opacity-50">|</span>
-                                                <span x-text="'NIDK: ' + itemsAll[index]?.slot3"></span>
-                                            </div>
-                                        </template>
 
-                                        {{-- Slot 4 --}}
-                                        <template x-if="itemsAll[index]?.slot4">
-                                            <div class="flex items-center">
-                                                <span class="mx-1.5 opacity-50">|</span>
-                                                <span x-text="'Status: ' + itemsAll[index]?.slot4"></span>
-                                            </div>
-                                        </template>
-
-                                        {{-- Slot 5 --}}
-                                        <template x-if="itemsAll[index]?.slot5">
-                                            <div class="flex items-center">
-                                                <span class="mx-1.5 opacity-50">|</span>
-                                                <span x-text="itemsAll[index]?.slot5"></span>
-                                            </div>
-                                        </template>
-
-                                        <div class="flex items-center">
-                                            <span class="mx-1.5 opacity-50">|</span>
-                                            <span x-text="'ID: ' + itemsAll[index]?.id"></span>
-                                        </div>
-                                    </div>
                                 </div>
 
                             </div>
 
                             {{-- PEMILIH PERAN --}}
-                           {{-- Tambahkan w-full dan justify-between pada wrapper --}}
+                            {{-- Tambahkan w-full dan justify-between pada wrapper --}}
                             <div class="flex items-center justify-between gap-2">
-                                
+
                                 {{-- SELECT (Kiri) --}}
                                 <select x-model="itemsAll[index].peran"
                                     class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">

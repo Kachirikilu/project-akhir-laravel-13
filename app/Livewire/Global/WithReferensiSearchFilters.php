@@ -25,7 +25,7 @@ trait WithReferensiSearchFilters
 
     public $ref_items = [];
 
-    public $refNameSearch = '';
+    public $refNameSearch;
 
     public $refResults = [];
 
@@ -147,7 +147,7 @@ trait WithReferensiSearchFilters
                     $this->ref_items = $this->itemsRef($exactMatch);
                     $this->refResults = [];
                 } else {
-                    $this->refNameSearch = '';
+                    $this->refNameSearch;
                     $this->ref_id_array[] = $exactMatch->id;
                     $this->ref_items_array[] = $this->itemsRef($exactMatch);
                     $this->ref_id_array = collect($this->ref_id_array)
@@ -264,7 +264,7 @@ trait WithReferensiSearchFilters
     {
         $this->ref_id_array = [];
         $this->ref_items_array = [];
-        $this->refNameSearch = '';
+        $this->refNameSearch;
     }
 
     public function searchOutputRef($queryRef, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

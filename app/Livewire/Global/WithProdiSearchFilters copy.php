@@ -16,7 +16,7 @@ trait WithProdiSearchFilters
     public $pr_id;
     public $pr_name;
     public $pr_items;
-    public $prNameSearch = '';
+    public $prNameSearch;
     public $prResults = [];
     public $selectedPrId = null;
     public $mkType = '';
@@ -126,7 +126,7 @@ trait WithProdiSearchFilters
                     $this->pr_items_array[] = $this->itemsPr($p);
                 }
             }
-            $this->prNameSearch = '';
+            $this->prNameSearch;
             $this->prResults = $this->getPrbyUser();
 
             return;
@@ -183,7 +183,7 @@ trait WithProdiSearchFilters
                         $this->pr_items_array[] = $this->itemsPr($match);
                     }
                 }
-                $this->prNameSearch = '';
+                $this->prNameSearch;
             }
             $this->prResults = $this->getPrbyUser();
         }
@@ -287,7 +287,7 @@ trait WithProdiSearchFilters
     {
         $this->pr_id = null;
         $this->pr_items = null;
-        $this->prNameSearch = '';
+        $this->prNameSearch;
 
         $this->updatedPrNameSearch('');
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
@@ -297,6 +297,6 @@ trait WithProdiSearchFilters
     {
         $this->pr_id_array = [];
         $this->pr_items_array = [];
-        $this->prNameSearch = '';
+        $this->prNameSearch;
     }
 }

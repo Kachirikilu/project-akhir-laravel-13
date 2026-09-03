@@ -62,7 +62,7 @@ trait WithTimDosenDelete
                 $isConnected = $timDosen->rps()->where('is_draf', 0)->exists();
 
                 if ($isConnected) {
-                    throw new \Exception('Gagal hapus permanen: Tim Dosen masih terhubung ke RPS yang sudah Aktif!');
+                    throw new \Exception('Gagal Hapus Permanen: Tim Dosen masih terhubung ke RPS yang sudah Aktif!');
                 }
 
                 $type = 'permanent';

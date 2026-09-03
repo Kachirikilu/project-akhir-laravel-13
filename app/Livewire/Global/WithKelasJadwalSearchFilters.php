@@ -145,7 +145,7 @@ trait WithKelasJadwalSearchFilters
                     $this->jadwal_items = $this->itemsJadwal($exactMatch);
                     $this->jadwalResults = [];
                 } else {
-                    $this->jadwalNameSearch = '';
+                    $this->jadwalNameSearch;
                     $this->kj_id_array[] = $exactMatch->id;
                     $this->jadwal_items_array[] = $this->itemsJadwal($exactMatch);
                     $this->kj_id_array = collect($this->kj_id_array)
@@ -267,7 +267,7 @@ trait WithKelasJadwalSearchFilters
     {
         $this->kj_id_array = [];
         $this->jadwal_items_array = [];
-        $this->jadwalNameSearch = '';
+        $this->jadwalNameSearch;
     }
 
     public function searchOutputJadwal($queryJadwal, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

@@ -6,7 +6,6 @@ use App\Models\Auth\Dosen;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
 
 trait WithDosenSearchFilters
@@ -28,16 +27,16 @@ trait WithDosenSearchFilters
 
     public $dosenNameSearch;
 
-    public $dosenNameSearchArray = [];
-
     public $dosenResults = [];
 
     public $selectedDosenId = null;
 
+    // Properti Array untuk Multiple Selection jika dibutuhkan
     public $dosen_id_array = [];
 
     public $dosen_items_array = [];
 
+    // Properti Dosen Pengajar
     // public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
     public $peran_dosen = [];
 
@@ -55,8 +54,8 @@ trait WithDosenSearchFilters
             'fakultas' => $d->pr_rel?->fakultasFk,
             'status' => $d->status,
 
-            'peran' => $d->pivot->peran ?? null,
-            'is_ketua' => (bool) ($d->pivot?->is_ketua ?? false),
+            'peran'        => $d->pivot->peran ?? null,
+            'is_ketua'     => (bool) ($d->pivot?->is_ketua ?? false),
             'pertemuan_ke' => $d->pivot->pertemuan_ke ?? null,
         ])->toArray();
     }
@@ -93,8 +92,8 @@ trait WithDosenSearchFilters
             'slot1' => $d->name,
             'slot2' => $d->nidn,
             'slot3' => $d->nidk,
-            'slot4' => $d->pr_rel?->prodi,
-            'slot5' => $d->status,
+            'slot4' => $d->status,
+            'slot5' => $d->prodi,
             // 'slot6' => $d->fakultasFk,
             'peran' => $d->pivot->peran ?? 'Pengajar',
             'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
@@ -178,9 +177,11 @@ trait WithDosenSearchFilters
 
                     $this->dosen_id_array = collect($this->dosen_id_array)
                         ->unique()
+                        ->values()
                         ->all();
                     $this->dosen_items_array = collect($this->dosen_items_array)
                         ->unique('id')
+                        ->values()
                         ->all();
 
                     $isKetua = collect($this->dosen_items_array)
@@ -195,107 +196,6 @@ trait WithDosenSearchFilters
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->dosenResults = $this->getDosenbyUser();
-            } else {
-                $this->dosenResults = $this->mapDosen(
-                    $query->orderBy('dosens.name')->limit(12)->get()
-                );
-            }
-        }
-    }
-
-    public function updatedDosenNameSearchArray($value, $key = null)
-    {
-        // Determine search term reliably:
-        // - If Livewire provides a $key (index), prefer the indexed value (scalar or array input)
-        // - If no $key, expect $value to be scalar; ignore whole-array resets to avoid picking wrong index
-        if ($key !== null) {
-            if (is_array($value)) {
-                $searchTerm = isset($value[$key]) ? $value[$key] : '';
-            } else {
-                $searchTerm = $value;
-            }
-        } else {
-            // No key provided: treat value as scalar search string
-            $searchTerm = is_string($value) ? $value : '';
-        }
-
-        $searchTerm = is_string($searchTerm) ? trim($searchTerm) : '';
-
-        Log::debug('updatedDosenNameSearchArray start', [
-            'key' => $key,
-            'searchTerm' => $searchTerm,
-            'incoming_value' => $value,
-            'dosen_id_array_before' => $this->dosen_id_array,
-            'dosen_items_array_before' => $this->dosen_items_array,
-            'dosenNameSearchArray_before' => $this->dosenNameSearchArray,
-        ]);
-
-        $this->resetErrorBag(['dosen_id_array', 'dosenNameSearchArray']);
-
-        $query = $this->dosenQuery();
-
-        if (strlen($searchTerm) > 0) {
-            $results = $query->searchDosen($searchTerm)->limit(12)->get();
-            $this->dosenResults = $this->mapDosen($results);
-
-            $normalizedValue = str_replace(['-', ' '], '', strtolower($searchTerm));
-
-            $exactMatch = $results->first(function ($d) use ($searchTerm, $normalizedValue) {
-                $normalizedDosenNIP = str_replace(['-', ' '], '', strtolower($d->nip ?? ''));
-                $normalizedDosenNIDN = str_replace(['-', ' '], '', strtolower($d->nidn ?? ''));
-                $normalizedDosenNIDK = str_replace(['-', ' '], '', strtolower($d->nidk ?? ''));
-                $normalizedDosenNIK = str_replace(['-', ' '], '', strtolower($d->nik ?? ''));
-                $userEmail = $d->user->email ?? '';
-
-                return strtolower($d->name ?? '') === strtolower($searchTerm)
-                    || strtolower($userEmail) === strtolower($searchTerm)
-                    || $normalizedDosenNIP === $normalizedValue
-                    || $normalizedDosenNIDN === $normalizedValue
-                    || $normalizedDosenNIDK === $normalizedValue
-                    || $normalizedDosenNIK === $normalizedValue;
-            });
-
-            if ($exactMatch) {
-                Log::debug('updatedDosenNameSearchArray exact match found', ['key' => $key, 'exact_id' => $exactMatch->id, 'exact_name' => $exactMatch->name]);
-                if ($key !== null) {
-                    $this->dosenNameSearchArray[$key] = $exactMatch->name;
-                    $this->dosen_id_array[$key] = $exactMatch->id;
-                    $this->dosen_items_array[$key] = $this->itemsDosen($exactMatch);
-                } else {
-                    $this->dosenNameSearchArray[] = $exactMatch->name;
-                    $this->dosen_id_array[] = $exactMatch->id;
-                    $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
-                }
-
-                // Preserve fixed slots (0..5) and do NOT remove duplicate ids.
-                // Use array_replace to ensure indices remain stable so UI bindings don't lose keys.
-                $default = array_fill(0, 6, null);
-                $this->dosen_id_array = array_replace($default, is_array($this->dosen_id_array) ? $this->dosen_id_array : []);
-                $this->dosen_items_array = array_replace($default, is_array($this->dosen_items_array) ? $this->dosen_items_array : []);
-                $this->dosenNameSearchArray = array_replace($default, is_array($this->dosenNameSearchArray) ? $this->dosenNameSearchArray : []);
-
-                Log::debug('updatedDosenNameSearchArray after assign/unique', [
-                    'dosen_id_array_after' => $this->dosen_id_array,
-                    'dosen_items_array_after' => $this->dosen_items_array,
-                    'dosenNameSearchArray_after' => $this->dosenNameSearchArray,
-                ]);
-
-                $isKetua = collect($this->dosen_items_array)
-                    ->contains(fn ($item) => is_array($item) && ($item['is_ketua'] ?? false) === true);
-
-                if (! $isKetua && count($this->dosen_items_array) > 0) {
-                    $lastIndex = array_key_last($this->dosen_items_array);
-                    if (isset($this->dosen_items_array[$lastIndex]) && is_array($this->dosen_items_array[$lastIndex])) {
-                        $this->dosen_items_array[$lastIndex]['is_ketua'] = true;
-                        $this->dosen_items_array[$lastIndex]['peran'] = 'Koordinator';
-                    }
-                }
-
-                $this->dosenResults = $this->getDosenbyUser();
-            }
-        } else {
-            if (Auth::user()?->pr_id) {
                 $this->dosenResults = $this->getDosenbyUser();
             } else {
                 $this->dosenResults = $this->mapDosen(
@@ -344,6 +244,7 @@ trait WithDosenSearchFilters
             : $this->mapDosen($mainResults);
     }
 
+  
     public function fetchDosen($mode = 'single')
     {
         $this->modeDosen = $mode;
@@ -354,62 +255,9 @@ trait WithDosenSearchFilters
                 $this->dosen_items = $this->itemsDosen($dosen);
             }
             $this->dosenResults = $this->getDosenbyUser();
-
             return;
         }
     }
-
-public function fetchDosenArray($index = null)
-{
-    $this->modeDosen = 'array';
-
-    // Inisialisasi jika properti belum berupa array
-    if (!is_array($this->dosenNameSearchArray)) {
-        $this->dosenNameSearchArray = [];
-    }
-    if (!is_array($this->dosen_items_array)) {
-        $this->dosen_items_array = [];
-    }
-    if (!is_array($this->dosen_id_array)) {
-        $this->dosen_id_array = [];
-    }
-
-    if ($index !== null) {
-        Log::debug('fetchDosenArray called for index', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array]);
-        $id = $this->dosen_id_array[$index] ?? null;
-
-        if ($id) {
-            $dosen = Dosen::find($id);
-            if ($dosen) {
-                $this->dosenNameSearchArray[$index] = $dosen->name;
-                $this->dosen_items_array[$index] = $this->itemsDosen($dosen);
-            } else {
-                $this->dosenNameSearchArray[$index] = '';
-                $this->dosen_items_array[$index] = null;
-            }
-        } else {
-            // PAKSA reset index ini ke string kosong
-            $this->dosenNameSearchArray[$index] = '';
-            $this->dosen_items_array[$index] = null;
-        }
-        Log::debug('fetchDosenArray after assign', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
-    } else {
-        // Jika dipanggil tanpa index, bersihkan total dulu
-        $this->resetDosenArray();
-
-        foreach ($this->dosen_id_array as $idx => $id) {
-            if ($id && $dosen = Dosen::find($id)) {
-                $this->dosenNameSearchArray[$idx] = $dosen->name;
-                $this->dosen_items_array[$idx] = $this->itemsDosen($dosen);
-            } else {
-                $this->dosenNameSearchArray[$idx] = '';
-                $this->dosen_items_array[$idx] = null;
-            }
-        }
-    }
-
-    $this->dosenResults = $this->getDosenbyUser();
-}
 
     public function selectDosen($id, $dosenName)
     {
@@ -429,58 +277,13 @@ public function fetchDosenArray($index = null)
         $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);
     }
 
-    // public function selectDosenArray($id)
-    // {
-    //     $data = $this->dosenQuery()->find($id);
-    //     if ($data && ! in_array($id, $this->dosen_id_array)) {
-    //         $this->dosen_id_array[] = $id;
-    //         $this->dosen_items_array[] = $this->itemsDosen($data);
-    //     }
-    // }
-    public function selectDosenArray($id, $dosenName, $index = null)
+    public function selectDosenArray($id)
     {
-        Log::debug('selectDosenArray called', ['id' => $id, 'dosenName' => $dosenName, 'index' => $index, 'before_ids' => $this->dosen_id_array, 'before_items' => $this->dosen_items_array, 'before_names' => $this->dosenNameSearchArray]);
-
-        // Defensive: if provided index does not match the input text we received,
-        // try to detect the correct index by matching the name in the nameSearch array.
-        if ($index !== null) {
-            $currentNameAtIndex = $this->dosenNameSearchArray[$index] ?? null;
-            if ($currentNameAtIndex !== null && $currentNameAtIndex !== $dosenName) {
-                $found = array_search($dosenName, $this->dosenNameSearchArray, true);
-                if ($found !== false) {
-                    Log::debug('selectDosenArray adjusted index by name match', ['requested' => $index, 'matched' => $found, 'dosenName' => $dosenName]);
-                    $index = $found;
-                }
-            }
-        }
-
-        if ($index !== null) {
-            $this->dosen_id_array[$index] = $id;
-            $this->dosenNameSearchArray[$index] = $dosenName;
-
-            $data = $this->dosenQuery()->find($id);
-            if ($data) {
-                $this->dosen_items_array[$index] = $this->itemsDosen($data);
-            }
-        } else {
+        $data = $this->dosenQuery()->find($id);
+        if ($data && ! in_array($id, $this->dosen_id_array)) {
             $this->dosen_id_array[] = $id;
-            $this->dosenNameSearchArray[] = $dosenName;
-
-            $data = $this->dosenQuery()->find($id);
-            if ($data) {
-                $this->dosen_items_array[] = $this->itemsDosen($data);
-            }
+            $this->dosen_items_array[] = $this->itemsDosen($data);
         }
-
-        Log::debug('selectDosenArray after assign', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
-
-        $this->dosenResults = $this->getDosenbyUser();
-
-        if (method_exists($this, 'fetchDosenArray')) {
-            $this->fetchDosenArray($index);
-        }
-
-        $this->resetErrorBag(['dosen_id_array', 'dosenNameSearchArray']);
     }
 
     public function resetDosenInput()
@@ -493,26 +296,9 @@ public function fetchDosenArray($index = null)
     {
         $this->dosen_id_array = [];
         $this->dosen_items_array = [];
-        $this->dosenNameSearchArray = [];
-        $this->dosenResults = $this->getDosenbyUser();
+        $this->dosenNameSearch;
     }
 
-    public function resetDosenInputArray($index)
-    {
-        if (array_key_exists($index, $this->dosen_id_array)) {
-            $this->dosen_id_array[$index] = null;
-        }
-        if (array_key_exists($index, $this->dosen_items_array)) {
-            $this->dosen_items_array[$index] = null;
-        }
-        if (array_key_exists($index, $this->dosenNameSearchArray)) {
-            $this->dosenNameSearchArray[$index] = '';
-        }
-
-        $this->dosenResults = $this->getDosenbyUser();
-        Log::debug('resetDosenInputArray called', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
-    }
-    
     public function searchOutputDosen($queryDosen, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
     {
         $search = trim($searchRaw);

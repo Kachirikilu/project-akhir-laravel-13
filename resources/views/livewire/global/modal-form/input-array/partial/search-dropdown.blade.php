@@ -20,17 +20,22 @@
 
             $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;
             $store.{{ $alpine ?? 'config' }}['{{ $itemsAllString }}'] = itemsAll;
-            $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = newSearch;
+            // Prefer per-index nameSearchString to avoid collisions across inputs
+            @if(!empty($nameSearchString))
+                $store.{{ $alpine ?? 'config' }}['{{ $nameSearchString }}'] = newSearch;
+            @else
+                $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = newSearch;
+            @endif
 
             open = false;
             
-            $wire.{{ $selectX }}(itemId, newSearch).then(() => {
+            $wire.{{ $selectX }}(itemId, newSearch, {{ isset($selectIndex) ? $selectIndex : 'null' }}).then(() => {
                 isManual = false;
             });
         "
         class="px-4 py-2 cursor-pointer transition-colors duration-200
                bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-               hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 text-sm">
+               hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
 
         <div class="flex flex-wrap items-start gap-x-4 gap-y-1">
             

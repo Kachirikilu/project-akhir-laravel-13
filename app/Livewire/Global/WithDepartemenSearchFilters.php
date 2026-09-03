@@ -23,7 +23,7 @@ trait WithDepartemenSearchFilters
 
     public $dp_items = [];
 
-    public $dpNameSearch = '';
+    public $dpNameSearch;
 
     public $dpResults = [];
 
@@ -259,7 +259,7 @@ trait WithDepartemenSearchFilters
     {
         $this->dp_id = null;
         $this->dp_items = null;
-        $this->dpNameSearch = '';
+        $this->dpNameSearch;
 
         $this->haveDpChild();
 

@@ -50,6 +50,10 @@ document.addEventListener("alpine:init", () => {
         departemenItems: "",
         fakultasItems: "",
 
+        // dosenNameSearchArray: [],
+        // dosen_id_array: [],
+        // dosen_items_array: [],
+
         setValueProdi(
             prodi,
             strata,
@@ -155,6 +159,10 @@ document.addEventListener("alpine:init", () => {
 
                 this.dp_items = "";
                 this.fk_items = "";
+
+                // this.dosenNameSearchArray = [];
+                // this.dosen_id_array = [];
+                // this.dosen_items_array = [];
 
                 this.target_sks = "";
 

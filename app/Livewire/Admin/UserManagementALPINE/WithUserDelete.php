@@ -91,15 +91,15 @@ trait WithUserDelete
             $dosen = $user->dosen;
 
             if ($dosen->tim_dosens()->whereHas('rps')->exists()) {
-                throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data RPS!');
+                throw new \Exception('Gagal Hapus Permanen: User (Dosen) masih terhubung ke data RPS!');
             }
 
             // if ($dosen->scpmks()->exists()) {
-            //     throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data Sub-CPMK!');
+            //     throw new \Exception('Gagal Hapus Permanen: User (Dosen) masih terhubung ke data Sub-CPMK!');
             // }
 
             // if ($dosen->sesiMengajars()->exists()) {
-            //     throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke jadwal Kelas!');
+            //     throw new \Exception('Gagal Hapus Permanen: User (Dosen) masih terhubung ke jadwal Kelas!');
             // }
         }
 
@@ -107,7 +107,7 @@ trait WithUserDelete
         if ($user->mahasiswa) {
             if ($user->mahasiswa?->jadwals()->exists()) {
                 throw new \Exception(
-                    'Gagal hapus permanen: User (Mahasiswa) masih terhubung ke data Kelas!'
+                    'Gagal Hapus Permanen: User (Mahasiswa) masih terhubung ke data Kelas!'
                 );
             }
         }

@@ -106,7 +106,7 @@ trait WithKelasDelete
     private function checkKelasSafety($kelas)
     {
         if ($kelas->jadwals()->exists()) {
-            throw new \Exception('Gagal hapus permanen: Kelas masih memiliki Jadwal Kelas!');
+            throw new \Exception('Gagal Hapus Permanen: Kelas masih memiliki Jadwal Kelas!');
         }
     }
 

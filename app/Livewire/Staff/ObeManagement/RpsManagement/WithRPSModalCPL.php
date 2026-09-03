@@ -661,7 +661,7 @@ trait WithRPSModal
         return [
             // Relasi Mata Kuliah & Prodi
             'mk_id.required' => 'Mata Kuliah asal wajib dipilih!',
-            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
+            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak tersedia!',
             // 'pr_id.required' => 'Program Studi wajib diisi!',
             // 'pr_id_array.required' => 'Program Studi wajib diisi!',
             // 'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
@@ -739,11 +739,11 @@ trait WithRPSModal
 
     private function resetInputRPS()
     {
-        $this->cpmkNameSearch = '';
+        $this->cpmkNameSearch;
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = '';
+        $this->refNameSearch;
 
-        $this->mkNameSearch = '';
+        $this->mkNameSearch;
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];

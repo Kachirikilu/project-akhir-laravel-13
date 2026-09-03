@@ -56,7 +56,7 @@ trait WithMKDelete
 
             if ($this->isPermanentDelete) {
                 if ($mk->rps()->exists()) {
-                    throw new \Exception('Gagal hapus permanen: Mata Kuliah masih memiliki RPS!');
+                    throw new \Exception('Gagal Hapus Permanen: Mata Kuliah masih memiliki RPS!');
                 }
 
                 DB::transaction(function () use ($mk) {

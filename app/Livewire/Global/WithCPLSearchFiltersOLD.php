@@ -16,7 +16,7 @@ trait WithCPLSearchFilters
     public $cpl_id;
     public $cpl_name = '';
     public $cpl_items = [];
-    public $cplNameSearch = '';
+    public $cplNameSearch;
     public $cplResults = [];
     public $selectedCPLId = null;
 
@@ -117,7 +117,7 @@ trait WithCPLSearchFilters
                     $this->cpl_items = $this->itemsCPL($exactMatch);
                     $this->cplResults = [];
                 } else {
-                    $this->cplNameSearch = '';
+                    $this->cplNameSearch;
                     $this->cpl_id_array[] = $exactMatch->id;
                     $this->cpl_items_array[] = $this->itemsCPL($exactMatch);
                 }
@@ -216,6 +216,6 @@ trait WithCPLSearchFilters
         $this->cpl_id_array = [];
         $this->cpl_name_array = [];
         $this->cpl_items_array = [];
-        $this->cplNameSearch = '';
+        $this->cplNameSearch;
     }
 }

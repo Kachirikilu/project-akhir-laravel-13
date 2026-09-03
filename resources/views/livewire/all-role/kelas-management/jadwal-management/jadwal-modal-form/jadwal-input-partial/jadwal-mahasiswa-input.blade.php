@@ -44,7 +44,7 @@
                 'typeX2String' => 'prodi',
                 'typeX3String' => 'wilayah',
                 'typeX4String' => 'angkatan',
-                'typeX5String' => 'status',
+                '
             
                 'nameXString' => 'Mahasiswa',
                 'nameSearchString' => 'mahasiswaNameSearch',

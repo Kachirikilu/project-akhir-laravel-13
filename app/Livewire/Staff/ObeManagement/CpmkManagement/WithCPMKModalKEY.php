@@ -549,9 +549,9 @@ trait WithCPMKModal
 
     private function resetInputCPMK()
     {
-        $this->scpmkNameSearch = '';
+        $this->scpmkNameSearch;
         $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = '';
+        $this->refNameSearch;
 
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];

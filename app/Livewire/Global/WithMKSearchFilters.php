@@ -25,7 +25,7 @@ trait WithMKSearchFilters
 
     public $mk_items = [];
 
-    public $mkNameSearch = '';
+    public $mkNameSearch;
 
     public $mkResults = [];
 
@@ -156,7 +156,7 @@ trait WithMKSearchFilters
                     $this->mk_items = $this->itemsMK($exactMatch);
                     $this->mkResults = [];
                 } else {
-                    $this->mkNameSearch = '';
+                    $this->mkNameSearch;
                     $this->mk_id_array[] = $exactMatch->id;
                     $this->mk_items_array[] = $this->itemsMK($exactMatch);
 
@@ -277,7 +277,7 @@ trait WithMKSearchFilters
     {
         $this->mk_id = null;
         $this->mk_items = null;
-        $this->mkNameSearch = '';
+        $this->mkNameSearch;
 
         $this->updatedMKNameSearch('');
         $this->resetErrorBag(['mk_id', 'mkNameSearch']);
@@ -287,7 +287,7 @@ trait WithMKSearchFilters
     {
         $this->mk_id_array = [];
         $this->mk_items_array = [];
-        $this->mkNameSearch = '';
+        $this->mkNameSearch;
     }
 
     public function haveMKParent($query)

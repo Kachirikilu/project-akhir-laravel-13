@@ -370,9 +370,7 @@ trait WithJadwalModal
                 },
             ],
 
-            'mahasiswa_id_array' => 'nullable|array',
-
-            'mahasiswa_id_array.*' => 'exists:users,id',
+            'mahasiswa_id_array' => 'nullable|array|min:1|exists:users,id',
         ];
 
         // ==========================================
@@ -733,6 +731,7 @@ trait WithJadwalModal
 
             'mahasiswa_id_array.required' => 'Mahasiswa wajib dipilih!',
             'mahasiswa_id_array.min' => 'Minimal harus ada satu Mahasiswa!',
+            'mahasiswa_id_array.exists' => 'Mahasiswa tidak tersedia!',
             'mahasiswa_items_array.required' => 'Data detail Mahasiswa tidak boleh kosong!',
         ];
 
@@ -783,7 +782,7 @@ trait WithJadwalModal
             'jadwal_input',
         ];
 
-        $this->mahasiswaNameSearch = '';
+        $this->mahasiswaNameSearch;
         $this->mahasiswa_id_array = [];
         $this->mahasiswa_items_array = [];
         $this->mahasiswa_sub_items_array = [];

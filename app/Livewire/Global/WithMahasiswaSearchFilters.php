@@ -25,7 +25,7 @@ trait WithMahasiswaSearchFilters
 
     public $mahasiswa_items = [];
 
-    public $mahasiswaNameSearch = '';
+    public $mahasiswaNameSearch;
 
     public $mahasiswaResults = [];
 
@@ -153,7 +153,7 @@ trait WithMahasiswaSearchFilters
     //                 $this->mahasiswa_id = $exactMatch->id;
     //                 $this->mahasiswa_items = $this->itemsMahasiswa($exactMatch);
     //             } else {
-    //                 $this->mahasiswaNameSearch = '';
+    //                 $this->mahasiswaNameSearch;
     //                 $this->mahasiswa_id_array[] = $exactMatch->id;
     //                 $this->mahasiswa_items_array[] = $this->itemsMahasiswa($exactMatch);
     //             }
@@ -270,7 +270,7 @@ trait WithMahasiswaSearchFilters
                         $this->mahasiswa_items_array[] = $this->itemsMahasiswa($match);
                     }
                 }
-                $this->mahasiswaNameSearch = '';
+                $this->mahasiswaNameSearch;
                 $this->mahasiswaResults = $this->getMahasiswabyUser();
 
                 return;
@@ -291,7 +291,7 @@ trait WithMahasiswaSearchFilters
                 $this->mahasiswa_id = $exactMatch->id;
                 $this->mahasiswa_items = $this->itemsMahasiswa($exactMatch);
             } else {
-                $this->mahasiswaNameSearch = '';
+                $this->mahasiswaNameSearch;
                 if (! in_array($exactMatch->id, $this->mahasiswa_id_array ?? [])) {
                     $this->mahasiswa_id_array[] = $exactMatch->id;
                     $this->mahasiswa_items_array[] = $this->itemsMahasiswa($exactMatch);
@@ -399,7 +399,7 @@ trait WithMahasiswaSearchFilters
     {
         $this->mahasiswa_id_array = [];
         $this->mahasiswa_items_array = [];
-        $this->mahasiswaNameSearch = '';
+        $this->mahasiswaNameSearch;
     }
 
     public function searchOutputMahasiswa($queryMahasiswa, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

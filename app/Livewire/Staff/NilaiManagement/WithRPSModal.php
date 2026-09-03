@@ -317,6 +317,7 @@ trait WithRPSModal
             'cpmk_id_array' => [
                 'required',
                 'array',
+                'exists:cpmks,id',
                 'min:1',
                 function ($attribute, $value, $fail) use ($data, $hasUTS, $hasUAS, $totalSubCPMK) {
                     $max = 14;
@@ -344,8 +345,8 @@ trait WithRPSModal
             ],
             'bobot_uts' => 'nullable|numeric|min:1|max:60',
             'bobot_uas' => 'nullable|numeric|min:1|max:60',
-            'ref_id_array' => 'nullable|array',
-            'tim_dosen_id_array' => 'required|array|min:1',
+            'ref_id_array' => 'nullable|array|exists:refs,id',
+            'tim_dosen_id_array' => 'required|array|min:1|exists:tim_dosens,id',
             'tim_dosen_items_array' => [
                 'array',
                 function ($attribute, $value, $fail) {
@@ -637,7 +638,7 @@ trait WithRPSModal
         return [
             // Relasi Mata Kuliah & Prodi
             'mk_id.required' => 'Mata Kuliah asal wajib dipilih!',
-            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
+            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak tersedia!',
             // 'pr_id.required' => 'Program Studi wajib diisi!',
             // 'pr_id_array.required' => 'Program Studi wajib diisi!',
             // 'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
@@ -667,16 +668,20 @@ trait WithRPSModal
             'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk RPS ini!',
             'cpmk_id_array.array' => 'Format data CPMK tidak valid!',
             'cpmk_id_array.min' => 'Minimal harus ada satu CPMK yang dipilih!',
+            'cpmk_id_array.exists' => 'CPMK yang dipilih tidak tersedia!',
 
             // 'cpl_id_array.array' => 'Format data CPL tidak valid!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
+            'ref_id_array.exists' => 'Referensi yang dipilih tidak tersedia!',
 
             // Dosen Pengampu
             'tim_dosen_id_array.required' => 'Tim Dosen wajib dipilih!',
             'tim_dosen_id_array.min' => 'Minimal harus ada satu Tim Dosen!',
+            'tim_dosen_id_array.array' => 'Format data Tim Dosen tidak valid!',
+            'tim_dosen_id_array.exists' => 'Tim Dosen yang dipilih tidak tersedia!',
             'tim_dosen_items_array.required' => 'Data detail Tim Dosen tidak boleh kosong!',
             'tim_dosen_id_array.required' => 'Tim Dosen wajib diisi!',
-
+            'tim_dosen_items_array.array' => 'Format data detail Tim Dosen tidak valid!',
         ];
     }
 
@@ -713,11 +718,11 @@ trait WithRPSModal
 
     private function resetInputRPS()
     {
-        $this->cpmkNameSearch = '';
+        $this->cpmkNameSearch;
         // $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
-        $this->refNameSearch = '';
+        $this->refNameSearch;
 
-        $this->mkNameSearch = '';
+        $this->mkNameSearch;
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];

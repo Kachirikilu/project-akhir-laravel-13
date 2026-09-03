@@ -70,7 +70,7 @@ trait WithRefDelete
                     || $ref->scpmks()->whereHas('cpmks.rps', fn ($q) => $q->where('is_draf', 0))->exists();
 
                 if ($isConnected) {
-                    throw new \Exception('Gagal hapus permanen: Referensi masih terhubung ke RPS yang sudah Aktif!');
+                    throw new \Exception('Gagal Hapus Permanen: Referensi masih terhubung ke RPS yang sudah Aktif!');
                 }
 
                 $type = 'permanent';

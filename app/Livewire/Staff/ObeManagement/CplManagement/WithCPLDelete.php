@@ -67,7 +67,7 @@ trait WithCPLDelete
                     ->exists();
 
                 if ($isConnected) {
-                    throw new \Exception('Gagal hapus permanen: CPL masih terhubung ke RPS yang sudah Aktif!');
+                    throw new \Exception('Gagal Hapus Permanen: CPL masih terhubung ke RPS yang sudah Aktif!');
                 }
 
                 $type = 'permanent';

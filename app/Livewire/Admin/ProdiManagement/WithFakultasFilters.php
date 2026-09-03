@@ -165,7 +165,7 @@ trait WithFakultasFilters
 
     //     return $queryFk;
     // }
-
+    
     public function sortFieldOrderFakultas($queryFk)
     {
         $queryFk->addSelect('fakultas.*');
@@ -173,10 +173,17 @@ trait WithFakultasFilters
         return match ($this->sortField) {
             'kode' => $queryFk->orderBy('kode_fk', $this->sortDirection),
             'fakultas' => $queryFk->orderBy('nama_fk', $this->sortDirection),
+
+            // ===== Pimpinan Khusus Fakultas =====
+            'dekan' => $queryFk->leftJoin('dosens as d_dekan', 'fakultas.dekan_id', '=', 'd_dekan.id')
+                ->orderBy('d_dekan.name', $this->sortDirection),
+            'wadek' => $queryFk->leftJoin('dosens as d_wadek', 'fakultas.wadek_id', '=', 'd_wadek.id')
+                ->orderBy('d_wadek.name', $this->sortDirection),
+
             'nilai_fk', 'rekap_fk', 'index_fk', 'akreditas_fk' => $queryFk->orderBy('nilai_fk', $this->sortDirection),
             'created_at' => $queryFk->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryFk->orderBy('updated_at', $this->sortDirection),
-            default => $queryFk->orderBy('id', $this->sortDirection),
+            default => $queryFk->orderBy('fakultas.id', $this->sortDirection),
         };
     }
 }

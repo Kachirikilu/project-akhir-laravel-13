@@ -25,7 +25,7 @@ trait WithTimDosenSearchFilters
 
     public $tim_dosen_items = [];
 
-    public $timDosenNameSearch = '';
+    public $timDosenNameSearch;
 
     public $timDosenResults = [];
 
@@ -193,7 +193,7 @@ trait WithTimDosenSearchFilters
                     }
                     $this->timDosenResults = [];
                 } else {
-                    $this->timDosenNameSearch = '';
+                    $this->timDosenNameSearch;
                     $this->tim_dosen_id_array[] = $exactMatch->id;
                     $this->tim_dosen_items_array[] = $this->itemsTimDosen($exactMatch);
                     $this->tim_dosen_id_array = collect($this->tim_dosen_id_array)
@@ -323,7 +323,7 @@ trait WithTimDosenSearchFilters
     {
         $this->tim_dosen_id_array = [];
         $this->tim_dosen_items_array = [];
-        $this->timDosenNameSearch = '';
+        $this->timDosenNameSearch;
     }
 
     public function searchOutputTimDosen($queryTimDosen, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

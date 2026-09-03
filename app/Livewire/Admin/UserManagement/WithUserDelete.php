@@ -88,28 +88,32 @@ trait WithUserDelete
 
     private function checkUserSafety($user)
     {
-        // 1. Cek Dosen
         if ($user->dosen) {
             $dosen = $user->dosen;
 
             if ($dosen->tim_dosens()->whereHas('rps')->exists()) {
-                throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data RPS!');
+                throw new \Exception('Gagal Hapus Permanen: User (Dosen) masih terhubung ke data RPS!');
             }
 
-            // if ($dosen->scpmks()->exists()) {
-            //     throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data Sub-CPMK!');
-            // }
+            $roles = [
+                'dekan_rels' => 'Dekan',
+                'wadek_rels' => 'Wakil Dekan',
+                'kadep_rels' => 'Ketua Departemen',
+                'sekdep_rels' => 'Sekretaris Departemen',
+                'kaprodi_rels' => 'Ketua Program Studi',
+                'sekprodi_rels' => 'Sekretaris Program Studi',
+            ];
 
-            // if ($dosen->sesiMengajars()->exists()) {
-            //     throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke jadwal Kelas!');
-            // }
+            foreach ($roles as $relation => $label) {
+                if ($dosen->{$relation}()->exists()) {
+                    throw new \Exception("Gagal Hapus Permanen: User (Dosen) masih terdaftar sebagai {$label}!");
+                }
+            }
         }
-
-        // 2. Cek Mahasiswa
         if ($user->mahasiswa) {
             if ($user->mahasiswa?->jadwals()->exists()) {
                 throw new \Exception(
-                    'Gagal hapus permanen: User (Mahasiswa) masih terhubung ke data Kelas!'
+                    'Gagal Hapus Permanen: User (Mahasiswa) masih terhubung ke data Kelas!'
                 );
             }
         }

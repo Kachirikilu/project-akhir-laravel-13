@@ -75,6 +75,17 @@
                     'rowSpan' => 2,
                 ])
 
+                @if ($showMore)
+                    <th colspan="2" class="table-head-sub table-border-x">
+                        Pimpinan
+                        @if ($switchTable === '' || $switchTable === 'prodi')
+                            Program Studi
+                        @else
+                            {{ ucfirst($switchTable) }}
+                        @endif
+                    </th>
+                @endif
+
                 @if ($switchTable === '' || $switchTable === 'prodi')
                     <th colspan="{{ $showMore ? 4 : 3 }}" class="table-head-sub table-border-x">
                         Nilai Capaian
@@ -142,6 +153,35 @@
             </tr>
 
             <tr>
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => match ($switchTable ?? '') {
+                            'departemen' => 'kadep',
+                            'fakultas' => 'dekan',
+                            default => 'kaprodi',
+                        },
+                        'headString' => match ($switchTable ?? '') {
+                            'fakultas' => 'Dekan',
+                            default => 'Ketua',
+                        },
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => match ($switchTable ?? '') {
+                            'departemen' => 'sekdep',
+                            'fakultas' => 'wadek',
+                            default => 'sekprodi',
+                        },
+                              'headString' => match ($switchTable ?? '') {
+                            'fakultas' => 'Wakil Dekan',
+                            default => 'Sekretaris',
+                        },
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                @endif
                 @if ($switchTable === '' || $switchTable === 'prodi')
                     <th class="table-head table-border-l whitespace-nowrap">Show</th>
                 @endif
@@ -240,6 +280,32 @@
                 <td class="table-second whitespace-nowrap">
                     {{ $x->prodi ?? ($x->departemen_dp ?? ($x->fakultas_fk ?? '-')) }}</td>
 
+
+                @if ($showMore)
+                    @php
+                        $namaKetua = $x->nama_kaprodi ?? ($x->nama_kadep ?? ($x->nama_dekan ?? '-'));
+                        $nipKetua = $x->nip_kaprodi ?? ($x->nip_kadep ?? $x->nip_dekan);
+
+                        $namaSekretaris = $x->nama_sekprodi ?? ($x->nama_sekdep ?? ($x->nama_wadek ?? '-'));
+                        $nipSekretaris = $x->nip_sekprodi ?? ($x->nip_sekdep ?? $x->nip_wadek);
+                    @endphp
+
+                    <td class="table-main table-border-l whitespace-nowrap">
+                        {{ $namaKetua }}
+                        @if ($nipKetua)
+                            <br>
+                            NIP: {{ $nipKetua }}
+                        @endif
+                    </td>
+
+                    <td class="table-sub table-border-l whitespace-nowrap">
+                        {{ $namaSekretaris }}
+                        @if ($nipSekretaris)
+                            <br>
+                            NIP: {{ $nipSekretaris }}
+                        @endif
+                    </td>
+                @endif
                 @if ($switchTable === '' || $switchTable === 'prodi')
                     <td class="table-second table-border-l text-center">
                         @if (!$x->trashed())
@@ -259,6 +325,8 @@
                         @endif
                     </td>
                 @endif
+
+
 
 
                 @php
@@ -366,9 +434,9 @@
             @empty
                 <tr>
                     <td colspan="{{ match ($switchTable) {
-                        'fakultas' => 9,
-                        'departemen' => 10,
-                        default => 17,
+                        'fakultas' => 11,
+                        'departemen' => 12,
+                        default => 19,
                     } }}"
                         class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                         Tidak ada data {{ $xNameString }} ditemukan!

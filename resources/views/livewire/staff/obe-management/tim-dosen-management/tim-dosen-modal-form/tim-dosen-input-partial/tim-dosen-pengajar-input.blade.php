@@ -32,12 +32,18 @@
                 'idString' => 'dosen_id_array',
                 'itemsAllString' => 'dosen_items_array',
                 'itemsPertemuanString' => 'dosen_pertemuan_array',
-            
+
+                'kodeHeadString' => 'NIP:',
+                'x2HeadString' => 'NIDN:',
+                'x3HeadString' => 'NIDK:',
+                'x4HeadString' => 'Prodi:',
+                'x5HeadString' => 'Status:',
+        
                 'typeXString' => 'name',
                 'typeX2String' => 'nidn',
                 'typeX3String' => 'nidk',
-                'typeX4String' => 'status',
-                'typeX5String' => 'prodi',
+                'typeX4String' => 'prodi',
+                'typeX5String' => 'status',
             
                 'nameXString' => 'Dosen Pengajar',
                 'nameSearchString' => 'dosenNameSearch',

@@ -65,7 +65,7 @@ trait WithCPMKDelete
                     ->exists();
 
                 if ($isConnected) {
-                    throw new \Exception('Gagal hapus permanen: CPMK masih terhubung ke RPS yang sudah Aktif!');
+                    throw new \Exception('Gagal Hapus Permanen: CPMK masih terhubung ke RPS yang sudah Aktif!');
                 }
 
                 $type = 'permanent';

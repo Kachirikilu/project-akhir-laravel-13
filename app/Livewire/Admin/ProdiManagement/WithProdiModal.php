@@ -15,10 +15,12 @@ use Illuminate\Validation\ValidationException;
 
 trait WithProdiModal
 {
-    use HasToast;
     use HasErrorCount;
+    use HasToast;
 
     public $selected_id_pr;
+
+    public $selected_id_dosen = [];
 
     public $showProdiModal = false;
 
@@ -30,13 +32,13 @@ trait WithProdiModal
 
     public $fk_id_2;
 
-    protected $prodis = [
-        'nama_pr' => 'required|string|max:255|unique:prodis,nama_pr',
-        'dp_id' => 'required|exists:departemens,id',
-        'nama_dp' => 'required|string|max:255|unique:departemens,nama_dp',
-        'fk_id' => 'required|exists:fakultas,id',
-        'nama_fk' => 'required|string|max:255|unique:fakultas,nama_fk',
-    ];
+    // protected $prodis = [
+    //     'nama_pr' => 'required|string|max:255|unique:prodis,nama_pr',
+    //     'dp_id' => 'required|exists:departemens,id',
+    //     'nama_dp' => 'required|string|max:255|unique:departemens,nama_dp',
+    //     'fk_id' => 'required|exists:fakultas,id',
+    //     'nama_fk' => 'required|string|max:255|unique:fakultas,nama_fk',
+    // ];
 
     public function addProdi($type)
     {
@@ -66,7 +68,7 @@ trait WithProdiModal
                 $this->fk_id = Auth::user()->fk_id;
             }
         }
-        $this->updatedDosenNameSearch($this->dosenNameSearch);
+        $this->updatedDosenNameSearchArray($this->dosenNameSearchArray);
     }
 
     public function editProdi($id, $type)
@@ -82,12 +84,18 @@ trait WithProdiModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->dp_id = $this->fk_id = $this->selected_id_pr = null;
+        // Ensure arrays have fixed slots so indices (0..5) remain stable in edit mode
+        $this->dosen_id_array = array_fill(0, 6, null);
+        $this->dosen_items_array = array_fill(0, 6, null);
+        $this->dosenNameSearchArray = array_fill(0, 6, '');
+
+        $this->dp_id = $this->fk_id = null;
 
         try {
             if ($type === 'prodi') {
                 $prodi = Prodi::with('dp_rel')->findOrFail($id);
                 $this->selected_id_pr = $prodi->id;
+
                 if (Auth::user()->tingkat < 3) {
                     if (Auth::user()->tingkat == 2) {
                         $this->fk_id = Auth::user()->fk_id;
@@ -99,9 +107,14 @@ trait WithProdiModal
                 } else {
                     $this->dp_id = Auth::user()->dp_id;
                 }
+
+                $this->dosen_id_array[4] = $prodi->kaprodi_id ?? null;
+                $this->dosen_id_array[5] = $prodi->sekprodi_id ?? null;
+
             } elseif ($type === 'departemen') {
                 $departemen = Departemen::with('fk_rel')->findOrFail($id);
                 $this->selected_id_pr = $departemen->id;
+
                 if (Auth::user()->tingkat < 2) {
                     $this->fk_id = $departemen->fk_id;
                     $this->fk_id_2 = $departemen->fk_id;
@@ -109,9 +122,21 @@ trait WithProdiModal
                 } else {
                     $this->fk_id = Auth::user()->fk_id;
                 }
+
+                $this->dosen_id_array[2] = $departemen->kadep_id ?? null;
+                $this->dosen_id_array[3] = $departemen->sekdep_id ?? null;
+
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
                 $this->selected_id_pr = $fakultas->id;
+
+                $this->dosen_id_array[0] = $fakultas->dekan_id ?? null;
+                $this->dosen_id_array[1] = $fakultas->wadek_id ?? null;
+            }
+
+            // Only fetch indices where an id may exist or ensure UI shows empty slots
+            foreach ([0, 1, 2, 3, 4, 5] as $idx) {
+                $this->fetchDosenArray($idx);
             }
 
             $this->showProdiModal = true;
@@ -181,6 +206,8 @@ trait WithProdiModal
                     },
                 ],
                 'dp_id' => ['required', 'integer', 'exists:departemens,id'],
+                'dosen_id_array.4' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.5' => ['required', 'integer', 'exists:dosens,id'],
                 'strata' => [
                     'required',
                     Rule::in(['Sarjana', 'Magister', 'Doktor']),
@@ -242,6 +269,8 @@ trait WithProdiModal
                     },
                 ],
                 'fk_id' => ['required', 'integer', 'exists:fakultas,id'],
+                'dosen_id_array.2' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.3' => ['required', 'integer', 'exists:dosens,id'],
             ];
         }
 
@@ -275,6 +304,8 @@ trait WithProdiModal
                         }
                     },
                 ],
+                'dosen_id_array.0' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.1' => ['required', 'integer', 'exists:dosens,id'],
             ];
         }
 
@@ -321,13 +352,13 @@ trait WithProdiModal
             return;
         }
 
-
         $data['dp_id'] = $this->dp_id;
         $data['fk_id'] = $this->fk_id;
-        $data['dosen_id'] = $this->dosen_id;
 
-        dd($data);
-
+        $data['dosen_id_array'] = array_replace(
+            array_fill(0, 6, null),
+            array_filter($this->dosen_id_array ?? [], fn ($val) => ! is_null($val) && $val !== '')
+        );
 
         if (empty($data['strata'])) {
             $data['strata'] = 'Sarjana';
@@ -340,6 +371,7 @@ trait WithProdiModal
             $message = '';
 
             DB::transaction(function () use ($validated, $message) {
+                $dosenArray = $validated['dosen_id_array'] ?? [];
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['strata']);
                     $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
@@ -349,6 +381,8 @@ trait WithProdiModal
                         'strata' => $validated['strata'],
                         'dp_id' => $validated['dp_id'],
                         'kode_pr' => $validated['kode_pr'],
+                        'kaprodi_id' => data_get($dosenArray, 4),
+                        'sekprodi_id' => data_get($dosenArray, 5),
                     ]);
                 } elseif ($this->prodiType === 'departemen') {
                     $message = 'Departemen '.$validated['nama_dp'];
@@ -356,12 +390,16 @@ trait WithProdiModal
                         'nama_dp' => $validated['nama_dp'],
                         'fk_id' => $validated['fk_id'],
                         'kode_dp' => $validated['kode_dp'],
+                        'kadep_id' => data_get($dosenArray, 2),
+                        'sekdep_id' => data_get($dosenArray, 3),
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
                     $message = 'Fakultas '.$validated['nama_fk'];
                     Fakultas::create([
                         'nama_fk' => $validated['nama_fk'],
                         'kode_fk' => $validated['kode_fk'],
+                        'dekan_id' => data_get($dosenArray, 0),
+                        'wadek_id' => data_get($dosenArray, 1),
                     ]);
                 }
             });
@@ -397,6 +435,12 @@ trait WithProdiModal
             $data['fk_id'] = $this->fk_id;
         }
 
+        $data['dosen_id_array'] = array_replace(
+            array_fill(0, 6, null),
+            array_filter($this->dosen_id_array ?? [], fn ($val) => ! is_null($val) && $val !== '')
+        );
+
+
         if (empty($data['strata'])) {
             $data['strata'] = 'Sarjana';
         }
@@ -407,6 +451,9 @@ trait WithProdiModal
             $message = '';
 
             DB::transaction(function () use ($validated, &$message) {
+                $dosenArray = $validated['dosen_id_array'] ?? [];
+                // dump($dosenArray, $validated);
+
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['strata']);
                     $message = 'Program Studi '.$strata.' '.$validated['nama_pr'];
@@ -416,6 +463,8 @@ trait WithProdiModal
                         'strata' => $validated['strata'],
                         'dp_id' => $validated['dp_id'],
                         'kode_pr' => $validated['kode_pr'],
+                        'kaprodi_id' => data_get($dosenArray, 4),
+                        'sekprodi_id' => data_get($dosenArray, 5),
                     ]);
                 } elseif ($this->prodiType === 'departemen') {
                     $message = 'Departemen '.$validated['nama_dp'];
@@ -423,12 +472,16 @@ trait WithProdiModal
                         'nama_dp' => $validated['nama_dp'],
                         'fk_id' => $validated['fk_id'],
                         'kode_dp' => $validated['kode_dp'],
+                        'kadep_id' => data_get($dosenArray, 2),
+                        'sekdep_id' => data_get($dosenArray, 3),
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
                     $message = 'Fakultas '.$validated['nama_fk'];
                     Fakultas::findOrFail($this->selected_id_pr)->update([
                         'nama_fk' => $validated['nama_fk'],
                         'kode_fk' => $validated['kode_fk'],
+                        'dekan_id' => data_get($dosenArray, 0),
+                        'wadek_id' => data_get($dosenArray, 1),
                     ]);
                 }
             });
@@ -467,7 +520,7 @@ trait WithProdiModal
             'kode_pr.unique' => 'Kode Program Studi ini sudah digunakan oleh Program Studi lain!',
             'dp_id.required' => 'Departemen wajib diisi!',
             'dp_id.integer' => 'ID Departemen harus berupa angka!',
-            'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
+            'dp_id.exists' => 'Departemen yang dipilih tidak tersedia!',
 
             /* --- Departemen --- */
             'nama_dp.required' => 'Nama Departemen wajib diisi!',
@@ -479,7 +532,7 @@ trait WithProdiModal
             'kode_dp.unique' => 'Kode Departemen ini sudah terdaftar di database!',
             'fk_id.required' => 'Fakultas wajib diisi!',
             'fk_id.integer' => 'ID Fakultas harus berupa angka!',
-            'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
+            'fk_id.exists' => 'Fakultas yang dipilih tidak tersedia!',
 
             /* --- Fakultas --- */
             'nama_fk.required' => 'Nama Fakultas wajib diisi!',
@@ -491,12 +544,24 @@ trait WithProdiModal
             'kode_fk.unique' => 'Kode Fakultas sudah terdaftar di database!',
             'kode_fk.string' => 'Kode Fakultas harus berupa teks!',
 
-            'dosen_id_array[0].required' => 'Dekan wajib dipilih!',
-            'dosen_id_array[1].required' => 'Wakil Dekan (Wadek) wajib dipilih!',
-            'dosen_id_array[2].required' => 'Ketua Departemen (Kadep) wajib dipilih!',
-            'dosen_id_array[3].required' => 'Sekretaris Departemen (Sekdep) wajib dipilih!',
-            'dosen_id_array[4].required' => 'Ketua Program Studi (Kaprodi) wajib dipilih!',
-            'dosen_id_array[5].required' => 'Sekretaris Program Studi (Sekprodi) wajib dipilih!',
+            'dosen_id_array.0.required' => 'Dekan wajib dipilih!',
+            'dosen_id_array.0.integer' => 'ID Dekan harus berupa angka!',
+            'dosen_id_array.0.exists' => 'Dekan yang dipilih tidak tersedia!',
+            'dosen_id_array.1.required' => 'Wakil Dekan (Wadek) wajib dipilih!',
+            'dosen_id_array.1.integer' => 'ID Wakil Dekan (Wadek) harus berupa angka!',
+            'dosen_id_array.1.exists' => 'Wakil Dekan (Wadek) yang dipilih tidak tersedia!',
+            'dosen_id_array.2.required' => 'Ketua Departemen (Kadep) wajib dipilih!',
+            'dosen_id_array.2.integer' => 'ID Ketua Departemen (Kadep) harus berupa angka!',
+            'dosen_id_array.2.exists' => 'Ketua Departemen (Kadep) yang dipilih tidak tersedia!',
+            'dosen_id_array.3.required' => 'Sekretaris Departemen (Sekdep) wajib dipilih!',
+            'dosen_id_array.3.integer' => 'ID Sekretaris Departemen (Sekdep) harus berupa angka!',
+            'dosen_id_array.3.exists' => 'Sekretaris Departemen (Sekdep) yang dipilih tidak tersedia!',
+            'dosen_id_array.4.required' => 'Ketua Program Studi (Kaprodi) wajib dipilih!',
+            'dosen_id_array.4.integer' => 'ID Ketua Program Studi (Kaprodi) harus berupa angka!',
+            'dosen_id_array.4.exists' => 'Ketua Program Studi (Kaprodi) yang dipilih tidak tersedia!',
+            'dosen_id_array.5.required' => 'Sekretaris Program Studi (Sekprodi) wajib dipilih!',
+            'dosen_id_array.5.integer' => 'ID Sekretaris Program Studi (Sekprodi) harus berupa angka!',
+            'dosen_id_array.5.exists' => 'Sekretaris Program Studi (Sekprodi) yang dipilih tidak tersedia!',
         ];
     }
 
@@ -508,15 +573,15 @@ trait WithProdiModal
                 'kode_pr', 'kode_dp', 'kode_fk',
                 'strata',
                 'dp_id', 'fk_id',
-                'target_sks'
+                'target_sks',
             ]),
             2 => $this->getErrorCount([
-                'dosen_id_array[0]',
-                'dosen_id_array[1]',
-                'dosen_id_array[2]',
-                'dosen_id_array[3]',
-                'dosen_id_array[4]',
-                'dosen_id_array[5]',
+                'dosen_id_array.0',
+                'dosen_id_array.1',
+                'dosen_id_array.2',
+                'dosen_id_array.3',
+                'dosen_id_array.4',
+                'dosen_id_array.5',
             ]),
         ];
     }
@@ -534,8 +599,10 @@ trait WithProdiModal
         //     // , 'prResults'
         //     ]);
         // }
-        $this->dosen_id_array = [];
-        $this->dosen_items_array = [];
+        // $this->resetDosenArray();
+        $this->dosenNameSearchArray = [null, null, null, null, null, null];
+        $this->dosen_id_array = [null, null, null, null, null, null];
+        $this->dosen_items_array = [null, null, null, null, null, null];
 
         $this->reset($fields);
         $this->resetErrorBag();

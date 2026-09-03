@@ -3,33 +3,34 @@
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Ketua dan Sekretaris Departemen</h4>
 
+
         @include('livewire.global.modal-form.input-array.search-input-form', [
             'alpine' => 'prodi',
             'xResults' => $dosenResults,
             'selectX' => 'selectDosen',
             'modelString' => 'nama_dosen_search',
         
-            'idString' => 'dosen_id[2]',
-            'itemsAllString' => 'dosen_items[2]',
+        'selectIndex' => 2,
+            'idString' => 'dosen_id_array[2]',
+            'itemsAllString' => 'dosen_items_array[2]',
         
             'kodeHeadString' => 'NIP:',
             'x2HeadString' => 'NIDN:',
             'x3HeadString' => 'NIDK:',
-            'x4HeadString' => 'Status:',
+            'x5HeadString' => 'Status:',
         
-            'resetXInput' => 'resetDosenInput()',
+            'resetXInput' => 'resetDosenInputArray(2)',
             'typeXString' => 'name',
             'typeX2String' => 'nidn',
             'typeX3String' => 'nidk',
-            'typeX4String' => 'status',
-            'typeX5String' => 'prodi',
+            'typeX4String' => 'prodi',
+            'typeX5String' => 'status',
         
             'nameXString' => 'Ketua Departemen (Kadep)',
-            'nameSearchString' => 'dosenNameSearch[2]',
-            'fetchString' => 'fetchDosen',
+            'nameSearchString' => 'dosenNameSearchArray[2]',
+            'fetchString' => 'fetchDosenArray',
             'iconString' => 'user',
-            'wireLoading' => 'fetchDosen',
-            'isRequired' => 0,
+            'wireLoading' => 'fetchDosenArray',
         ])
 
         @include('livewire.global.modal-form.input-array.search-input-form', [
@@ -38,26 +39,28 @@
             'selectX' => 'selectDosen',
             'modelString' => 'nama_dosen_search',
         
-            'idString' => 'dosen_id[3]',
-            'itemsAllString' => 'dosen_items[3]',
+        'selectIndex' => 3,
+            'idString' => 'dosen_id_array[3]',
+            'itemsAllString' => 'dosen_items_array[3]',
         
             'kodeHeadString' => 'NIP:',
             'x2HeadString' => 'NIDN:',
             'x3HeadString' => 'NIDK:',
-            'x4HeadString' => 'Status:',
+            'x4HeadString' => 'Prodi:',
+            'x5HeadString' => 'Status:',
         
-            'resetXInput' => 'resetDosenInput()',
+            'resetXInput' => 'resetDosenInputArray(3)',
             'typeXString' => 'name',
             'typeX2String' => 'nidn',
             'typeX3String' => 'nidk',
-            'typeX4String' => 'status',
-            'typeX5String' => 'prodi',
+            'typeX4String' => 'prodi',
+            'typeX5String' => 'status',
         
             'nameXString' => 'Sekretaris Departemen (Sekdep)',
-            'nameSearchString' => 'dosenNameSearch[3]',
-            'fetchString' => 'fetchDosen',
+            'nameSearchString' => 'dosenNameSearchArray[3]',
+            'fetchString' => 'fetchDosenArray',
             'iconString' => 'user',
-            'wireLoading' => 'fetchDosen',
+            'wireLoading' => 'fetchDosenArray',
         ])
 
 </div>

@@ -25,7 +25,7 @@ trait WithNilaiSearchFilters
 
     public $nilai_items = [];
 
-    public $nilaiNameSearch = '';
+    public $nilaiNameSearch;
 
     public $nilaiResults = [];
 
@@ -134,7 +134,7 @@ trait WithNilaiSearchFilters
                     $this->nilai_items = $this->itemsNilai($exactMatch);
                     $this->nilaiResults = [];
                 } else {
-                    $this->nilaiNameSearch = '';
+                    $this->nilaiNameSearch;
                     $this->nilai_id_array[] = $exactMatch->id;
                     $this->nilai_items_array[] = $this->itemsNilai($exactMatch);
                     $this->nilai_id_array = collect($this->nilai_id_array)
@@ -256,7 +256,7 @@ trait WithNilaiSearchFilters
     {
         $this->nilai_id_array = [];
         $this->nilai_items_array = [];
-        $this->nilaiNameSearch = '';
+        $this->nilaiNameSearch;
     }
 
     public function searchOutputNilai($calculatedPeriode, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')

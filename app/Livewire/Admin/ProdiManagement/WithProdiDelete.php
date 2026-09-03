@@ -124,13 +124,13 @@ trait WithProdiDelete
     {
         if ($type === 'fakultas') {
             if ($data->departemens()->exists()) {
-                throw new \Exception('Gagal hapus permanen: Fakultas masih memiliki Departemen!');
+                throw new \Exception('Gagal Hapus Permanen: Fakultas masih memiliki Departemen!');
             }
         }
 
         if ($type === 'departemen') {
             if ($data->prodis()->exists()) {
-                throw new \Exception('Gagal hapus permanen: Departemen masih memiliki Program Studi!');
+                throw new \Exception('Gagal Hapus Permanen: Departemen masih memiliki Program Studi!');
             }
         }
 
@@ -140,19 +140,19 @@ trait WithProdiDelete
                        Mahasiswa::where('pr_id', $data->id)->exists();
 
             if ($hasUsers) {
-                throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki User (Admin/Dosen/Mahasiswa)!');
+                throw new \Exception('Gagal Hapus Permanen: Program Studi masih memiliki User (Admin/Dosen/Mahasiswa)!');
             }
 
             if ($data->mata_kuliahs()->exists()) {
-                throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki Mata Kuliah!');
+                throw new \Exception('Gagal Hapus Permanen: Program Studi masih memiliki Mata Kuliah!');
             }
 
             if ($data->cpls()->exists()) {
-                throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki CPL!');
+                throw new \Exception('Gagal Hapus Permanen: Program Studi masih memiliki CPL!');
             }
 
             if (Kelas::where('pr_id', $data->id)->exists()) {
-                throw new \Exception('Gagal hapus permanen: Program Studi masih memiliki Kelas!');
+                throw new \Exception('Gagal Hapus Permanen: Program Studi masih memiliki Kelas!');
             }
         }
     }

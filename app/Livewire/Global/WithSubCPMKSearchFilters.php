@@ -25,7 +25,7 @@ trait WithSubCPMKSearchFilters
 
     public $scpmk_items = [];
 
-    public $scpmkNameSearch = '';
+    public $scpmkNameSearch;
 
     public $scpmkResults = [];
 
@@ -227,7 +227,7 @@ trait WithSubCPMKSearchFilters
                     $this->scpmk_items = $this->itemsSCPMK($exactMatch);
                     $this->scpmkResults = [];
                 } else {
-                    $this->scpmkNameSearch = '';
+                    $this->scpmkNameSearch;
                     $this->scpmk_id_array[] = $exactMatch->id;
                     $this->scpmk_items_array[] = $this->itemsSCPMK($exactMatch);
                     $mappedResults = $this->mapSCPMK(collect([$exactMatch]));
@@ -349,7 +349,7 @@ trait WithSubCPMKSearchFilters
     {
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
-        $this->scpmkNameSearch = '';
+        $this->scpmkNameSearch;
     }
 
     public function searchOutputSCPMK($querySCPMK, $searchRaw, $searchBobot, $perPage, $sortField = null, $sortDirection = 'asc')
