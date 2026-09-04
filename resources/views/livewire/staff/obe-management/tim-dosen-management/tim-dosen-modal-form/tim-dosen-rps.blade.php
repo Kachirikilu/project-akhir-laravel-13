@@ -19,16 +19,17 @@
     </div>
 
     <div>
-        <label  x-text="'Program Studi ' + ($store.tim_dosen?.prodi ?? 'S1 Teknik Elektro')" class="block text-xs font-semibold uppercase tracking-wider text-[var(--contrast-second-text)] mb-3">
+        <label x-text="'Program Studi ' + ($store.tim_dosen?.prodi ?? 'S1 Teknik Elektro')"
+            class="block text-xs font-semibold uppercase tracking-wider text-[var(--contrast-second-text)] mb-3">
         </label>
 
         <div class="space-y-3">
 
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-4 gap-3">
                 <div
-                    class="p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
-                    <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Koordinator</span>
-                    <span class="block text-xl font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
+                    class="p-3 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50/50 dark:bg-red-950/20 text-center">
+                    <span class="block text-xs font-medium text-red-700 dark:text-red-400">Koordinator</span>
+                    <span class="block text-xl font-bold text-red-800 dark:text-red-300 mt-0.5">
                         <span x-text="$store.tim_dosen?.count_koordinator"></span>
                     </span>
                 </div>
@@ -38,6 +39,14 @@
                     <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Pengajar</span>
                     <span class="block text-xl font-bold text-blue-800 dark:text-blue-300 mt-0.5">
                         <span x-text="$store.tim_dosen?.count_pengajar"></span>
+                    </span>
+                </div>
+
+                <div
+                    class="p-3 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
+                    <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Instruktur</span>
+                    <span class="block text-xl font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
+                        <span x-text="$store.tim_dosen?.count_instruktur"></span>
                     </span>
                 </div>
 

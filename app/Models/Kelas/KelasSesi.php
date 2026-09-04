@@ -140,6 +140,7 @@ class KelasSesi extends Model
             $cpmk = $scpmk->cpmk_rel ?? null;
             $rps = $this->jadwal_rel?->kelas_rel?->rps_rel;
             $referensi = collect();
+
             if (isset($scpmk->refs)) {
                 $referensi = $referensi->merge($scpmk->refs);
             }
@@ -150,7 +151,10 @@ class KelasSesi extends Model
                 $referensi = $referensi->merge($rps->refs);
             }
 
-            return $referensi->unique('id')->values();
+            return $referensi
+                ->unique('id')
+                ->sortBy('penulis', SORT_NATURAL | SORT_FLAG_CASE)
+                ->values();
         });
     }
 

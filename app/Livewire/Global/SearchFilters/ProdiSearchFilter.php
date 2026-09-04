@@ -17,6 +17,13 @@ class ProdiSearchFilter extends Component
         resetPrFilter as traitResetPrFilter;
     }
 
+    public $isSmall = false;
+
+    public function mount($isSmall = false)
+    {
+        $this->isSmall = $isSmall;
+    }
+
     public function selectPrForFilter($id)
     {
         $this->traitSelectPrForFilter($id);

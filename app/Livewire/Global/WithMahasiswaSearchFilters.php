@@ -57,7 +57,7 @@ trait WithMahasiswaSearchFilters
         return $collection->map(fn ($m) => [
             'id' => $m->id,
             'kode' => $m->nim,
-            'nim_full' => 'NIM: '.$m->nim,
+            // 'nim_full' => 'NIM. '.$m->nim,
             'name' => $m->name,
             'prodi' => $m->pr_rel?->prodi,
             'angkatan' => $m->angkatan,

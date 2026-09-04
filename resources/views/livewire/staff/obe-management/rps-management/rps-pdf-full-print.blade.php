@@ -1,0 +1,5 @@
+@extends('layouts.pdf')
+@section('content')
+    @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-head-show')
+    @include('livewire.staff.obe-management.rps-management.rps-show.rps-pdf-body-show')
+@endsection

@@ -14,7 +14,7 @@
                     x-text="$store.nilai?.nama"></h3>
 
                 <div class="text-xs text-[var(--contrast-second-text)] mt-1">
-                    <span class="font-mono font-medium" x-text="'NIM: ' + $store.nilai?.nim"></span>
+                    <span class="font-mono font-medium" x-text="'NIM. ' + $store.nilai?.nim"></span>
                 </div>
 
                 <div

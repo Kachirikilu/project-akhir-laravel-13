@@ -34,7 +34,7 @@
                 'idString' => 'mahasiswa_id_array',
                 'itemsAllString' => 'mahasiswa_items_array',
 
-                'kodeHeadString' => 'NIM:',
+                'kodeHeadString' => 'NIM.',
 
                 'x4HeadString' => 'Angkatan',
                 'x5HeadString' => 'Status:',

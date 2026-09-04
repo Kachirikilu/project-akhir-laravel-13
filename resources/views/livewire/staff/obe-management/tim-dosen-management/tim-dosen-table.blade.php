@@ -53,7 +53,7 @@
                 </th>
 
                 @if ($showMore)
-                    <th colspan="4" class="table-head-sub">
+                    <th colspan="5" class="table-head-sub">
                         Jumlah Anggota Tim
                     </th>
 
@@ -119,6 +119,11 @@
                         'isCenter' => 1,
                     ])
                     @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'count_instruktur',
+                        'headString' => 'Instruktur',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'count_asisten',
                         'headString' => 'Asisten',
                         'isCenter' => 1,
@@ -170,7 +175,8 @@
                     <td class="table-second table-border-r text-center">{{ $d->count_dosen ?? '-' }}</td>
                     <td class="table-sub text-center">{{ $d->count_koordinator ?? '-' }}</td>
                     <td class="table-second text-center">{{ $d->count_pengajar ?? '-' }}</td>
-                    <td class="table-sub table-border-r text-center">{{ $d->count_asisten ?? '-' }}</td>
+                    <td class="table-sub text-center">{{ $d->count_instruktur ?? '-' }}</td>
+                    <td class="table-second table-border-r text-center">{{ $d->count_asisten ?? '-' }}</td>
                 @endif
 
 
@@ -191,6 +197,7 @@
 
                                     '{{ $d->count_koordinator ?? '' }}',
                                     '{{ $d->count_pengajar ?? '' }}',
+                                    '{{ $d->count_instruktur ?? '' }}',
                                     '{{ $d->count_asisten ?? '' }}',
 
                                     '{{ $d->count_rps ?? '' }}',
@@ -237,7 +244,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="16" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                <td colspan="17" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Tim Dosen ditemukan!
                 </td>
             </tr>

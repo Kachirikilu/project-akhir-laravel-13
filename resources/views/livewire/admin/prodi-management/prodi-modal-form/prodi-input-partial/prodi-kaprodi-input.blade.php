@@ -15,9 +15,9 @@
         'idString' => 'dosen_id_array[4]',
         'itemsAllString' => 'dosen_items_array[4]',
     
-        'kodeHeadString' => 'NIP:',
-        'x2HeadString' => 'NIDN:',
-        'x3HeadString' => 'NIDK:',
+        'kodeHeadString' => 'NIP.',
+        'x2HeadString' => 'NIDN.',
+        'x3HeadString' => 'NIDK.',
         'x5HeadString' => 'Status:',
     
         'resetXInput' => 'resetDosenInputArray(4)',
@@ -44,9 +44,9 @@
         'idString' => 'dosen_id_array[5]',
         'itemsAllString' => 'dosen_items_array[5]',
     
-        'kodeHeadString' => 'NIP:',
-        'x2HeadString' => 'NIDN:',
-        'x3HeadString' => 'NIDK:',
+        'kodeHeadString' => 'NIP.',
+        'x2HeadString' => 'NIDN.',
+        'x3HeadString' => 'NIDK.',
         'x5HeadString' => 'Status:',
     
         'resetXInput' => 'resetDosenInputArray(5)',

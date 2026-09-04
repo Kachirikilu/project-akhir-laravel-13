@@ -82,7 +82,7 @@ trait WithRPSShow
         $prodi = $mk?->prodis->first();
 
         $timPengajar = $rps->dosens->map(function ($dosen) {
-            return $dosen->name.'<br>(NIP: '.($dosen->nip ?? '-').')';
+            return $dosen->name.'<br>(NIP. '.($dosen->nip ?? '-').')';
         })->filter()->implode("\n");
         $ketua = optional($rps->dosens->first(function ($d) {
             return (bool) ($d->pivot->is_ketua ?? false);

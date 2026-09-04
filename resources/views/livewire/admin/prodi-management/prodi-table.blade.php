@@ -294,7 +294,7 @@
                         {{ $namaKetua }}
                         @if ($nipKetua)
                             <br>
-                            NIP: {{ $nipKetua }}
+                            NIP. {{ $nipKetua }}
                         @endif
                     </td>
 
@@ -302,7 +302,7 @@
                         {{ $namaSekretaris }}
                         @if ($nipSekretaris)
                             <br>
-                            NIP: {{ $nipSekretaris }}
+                            NIP. {{ $nipSekretaris }}
                         @endif
                     </td>
                 @endif

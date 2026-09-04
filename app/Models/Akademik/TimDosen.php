@@ -107,7 +107,12 @@ class TimDosen extends Model
             return $this->dosens->where('pivot.peran', 'Pengajar')->count();
         });
     }
-
+    protected function countInstruktur(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->dosens->where('pivot.peran', 'Instruktur')->count();
+        });
+    }
     protected function countAsisten(): Attribute
     {
         return Attribute::get(function () {

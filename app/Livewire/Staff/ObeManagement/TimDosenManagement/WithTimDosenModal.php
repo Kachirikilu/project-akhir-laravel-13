@@ -314,7 +314,7 @@ trait WithTimDosenModal
                     }
                 },
             ],
-            'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
+            'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Instruktur,Asisten',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesTimDosen());
@@ -515,8 +515,8 @@ trait WithTimDosenModal
             'dosen_id_array.array' => 'Format data Dosen pengampu tidak valid!',
             'dosen_id_array.exists' => 'Dosen pengampu yang dipilih tidak tersedia!',
             'dosen_items_array.required' => 'Data detail Dosen tidak boleh kosong!',
-            'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
-            'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
+            'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Instruktur/Asisten) wajib dipilih!',
+            'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, Instruktur, atau Asisten!',
             'dosen_pertemuan_array.array' => 'Format data Pertemuan Dosen tidak valid!',
             'dosen_pertemuan_array.*.array' => 'Format data Pertemuan Dosen tidak valid!',
         ];

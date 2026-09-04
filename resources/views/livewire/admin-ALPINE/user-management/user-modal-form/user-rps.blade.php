@@ -11,11 +11,11 @@
                     x-text="$store.user?.name ?? 'Wildan Athif Muttaqien'"></h3>
                 <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
                     <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5"
-                        x-text="'NIP: ' + ($store.user?.nip ?? '03041282227063')"></p>
+                        x-text="'NIP. ' + ($store.user?.nip ?? '03041282227063')"></p>
                 </template>
                 <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
                     <p class="text-xs text-[var(--contrast-second-text)] font-mono mt-0.5"
-                        x-text="'NIM: ' + ($store.user?.nim ?? '03041282227063')"></p>
+                        x-text="'NIM. ' + ($store.user?.nim ?? '03041282227063')"></p>
                 </template>
 
                 {{-- <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide">{{ $user_input['name'] }}

@@ -104,7 +104,7 @@
                 </h2>
                 <p
                     class="text-[var(--contrast-main-text)] opacity-70 text-xs sm:text-sm flex items-center gap-x-1 gap-y-1 flex-wrap mt-0.5 min-w-0">
-                    <span>NIM: {{ $nim_url ?? '03041282227063' }}</span>
+                    <span>NIM. {{ $nim_url ?? '03041282227063' }}</span>
                     <strong class="opacity-40 mx-1">|</strong>
                     <span>{{ $mahasiswa->pr_rel->prodi ?? '---' }} ({{ $mahasiswa->pr_rel->kode_dp ?? '---' }})</span>
                     <strong class="opacity-40 mx-1">|</strong>

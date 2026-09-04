@@ -32,10 +32,12 @@
             'itemsAllString' => 'pr_items',
         
             'resetXInput' => 'resetPrInput()',
+
+            'x3HeadString' => 'Fakultas',
         
             'typeXString' => 'prodi',
-            // 'typeX2String' => 'departemen',
-            'typeX2String' => 'fakultas',
+            'typeX2String' => 'departemen',
+            'typeX3String' => 'fakultas',
         
             'nameXString' => 'Program Studi',
             'nameSearchString' => 'prNameSearch',

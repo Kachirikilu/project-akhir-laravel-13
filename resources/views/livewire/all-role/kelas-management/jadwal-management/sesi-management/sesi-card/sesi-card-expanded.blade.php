@@ -107,7 +107,7 @@
                         </span>
                     @endif
 
-                    <br>NIP: {{ $dosen->nip }}
+                    <br>NIP. {{ $dosen->nip }}
                 </div>
             </div>
         @empty

@@ -100,7 +100,7 @@ class Dosen extends Model
             $nidn = $this->nidn ?? '---';
             $nidk = $this->nidk ?? '---';
 
-            return "NIDN: {$nidn} / NIDK: {$nidk}";
+            return "NIDN. {$nidn} / NIDK. {$nidk}";
         });
     }
 

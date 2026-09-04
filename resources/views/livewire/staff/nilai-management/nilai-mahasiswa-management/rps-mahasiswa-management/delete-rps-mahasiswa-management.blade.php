@@ -13,7 +13,7 @@
                         </strong>
                         dari mahasiswa
                         <strong class="text-red-700 dark:text-red-400"
-                            x-text="($store.nilai?.name_delete ?? '') + ' (NIM: ' + ($store.nilai?.nim_delete ?? '') + ')'">
+                            x-text="($store.nilai?.name_delete ?? '') + ' (NIM. ' + ($store.nilai?.nim_delete ?? '') + ')'">
                         </strong>?
 
                         <span x-show="$store.nilai?.isForceDelete"

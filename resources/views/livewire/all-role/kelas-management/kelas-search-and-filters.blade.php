@@ -108,7 +108,7 @@
 
         <div x-show="activeFilter !== '' && activeFilter !== 'kelas-prodi' && activeFilter !== 'kelas-uni'"
             class="sm:col-span-6 xl:col-span-3 relative">
-            <livewire:global.search-filters.prodi-search-filter lazy wire:key="pr-search-filter" />
+            <livewire:global.search-filters.prodi-search-filter lazy :isSmall="true" wire:key="pr-search-filter" />
         </div>
 
         <div class="relative text-left"

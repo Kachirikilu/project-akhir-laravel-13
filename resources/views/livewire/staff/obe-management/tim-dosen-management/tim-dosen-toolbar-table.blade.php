@@ -12,6 +12,7 @@
         'prodi' => $d->prodi,
         'count_koordinator' => $d->count_koordinator,
         'count_pengajar' => $d->count_pengajar,
+        'count_instruktur' => $d->count_instruktur,
         'count_asisten' => $d->count_asisten,
         'count_rps' => $d->count_rps,
         'total_sks' => $d->total_sks,

@@ -40,7 +40,9 @@ class iFrameRpsController extends Controller
         }
         $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($selectedPr->id);
         $tim_dosen = $rps->tim_dosens->where('pr_id', $selectedPr->id);
+        $tim = $tim_dosen->first();
+        $allDosens = $tim ? $tim->dosens : collect();
 
-        return view('staff.obe-management.rps-management.rps-pdf-print', compact('rps', 'prodi', 'tim_dosen'));
+        return view('staff.obe-management.rps-management.rps-pdf-full-print', compact('rps', 'prodi', 'tim_dosen', 'allDosens'));
     }
 }

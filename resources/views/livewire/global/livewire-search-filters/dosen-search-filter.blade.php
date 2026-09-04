@@ -10,8 +10,12 @@
     'xSearchQuery' => $dosenSearchQuery,
     'xSearchResults' => $dosenSearchResults,
     'selectXForFilterString' => 'selectDosenForFilter',
+
+    'x2HeadString' => 'NIP.',
+    'x3HeadString' => 'Status:',
+
     'typeXString' => 'name',
-    'typeX2String' => 'nip_full',
+    'typeX2String' => 'kode',
     'typeX3String' => 'status',
     'typeKodeString' => 'kode_pr',
     'unfoundString' => 'Tidak ada Dosen ditemukan!',

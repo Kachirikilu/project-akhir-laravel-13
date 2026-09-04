@@ -251,10 +251,10 @@
             <td rowspan="2" class="font-bold bg-gray text-center">{{ $label }}</td>
             <td rowspan="2" colspan="{{ $instruktur->isNotEmpty() ? 3 : 6 }}">
                 @if ($allDosens->count() === 1)
-                    {{ $allDosens->first()->name }}<br>NIP: {{ $allDosens->first()->nip }}
+                    {{ $allDosens->first()->name }}<br>NIP. {{ $allDosens->first()->nip }}
                 @elseif ($allDosens->count() > 1)
                     @foreach ($allDosens as $idx => $dosen)
-                        <div class="list-indent">{{ $idx + 1 }}. {{ $dosen->name }}<br>NIP: {{ $dosen->nip }}
+                        <div class="list-indent">{{ $idx + 1 }}. {{ $dosen->name }}<br>NIP. {{ $dosen->nip }}
                         </div>
                     @endforeach
                 @else

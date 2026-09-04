@@ -33,9 +33,9 @@
                 'itemsAllString' => 'dosen_items_array',
                 'itemsPertemuanString' => 'dosen_pertemuan_array',
 
-                'kodeHeadString' => 'NIP:',
-                'x2HeadString' => 'NIDN:',
-                'x3HeadString' => 'NIDK:',
+                'kodeHeadString' => 'NIP.',
+                'x2HeadString' => 'NIDN.',
+                'x3HeadString' => 'NIDK.',
                 'x4HeadString' => 'Prodi:',
                 'x5HeadString' => 'Status:',
         

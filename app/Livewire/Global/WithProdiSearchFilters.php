@@ -44,8 +44,10 @@ trait WithProdiSearchFilters
             'kode' => $p->kode,
             'kode_short' => $p->kode_short,
             'prodi' => $p->prodi,
-            'departemen' => $p->departemenDp,
-            'fakultas' => $p->fakultasFk,
+            'departemen' => $p->departemen,
+            'fakultas' => $p->fakultas,
+            // 'departemen_dp' => $p->departemen_dp,
+            // 'fakultas_fk' => $p->fakultas_fk,
             'strata' => $p->strata,
         ])->toArray();
     }
@@ -66,8 +68,8 @@ trait WithProdiSearchFilters
             'kode' => $p->kode,
             'kode_short' => $p->kode_short,
             'slot1' => $p->prodi,
-            // 'slot2' => $p->departemenDp,
-            'slot2' => $p->fakultasFk,
+            'slot2' => $p->departemen,
+            'slot3' => $p->fakultas,
         ];
     }
 
@@ -621,7 +623,7 @@ trait WithProdiSearchFilters
                         || $matchDp
                         || $matchFk
 
-                        || $matchName 
+                        || $matchName
                         || $matchIdentity1
                         || $matchIdentity2
                         || $matchIdentity1

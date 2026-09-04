@@ -69,6 +69,7 @@ document.addEventListener("alpine:init", () => {
             prodi,
             koor,
             pengajar,
+            instruktur,
             asisten,
             countRps,
             sks
@@ -80,6 +81,7 @@ document.addEventListener("alpine:init", () => {
 
             this.count_koordinator = koor;
             this.count_pengajar = pengajar;
+            this.count_instruktur = instruktur;
             this.count_asisten = asisten;
 
             this.count_rps = countRps;
@@ -112,6 +114,7 @@ document.addEventListener("alpine:init", () => {
 
                 this.count_koordinator = "";
                 this.count_pengajar = "";
+                this.count_instruktur = "";
                 this.count_asisten = "";
 
                 this.count_rps = "";

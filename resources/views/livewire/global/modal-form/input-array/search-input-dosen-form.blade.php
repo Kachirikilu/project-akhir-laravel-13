@@ -276,12 +276,20 @@
                             <div class="flex items-center justify-between gap-2">
 
                                 {{-- SELECT (Kiri) --}}
-                                <select x-model="itemsAll[index].peran"
-                                    class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">
-                                    <option value="Koordinator">Koordinator</option>
-                                    <option value="Pengajar">Pengajar</option>
-                                    <option value="Asisten">Asisten</option>
-                                </select>
+                                <template x-if="itemsAll[index]?.is_ketua">
+                                    <select x-model="itemsAll[index].peran"
+                                        class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">
+                                        <option value="Koordinator">Koordinator</option>
+                                    </select>
+                                </template>
+                                <template x-if="!itemsAll[index]?.is_ketua">
+                                    <select x-model="itemsAll[index].peran"
+                                        class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] table-border focus:ring-[var(--focus-color)] p-1.5">
+                                        <option value="Pengajar">Pengajar</option>
+                                        <option value="Instruktur">Instruktur</option>
+                                        <option value="Asisten">Asisten</option>
+                                    </select>
+                                </template>
 
                                 {{-- ACTION BUTTONS (Otomatis akan terdorong ke kanan karena justify-between) --}}
                                 <div class="flex items-center sm:gap-1 ml-auto">

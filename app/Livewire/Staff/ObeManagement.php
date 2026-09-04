@@ -370,7 +370,7 @@ class ObeManagement extends Component
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count_cpl', 5 => 'count-scpmk', 6 => 'total_bobot', 7 => 'created_at', 8 => 'updated_at'],
             'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'referensi' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
-            'tim-dosen' => [1 => 'id', 2 => 'kode', 3 => 'nama_tim', 4 => 'ketua_tim', 5 => 'nip_ketua_tim', 6 => 'count_dosen', 7 => 'count_koordinator', 8 => 'count_pengajar', 9 => 'count_asisten', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+            'tim-dosen' => [1 => 'id', 2 => 'kode', 3 => 'nama_tim', 4 => 'ketua_tim', 5 => 'nip_ketua_tim', 6 => 'count_dosen', 7 => 'count_koordinator', 8 => 'count_pengajar', 9 => 'count_instruktur', 10 => 'count_asisten', 11 => 'program_studi', 12 => 'created_at', 13 => 'updated_at'],
             'dosen' => [1 => 'kode', 2 => 'name', 3 => 'count_rps', 4 => 'total_sks', 5 => 'status', 6 => 'program_studi'],
         ];
         $aliases = [
@@ -382,7 +382,7 @@ class ObeManagement extends Component
             'materi' => ['materi', 'penulis'],
             // 'penulis' => ['penulis', 'materi'],
             // 'count_rps' => ['count_rps', 'count_cpl'],
-            'count_cpl' => ['count_cpl', 'count_rps', 'total_sks', 'count_dosen', 'count_koordinator', 'count_pengajar', 'count_asisten'],
+            'count_cpl' => ['count_cpl', 'count_rps', 'total_sks', 'count_dosen', 'count_koordinator', 'count_pengajar', 'count_instruktur', 'count_asisten'],
             // 'akademik' => ['akademik', 'bobot', 'total_bobot'],
             'bobot' => ['bobot', 'total_bobot'],
             // 'total_bobot' => ['total_bobot', 'akademik', 'bobot'],

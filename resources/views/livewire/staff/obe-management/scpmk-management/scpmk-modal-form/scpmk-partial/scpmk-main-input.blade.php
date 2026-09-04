@@ -44,7 +44,7 @@
 
     @include('livewire.global.modal-form.textarea-form', [
         'alpine' => 'scpmk',
-        'nameXString' => 'Deskripsi',
+        'nameXString' => 'Deskripsi / Kompetensi Mingguan',
         'modelString' => 'deskripsi',
         'iconString' => 'document-text',
         'placeholder' => 'Masukkan deskripsi ringkas tentang Sub-CPMK...',

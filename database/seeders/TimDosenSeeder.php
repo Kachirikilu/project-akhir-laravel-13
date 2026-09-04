@@ -22,7 +22,7 @@ class TimDosenSeeder extends Seeder
             $jumlahTim = rand(2, 4);
 
             for ($i = 1; $i <= $jumlahTim; $i++) {
-                // Ambil anggota secara acak untuk menentukan ketua
+                // Ambil anggota secara acak untuk menentukan tim
                 $anggota = $dosens->shuffle()->take(min(rand(2, 5), $dosens->count()))->values();
                 $ketua = $anggota->first();
                 
@@ -38,11 +38,21 @@ class TimDosenSeeder extends Seeder
                     'sort_order' => $i,
                 ]);
 
-                // 2. Attach anggota
+                // Opsi peran non-koordinator untuk acak anggota selain ketua
+                $nonKoordinatorRoles = ['Pengajar', 'Instruktur', 'Asisten'];
+
+                // Attach anggota
                 foreach ($anggota as $index => $dosen) {
+                    $isKetua = ($index === 0);
+                    
+                    // Indeks 0 dipastikan Koordinator & Ketua, sisanya diacak dari opsi peran non-koordinator
+                    $peran = $isKetua 
+                        ? 'Koordinator' 
+                        : $nonKoordinatorRoles[array_rand($nonKoordinatorRoles)];
+
                     $tim->dosens()->attach($dosen->id, [
-                        'peran'        => $index == 0 ? 'Koordinator' : 'Pengajar',
-                        'is_ketua'     => $index == 0,
+                        'peran'        => $peran,
+                        'is_ketua'     => $isKetua,
                         'pertemuan_ke' => null,
                         'sort_order'   => $index + 1,
                     ]);

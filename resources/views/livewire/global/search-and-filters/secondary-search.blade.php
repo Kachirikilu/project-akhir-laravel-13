@@ -51,14 +51,10 @@
 
 
         {{-- DROPDOWN --}}
-       <div x-show="open" x-cloak 
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95" 
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100" 
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            x-ref="dropdown"
+        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95" x-ref="dropdown"
             :class="align === 'right' ? 'right-0' : 'left-0'"
             class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full {{ $minW ?? 'sm:min-w-[450px]' }} mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
             @forelse ($xSearchResults as $x)
@@ -72,51 +68,75 @@
                         bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
                         hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90
                         text-xs sm:text-sm">
-                        <div class="flex flex-wrap items-start gap-x-4 gap-y-1">
-                            
-                            <div class="flex-1 min-w-[200px]">
-                                <div class="text-[var(--contrast-main-text)] font-medium break-words">
-                                    {{ $x[$typeXString] }}
-                                </div>
+                    <div class="flex flex-wrap items-start gap-x-4 gap-y-1">
 
-                                <div class="flex flex-wrap items-center text-xs sm:text-sm">
-                                    <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
-                                        <span class="font-bold">- ID: {{ $x['id'] }}</span>
-                                    </div>
-
-                                    @if ($typeX2String ?? null)
-                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                            <span class="mx-2">|</span>
-                                            <span>{{ $x[$typeX2String] }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if ($typeX3String ?? null)
-                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                            <span class="mx-2">|</span>
-                                            <span>{{ $x[$typeX3String] }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if ($typeX4String ?? null)
-                                        <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
-                                            <span class="mx-2">|</span>
-                                            <span>{{ $x[$typeX4String] }}</span>
-                                        </div>
-                                    @endif
-                                </div>
+                        <div class="flex-1 min-w-[200px]">
+                            <div class="text-[var(--contrast-main-text)] font-medium break-words">
+                                {{ $x[$typeXString] }}
                             </div>
 
-                            <div class="shrink-0">
-                                <span class="my-2 inline-block bg-[var(--focus-color)] text-[var(--main-text)] text-[9px] sm:text-xs px-2 py-1 rounded-md">
-                                    @if ($typeKodeString ?? null)
-                                        {{ $x[$typeKodeString] }}
-                                    @else
-                                        {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
-                                    @endif
-                                </span>
+                            <div class="flex flex-wrap items-center text-xs sm:text-sm">
+                                <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
+                                    <span class="font-bold">- ID: {{ $x['id'] }}</span>
+                                </div>
+
+                                @if ($typeX2String ?? null)
+                                    <div
+                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                        <span class="mx-2">|</span>
+                                        <span>
+                                            <span>{{ $x2HeadString ?? '' }}</span>
+                                            <span>{{ $x[$typeX2String] }}</span>
+                                        </span>
+                                    </div>
+                                @endif
+
+                                @if ($typeX3String ?? null)
+                                    <div
+                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                        <span class="mx-2">|</span>
+                                        <span>
+                                            <span>{{ $x3HeadString ?? '' }}</span>
+                                            <span>{{ $x[$typeX3String] }}</span>
+                                        </span>
+                                    </div>
+                                @endif
+
+                                @if ($typeX4String ?? null)
+                                    <div
+                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                        <span class="mx-2">|</span>
+                                        <span>
+                                            <span>{{ $x4HeadString ?? '' }}</span>
+                                            <span>{{ $x[$typeX4String] }}</span>
+                                        </span>
+                                    </div>
+                                @endif
+
+                                @if ($typeX5String ?? null)
+                                    <div
+                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                        <span class="mx-2">|</span>
+                                        <span>
+                                            <span>{{ $x5HeadString ?? '' }}</span>
+                                            <span>{{ $x[$typeX5String] }}</span>
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
+
+                        <div class="shrink-0">
+                            <span
+                                class="my-2 inline-block bg-[var(--focus-color)] text-[var(--main-text)] text-[9px] sm:text-xs px-2 py-1 rounded-md">
+                                @if ($typeKodeString ?? null)
+                                    {{ $x[$typeKodeString] }}
+                                @else
+                                    {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
+                                @endif
+                            </span>
+                        </div>
+                    </div>
                 </div>
             @empty
                 <div class="py-4">

@@ -366,7 +366,7 @@ trait WithRPSModal
                     }
                 },
             ],
-            'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
+            'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Instruktur,Asisten',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesRPS());
@@ -694,8 +694,8 @@ trait WithRPSModal
             'dosen_id_array.required' => 'Dosen pengampu wajib dipilih!',
             'dosen_id_array.min' => 'Minimal harus ada satu Dosen pengampu!',
             'dosen_items_array.required' => 'Data detail Dosen tidak boleh kosong!',
-            'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
-            'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
+            'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Instruktur/Asisten) wajib dipilih!',
+            'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, Instruktur, atau Asisten!',
             'dosen_id_array.required' => 'Dosen pengampu wajib diisi!',
 
         ];

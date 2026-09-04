@@ -129,7 +129,7 @@ return new class extends Migration
             $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
             $table->index('sesi_id');
             $table->index('dosen_id');
-            $table->enum('peran', ['Koordinator', 'Pengajar', 'Asisten'])->default('Pengajar');
+            $table->enum('peran', ['Koordinator', 'Pengajar', 'Instruktur', 'Asisten'])->default('Pengajar');
             $table->boolean('is_ketua')->default(false);
             $table->integer('sort_order')->default(0);
             $table->timestamps();

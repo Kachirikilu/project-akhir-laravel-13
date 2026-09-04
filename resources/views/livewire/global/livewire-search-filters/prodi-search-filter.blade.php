@@ -10,9 +10,13 @@
     'xSearchQuery' => $prSearchQuery,
     'xSearchResults' => $prSearchResults,
     'selectXForFilterString' => 'selectPrForFilter',
+
+    'x2HeadString' => $isSmall ? null : 'Departemen',
+    'x3HeadString' => 'Fakultas',
+
     'typeXString' => 'prodi',
-    // 'typeX2String' => 'departemen',
-    'typeX2String' => 'fakultas',
+    'typeX2String' => $isSmall ? null : 'departemen',
+    'typeX3String' => 'fakultas',
     'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-    'minW' => 'sm:min-w-[360px]'
+    'minW' => 'sm:min-w-[360px]',
 ])

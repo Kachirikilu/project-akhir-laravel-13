@@ -3,12 +3,14 @@
 namespace App\Livewire\Staff\ObeManagement\RpsManagement;
 
 use App\Models\Akademik\RPS;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\SubCPMK;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Browsershot\Browsershot;
+use App\Models\ProgramStudi\Prodi;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use setasign\Fpdi\Fpdi;
+use Spatie\Browsershot\Browsershot;
+use setasign\Fpdi\PdfParser\StreamReader;
 
 trait WithRPSShow
 {
@@ -30,15 +32,20 @@ trait WithRPSShow
         try {
             $rps = RPS::with([
                 'mk_rel.prodis',
-                'tim_dosens'
+                'tim_dosens',
             ])->findOrFail($id);
-            
+
             $this->rps_data = $rps;
 
             $this->prodisRPS = $rps->mk_rel->prodis->sort(function ($a, $b) use ($prId, $userPrId) {
                 $getPriority = function ($prodiId) use ($prId, $userPrId) {
-                    if ($userPrId && $prodiId == $userPrId) return 0;
-                    if ($prId && $prodiId == $prId) return 1;
+                    if ($userPrId && $prodiId == $userPrId) {
+                        return 0;
+                    }
+                    if ($prId && $prodiId == $prId) {
+                        return 1;
+                    }
+
                     return 2;
                 };
 
@@ -50,9 +57,9 @@ trait WithRPSShow
                 if ($a->nama_pr !== $b->nama_pr) {
                     return strcmp($a->nama_pr, $b->nama_pr);
                 }
+
                 return $b->strata <=> $a->strata;
             });
-
 
             $this->detailRPSModal = true;
             $this->dispatch('fill-modal-rps', rps: $rps);
@@ -68,11 +75,11 @@ trait WithRPSShow
     {
         try {
             $data = $this->handleRpsPdfExport($id, $prId, 'stream', false);
-            
+
             return response()->streamDownload(function () use ($data) {
                 echo $data['content'];
             }, $data['name'], ['Content-Type' => 'application/pdf']);
-            
+
         } catch (\Exception $e) {
             abort(404, $e->getMessage());
         }
@@ -81,33 +88,39 @@ trait WithRPSShow
     protected function handleRpsPdfExport($rpsId, $prodiIdentifier, $exportType = 'stream', $isKode = false)
     {
         $rps = RPS::with([
-                'mk_rel.prodis',
-                'tim_dosens',
-                'tim_dosens.dosens',
-                // 'cpmks.scpmks.dosens',
-                'cpmks.scpmks.refs',
-                'cpmks.refs',
-                'cpmks.cpls',
-                'refs'
-            ])->findOrFail($rpsId);
+            'mk_rel.prodis',
+            'tim_dosens',
+            'tim_dosens.dosens',
+            // 'cpmks.scpmks.dosens',
+            'cpmks.scpmks.refs',
+            'cpmks.refs',
+            'cpmks.cpls',
+            'refs',
+        ])->findOrFail($rpsId);
         $prodis = $rps->mk_rel->prodis;
         $prodi = null;
 
         // Logika Pemilihan Prodi yang sama
         if ($prodiIdentifier) {
             $found = $isKode ? $this->getProdiByKode($prodiIdentifier) : $prodis->find($prodiIdentifier);
-            if ($found) $prodi = $prodis->firstWhere('id', $found->id);
+            if ($found) {
+                $prodi = $prodis->firstWhere('id', $found->id);
+            }
         }
-        if (!$prodi) $prodi = $prodis->firstWhere('id', Auth::user()->pr_id ?? null);
-        if (!$prodi) $prodi = $prodis->first();
+        if (! $prodi) {
+            $prodi = $prodis->firstWhere('id', Auth::user()->pr_id ?? null);
+        }
+        if (! $prodi) {
+            $prodi = $prodis->first();
+        }
 
-        if (!$prodi) {
-            throw new \Exception("Data Program Studi tidak ditemukan pada RPS ini!");
+        if (! $prodi) {
+            throw new \Exception('Data Program Studi tidak ditemukan pada RPS ini!');
         }
 
         // Generate Raw PDF
         $pdfRawContent = $this->generateRPSRawPDFContent($rps, $prodi);
-        
+
         // Penamaan file yang aman
         $fileName = "RPS_{$prodi->kode}_{$rps->kode}_{$rps->mk_rel->mk}.pdf";
         $fileNameSafe = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $fileName);
@@ -116,7 +129,7 @@ trait WithRPSShow
             'content' => $pdfRawContent,
             'name' => $fileNameSafe,
             'rps' => $rps,
-            'prodi' => $prodi
+            'prodi' => $prodi,
         ];
     }
 
@@ -136,7 +149,7 @@ trait WithRPSShow
     //     ])->findOrFail($prodi->id);
     //     $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
 
-    //     $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print', [
+    //     $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print-head', [
     //         'rps' => $rps,
     //         'prodi' => $prodi,
     //         'tim_dosen' => $tim_dosen,
@@ -157,6 +170,38 @@ trait WithRPSShow
     //     return $browsershot->pdf();
     // }
 
+    // protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
+    // {
+    //     $logoPath = public_path('images/logo-unsri.webp');
+    //     $logoBase64 = '';
+
+    //     if (file_exists($logoPath)) {
+    //         $type = pathinfo($logoPath, PATHINFO_EXTENSION);
+    //         $dataLogo = file_get_contents($logoPath);
+    //         $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
+    //     }
+
+    //     $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($prodi->id);
+    //     $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
+
+    //     $pdf = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-print-head', [
+    //         'rps' => $rps,
+    //         'prodi' => $prodi,
+    //         'tim_dosen' => $tim_dosen,
+    //         'isPDF' => 1,
+    //         'logoBase64' => $logoBase64,
+    //     ]);
+
+    //     $pdf->setPaper('a4', 'portrait');
+    //     $pdf->setOptions([
+    //         'isHtml5ParserEnabled' => true,
+    //         'isRemoteEnabled' => true,
+    //         'dpi' => 96,
+    //     ]);
+
+    //     return $pdf->output();
+    // }
+
     protected function generateRPSRawPDFContent(RPS $rps, Prodi $prodi): string
     {
         $logoPath = public_path('images/logo-unsri.webp');
@@ -170,23 +215,58 @@ trait WithRPSShow
 
         $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($prodi->id);
         $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
+        $tim = $tim_dosen->first();
 
-        $pdf = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-print', [
+        $dataView = [
             'rps' => $rps,
             'prodi' => $prodi,
             'tim_dosen' => $tim_dosen,
+            'allDosens' => $tim ? $tim->dosens : collect(),
             'isPDF' => 1,
             'logoBase64' => $logoBase64,
-        ]);
+        ];
 
-        $pdf->setPaper('a4', 'portrait');
-        $pdf->setOptions([
+        $options = [
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
             'dpi' => 96,
-        ]);
+        ];
 
-        return $pdf->output();
+        // 1. Render PDF Pertama (Portrait)
+        $pdf1 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-head-print', $dataView)
+            ->setPaper('a4', 'portrait')
+            ->setOptions($options);
+        $output1 = $pdf1->output();
+
+        // 2. Render PDF Kedua (Landscape)
+        $pdf2 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-body-print', $dataView)
+            ->setPaper('a4', 'landscape')
+            ->setOptions($options);
+        $output2 = $pdf2->output();
+
+        // 3. Proses Penggabungan Menggunakan FPDI
+        $fpdi = new Fpdi;
+
+        // Gabungkan PDF 1 (Portrait)
+        $pageCount1 = $fpdi->setSourceFile(StreamReader::createByString($output1));
+        for ($pageNo = 1; $pageNo <= $pageCount1; $pageNo++) {
+            $templateId = $fpdi->importPage($pageNo);
+            $size = $fpdi->getTemplateSize($templateId);
+            $fpdi->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            $fpdi->useTemplate($templateId);
+        }
+
+        // Gabungkan PDF 2 (Landscape)
+        $pageCount2 = $fpdi->setSourceFile(StreamReader::createByString($output2));
+        for ($pageNo = 1; $pageNo <= $pageCount2; $pageNo++) {
+            $templateId = $fpdi->importPage($pageNo);
+            $size = $fpdi->getTemplateSize($templateId);
+            $fpdi->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            $fpdi->useTemplate($templateId);
+        }
+
+        // Return string binary PDF gabungan
+        return $fpdi->Output('S');
     }
 
     public function formatRPSDetailForShow(RPS $rps): array
@@ -195,7 +275,7 @@ trait WithRPSShow
         $prodi = $mk?->prodis->first();
 
         $timPengajar = $rps->dosens->map(function ($dosen) {
-            return $dosen->name.'<br>(NIP: '.($dosen->nip ?? '-').')';
+            return $dosen->name.'<br>(NIP. '.($dosen->nip ?? '-').')';
         })->filter()->implode("\n");
         $ketua = optional($rps->dosens->first(function ($d) {
             return (bool) ($d->pivot->is_ketua ?? false);
@@ -210,7 +290,7 @@ trait WithRPSShow
         if (! str_ends_with($desRPS, '.') && ! empty($desRPS)) {
             $desRPS .= '.';
         }
-        
+
         $data = [
             'id' => $rps->id,
             'rps_id' => $rps->id,
@@ -224,7 +304,7 @@ trait WithRPSShow
             'bobot_uts' => $rps->bobot_uts ?? null,
             'bobot_uas' => $rps->bobot_uas ?? null,
             'total_bobot' => $rps->sks ?? null,
-            
+
             'fakultas' => $prodi?->dp_rel?->fk_rel?->nama_fk ?? '-',
             'departemen' => $prodi?->dp_rel?->nama_dp ?? '-',
             'prodi' => $prodi?->prodi ?? '-',
@@ -358,8 +438,6 @@ trait WithRPSShow
         $hasUAS = collect($rows)->contains(function ($row) {
             return SubCPMK::isUAS($row['metode'] ?? '');
         });
-
-
 
         $finalRows = [];
 

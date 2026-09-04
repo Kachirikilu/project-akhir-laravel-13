@@ -93,7 +93,7 @@
                     </div>
 
                     <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
-                        NIP: {{ $dosen->nip }}
+                        NIP. {{ $dosen->nip }}
                         <strong class="px-1">|</strong>
                         <span
                             class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>

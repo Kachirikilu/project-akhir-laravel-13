@@ -15,7 +15,7 @@
                     x-text="$store.sesi?.nama"></h3>
 
                 <div class="text-xs text-[var(--contrast-second-text)] mt-1">
-                    <span class="font-mono font-medium" x-text="'NIM: ' + $store.sesi?.nim"></span>
+                    <span class="font-mono font-medium" x-text="'NIM. ' + $store.sesi?.nim"></span>
                 </div>
 
                 <div

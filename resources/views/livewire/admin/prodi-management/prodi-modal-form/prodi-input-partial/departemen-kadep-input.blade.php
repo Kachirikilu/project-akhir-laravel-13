@@ -10,13 +10,13 @@
             'selectX' => 'selectDosen',
             'modelString' => 'nama_dosen_search',
         
-        'selectIndex' => 2,
+            'selectIndex' => 2,
             'idString' => 'dosen_id_array[2]',
             'itemsAllString' => 'dosen_items_array[2]',
         
-            'kodeHeadString' => 'NIP:',
-            'x2HeadString' => 'NIDN:',
-            'x3HeadString' => 'NIDK:',
+            'kodeHeadString' => 'NIP.',
+            'x2HeadString' => 'NIDN',
+            'x3HeadString' => 'NIDK',
             'x5HeadString' => 'Status:',
         
             'resetXInput' => 'resetDosenInputArray(2)',
@@ -39,13 +39,13 @@
             'selectX' => 'selectDosen',
             'modelString' => 'nama_dosen_search',
         
-        'selectIndex' => 3,
+            'selectIndex' => 3,
             'idString' => 'dosen_id_array[3]',
             'itemsAllString' => 'dosen_items_array[3]',
         
-            'kodeHeadString' => 'NIP:',
-            'x2HeadString' => 'NIDN:',
-            'x3HeadString' => 'NIDK:',
+            'kodeHeadString' => 'NIP.',
+            'x2HeadString' => 'NIDN.',
+            'x3HeadString' => 'NIDK.',
             'x4HeadString' => 'Prodi:',
             'x5HeadString' => 'Status:',
         

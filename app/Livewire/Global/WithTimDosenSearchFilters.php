@@ -100,7 +100,6 @@ trait WithTimDosenSearchFilters
         }
     }
 
- 
     // public function inputTimDosenFilter()
     // {
     //     $search = trim($this->timDosenSearchQuery);
@@ -277,6 +276,7 @@ trait WithTimDosenSearchFilters
                 $this->timDosen_items = $this->itemsTimDosen($timDosen);
             }
             $this->timDosenResults = $this->getTimDosenbyUser();
+
             return;
         }
     }
@@ -396,7 +396,7 @@ trait WithTimDosenSearchFilters
                         $searchLower
                     );
 
-                   $matchPengajar = $this->matchCount(
+                    $matchPengajar = $this->matchCount(
                         $timDosen->count_pengajar,
                         $searchLower, ['pembimbing', 'pengajar']
                     ) || $this->containsStrict(
@@ -404,7 +404,15 @@ trait WithTimDosenSearchFilters
                         $searchLower
                     );
 
-                   $matchAsisten = $this->matchCount(
+                           $matchInstruktur = $this->matchCount(
+                        $timDosen->count_instruktur,
+                        $searchLower, ['instruktur lab', 'instruktur', 'dosen instruktur']
+                    ) || $this->containsStrict(
+                        $timDosen->count_instruktur.' Instruktur',
+                        $searchLower
+                    );
+
+                    $matchAsisten = $this->matchCount(
                         $timDosen->count_asisten,
                         $searchLower, ['aslab', 'asisten lab', 'asisten', 'asdos', 'asisten dosen']
                     ) || $this->containsStrict(
@@ -412,40 +420,39 @@ trait WithTimDosenSearchFilters
                         $searchLower
                     );
 
-
-                        $rps = (int) ($timDosen->count_rps ?? 0);
-                        $matchRPS = false;
-                        if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
-                            $targetRPS = (int) max(
-                                $matches[1] ?? 0,
-                                $matches[2] ?? 0
-                            );
-                            $matchRPS = $rps === $targetRPS;
-                        }
-                        $matchRPS = $this->matchCount(
-                            $rps,
-                            $searchLower, ['rps']
-                        ) || $this->containsStrict(
-                            $rps.' RPS',
-                            $searchLower
+                    $rps = (int) ($timDosen->count_rps ?? 0);
+                    $matchRPS = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetRPS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
                         );
+                        $matchRPS = $rps === $targetRPS;
+                    }
+                    $matchRPS = $this->matchCount(
+                        $rps,
+                        $searchLower, ['rps']
+                    ) || $this->containsStrict(
+                        $rps.' RPS',
+                        $searchLower
+                    );
 
-                        $sks = (int) ($timDosen->total_sks ?? 0);
-                        $matchSKS = false;
-                        if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
-                            $targetSKS = (int) max(
-                                $matches[1] ?? 0,
-                                $matches[2] ?? 0
-                            );
-                            $matchSKS = $sks === $targetSKS;
-                        }
-                        $matchSKS = $this->matchCount(
-                            $sks,
-                            $searchLower, ['sks']
-                        ) || $this->containsStrict(
-                            $sks.' SKS',
-                            $searchLower
+                    $sks = (int) ($timDosen->total_sks ?? 0);
+                    $matchSKS = false;
+                    if (preg_match('/(\d+)\s*sks|sks\s*(\d+)/i', $searchLower, $matches)) {
+                        $targetSKS = (int) max(
+                            $matches[1] ?? 0,
+                            $matches[2] ?? 0
                         );
+                        $matchSKS = $sks === $targetSKS;
+                    }
+                    $matchSKS = $this->matchCount(
+                        $sks,
+                        $searchLower, ['sks']
+                    ) || $this->containsStrict(
+                        $sks.' SKS',
+                        $searchLower
+                    );
 
                     $matchKodePr = $this->matchKode(
                         $timDosen->pr_rel->kode_pr,
@@ -459,7 +466,6 @@ trait WithTimDosenSearchFilters
                         $timDosen->pr_rel->dp_rel->fk_rel->kode_fk,
                         $searchLower
                     );
-
 
                     $basePr = [
                         $timDosen->pr_rel->prodi,
@@ -516,7 +522,6 @@ trait WithTimDosenSearchFilters
                         }
                     }
 
-
                     $matchCreatedAt = $this->matchDateField(
                         $timDosen->created_at,
                         $searchLower,
@@ -552,6 +557,7 @@ trait WithTimDosenSearchFilters
                         || $matchDosen
                         || $matchKoordinator
                         || $matchPengajar
+                        || $matchInstruktur
                         || $matchAsisten
 
                         || $matchRPS
@@ -576,6 +582,7 @@ trait WithTimDosenSearchFilters
                 'count_dosen' => fn ($timDosen) => $timDosen->count_dosen,
                 'count_koordinator' => fn ($timDosen) => $timDosen->count_koordinator,
                 'count_pengajar' => fn ($timDosen) => $timDosen->count_pengajar,
+                'count_instruktur' => fn ($timDosen) => $timDosen->count_instruktur,
                 'count_asisten' => fn ($timDosen) => $timDosen->count_asisten,
 
                 'count_rps' => fn ($timDosen) => $timDosen->count_rps ?? 0,

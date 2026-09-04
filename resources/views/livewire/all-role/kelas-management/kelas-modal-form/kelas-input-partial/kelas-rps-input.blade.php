@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Program Studi & Rencana Pembelajaran Semester</h4>
@@ -16,9 +15,12 @@
         
             'resetXInput' => 'resetPrInput()',
         
+            'x2HeadString' => 'Departemen',
+            'x3HeadString' => 'Fakultas',
+        
             'typeXString' => 'prodi',
-            // 'typeX2String' => 'departemen',
-            'typeX2String' => 'fakultas',
+            'typeX2String' => 'departemen',
+            'typeX3String' => 'fakultas',
         
             'nameXString' => 'Program Studi',
             'nameSearchString' => 'prNameSearch',

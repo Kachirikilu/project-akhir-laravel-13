@@ -29,6 +29,7 @@
 
                         '{{ $data['count_koordinator'] ?? '' }}',
                         '{{ $data['count_pengajar'] ?? '' }}',
+                        '{{ $data['count_instruktur'] ?? '' }}',
                         '{{ $data['count_asisten'] ?? '' }}',
 
                         '{{ $data['count_rps'] ?? '' }}',

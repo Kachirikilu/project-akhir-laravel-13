@@ -9,10 +9,13 @@
         'idString' => 'pr_id',
         'itemsAllString' => 'pr_items',
     
+        'x2HeadString' => 'Departemen',
+        'x3HeadString' => 'Fakultas',
+    
         'resetXInput' => 'resetPrInput()',
         'typeXString' => 'prodi',
-        // 'typeX2String' => 'departemen',
-        'typeX2String' => 'fakultas',
+        'typeX2String' => 'departemen',
+        'typeX3String' => 'fakultas',
     
         'nameXString' => 'Program Studi',
         'nameSearchString' => 'prNameSearch',

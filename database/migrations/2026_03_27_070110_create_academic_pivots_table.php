@@ -30,6 +30,7 @@ return new class extends Migration
             $table->enum('peran', [
                 'Koordinator',
                 'Pengajar',
+                'Instruktur',
                 'Asisten'
             ])->default('Pengajar');
             $table->json('pertemuan_ke')->nullable(); // Pengganti dosen_pivot_scpmk 

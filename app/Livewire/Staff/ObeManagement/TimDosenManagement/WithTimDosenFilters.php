@@ -122,6 +122,13 @@ trait WithTimDosenFilters
                 AND tim_dosen_pivot_dosen.peran = 'Pengajar'
             ) ".$this->sortDirection),
 
+                   'count_instruktur' => $queryTimDosen->orderByRaw("(
+                SELECT count(*) 
+                FROM tim_dosen_pivot_dosen 
+                WHERE tim_dosen_pivot_dosen.tim_dosen_id = tim_dosens.id 
+                AND tim_dosen_pivot_dosen.peran = 'Instruktur'
+            ) ".$this->sortDirection),
+
             'count_asisten' => $queryTimDosen->orderByRaw("(
                 SELECT count(*) 
                 FROM tim_dosen_pivot_dosen 

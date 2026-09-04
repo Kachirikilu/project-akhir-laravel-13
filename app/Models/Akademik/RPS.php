@@ -123,6 +123,23 @@ class RPS extends Model
             $program = collect();
             $scpmkIndex = 0;
 
+            // Helper untuk generate deskripsi ujian yang adaptif & naratif
+            $generateExamDescription = function (string $type, int $pertemuan) {
+                $isLast = ($pertemuan === 16);
+                $prevMeeting = $pertemuan - 1;
+                $label = ($type === 'UTS') ? 'Tengah' : 'Akhir';
+
+                if ($isLast) {
+                    return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Comprehensive yang Mencakup Seluruh Keseluruhan Materi Perkuliahan";
+                }
+
+                if ($prevMeeting <= 1) {
+                    return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Capaian Pembelajaran pada Pertemuan ke-1";
+                }
+
+                return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Capaian Pembelajaran dengan Ruang Lingkup Materi dari Pertemuan 1–{$prevMeeting}";
+            };
+
             for ($p = 1; $p <= 16; $p++) {
 
                 $isAssignedToMeeting = function ($dosen, $pertemuanKe) use ($p) {
@@ -135,16 +152,51 @@ class RPS extends Model
                 };
 
                 if ($p == 8 && ! $hasUts) {
-                    $item = (object) ['kode' => 'UTS', 'kode_cpmk' => 'CPMK-UTS', 'bobot' => (float) $this->bobot_uts, 'metode' => 'UTS', 'deskripsi' => 'Ujian Tengah Semester'];
+                    $item = (object) [
+                        'kode' => 'UTS',
+                        'kode_cpmk' => 'CPMK-UTS',
+                        'bobot' => (float) $this->bobot_uts,
+                        'metode' => 'UTS',
+                        'name' => 'Ujian Tengah Semester (UTS)',
+                        'deskripsi' => $generateExamDescription('UTS', $p),
+                        'general_exam' => 1,
+                    ];
                 } elseif ($p == 16 && ! $hasUas) {
-                    $item = (object) ['kode' => 'UAS', 'kode_cpmk' => 'CPMK-UAS', 'bobot' => (float) $this->bobot_uas, 'metode' => 'UAS', 'deskripsi' => 'Ujian Akhir Semester'];
+                    $item = (object) [
+                        'kode' => 'UAS',
+                        'kode_cpmk' => 'CPMK-UAS',
+                        'bobot' => (float) $this->bobot_uas,
+                        'metode' => 'UAS',
+                        'name' => 'Ujian Akhir Semester (UAS)',
+                        'deskripsi' => $generateExamDescription('UAS', $p),
+                        'general_exam' => 1,
+                    ];
                 } else {
                     $rawItem = $allScpmk->get($scpmkIndex);
                     if ($rawItem) {
                         $item = clone $rawItem;
+
+                        // Jika item dari DB merupakan UTS/UAS custom yang terdeteksi via keyword
+                        $isCustomUts = Str::contains($item->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UTS_FIELDS, true);
+                        $isCustomUas = Str::contains($item->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UAS_FIELDS, true);
+
+                        if ($isCustomUts || $isCustomUas) {
+                            $examType = $isCustomUts ? 'UTS' : 'UAS';
+                            // Bila deskripsi kosong atau bawaan seeder, perbarui dengan deskripsi adaptif
+                            if (empty($item->deskripsi) || $item->deskripsi === 'UTS' || $item->deskripsi === 'UAS') {
+                                $item->deskripsi = $generateExamDescription($examType, $p);
+                            }
+                        }
+
                         $scpmkIndex++;
                     } else {
-                        $item = (object) ['kode' => '-', 'kode_cpmk' => '-', 'deskripsi' => 'Materi belum ditentukan', 'bobot' => 0];
+                        $item = (object) [
+                            'kode' => '-',
+                            'kode_cpmk' => '-',
+                            'deskripsi' => 'Materi perkuliahan belum ditentukan',
+                            'bobot' => 0,
+                            'general_exam' => 0,
+                        ];
                     }
                 }
 
@@ -184,6 +236,7 @@ class RPS extends Model
             ->concat($refsCpmk)
             ->concat($refsSubCpmk)
             ->unique('id')
+            ->sortBy('penulis', SORT_NATURAL | SORT_FLAG_CASE)
             ->values();
     }
 
@@ -332,6 +385,17 @@ class RPS extends Model
             }
 
             return $this->revisi->translatedFormat('D, d M Y');
+        });
+    }
+
+    protected function revisiHari(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! $this->revisi) {
+                return null;
+            }
+
+            return $this->revisi->translatedFormat('j F Y');
         });
     }
 
