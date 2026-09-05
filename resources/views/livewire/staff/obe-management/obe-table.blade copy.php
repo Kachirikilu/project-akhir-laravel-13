@@ -159,7 +159,7 @@
             @if (!($withCapaian ?? null) && $switchTable === 'cpl')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
+                    'headString' => 'Jumlah RPS',
                     'isBorderL' => 1,
                     'isCenter' => 1,
                 ])
@@ -322,7 +322,7 @@
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
+                    'headString' => 'Jumlah RPS',
                     'isCenter' => 1,
                 ])
             @endif

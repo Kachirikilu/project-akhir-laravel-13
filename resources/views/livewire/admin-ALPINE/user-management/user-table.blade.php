@@ -210,7 +210,7 @@
                 <th class="table-head border-x">Show</th>
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
+                    'headString' => 'Jumlah RPS',
                     'isCenter' => 1,
                     'isBorderL' => 1,
                 ])

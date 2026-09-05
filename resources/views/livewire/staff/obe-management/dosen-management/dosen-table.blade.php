@@ -1,23 +1,60 @@
 <div wire:key="view-table-dosen">
     <x-global.main-layout-table :paginator="$users" :onlyAdmin="!Auth::user()->admin">
 
+        @php
+            $showMore = $showMore ?? false;
+        @endphp
+        <x-slot:leftSecHead>
+            <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'kode',
+                    'headString' => 'NIP',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'name',
+                    'sortFieldString' => 'Nama',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'count_rps',
+                    'sortFieldString' => 'Jumlah RPS',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'total_sks',
+                    'sortFieldString' => 'Total SKS',
+                ])
+            </div>
+        </x-slot:leftSecHead>
+
+        <x-slot:rightSecHead>
+            @include('livewire.global.table.detail-view-switch')
+        </x-slot:rightSecHead>
+
         <x-slot:header>
             <tr>
                 {{-- <th rowspan="2" class="table-head ">Role</th> --}}
-                        @include('livewire.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'role',
                     'rowSpan' => 2,
                     'isCenter' => 1,
                 ])
 
+
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'kode',
-                    'headString' => $switchTable == 'dosen' ? 'NIP / NIDN' : 'NIM',
+                    'headString' => $showMore ? 'NIP' : 'NIP / NIDN',
                     'rowSpan' => 2,
                     'isMain' => 1,
                     'isCenter' => 1,
                     'isSticky' => 1,
                 ])
+
+                @if ($showMore)
+                    <th colspan="3" class="table-head-sub">
+                        Identitas (ID)
+                    </th>
+                @endif
+
+
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'name',
@@ -45,10 +82,27 @@
             </tr>
 
             <tr>
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'nidn',
+                        // 'isMain' => 1,
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'nidk',
+                        // 'isMain' => 1,
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'nik',
+                        'isMain' => 1,
+                        'isCenter' => 1,
+                    ])
+                @endif
                 <th class="table-head border-x">Show</th>
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
+                    'headString' => 'Jumlah RPS',
                     'isCenter' => 1,
                     'isBorderL' => 1,
                 ])
@@ -68,7 +122,8 @@
                 <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
-                            <flux:badge icon="briefcase" color="lime" size="sm">{{ $user->role_full }}</flux:badge>
+                            <flux:badge icon="briefcase" color="lime" size="sm">{{ $user->role_full }}
+                            </flux:badge>
                         </button>
                         @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
                             'key' => 1,
@@ -76,8 +131,17 @@
                     </flux:dropdown>
                 </td>
                 {{-- Role --}}
-                <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }} /
-                    {{ $user->dosen->nidn ?? '-' }}</td>
+                @if ($showMore)
+                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }}</td>
+                    <td class="table-sub whitespace-nowrap text-center">{{ $user->dosen->nidn ?? '-' }}</td>
+                    <td class="table-sub whitespace-nowrap text-center">{{ $user->dosen->nidk ?? '-' }}</td>
+                    <td class="table-second table-border-x whitespace-nowrap text-center">{{ $user->dosen->nik ?? '-' }}</td>
+                @else
+                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }} /
+                        {{ $user->dosen->nidn ?? '-' }}</td>
+                @endif
+
+
 
                 <td class="table-second whitespace-nowrap">
                     {{ $user->name ?? '-' }}</td>
@@ -150,7 +214,7 @@
 
         @empty
             <tr>
-                <td colspan="10" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                <td colspan="13" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Dosen ditemukan!
                 </td>
             </tr>

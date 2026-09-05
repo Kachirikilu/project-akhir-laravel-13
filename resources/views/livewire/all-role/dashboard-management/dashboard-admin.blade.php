@@ -59,7 +59,7 @@
         @include('livewire.global.statistik.donut-box-stats', [
             'icon' => 'book-open',
             'title' => 'RPS Aktif',
-            'subtitle' => 'dari total RPS',
+            'subtitle' => 'dari Jumlah RPS',
             'value' => $rpsProdiAktif,
             'max' => $rpsProdi,
             'displayValue' => $rpsProdiAktif . ' / ' . $rpsProdi,

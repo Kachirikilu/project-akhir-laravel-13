@@ -17,7 +17,7 @@
                 ])
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'count_rps',
-                    'headString' => 'Total RPS',
+                    'headString' => 'Jumlah RPS',
                 ])
             </div>
         </x-slot:leftSecHead>
@@ -115,7 +115,7 @@
                 @if ($showMore)
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'count_rps',
-                        'headString' => 'Total RPS',
+                        'headString' => 'Jumlah RPS',
                         'isCenter' => 1,
                     ])
                 @endif

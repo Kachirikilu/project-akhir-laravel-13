@@ -63,7 +63,7 @@ trait WithProdiFilters
                 ->selectRaw('COUNT(DISTINCT prodi_pivot_mk.mk_id)');
         }, $aliasMk);
 
-        // 3. Subquery Count Total RPS
+        // 3. Subquery Count Jumlah RPS
         $queryPr->selectSub(function ($query) {
             $query->from('rps')
                 ->join('prodi_pivot_mk', 'prodi_pivot_mk.mk_id', '=', 'rps.mk_id')

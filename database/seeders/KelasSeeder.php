@@ -292,7 +292,7 @@ $candidateIds = $candidateIds
             });
 
         $this->command->info(
-            "KelasSeeder finished. Total RPS processed: {$totalProcessed}"
+            "KelasSeeder finished. Jumlah RPS processed: {$totalProcessed}"
         );
     }
 

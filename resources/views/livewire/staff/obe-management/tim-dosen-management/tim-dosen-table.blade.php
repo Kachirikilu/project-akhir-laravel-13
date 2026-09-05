@@ -134,7 +134,7 @@
 
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'count_rps',
-                        'headString' => 'Total RPS',
+                        'headString' => 'Jumlah RPS',
                         'isCenter' => 1,
                     ])
                     @include('livewire.global.table.head-table', [
