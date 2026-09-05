@@ -20,7 +20,7 @@
                 class="pr2 flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-lg bg-[var(--main-pop-up-color)] border border-[var(--border-table-color)]">
                 <flux:icon name="user-circle" class="w-4 h-4 text-[var(--focus-color)]" />
                 <span
-                    class="text-xs font-semibold text-[var(--contrast-second-text)] uppercase">{{ Auth::user()->role }}</span>
+                    class="text-xs font-semibold text-[var(--contrast-second-text)] uppercase">{{ Auth::user()->role_full }}</span>
 
                 <button class="cursor-pointer" wire:click="refreshStats"
                     x-on:click="
@@ -56,7 +56,7 @@
             class="md:hidden flex items-center gap-1.5 px-2 py-0.5 rounded bg-[var(--main-pop-up-color)] border border-[var(--border-table-color)]">
             <flux:icon name="user-circle" class="w-3 h-3 text-[var(--focus-color)]" />
             <span
-                class="text-[10px] font-semibold text-[var(--contrast-second-text)] uppercase">{{ Auth::user()->role }}</span>
+                class="text-[10px] font-semibold text-[var(--contrast-second-text)] uppercase">{{ Auth::user()->role_full }}</span>
 
             <button class="cursor-pointer" wire:click="refreshStats"
                 x-on:click="

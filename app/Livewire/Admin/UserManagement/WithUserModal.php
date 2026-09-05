@@ -35,6 +35,8 @@ trait WithUserModal
 
     public $roleType;
 
+    public $tingkatType;
+
     public $selected_id_user;
 
     // public $pr_id_2;
@@ -120,6 +122,7 @@ trait WithUserModal
             $this->showUserModal = true;
             $this->showUserExcelModal = false;
         }
+
         $colors = [
             'admin' => 'text-red-700 dark:text-red-400',
             'dosen' => 'text-lime-700 dark:text-lime-400',
@@ -203,6 +206,7 @@ trait WithUserModal
                 }
             }
             $this->roleType = strtolower($user->role);
+            $this->tingkatType = $user->tingkat;
 
             if ($withRPS) {
                 $this->user_rps_id = $user->role_id;
@@ -374,10 +378,83 @@ trait WithUserModal
         // $this->loadMahasiswaRPSPagination();
     }
 
+    public function parseTingkatValue($value, ?string $role = null): int
+    {
+        $role = strtolower(trim($role ?? ''));
+
+        if ($value === null || $value === '' || empty($value)) {
+            return $role === 'admin' ? 4 : 5;
+        }
+
+        if (! is_numeric($value)) {
+            $mapTingkat = [
+                'admin program studi' => 4,
+                'admin departemen' => 3,
+                'admin fakultas' => 2,
+                'admin '.strtolower(config('app.univ')) => 1,
+                'admin univ' => 1,
+                'admin universitas' => 1,
+                'admin' => 4,
+                'super admin' => 1,
+                'admin uni' => 1,
+                'admin fk' => 2,
+                'admin dp' => 3,
+                'admin pr' => 4,
+
+
+                // Dosen Mapping
+                'dosen umum' => 5,
+                'dosen program studi' => 4,
+                'dosen departemen' => 3,
+                'dosen fakultas' => 2,
+                'dosen '.strtolower(config('app.univ')) => 1,
+                'dosen univ' => 1,
+                'dosen universitas' => 1,
+                'super dosen' => 1,
+                'dosen uni' => 1,
+                'dosen fk' => 2,
+                'dosen dp' => 3,
+                'dosen pr' => 4,
+                'dosen' => 5,
+
+                // Mahasiswa Mapping
+                'mahasiswa' => 5,
+
+                'univ' => 1,
+                'uni' => 1,
+                'fk' => 2,
+                'dp' => 3,
+                'pr' => 4,
+                'umum' => 5,
+
+                'program studi' => 4,
+                'departemen' => 3,
+                'fakultas' => 2,
+                'universitas' => 1,
+                'universitas sriwijaya' => 1,
+                'unsri' => 1,
+                strtolower(config('app.univ')) => 1,
+                strtolower(config('app.universitas')) => 1,
+            ];
+
+            $key = strtolower(trim((string) $value));
+
+            return $mapTingkat[$key] ?? ($role === 'admin' ? 4 : 5);
+        }
+
+        return (int) $value;
+    }
+
     private function inputModalUser($isEditingUser, $data, $role)
     {
         $this->resetErrorBag();
         $this->resetValidation();
+
+        $data['tingkat'] = $this->parseTingkatValue($data['tingkat'] ?? null, $role);
+
+        if (empty($data['status'])) {
+            $data['status'] = 'Aktif';
+        }
 
         // dd($data['no_hp_back']);
         $kode = $data['kode_no_hp'] ?? null;
@@ -438,8 +515,12 @@ trait WithUserModal
             ],
         ];
 
+        $allowedStatus = config("status.{$role}", config('status.all'));
+
         /* ===================== ADMIN ===================== */
         if ($role === 'admin') {
+
+            $rules['tingkat'] = ['required', 'integer', 'in:1,2,3,4'];
 
             $rules['nip'] = [
                 'required',
@@ -488,22 +569,15 @@ trait WithUserModal
 
             $rules['status'] = [
                 'required',
-                Rule::in([
-                    'Aktif',                  // Hijau (Produktif)
-                    'Tugas Belajar',          // Kuning (Transisi/Sementara)
-                    'Mutasi',                 // Kuning (Transisi/Sementara)
-                    'Cuti Luar Tanggungan',   // Kuning (Transisi/Sementara)
-                    'Resign',                 // Orange (Keluar Prosedural)
-                    'Pensiun',                // Orange (Keluar Prosedural)
-                    'Diberhentikan',          // Merah (Masalah/Sanksi)
-                    'Meninggal Dunia',         // Merah (Permanen)
-                ]),
+                Rule::in($allowedStatus),
             ];
 
         }
 
         /* ===================== DOSEN ===================== */
         elseif ($role === 'dosen') {
+
+            $rules['tingkat'] = ['required', 'integer', 'in:1,2,3,4,5'];
 
             $rules['nip'] = [
                 'required',
@@ -560,22 +634,14 @@ trait WithUserModal
 
             $rules['status'] = [
                 'required',
-                Rule::in([
-                    'Aktif',                  // Hijau (Produktif)
-                    'Tugas Belajar',          // Kuning (Transisi/Studi)
-                    'Izin Belajar',           // Kuning (Transisi/Studi)
-                    'Cuti Sabatika',          // Kuning (Transisi/Riset)
-                    'Alih Tugas',             // Orange (Perubahan Jabatan)
-                    'Resign',                 // Orange (Keluar Prosedural)
-                    'Pensiun',                // Orange (Keluar Prosedural)
-                    'Diberhentikan',          // Merah (Masalah/Sanksi)
-                    'Meninggal Dunia',         // Merah (Permanen)
-                ]),
+                Rule::in($allowedStatus),
             ];
         }
 
         /* ===================== MAHASISWA ===================== */
         elseif ($role === 'mahasiswa') {
+
+            $rules['tingkat'] = ['required', 'integer', 'in:5'];
 
             $rules['nim'] = [
                 'required',
@@ -615,17 +681,7 @@ trait WithUserModal
 
             $rules['status'] = [
                 'required',
-                Rule::in([
-                    'Aktif',                  // Hijau (Aktif Kuliah)
-                    'Lulus',                  // Biru (Output Positif)
-                    'Cuti',                   // Kuning (Jeda Resmi)
-                    'Pindah',                 // Kuning (Transisi Keluar)
-                    'Non-Aktif',              // Orange (Masalah Administrasi)
-                    'Mengundurkan Diri',      // Orange (Keluar Prosedural)
-                    'Drop Out',               // Merah (Masalah Akademik/Sanksi)
-                    'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
-                    'Meninggal Dunia',         // Merah (Permanen)
-                ]),
+                Rule::in($allowedStatus),
             ];
         }
 
@@ -661,11 +717,53 @@ trait WithUserModal
         ];
 
         $rules['pr_id'] = 'required|exists:prodis,id';
-
         $validator = Validator::make($data, $rules, $this->validationMessagesUser());
+        $validator->after(function ($validator) use ($data, $role, $isEditingUser) {
 
-        $validator->after(function ($validator) use ($data, $role) {
+            /* ===================== LOGIKA VALIDASI TINGKAT (ROLE/LEVEL) ===================== */
+            $currentUser = Auth::user();
+            $currentUserAdminTingkat = (int) ($currentUser?->admin?->tingkat ?? 4);
+            $targetTingkatType = (int) ($this->tingkatType ?? ($role === 'admin' ? 4 : 5));
 
+            if ($isEditingUser) {
+                // 1. Admin tidak bisa mengubah tingkatnya sendiri
+                if ((int) $currentUser->id === (int) $this->selected_id_user && isset($data['tingkat'])) {
+                    if ((int) $data['tingkat'] !== $targetTingkatType) {
+                        $validator->errors()->add(
+                            'tingkat',
+                            'Anda tidak diizinkan untuk mengubah tingkat akun Anda sendiri!'
+                        );
+                    }
+                }
+
+                // 2. Admin di tingkat lebih rendah tidak bisa mengubah tingkatan Admin yang lebih tinggi
+                if ($role === 'admin') {
+                    if ($currentUserAdminTingkat > $targetTingkatType) {
+                        if (isset($data['tingkat']) && (int) $data['tingkat'] !== $targetTingkatType) {
+                            $validator->errors()->add(
+                                'tingkat',
+                                'Anda tidak memiliki otoritas untuk mengubah tingkat Admin yang berkedudukan lebih tinggi dari Anda!'
+                            );
+                        }
+                    }
+                }
+
+                // 4. Memastikan minimal ada 1 Admin dengan tingkat 1 tersisa di sistem
+                if ($role === 'admin' && $targetTingkatType === 1) {
+                    if (isset($data['tingkat']) && (int) $data['tingkat'] !== 1) {
+                        $totalAdminTingkatSatu = Admin::where('tingkat', 1)->count();
+
+                        if ($totalAdminTingkatSatu <= 1) {
+                            $validator->errors()->add(
+                                'tingkat',
+                                'Perubahan gagal! Sistem wajib memiliki minimal 1 pengguna dengan Admin Tingkat 1.'
+                            );
+                        }
+                    }
+                }
+            }
+
+            /* ===================== LOGIKA DUPLIKASI IDENTITAS ===================== */
             if ($role === 'admin') {
                 if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk'] && $data['nip'] === $data['nik']) {
                     $validator->errors()->add(
@@ -765,9 +863,6 @@ trait WithUserModal
         }
         $data = array_merge($this->user_input, $dataAlpine);
         $data['pr_id'] = $this->pr_id;
-        if (empty($data['status'])) {
-            $data['status'] = 'Aktif';
-        }
 
         $role = strtolower($this->roleType);
         try {
@@ -800,6 +895,7 @@ trait WithUserModal
 
                 $data = [
                     'user_id' => $user->id,
+                    'tingkat' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
@@ -897,15 +993,8 @@ trait WithUserModal
         }
         $data = array_merge($this->user_input, $dataAlpine);
         $data['pr_id'] = $this->pr_id;
-        // if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
-        //     ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
-        //     $data['pr_id'] = $this->pr_id;
-        // }
-
-        if (empty($data['status'])) {
-            $data['status'] = 'Aktif';
-        }
         $role = strtolower($this->roleType);
+
         try {
             $validated = $this->inputModalUser(true, $data, $role);
 
@@ -940,6 +1029,7 @@ trait WithUserModal
                 };
 
                 $data = [
+                    'tingkat' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
@@ -1009,6 +1099,11 @@ trait WithUserModal
             'email.required' => 'Alamat Email wajib diisi!',
             'email.email' => 'Format email tidak valid!',
             'email.unique' => 'Email ini sudah terdaftar di sistem!',
+
+            'tingkat.required' => 'Tingkat Role wajib diisi!',
+            'tingkat.integer' => 'Format Tingkat Role tidak valid!',
+            'tingkat.in' => 'Tingkat Role yang dipilih tidak sesuai dengan kategori yang diizinkan!',
+
             'password.required' => 'Password wajib diisi!',
             'password.min' => 'Password minimal harus 8 karakter!',
             'name.required' => 'Nama lengkap wajib diisi!',

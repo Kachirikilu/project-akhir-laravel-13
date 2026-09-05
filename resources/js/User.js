@@ -29,6 +29,7 @@ document.addEventListener("alpine:init", () => {
         // User
         email: "",
         password: "",
+        tingkat: 5,
 
         // Admin, Dosen, Mahasiswa
         name: "",
@@ -72,8 +73,9 @@ document.addEventListener("alpine:init", () => {
 
         pr_id_show: "",
 
-        setValueUser(email, label1, id1, rps, sks, rekap, index, mutu) {
+        setValueUser(email, tingkat, label1, id1, rps, sks, rekap, index, mutu) {
             this.email = email;
+            this.tingkat = tingkat;
             this.label_id1 = label1;
             this.identity1 = id1;
 
@@ -87,6 +89,7 @@ document.addEventListener("alpine:init", () => {
             return {
                 email: this.email,
                 password: this.password,
+                tingkat: this.tingkat,
                 // count_rps: this.count_rps,
                 // total_sks: this.total_sks,
                 // rekap_mhs: this.rekap_mhs,
@@ -98,6 +101,7 @@ document.addEventListener("alpine:init", () => {
         setValueUserFull(
             email,
             password,
+            tingkat,
             name,
             nip,
             nitk,
@@ -127,6 +131,7 @@ document.addEventListener("alpine:init", () => {
         ) {
             this.email = email;
             this.password = password;
+            this.tingkat = tingkat;
 
             this.name = name;
             this.nip = nip;
@@ -239,6 +244,7 @@ document.addEventListener("alpine:init", () => {
             if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
                 this.email = "";
                 this.password = "";
+                this.tingkat = 5;
 
                 // Admin, Dosen, Mahasiswa
                 this.name = "";
@@ -295,6 +301,8 @@ document.addEventListener("alpine:init", () => {
         resetLite(isAdd = 0) {
             if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
                 this.email = "";
+                this.password = "";
+                this.tingkat = 5;
             }
             if (isAdd == 0) {
                 this.typeModal = "";

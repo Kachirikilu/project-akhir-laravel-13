@@ -6,6 +6,7 @@
     $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
     $itemLabel4 = isset($typeX4String) ? data_get($x, $typeX4String, '') : null;
     $itemLabel5 = isset($typeX5String) ? data_get($x, $typeX5String, '') : null;
+    $itemLabel6 = isset($typeX6String) ? data_get($x, $typeX6String, '') : null;
 @endphp
 
 <div class="flex flex-col mr-4">
@@ -62,6 +63,13 @@
             <span class="flex items-center">
                 {{ $x5HeadString ?? '' }}
                 {{ $itemLabel5 }}
+            </span>
+        @endif
+        @if ($typeX6String ?? null)
+            <span class="text-[var(--contrast-second-text)]">|</span>
+            <span class="flex items-center">
+                {{ $x6HeadString ?? '' }}
+                {{ $itemLabel6 }}
             </span>
         @endif
     </div>

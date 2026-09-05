@@ -123,6 +123,17 @@
                                         </span>
                                     </div>
                                 @endif
+
+                               @if ($typeX6String ?? null)
+                                    <div
+                                        class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                        <span class="mx-2">|</span>
+                                        <span>
+                                            <span>{{ $x6HeadString ?? '' }}</span>
+                                            <span>{{ $x[$typeX6String] }}</span>
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 

@@ -99,6 +99,38 @@ class Mahasiswa extends Model
         );
     }
 
+    protected function tingkatText(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            if (! $tingkat) {
+                return null;
+            }
+            $map = [
+                5 => 'Umum',
+            ];
+            if (in_array($tingkat, [5])) {
+                return $map[$tingkat];
+            }
+
+            return $map[$tingkat] ?? null;
+        });
+    }
+    protected function tingkatFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $role = 'Mahasiswa';
+            $tingkatText = $this->tingkat_text;
+
+            if (! $role || ! $tingkatText) {
+                return null;
+            }
+
+            return "{$role} {$tingkatText}";
+        });
+    }
+
+
     protected function rekapMhs(): Attribute
     {
         return Attribute::get(fn () => number_format($this->rekap_nilai?->nilai ?? 0, 2, '.', ''));
@@ -201,10 +233,10 @@ class Mahasiswa extends Model
         }
 
         $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
+        $searchLower = strtolower($search);
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm) {
+        return $query->where(function ($q) use ($search, $searchLower, $searchTerm) {
             $fields = ['name', 'nim', 'nik', 'status', 'angkatan', 'kode_wilayah'];
             foreach ($fields as $field) {
                 $q->orWhere("mahasiswas.$field", 'like', $searchTerm);
@@ -213,9 +245,27 @@ class Mahasiswa extends Model
             if (is_numeric($search)) {
                 $q->orWhere('mahasiswas.id', $search);
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pencarian Tingkat & Tingkat Full (Khusus Mahasiswa - Level 5 / Umum)
+            |--------------------------------------------------------------------------
+            */
+            $mahasiswaKeywords = ['5', 'umum', 'mahasiswa umum', 'mahasiswa'];
+
+            if (in_array($searchLower, $mahasiswaKeywords)) {
+                $q->orWhere('mahasiswas.tingkat', 5);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pencarian Relasi User & Prodi
+            |--------------------------------------------------------------------------
+            */
             $q->orWhereHas('user', function ($u) use ($searchTerm) {
                 $u->where('email', 'like', $searchTerm);
             });
+
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
                 $p->where('nama_pr', 'like', $searchTerm)
                     ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {

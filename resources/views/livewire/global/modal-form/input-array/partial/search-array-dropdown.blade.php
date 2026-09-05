@@ -9,6 +9,7 @@
             $param3 = isset($typeX3String) ? "'" . addslashes($itemLabel3) . "'" : 'null';
             $param4 = isset($typeX4String) ? "'" . addslashes($itemLabel4) . "'" : 'null';
             $param5 = isset($typeX5String) ? "'" . addslashes($itemLabel5) . "'" : 'null';
+            $param6 = isset($typeX6String) ? "'" . addslashes($itemLabel6) . "'" : 'null';
             $paramLink = isset($typeLinkString) ? "'" . addslashes($itemLink) . "'" : 'null';
 
             $selectPayload = isset($sendLabelAsValue) && $sendLabelAsValue 
@@ -33,6 +34,7 @@
                         {{ $param3 }},
                         {{ $param4 }},
                         {{ $param5 }},
+                        {{ $param6 }},
                         {{ $paramLink }}
                     );
 

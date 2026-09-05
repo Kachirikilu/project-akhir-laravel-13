@@ -4,6 +4,7 @@
     $xValues = is_array($xValues ?? null) ? $xValues : $xOptions;
     $xPilih = is_array($xPilih ?? null) ? $xPilih : null;
     $isShow = $isShowFrist ?? null;
+    $isReadonly = $isReadonly ?? false;
 
     $alpineState = $alpine ?? 'config';
 
@@ -157,43 +158,48 @@ setNestedValue(
                 ?
                 'bg-gray-100 dark:bg-zinc-800 cursor-not-allowed opacity-70 text-gray-500 border-gray-200' :
                 'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
-            class="placeholder-shown:pr-2 text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
+            class="placeholder-shown:pr-2 text-xs sm:text-sm
+            {{  $isReadonly ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]'  }} 
+            focus:ring-2 outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
 
-        <template x-if="!isDisabled">
-            @if ($isLivewireState)
-                @include('livewire.global.search-and-filters.partial.reset-button', [
-                    'xShow' => 'value',
-                    'xClick' => "
-                                                                        value = '';
-                                                                        valueInput = '';
-                                                                        setNestedValue(
-                                                                            \$store.$alpineState,
-                                                                            '$fullModelPath',
-                                                                            ''
-                                                                        );
-                                                                    ",
-                ])
-            @else
-                @include('livewire.global.search-and-filters.partial.reset-button', [
-                    'xShow' => 'value',
-                    'xClick' => "value = ''",
-                    'xAlpine' => $modelString,
-                ])
-            @endif
-        </template>
+        @if (!$isReadonly)
+            <template x-if="!isDisabled">
+                @if ($isLivewireState)
+                    @include('livewire.global.search-and-filters.partial.reset-button', [
+                        'xShow' => 'value',
+                        'xClick' => "
+                                                                                                                value = '';
+                                                                                                                valueInput = '';
+                                                                                                                setNestedValue(
+                                                                                                                    \$store.$alpineState,
+                                                                                                                    '$fullModelPath',
+                                                                                                                    ''
+                                                                                                                );
+                                                                                                            ",
+                    ])
+                @else
+                    @include('livewire.global.search-and-filters.partial.reset-button', [
+                        'xShow' => 'value',
+                        'xClick' => "value = ''",
+                        'xAlpine' => $modelString,
+                    ])
+                @endif
+            </template>
+        @endif
     </div>
 
-    <div x-show="open && !isDisabled" x-cloak x-transition
-        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto custom-scrollbar">
-        @foreach ($xOptions as $i => $option)
-            @php
-                $label = is_array($option) ? $option['label'] ?? '-' : $option;
-                $valueOption = is_array($option) ? $option['value'] ?? $label : $option;
-                $selectedValue = $xValues[$i] ?? $valueOption;
-            @endphp
+    @if (!$isReadonly)
+        <div x-show="open && !isDisabled" x-cloak x-transition
+            class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto custom-scrollbar">
+            @foreach ($xOptions as $i => $option)
+                @php
+                    $label = is_array($option) ? $option['label'] ?? '-' : $option;
+                    $valueOption = is_array($option) ? $option['value'] ?? $label : $option;
+                    $selectedValue = $xValues[$i] ?? $valueOption;
+                @endphp
 
-            <div wire:key="option-{{ $i }}"
-                @click="
+                <div wire:key="option-{{ $i }}"
+                    @click="
                     {{-- const selectedValue =
                         {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }}; --}}
                     const selectedValue = '{{ $selectedValue }}';
@@ -207,18 +213,20 @@ setNestedValue(
                     @if ($isLivewireState) valueInput = selectedValue; @endif
                     open = false;
                 "
-                class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
-                <div class="flex flex-wrap items-start gap-x-4 gap-y-1 my-1">
-                    <span class="my-2 flex-1 text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
-                        {{ $label }}
-                    </span>
-                    <span class="my-1 shrink-0 text-xs sm:text-sm bg-[var(--focus-color)] text-white px-2 py-1 rounded-md">
-                        {{ $xPilih[$i] ?? 'Pilih' }}
-                    </span>
+                    class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
+                    <div class="flex flex-wrap items-start gap-x-4 gap-y-1 my-1">
+                        <span class="my-2 flex-1 text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
+                            {{ $label }}
+                        </span>
+                        <span
+                            class="my-1 shrink-0 text-xs sm:text-sm bg-[var(--focus-color)] text-white px-2 py-1 rounded-md">
+                            {{ $xPilih[$i] ?? 'Pilih' }}
+                        </span>
+                    </div>
                 </div>
-            </div>
-        @endforeach
-    </div>
+            @endforeach
+        </div>
+    @endif
 
     @if (!empty($message))
         <span class="text-xs sm:text-sm text-red-500 mt-1 block">

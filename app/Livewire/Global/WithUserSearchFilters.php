@@ -313,7 +313,7 @@ trait WithUserSearchFilters
                     );
 
                     $matchRole = $this->containsStrict(
-                        $user->role,
+                        $user->tingkat_full,
                         $searchLower
                     );
 
@@ -679,7 +679,7 @@ trait WithUserSearchFilters
 
             $sortValue = match ($sortField) {
                 'admin_id', 'dosen_id', 'mahasiswa_id' => fn ($user) => $user->role_id,
-                'role' => fn ($user) => $user->role,
+                'role' => fn ($user) => $user->role . $user->tingkat_reverse,
                 'name' => fn ($user) => $user->name,
                 'email' => fn ($user) => $user->email,
 

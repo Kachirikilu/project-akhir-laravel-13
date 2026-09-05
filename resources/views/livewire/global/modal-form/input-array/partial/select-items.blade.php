@@ -25,6 +25,13 @@
         <span x-text="itemsAll[index]?.slot5"></span>
     @endif
 
+
+    @if ($typeX6String ?? null)
+        <span class="mx-1.5 opacity-50">|</span>
+        <span>{{ $x6HeadString ?? '' }}</span>
+        <span x-text="itemsAll[index]?.slot6"></span>
+    @endif
+
     @if ($typeLinkString ?? null)
         <span class="mx-1.5 opacity-50">|</span>
         <template x-if="itemsAll[index]?.link && itemsAll[index]?.link.trim() !== ''">

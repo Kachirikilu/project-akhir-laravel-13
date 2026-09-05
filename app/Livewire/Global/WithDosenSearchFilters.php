@@ -48,6 +48,7 @@ trait WithDosenSearchFilters
         return $collection->map(fn ($d) => [
             'id' => $d->id,
             'kode' => $d->nip,
+            'tingkat_full' => $d->tingkatFull,
             'nidn' => $d->nidn ?? null,
             'nidk' => $d->nidk ?? null,
             'name' => $d->name,
@@ -66,7 +67,7 @@ trait WithDosenSearchFilters
         return $collection->map(fn ($d) => [
             'id' => $d->id,
             'kode' => $d->nip,
-            // 'nip_full' => 'NIP. '.$d->nip,
+            'tingkat_full' => $d->tingkatFull,
             'name' => $d->name,
             'prodi' => $d->pr_rel?->prodi,
             'departemen' => $d->pr_rel?->departemenDp,
@@ -94,7 +95,8 @@ trait WithDosenSearchFilters
             'slot2' => $d->nidn,
             'slot3' => $d->nidk,
             'slot4' => $d->pr_rel?->prodi,
-            'slot5' => $d->status,
+            'slot5' => $d->tingkat_full,
+            'slot6' => $d->status,
             // 'slot6' => $d->fakultasFk,
             'peran' => $d->pivot->peran ?? 'Pengajar',
             'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
@@ -359,57 +361,57 @@ trait WithDosenSearchFilters
         }
     }
 
-public function fetchDosenArray($index = null)
-{
-    $this->modeDosen = 'array';
+    public function fetchDosenArray($index = null)
+    {
+        $this->modeDosen = 'array';
 
-    // Inisialisasi jika properti belum berupa array
-    if (!is_array($this->dosenNameSearchArray)) {
-        $this->dosenNameSearchArray = [];
-    }
-    if (!is_array($this->dosen_items_array)) {
-        $this->dosen_items_array = [];
-    }
-    if (!is_array($this->dosen_id_array)) {
-        $this->dosen_id_array = [];
-    }
+        // Inisialisasi jika properti belum berupa array
+        if (! is_array($this->dosenNameSearchArray)) {
+            $this->dosenNameSearchArray = [];
+        }
+        if (! is_array($this->dosen_items_array)) {
+            $this->dosen_items_array = [];
+        }
+        if (! is_array($this->dosen_id_array)) {
+            $this->dosen_id_array = [];
+        }
 
-    if ($index !== null) {
-        // Log::debug('fetchDosenArray called for index', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array]);
-        $id = $this->dosen_id_array[$index] ?? null;
+        if ($index !== null) {
+            // Log::debug('fetchDosenArray called for index', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array]);
+            $id = $this->dosen_id_array[$index] ?? null;
 
-        if ($id) {
-            $dosen = Dosen::find($id);
-            if ($dosen) {
-                $this->dosenNameSearchArray[$index] = $dosen->name;
-                $this->dosen_items_array[$index] = $this->itemsDosen($dosen);
+            if ($id) {
+                $dosen = Dosen::find($id);
+                if ($dosen) {
+                    $this->dosenNameSearchArray[$index] = $dosen->name;
+                    $this->dosen_items_array[$index] = $this->itemsDosen($dosen);
+                } else {
+                    $this->dosenNameSearchArray[$index] = '';
+                    $this->dosen_items_array[$index] = null;
+                }
             } else {
+                // PAKSA reset index ini ke string kosong
                 $this->dosenNameSearchArray[$index] = '';
                 $this->dosen_items_array[$index] = null;
             }
+            // Log::debug('fetchDosenArray after assign', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
         } else {
-            // PAKSA reset index ini ke string kosong
-            $this->dosenNameSearchArray[$index] = '';
-            $this->dosen_items_array[$index] = null;
-        }
-        // Log::debug('fetchDosenArray after assign', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
-    } else {
-        // Jika dipanggil tanpa index, bersihkan total dulu
-        $this->resetDosenArray();
+            // Jika dipanggil tanpa index, bersihkan total dulu
+            $this->resetDosenArray();
 
-        foreach ($this->dosen_id_array as $idx => $id) {
-            if ($id && $dosen = Dosen::find($id)) {
-                $this->dosenNameSearchArray[$idx] = $dosen->name;
-                $this->dosen_items_array[$idx] = $this->itemsDosen($dosen);
-            } else {
-                $this->dosenNameSearchArray[$idx] = '';
-                $this->dosen_items_array[$idx] = null;
+            foreach ($this->dosen_id_array as $idx => $id) {
+                if ($id && $dosen = Dosen::find($id)) {
+                    $this->dosenNameSearchArray[$idx] = $dosen->name;
+                    $this->dosen_items_array[$idx] = $this->itemsDosen($dosen);
+                } else {
+                    $this->dosenNameSearchArray[$idx] = '';
+                    $this->dosen_items_array[$idx] = null;
+                }
             }
         }
-    }
 
-    $this->dosenResults = $this->getDosenbyUser();
-}
+        $this->dosenResults = $this->getDosenbyUser();
+    }
 
     public function selectDosen($id, $dosenName)
     {
@@ -512,7 +514,7 @@ public function fetchDosenArray($index = null)
         $this->dosenResults = $this->getDosenbyUser();
         // Log::debug('resetDosenInputArray called', ['index' => $index, 'dosen_id_array' => $this->dosen_id_array, 'dosen_items_array' => $this->dosen_items_array, 'dosenNameSearchArray' => $this->dosenNameSearchArray]);
     }
-    
+
     public function searchOutputDosen($queryDosen, $searchRaw, $perPage, $sortField = null, $sortDirection = 'asc')
     {
         $search = trim($searchRaw);
@@ -533,6 +535,11 @@ public function fetchDosenArray($index = null)
 
                     $matchID = $this->matchID(
                         $dosen->id,
+                        $searchLower
+                    );
+
+                    $matchRole = $this->containsStrict(
+                        $user->tingkat_full,
                         $searchLower
                     );
 
@@ -665,6 +672,7 @@ public function fetchDosenArray($index = null)
 
                     return
                         $matchID
+                        || $matchRole
                         || $matchName
                         || $matchEmail
                         || $matchStatus

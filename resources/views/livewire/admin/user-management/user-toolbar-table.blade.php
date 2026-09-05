@@ -3,6 +3,7 @@
     @if (Auth::user()->tingkat > 4)
         <livewire:admin.user-management.toolbar-user-management lazy :data="[
             'id' => $user->id,
+            'tingkat' => $user->tingkat,
             'label_id1' => $user->label_id1,
             'identity1' => $user->identity1,
             'role' => $user->role,
@@ -12,10 +13,12 @@
     @else
         <livewire:admin.user-management.toolbar-user-management lazy :data="[
             'id' => $user->id,
+            'tingkat' => $user->tingkat,
             'label_id1' => $user->label_id1,
             'identity1' => $user->identity1,
             'role' => $user->role,
             'email' => $user->email,
+            'tingkat' => $user->tingkat,
             'pr_id' => $user->pr_id,
             'dp_id' => $user->dp_id,
             'fk_id' => $user->fk_id,

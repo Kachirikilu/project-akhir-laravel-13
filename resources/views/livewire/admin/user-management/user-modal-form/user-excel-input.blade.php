@@ -28,8 +28,8 @@
     <div class="form-container-excel">
 
         <div class="grid grid-cols-4 sm:grid-cols-8 gap-y-4 gap-x-2 sm:gap-x-4">
-            <div class="col-span-4">
-                @if (Auth::user()->tingkat < 4)
+            @if (Auth::user()->tingkat < 4)
+                <div class="col-span-4">
                     <div class="mx-2 sm:mx-0">
                         @include('livewire.global.modal-form.input-array.search-input-form', [
                             'alpine' => 'user',
@@ -40,10 +40,13 @@
                             'idString' => 'pr_id',
                             'itemsAllString' => 'pr_items',
                         
+                            'x2HeadString' => 'Departemen',
+                            'x3HeadString' => 'Fakultas',
+                        
                             'resetXInput' => 'resetPrInput()',
                             'typeXString' => 'prodi',
-                            // 'typeX2String' => 'departemen',
-                            'typeX2String' => 'fakultas',
+                            'typeX2String' => 'departemen',
+                            'typeX3String' => 'fakultas',
                         
                             'nameXString' => 'Program Studi',
                             'nameSearchString' => 'prNameSearch',
@@ -52,8 +55,8 @@
                             'wireLoading' => 'fetchPr',
                         ])
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
             <div class="col-span-4">
                 <div class="mx-2 sm:mx-0">
                     @include('livewire.global.modal-form.select-form', [
@@ -160,18 +163,19 @@
                                     <th class="{{ $headColumn }}">#</th>
                                     <th class="{{ $headColumn }}">Email</th>
                                     <th class="{{ $headColumn }}">Role</th>
+                                    <th class="{{ $headColumn }}">Tingkat</th>
                                     <th class="{{ $headColumn }}">Password</th>
                                     <th class="{{ $headColumn }}">Nama</th>
-                                    <th class="{{ $headColumn }}">NIP</th>
-                                    <th class="{{ $headColumn }}">NITK</th>
-                                    <th class="{{ $headColumn }}">NIDN</th>
+                                    <th class="{{ $headColumn }}">Status</th>
+
+                                    <th class="{{ $headColumn }}">NIP/NIM</th>
+                                    <th class="{{ $headColumn }}">NITK/NIDN</th>
                                     <th class="{{ $headColumn }}">NIDK</th>
-                                    <th class="{{ $headColumn }}">NIM</th>
                                     <th class="{{ $headColumn }}">NIK</th>
                                     <th class="{{ $headColumn }}">Tahun Masuk</th>
                                     <th class="{{ $headColumn }}">Kode Wilayah</th>
                                     {{-- <th  class="{{ $headColumn }}">Program Studi</th> --}}
-                                    <th class="{{ $headColumn }}">No HP</th>
+                                    <th class="{{ $headColumn }}">Nomor HP</th>
                                     <th class="{{ $headColumn }}">Gender</th>
                                     <th class="{{ $headColumn }}">Tempat Lahir</th>
                                     <th class="{{ $headColumn }}">Tanggal Lahir</th>
@@ -191,6 +195,7 @@
                                 @foreach ($this->paginatedUserRows as $row)
                                     @php
                                         $i = $row['_index'] ?? 0;
+                                        $roleLine = strtolower($this->parsedUserRows[$i]['role']);
                                     @endphp
                                     <tr>
                                         <td
@@ -209,12 +214,63 @@
                                         @include('livewire.global.modal-form.table.excel-input-form', [
                                             'model' => $this->parsedUserRows[$i]['role'] ?? '',
                                             'wireModel' => "parsedUserRows.$i.role",
+                                            'isLive' => 1,
                                             'isSelect' => 1,
-                                            'xOptions' => ['Admin', 'Dosen', 'Mahasiswa', 'None'],
+                                            'xOptions' => ['None', 'Admin', 'Dosen', 'Mahasiswa'],
                                             'message' => $rowUserErrors[$i]['role'] ?? null,
                                             'isDark' => 1,
                                             'minW' => '192',
                                         ])
+
+                                        @if ($roleLine == 'admin')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['tingkat'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.tingkat",
+                                                'isSelect' => 1,
+                                                'xOptions' => [
+                                                    'Admin Program Studi',
+                                                    'Admin Departemen',
+                                                    'Admin Fakultas',
+                                                    'Admin ' . config('app.univ'),
+                                                ],
+                                                'xValues' => [4, 3, 2, 1],
+                                                'message' => $rowUserErrors[$i]['tingkat'] ?? null,
+                                                'isDark' => 1,
+                                                'minW' => '192',
+                                            ])
+                                        @elseif ($roleLine == 'dosen')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['tingkat'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.tingkat",
+                                                'isSelect' => 1,
+                                                'xOptions' => [
+                                                    'Dosen Umum',
+                                                    'Dosen Program Studi',
+                                                    'Dosen Departemen',
+                                                    'Dosen Fakultas',
+                                                    'Dosen ' . config('app.univ'),
+                                                ],
+                                                'xValues' => [5, 4, 3, 2, 1],
+                                                'message' => $rowUserErrors[$i]['tingkat'] ?? null,
+                                                'isDark' => 1,
+                                                'minW' => '192',
+                                            ])
+                                        @else
+                                            <td class="min-w-[192px] bg-gray-100 dark:bg-neutral-800"></td>
+                                        @endif
+
+
+                                        {{-- @include('livewire.global.modal-form.table.excel-input-form', [
+                                            'alpine' => 'user',
+                                            'isLivewire' => 1,
+                                            'nameXString' => 'Status',
+                                            'modelString' => 'status',
+                                         
+                                            'iconString' => 'tag',
+                                            'placeholder' => 'Pilih Status...',
+                                            'message' => $errors->first('status'),
+                                            'isRequired' => 0,
+                                        ]) --}}
 
                                         @include('livewire.global.modal-form.table.excel-input-form', [
                                             'model' => $this->parsedUserRows[$i]['password'] ?? '',
@@ -231,53 +287,112 @@
                                             'minW' => '192',
                                         ])
 
-                                        @include('livewire.global.modal-form.table.excel-input-form', [
-                                            'model' => $this->parsedUserRows[$i]['nip'] ?? '',
-                                            'wireModel' => "parsedUserRows.$i.nip",
-                                            'numberOnly' => 1,
-                                            'maxLength' => 20,
-                                            'message' => $rowUserErrors[$i]['nip'] ?? null,
-                                            'minW' => '192',
-                                        ])
 
-                                        @include('livewire.global.modal-form.table.excel-input-form', [
-                                            'model' => $this->parsedUserRows[$i]['nitk'] ?? '',
-                                            'wireModel' => "parsedUserRows.$i.nitk",
-                                            'numberOnly' => 1,
-                                            'maxLength' => 20,
-                                            'message' => $rowUserErrors[$i]['nitk'] ?? null,
-                                            'minW' => '192',
-                                        ])
+                                        @php
+                                            $status = config("status.{$roleLine}", []);
+                                        @endphp
 
-                                        @include('livewire.global.modal-form.table.excel-input-form', [
-                                            'model' => $this->parsedUserRows[$i]['nidn'] ?? '',
-                                            'wireModel' => "parsedUserRows.$i.nidn",
-                                            'numberOnly' => 1,
-                                            'maxLength' => 20,
-                                            'message' => $rowUserErrors[$i]['nidn'] ?? null,
-                                            'minW' => '192',
-                                        ])
+                                        @if ($roleLine == 'admin')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['status'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.status",
+                                                'isSelect' => 1,
+                                                'xOptions' => $status,
+                                                'message' => $rowUserErrors[$i]['status'] ?? null,
+                                                'isDark' => 1,
+                                                'minW' => '192',
+                                            ])
+                                        @elseif ($roleLine == 'dosen')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['status'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.status",
+                                                'isSelect' => 1,
+                                                'xOptions' => $status,
+                                                'message' => $rowUserErrors[$i]['status'] ?? null,
+                                                'isDark' => 1,
+                                                'minW' => '192',
+                                            ])
+                                        @elseif ($roleLine == 'mahasiswa')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['status'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.status",
+                                                'isSelect' => 1,
+                                                'xOptions' => $status,
+                                                'message' => $rowUserErrors[$i]['status'] ?? null,
+                                                'isDark' => 1,
+                                                'minW' => '192',
+                                            ])
+                                        @else
+                                            <td class="min-w-[192px] bg-gray-100 dark:bg-neutral-800"></td>
+                                        @endif
 
-                                        @include('livewire.global.modal-form.table.excel-input-form', [
-                                            'model' => $this->parsedUserRows[$i]['nidk'] ?? '',
-                                            'wireModel' => "parsedUserRows.$i.nidk",
-                                            'numberOnly' => 1,
-                                            'maxLength' => 20,
-                                            'message' => $rowUserErrors[$i]['nidk'] ?? null,
-                                            'minW' => '192',
-                                        ])
+                                        @if ($roleLine == 'admin' || $roleLine == 'dosen')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['nip'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.nip",
+                                                'xHeadString' => 'NIP.',
+                                                'numberOnly' => 1,
+                                                'maxLength' => 20,
+                                                'message' => $rowUserErrors[$i]['nip'] ?? null,
+                                                'minW' => '192',
+                                            ])
+                                        @elseif ($roleLine == 'mahasiswa')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['nim'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.nim",
+                                                'xHeadString' => 'NIM.',
+                                                'numberOnly' => 1,
+                                                'maxLength' => 20,
+                                                'message' => $rowUserErrors[$i]['nim'] ?? null,
+                                                'minW' => '192',
+                                            ])
+                                        @else
+                                            <td class="min-w-[192px]"></td>
+                                        @endif
 
-                                        @include('livewire.global.modal-form.table.excel-input-form', [
-                                            'model' => $this->parsedUserRows[$i]['nim'] ?? '',
-                                            'wireModel' => "parsedUserRows.$i.nim",
-                                            'numberOnly' => 1,
-                                            'maxLength' => 20,
-                                            'message' => $rowUserErrors[$i]['nim'] ?? null,
-                                            'minW' => '192',
-                                        ])
+                                        @if ($roleLine == 'admin')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['nitk'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.nitk",
+                                                'xHeadString' => 'NITK.',
+                                                'numberOnly' => 1,
+                                                'maxLength' => 20,
+                                                'message' => $rowUserErrors[$i]['nitk'] ?? null,
+                                                'minW' => '192',
+                                            ])
+                                        @elseif ($roleLine == 'dosen')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['nidn'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.nidn",
+                                                'xHeadString' => 'NIDN.',
+                                                'numberOnly' => 1,
+                                                'maxLength' => 20,
+                                                'message' => $rowUserErrors[$i]['nidn'] ?? null,
+                                                'minW' => '192',
+                                            ])
+                                        @else
+                                            <td class="min-w-[192px]"></td>
+                                        @endif
+
+                                        @if ($roleLine == 'dosen')
+                                            @include('livewire.global.modal-form.table.excel-input-form', [
+                                                'model' => $this->parsedUserRows[$i]['nidk'] ?? '',
+                                                'wireModel' => "parsedUserRows.$i.nidk",
+                                                'xHeadString' => 'NIDK.',
+                                                'numberOnly' => 1,
+                                                'maxLength' => 20,
+                                                'message' => $rowUserErrors[$i]['nidk'] ?? null,
+                                                'minW' => '192',
+                                            ])
+                                        @else
+                                            <td class="min-w-[192px]"></td>
+                                        @endif
+
+
                                         @include('livewire.global.modal-form.table.excel-input-form', [
                                             'model' => $this->parsedUserRows[$i]['nik'] ?? '',
                                             'wireModel' => "parsedUserRows.$i.nik",
+                                            'xHeadString' => 'NIK.',
                                             'numberOnly' => 1,
                                             'maxLength' => 16,
                                             'message' => $rowUserErrors[$i]['nik'] ?? null,
@@ -371,7 +486,7 @@
                                     {{-- Error Baris --}}
                                     @if (!empty($rowUserErrors[$i]))
                                         <tr>
-                                            <td colspan="19"
+                                            <td colspan="21"
                                                 class="px-4 py-1 bg-red-50 dark:bg-red-950/30 text-red-600 text-[10px] border italic">
                                                 ⚠️
                                                 @foreach ($rowUserErrors[$i] as $fieldErrors)

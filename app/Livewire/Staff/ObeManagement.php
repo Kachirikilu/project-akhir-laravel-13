@@ -371,9 +371,10 @@ class ObeManagement extends Component
             'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'referensi' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
             'tim-dosen' => [1 => 'id', 2 => 'kode', 3 => 'nama_tim', 4 => 'ketua_tim', 5 => 'nip_ketua_tim', 6 => 'count_dosen', 7 => 'count_koordinator', 8 => 'count_pengajar', 9 => 'count_instruktur', 10 => 'count_asisten', 11 => 'program_studi', 12 => 'created_at', 13 => 'updated_at'],
-            'dosen' => [1 => 'kode', 2 => 'name', 3 => 'count_rps', 4 => 'total_sks', 5 => 'status', 6 => 'program_studi'],
+            'dosen' => [1 => 'role', 2 => 'kode', 3 => 'name', 4 => 'count_rps', 5 => 'total_sks', 6 => 'status', 7 => 'program_studi'],
         ];
         $aliases = [
+            'id' => ['id', 'role'],
             'kode' => ['kode', 'name', 'nama_tim'],
             // 'name' => ['name', 'kode'],
             'deskripsi' => ['deskripsi', 'mk', 'judul', 'name', 'ketua_tim'],

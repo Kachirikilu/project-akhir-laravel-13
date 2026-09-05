@@ -48,6 +48,41 @@ class Admin extends Model
         return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
     }
 
+    protected function tingkatText(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            if (! $tingkat) {
+                return null;
+            }
+            $map = [
+                1 => 'Universitas',
+                2 => 'Fakultas',
+                3 => 'Departemen',
+                4 => 'Program Studi',
+            ];
+            if (in_array($tingkat, [1, 2, 3, 4])) {
+                return $map[$tingkat];
+            }
+
+            return $map[$tingkat] ?? null;
+        });
+    }
+
+    protected function tingkatFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $role = 'Admin';
+            $tingkatText = $this->tingkat_text;
+
+            if (! $role || ! $tingkatText) {
+                return null;
+            }
+
+            return "{$role} {$tingkatText}";
+        });
+    }
+
     protected function wilayah(): Attribute
     {
         return Attribute::get(function () {
@@ -74,12 +109,14 @@ class Admin extends Model
             return $phone;
         });
     }
+
     protected function waAktif(): Attribute
     {
         return Attribute::get(function () {
             return $this->is_wa_active;
         });
     }
+
     protected function noWaFull(): Attribute
     {
         return Attribute::get(function () {
@@ -98,8 +135,10 @@ class Admin extends Model
             $rest = substr($body, 3);
             if ($rest !== false && $rest !== '') {
                 $chunks = str_split($rest, 4);
+
                 return '+'.$countryCode.'-'.$firstThree.'-'.implode('-', $chunks);
             }
+
             return '+'.$countryCode.'-'.$firstThree;
         });
     }

@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'universitas' => env('UNIVERSITAS', 'Universitas Sriwijaya'),
+    'univ' => env('UNIV', 'UNSRI'),
 
     /*
     |--------------------------------------------------------------------------

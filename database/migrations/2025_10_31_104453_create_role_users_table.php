@@ -19,7 +19,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->tinyInteger('tingkat')->default(1);
+            $table->enum('tingkat', [1, 2, 3, 4])->default(4);
             $table->index('user_id');
             $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
@@ -46,16 +46,7 @@ return new class extends Migration
             $table->date('tmt_cp_blu')->nullable();
             $table->date('tmt_blu')->nullable();
 
-            $table->enum('status', [
-                'Aktif',                  // Hijau (Produktif)
-                'Tugas Belajar',          // Kuning (Transisi/Sementara)
-                'Mutasi',                 // Kuning (Transisi/Sementara)
-                'Cuti Luar Tanggungan',   // Kuning (Transisi/Sementara)
-                'Resign',                 // Orange (Keluar Prosedural)
-                'Pensiun',                // Orange (Keluar Prosedural)
-                'Diberhentikan',          // Merah (Masalah/Sanksi)
-                'Meninggal Dunia',        // Merah (Permanen)
-            ])->default('Aktif');
+            $table->enum('status', config('status.admin'))->default('Aktif');
             $table->index('status');
 
             $table->timestamps();
@@ -69,7 +60,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->tinyInteger('tingkat')->default(1);
+            $table->enum('tingkat', [1, 2, 3, 4, 5])->default(5);
             $table->index('user_id');
             $table->index('pr_id');
 
@@ -96,17 +87,7 @@ return new class extends Migration
             $table->string('jabatan_fungsional')->nullable();
             $table->date('tmt_jabatan')->nullable();
 
-            $table->enum('status', [
-                'Aktif',                  // Hijau (Produktif)
-                'Tugas Belajar',          // Kuning (Transisi/Studi)
-                'Izin Belajar',           // Kuning (Transisi/Studi)
-                'Cuti Sabatika',          // Kuning (Transisi/Riset)
-                'Alih Tugas',             // Orange (Perubahan Jabatan)
-                'Resign',                 // Orange (Keluar Prosedural)
-                'Pensiun',                // Orange (Keluar Prosedural)
-                'Diberhentikan',          // Merah (Masalah/Sanksi)
-                'Meninggal Dunia',        // Merah (Permanen)
-            ])->default('Aktif');
+            $table->enum('status', config('status.dosen'))->default('Aktif');
             $table->index('status');
 
             $table->timestamps();
@@ -120,7 +101,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->tinyInteger('tingkat')->default(1);
+            $table->enum('tingkat', [5])->default(5);
             $table->index('user_id');
             $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
@@ -143,17 +124,8 @@ return new class extends Migration
             $table->year('angkatan');
             $table->date('tanggal_yudisium')->nullable();
             $table->date('tanggal_wisuda')->nullable();
-            $table->enum('status', [
-                'Aktif',                  // Hijau (Aktif Kuliah)
-                'Lulus',                  // Biru (Output Positif)
-                'Cuti',                   // Kuning (Jeda Resmi)
-                'Pindah',                 // Kuning (Transisi Keluar)
-                'Non-Aktif',              // Orange (Masalah Administrasi)
-                'Mengundurkan Diri',      // Orange (Keluar Prosedural)
-                'Drop Out',               // Merah (Masalah Akademik/Sanksi)
-                'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
-                'Meninggal Dunia',        // Merah (Permanen)
-            ])->default('Aktif');
+            $table->enum('status', config('status.mahasiswa'))->default('Aktif');
+
             $table->index('status');
 
             $table->timestamps();

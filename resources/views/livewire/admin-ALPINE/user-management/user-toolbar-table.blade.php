@@ -76,6 +76,7 @@
                 $store.user?.setValueUser(
                     '{{ $x->email ?? '' }}',
                     '',
+                    '{{ $x->tingkat ?? '' }}',
                     '{{ $x->name ?? '' }}',
                     '{{ $detail->nip ?? '' }}',
                     '{{ $detail->nitk ?? '' }}',

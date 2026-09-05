@@ -33,7 +33,7 @@
                 </div>
             @else
                 <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
-                    @if ($switchTable == '')
+                    @if ($switchTable !== 'mahasiswa')
                         @include('livewire.global.table.head-sortir', [
                             'sortFieldString' => 'role',
                         ])
@@ -110,7 +110,7 @@
                 @endif
 
 
-                @if ($switchTable == '')
+                @if ($switchTable !== 'mahasiswa')
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'role',
                         'rowSpan' => 2,
@@ -269,15 +269,15 @@
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
                             @switch($user->role)
                                 @case('Admin')
-                                    <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
+                                    <flux:badge icon="cog-6-tooth" color="red" size="sm">{{ $user->role_full }}</flux:badge>
                                 @break
 
                                 @case('Dosen')
-                                    <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
+                                    <flux:badge icon="briefcase" color="lime" size="sm">{{ $user->role_full }}</flux:badge>
                                 @break
 
                                 @case('Mahasiswa')
-                                    <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
+                                    <flux:badge icon="book-open" color="cyan" size="sm">{{ $user->role_full }}</flux:badge>
                                 @break
 
                                 @default

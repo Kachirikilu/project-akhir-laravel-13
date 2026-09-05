@@ -133,18 +133,25 @@ store.{{ $modelString }} = valueInput ?? '';
                     @else
                         wire:model="{{ $modelLivewire }}" @endif
                 @endif
+            @if (!$isLivewireState || ($isXModal ?? false)) @if (isset($itemsString))
+                            x-model="valueInput"
+                        @else
+                            x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
+            @endif
             @endif
 
-            @if (!$isLivewireState || ($isXModal ?? false)) @if (isset($itemsString))
-                        x-model="valueInput"
-                    @else
-                        x-model="$store.{{ $alpineState }}.{{ $modelString }}" @endif
-            @endif
+
+            @if ($value ?? null && $noEntangle) value="{{ $value ?? '' }}" @endif
+
 
             name="{{ $modelString }}"
             x-bind:value="$store.{{ $alpineState }}?.isEdit ? $el.value : ('{{ $oldValue ?? ($value ?? '') }}')"
-            {{-- Tipe input dinamis --}}
-            :type="inputType" id="{{ $modelString }}" placeholder="{{ $placeholder ?? null }}"
+            id="{{ $modelString }}"
+
+
+
+
+            :type="inputType" placeholder="{{ $placeholder ?? null }}"
             class="text-xs sm:text-sm bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)]
             focus:ring-2 {{ $isReadonly ?? null ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]' }} outline-none w-full border rounded-lg pl-10 px-3 py-2"
             {{-- Auto Select --}} @if ($isFocusSelect ?? null) @focus="$el.select()" @endif {{-- YEAR ONLY --}}

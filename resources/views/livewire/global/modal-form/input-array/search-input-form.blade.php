@@ -103,6 +103,11 @@
                     <span>{{ $x5HeadString ?? '' }}</span>
                     <span x-text="itemsAll?.slot5"></span>
                 @endif
+                @if ($typeX6String ?? null)
+                    <span class="mx-1">|</span>
+                    <span>{{ $x6HeadString ?? '' }}</span>
+                    <span x-text="itemsAll?.slot5"></span>
+                @endif
                 <span class="mx-1">|</span>
                 ID: <span x-text="itemsAll?.id"></span>
             </p>

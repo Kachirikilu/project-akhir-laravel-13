@@ -18,8 +18,13 @@ APP_MAINTENANCE_DRIVER=file
 # PHP_CLI_SERVER_WORKERS=4
 
 UNIVERSITAS="Universitas Sriwijaya"
+UNIV="UNSRI"
 UTS_FIELDS="UTS,EVALUASI AWAL"
 UAS_FIELDS="UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK"
+
+STATUS_ADM="Aktif,Tugas Belajar,Mutasi,Cuti Luar Tanggungan,Resign,Pensiun,Diberhentikan,Meninggal Dunia"
+STATUS_DSN="Aktif,Tugas Belajar,Izin Belajar,Cuti Sabatika,Alih Tugas,Resign,Pensiun,Diberhentikan,Meninggal Dunia"
+STATUS_MHS="Aktif,Lulus,Cuti,Pindah,Non-Aktif,Mengundurkan Diri,Drop Out,Hilang,Meninggal Dunia"
 
 BCRYPT_ROUNDS=12
 

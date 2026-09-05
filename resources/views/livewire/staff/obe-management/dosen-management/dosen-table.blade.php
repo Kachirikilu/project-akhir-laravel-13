@@ -3,7 +3,13 @@
 
         <x-slot:header>
             <tr>
-                <th rowspan="2" class="table-head ">Role</th>
+                {{-- <th rowspan="2" class="table-head ">Role</th> --}}
+                        @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'role',
+                    'rowSpan' => 2,
+                    'isCenter' => 1,
+                ])
+
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'kode',
                     'headString' => $switchTable == 'dosen' ? 'NIP / NIDN' : 'NIM',
@@ -62,7 +68,7 @@
                 <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
-                            <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
+                            <flux:badge icon="briefcase" color="lime" size="sm">{{ $user->role_full }}</flux:badge>
                         </button>
                         @include('livewire.staff.obe-management.dosen-management.dosen-toolbar-table', [
                             'key' => 1,

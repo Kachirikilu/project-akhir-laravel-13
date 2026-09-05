@@ -335,6 +335,8 @@ trait WithProdiSearchFilters
 
     public function havePrParent($query)
     {
+        // dump($this->fk_id);
+
         if ($this->prLevel == 2 && filled($this->dp_id)) {
             $query->where('dp_id', $this->dp_id);
         } elseif ($this->prLevel == 3 && filled($this->fk_id)) {

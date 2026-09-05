@@ -32,7 +32,7 @@
             'itemsAllString' => 'pr_items',
         
             'resetXInput' => 'resetPrInput()',
-
+        
             'x3HeadString' => 'Fakultas',
         
             'typeXString' => 'prodi',
@@ -56,16 +56,7 @@
             'isLivewire' => 1,
             'nameXString' => 'Status',
             'modelString' => 'status',
-            'xOptions' => [
-                'Aktif', // Hijau (Produktif)
-                'Tugas Belajar', // Kuning (Transisi/Sementara)
-                'Mutasi', // Kuning (Transisi/Sementara)
-                'Cuti Luar Tanggungan', // Kuning (Transisi/Sementara)
-                'Resign', // Orange (Keluar Prosedural)
-                'Pensiun', // Orange (Keluar Prosedural)
-                'Diberhentikan', // Merah (Masalah/Sanksi)
-                'Meninggal Dunia', // Merah (Permanen)
-            ],
+            'xOptions' => config('status.admin', []),
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
@@ -77,17 +68,7 @@
             'alpine' => 'user',
             'isLivewire' => 1,
             'modelString' => 'status',
-            'xOptions' => [
-                'Aktif', // Hijau (Produktif)
-                'Tugas Belajar', // Kuning (Transisi/Studi)
-                'Izin Belajar', // Kuning (Transisi/Studi)
-                'Cuti Sabatika', // Kuning (Transisi/Riset)
-                'Alih Tugas', // Orange (Perubahan Jabatan)
-                'Resign', // Orange (Keluar Prosedural)
-                'Pensiun', // Orange (Keluar Prosedural)
-                'Diberhentikan', // Merah (Masalah/Sanksi)
-                'Meninggal Dunia', // Merah (Permanen)
-            ],
+            'xOptions' => config('status.dosen', []),
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
@@ -113,17 +94,7 @@
             'isLivewire' => 1,
             'nameXString' => 'Status',
             'modelString' => 'status',
-            'xOptions' => [
-                'Aktif', // Hijau (Aktif Kuliah)
-                'Lulus', // Biru (Output Positif)
-                'Cuti', // Kuning (Jeda Resmi)
-                'Pindah', // Kuning (Transisi Keluar)
-                'Non-Aktif', // Orange (Masalah Administrasi)
-                'Mengundurkan Diri', // Orange (Keluar Prosedural)
-                'Drop Out', // Merah (Masalah Akademik/Sanksi)
-                'Hilang', // Merah (Tanpa Kabar/Ghaib)
-                'Meninggal Dunia', // Merah (Permanen)
-            ],
+            'xOptions' => config('status.mahasiswa', []),
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),

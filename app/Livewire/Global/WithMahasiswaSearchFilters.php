@@ -425,6 +425,11 @@ trait WithMahasiswaSearchFilters
                         $searchLower
                     );
 
+                    $matchRole = $this->containsStrict(
+                        $user->tingkat_full,
+                        $searchLower
+                    );
+
                     $matchName = $this->containsStrict(
                         $mahasiswa->name,
                         $searchLower
@@ -548,6 +553,7 @@ trait WithMahasiswaSearchFilters
 
                     return
                         $matchID
+                        || $matchRole
                         || $matchName
                         || $matchEmail
                         || $matchStatus

@@ -86,4 +86,67 @@
             'isRequired' => 0,
         ])
     </template>
+
+    @php
+        $user = Auth::user();
+
+        $tingkatMe = (int) ($user->admin?->tingkat ?? ($user->dosen?->tingkat ?? 5));
+        $isMe = (int) $selected_id_user === (int) $user->id;
+
+        $canAccess = !$isMe && ($tingkatMe <= ($tingkatType ?? 5));
+    @endphp
+    <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
+        @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'nameXString' => 'Tingkat Admin',
+            'modelString' => 'tingkat',
+            'xOptions' => [
+                'Admin Program Studi',
+                'Admin Departemen',
+                'Admin Fakultas',
+                'Admin ' . config('app.univ'),
+            ],
+            'xValues' => [4, 3, 2, 1],
+            'iconString' => 'shield-check',
+            'placeholder' => 'Defau: Admin Program Studi',
+            'message' => $errors->first('tingkat'),
+            'isReadonly' => $canAccess ? 0 : 1,
+            'isRequired' => 0,
+        ])
+    </template>
+    <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+        @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'nameXString' => 'Tingkat Dosen',
+            'modelString' => 'tingkat',
+            'xOptions' => [
+                'Dosen Umum',
+                'Dosen Program Studi',
+                'Dosen Departemen',
+                'Dosen Fakultas',
+                'Dosen ' . config('app.univ'),
+            ],
+            'xValues' => [5, 4, 3, 2, 1],
+            'iconString' => 'shield-check',
+            'placeholder' => 'Defau: Dosen Umum',
+            'message' => $errors->first('tingkat'),
+            'isRequired' => 0,
+        ])
+    </template>
+    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            'value' => 'Mahasiswa',
+            // 'isLivewire' => 1,
+            'noEntangle' => 1,
+            'nameXString' => 'Role',
+            'modelString' => 'tingkat_text',
+            'iconString' => 'shield-check',
+            'isRequired' => 0,
+            'isReadonly' => 1,
+        ])
+    </template>
+
 </div>

@@ -204,11 +204,11 @@ class Fakultas extends Model
         $query->searchFakultas($search);
 
         $search = trim($search);
-        $searchCleaned = trim(preg_replace('/(nilai|index)/i', '', $search));
+        $searchClean = trim(preg_replace('/(nilai|index)/i', '', $search));
         $searchTerm = "%{$search}%";
         $searchLower = strtolower($search);
 
-        return $query->orWhere(function ($q) use ($searchCleaned, $searchTerm, $searchLower) {
+        return $query->orWhere(function ($q) use ($search, $searchClean, $searchTerm, $searchLower) {
 
             $searchDigits = preg_replace('/[^0-9]/', '', $search);
 
@@ -229,7 +229,7 @@ class Fakultas extends Model
             });
 
             // ===== Nilai / Index =====
-            $q->orWhere(function ($sub) use ($searchCleaned) {
+            $q->orWhere(function ($sub) use ($searchClean) {
 
                 $mapHuruf = [
                     'A' => [85, 100],
@@ -243,7 +243,7 @@ class Fakultas extends Model
                     'E' => [0, 39.99],
                 ];
 
-                $upper = strtoupper($searchCleaned);
+                $upper = strtoupper($searchClean);
 
                 if (isset($mapHuruf[$upper])) {
                     $sub->orWhereBetween('nilai_fk', $mapHuruf[$upper]);
@@ -251,7 +251,7 @@ class Fakultas extends Model
                     return;
                 }
 
-                if (preg_match('/([><=]?)\s*(\d*\.?\d+)/', $searchCleaned, $m)) {
+                if (preg_match('/([><=]?)\s*(\d*\.?\d+)/', $searchClean, $m)) {
 
                     $operator = $m[1] ?: 'LIKE';
                     $value = (float) $m[2];

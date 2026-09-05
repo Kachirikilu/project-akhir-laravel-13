@@ -196,7 +196,7 @@ new #[Title('Profile Settings')] class extends Component {
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'user',
                 'value' => Auth::user()->name ?? '-',
-                'isLivewire' => 1,
+                // 'isLivewire' => 1,
                 'noEntangle' => 1,
                 'modelString' => 'name',
                 'iconString' => 'user',
@@ -209,7 +209,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->email ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'email',
                             'iconString' => 'envelope',
@@ -221,7 +221,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->role ?? 'Pengunjung',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'role',
                             'iconString' => 'users',
@@ -234,7 +234,7 @@ new #[Title('Profile Settings')] class extends Component {
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'user',
                     'value' => Auth::user()->email ?? '-',
-                    'isLivewire' => 1,
+                    // 'isLivewire' => 1,
                     'noEntangle' => 1,
                     'modelString' => 'email',
                     'iconString' => 'envelope',
@@ -246,7 +246,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->role ?? 'Pengunjung',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'role',
                             'iconString' => 'users',
@@ -258,7 +258,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->mahasiswa->angkatan ?? 'YYYY',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'angkatan',
                             'iconString' => 'calendar-days',
@@ -308,7 +308,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->identity1 ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'identity1',
                             'nameXString' => Auth::user()->label_id1,
@@ -321,7 +321,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->identity2 ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'identity2',
                             'nameXString' => Auth::user()->label_id2,
@@ -337,7 +337,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->mahasiswa->nim ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'identity1',
                             'nameXString' => 'NIM',
@@ -350,7 +350,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->mahasiswa->nik ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'NIK',
                             'nameXString' => 'NIK',
@@ -365,7 +365,7 @@ new #[Title('Profile Settings')] class extends Component {
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'user',
                     'value' => Auth::user()->admin->nik ?? '-',
-                    'isLivewire' => 1,
+                    // 'isLivewire' => 1,
                     'noEntangle' => 1,
                     'modelString' => 'NIK',
                     'nameXString' => 'NIK',
@@ -379,7 +379,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->dosen->nidk ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'identity3',
                             'nameXString' => 'NIDK',
@@ -392,7 +392,7 @@ new #[Title('Profile Settings')] class extends Component {
                         @include('livewire.global.modal-form.input-form', [
                             'alpine' => 'user',
                             'value' => Auth::user()->dosen->nik ?? '-',
-                            'isLivewire' => 1,
+                            // 'isLivewire' => 1,
                             'noEntangle' => 1,
                             'modelString' => 'NIK',
                             'nameXString' => 'NIK',
@@ -409,7 +409,7 @@ new #[Title('Profile Settings')] class extends Component {
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
                         'value' => Auth::user()->gender ?? 'Tidak Dikeahui',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'gender',
                         'iconString' => 'users',
@@ -421,7 +421,7 @@ new #[Title('Profile Settings')] class extends Component {
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
                         'value' => Auth::user()->agama ?? 'Tidak Diketahui',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'agama',
                         'iconString' => 'bookmark',
@@ -436,7 +436,7 @@ new #[Title('Profile Settings')] class extends Component {
                         'alpine' => 'user',
                         'value' =>
                             (Auth::user()->tmt_lahir ?? '---') . ', ' . (Auth::user()->tgl_lahir ?? 'DD MM YYY'),
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'tempat_tanggal_lahir',
                         'nameXString' => 'Tempat, Tanggal Lahir',
@@ -449,7 +449,7 @@ new #[Title('Profile Settings')] class extends Component {
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
                         'value' => Auth::user()->no_wa_full ?? '+62 --- ---- -----',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'no_hp',
                         'nameXString' => 'Nomor Telepon',
@@ -466,7 +466,7 @@ new #[Title('Profile Settings')] class extends Component {
                         'value' => Auth::user()->pr_rel
                             ? Auth::user()->prodi . ' / ' . Auth::user()->kode_pr
                             : 'Tidak Terdaftar',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'program_studi',
                         'iconString' => 'academic-cap',
@@ -478,7 +478,7 @@ new #[Title('Profile Settings')] class extends Component {
                     @include('livewire.global.modal-form.input-form', [
                         'alpine' => 'user',
                         'value' => Auth::user()->status,
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'status',
                         'iconString' => 'tag',
@@ -495,7 +495,7 @@ new #[Title('Profile Settings')] class extends Component {
                         'value' => Auth::user()->pr_rel?->dp_rel
                             ? Auth::user()->departemen . ' / ' . Auth::user()->kode_dp
                             : 'Tidak Terdaftar',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'departemen',
                         'iconString' => 'book-open',
@@ -509,7 +509,7 @@ new #[Title('Profile Settings')] class extends Component {
                         'value' => Auth::user()->pr_rel?->dp_rel?->fk_rel
                             ? Auth::user()->fakultas . ' / ' . Auth::user()->kode_fk
                             : 'Tidak Terdaftar',
-                        'isLivewire' => 1,
+                        // 'isLivewire' => 1,
                         'noEntangle' => 1,
                         'modelString' => 'fakultas',
                         'iconString' => 'building-library',

@@ -19,14 +19,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['email', 'password', 'current_team_id'])] // Menggunakan PHP Attribute ala Laravel 13 (Name sengaja dilepas/di-comment seperti versi lama)
+#[Fillable(['email', 'password', 'tingkat', 'current_team_id'])] // Menggunakan PHP Attribute ala Laravel 13 (Name sengaja dilepas/di-comment seperti versi lama)
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     // use HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
-
     use SoftDeletes;
 
     /**
@@ -123,7 +122,7 @@ class User extends Authenticatable
     public function wallpapers()
     {
         return $this->hasMany(Wallpaper::class);
-        }
+    }
 
     public function pendidikans(): HasMany
     {
@@ -204,6 +203,106 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             return data_get($this->getProfile(), 'tingkat');
+        });
+    }
+    protected function tingkatReverse(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            if (! $tingkat) {
+                return 0;
+            }
+            return 6 - $tingkat;
+        });
+    }
+
+
+    protected function tingkatText(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            $role = strtolower($this->role);
+
+            if (! $tingkat) {
+                return null;
+            }
+
+            $map = [
+                1 => 'Universitas',
+                2 => 'Fakultas',
+                3 => 'Departemen',
+                4 => 'Program Studi',
+                5 => 'Umum',
+            ];
+
+            // Validasi khusus sesuai batasan role
+            if ($role === 'admin' && in_array($tingkat, [1, 2, 3, 4])) {
+                return $map[$tingkat];
+            }
+
+            if ($role === 'dosen' && in_array($tingkat, [1, 2, 3, 4, 5])) {
+                return $map[$tingkat];
+            }
+
+            if ($role === 'mahasiswa' && $tingkat === 5) {
+                return 'Umum';
+            }
+
+            return $map[$tingkat] ?? null;
+        });
+    }
+
+    protected function roleFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            $roleRaw = strtolower($this->role ?? '');
+            $roleName = ucfirst($roleRaw);
+
+            if (! $tingkat || ! $roleRaw) {
+                return null;
+            }
+
+            $map = [
+                1 => 'UNI',
+                2 => 'FK',
+                3 => 'DP',
+                4 => 'PR',
+                5 => null,
+            ];
+
+            $isValid = match ($roleRaw) {
+                'admin' => in_array($tingkat, [1, 2, 3, 4]),
+                'dosen' => in_array($tingkat, [1, 2, 3, 4, 5]),
+                'mahasiswa' => $tingkat === 5,
+                default => false,
+            };
+
+            if (! $isValid) {
+                return null;
+            }
+
+            $singkatan = $map[$tingkat] ?? null;
+
+            if ($singkatan === null) {
+                return $roleName;
+            }
+
+            return "{$roleName} {$singkatan}";
+        });
+    }
+
+    protected function tingkatFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $role = $this->role;
+            $tingkatText = $this->tingkat_text;
+
+            if (! $role || ! $tingkatText) {
+                return null;
+            }
+
+            return "{$role} {$tingkatText}";
         });
     }
 
@@ -365,28 +464,30 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $phone = preg_replace('/[^0-9]/', '', $this->no_hp);
-            
-            if (empty($phone)) return null;
+
+            if (empty($phone)) {
+                return null;
+            }
 
             if (str_starts_with($phone, '0')) {
-                $phone = '62' . substr($phone, 1);
-            } elseif (!str_starts_with($phone, '62')) {
-                $phone = '62' . $phone;
+                $phone = '62'.substr($phone, 1);
+            } elseif (! str_starts_with($phone, '62')) {
+                $phone = '62'.$phone;
             }
             $countryCode = '62';
-            $body = substr($phone, 2); 
-            
+            $body = substr($phone, 2);
+
             $firstPart = substr($body, 0, 3);
             $secondPart = substr($body, 3, 4);
             $thirdPart = substr($body, 7);
-            $result = '+' . $countryCode . '-' . $firstPart;
-            
+            $result = '+'.$countryCode.'-'.$firstPart;
+
             if ($secondPart !== false && $secondPart !== '') {
-                $result .= '-' . $secondPart;
+                $result .= '-'.$secondPart;
             }
-            
+
             if ($thirdPart !== false && $thirdPart !== '') {
-                $result .= '-' . $thirdPart;
+                $result .= '-'.$thirdPart;
             }
 
             return $result;
@@ -675,6 +776,77 @@ class User extends Authenticatable
 
             /*
             |--------------------------------------------------------------------------
+            | Tingkat & Tingkat Full Search
+            |--------------------------------------------------------------------------
+            */
+
+            $tingkatMap = [
+                1 => ['universitas', 'univ', 'unsri', 'uni'],
+                2 => ['fakultas', 'fak', 'fk'],
+                3 => ['departemen', 'dept', 'dp'],
+                4 => ['program studi', 'prodi', 'prostud', 'pr'],
+                5 => ['umum', ''],
+            ];
+
+            // 1. Cek apakah input mengandung nama role tertentu
+            $detectedRole = null;
+            foreach (['admin', 'dosen', 'mahasiswa'] as $r) {
+                if (str_contains($searchLower, $r)) {
+                    $detectedRole = $r;
+                    break;
+                }
+            }
+
+            foreach ($tingkatMap as $tingkatNum => $keywords) {
+                foreach ($keywords as $kw) {
+                    if (! str_contains($searchLower, $kw)) {
+                        continue;
+                    }
+
+                    // KONDISI A: User menyebutkan Role secara spesifik (misal: "admin univ", "dosen prodi")
+                    if ($detectedRole) {
+                        // Validasi batasan tingkat per role agar query tidak sia-sia
+                        $isAllowed = match ($detectedRole) {
+                            'admin' => in_array($tingkatNum, [1, 2, 3, 4]),
+                            'dosen' => in_array($tingkatNum, [1, 2, 3, 4, 5]),
+                            'mahasiswa' => $tingkatNum === 5,
+                            default => false,
+                        };
+
+                        if ($isAllowed) {
+                            $q->orWhereHas($detectedRole, function ($r) use ($tingkatNum) {
+                                $r->where('tingkat', $tingkatNum);
+                            });
+                        }
+                        break; // Lanjut ke tingkat berikutnya jika keyword sudah cocok
+                    }
+
+                    // KONDISI B: User HANYA mengetik tingkat (misal: "univ", "prodi", "umum")
+                    else {
+                        // Hanya cari di Admin & Dosen (karena Tingkat 1-4)
+                        if (in_array($tingkatNum, [1, 2, 3, 4])) {
+                            $q->orWhereHas('admin', function ($r) use ($tingkatNum) {
+                                $r->where('tingkat', $tingkatNum);
+                            })->orWhereHas('dosen', function ($r) use ($tingkatNum) {
+                                $r->where('tingkat', $tingkatNum);
+                            });
+                        }
+
+                        // Jika Tingkat 5 (Umum), cari di Dosen & Mahasiswa
+                        if ($tingkatNum === 5) {
+                            $q->orWhereHas('dosen', function ($r) use ($tingkatNum) {
+                                $r->where('tingkat', $tingkatNum);
+                            })->orWhereHas('mahasiswa', function ($r) use ($tingkatNum) {
+                                $r->where('tingkat', $tingkatNum);
+                            });
+                        }
+                        break;
+                    }
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
             | Smart Role Data
             |--------------------------------------------------------------------------
             */
@@ -692,7 +864,7 @@ class User extends Authenticatable
                         */
 
                         $sub->orWhereRaw(
-                            "LOWER(tempat_lahir) LIKE ?",
+                            'LOWER(tempat_lahir) LIKE ?',
                             ["%{$searchLower}%"]
                         );
 
@@ -709,11 +881,11 @@ class User extends Authenticatable
                             $phones = [$phone];
 
                             if (str_starts_with($phone, '08')) {
-                                $phones[] = '62' . substr($phone, 1);
+                                $phones[] = '62'.substr($phone, 1);
                             }
 
                             if (str_starts_with($phone, '62')) {
-                                $phones[] = '0' . substr($phone, 2);
+                                $phones[] = '0'.substr($phone, 2);
                             }
 
                             foreach (array_unique($phones) as $hp) {
@@ -818,7 +990,7 @@ class User extends Authenticatable
 
                 $q->orWhereHas(
                     "{$role}.pr_rel",
-                    fn($pr) => $pr->searchProdiSmart($search)
+                    fn ($pr) => $pr->searchProdiSmart($search)
                 );
 
                 if (str_contains($searchLower, $role)) {
@@ -827,4 +999,209 @@ class User extends Authenticatable
             }
         });
     }
+
+    // public function scopeSearchUserSmart($query, $search, $withTahun = false)
+    // {
+    //     if (blank(trim($search))) {
+    //         return $query;
+    //     }
+
+    //     $query->searchUser($search, $withTahun);
+
+    //     if ($withTahun) {
+    //         return $query;
+    //     }
+
+    //     $search = trim($search);
+    //     $searchLower = strtolower($search);
+    //     $searchTerm = "%{$search}%";
+
+    //     return $query->orWhere(function ($q) use ($search, $searchLower, $searchTerm) {
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Created / Updated
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+
+    //             foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+    //                 $dq->orWhereRaw("DATE_FORMAT(users.created_at, '$format') LIKE ?", [$searchTerm])
+    //                     ->orWhereRaw("DATE_FORMAT(users.updated_at, '$format') LIKE ?", [$searchTerm]);
+    //             }
+
+    //             foreach ([
+    //                 '%a, %d %b %Y',
+    //                 '%W, %d %M %Y',
+    //                 '%a %d %b %Y',
+    //                 '%W %d %M %Y',
+    //             ] as $format) {
+
+    //                 $dq->orWhereRaw(
+    //                     "LOWER(DATE_FORMAT(users.created_at, '$format')) LIKE ?",
+    //                     ["%{$searchLower}%"]
+    //                 );
+
+    //                 $dq->orWhereRaw(
+    //                     "LOWER(DATE_FORMAT(users.updated_at, '$format')) LIKE ?",
+    //                     ["%{$searchLower}%"]
+    //                 );
+    //             }
+    //         });
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Smart Role Data
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         foreach (['admin', 'dosen', 'mahasiswa'] as $role) {
+
+    //             $q->orWhereHas($role, function ($r) use ($search, $searchLower, $searchTerm) {
+
+    //                 $r->where(function ($sub) use ($search, $searchLower, $searchTerm) {
+
+    //                     /*
+    //                     |--------------------------------------------------------------------------
+    //                     | Tempat lahir
+    //                     |--------------------------------------------------------------------------
+    //                     */
+
+    //                     $sub->orWhereRaw(
+    //                         "LOWER(tempat_lahir) LIKE ?",
+    //                         ["%{$searchLower}%"]
+    //                     );
+
+    //                     /*
+    //                     |--------------------------------------------------------------------------
+    //                     | Nomor HP
+    //                     |--------------------------------------------------------------------------
+    //                     */
+
+    //                     $phone = preg_replace('/\D/', '', $search);
+
+    //                     if ($phone !== '') {
+
+    //                         $phones = [$phone];
+
+    //                         if (str_starts_with($phone, '08')) {
+    //                             $phones[] = '62' . substr($phone, 1);
+    //                         }
+
+    //                         if (str_starts_with($phone, '62')) {
+    //                             $phones[] = '0' . substr($phone, 2);
+    //                         }
+
+    //                         foreach (array_unique($phones) as $hp) {
+    //                             $sub->orWhere('no_hp', 'like', "%{$hp}%");
+    //                         }
+    //                     }
+
+    //                     /*
+    //                     |--------------------------------------------------------------------------
+    //                     | Tanggal lahir
+    //                     |--------------------------------------------------------------------------
+    //                     */
+
+    //                     $sub->orWhere(function ($dq) use ($search, $searchLower, $searchTerm) {
+
+    //                         foreach (['%d/%m/%Y', '%Y-%m-%d'] as $format) {
+    //                             $dq->orWhereRaw(
+    //                                 "DATE_FORMAT(tanggal_lahir, '$format') LIKE ?",
+    //                                 [$searchTerm]
+    //                             );
+    //                         }
+
+    //                         foreach ([
+    //                             '%a, %d %b %Y',
+    //                             '%W, %d %M %Y',
+    //                             '%a %d %b %Y',
+    //                             '%W %d %M %Y',
+    //                         ] as $format) {
+
+    //                             $dq->orWhereRaw(
+    //                                 "LOWER(DATE_FORMAT(tanggal_lahir, '$format')) LIKE ?",
+    //                                 ["%{$searchLower}%"]
+    //                             );
+    //                         }
+
+    //                         if (preg_match('/^\d{4}$/', $search)) {
+    //                             $dq->orWhereYear('tanggal_lahir', $search);
+    //                         }
+
+    //                         if (preg_match('/^(0?[1-9]|1[0-2])$/', $search)) {
+    //                             $dq->orWhereMonth('tanggal_lahir', (int) $search);
+    //                         }
+    //                     });
+
+    //                     /*
+    //                     |--------------------------------------------------------------------------
+    //                     | Jenis Kelamin
+    //                     |--------------------------------------------------------------------------
+    //                     */
+
+    //                     if (preg_match('/^(l|lk|laki|laki-laki|pria|cowok|male)$/i', $search)) {
+    //                         $sub->orWhere(function ($jk) {
+    //                             $jk->where('jenis_kelamin', 'L')
+    //                                 ->orWhere('jenis_kelamin', 'Laki-laki')
+    //                                 ->orWhere('jenis_kelamin', 'Male');
+    //                         });
+    //                     }
+
+    //                     if (preg_match('/^(p|pr|perempuan|wanita|cewek|female)$/i', $search)) {
+    //                         $sub->orWhere(function ($jk) {
+    //                             $jk->where('jenis_kelamin', 'P')
+    //                                 ->orWhere('jenis_kelamin', 'Perempuan')
+    //                                 ->orWhere('jenis_kelamin', 'Female');
+    //                         });
+    //                     }
+
+    //                     /*
+    //                     |--------------------------------------------------------------------------
+    //                     | Agama
+    //                     |--------------------------------------------------------------------------
+    //                     */
+
+    //                     $agamaMap = [
+    //                         'islam' => ['islam'],
+    //                         'kristen' => ['kristen', 'protestan'],
+    //                         'katolik' => ['katolik'],
+    //                         'hindu' => ['hindu'],
+    //                         'buddha' => ['buddha', 'budha'],
+    //                         'konghucu' => ['konghucu'],
+    //                     ];
+
+    //                     foreach ($agamaMap as $dbValue => $keywords) {
+
+    //                         foreach ($keywords as $keyword) {
+
+    //                             if (str_contains($keyword, $searchLower)) {
+
+    //                                 $sub->orWhere('agama', 'like', "%{$dbValue}%");
+
+    //                                 break;
+    //                             }
+    //                         }
+    //                     }
+    //                 });
+    //             });
+
+    //             /*
+    //             |--------------------------------------------------------------------------
+    //             | Prodi
+    //             |--------------------------------------------------------------------------
+    //             */
+
+    //             $q->orWhereHas(
+    //                 "{$role}.pr_rel",
+    //                 fn($pr) => $pr->searchProdiSmart($search)
+    //             );
+
+    //             if (str_contains($searchLower, $role)) {
+    //                 $q->orWhereHas($role);
+    //             }
+    //         }
+    //     });
+    // }
 }

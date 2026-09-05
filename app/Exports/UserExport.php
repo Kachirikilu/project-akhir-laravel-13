@@ -63,7 +63,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         if ($this->switchTable == 'admin') {
             return [
                 [
-                    'ID', 'AMN ID', 'Role', 'Nama', 'Email',
+                    'ID', 'AMN ID',
+                    'Otoritas Web', '',
+                    'Nama', 'Email',
                     'Identitas (ID)', '', '',
                     'Status', 'Program Studi', '', 'Kode Kampus',
                     'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'No. HP',
@@ -74,7 +76,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                     'Pendidikan S3', '', '', '',
                 ],
                 [
-                    '', '', '', '', '',
+                    '', '',
+                    'Role', 'Tingkat Role',
+                    '', '',
                     'NIP', 'NITK', 'NIK',
                     '', 'Kode PR', 'Program Studi', '',
                     '', '', '', '', '',
@@ -88,7 +92,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         } elseif ($this->switchTable == 'dosen') {
             return [
                 [
-                    'ID', 'DSN ID', 'Role', 'Nama', 'Email',
+                    'ID', 'DSN ID',
+                    'Otoritas Web', '',
+                    'Nama', 'Email',
                     'Identitas (ID)', '', '', '',
                     'Status', 'Program Studi', '',
                     'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'No. HP', 'No. Karpeg',
@@ -99,7 +105,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                     'Pendidikan S3', '', '', '',
                 ],
                 [
-                    '', '', '', '', '',
+                    '', '',
+                    'Role', 'Tingkat Role',
+                    '', '',
                     'NIP', 'NIDN', 'NIDK', 'NIK',
                     '', 'Kode PR', 'Program Studi',
                     '', '', '', '', '', '',
@@ -113,7 +121,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         } elseif ($this->switchTable == 'mahasiswa') {
             return [
                 [
-                    'ID', 'MHS ID', 'Role', 'Nama', 'Email',
+                    'ID', 'MHS ID',
+                    'Otoritas Web', '',
+                    'Nama', 'Email',
                     'Identitas (ID)', '',
                     'Angkatan', 'Status', 'Program Studi', '', 'Kode Kampus',
                     'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'No. HP',
@@ -123,7 +133,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                     'Pendidikan S3', '', '', '',
                 ],
                 [
-                    '', '', '', '', '',
+                    '', '',
+                    'Role', 'Tingkat Role',
+                    '', '',
                     'NIM', 'NIK',
                     '', '', 'Kode PR', 'Program Studi', '',
                     '', '', '', '', '',
@@ -136,7 +148,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         } else {
             return [
                 [
-                    'ID', 'RL ID', 'Role', 'Nama', 'Email',
+                    'ID', 'RL ID',
+                    'Otoritas Web', '',
+                    'Nama', 'Email',
                     'Identitas (ID)', '', '', '', '', '',
                     'Angkatan', 'Status', 'Program Studi', '', 'Kode Kampus',
                     'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'No. HP', 'No. Karpeg',
@@ -148,7 +162,9 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                     'Pendidikan S3', '', '', '',
                 ],
                 [
-                    '', '', '', '', '',
+                    '', '',
+                    'Role', 'Tingkat Role',
+                    '', '',
                     'NIP', 'NIM', 'NIDN', 'NIDK', 'NITK', 'NIK',
                     '', '', 'Kode PR', 'Program Studi', '',
                     '', '', '', '', '', '',
@@ -171,6 +187,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->id ?? '', // A
                 $user->admin->id ?? '', // B
                 $user->role ?? '', // B
+                $user->tingkat_text ?? '', // B
                 $user->name ?? '', // C
                 $user->email ?? '', // D
 
@@ -225,6 +242,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->id ?? '', // A
                 $user->dosen->id ?? '', // B
                 $user->role ?? '', // B
+                $user->tingkat_text ?? '', // B
                 $user->name ?? '', // C
                 $user->email ?? '', // D
 
@@ -280,6 +298,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->id ?? '', // A
                 $user->mahasiswa->id ?? '', // B
                 $user->role ?? '', // B
+                $user->tingkat_text ?? '', // B
                 $user->name ?? '', // C
                 $user->email ?? '', // D
 
@@ -326,6 +345,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
                 $user->id ?? '', // A
                 $user->admin->id ?? $user->dosen->id ?? $user->mahasiswa->id ?? '', // A
                 $user->role ?? '', // B
+                $user->tingkat_text ?? '', // B
                 $user->name ?? '', // C
                 $user->email ?? '', // D
 
@@ -395,25 +415,25 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
     public function bindValue(Cell $cell, $value)
     {
         if ($this->switchTable == 'admin') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'Q'])) {
+            if (in_array($cell->getColumn(), ['G', 'H', 'I', 'R'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } elseif ($this->switchTable == 'dosen') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'Q'])) {
+            if (in_array($cell->getColumn(), ['G', 'H', 'I', 'J', 'R'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } elseif ($this->switchTable == 'mahasiswa') {
-            if (in_array($cell->getColumn(), ['F', 'G', 'Q'])) {
+            if (in_array($cell->getColumn(), ['G', 'H', 'R'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
             }
         } else {
-            if (in_array($cell->getColumn(), ['F', 'G', 'H', 'I', 'J', 'K', 'U'])) {
+            if (in_array($cell->getColumn(), ['G', 'H', 'I', 'J', 'K', 'L', 'V'])) {
                 $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
                 return true;
@@ -427,34 +447,34 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
     {
         if ($this->switchTable == 'admin') {
             return [
-                'F' => NumberFormat::FORMAT_TEXT,
-                'G' => NumberFormat::FORMAT_TEXT,
-                'H' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
-            ];
-        } elseif ($this->switchTable == 'dosen') {
-            return [
-                'F' => NumberFormat::FORMAT_TEXT,
                 'G' => NumberFormat::FORMAT_TEXT,
                 'H' => NumberFormat::FORMAT_TEXT,
                 'I' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
+                'R' => NumberFormat::FORMAT_TEXT,
+            ];
+        } elseif ($this->switchTable == 'dosen') {
+            return [
+                'G' => NumberFormat::FORMAT_TEXT,
+                'H' => NumberFormat::FORMAT_TEXT,
+                'I' => NumberFormat::FORMAT_TEXT,
+                'J' => NumberFormat::FORMAT_TEXT,
+                'R' => NumberFormat::FORMAT_TEXT,
             ];
         } elseif ($this->switchTable == 'mahasiswa') {
             return [
-                'F' => NumberFormat::FORMAT_TEXT,
                 'G' => NumberFormat::FORMAT_TEXT,
-                'Q' => NumberFormat::FORMAT_TEXT,
+                'H' => NumberFormat::FORMAT_TEXT,
+                'R' => NumberFormat::FORMAT_TEXT,
             ];
         } else {
             return [
-                'F' => NumberFormat::FORMAT_TEXT,
                 'G' => NumberFormat::FORMAT_TEXT,
                 'H' => NumberFormat::FORMAT_TEXT,
                 'I' => NumberFormat::FORMAT_TEXT,
                 'J' => NumberFormat::FORMAT_TEXT,
                 'K' => NumberFormat::FORMAT_TEXT,
-                'U' => NumberFormat::FORMAT_TEXT,
+                'L' => NumberFormat::FORMAT_TEXT,
+                'V' => NumberFormat::FORMAT_TEXT,
             ];
         }
     }
@@ -477,21 +497,21 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         $highestColumn = $sheet->getHighestColumn();
 
         if ($this->switchTable == 'admin') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'I', 'L', 'M', 'N', 'O', 'P', 'Q'];
-            $horizontalMerges = ['F4:H4', 'J4:K4', 'R4:V4', 'W4:X4', 'Y4:AB4', 'AC4:AF4', 'AG4:AJ4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'AA', 'AB', 'AE', 'AF', 'AI', 'AJ'];
+            $verticalMerges = ['A', 'B', 'E', 'F', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
+            $horizontalMerges = ['C4:D4' ,'G4:I4', 'K4:L4', 'S4:W4', 'X4:Y4', 'Z4:AC4', 'AD4:AG4', 'AH4:AK4'];
+            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'AB', 'AC', 'AF', 'AG', 'AJ', 'AK'];
         } elseif ($this->switchTable == 'dosen') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
-            $horizontalMerges = ['F4:I4', 'K4:L4', 'S4:W4', 'X4:Y4', 'Z4:AC4', 'AD4:AG4', 'AH4:AK4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'K', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'Y', 'AB', 'AC', 'AF', 'AG', 'AJ', 'AK'];
+            $verticalMerges = ['A', 'B', 'E', 'F', 'K', 'N', 'O', 'P', 'Q', 'R', 'S'];
+            $horizontalMerges = ['C4:D4' ,'G4:J4', 'L4:M4', 'T4:X4', 'Y4:Z4', 'AA4:AD4', 'AE4:AH4', 'AI4:AL4'];
+            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'L', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Z', 'AC', 'AD', 'AG', 'AH', 'AK', 'AL'];
         } elseif ($this->switchTable == 'mahasiswa') {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q'];
-            $horizontalMerges = ['F4:G4', 'J4:K4', 'R4:S4', 'T4:W4', 'X4:AA4', 'AB4:AE4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'L', 'N', 'O', 'Q', 'S', 'V', 'W', 'Z', 'AA', 'AD', 'AE'];
+            $verticalMerges = ['A', 'B', 'E', 'F', 'I', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
+            $horizontalMerges = ['C4:D4', 'G4:H4', 'K4:L4', 'S4:T4', 'U4:X4', 'Y4:AB4', 'AC4:AF4'];
+            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'M', 'O', 'P', 'R', 'T', 'W', 'X', 'AA', 'AB', 'AE', 'AF'];
         } else {
-            $verticalMerges = ['A', 'B', 'C', 'E', 'D', 'L', 'M', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'];
-            $horizontalMerges = ['F4:K4', 'N4:O4', 'W4:AA4', 'AB4:AF4', 'AG4:AH4', 'AI4:AL4', 'AM4:AP4', 'AQ4:AT4'];
-            $alignmentMerges = ['A', 'B', 'C', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AH', 'AK', 'AL', 'AO', 'AP', 'AS', 'AT'];
+            $verticalMerges = ['A', 'B', 'E', 'F', 'M', 'N', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'];
+            $horizontalMerges = ['C4:D4' ,'G4:L4', 'O4:P4', 'X4:AB4', 'AC4:AG4', 'AH4:AI4', 'AJ4:AM4', 'AN4:AQ4', 'AR4:AU4'];
+            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AP', 'AQ', 'AT', 'AU'];
         }
         $headerRange = "A4:{$highestColumn}5";
 
@@ -503,8 +523,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
             $sheet->mergeCells($range);
         }
 
-        // Perkecualian: Nama (C) dan Email (D) biasanya rata kiri
-        $excluded = ['C', 'D'];
+        $excluded = ['E', 'F'];
         foreach ($alignmentMerges as $c) {
             if (in_array($c, $excluded)) {
                 continue;

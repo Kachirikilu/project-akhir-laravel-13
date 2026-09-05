@@ -28,6 +28,7 @@
                         $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
                         $store.user?.setValueUser(
                             '{{ $data['email'] ?? '' }}',
+                            '{{ $data['tingkat'] ?? '' }}',
                             '{{ $data['label_id1'] ?? '' }}',
                             '{{ $data['identity1'] ?? '' }}',
                             '{{ $data['count_rps'] ?? '0' }}',
@@ -45,7 +46,7 @@
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span>Edit {{ $data['role'] }}</span>
+                    <span>Edit {{ $data['role'] }} </span>
                     <flux:icon wire:loading wire:target="open-edit-user-modal" name="arrow-path"
                         class="animate-spin h-4 w-4 ml-2" />
                 </div>

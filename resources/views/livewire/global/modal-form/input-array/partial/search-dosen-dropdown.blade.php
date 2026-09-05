@@ -20,7 +20,8 @@
                                 @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
                                 @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
                                 @isset($typeX4String) '{{ $x[$typeX4String] ?? '' }}' @else null @endisset,
-                                @isset($typeX5String) '{{ $x[$typeX5String] ?? '' }}' @else null @endisset
+                                @isset($typeX5String) '{{ $x[$typeX5String] ?? '' }}' @else null @endisset,
+                                @isset($typeX6String) '{{ $x[$typeX6String] ?? '' }}' @else null @endisset
                             );
                         }
                         "

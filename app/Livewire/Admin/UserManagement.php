@@ -18,8 +18,8 @@ class UserManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use WithUserExcel;
     use WithPagination;
+    use WithUserExcel;
     use WithUserFilters;
     use WithUserSearchFilters;
 
@@ -137,7 +137,8 @@ class UserManagement extends Component
         $this->clearMahasiswaProdiStatsCache();
     }
 
-    public function refreshStats() {
+    public function refreshStats()
+    {
         $this->refreshStatsUsersList();
         $this->resetPage();
         $this->toast(text: 'Data Statistik User berhasil diperbarui!', type: 'info', variant: 'info');
@@ -167,12 +168,66 @@ class UserManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
-            'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'kampus', 9 => 'status', 10 => 'created_at', 11 => 'updated_at'],
-            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
-            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'kampus', 9 => 'status', 10 => 'program_studi', 11 => 'created_at', 12 => 'updated_at'],
+            '' => [
+                1 => 'id',
+                2 => 'role',
+                3 => 'name',
+                4 => 'email',
+                5 => 'identity1',
+                6 => 'identity2',
+                7 => 'nidk',
+                8 => 'nik',
+                9 => 'status',
+                10 => 'program_studi',
+                11 => 'created_at',
+                12 => 'updated_at',
+            ],
+            'admin' => [
+                1 => 'id',
+                2 => 'role',
+                3 => 'admin_id',
+                4 => 'name',
+                5 => 'email',
+                6 => 'nip',
+                7 => 'nitk',
+                8 => 'nik',
+                9 => 'kampus',
+                10 => 'status',
+                11 => 'created_at',
+                12 => 'updated_at',
+            ],
+            'dosen' => [
+                1 => 'id',
+                2 => 'role',
+                3 => 'dosen_id',
+                4 => 'name',
+                5 => 'email',
+                6 => 'nip',
+                7 => 'nidn',
+                8 => 'nidk',
+                9 => 'nik',
+                10 => 'status',
+                11 => 'program_studi',
+                12 => 'created_at',
+                13 => 'updated_at',
+            ],
+            'mahasiswa' => [
+                1 => 'id',
+                2 => 'mahasiswa_id',
+                3 => 'name',
+                4 => 'email',
+                5 => 'nim',
+                6 => 'nik',
+                7 => 'angkatan',
+                8 => 'kampus',
+                9 => 'status',
+                10 => 'program_studi',
+                11 => 'created_at',
+                12 => 'updated_at',
+            ],
         ];
         $aliases = [
+            'role' => ['role'],
             'name' => ['name'],
             'email' => ['email'],
             'program_studi' => ['program_studi'],
@@ -231,7 +286,7 @@ class UserManagement extends Component
                 'dosen' => '👨‍🏫',
                 'mahasiswa' => '🧑‍🎓',
             ];
-            
+
             if ($this->showDeleted && $this->AuthCheck('admin')) {
                 $queryUser->onlyTrashed();
             }

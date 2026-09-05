@@ -4,7 +4,8 @@
         $isSameFk = $user->tingkat <= 2 && $user->fk_id == ($data['fk_id'] ?? null);
         $isSameDp = $user->tingkat <= 3 && $user->dp_id == ($data['dp_id'] ?? null);
         $isSamePr = $user->tingkat <= 4 && $user->pr_id == ($data['pr_id'] ?? null);
-        $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
+        $canAccess = ($user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr) && ($user->tingkat <= $data['tingkat']);
+
     } else {
         $canAccess = false;
     }

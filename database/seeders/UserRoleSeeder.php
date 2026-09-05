@@ -7,10 +7,9 @@ use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\Pendidikan;
 use App\Models\Auth\User;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
-
+use App\Models\ProgramStudi\Prodi;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -34,10 +33,28 @@ class UserRoleSeeder extends Seeder
         // --- 1. AKUN UTAMA ---
         DB::transaction(function () use ($faker, $defaultPw, $prodiIds) {
             $adminUser = User::create(['email' => 'muttaqien.wildan12@gmail.com', 'password' => $defaultPw]);
-            $this->createAdminProfile($adminUser, 'Wildan Athif Muttaqien (Admin)', '03041282227066', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+            $this->createAdminProfile($adminUser, 1, 'Wildan Athif Muttaqien (Admin)', '03041282227066', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $adminUser = User::create(['email' => 'muttaqien.wildan122@gmail.com', 'password' => $defaultPw]);
+            $this->createAdminProfile($adminUser, 2, 'Wildan Athif Muttaqien (Admin 2)', '030412822270662', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $adminUser = User::create(['email' => 'muttaqien.wildan123@gmail.com', 'password' => $defaultPw]);
+            $this->createAdminProfile($adminUser, 3, 'Wildan Athif Muttaqien (Admin 3)', '030412822270663', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $adminUser = User::create(['email' => 'muttaqien.wildan124@gmail.com', 'password' => $defaultPw]);
+            $this->createAdminProfile($adminUser, 4, 'Wildan Athif Muttaqien (Admin 4)', '030412822270664', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
 
             $dosenUser = User::create(['email' => 'muttaqien.wildan13@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($dosenUser, 'Wildan Athif Muttaqien (Dosen)', '03041282227064', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+            $this->createDosenProfile($dosenUser, 1, 'Wildan Athif Muttaqien (Dosen)', '03041282227064', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $mhsUser6 = User::create(['email' => 'aisyah@gmail.com', 'password' => $defaultPw]);
+            $this->createDosenProfile($mhsUser6, 2, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $mhsUser7 = User::create(['email' => 'afif@gmail.com', 'password' => $defaultPw]);
+            $this->createDosenProfile($mhsUser7, 3, 'Afif Budiani', '03011382126114', '6289506506639', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
+
+            $mhsUser8 = User::create(['email' => 'mustofa.ihsan@gmail.com', 'password' => $defaultPw]);
+            $this->createMahasiswaProfile($mhsUser8, 'Mustofa Ihsan', '2230803106', '6283143337282', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
 
             $mhsUser = User::create(['email' => 'muttaqien.wildan14@gmail.com', 'password' => $defaultPw]);
             $this->createMahasiswaProfile($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)', '03041282227063', '628985655826', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
@@ -53,15 +70,6 @@ class UserRoleSeeder extends Seeder
 
             $mhsUser5 = User::create(['email' => 'dzakiudin07@gmail.com', 'password' => $defaultPw]);
             $this->createMahasiswaProfile($mhsUser5, 'Dzaki Udin', '03041282227062', '6285707091624', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
-
-            $mhsUser6 = User::create(['email' => 'aisyah@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($mhsUser6, 'Aisyah Nada Khalilah', '03041282227061', '6282118716848', 'Perempuan', 'Islam', $faker, $prodiIds[0], 1, 100);
-
-            $mhsUser7 = User::create(['email' => 'afif@gmail.com', 'password' => $defaultPw]);
-            $this->createDosenProfile($mhsUser7, 'Afif Budiani', '03011382126114', '6289506506639', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 100);
-
-            $mhsUser8 = User::create(['email' => 'mustofa.ihsan@gmail.com', 'password' => $defaultPw]);
-            $this->createMahasiswaProfile($mhsUser8, 'Mustofa Ihsan', '2230803106', '6283143337282', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
         });
 
         // --- 2. DATA DUMMY ---
@@ -79,7 +87,7 @@ class UserRoleSeeder extends Seeder
             $gender = $faker->randomElement(['Laki-laki', 'Perempuan']);
             $agama = $faker->randomElement(['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik']);
             $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
-            $this->createAdminProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $faker->randomElement($prodiIds));
+            $this->createAdminProfile($user, 4, $name, $nip, $telpon, $gender, $agama, $faker, $faker->randomElement($prodiIds));
         });
 
         // Seed Dosens
@@ -90,7 +98,7 @@ class UserRoleSeeder extends Seeder
             $gender = $faker->randomElement(['Laki-laki', 'Perempuan']);
             $agama = $faker->randomElement(['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik']);
             $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
-            $this->createDosenProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $faker->randomElement($prodiIds));
+            $this->createDosenProfile($user, 5, $name, $nip, $telpon, $gender, $agama, $faker, $faker->randomElement($prodiIds));
         });
 
         // Seed Mahasiswas
@@ -105,7 +113,7 @@ class UserRoleSeeder extends Seeder
         });
 
         // --- 3. ASSIGN PIMPINAN (Fakultas, Departemen, Prodi) ---
-        $this->command->info("Assigning leadership (Dekan, Kadep, Kaprodi, dll) from existing Dosens...");
+        $this->command->info('Assigning leadership (Dekan, Kadep, Kaprodi, dll) from existing Dosens...');
         $this->assignLeaderships();
     }
 
@@ -129,7 +137,7 @@ class UserRoleSeeder extends Seeder
         // Update Pimpinan Departemen
         Departemen::all()->each(function ($dept) use ($dosenIds) {
             $dept->update([
-                'kadep_id'  => array_rand(array_flip($dosenIds)),
+                'kadep_id' => array_rand(array_flip($dosenIds)),
                 'sekdep_id' => array_rand(array_flip($dosenIds)),
             ]);
         });
@@ -137,7 +145,7 @@ class UserRoleSeeder extends Seeder
         // Update Pimpinan Prodi
         Prodi::all()->each(function ($prodi) use ($dosenIds) {
             $prodi->update([
-                'kaprodi_id'  => array_rand(array_flip($dosenIds)),
+                'kaprodi_id' => array_rand(array_flip($dosenIds)),
                 'sekprodi_id' => array_rand(array_flip($dosenIds)),
             ]);
         });
@@ -160,10 +168,11 @@ class UserRoleSeeder extends Seeder
         }
     }
 
-    private function createAdminProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
+    private function createAdminProfile($user, $tingkat = 4, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
     {
         Admin::create([
             'user_id' => $user->id,
+            'tingkat' => $tingkat,
             'pr_id' => $prodiId,
             'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),
             'nip' => $nip,
@@ -188,10 +197,11 @@ class UserRoleSeeder extends Seeder
         $this->seedEducation($user, $faker, ['S1', 'S2']);
     }
 
-    private function createDosenProfile($user, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
+    private function createDosenProfile($user, $tingkat = 5, $name, $nip, $telpon, $gender, $agama, $faker, $prodiId, $wa = 0, $token = 0)
     {
         Dosen::create([
             'user_id' => $user->id,
+            'tingkat' => $tingkat,
             'pr_id' => $prodiId,
             'name' => $name,
             'nip' => $nip,

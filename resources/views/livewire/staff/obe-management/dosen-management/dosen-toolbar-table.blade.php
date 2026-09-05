@@ -3,6 +3,7 @@
     @if (Auth::user()->tingkat > 4)
         <livewire:staff.obe-management.dosen-management.toolbar-dosen-management lazy :data="[
             'id' => $user->id,
+            'tingkat' => $user->tingkat,
             'label_id1' => 'NIP',
             'identity1' => $user->dosen->nip,
             'role' => 'dosen',
@@ -12,6 +13,7 @@
     @else
         <livewire:staff.obe-management.dosen-management.toolbar-dosen-management lazy :data="[
             'id' => $user->id,
+            'tingkat' => $user->tingkat,
             'label_id1' => 'NIP',
             'identity1' => $user->dosen->nip,
             'role' => 'dosen',

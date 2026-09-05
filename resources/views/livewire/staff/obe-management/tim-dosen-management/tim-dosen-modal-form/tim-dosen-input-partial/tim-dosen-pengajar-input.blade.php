@@ -37,13 +37,14 @@
                 'x2HeadString' => 'NIDN.',
                 'x3HeadString' => 'NIDK.',
                 'x4HeadString' => 'Prodi:',
-                'x5HeadString' => 'Status:',
+                'x6HeadString' => 'Status:',
         
                 'typeXString' => 'name',
                 'typeX2String' => 'nidn',
                 'typeX3String' => 'nidk',
                 'typeX4String' => 'prodi',
-                'typeX5String' => 'status',
+                'typeX5String' => 'tingkat_full',
+                'typeX6String' => 'status',
             
                 'nameXString' => 'Dosen Pengajar',
                 'nameSearchString' => 'dosenNameSearch',

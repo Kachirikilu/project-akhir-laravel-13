@@ -34,7 +34,7 @@
                 return this.parentSelectedId != null && this.parentSelectedId != '';
             },
         
-            addItem(id, kode, slot1, slot2, slot3, slot4, slot5) {
+            addItem(id, kode, slot1, slot2, slot3, slot4, slot5, slot6) {
                 let normalizedId = Number(id);
         
                 if (!this.items.map(i => Number(i)).includes(normalizedId)) {
@@ -48,6 +48,7 @@
                         slot3: slot3,
                         slot4: slot4,
                         slot5: slot5,
+                        slot6: slot6,
                         peran: isFirst ? 'Koordinator' : 'Pengajar',
                         is_ketua: isFirst
                     });

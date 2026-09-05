@@ -6,9 +6,9 @@ use App\Models\Akademik\RPS;
 // use App\Models\Akademik\SubCPMK;
 // use App\Models\Kelas\KelasSesi;
 use App\Models\Akademik\TimDosen;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,6 +47,42 @@ class Dosen extends Model
         'tmt_jabatan',
         'status',
     ];
+
+    protected function tingkatText(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = (int) $this->tingkat;
+            if (! $tingkat) {
+                return null;
+            }
+            $map = [
+                1 => 'Universitas',
+                2 => 'Fakultas',
+                3 => 'Departemen',
+                4 => 'Program Studi',
+                5 => 'Umum',
+            ];
+            if (in_array($tingkat, [1, 2, 3, 4, 5])) {
+                return $map[$tingkat];
+            }
+
+            return $map[$tingkat] ?? null;
+        });
+    }
+
+    protected function tingkatFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $role = 'Dosen';
+            $tingkatText = $this->tingkat_text;
+
+            if (! $role || ! $tingkatText) {
+                return null;
+            }
+
+            return "{$role} {$tingkatText}";
+        });
+    }
 
     public function dekan_rels(): HasMany
     {
@@ -194,20 +230,53 @@ class Dosen extends Model
         }
 
         $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
+        $searchLower = strtolower($search);
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm) {
+        return $query->where(function ($q) use ($search, $searchLower, $searchTerm) {
             $fields = ['name', 'nip', 'nidn', 'nidk', 'nik', 'status'];
             foreach ($fields as $field) {
                 $q->orWhere("dosens.$field", 'like', $searchTerm);
             }
+
             if (is_numeric($search)) {
                 $q->orWhere('dosens.id', $search);
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pencarian Tingkat & Tingkat Full (Khusus Dosen)
+            |--------------------------------------------------------------------------
+            */
+            $tingkatMap = [
+                1 => ['universitas', 'univ', 'unsri', 'uni'],
+                2 => ['fakultas', 'fak', 'fk'],
+                3 => ['departemen', 'dept', 'dp'],
+                4 => ['program studi', 'prodi', 'prostud', 'pr'],
+                5 => ['umum', ''],
+            ];
+
+            foreach ($tingkatMap as $tingkatNum => $keywords) {
+                foreach ($keywords as $kw) {
+                    // Cocokkan input seperti "Dosen Universitas", "Dosen Prodi", atau sekadar "Prodi"
+                    if ($searchLower === (string) $tingkatNum ||
+                        $searchLower === $kw ||
+                        $searchLower === "dosen {$kw}") {
+                        $q->orWhere('dosens.tingkat', $tingkatNum);
+                        break;
+                    }
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pencarian Relasi User & Prodi
+            |--------------------------------------------------------------------------
+            */
             $q->orWhereHas('user', function ($u) use ($searchTerm) {
                 $u->where('email', 'like', $searchTerm);
             });
+
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
                 $p->where('nama_pr', 'like', $searchTerm)
                     ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {

@@ -356,7 +356,6 @@ trait WithUserFilters
         //         default => $queryUser,
         //     };
         // }
-        
 
         $aliasSort = match ($this->sortField) {
             'mhs_nilai_akhir',
@@ -384,11 +383,12 @@ trait WithUserFilters
             'mahasiswa_id' => 'mahasiswas.id',
 
             'role' => 'CASE
-                        WHEN admins.id IS NOT NULL THEN 1
-                        WHEN dosens.id IS NOT NULL THEN 2
-                        WHEN mahasiswas.id IS NOT NULL THEN 3
-                        ELSE 4
-                    END',
+                WHEN admins.id IS NOT NULL THEN (10 + COALESCE(admins.tingkat, 99))
+                WHEN dosens.id IS NOT NULL THEN (20 + COALESCE(dosens.tingkat, 99))
+                WHEN mahasiswas.id IS NOT NULL THEN (30 + COALESCE(mahasiswas.tingkat, 99))
+                
+                ELSE 400
+            END',
 
             'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
             'kode' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
@@ -430,5 +430,4 @@ trait WithUserFilters
             "$orderByRaw {$this->sortDirection}"
         );
     }
-   
 }

@@ -172,15 +172,20 @@ trait WithUserExcel
                 }
 
                 /** ===============================
-                 * CARI HEADER (Robust Search)
+                 * CARI HEADER & DUA BARIS HEADER (Robust Search)
                  * =============================== */
                 $headerRowIndex = null;
                 $secondHeaderRowIndex = null;
 
+                // Scan hingga 10 baris pertama untuk menemukan baris header utama
                 foreach ($allData as $i => $row) {
+                    if ($i > 10) {
+                        break;
+                    } // Batasi scan agar efisien
+
                     $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
 
-                    if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
+                    if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama') || $rowValues->contains('tingkat')) {
                         $headerRowIndex = $i;
                         if (isset($allData[$i + 1])) {
                             $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
@@ -201,14 +206,27 @@ trait WithUserExcel
                 $rawHeader1 = $allData[$headerRowIndex];
                 $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
 
+                // Ambil semua indeks kolom yang tersedia di baris 1 maupun baris 2
+                $maxCols = max(count($rawHeader1), count($rawHeader2));
                 $headers = [];
-                foreach ($rawHeader1 as $idx => $value) {
-                    $val1 = Str::lower(trim((string) $value));
+
+                for ($idx = 0; $idx < $maxCols; $idx++) {
+                    $val1 = isset($rawHeader1[$idx]) ? Str::lower(trim((string) $rawHeader1[$idx])) : '';
                     $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
 
-                    $finalHeader = $val1;
-                    if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
+                    $finalHeader = '';
+
+                    // 1. Jika baris 2 punya nilai khusus (seperti 'role', 'tingkat', 'level'), prioritaskan baris 2
+                    if (in_array($val2, ['role', 'tingkat',  'tingkat role', 'tingkat_role', 'level', 'email', 'nama', 'name', 'nip', 'nim', 'nik'])) {
                         $finalHeader = $val2;
+                    }
+                    // 2. Jika baris 1 kosong atau berupa header parent/group, gunakan baris 2
+                    elseif ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat')) {
+                        $finalHeader = $val2 !== '' ? $val2 : $val1;
+                    }
+                    // 3. Jika kedua baris ada isinya dan berbeda, utamakan baris 2 jika lebih spesifik, atau gunakan baris 1
+                    else {
+                        $finalHeader = $val2 !== '' ? $val2 : $val1;
                     }
 
                     if ($finalHeader !== '') {
@@ -240,10 +258,16 @@ trait WithUserExcel
                         default => ''
                     };
 
+                    $rawTingkat = $data['tingkat role'] ?? $data['tingkat_role'] ?? $data['tingkat'] ?? $data['level'] ?? null;
+
                     $this->parsedUserRows[] = [
                         'email' => $data['email'] ?? '',
+                        'role' => ucfirst(! empty($data['role']) ? $data['role'] : 'None'),
+                        // 'tingkat' => $data['tingkat'] ?? $data['level'] ?? 1,
+                        'tingkat' => $this->parseTingkatValue($rawTingkat, $data['tingkat'] ?? null),
                         'password' => $data['password'] ?? '',
                         'name' => $data['name'] ?? $data['nama'] ?? '',
+                        'status' => $data['status'] ?? $data['kabar'] ?? '',
                         'nip' => $data['nip'] ?? '',
                         'nitk' => $data['nitk'] ?? '',
                         'nidn' => $data['nidn'] ?? '',
@@ -257,7 +281,6 @@ trait WithUserExcel
                         'tanggal_lahir' => $data['tanggal lahir'] ?? $data['tgl lahir'] ?? '',
                         'kode_wilayah' => strtoupper(($data['kode wilayah'] ?? $data['kode kampus'] ?? '')),
                         'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
-                        'role' => ucfirst(! empty($data['role']) ? $data['role'] : 'None'),
                     ];
                 }
             } // 🌟 Akhir loop sheet
@@ -517,7 +540,9 @@ trait WithUserExcel
             if ($role === 'admin') {
                 Admin::create([
                     'user_id' => $user->id,
+                    'tingkat' => $validated['tingkat'],
                     'name' => $validated['name'],
+                    'status' => $validated['status'],
                     'nip' => $validated['nip'],
                     'nitk' => $validated['nitk'] ?? null,
                     'nik' => $validated['nik'],
@@ -535,7 +560,9 @@ trait WithUserExcel
             } elseif ($role === 'dosen') {
                 Dosen::create([
                     'user_id' => $user->id,
+                    'tingkat' => $validated['tingkat'],
                     'name' => $validated['name'],
+                    'status' => $validated['status'],
                     'nip' => $validated['nip'],
                     'nidn' => $validated['nidn'] ?? null,
                     'nidk' => $validated['nidk'] ?? null,
@@ -553,7 +580,9 @@ trait WithUserExcel
             } elseif ($role === 'mahasiswa') {
                 Mahasiswa::create([
                     'user_id' => $user->id,
+                    'tingkat' => $validated['tingkat'],
                     'name' => $validated['name'],
+                    'status' => $validated['status'],
                     'nim' => $validated['nim'],
                     'nik' => $validated['nik'],
                     'angkatan' => $validated['angkatan'],
@@ -579,22 +608,22 @@ trait WithUserExcel
                 ? ['id' => $this->selected_id_user]
                 : ['email' => $validated['email']];
 
-        $userData = [
-            'email' => $validated['email'],
-        ];
-        if (!empty($validated['password'])) {
-            $userData['password'] = Hash::make($validated['password']);
-        } else {
-            if (!$this->selected_id_user) {
-                $defaultPass = $validated['nip'] ?? $validated['nim'] ?? $validated['nik'] ?? $validated['email'] ?? 'defaultpassword';
-                $userData['password'] = Hash::make($defaultPass);
+            $userData = [
+                'email' => $validated['email'],
+            ];
+            if (! empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            } else {
+                if (! $this->selected_id_user) {
+                    $defaultPass = $validated['nip'] ?? $validated['nim'] ?? $validated['nik'] ?? $validated['email'] ?? 'defaultpassword';
+                    $userData['password'] = Hash::make($defaultPass);
+                }
             }
-        }
 
-        $user = User::updateOrCreate(
-            $userMatchAttributes,
-            $userData
-        );
+            $user = User::updateOrCreate(
+                $userMatchAttributes,
+                $userData
+            );
 
             $mode = $this->user_input['update_or_create'] ?? 'identity1';
 
@@ -613,7 +642,9 @@ trait WithUserExcel
                     $adminMatchAttributes,
                     [
                         'user_id' => $user->id,
+                        'tingkat' => $validated['tingkat'],
                         'name' => $validated['name'],
+                        'status' => $validated['status'],
                         'nip' => $validated['nip'],
                         'nitk' => $validated['nitk'] ?? null,
                         'nik' => $validated['nik'],
@@ -642,7 +673,9 @@ trait WithUserExcel
                     $dosenMatchAttributes,
                     [
                         'user_id' => $user->id,
+                        'tingkat' => $validated['tingkat'],
                         'name' => $validated['name'],
+                        'status' => $validated['status'],
                         'nip' => $validated['nip'],
                         'nidn' => $validated['nidn'] ?? null,
                         'nidk' => $validated['nidk'] ?? null,
@@ -671,7 +704,9 @@ trait WithUserExcel
                     $mahasiswaMatchAttributes,
                     [
                         'user_id' => $user->id,
+                        'tingkat' => $validated['tingkat'],
                         'name' => $validated['name'],
+                        'status' => $validated['status'],
                         'nim' => $validated['nim'],
                         'nik' => $validated['nik'],
                         'angkatan' => $validated['angkatan'],

@@ -12,11 +12,12 @@
     'selectXForFilterString' => 'selectDosenForFilter',
 
     'x2HeadString' => 'NIP.',
-    'x3HeadString' => 'Status:',
+    'x4HeadString' => 'Status:',
 
     'typeXString' => 'name',
     'typeX2String' => 'kode',
-    'typeX3String' => 'status',
+    'typeX3String' => 'tingkat_full',
+    'typeX4String' => 'status',
     'typeKodeString' => 'kode_pr',
     'unfoundString' => 'Tidak ada Dosen ditemukan!',
 ])
