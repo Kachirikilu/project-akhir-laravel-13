@@ -45,7 +45,10 @@ return new class extends Migration
             
             $table->softDeletes();
             $table->timestamps();
-            $table->unique(['kelas_id', 'label_kelas', 'kode_wilayah']);
+            $table->unique(
+                ['kelas_id', 'label_kelas', 'kode_wilayah', 'tanggal_mulai'], 
+                'id_kelas_wilayah_tgl'
+            );
         });
 
         Schema::create('kelas_sesi', function (Blueprint $table) {
