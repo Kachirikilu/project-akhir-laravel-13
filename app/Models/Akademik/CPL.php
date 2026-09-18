@@ -45,7 +45,7 @@ class CPL extends Model
 
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(CPMK::class, 'cpmk_pivot_cpl', 'cpl_id', 'cpmk_id')
+        return $this->belongsToMany(CPMK::class, 'cpl_pivot_cpmk', 'cpl_id', 'cpmk_id')
             ->withPivot('sort_order');
     }
 
@@ -62,13 +62,13 @@ class CPL extends Model
             $prodi = $this->prodis->first();
             $prefix = 'UNI';
             if ($prodi) {
-                if ($this->level_cpl == 1) { // Tingkat Prodi
+                if ($this->tingkat_cpl == 1) { // Tingkat Prodi
                     $prefix = $prodi->kode;
-                } elseif ($this->level_cpl == 2) { // Tingkat Departemen
+                } elseif ($this->tingkat_cpl == 2) { // Tingkat Departemen
                     $prefix = $prodi->dp_rel?->kode;
-                } elseif ($this->level_cpl == 3) { // Tingkat Fakultas
+                } elseif ($this->tingkat_cpl == 3) { // Tingkat Fakultas
                     $prefix = $prodi->dp_rel?->fk_rel?->kode;
-                } elseif ($this->level_cpl == 4) { // Tingkat Universitas
+                } elseif ($this->tingkat_cpl == 4) { // Tingkat Universitas
                     $prefix = 'UNI';
                 }
             } else {
@@ -162,7 +162,7 @@ class CPL extends Model
                         // 1. CPL Level 1: Prodi
                         $low->orWhere(function ($q) use ($prefixPart, $kodePart) {
 
-                            $q->where('cpls.level_cpl', 1)
+                            $q->where('cpls.tingkat_cpl', 1)
                                 ->when($kodePart, function ($q) use ($kodePart) {
                                     $q->where('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
                                 })
@@ -216,9 +216,9 @@ class CPL extends Model
             $query->where(function ($q) use ($targetRps) {
                 $q->whereRaw('(
                     SELECT COUNT(DISTINCT rps_pivot_cpmk.rps_id)
-                    FROM cpmk_pivot_cpl
-                    JOIN rps_pivot_cpmk ON cpmk_pivot_cpl.cpmk_id = rps_pivot_cpmk.cpmk_id
-                    WHERE cpmk_pivot_cpl.cpl_id = cpls.id
+                    FROM cpl_pivot_cpmk
+                    JOIN rps_pivot_cpmk ON cpl_pivot_cpmk.cpmk_id = rps_pivot_cpmk.cpmk_id
+                    WHERE cpl_pivot_cpmk.cpl_id = cpls.id
                 ) = ?', [$targetRps]);
             });
         }

@@ -140,12 +140,7 @@
                                             </flux:badge>
                                         </div>
 
-                                        <div
-                                            x-show="![
-                                                'Teori', 'Praktik', 'Responsi', 'Tugas', 'Logbook', 'UTS', 'Evaluasi Awal', 'Kuis', 
-                                                'UAS', 'Evaluasi Akhir', 'Laporan Akhir', 'Hasil Proyek', 'Hasil Projek', 'Portofolio', 
-                                                'Kerja Praktek', 'Skripsi', 'Aktivitas Partisipasif', 'Mandiri'
-                                            ].includes(item.metode)">
+                                        <div x-show="!{{ json_encode(config('rps.metode')) }}.includes(item.metode)">
                                             <flux:badge icon="information-circle" color="zinc" size="sm"
                                                 variant="{{ $variant ?? 'pill' }}" x-text="item.metode"></flux:badge>
                                         </div>
@@ -170,7 +165,7 @@
                                             'iconString' => 'chart-bar',
                                             'placeholder' => 'Masukkan Nilai...',
                                             'isRequired' => 0,
-                                            'message' => $errors->first('nilai_'.($indexphp + 1)),
+                                            'message' => $errors->first('nilai_' . ($indexphp + 1)),
                                         ])
                                     </div>
 
@@ -184,7 +179,7 @@
                                             'iconString' => 'scale',
                                             'placeholder' => 'Bobot...',
                                             'isRequired' => 0,
-                                            'message' => $errors->first('bobot_'.($indexphp + 1)),
+                                            'message' => $errors->first('bobot_' . ($indexphp + 1)),
                                         ])
                                     </div>
 

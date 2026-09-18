@@ -124,19 +124,19 @@ trait WithKelasFilters
             });
         } elseif ($this->filterKelas === 'kelas-pr') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.level_mk', 1);
+                $q->where('mata_kuliahs.tingkat_mk', 1);
             });
         } elseif ($this->filterKelas === 'kelas-dp') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.level_mk', 2);
+                $q->where('mata_kuliahs.tingkat_mk', 2);
             });
         } elseif ($this->filterKelas === 'kelas-fk') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.level_mk', 3);
+                $q->where('mata_kuliahs.tingkat_mk', 3);
             });
         } elseif ($this->filterKelas === 'kelas-uni') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
-                $q->where('mata_kuliahs.level_mk', 4);
+                $q->where('mata_kuliahs.tingkat_mk', 4);
             });
         }
 

@@ -895,7 +895,7 @@ trait WithUserModal
 
                 $data = [
                     'user_id' => $user->id,
-                    'tingkat' => $validated['tingkat'],
+                    'tingkat_user' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
@@ -1029,7 +1029,7 @@ trait WithUserModal
                 };
 
                 $data = [
-                    'tingkat' => $validated['tingkat'],
+                    'tingkat_user' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],

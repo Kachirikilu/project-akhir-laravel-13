@@ -205,9 +205,9 @@
                                                     $user = Auth::user();
                                                     $isSuperUser = $user->tingkat <= 1;
 
-                                                    $isFkAccess = $user->tingkat <= 2 && ($r['fk_id'] ?? null) == $user->fk_id && ($r['level_mk'] ?? null) == 3;
-                                                    $isDpAccess = $user->tingkat <= 3 && ($r['dp_id'] ?? null) == $user->dp_id && ($r['level_mk'] ?? null) == 2;
-                                                    $isPrAccess = $user->tingkat <= 4 && ($r['pr_id'] ?? null) == $user->pr_id && ($r['level_mk'] ?? null) == 1;
+                                                    $isFkAccess = $user->tingkat <= 2 && ($r['fk_id'] ?? null) == $user->fk_id && ($r['tingkat_mk'] ?? null) == 3;
+                                                    $isDpAccess = $user->tingkat <= 3 && ($r['dp_id'] ?? null) == $user->dp_id && ($r['tingkat_mk'] ?? null) == 2;
+                                                    $isPrAccess = $user->tingkat <= 4 && ($r['pr_id'] ?? null) == $user->pr_id && ($r['tingkat_mk'] ?? null) == 1;
 
                                                     $canAccess = $isSuperUser || $isFkAccess || $isDpAccess || $isPrAccess;
                                                 @endphp

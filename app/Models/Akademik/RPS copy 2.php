@@ -21,7 +21,7 @@ class RPS extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode', 'mk', 'level_mk', 'revisi_day', 'count_scpmk'];
+    protected $appends = ['kode', 'mk', 'tingkat_mk', 'revisi_day', 'count_scpmk'];
 
     protected $casts = [
         'revisi' => 'date',
@@ -363,9 +363,9 @@ if ($item instanceof \App\Models\Akademik\SubCPMK && ! empty($item->materi)) {
         return Attribute::get(fn () => $this->mk_rel?->sks_full);
     }
 
-    protected function levelMk(): Attribute
+    protected function tingkatMk(): Attribute
     {
-        return Attribute::get(fn () => $this->mk_rel?->level_mk);
+        return Attribute::get(fn () => $this->mk_rel?->tingkat_mk);
     }
 
     protected function rps(): Attribute

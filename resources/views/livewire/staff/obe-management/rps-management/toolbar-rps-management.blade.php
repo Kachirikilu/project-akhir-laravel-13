@@ -13,9 +13,9 @@
 
     @php
         $user = Auth::user();
-        $isSameFk = $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['level_mk'] ?? null) == 3;
-        $isSameDp = $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['level_mk'] ?? null) == 2;
-        $isSamePr = $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['level_mk'] ?? null) == 1;
+        $isSameFk = $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['tingkat_mk'] ?? null) == 3;
+        $isSameDp = $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['tingkat_mk'] ?? null) == 2;
+        $isSamePr = $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['tingkat_mk'] ?? null) == 1;
         $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
     @endphp
     @if ($user->admin || $user->dosen)

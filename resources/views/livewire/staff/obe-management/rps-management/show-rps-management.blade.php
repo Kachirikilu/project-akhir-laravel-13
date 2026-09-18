@@ -41,9 +41,9 @@
                 {{-- KANAN-ATAS: Badges --}}
                 <div wire:loading.class="opacity-10" wire:target="showRPS" class="flex flex-wrap items-center justify-start xl:justify-end gap-2 w-full order-1 xl:order-2">
 
-                    @include('livewire.global.table.badge.level-mk-badge', [
+                    @include('livewire.global.table.badge.tingkat-mk-badge', [
                         'xValue' => $rps_data->kode ?? null,
-                        'sortir' => $rps_data->level_mk ?? null,
+                        'sortir' => $rps_data->tingkat_mk ?? null,
                         'size' => 'lg',
                     ])
 

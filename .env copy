@@ -19,6 +19,8 @@ APP_MAINTENANCE_DRIVER=file
 
 UNIVERSITAS="Universitas Sriwijaya"
 UNIV="UNSRI"
+
+METODE_SCPMK="Teori,Aktivitas Partisipasif,Tugas,Mandiri,UTS,UAS,Evaluasi Awal,Evaluasi Akhir,Laporan Akhir,Hasil Proyek,Kuis,Skripsi,Kerja Praktek,Responsi,Logbook,Portofolio"
 UTS_FIELDS="UTS,EVALUASI AWAL"
 UAS_FIELDS="UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK"
 

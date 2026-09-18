@@ -203,7 +203,7 @@ document.addEventListener("alpine:init", () => {
             this.kode_rps_show = "";
             this.rps_show = "";
             this.draf_show = "";
-            this.level_mk_show = "";
+            this.tingkat_mk_show = "";
             this.pr_id_show = "";
         },
 

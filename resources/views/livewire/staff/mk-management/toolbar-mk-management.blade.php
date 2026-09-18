@@ -11,11 +11,11 @@
     @if ($user->admin || $user->dosen)
         @php
             $isSameFk =
-                $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['level_mk'] ?? null) == 3;
+                $user->tingkat <= 2 && ($data['fk_id'] ?? null) == $user->fk_id && ($data['tingkat_mk'] ?? null) == 3;
             $isSameDp =
-                $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['level_mk'] ?? null) == 2;
+                $user->tingkat <= 3 && ($data['dp_id'] ?? null) == $user->dp_id && ($data['tingkat_mk'] ?? null) == 2;
             $isSamePr =
-                $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['level_mk'] ?? null) == 1;
+                $user->tingkat <= 4 && ($data['pr_id'] ?? null) == $user->pr_id && ($data['tingkat_mk'] ?? null) == 1;
             $canAccess = $user->tingkat <= 1 || $isSameFk || $isSameDp || $isSamePr;
         @endphp
         @if ($canAccess)
@@ -27,7 +27,7 @@
                     @click="
                 $store.mk?.reset();
 
-                const type = {{ $data['level_mk'] }};
+                const type = {{ $data['tingkat_mk'] }};
 
                 $store.mk?.setType(type);
                 $store.mk?.setEdit(1);
@@ -41,7 +41,7 @@
                 $store.mk?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
                     $store.mk?.setValueMK(
-                        '{{ $data['level_mk'] ?? '' }}',
+                        '{{ $data['tingkat_mk'] ?? '' }}',
                         '{{ $data['mk'] ?? '' }}',
                         '{{ $data['kode_blok'] ?? '' }}',
                         '{{ $data['digit_semester'] ?? '' }}',
@@ -54,7 +54,7 @@
                         {{-- '{{ $data['bahan_kajian'] ?? '' }}', --}}
                     );
                     $flux.modal('mk-modal').show();
-                    $dispatch('open-edit-mk-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['level_mk'] }} });
+                    $dispatch('open-edit-mk-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['tingkat_mk'] }} });
             "
                     class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                     <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />

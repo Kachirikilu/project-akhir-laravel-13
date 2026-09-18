@@ -5,7 +5,7 @@
             'id' => $c->id,
         
             'kode' => $c->kode,
-            'level_cpl' => $c->level_cpl,
+            'tingkat_cpl' => $c->tingkat_cpl,
 
         
             'rekap_cpl_pr' => $c->rekap_cpl_pr ?? null,
@@ -18,7 +18,7 @@
         <livewire:staff.obe-management.cpl-management.toolbar-cpl-management lazy :data="[
             'id' => $c->id,
             'kode' => $c->kode,
-            'level_cpl' => $c->level_cpl,
+            'tingkat_cpl' => $c->tingkat_cpl,
             'pr_id' => $c->prodis->first()?->id,
             'dp_id' => $c->prodis->first()?->dp_id,
             'fk_id' => $c->prodis->first()?->fk_id,

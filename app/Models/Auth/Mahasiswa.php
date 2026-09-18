@@ -24,7 +24,7 @@ class Mahasiswa extends Model
     protected $fillable = [
         'user_id',
         'pr_id',
-        'tingkat',
+        'tingkat_user',
         'kode_wilayah',
         'name',
         'nim',
@@ -97,6 +97,13 @@ class Mahasiswa extends Model
             RekapCPLMahasiswa::class,
             'mahasiswa_id'
         );
+    }
+
+    protected function tingkat(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->tingkat_user;
+        });
     }
 
     protected function tingkatText(): Attribute
@@ -254,7 +261,7 @@ class Mahasiswa extends Model
             $mahasiswaKeywords = ['5', 'umum', 'mahasiswa umum', 'mahasiswa'];
 
             if (in_array($searchLower, $mahasiswaKeywords)) {
-                $q->orWhere('mahasiswas.tingkat', 5);
+                $q->orWhere('mahasiswas.tingkat_user', 5);
             }
 
             /*

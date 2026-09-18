@@ -150,12 +150,7 @@ trait WithSesiModal
 
             'metode' => [
                 'nullable',
-                Rule::in([
-                    'Teori', 'Aktivitas Partisipasif', 'Tugas', 'Mandiri',
-                    'UTS', 'UAS', 'Evaluasi Awal', 'Evaluasi Akhir',
-                    'Laporan Akhir', 'Hasil Proyek', 'Kuis',
-                    'Skripsi', 'Kerja Praktek', 'Responsi', 'Logbook', 'Portofolio',
-                ]),
+                Rule::in(config('rps.metode')),
             ],
 
             'deskripsi_tugas' => 'nullable|string|min:5|max:1000',

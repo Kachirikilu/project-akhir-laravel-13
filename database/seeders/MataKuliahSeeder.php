@@ -165,7 +165,7 @@ class MataKuliahSeeder extends Seeder
                 $smt = $data['smt'];
 
                 $mk = MataKuliah::create([
-                    'level_mk' => $data['level'],
+                    'tingkat_mk' => $data['level'],
                     'nama_mk' => $data['nama'],
                     'digit_semester' => $this->generateDigitSemester($smt, false),
                     'digit_mk' => $digitMkRaw,
@@ -186,7 +186,7 @@ class MataKuliahSeeder extends Seeder
             foreach ($namaMkUniv as $nama) {
                 $smt = rand(1, 4);
                 $mk = MataKuliah::create([
-                    'level_mk' => 4,
+                    'tingkat_mk' => 4,
                     'nama_mk' => $nama,
                     'digit_semester' => ceil($smt / 2).($smt % 2 == 0 ? 2 : 1),
                     'digit_mk' => $getNextDigit(4, 0, $smt),
@@ -204,7 +204,7 @@ class MataKuliahSeeder extends Seeder
                 for ($i = 1; $i <= 2; $i++) {
                     $smt = rand(1, 6);
                     $mk = MataKuliah::create([
-                        'level_mk' => 3, 'nama_mk' => "MK Fak $fak->nama_fakultas $i",
+                        'tingkat_mk' => 3, 'nama_mk' => "MK Fak $fak->nama_fakultas $i",
                         'digit_semester' => ceil($smt / 2).($smt % 2 == 0 ? 2 : 1),
                         'digit_mk' => $getNextDigit(3, $fak->id, $smt),
                         'semester' => $smt, 'sks_kuliah' => 3, 'tipe_sks' => 1,
@@ -218,7 +218,7 @@ class MataKuliahSeeder extends Seeder
                     for ($i = 1; $i <= 2; $i++) {
                         $smt = rand(1, 6);
                         $mk = MataKuliah::create([
-                            'level_mk' => 2, 'nama_mk' => "MK Dept $dept->nama_dept $i",
+                            'tingkat_mk' => 2, 'nama_mk' => "MK Dept $dept->nama_dept $i",
                             'digit_semester' => ceil($smt / 2).($smt % 2 == 0 ? 2 : 1),
                             'digit_mk' => $getNextDigit(2, $dept->id, $smt),
                             'semester' => $smt, 'sks_kuliah' => 3, 'tipe_sks' => 1,
@@ -232,7 +232,7 @@ class MataKuliahSeeder extends Seeder
                         for ($i = 1; $i <= 3; $i++) {
                             $smt = rand(1, 8);
                             $mk = MataKuliah::create([
-                                'level_mk' => 1, 'nama_mk' => "MK $prodi->prodi $i",
+                                'tingkat_mk' => 1, 'nama_mk' => "MK $prodi->prodi $i",
                                 'digit_semester' => ceil($smt / 2).($smt % 2 == 0 ? 2 : 1),
                                 'digit_mk' => $getNextDigit(1, $prodi->id, $smt),
                                 'semester' => $smt, 'sks_kuliah' => 3, 'tipe_sks' => 1,

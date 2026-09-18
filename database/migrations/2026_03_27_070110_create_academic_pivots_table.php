@@ -101,7 +101,7 @@ return new class extends Migration
         });
 
         // CPMK - CPL
-        Schema::create('cpmk_pivot_cpl', function (Blueprint $table) {
+        Schema::create('cpl_pivot_cpmk', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
@@ -161,7 +161,7 @@ return new class extends Migration
         // Schema::dropIfExists('rps_pivot_dosen');
         Schema::dropIfExists('rps_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_scpmk');
-        Schema::dropIfExists('cpmk_pivot_cpl');
+        Schema::dropIfExists('cpl_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_ref');
         Schema::dropIfExists('scpmk_pivot_ref');
         Schema::dropIfExists('prodi_pivot_cpl');

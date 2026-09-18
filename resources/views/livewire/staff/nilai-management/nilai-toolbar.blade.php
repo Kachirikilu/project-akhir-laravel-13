@@ -44,12 +44,12 @@
                             <flux:dropdown>
                                 <flux:button variant="primary" icon="plus" size="sm"
                                     class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
-                                    Atur Kunci Nilai
+                                    Akses Nilai
                                 </flux:button>
 
                                 <flux:menu
                                     class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
-                                    <flux:menu.heading>Atur Kunci Nilai</flux:menu.heading>
+                                    <flux:menu.heading>Pengaturan Akses Nilai</flux:menu.heading>
                                     <flux:menu.separator />
 
                                     <flux:menu.item
@@ -64,7 +64,7 @@
                                         <flux:icon name="chart-pie"
                                             class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
                                         <div class="flex justify-between items-center w-full">
-                                            <span class="mr-7 whitespace-nowrap">Kunci Nilai</span>
+                                            <span class="mr-7 whitespace-nowrap">Tanggal Akses Nilai Mahasiswa</span>
                                         </div>
                                     </flux:menu.item>
                                 </flux:menu>

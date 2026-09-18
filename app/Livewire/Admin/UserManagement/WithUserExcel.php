@@ -540,7 +540,7 @@ trait WithUserExcel
             if ($role === 'admin') {
                 Admin::create([
                     'user_id' => $user->id,
-                    'tingkat' => $validated['tingkat'],
+                    'tingkat_user' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'status' => $validated['status'],
                     'nip' => $validated['nip'],
@@ -560,7 +560,7 @@ trait WithUserExcel
             } elseif ($role === 'dosen') {
                 Dosen::create([
                     'user_id' => $user->id,
-                    'tingkat' => $validated['tingkat'],
+                    'tingkat_user' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'status' => $validated['status'],
                     'nip' => $validated['nip'],
@@ -580,7 +580,7 @@ trait WithUserExcel
             } elseif ($role === 'mahasiswa') {
                 Mahasiswa::create([
                     'user_id' => $user->id,
-                    'tingkat' => $validated['tingkat'],
+                    'tingkat_user' => $validated['tingkat'],
                     'name' => $validated['name'],
                     'status' => $validated['status'],
                     'nim' => $validated['nim'],
@@ -642,7 +642,7 @@ trait WithUserExcel
                     $adminMatchAttributes,
                     [
                         'user_id' => $user->id,
-                        'tingkat' => $validated['tingkat'],
+                        'tingkat_user' => $validated['tingkat'],
                         'name' => $validated['name'],
                         'status' => $validated['status'],
                         'nip' => $validated['nip'],
@@ -673,7 +673,7 @@ trait WithUserExcel
                     $dosenMatchAttributes,
                     [
                         'user_id' => $user->id,
-                        'tingkat' => $validated['tingkat'],
+                        'tingkat_user' => $validated['tingkat'],
                         'name' => $validated['name'],
                         'status' => $validated['status'],
                         'nip' => $validated['nip'],
@@ -704,7 +704,7 @@ trait WithUserExcel
                     $mahasiswaMatchAttributes,
                     [
                         'user_id' => $user->id,
-                        'tingkat' => $validated['tingkat'],
+                        'tingkat_user' => $validated['tingkat'],
                         'name' => $validated['name'],
                         'status' => $validated['status'],
                         'nim' => $validated['nim'],

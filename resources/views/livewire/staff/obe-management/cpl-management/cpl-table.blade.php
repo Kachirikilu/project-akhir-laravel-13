@@ -180,7 +180,7 @@
                         <x-button-action
                             @click="
                             $store.cpl?.reset();
-                            const type = '{{ $c->level_cpl }}';
+                            const type = '{{ $c->tingkat_cpl }}';
                             $store.cpl?.setEdit(1);
                             const colors = {
                                 '1': 'text-emerald-700 dark:text-emerald-400',
@@ -196,7 +196,7 @@
                                     '{{ $c->mutu_cpl_pr ?? 'E' }}',
                                 );
                             $flux.modal('cpl-rps-modal').show();
-                            $dispatch('open-list-rps-cpl-modal', { id: {{ $c->id }}, tingkatan: {{ $c->level_cpl }}, isRPS: 1 });
+                            $dispatch('open-list-rps-cpl-modal', { id: {{ $c->id }}, tingkatan: {{ $c->tingkat_cpl }}, isRPS: 1 });
                         "
                             color="emerald">
                             <flux:icon name="eye" class="w-3.5 h-3.5" />

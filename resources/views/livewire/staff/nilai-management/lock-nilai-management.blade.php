@@ -10,7 +10,7 @@
                 <div class="modal-flux-header">
                     <h3 class="text-xl font-semibold">
                         <flux:badge icon="chart-pie" color="blue" size="lg">
-                            <span>Pengaturan Kunci Nilai Mahasiswa</span>
+                            <span>Pengaturan Akses Nilai Mahasiswa {{ Auth::user()->prodi }}</span>
                         </flux:badge>
                     </h3>
                 </div>
@@ -23,7 +23,7 @@
                         <div class="form-container">
                             <h4
                                 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
-                                Input Pengaturan Kunci Nilai</h4>
+                                Input Tanggal Akses Nilai Mahasiswa</h4>
 
                             <div class="space-y-4">
 

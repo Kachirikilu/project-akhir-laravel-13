@@ -477,7 +477,7 @@ trait WithCPLModal
                             ->join('prodi_pivot_cpl', 'cpls.id', '=', 'prodi_pivot_cpl.cpl_id')
                             ->where('prodi_pivot_cpl.pr_id', $pId)
                             ->where('cpls.kode_cpl', $value)
-                            ->where('cpls.level_cpl', 1);
+                            ->where('cpls.tingkat_cpl', 1);
 
                         if ($isEditingCPL) {
                             $query->where('cpls.id', '!=', $this->selected_id_cpl);
@@ -488,7 +488,7 @@ trait WithCPLModal
                             $prefix = $prodi->kode ?? $prodi->kode_pr ?? '';
                             $fullKode = $prefix ? "{$prefix}-{$value}" : $value;
 
-                            $fail("Kode CPL penuh ***{$fullKode}*** sudah terpakai di Program Studi: {$prodi->nama_pr}.");
+                            $fail("Kode CPL penuh ***{$fullKode}*** sudah terpakai di Program Studi {$prodi->nama_pr}!");
                             break;
                         }
                     }
@@ -501,7 +501,7 @@ trait WithCPLModal
                             ->join('prodis', 'prodi_pivot_cpl.pr_id', '=', 'prodis.id')
                             ->where('prodis.dp_id', $dpId)
                             ->where('cpls.kode_cpl', $value)
-                            ->where('cpls.level_cpl', 2);
+                            ->where('cpls.tingkat_cpl', 2);
 
                         if ($isEditingCPL) {
                             $query->where('cpls.id', '!=', $this->selected_id_cpl);
@@ -525,7 +525,7 @@ trait WithCPLModal
                             ->join('departemens', 'prodis.dp_id', '=', 'departemens.id')
                             ->where('departemens.fk_id', $fkId)
                             ->where('cpls.kode_cpl', $value)
-                            ->where('cpls.level_cpl', 3);
+                            ->where('cpls.tingkat_cpl', 3);
 
                         if ($isEditingCPL) {
                             $query->where('cpls.id', '!=', $this->selected_id_cpl);
@@ -542,7 +542,7 @@ trait WithCPLModal
                 } elseif ($level === 4) {
                     $query = DB::table('cpls')
                         ->where('kode_cpl', $value)
-                        ->where('cpls.level_cpl', 4);
+                        ->where('cpls.tingkat_cpl', 4);
 
                     if ($isEditingCPL) {
                         $query->where('id', '!=', $this->selected_id_cpl);

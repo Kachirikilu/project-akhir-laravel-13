@@ -51,7 +51,7 @@ trait WithMKSearchFilters
             'sks_text' => $m->sks_text,
             'sks_full' => $m->sks_full,
             'wajib_text' => $m->wajib_text,
-            'level_mk' => $m->level_mk,
+            'tingkat_mk' => $m->tingkat_mk,
         ])->toArray();
     }
 
@@ -293,13 +293,13 @@ trait WithMKSearchFilters
     public function haveMKParent($query)
     {
         if ($this->mkLevel == 2 && filled($this->pr_id)) {
-            $query->where('level_mk', '<=', 3)->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->pr_id));
+            $query->where('tingkat_mk', '<=', 3)->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->pr_id));
         } 
         elseif ($this->mkLevel == 3 && filled($this->dp_id)) {
-            $query->where('level_mk', '<=', 2)->whereHas('prodis.dp_rel', fn ($q) => $q->where('departemens.id', $this->dp_id));
+            $query->where('tingkat_mk', '<=', 2)->whereHas('prodis.dp_rel', fn ($q) => $q->where('departemens.id', $this->dp_id));
         } 
         elseif ($this->mkLevel == 4 && filled($this->fk_id)) {
-            $query->where('level_mk', 1)->whereHas('prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+            $query->where('tingkat_mk', 1)->whereHas('prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         }
         return $query;
     }

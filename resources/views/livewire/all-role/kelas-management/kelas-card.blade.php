@@ -180,9 +180,9 @@
                                 class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">RPS</span>
                             <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
                                 <button class="cursor-pointer focus:outline-none">
-                                    @include('livewire.global.table.badge.level-mk-badge', [
+                                    @include('livewire.global.table.badge.tingkat-mk-badge', [
                                         'xValue' => $k->kode_rps,
-                                        'sortir' => $k->rps_rel?->mk_rel?->level_mk,
+                                        'sortir' => $k->rps_rel?->mk_rel?->tingkat_mk,
                                     ])
                                 </button>
                             </span>

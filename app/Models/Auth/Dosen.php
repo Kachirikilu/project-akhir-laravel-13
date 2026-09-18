@@ -26,7 +26,7 @@ class Dosen extends Model
     protected $fillable = [
         'user_id',
         'pr_id',
-        'tingkat',
+        'tingkat_user',
         'name',
         'nip',
         'nidn',
@@ -47,6 +47,13 @@ class Dosen extends Model
         'tmt_jabatan',
         'status',
     ];
+
+    protected function tingkat(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->tingkat_user;
+        });
+    }
 
     protected function tingkatText(): Attribute
     {
@@ -262,7 +269,7 @@ class Dosen extends Model
                     if ($searchLower === (string) $tingkatNum ||
                         $searchLower === $kw ||
                         $searchLower === "dosen {$kw}") {
-                        $q->orWhere('dosens.tingkat', $tingkatNum);
+                        $q->orWhere('dosens.tingkat_user', $tingkatNum);
                         break;
                     }
                 }

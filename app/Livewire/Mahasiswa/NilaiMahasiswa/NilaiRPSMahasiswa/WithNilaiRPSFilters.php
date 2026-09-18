@@ -54,7 +54,7 @@ trait WithNilaiRPSFilters
     //     } elseif ($this->filterNilai === 'mk-pilihan') {
     //         $queryNilai->where('is_wajib', false);
     //     } elseif ($this->filterNilai === 'mk-uni') {
-    //         $queryNilai->where('level_mk', 4);
+    //         $queryNilai->where('tingkat_mk', 4);
     //     }
 
     //     $this->totalGanjilNilai = (clone $queryNilai)->whereRaw('semester % 2 = 1')->count();

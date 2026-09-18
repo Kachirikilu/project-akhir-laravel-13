@@ -14,7 +14,7 @@ class MataKuliah extends Model
     protected $table = 'mata_kuliahs';
 
     protected $fillable = [
-        'level_mk', 'kode_mk', 'digit_semester', 'digit_mk',
+        'tingkat_mk', 'kode_mk', 'digit_semester', 'digit_mk',
         'nama_mk', 'semester', 'sks_kuliah', 'tipe_sks',
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
@@ -42,7 +42,7 @@ class MataKuliah extends Model
     // protected function tingkatanMode(): Attribute
     // {
     //     return Attribute::get(function () {
-    //         return match ((int) $this->level_mk) {
+    //         return match ((int) $this->tingkat_mk) {
     //             1 => 'mk-prodi',
     //             2 => 'mk-departemen',
     //             3 => 'mk-fakultas',
@@ -59,13 +59,13 @@ class MataKuliah extends Model
             $prodi = $this->prodis->first();
             $prefix = 'UNI';
             if ($prodi) {
-                if ($this->level_mk == 1) { // Tingkat Prodi
+                if ($this->tingkat_mk == 1) { // Tingkat Prodi
                     $prefix = $prodi->kode_pr_short ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->level_mk == 2) { // Tingkat Departemen
+                } elseif ($this->tingkat_mk == 2) { // Tingkat Departemen
                     $prefix = $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->level_mk == 3) { // Tingkat Fakultas
+                } elseif ($this->tingkat_mk == 3) { // Tingkat Fakultas
                     $prefix = $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->level_mk == 4) { // Tingkat Universitas
+                } elseif ($this->tingkat_mk == 4) { // Tingkat Universitas
                     $prefix = $prefixDefault ?? 'UNI';
                 }
             } else {
@@ -346,7 +346,7 @@ class MataKuliah extends Model
 
                                 // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke departemen, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.level_mk', 1)
+                                        $q->where('mata_kuliahs.tingkat_mk', 1)
                                             ->whereHas('prodis', function ($pro) use ($prefixPart) {
                                                 $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                                                     ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
@@ -356,7 +356,7 @@ class MataKuliah extends Model
 
                                 // 3. Tingkatan MK = 2 (Departemen): Cari di departemen, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.level_mk', 2)
+                                        $q->where('mata_kuliahs.tingkat_mk', 2)
                                             ->whereHas('prodis.dp_rel', function ($jur) use ($prefixPart) {
                                                 $jur->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
                                                     ->whereRaw("COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
@@ -365,7 +365,7 @@ class MataKuliah extends Model
 
                                 // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.level_mk', 3)
+                                        $q->where('mata_kuliahs.tingkat_mk', 3)
                                             ->whereHas('prodis.dp_rel.fk_rel', function ($fak) use ($prefixPart) {
                                                 $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
@@ -373,7 +373,7 @@ class MataKuliah extends Model
 
                                 // 5. Khusus tingkat Universitas (Tingkatan 4)
                                     ->when($prefixPart === 'UNI', function ($query) {
-                                        $query->orWhere('mata_kuliahs.level_mk', 4);
+                                        $query->orWhere('mata_kuliahs.tingkat_mk', 4);
                                     });
                             });
                         }

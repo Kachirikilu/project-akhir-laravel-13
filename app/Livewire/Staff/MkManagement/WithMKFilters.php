@@ -68,13 +68,13 @@ trait WithMKFilters
         } elseif ($this->filterMK === 'mk-pilihan') {
             $queryMK->where('is_wajib', false);
         } elseif ($this->filterMK === 'mk-pr') {
-            $queryMK->where('level_mk', 1);
+            $queryMK->where('tingkat_mk', 1);
         } elseif ($this->filterMK === 'mk-dp') {
-            $queryMK->where('level_mk', 2);
+            $queryMK->where('tingkat_mk', 2);
         } elseif ($this->filterMK === 'mk-fk') {
-            $queryMK->where('level_mk', 3);
+            $queryMK->where('tingkat_mk', 3);
         } elseif ($this->filterMK === 'mk-uni') {
-            $queryMK->where('level_mk', 4);
+            $queryMK->where('tingkat_mk', 4);
         }
 
         $this->totalGanjilMK = (clone $queryMK)->whereRaw('semester % 2 = 1')->count();

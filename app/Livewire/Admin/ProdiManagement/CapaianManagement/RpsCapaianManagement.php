@@ -133,7 +133,7 @@ class RpsCapaianManagement extends Component
                         return false;
                     }
 
-                    $expectedPrefix = match ((int) $cpl->level_cpl) {
+                    $expectedPrefix = match ((int) $cpl->tingkat_cpl) {
                         1 => $prodi->kode_pr,
                         2 => $prodi->dp_rel?->kode_dp,
                         3 => $prodi->dp_rel?->fk_rel?->kode_fk,

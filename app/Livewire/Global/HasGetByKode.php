@@ -198,7 +198,7 @@ trait HasGetByKode
                         $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
 
                             ->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('mata_kuliahs.level_mk', 1)
+                                $q->where('mata_kuliahs.tingkat_mk', 1)
                                     ->whereHas('prodis', function ($pro) use ($prefixPart) {
                                         $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                                             ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
@@ -210,7 +210,7 @@ trait HasGetByKode
                             })
 
                             ->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('mata_kuliahs.level_mk', 2)
+                                $q->where('mata_kuliahs.tingkat_mk', 2)
                                     ->whereHas('prodis.dp_rel', function ($jur) use ($prefixPart) {
                                         $jur->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
                                             ->whereRaw(
@@ -221,7 +221,7 @@ trait HasGetByKode
                             })
 
                             ->orWhere(function ($q) use ($prefixPart) {
-                                $q->where('mata_kuliahs.level_mk', 3)
+                                $q->where('mata_kuliahs.tingkat_mk', 3)
                                     ->whereHas('prodis.dp_rel.fk_rel', function ($fak) use ($prefixPart) {
                                         $fak->whereRaw(
                                             "COALESCE(fakultas.kode_fk, 'UNI') LIKE ?",
@@ -231,7 +231,7 @@ trait HasGetByKode
                             });
 
                         if ($prefixPart === 'UNI') {
-                            $low->orWhere('mata_kuliahs.level_mk', 4);
+                            $low->orWhere('mata_kuliahs.tingkat_mk', 4);
                         }
                     });
                 }

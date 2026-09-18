@@ -76,12 +76,12 @@ return new class extends Migration
             $table->text('metodologi')->nullable();
             $table->text('indikator')->nullable();
 
-            $table->enum('metode', [
-                'Teori', 'Aktivitas Partisipasif', 'Tugas', 'Mandiri',
-                'UTS', 'UAS', 'Evaluasi Awal', 'Evaluasi Akhir',
-                'Laporan Akhir', 'Hasil Proyek', 'Kuis',
-                'Skripsi', 'Kerja Praktek', 'Responsi', 'Logbook', 'Portofolio',
-            ])->nullable();
+            // $table->enum('metode', [
+            //     'Teori', 'Aktivitas Partisipasif', 'Tugas', 'Mandiri',
+            //     'UTS', 'UAS', 'Evaluasi Awal', 'Evaluasi Akhir',
+            //     'Laporan Akhir', 'Hasil Proyek', 'Kuis',
+            //     'Skripsi', 'Kerja Praktek', 'Responsi', 'Logbook', 'Portofolio',
+            // ])->nullable();
 
             $table->text('deskripsi_tugas')->nullable();
             $table->integer('waktu_tugas')->nullable();

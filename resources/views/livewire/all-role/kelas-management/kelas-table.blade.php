@@ -194,9 +194,9 @@
                 <td class="table-main-sticky text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.level-mk-badge', [
+                            @include('livewire.global.table.badge.tingkat-mk-badge', [
                                 'xValue' => $k->kode,
-                                'sortir' => $k->rps_rel?->mk_rel?->level_mk,
+                                'sortir' => $k->rps_rel?->mk_rel?->tingkat_mk,
                             ])
                         </button>
                         @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 1])
@@ -289,9 +289,9 @@
                 <td class="table-main text-center table-border-x">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.level-mk-badge', [
+                            @include('livewire.global.table.badge.tingkat-mk-badge', [
                                 'xValue' => $k->kode_mk,
-                                'sortir' => $k->rps_rel?->mk_rel?->level_mk,
+                                'sortir' => $k->rps_rel?->mk_rel?->tingkat_mk,
                             ])
                         </button>
                         @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3])

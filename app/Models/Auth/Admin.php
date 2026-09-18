@@ -17,7 +17,7 @@ class Admin extends Model
     protected $fillable = [
         'user_id',
         'pr_id',
-        'tingkat',
+        'tingkat_user',
         'kode_wilayah',
         'nip',
         'nitk',
@@ -47,6 +47,14 @@ class Admin extends Model
     {
         return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
     }
+
+    protected function tingkat(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->tingkat_user;
+        });
+    }
+
 
     protected function tingkatText(): Attribute
     {

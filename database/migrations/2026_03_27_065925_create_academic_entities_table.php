@@ -51,26 +51,7 @@ return new class extends Migration
             $table->text('materi');
             $table->text('metodologi');
             $table->text('indikator');
-            $table->enum('metode', [
-                // --- Evaluasi OBE/Projek (Tatap Muka/Tugas) ---
-                'Teori',
-                'Aktivitas Partisipasif',
-                'Tugas',
-                'Mandiri',
-
-                // --- Evaluasi Formal (Umum) ---
-                'UTS', 'UAS', 
-                'Evaluasi Awal', // Setara UTS
-                'Evaluasi Akhir', 'Laporan Akhir', 'Hasil Proyek', // Setara UAS
-                'Kuis',
-
-                // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
-                'Skripsi',
-                'Kerja Praktek',
-                'Responsi',
-                'Logbook',
-                'Portofolio',
-            ])->default('Teori');
+            $table->enum('metode', config('rps.metode'))->default('Teori');
             $table->text('deskripsi_tugas')->nullable();
             $table->integer('waktu_tugas')->nullable();
             $table->integer('waktu_mandiri')->nullable();
@@ -81,7 +62,7 @@ return new class extends Migration
 
         Schema::create('cpls', function (Blueprint $table) {
             $table->id();
-            $table->enum('level_cpl', [1, 2, 3, 4])->default(1);
+            $table->enum('tingkat_cpl', [1, 2, 3, 4])->default(1);
             $table->string('kode_cpl');
             $table->string('deskripsi')->unique();
             $table->softDeletes();

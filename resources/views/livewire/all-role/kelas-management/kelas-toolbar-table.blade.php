@@ -19,7 +19,7 @@
         'rps_id' => $k->rps_id,
         'kode' => $k->kode,
         // 'kode_rps'       => $k->rps_rel->kode ?? null,
-        // 'level_mk'       => $k->rps_rel->level_mk ?? null,
+        // 'tingkat_mk'       => $k->rps_rel->tingkat_mk ?? null,
         // 'rps'            => $k->rps_rel->rps ?? null,
         'kelas' => $k->kelas,
         'deskripsi_kelas' => $k->deskripsi_kelas,

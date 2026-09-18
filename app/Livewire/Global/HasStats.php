@@ -299,10 +299,10 @@ trait HasStats
                 'kelas-wajib' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', true))->count(),
                 'kelas-pilihan' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('is_wajib', false))->count(),
 
-                'kelas-pr' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 1))->count(),
-                'kelas-dp' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 2))->count(),
-                'kelas-fk' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 3))->count(),
-                'kelas-uni' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('level_mk', 4))->count(),
+                'kelas-pr' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tingkat_mk', 1))->count(),
+                'kelas-dp' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tingkat_mk', 2))->count(),
+                'kelas-fk' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tingkat_mk', 3))->count(),
+                'kelas-uni' => (clone $queryKelas)->whereHas('rps_rel.mk_rel', fn ($q) => $q->where('tingkat_mk', 4))->count(),
             ];
         });
 
@@ -828,10 +828,10 @@ trait HasStats
                 'mk-opsi' => (clone $tabQuery)->count(),
                 'mk-wajib' => (clone $tabQuery)->where('is_wajib', true)->count(),
                 'mk-pilihan' => (clone $tabQuery)->where('is_wajib', false)->count(),
-                'mk-pr' => (clone $tabQuery)->where('level_mk', 1)->count(),
-                'mk-dp' => (clone $tabQuery)->where('level_mk', 2)->count(),
-                'mk-fk' => (clone $tabQuery)->where('level_mk', 3)->count(),
-                'mk-uni' => (clone $tabQuery)->where('level_mk', 4)->count(),
+                'mk-pr' => (clone $tabQuery)->where('tingkat_mk', 1)->count(),
+                'mk-dp' => (clone $tabQuery)->where('tingkat_mk', 2)->count(),
+                'mk-fk' => (clone $tabQuery)->where('tingkat_mk', 3)->count(),
+                'mk-uni' => (clone $tabQuery)->where('tingkat_mk', 4)->count(),
             ];
         });
 

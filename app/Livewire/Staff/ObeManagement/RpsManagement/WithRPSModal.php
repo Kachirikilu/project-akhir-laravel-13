@@ -286,6 +286,9 @@ trait WithRPSModal
             }
         }
 
+        $bobotMin = config('rps.bobot_min', 70);
+        $bobotMax = config('rps.bobot_max', 200);
+
         // --- RULES VALIDASI ---
         $rules = [
             'deskripsi' => 'nullable|string|min:5|max:1000',
@@ -304,15 +307,15 @@ trait WithRPSModal
             ],
             'akademik_1' => 'required|integer|min:1970',
             'akademik_2' => 'required|integer|min:1971',
-            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data, $totalSubCPMK, $totalBobot) {
+            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data, $totalSubCPMK, $totalBobot, $bobotMin, $bobotMax) { // --- DIUBAH: Tambahkan $bobotMin dan $bobotMax di klausa use
                 if (($totalSubCPMK < 14 || $totalSubCPMK > 16) && $data['is_draf'] == 0) {
                     $fail('Jumlah Sub-CPMK harus antara 14 dan 16 pertemuan!');
                 }
 
                 if ($value == 0) {
                     $rounded = round($totalBobot, 2);
-                    if (($rounded < 70 || $rounded > 200) && $data['is_draf'] == 0) {
-                        $fail("Total bobot harus 70-200% (Saat ini: $rounded%)!");
+                    if (($rounded < $bobotMin || $rounded > $bobotMax) && $data['is_draf'] == 0) {
+                        $fail("Total bobot harus {$bobotMin}-{$bobotMax}% (Saat ini: $rounded%)!");
                     }
                 }
             }],

@@ -43,7 +43,7 @@
         
             // 'rps' => $n->rps_rel->rps,
             // 'draf' => $n->rps_rel->draf,
-            // 'level_mk' => $n->rps_rel->level_mk,
+            // 'tingkat_mk' => $n->rps_rel->tingkat_mk,
             'mk' => $n->mk,
             'sks' => $n->sks,
         

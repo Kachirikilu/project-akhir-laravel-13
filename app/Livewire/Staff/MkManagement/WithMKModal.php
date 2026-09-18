@@ -200,7 +200,7 @@ trait WithMKModal
                             $prodiModel = Prodi::find($pId);
                             $namaProdi = $prodiModel ? $prodiModel->prodi : "Prodi ID: $pId";
 
-                            $fail("Digit MK '$value' sudah terpakai pada Semester $semesterSaatIni di Program Studi: ***$namaProdi***!");
+                            $fail("Digit MK '$value' sudah terpakai pada Semester $semesterSaatIni di Program Studi ***$namaProdi***!");
                             break;
                         }
                     }
@@ -313,7 +313,7 @@ trait WithMKModal
             DB::transaction(function () use ($validated, $level) {
 
                 $mk = MataKuliah::create([
-                    'level_mk' => $level,
+                    'tingkat_mk' => $level,
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],

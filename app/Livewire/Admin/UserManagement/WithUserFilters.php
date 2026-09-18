@@ -383,9 +383,9 @@ trait WithUserFilters
             'mahasiswa_id' => 'mahasiswas.id',
 
             'role' => 'CASE
-                WHEN admins.id IS NOT NULL THEN (10 + COALESCE(admins.tingkat, 99))
-                WHEN dosens.id IS NOT NULL THEN (20 + COALESCE(dosens.tingkat, 99))
-                WHEN mahasiswas.id IS NOT NULL THEN (30 + COALESCE(mahasiswas.tingkat, 99))
+                WHEN admins.id IS NOT NULL THEN (10 + COALESCE(admins.tingkat_user, 99))
+                WHEN dosens.id IS NOT NULL THEN (20 + COALESCE(dosens.tingkat_user, 99))
+                WHEN mahasiswas.id IS NOT NULL THEN (30 + COALESCE(mahasiswas.tingkat_user, 99))
                 
                 ELSE 400
             END',

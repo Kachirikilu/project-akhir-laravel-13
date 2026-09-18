@@ -143,9 +143,9 @@ class NilaiMahasiswa extends Model
         return Attribute::get(fn () => $this->rps_rel?->kode);
     }
 
-    protected function levelMk(): Attribute
+    protected function tingkatMk(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel?->mk_rel?->level_mk);
+        return Attribute::get(fn () => $this->rps_rel?->mk_rel?->tingkat_mk);
     }
 
     protected function digitMk(): Attribute

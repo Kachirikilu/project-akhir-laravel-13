@@ -49,7 +49,7 @@ trait WithRPSSearchFilters
             'mk_id' => $r->mk_id,
             'kode_mk' => $r->kode_mk,
             'kode' => $r->kode,
-            'level_mk' => $r->level_mk,
+            'tingkat_mk' => $r->tingkat_mk,
             'pr_id' => $r->mk_rel->prodis->first()?->id,
             'dp_id' => $r->mk_rel->prodis->first()?->dp_id,
             'fk_id' => $r->mk_rel->prodis->first()?->fk_id,

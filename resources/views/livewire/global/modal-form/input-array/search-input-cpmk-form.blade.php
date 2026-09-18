@@ -1,4 +1,8 @@
 <div>
+    @php
+        $bobotMin = config('rps.bobot_min', 70);
+        $bobotMax = config('rps.bobot_max', 200);
+    @endphp
     <div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
         x-data="{
             open: false,
@@ -190,8 +194,8 @@
         <div class="mt-4 p-4 border-2 border-dashed table-border rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
             @include('livewire.global.modal-form.input-array.partial.scpmk-bobot-akumulasi', [
                 'nilai1' => 20,
-                'nilai2' => 70,
-                'nilai3' => 200,
+                'nilai2' => $bobotMin,
+                'nilai3' => $bobotMax,
             ])
 
             {{-- Daftar Item Berjejer ke Bawah (flex-col) --}}
@@ -215,12 +219,12 @@
             {{-- Footer Keseluruhan (Total Semua Sub-CPMK dari berbagai CPMK) --}}
             @include('livewire.global.modal-form.input-array.partial.scpmk-bobot-pesan', [
                 'nilai1' => 20,
-                'nilai2' => 70,
-                'nilai3' => 200,
+                'nilai2' => $bobotMin,
+                'nilai3' => $bobotMax,
                 'pNilai1' => 'Bobot sangat kurang dari target:',
                 'pNilai2' => 'Bobot masih kurang dari target standar:',
                 'pNilai3' => 'Bobot sudah mencukupi (Maksimal):',
-                'pNilai4' => 'Bobot melebihi batas 200%, mohon tinjau kembali:',
+                'pNilai4' => 'Bobot melebihi batas ' . $bobotMax . '%, mohon tinjau kembali:',
             ])
 
 

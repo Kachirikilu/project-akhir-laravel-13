@@ -97,10 +97,10 @@ trait HasSortir
             (
                 SELECT CONCAT(
                     CASE
-                        WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                        WHEN mk.level_mk = 4 THEN 'UNI'
+                        WHEN mk.tingkat_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
+                        WHEN mk.tingkat_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
+                        WHEN mk.tingkat_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                        WHEN mk.tingkat_mk = 4 THEN 'UNI'
                         ELSE mk.kode_mk
                     END,
                     LPAD(mk.digit_semester, 2, '0'),
@@ -124,7 +124,7 @@ trait HasSortir
                 SELECT CONCAT(
                     MIN(
                         CASE
-                            WHEN c.level_cpl = 1 THEN CONCAT(
+                            WHEN c.tingkat_cpl = 1 THEN CONCAT(
                                 CASE
                                     WHEN p.strata = 'Sarjana' THEN 'S1'
                                     WHEN p.strata = 'Magister' THEN 'S2'
@@ -134,9 +134,9 @@ trait HasSortir
                                 '-',
                                 COALESCE(p.kode_pr, d.kode_dp, f.kode_fk, 'UNI')
                             )
-                            WHEN c.level_cpl = 2 THEN COALESCE(d.kode_dp, f.kode_fk, 'UNI')
-                            WHEN c.level_cpl = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                            WHEN c.level_cpl = 4 THEN 'UNI'
+                            WHEN c.tingkat_cpl = 2 THEN COALESCE(d.kode_dp, f.kode_fk, 'UNI')
+                            WHEN c.tingkat_cpl = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN c.tingkat_cpl = 4 THEN 'UNI'
                             ELSE ''
                         END
                     ),
@@ -166,10 +166,10 @@ trait HasSortir
                 SELECT CONCAT(
                     MIN(
                         CASE 
-                            WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 4 THEN 'UNI'
+                            WHEN mk.tingkat_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
+                            WHEN mk.tingkat_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
+                            WHEN mk.tingkat_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN mk.tingkat_mk = 4 THEN 'UNI'
                             ELSE mk.kode_mk
                         END
                     ),

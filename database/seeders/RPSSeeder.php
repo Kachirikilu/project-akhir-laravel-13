@@ -105,7 +105,7 @@ class RPSSeeder extends Seeder
                 ],
                 [
                     'deskripsi' => $kombinasi[$i - 1],
-                    'level_cpl' => fake()->randomElement([1, 1, 1, 2, 2, 3, 4]),
+                    'tingkat_cpl' => fake()->randomElement([1, 1, 1, 2, 2, 3, 4]),
                 ]
             );
         }
@@ -274,7 +274,7 @@ class RPSSeeder extends Seeder
 
         foreach ($cpls as $cpl) {
 
-            switch ((int) $cpl->level_cpl) {
+            switch ((int) $cpl->tingkat_cpl) {
 
                 // ======================
                 // LEVEL 1
@@ -433,6 +433,10 @@ class RPSSeeder extends Seeder
         // simpan mapping CPMK → jumlah SCPMK
         $cpmkAssignments = [];
 
+        // Ambil pilihan pertama (default) dari metode UTS dan UAS di config/rps.php
+        $metodeUTS = config('rps.metode_uts')[0] ?? 'UTS';
+        $metodeUAS = config('rps.metode_uas')[0] ?? 'UAS';
+
         // -----------------------------------
         // 1. Pastikan semua CPMK kebagian dulu
         // -----------------------------------
@@ -447,9 +451,10 @@ class RPSSeeder extends Seeder
             $isUTS = ($tipe >= 15 && $i == 8);
             $isUAS = ($tipe == 16 && $i == 16);
 
+            // --- DIUBAH: Ambil dari variabel config ---
             $metode = $isUTS
-                ? 'UTS'
-                : ($isUAS ? 'UAS' : 'Teori');
+                ? $metodeUTS
+                : ($isUAS ? $metodeUAS : 'Teori');
 
             $bobot = rand(3, 10);
 
@@ -480,9 +485,10 @@ class RPSSeeder extends Seeder
             $isUTS = ($tipe >= 15 && $i == 8);
             $isUAS = ($tipe == 16 && $i == 16);
 
+            // --- DIUBAH: Ambil dari variabel config ---
             $metode = $isUTS
-                ? 'UTS'
-                : ($isUAS ? 'UAS' : 'Teori');
+                ? $metodeUTS
+                : ($isUAS ? $metodeUAS : 'Teori');
 
             $bobot = rand(3, 10);
 
@@ -505,7 +511,6 @@ class RPSSeeder extends Seeder
             $subs[] = $sub;
             $totalBobot += $bobot;
         }
-
         // =========================
         // SUB-CPMK ↔ REFERENSI (MINIMAL 1)
         // =========================
@@ -541,7 +546,10 @@ class RPSSeeder extends Seeder
         // =========================
         // VALIDASI
         // =========================
-        if ($totalBobot < 70 || $totalBobot > 200) {
+        $bobotMin = config('rps.bobot_min', 70);
+        $bobotMax = config('rps.bobot_max', 200);
+
+        if ($totalBobot < $bobotMin || $totalBobot > $bobotMax) {
 
             foreach ($subs as $sub) {
                 $sub->delete();

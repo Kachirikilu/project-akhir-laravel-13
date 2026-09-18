@@ -266,9 +266,9 @@
             <td class="table-main text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.level-mk-badge', [
+                        @include('livewire.global.table.badge.tingkat-mk-badge', [
                             'xValue' => $j->kode_mk,
-                            'sortir' => $j->rps_rel?->mk_rel?->level_mk,
+                            'sortir' => $j->rps_rel?->mk_rel?->tingkat_mk,
                         ])
                     </button>
 

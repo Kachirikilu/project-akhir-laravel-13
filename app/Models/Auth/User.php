@@ -202,7 +202,7 @@ class User extends Authenticatable
     protected function tingkat(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'tingkat');
+            return data_get($this->getProfile(), 'tingkat_user');
         });
     }
     protected function tingkatReverse(): Attribute

@@ -400,9 +400,9 @@
                         <button class="cursor-pointer">
                             @switch($switchTable)
                                 @case('rps')
-                                    @include('livewire.global.table.badge.level-mk-badge', [
+                                    @include('livewire.global.table.badge.tingkat-mk-badge', [
                                         'xValue' => $x->kode,
-                                        'sortir' => $x->level_mk,
+                                        'sortir' => $x->tingkat_mk,
                                     ])
                                 @break
 
@@ -442,9 +442,9 @@
                 <td class="text-xs sm:text-sm table-second table-border-r table-border-l text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.level-mk-badge', [
+                            @include('livewire.global.table.badge.tingkat-mk-badge', [
                                 'xValue' => $x->kode_mk,
-                                'sortir' => $x->level_mk,
+                                'sortir' => $x->tingkat_mk,
                                 'noIcon' => 1,
                             ])
                         </button>

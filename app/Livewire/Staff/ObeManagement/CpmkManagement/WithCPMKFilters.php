@@ -104,15 +104,15 @@ trait WithCPMKFilters
             'deskripsi' => $queryCPMK->orderBy(
                 DB::table('cpls')
                     ->selectRaw("COALESCE(cpmks.deskripsi, GROUP_CONCAT(cpls.deskripsi SEPARATOR ' '))")
-                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
-                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
+                    ->join('cpl_pivot_cpmk', 'cpls.id', '=', 'cpl_pivot_cpmk.cpl_id')
+                    ->whereColumn('cpl_pivot_cpmk.cpmk_id', 'cpmks.id'),
                 $this->sortDirection
             ),
 
             'count_cpl' => $queryCPMK->orderBy(
-                DB::table('cpmk_pivot_cpl')
+                DB::table('cpl_pivot_cpmk')
                     ->selectRaw('count(*)')
-                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
+                    ->whereColumn('cpl_pivot_cpmk.cpmk_id', 'cpmks.id'),
                 $this->sortDirection
             ),
 

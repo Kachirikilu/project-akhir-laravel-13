@@ -172,7 +172,7 @@ class UserRoleSeeder extends Seeder
     {
         Admin::create([
             'user_id' => $user->id,
-            'tingkat' => $tingkat,
+            'tingkat_user' => $tingkat,
             'pr_id' => $prodiId,
             'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),
             'nip' => $nip,
@@ -201,7 +201,7 @@ class UserRoleSeeder extends Seeder
     {
         Dosen::create([
             'user_id' => $user->id,
-            'tingkat' => $tingkat,
+            'tingkat_user' => $tingkat,
             'pr_id' => $prodiId,
             'name' => $name,
             'nip' => $nip,

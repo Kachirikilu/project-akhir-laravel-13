@@ -102,7 +102,7 @@ class CPMK extends Model
 
     public function cpls(): BelongsToMany
     {
-        return $this->belongsToMany(CPL::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
+        return $this->belongsToMany(CPL::class, 'cpl_pivot_cpmk', 'cpmk_id', 'cpl_id')
             ->withPivot('sort_order');
     }
 
@@ -181,8 +181,8 @@ class CPMK extends Model
             $q->orWhereExists(function ($sq) use ($searchTerm) {
                 $sq->select(DB::raw(1))
                     ->from('cpls')
-                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
-                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
+                    ->join('cpl_pivot_cpmk', 'cpls.id', '=', 'cpl_pivot_cpmk.cpl_id')
+                    ->whereColumn('cpl_pivot_cpmk.cpmk_id', 'cpmks.id')
                     ->where(function ($sub) use ($searchTerm) {
                         $sub->where('cpls.deskripsi', 'like', $searchTerm)
                             ->orWhere('cpls.kode_cpl', 'like', $searchTerm);
@@ -193,9 +193,9 @@ class CPMK extends Model
                 (
                     SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ')
                     FROM cpls
-                    JOIN cpmk_pivot_cpl
-                        ON cpls.id = cpmk_pivot_cpl.cpl_id
-                    WHERE cpmk_pivot_cpl.cpmk_id = cpmks.id
+                    JOIN cpl_pivot_cpmk
+                        ON cpls.id = cpl_pivot_cpmk.cpl_id
+                    WHERE cpl_pivot_cpmk.cpmk_id = cpmks.id
                 ) LIKE ?
             ", [$searchTerm]);
 
@@ -214,9 +214,9 @@ class CPMK extends Model
             if (preg_match('/^(\d+)\s*(cpl|capaian)$/i', $search, $m)) {
                 $q->orWhereExists(function ($sq) use ($m) {
                     $sq->select(DB::raw(1))
-                        ->from('cpmk_pivot_cpl')
-                        ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
-                        ->groupBy('cpmk_pivot_cpl.cpmk_id')
+                        ->from('cpl_pivot_cpmk')
+                        ->whereColumn('cpl_pivot_cpmk.cpmk_id', 'cpmks.id')
+                        ->groupBy('cpl_pivot_cpmk.cpmk_id')
                         ->havingRaw('COUNT(*) = ?', [(int) $m[1]]);
                 });
             }

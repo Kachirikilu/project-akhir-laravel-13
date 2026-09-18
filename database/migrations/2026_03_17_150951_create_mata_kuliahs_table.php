@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('mata_kuliahs', function (Blueprint $table) {
             $table->id();
-            $table->enum('level_mk', [1, 2, 3, 4])->default(1);
+            $table->enum('tingkat_mk', [1, 2, 3, 4])->default(1);
             $table->string('kode_mk')->nullable();
             $table->char('digit_semester', 2);
             $table->char('digit_mk', 2)->nullable();

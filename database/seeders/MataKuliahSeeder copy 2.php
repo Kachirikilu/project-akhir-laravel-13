@@ -34,7 +34,7 @@ class MataKuliahSeeder extends Seeder
 
             foreach ($elektroData as $data) {
                 $mk = MataKuliah::create([
-                    'level_mk' => $data['level'],
+                    'tingkat_mk' => $data['level'],
                     'nama_mk' => $data['nama'],
                     'digit_semester' => $generateDigitSemester($data['smt'], $data['is_ta']),
                     'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
@@ -63,7 +63,7 @@ class MataKuliahSeeder extends Seeder
                     }
 
                     $mk = MataKuliah::create([
-                        'level_mk' => $level,
+                        'tingkat_mk' => $level,
                         'nama_mk' => 'MK '.($level == 4 ? 'Univ' : ($level == 3 ? 'Fak' : 'Dept'))." $i",
                         'digit_semester' => $generateDigitSemester($smt, false),
                         'digit_mk' => str_pad($digit, 2, '0', STR_PAD_LEFT),

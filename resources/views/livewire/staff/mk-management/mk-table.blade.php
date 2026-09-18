@@ -166,9 +166,9 @@
                 <td class="table-second text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
-                            @include('livewire.global.table.badge.level-mk-badge', [
+                            @include('livewire.global.table.badge.tingkat-mk-badge', [
                                 'xValue' => $mk->digit_mk,
-                                'sortir' => $mk->level_mk,
+                                'sortir' => $mk->tingkat_mk,
                             ])
                         </button>
                         @include('livewire.staff.mk-management.mk-toolbar-table', ['key' => 1])

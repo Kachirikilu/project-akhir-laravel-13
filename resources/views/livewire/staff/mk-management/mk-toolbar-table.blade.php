@@ -10,7 +10,7 @@
         <livewire:staff.mk-management.toolbar-mk-management lazy :data="[
             'id' => $mk->id,
             'kode' => $mk->kode,
-            'level_mk' => $mk->level_mk,
+            'tingkat_mk' => $mk->tingkat_mk,
             'pr_id' => $mk->prodis->first()?->id,
             'dp_id' => $mk->prodis->first()?->dp_id,
             'fk_id' => $mk->prodis->first()?->fk_id,

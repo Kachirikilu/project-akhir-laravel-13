@@ -275,7 +275,7 @@ trait WithCPMKModal
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
         $data['cpl_id_array'] = $this->cpl_id_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             // 1. Jalankan validasi & pembersihan
@@ -331,7 +331,7 @@ trait WithCPMKModal
             $this->resetInputCPMK();
 
             $this->dispatch('refresh-data-cpmk');
-            $this->dispatch('refresh-stats-cpmk'); 
+            $this->dispatch('refresh-stats-cpmk');
             $this->showCPMKModal = false;
 
         } catch (ValidationException $e) {
@@ -351,7 +351,10 @@ trait WithCPMKModal
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
         $data['cpl_id_array'] = $this->cpl_id_array ?? [];
         // $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
+
+        $bobotMin = config('rps.bobot_min', 70);
+        $bobotMax = config('rps.bobot_max', 200);
 
         try {
             $validated = $this->inputModalCPMK(true, $data);
@@ -360,7 +363,7 @@ trait WithCPMKModal
             $selectedScpmkIds = array_values(array_unique($validated['scpmk_id_array'] ?? []));
             $selectedScpmks = SubCPMK::whereIn('id', $selectedScpmkIds)->get();
 
-            $invalidRps = $cpmk->rps->first(function ($rps) use ($cpmk, $selectedScpmks) {
+            $invalidRps = $cpmk->rps->first(function ($rps) use ($cpmk, $selectedScpmks, $bobotMin, $bobotMax) {
                 if ($rps->is_draf != 0) {
                     return false;
                 }
@@ -389,11 +392,11 @@ trait WithCPMKModal
                 $uas = $hasUAS ? 0 : 20;
                 $adjustedTotal = $baseTotal + $uts + $uas;
 
-                return $adjustedTotal < 70 || $adjustedTotal > 200;
+                return $adjustedTotal < $bobotMin || $adjustedTotal > $bobotMax;
             });
 
             if ($invalidRps) {
-                $this->addError('scpmk_id_array', 'Bobot tidak valid: total bobot RPS terkait harus berada di antara 70 dan 200 setelah perubahan CPMK!');
+                $this->addError('scpmk_id_array', "Bobot tidak valid: total bobot RPS terkait harus berada di antara {$bobotMin}% dan {$bobotMax}% setelah perubahan CPMK!");
                 throw ValidationException::withMessages($this->getErrorBag()->messages());
             }
 

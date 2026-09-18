@@ -69,13 +69,13 @@ trait WithCPLFilters
                     'rps_pivot_cpmk.rps_id'
                 )
                 ->join(
-                    'cpmk_pivot_cpl',
+                    'cpl_pivot_cpmk',
                     'rps_pivot_cpmk.cpmk_id',
                     '=',
-                    'cpmk_pivot_cpl.cpmk_id'
+                    'cpl_pivot_cpmk.cpmk_id'
                 )
                 ->whereColumn(
-                    'cpmk_pivot_cpl.cpl_id',
+                    'cpl_pivot_cpmk.cpl_id',
                     'cpls.id'
                 );
 

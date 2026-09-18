@@ -19,7 +19,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->enum('tingkat', [1, 2, 3, 4])->default(4);
+            $table->enum('tingkat_user', [1, 2, 3, 4])->default(4);
             $table->index('user_id');
             $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
@@ -60,7 +60,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->enum('tingkat', [1, 2, 3, 4, 5])->default(5);
+            $table->enum('tingkat_user', [1, 2, 3, 4, 5])->default(5);
             $table->index('user_id');
             $table->index('pr_id');
 
@@ -101,7 +101,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
             $table->foreignId('pr_id')->nullable();
-            $table->enum('tingkat', [5])->default(5);
+            $table->enum('tingkat_user', [5])->default(5);
             $table->index('user_id');
             $table->index('pr_id');
             $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();

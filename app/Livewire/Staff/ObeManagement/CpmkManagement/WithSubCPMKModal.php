@@ -10,6 +10,7 @@ use App\Models\Akademik\SubCPMK;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 use Livewire\WithPagination;
 
 trait WithSubCPMKModal
@@ -101,12 +102,12 @@ trait WithSubCPMKModal
             ])->findOrFail($id);
 
             $this->scpmk_input = array_merge($this->scpmk_input, $scpmk->only([
-                'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas'
+                'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas',
             ]), [
-                'waktu_tugas'   => $scpmk->w_tugas,
+                'waktu_tugas' => $scpmk->w_tugas,
                 'waktu_mandiri' => $scpmk->w_mandiri,
             ]);
-            
+
             $this->ref_id_array = collect($this->ref_id_array)
                 ->merge($scpmk->refs->pluck('id'))->unique()->values()->all();
             $this->ref_items_array = collect($this->ref_items_array)
@@ -191,7 +192,10 @@ trait WithSubCPMKModal
             'materi' => 'required|string|min:5|max:1000',
             'metodologi' => 'required|string|min:5|max:1000',
             'indikator' => 'required|string|min:5|max:1000',
-            'metode' => 'required|in:Teori,Aktivitas Partisipasif,Tugas,Mandiri,UTS,UAS,Kuis,Evaluasi Awal,Evaluasi Akhir,Laporan Akhir,Hasil Proyek,Skripsi,Kerja Praktek,Responsi,Logbook,Portofolio',
+            'metode' => [
+                'required',
+                Rule::in(config('rps.metode')),
+            ],
             'deskripsi_tugas' => 'nullable|min:5|max:1000',
             'waktu_tugas' => 'nullable|integer|min:60',
             'waktu_mandiri' => 'nullable|integer|min:60',
@@ -239,7 +243,7 @@ trait WithSubCPMKModal
             $data['metode'] = 'Teori';
         }
 
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
             // 1. Jalankan validasi & pembersihan
@@ -285,7 +289,7 @@ trait WithSubCPMKModal
             $this->toast(message: "Sub-CPMK {$validated['kode_scpmk_1']}-{$validated['kode_scpmk_2']} berhasil disimpan!");
             $this->resetInputSCPMK();
             $this->dispatch('refresh-data-scpmk');
-            $this->dispatch('refresh-stats-scpmk'); 
+            $this->dispatch('refresh-stats-scpmk');
             $this->showSCPMKModal = false;
 
         } catch (ValidationException $e) {
@@ -310,7 +314,10 @@ trait WithSubCPMKModal
             $data['metode'] = 'Teori';
         }
 
-       $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['ref_id_array'] = $this->ref_id_array ?? [];
+
+        $bobotMin = config('rps.bobot_min', 70);
+        $bobotMax = config('rps.bobot_max', 200);
 
         try {
             $validated = $this->inputModalSCPMK(true, $data);
@@ -323,7 +330,7 @@ trait WithSubCPMKModal
             $beforeMethod = strtoupper($scpmk->metode);
             $afterMethod = strtoupper($validated['metode']);
 
-            $invalidRps = $relatedRps->first(function ($rps) use ($scpmk, $validated) {
+            $invalidRps = $relatedRps->first(function ($rps) use ($scpmk, $validated, $bobotMin, $bobotMax) {
                 if ($rps->is_draf != 0) {
                     return false;
                 }
@@ -344,10 +351,12 @@ trait WithSubCPMKModal
                 $uas = $hasUAS ? 0 : (float) ($rps->bobot_uas ?? 0);
                 $adjustedTotal = $baseTotal + (float) $validated['bobot'] + $uts + $uas;
 
-                return $adjustedTotal < 70 || $adjustedTotal > 200;
+                return $adjustedTotal < $bobotMin || $adjustedTotal > $bobotMax;
             });
+
             if ($invalidRps) {
-                $this->addError('bobot', 'Bobot tidak valid: total bobot RPS terkait harus berada di antara 70 dan 200 setelah perubahan bobot Sub-CPMK!');
+                $this->addError('bobot', "Bobot tidak valid: total bobot RPS terkait harus berada di antara {$bobotMin}% dan {$bobotMax}% setelah perubahan Sub-CPMK!");
+                throw ValidationException::withMessages($this->getErrorBag()->messages());
             }
 
             if ($this->getErrorBag()->any()) {

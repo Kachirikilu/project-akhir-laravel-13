@@ -105,9 +105,9 @@
                 <td class="table-main-sticky text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.level-mk-badge', [
+                            @include('livewire.global.table.badge.tingkat-mk-badge', [
                                 'xValue' => $r->kode,
-                                'sortir' => $r->level_mk,
+                                'sortir' => $r->tingkat_mk,
                             ])
                         </button>
                         @include('livewire.staff.obe-management.rps-management.rps-toolbar-table', [

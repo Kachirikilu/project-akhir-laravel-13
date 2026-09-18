@@ -312,7 +312,7 @@ trait WithRPSShow
             'mk_id' => $mk->id ?? null,
             'kode_mk' => $rps->kode_mk,
             'nama_mk' => $mk->nama_mk,
-            'level_mk' => $mk->level_mk ?? null,
+            'tingkat_mk' => $mk->tingkat_mk ?? null,
             'bahan_kajian' => $mk?->bahan_kajian ?? '-',
             'sks' => $mk->sks_tm ?? $mk->sks_pl ?? $mk->sks_sm ?? '-',
             'sks_pr' => $mk?->sks_pr ?? '-',
