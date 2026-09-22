@@ -28,6 +28,17 @@ STATUS_ADM="Aktif,Tugas Belajar,Mutasi,Cuti Luar Tanggungan,Resign,Pensiun,Diber
 STATUS_DSN="Aktif,Tugas Belajar,Izin Belajar,Cuti Sabatika,Alih Tugas,Resign,Pensiun,Diberhentikan,Meninggal Dunia"
 STATUS_MHS="Aktif,Lulus,Cuti,Pindah,Non-Aktif,Mengundurkan Diri,Drop Out,Hilang,Meninggal Dunia"
 
+RPS_BOBOT_MIN=70
+RPS_BOBOT_MAX=200
+
+# Hanya aktif salah satu saja
+WAKTU_TELAT=15
+# FAKTOR_TELAT=15
+
+# Hanya aktif salah satu saja
+WAKTU_DISPENSI=60
+# FAKTOR_DISPENSI=60
+
 BCRYPT_ROUNDS=12
 
 LOG_CHANNEL=stack

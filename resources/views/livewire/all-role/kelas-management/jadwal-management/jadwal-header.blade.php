@@ -41,7 +41,7 @@
             <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
                 {{ $kelas->kode_mk ?? '---' }}
                 <strong class="px-2">|</strong>
-                Sem {{ $kelas->semester ?? '-' }}</span>
+                Semester {{ $kelas->semester ?? '-' }}</span>
         </div>
         <div class="flex flex-col gap-1">
             <span

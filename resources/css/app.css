@@ -201,6 +201,12 @@
         @apply bg-[var(--main-table-trans)];
         @apply text-[var(--contrast-main-text)];
     }
+    .table-main-no-x {
+        @apply px-6 py-4 text-xs sm:text-sm;
+        @apply border-[var(--border-table-color)];
+        @apply bg-[var(--main-table-trans)];
+        @apply text-[var(--contrast-main-text)];
+    }
 
     .table-main-sticky {
         @apply px-6 py-4 text-xs sm:text-sm;
@@ -229,6 +235,13 @@
         @apply px-6 py-4 text-xs sm:text-sm;
         @apply text-center font-bold uppercase whitespace-nowrap;
         @apply border-x border-b border-[var(--border-table-color)];
+        @apply bg-[var(--main-table-color)];
+        @apply text-[var(--focus-color)];
+    }
+    .table-head-sub-no-x {
+        @apply px-6 py-4 text-xs sm:text-sm border-b border-[var(--border-table-color)];
+        @apply text-center font-bold uppercase whitespace-nowrap;
+        @apply border-b border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
         @apply text-[var(--focus-color)];
     }

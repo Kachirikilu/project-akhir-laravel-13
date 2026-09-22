@@ -256,8 +256,8 @@ $candidateIds = $candidateIds
                                     if ($pertemuan == 8 && $totalScpmk < 16 && $rps->bobot_uts) {
                                         $sesi->override()->create([
                                             'deskripsi' => 'Ujian Tengah Semester',
-                                            'metode' => 'UTS',
-                                            'bobot' => $rps->bobot_uts,
+                                            // 'metode' => 'UTS',
+                                            // 'bobot' => $rps->bobot_uts,
                                         ]);
 
                                         continue;
@@ -266,8 +266,8 @@ $candidateIds = $candidateIds
                                     if ($pertemuan == 16 && $totalScpmk < 16 && $rps->bobot_uas) {
                                         $sesi->override()->create([
                                             'deskripsi' => 'Ujian Akhir Semester',
-                                            'metode' => 'UAS',
-                                            'bobot' => $rps->bobot_uas,
+                                            // 'metode' => 'UAS',
+                                            // 'bobot' => $rps->bobot_uas,
                                         ]);
 
                                         continue;

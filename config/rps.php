@@ -90,4 +90,9 @@ return [
     'metode' => $metodeList,
     'metode_uts' => $metodeUTS,
     'metode_uas' => $metodeUAS,
+
+    'waktu_telat' => env('WAKTU_TELAT') ?? 15,
+    'faktor_telat' => env('FAKTOR_TELAT') ?? 30,
+    'waktu_dispensasi' => env('WAKTU_DISPENSI') ?? 150,
+    'faktor_dispensasi' => env('FAKTOR_DISPENSI') ?? 120,
 ];

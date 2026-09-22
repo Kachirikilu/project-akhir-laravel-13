@@ -3,20 +3,20 @@
     {{-- Sub CPMK --}}
     <div
         class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-               {{ $secondTable }} px-4 py-3 flex flex-col gap-3">
+               {{ $secondTable }} px-4 py-2 flex flex-col gap-3">
 
         @if ($showMore)
             <div class="flex items-center justify-between">
                 <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
 
-                <div class="h-6 w-20 rounded-lg {{ $focusColor }} opacity-30">
+                <div class="h-5 w-20 rounded-lg {{ $focusColor }} opacity-30">
                 </div>
             </div>
         @endif
         <div class="flex items-center justify-between">
             <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
 
-            <div class="h-6 w-24 rounded-lg {{ $focusColor }} opacity-30">
+            <div class="h-5 w-24 rounded-lg {{ $focusColor }} opacity-30">
             </div>
         </div>
         <div class="flex items-center justify-between">
@@ -30,17 +30,38 @@
         </div>
     </div>
 
+    {{-- Materi --}}
+    <div
+        class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
+               {{ $secondTable }} px-4 py-2 space-y-3">
+
+        <div class="h-3 w-36 rounded {{ $mainTable }}"></div>
+        <div class="space-y-2">
+            <div class="h-3 w-full rounded {{ $subTable }}"></div>
+        </div>
+
+        @if ($showMore)
+            <div class="h-3 w-36 rounded mt-2.5 {{ $mainTable }}"></div>
+            <div class="space-y-2">
+                <div class="h-3 w-full rounded {{ $subTable }}"></div>
+            </div>
+            <div class="h-3 w-36 rounded mt-2.5 {{ $mainTable }}"></div>
+            <div class="space-y-2">
+                <div class="h-3 w-full rounded {{ $subTable }}"></div>
+            </div>
+        @endif
+    </div>
+
     {{-- Deskripsi --}}
     <div
         class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-               {{ $secondTable }} px-4 py-3 space-y-3">
+               {{ $secondTable }} px-4 py-2 space-y-3">
 
         <div class="h-3 w-36 rounded {{ $mainTable }}"></div>
 
         <div class="space-y-2">
             <div class="h-3 w-full rounded {{ $subTable }}"></div>
             <div class="h-3 w-11/12 rounded {{ $subTable }}"></div>
-            <div class="h-3 w-8/12 rounded {{ $subTable }}"></div>
         </div>
     </div>
 
@@ -48,7 +69,7 @@
     @if ($showMore)
         <div
             class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-               {{ $secondTable }} px-4 py-3 space-y-3">
+               {{ $secondTable }} px-4 py-2 space-y-3">
 
             <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
 
@@ -69,7 +90,7 @@
     {{-- Dosen --}}
     <div
         class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-               {{ $secondTable }} px-4 py-3 space-y-3">
+               {{ $secondTable }} px-4 py-2 space-y-3">
 
         <div class="h-3 w-28 rounded {{ $mainTable }}"></div>
 
@@ -81,59 +102,48 @@
 
                     <div class="h-3 w-40 rounded {{ $subTable }}"></div>
 
-                    <div class="h-4 w-14 rounded-full {{ $subTable }}">
+                    <div class="h-3 w-14 rounded-full {{ $subTable }}">
                     </div>
                 </div>
 
                 <div class="h-3 w-32 ml-5 rounded-lg {{ $subTable }}"></div>
             </div>
 
-            <div class="space-y-1">
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full {{ $mainTable }}"></div>
-
-                    <div class="h-3 w-36 rounded {{ $subTable }}"></div>
-                </div>
-
-                <div class="h-3 w-28 ml-5 rounded {{ $subTable }}"></div>
-            </div>
 
         </div>
     </div>
 
     {{-- KHUSUS MAHASISWA --}}
-    @auth
-        @if (Auth::user()->mahasiswa)
-            {{-- Tombol absensi --}}
-            <div class="rounded-xl h-9 w-full
+    @if (Auth::user()->mahasiswa)
+        {{-- Tombol absensi --}}
+        <div class="rounded-xl h-9 w-full
                        {{ $focusColor }} opacity-25">
-            </div>
+        </div>
 
-            {{-- Status absensi --}}
-            <div
-                class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-                       {{ $secondTable }} px-3 py-3 flex items-center justify-between">
+        {{-- Status absensi --}}
+        <div
+            class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
+                       {{ $secondTable }} px-3 py-2 flex items-center justify-between">
 
-                <div class="h-6 w-24 rounded-full
+            <div class="h-5 w-24 rounded-full
                            {{ $focusColor }} opacity-30">
-                </div>
-
-                <div class="h-3 w-20 rounded {{ $subTable }}"></div>
             </div>
 
-            {{-- Keterangan --}}
-            <div
-                class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
-                       {{ $secondTable }} px-3 py-3 space-y-2">
+            <div class="h-3 w-20 rounded {{ $subTable }}"></div>
+        </div>
 
-                <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
+        {{-- Keterangan --}}
+        <div
+            class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
+                       {{ $secondTable }} px-3 py-2 space-y-2">
 
-                <div class="space-y-2">
-                    <div class="h-3 w-full rounded {{ $subTable }}"></div>
-                    <div class="h-3 w-9/12 rounded {{ $subTable }}"></div>
-                </div>
+            <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
+
+            <div class="space-y-2">
+                <div class="h-3 w-full rounded {{ $subTable }}"></div>
+                <div class="h-3 w-9/12 rounded {{ $subTable }}"></div>
             </div>
-        @endif
-    @endauth
+        </div>
+    @endif
 
 </div>

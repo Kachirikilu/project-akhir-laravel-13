@@ -48,9 +48,30 @@
         </div>
     </div>
 
+    {{-- Materi, Metodologi, & Indikator --}}
+    <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3">
+        <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-0.5">Materi</span>
+        <p class="text-xs leading-relaxed {{ $mainText }}">
+            {{ $s->materi ?? 'Tidak ada materi spesifik untuk sesi ini.' }}
+        </p>
+        @if ($showMore)
+            <span
+                class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mt-2.5 mb-0.5">Metodologi</span>
+            <p class="text-xs leading-relaxed {{ $mainText }}">
+                {{ $s->metodologi ?? 'Tidak ada metodologi spesifik untuk sesi ini.' }}
+            </p>
+            <span
+                class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mt-2.5 mb-0.5">Indikator</span>
+            <p class="text-xs leading-relaxed {{ $mainText }}">
+                {{ $s->indikator ?? 'Tidak ada indikator spesifik untuk sesi ini.' }}
+            </p>
+        @endif
+    </div>
+
+
     {{-- Deskripsi Tugas --}}
     <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3">
-        <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">Deskripsi
+        <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-0.5">Deskripsi
             Tugas / Evaluasi</span>
         <p class="text-xs leading-relaxed {{ $mainText }}">
             {{ $s->tugas ?? 'Tidak ada deskripsi tugas spesifik untuk sesi ini.' }}
@@ -116,7 +137,8 @@
                     {{ $dosen->name }}
 
                     @if ($dosen->is_ketua)
-                        <span class="mb-0.5 ml-1.5 inline-flex items-center px-1 py-0.5 text-[7px] font-bold leading-none bg-blue-100 text-blue-700 rounded-sm select-none align-middle">
+                        <span
+                            class="mb-0.5 ml-1.5 inline-flex items-center px-1 py-0.5 text-[7px] font-bold leading-none bg-blue-100 text-blue-700 rounded-sm select-none align-middle">
                             Ketua
                         </span>
                     @endif

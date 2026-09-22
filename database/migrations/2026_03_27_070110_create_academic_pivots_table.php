@@ -108,6 +108,7 @@ return new class extends Migration
             $table->index('cpl_id');
             $table->index('cpmk_id');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // CPMK - Referensi
@@ -118,6 +119,7 @@ return new class extends Migration
             $table->index('cpmk_id');
             $table->index('ref_id');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // Sub-CPMK - Referensi
@@ -128,6 +130,7 @@ return new class extends Migration
             $table->index('scpmk_id');
             $table->index('ref_id');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // Prodis - CPL (Ownership)
@@ -138,6 +141,7 @@ return new class extends Migration
             $table->index('pr_id');
             $table->index('cpl_id');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // RPS - Referensi
@@ -148,6 +152,7 @@ return new class extends Migration
             $table->index('rps_id');
             $table->index('ref_id');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
     }
 

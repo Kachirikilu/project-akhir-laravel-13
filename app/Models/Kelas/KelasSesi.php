@@ -494,11 +494,22 @@ class KelasSesi extends Model
     protected function waktuTelat(): Attribute
     {
         return Attribute::get(function () {
-            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
-            if (! $this->waktu_pelaksanaan || $sks === 0) {
-                return $this->waktu_pelaksanaan;
+            if (! $this->waktu_pelaksanaan) {
+                return null;
             }
-            $menitTambahan = $sks * 30;
+
+            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+
+            // Ambil dari config/rps.php (kembalikan null jika di-comment di .env)
+            $faktorTelat = config('rps.faktor_telat');
+            $waktuTelat = config('rps.waktu_telat');
+
+            // Mengutamakan FAKTOR_TELAT jika ada di .env dan SKS > 0
+            if (! is_null($faktorTelat) && $sks > 0) {
+                $menitTambahan = (int) $faktorTelat * $sks;
+            } else {
+                $menitTambahan = (int) ($waktuTelat ?? 15);
+            }
 
             return Carbon::parse($this->waktu_pelaksanaan)
                 ->addMinutes($menitTambahan)
@@ -513,8 +524,20 @@ class KelasSesi extends Model
                 return null;
             }
 
+            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+
+            $faktorDispensasi = config('rps.faktor_dispensasi');
+            $waktuDispensasi = config('rps.waktu_dispensasi');
+
+            // Mengutamakan FAKTOR_DISPENSI jika ada di .env dan SKS > 0
+            if (! is_null($faktorDispensasi) && $sks > 0) {
+                $menitTambahan = (int) $faktorDispensasi * $sks;
+            } else {
+                $menitTambahan = (int) ($waktuDispensasi ?? 150);
+            }
+
             return Carbon::parse($this->waktu_pelaksanaan)
-                ->addHours(6)
+                ->addMinutes($menitTambahan)
                 ->format('Y-m-d\TH:i');
         });
     }

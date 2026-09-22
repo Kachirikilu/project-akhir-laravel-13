@@ -44,7 +44,7 @@
     @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-switch-table')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @if ($this->switchTable == 'hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
+        {{-- @if ($this->switchTable == 'hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini')
         @elseif (
             $this->switchTable == 'card' ||
@@ -58,7 +58,23 @@
                 @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card')
             </div>
         @elseif ($this->switchTable == 'table')
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table') --}}
+
+
+        @if ($this->switchTable == 'hari-ini' && $haveSesiDay == true && $stats['sesi-hari-ini'] <= 4)
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-hari-ini')
+        @elseif (
+            $this->switchTable == 'card' ||
+                $this->switchTable == 'table' ||
+                ($this->switchTable == 'hari-ini' && ($haveSesiDay == false || $stats['sesi-hari-ini'] >= 4)))
+            <div wire:key="view-card-sesi-and-jadwal-kosong-message">
+                @if ($this->switchTable == 'hari-ini' && $stats['sesi-hari-ini'] == 0)
+                    @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message', [
+                        'mb' => 'mb-6',
+                    ])
+                @endif
+                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card')
+            </div>
         @elseif ($this->switchTable == 'mahasiswa')
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-sesi-table')
         @elseif ($this->switchTable == 'cpmk')

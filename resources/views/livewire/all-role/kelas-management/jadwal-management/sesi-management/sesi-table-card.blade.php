@@ -1,4 +1,4 @@
-<div wire:key="view-card-sesi">
+<div wire:key="view-{{ $this->switchTable }}-sesi">
 
     @php
         $showMore = $showMore ?? false;
@@ -14,6 +14,9 @@
                 $bobotRaw = $s->bobot_normalisasi ?? '';
                 $bobotClean = str_replace(',', '.', $bobotRaw);
 
+                $wTugas = (int) ($s->w_tugas ?? 0);
+                $wMandiri = (int) ($s->w_mandiri ?? 0);
+
                 return [
                     'id' => $s->id,
                     'dbIndex' => $index,
@@ -21,11 +24,13 @@
                     // Nilai sorting utama
                     'pertemuan_ke' => $p,
                     'total_absensi' => (int) ($s->total_absensi ?? 0),
+                    'total_absensi_all' => (int) ($s->total_absensi_all ?? 0),
 
                     'hari' => trim($s->hari ?? ''),
                     'hari_jam' => trim("{$s->hari}, {$s->jam_pelaksanaan}"),
                     'hari_tanggal' => trim("{$s->hari}, {$s->tanggal_pelaksanaan}"),
 
+                    'jam_pelaksanaan' => $s->jam_pelaksanaan ?? '',
                     'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                     'tanggal' => $s->tanggal ?? '',
 
@@ -36,11 +41,15 @@
 
                     'tugas' => strtolower($s->tugas ?? ''),
 
+                    // --- FIELD BARU: Materi, Metodologi, Indikator ---
+                    'materi' => strtolower($s->materi ?? ''),
+                    'metodologi' => strtolower($s->metodologi ?? ''),
+                    'indikator' => strtolower($s->indikator ?? ''),
+
                     'kode_scpmk' => strtolower($stringKodeSCPMK),
                     'kode_cpmk' => strtolower($stringKodeCPMK),
 
                     'searchKodeCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeCPMK)),
-
                     'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeSCPMK)),
 
                     'searchPertemuan' => [
@@ -58,6 +67,41 @@
                         str_replace('.', ',', $bobotClean),
                         $bobotClean . '%',
                         str_replace('.', ',', $bobotClean) . '%',
+                    ],
+
+                    // --- FIELD BARU: Durasi Waktu W_TUGAS & W_MANDIRI ---
+                    'w_tugas' => $wTugas,
+                    'searchWTugas' => [
+                        (string) $wTugas,
+                        $wTugas . 'm',
+                        $wTugas . ' m',
+                        $wTugas . 'mnt',
+                        $wTugas . ' mnt',
+                        $wTugas . 'menit',
+                        $wTugas . ' menit',
+                        $wTugas . 'min',
+                        $wTugas . ' min',
+                        $wTugas . 'minute',
+                        $wTugas . ' minute',
+                        $wTugas . 'minutes',
+                        $wTugas . ' minutes',
+                    ],
+
+                    'w_mandiri' => $wMandiri,
+                    'searchWMandiri' => [
+                        (string) $wMandiri,
+                        $wMandiri . 'm',
+                        $wMandiri . ' m',
+                        $wMandiri . 'mnt',
+                        $wMandiri . ' mnt',
+                        $wMandiri . 'menit',
+                        $wMandiri . ' menit',
+                        $wMandiri . 'min',
+                        $wMandiri . ' min',
+                        $wMandiri . 'minute',
+                        $wMandiri . ' minute',
+                        $wMandiri . 'minutes',
+                        $wMandiri . ' minutes',
                     ],
                 ];
             })
@@ -79,6 +123,7 @@
             ),
         );
     @endphp
+
     <div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
     
@@ -124,6 +169,10 @@
     
                 let metode = String(item.metode || '').toLowerCase();
                 let tugas = String(item.tugas || '').toLowerCase();
+                let materi = String(item.materi || '').toLowerCase();
+                let metodologi = String(item.metodologi || '').toLowerCase();
+                let indikator = String(item.indikator || '').toLowerCase();
+    
                 let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
                 let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
                 let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
@@ -133,18 +182,29 @@
                 let hariJam = String(item.hari_jam || '').toLowerCase().replace(/[\u2013\u2014]/g, '-');
                 let hariTanggal = String(item.hari_tanggal || '').toLowerCase();
     
-                if (metode.includes(query) || tugas.includes(query)) return true;
+                // 1. Pencarian Teks & Field Baru (materi, metodologi, indikator)
+                if (metode.includes(query) || tugas.includes(query) || materi.includes(query) || metodologi.includes(query) || indikator.includes(query)) return true;
+    
+                // 2. Kode CPMK & Sub-CPMK
                 if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
                 if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
+    
+                // 3. Pertemuan Ke
                 if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
     
+                // 4. Hari & Jam
                 if (hari.includes(query) || hariTanggal.includes(query)) return true;
                 if (hariJam.includes(normalizedQuery)) return true;
     
+                // 5. Bobot Normalisasi
                 if (item.bobot?.some(bText => {
                         let text = String(bText).toLowerCase();
                         return text.includes(query) || text.includes(dotQuery);
                     })) return true;
+    
+                // 6. Waktu Tugas & Waktu Mandiri (Variasi menit/mnt/minutes)
+                if (item.searchWTugas?.some(wText => String(wText).toLowerCase().includes(query))) return true;
+                if (item.searchWMandiri?.some(wText => String(wText).toLowerCase().includes(query))) return true;
     
                 return false;
             });
@@ -178,13 +238,15 @@
                 sortedFiltered.sort((a, b) => {
                     const fallbackOrder = () => Number(a.dbIndex) - Number(b.dbIndex);
     
-                    if (field === 'pertemuan_ke' || field === 'total_absensi') {
-                        const numA = Number(field === 'pertemuan_ke' ? (a.pertemuan_ke ?? 0) : (a.total_absensi ?? 0));
-                        const numB = Number(field === 'pertemuan_ke' ? (b.pertemuan_ke ?? 0) : (b.total_absensi ?? 0));
+                    // Sorting Angka
+                    if (['pertemuan_ke', 'total_absensi', 'total_absensi_all', 'w_tugas', 'w_mandiri'].includes(field)) {
+                        const numA = Number(a[field] ?? 0);
+                        const numB = Number(b[field] ?? 0);
                         if (numA !== numB) return (numA - numB) * direction;
                         return fallbackOrder();
                     }
     
+                    // Sorting Metode
                     if (field === 'metode') {
                         const rankA = getMethodPriority(a.metode);
                         const rankB = getMethodPriority(b.metode);
@@ -196,6 +258,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting Bobot
                     if (field === 'bobot') {
                         const safeA = parseNumber(a.bobot_normalisasi);
                         const safeB = parseNumber(b.bobot_normalisasi);
@@ -207,6 +270,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting String Umum (Materi, Metodologi, Indikator, Tugas, CPMK, Sub-CPMK, dll.)
                     const valA = a[field];
                     const valB = b[field];
                     const textA = String(valA ?? '').trim().toLowerCase();
@@ -263,192 +327,11 @@
         }
     }" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
 
-        <x-global.main-layout-card :noTrash="true">
+        @if ($this->switchTable == 'table')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-table')
+        @elseif ($this->switchTable == 'card' || $this->switchTable == 'hari-ini')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card')
+        @endif
 
-            {{-- Slot Sortir --}}
-            <x-slot:leftSecHead>
-                <div
-                    class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
-
-                    @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'pertemuan_ke',
-                        'alpine' => 'sesi',
-                        'headString' => 'Pertemuan',
-                    ])
-                    @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'total_absensi',
-                        'alpine' => 'sesi',
-                        'headString' => 'Absensi',
-                    ])
-                    @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'metode',
-                        'alpine' => 'sesi',
-                    ])
-                    @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'bobot',
-                        'alpine' => 'sesi',
-                    ])
-
-
-                </div>
-            </x-slot:leftSecHead>
-
-            {{-- Slot Search --}}
-            {{-- <x-slot:rightSecHead>
-                <div class="w-full md:w-96 xl:w-108">
-                    @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Sesi Pertemuan Kelas...',
-                        'alpine' => 'sesi',
-                        'isLive' => 1,
-                        'isBorder' => 2,
-                    ])
-                </div>
-            </x-slot:rightSecHead> --}}
-
-
-            <x-slot:rightSecHead>
-                <div class="w-full md:w-110 xl:w-124">
-                    <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
-                        <div class="flex-shrink-0">
-                            @include('livewire.global.search-and-filters.page-control', [
-                                'perPageOptions' => [2, 4, 8, 16],
-                                'alpine' => 'sesi',
-                                'key' => 'page-control-sesi-card',
-                                'withB' => 0,
-                                'isSmall' => 1,
-                            ])
-                        </div>
-
-                        <div class="flex-grow max-w-md">
-                            @include('livewire.global.search-and-filters.main-search', [
-                                'placeholder' => 'Cari Sesi Pertemuan Kelas...',
-                                'alpine' => 'sesi',
-                                'isLive' => 1,
-                                'isBorder' => 2,
-                            ])
-                        </div>
-                    </div>
-                </div>
-            </x-slot:rightSecHead>
-
-
-            @foreach ($sesis as $index => $s)
-                @php
-                    $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
-                    $isPastDate =
-                        !empty($s->tanggal) &&
-                        \Carbon\Carbon::parse($s->tanggal)->isPast() &&
-                        !\Carbon\Carbon::parse($s->tanggal)->isToday();
-
-                    $kehadiran_mhs = Auth::user()->mahasiswa
-                        ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
-                        : null;
-
-                    if ($isUjian) {
-                        if ($isPastDate) {
-                            $focusDiv = 'border-[var(--border-table-color-special)]';
-                            $focusButton = 'text-[var(--focus-color-special)] btn-card-focus-state-special-64';
-                            $mainColor = 'bg-[var(--main-color-special)]/64';
-                        } else {
-                            $focusDiv =
-                                'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]/64';
-                            $focusButton =
-                                'text-[var(--focus-color-special)] btn-card-focus-state-special ring-[var(--focus-color-special)]';
-                            $mainColor = 'bg-[var(--main-color-special)]';
-                        }
-
-                        $borderTable = 'border-[var(--border-table-color-special)]';
-                        $mainText = 'text-[var(--contrast-main-text-special)]';
-                        $secondText = 'text-[var(--contrast-second-text-special)]';
-                        $thirdText = 'text-[var(--contrast-third-text-special)]';
-
-                        $focusColor = 'bg-[var(--focus-color-special)]';
-                        $mainTable = 'bg-[var(--main-table-color-special)]';
-                        $secondTable = 'bg-[var(--second-table-color-special)]';
-                        $subTable = 'bg-[var(--sub-table-color-special)]';
-                    } else {
-                        if ($isPastDate) {
-                            $focusDiv = 'border-[var(--border-table-color)]';
-                            $focusButton = 'text-[var(--focus-color)] btn-card-focus-state-64';
-                            $mainColor = 'bg-[var(--main-color)]/64';
-                        } else {
-                            $focusDiv = 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]/64';
-                            $focusButton = 'text-[var(--focus-color)] btn-card-focus-state ring-[var(--focus-color)]';
-                            $mainColor = 'bg-[var(--main-color)]';
-                        }
-                        $borderTable = 'border-[var(--border-table-color)]';
-
-                        $mainText = 'text-[var(--contrast-main-text)]';
-                        $secondText = 'text-[var(--contrast-second-text)]';
-                        $thirdText = 'text-[var(--contrast-third-text)]';
-
-                        $focusColor = 'bg-[var(--focus-color)]';
-                        $mainTable = 'bg-[var(--main-table-color)]';
-                        $secondTable = 'bg-[var(--second-table-color)]';
-                        $subTable = 'bg-[var(--sub-table-color)]';
-                    }
-                @endphp
-
-                <template
-                    x-if="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))">
-                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number(
-                        {{ $s->id }}))"
-                        class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
-
-                        <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{
-                            expanded: false,
-                            hasLoaded: false
-                        }"
-                            @click="expanded = !expanded; hasLoaded = true"
-                            class="{{ $focusDiv }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
-
-                            {{-- ═══ HERO ═══ --}}
-                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-header')
-
-                            {{-- ═══ BODY ═══ --}}
-                            <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-main')
-
-                                <div x-show="expanded" x-collapse.duration.300ms>
-                                    @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
-                                        @include(
-                                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded',
-                                            [
-                                                'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
-                                            ]
-                                        )
-                                    @else
-                                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded-skeleton')
-                                    @endif
-                                </div>
-                            </div>
-
-                            {{-- ═══ FOOTER: toggle hint ═══ --}}
-                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-button')
-
-                        </div>
-                    </div>
-                </template>
-            @endforeach
-
-
-            {{-- EMPTY STATE ANCHOR --}}
-            <x-slot:emptys>
-                <div x-show="totalFilteredItems === 0"
-                    class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
-                    <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Sesi Pertemuan Kelas
-                        ditemukan!</p>
-                </div>
-            </x-slot:emptys>
-
-            {{-- Slot Footer Pagination --}}
-            <x-slot:footer>
-                @include('livewire.global.table.pagination-alpine', ['mx' => ''])
-                {{-- @if (Auth::user()->admin)
-                    @include('livewire.global.table.trash-delete-switch', ['mx' => ''])
-                @endif --}}
-            </x-slot:footer>
-
-        </x-global.main-layout-card>
     </div>
 </div>

@@ -272,28 +272,28 @@
                     @endphp
 
                     {{-- ═══ HERO ═══ --}}
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-header')
 
                     {{-- ═══ BODY ═══ --}}
                     <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-main')
 
                         <div x-show="expanded" x-collapse.duration.300ms>
                             @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
                                 @include(
-                                    'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
+                                    'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded',
                                     [
                                         'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
                                     ]
                                 )
                             @else
-                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
+                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded-skeleton')
                             @endif
                         </div>
                     </div>
 
                     {{-- ═══ FOOTER: toggle hint ═══ --}}
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-button')
 
                 </div>
             </div>

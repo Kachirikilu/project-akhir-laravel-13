@@ -22,7 +22,7 @@
          HEADER: IDENTITAS PENGGUNA
          ============================================================ --}}
 <div
-    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200">
+    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200">
 
     {{-- Hero --}}
     <div class="flex flex-col gap-3 p-4 sm:p-[18px] bg-[var(--main-color)]">
@@ -31,9 +31,9 @@
                 class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.07em] text-white/75">
                 <flux:icon name="identification" class="w-3 h-3" />
                 @if (Auth::user()->admin)
-                    Administrator
+                    Administrator {{ Auth::user()->tingkat_text }}
                 @elseif (Auth::user()->dosen)
-                    Dosen
+                    Dosen {{ Auth::user()->tingkat_text }}
                 @elseif (Auth::user()->mahasiswa)
                     Mahasiswa
                 @endif

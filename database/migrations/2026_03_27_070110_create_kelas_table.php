@@ -89,7 +89,7 @@ return new class extends Migration
             $table->text('deskripsi_tugas')->nullable();
             $table->integer('waktu_tugas')->nullable();
             $table->integer('waktu_mandiri')->nullable();
-            $table->decimal('bobot', 5, 2)->nullable();
+            // $table->decimal('bobot', 5, 2)->nullable();
 
             $table->timestamps();
         });

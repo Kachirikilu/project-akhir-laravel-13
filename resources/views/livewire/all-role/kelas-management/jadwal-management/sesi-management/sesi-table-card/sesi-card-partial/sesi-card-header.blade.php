@@ -39,9 +39,9 @@
                 </flux:dropdown>
             @endif
 
-                <span
-                    class="text-xs {{ $isPastDate ? 'text-[var(--main-text)]/64' : 'text-[var(--main-text)]' }} font-mono">ID:
-                    {{ $s->id }}</span>
+            <span
+                class="text-xs {{ $isPastDate ? 'text-[var(--main-text)]/64' : 'text-[var(--main-text)]' }} font-mono">ID:
+                {{ $s->id }}</span>
         </div>
 
         {{-- Tombol Menu --}}
@@ -61,11 +61,17 @@
     {{-- Judul: Sub-CPMK atau label Ujian --}}
     <p
         class="mt-1 text-[15px] font-bold leading-[1.35] tracking-[0.1em] {{ $isPastDate ? 'dark:text-[var(--main-text)]/64' : '' }} text-[var(--main-text)]">
-        {{-- @if ($isUjian)
-            Sesi Evaluasi Utama
-        @else --}}
+
         {{ $s->kode_cpmk ?? 'Sesi Evaluasi Utama' }}
-        {{-- @endif --}}
+
+        @if ($isPastDate)
+            <span class="mx-2">
+                |
+            </span>
+            <span class="font-mono">
+                Selesai
+            </span>
+        @endif
     </p>
 
     <div class="flex flex-wrap items-center gap-2">

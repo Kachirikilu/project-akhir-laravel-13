@@ -7,8 +7,6 @@
 
     <x-global.main-layout-card>
 
-
-
         @foreach ($sesis as $index => $s)
             @php
                 $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
@@ -34,7 +32,6 @@
                 $secondTable = "bg-[var(--second-table-color{$suf})]";
                 $subTable = "bg-[var(--sub-table-color{$suf})]";
 
-                // 2. Base String untuk Penggabungan $focusButton
                 $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
 
                 if ($isUjian) {
@@ -76,41 +73,33 @@
                     hasLoaded: false
                 }"
                     @click="expanded = !expanded; hasLoaded = true"
-                    class="{{ $focusDiv }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg">
+                    class="{{ $focusDiv }} flex flex-col h-auto flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg">
                     {{-- ═══ HERO ═══ --}}
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-header')
 
                     {{-- ═══ BODY ═══ --}}
                     <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-main')
 
                         <div x-show="expanded" x-collapse.duration.300ms>
                             @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
                                 @include(
-                                    'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
+                                    'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded',
                                     [
                                         'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
                                     ]
                                 )
                             @else
-                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
+                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded-skeleton')
                             @endif
                         </div>
                     </div>
 
                     {{-- ═══ FOOTER: toggle hint ═══ --}}
-                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
+                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-button')
                 </div>
             </div>
         @endforeach
-
-
-        {{-- Slot Footer Pagination --}}
-        {{-- <x-slot:footer>
-            @if (Auth::user()->admin)
-                @include('livewire.global.table.trash-delete-switch', ['mx' => ''])
-            @endif
-        </x-slot:footer> --}}
 
     </x-global.main-layout-card>
 </div>

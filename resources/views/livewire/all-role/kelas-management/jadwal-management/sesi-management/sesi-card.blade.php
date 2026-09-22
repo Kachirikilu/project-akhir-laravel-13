@@ -14,6 +14,9 @@
                 $bobotRaw = $s->bobot_normalisasi ?? '';
                 $bobotClean = str_replace(',', '.', $bobotRaw);
 
+                $wTugas = (int) ($s->w_tugas ?? 0);
+                $wMandiri = (int) ($s->w_mandiri ?? 0);
+
                 return [
                     'id' => $s->id,
                     'dbIndex' => $index,
@@ -21,11 +24,13 @@
                     // Nilai sorting utama
                     'pertemuan_ke' => $p,
                     'total_absensi' => (int) ($s->total_absensi ?? 0),
+                    'total_absensi_all' => (int) ($s->total_absensi_all ?? 0),
 
                     'hari' => trim($s->hari ?? ''),
                     'hari_jam' => trim("{$s->hari}, {$s->jam_pelaksanaan}"),
                     'hari_tanggal' => trim("{$s->hari}, {$s->tanggal_pelaksanaan}"),
 
+                    'jam_pelaksanaan' => $s->jam_pelaksanaan ?? '',
                     'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                     'tanggal' => $s->tanggal ?? '',
 
@@ -36,11 +41,15 @@
 
                     'tugas' => strtolower($s->tugas ?? ''),
 
+                    // --- FIELD BARU: Materi, Metodologi, Indikator ---
+                    'materi' => strtolower($s->materi ?? ''),
+                    'metodologi' => strtolower($s->metodologi ?? ''),
+                    'indikator' => strtolower($s->indikator ?? ''),
+
                     'kode_scpmk' => strtolower($stringKodeSCPMK),
                     'kode_cpmk' => strtolower($stringKodeCPMK),
 
                     'searchKodeCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeCPMK)),
-
                     'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeSCPMK)),
 
                     'searchPertemuan' => [
@@ -58,6 +67,41 @@
                         str_replace('.', ',', $bobotClean),
                         $bobotClean . '%',
                         str_replace('.', ',', $bobotClean) . '%',
+                    ],
+
+                    // --- FIELD BARU: Durasi Waktu W_TUGAS & W_MANDIRI ---
+                    'w_tugas' => $wTugas,
+                    'searchWTugas' => [
+                        (string) $wTugas,
+                        $wTugas . 'm',
+                        $wTugas . ' m',
+                        $wTugas . 'mnt',
+                        $wTugas . ' mnt',
+                        $wTugas . 'menit',
+                        $wTugas . ' menit',
+                        $wTugas . 'min',
+                        $wTugas . ' min',
+                        $wTugas . 'minute',
+                        $wTugas . ' minute',
+                        $wTugas . 'minutes',
+                        $wTugas . ' minutes',
+                    ],
+
+                    'w_mandiri' => $wMandiri,
+                    'searchWMandiri' => [
+                        (string) $wMandiri,
+                        $wMandiri . 'm',
+                        $wMandiri . ' m',
+                        $wMandiri . 'mnt',
+                        $wMandiri . ' mnt',
+                        $wMandiri . 'menit',
+                        $wMandiri . ' menit',
+                        $wMandiri . 'min',
+                        $wMandiri . ' min',
+                        $wMandiri . 'minute',
+                        $wMandiri . ' minute',
+                        $wMandiri . 'minutes',
+                        $wMandiri . ' minutes',
                     ],
                 ];
             })
@@ -79,6 +123,7 @@
             ),
         );
     @endphp
+
     <div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
     
@@ -124,6 +169,10 @@
     
                 let metode = String(item.metode || '').toLowerCase();
                 let tugas = String(item.tugas || '').toLowerCase();
+                let materi = String(item.materi || '').toLowerCase();
+                let metodologi = String(item.metodologi || '').toLowerCase();
+                let indikator = String(item.indikator || '').toLowerCase();
+    
                 let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
                 let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
                 let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
@@ -133,18 +182,29 @@
                 let hariJam = String(item.hari_jam || '').toLowerCase().replace(/[\u2013\u2014]/g, '-');
                 let hariTanggal = String(item.hari_tanggal || '').toLowerCase();
     
-                if (metode.includes(query) || tugas.includes(query)) return true;
+                // 1. Pencarian Teks & Field Baru (materi, metodologi, indikator)
+                if (metode.includes(query) || tugas.includes(query) || materi.includes(query) || metodologi.includes(query) || indikator.includes(query)) return true;
+    
+                // 2. Kode CPMK & Sub-CPMK
                 if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
                 if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
+
+                // 3. Pertemuan Ke
                 if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
     
+                // 4. Hari & Jam
                 if (hari.includes(query) || hariTanggal.includes(query)) return true;
                 if (hariJam.includes(normalizedQuery)) return true;
     
+                // 5. Bobot Normalisasi
                 if (item.bobot?.some(bText => {
                         let text = String(bText).toLowerCase();
                         return text.includes(query) || text.includes(dotQuery);
                     })) return true;
+
+                // 6. Waktu Tugas & Waktu Mandiri (Variasi menit/mnt/minutes)
+                if (item.searchWTugas?.some(wText => String(wText).toLowerCase().includes(query))) return true;
+                if (item.searchWMandiri?.some(wText => String(wText).toLowerCase().includes(query))) return true;
     
                 return false;
             });
@@ -178,13 +238,15 @@
                 sortedFiltered.sort((a, b) => {
                     const fallbackOrder = () => Number(a.dbIndex) - Number(b.dbIndex);
     
-                    if (field === 'pertemuan_ke' || field === 'total_absensi') {
-                        const numA = Number(field === 'pertemuan_ke' ? (a.pertemuan_ke ?? 0) : (a.total_absensi ?? 0));
-                        const numB = Number(field === 'pertemuan_ke' ? (b.pertemuan_ke ?? 0) : (b.total_absensi ?? 0));
+                    // Sorting Angka
+                    if (['pertemuan_ke', 'total_absensi', 'total_absensi_all', 'w_tugas', 'w_mandiri'].includes(field)) {
+                        const numA = Number(a[field] ?? 0);
+                        const numB = Number(b[field] ?? 0);
                         if (numA !== numB) return (numA - numB) * direction;
                         return fallbackOrder();
                     }
     
+                    // Sorting Metode
                     if (field === 'metode') {
                         const rankA = getMethodPriority(a.metode);
                         const rankB = getMethodPriority(b.metode);
@@ -196,6 +258,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting Bobot
                     if (field === 'bobot') {
                         const safeA = parseNumber(a.bobot_normalisasi);
                         const safeB = parseNumber(b.bobot_normalisasi);
@@ -207,6 +270,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting String Umum (Materi, Metodologi, Indikator, Tugas, CPMK, Sub-CPMK, dll.)
                     const valA = a[field];
                     const valB = b[field];
                     const textA = String(valA ?? '').trim().toLowerCase();
@@ -263,6 +327,7 @@
         }
     }" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
 
+
         <x-global.main-layout-card :noTrash="true">
 
             {{-- Slot Sortir --}}
@@ -293,19 +358,6 @@
 
                 </div>
             </x-slot:leftSecHead>
-
-            {{-- Slot Search --}}
-            {{-- <x-slot:rightSecHead>
-                <div class="w-full md:w-96 xl:w-108">
-                    @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Sesi Pertemuan Kelas...',
-                        'alpine' => 'sesi',
-                        'isLive' => 1,
-                        'isBorder' => 2,
-                    ])
-                </div>
-            </x-slot:rightSecHead> --}}
-
 
             <x-slot:rightSecHead>
                 <div class="w-full md:w-110 xl:w-124">
@@ -367,7 +419,7 @@
                                 'dark:border-[var(--border-table-color-special)]/42 border-[var(--border-table-color-special)]';
                             $focusButton =
                                 $btnBase .
-                                ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color)]/64';
+                                ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color-special)]/64';
                             $mainColor = 'dark:bg-[var(--main-color-special)]/24 bg-[var(--main-color-special)]/72';
                         } else {
                             $focusDiv =
@@ -401,33 +453,33 @@
                     <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number({{ $s->id }}))"
                         wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: false, hasLoaded: false }"
                         @click="expanded = !expanded; hasLoaded = true"
-                        class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
+                        class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-auto flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
 
 
 
                         {{-- ═══ HERO ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-header')
 
                         {{-- ═══ BODY ═══ --}}
                         <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
+                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-main')
 
                             <div x-show="expanded" x-collapse.duration.300ms>
                                 @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
                                     @include(
-                                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
+                                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded',
                                         [
                                             'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
                                         ]
                                     )
                                 @else
-                                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
+                                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-expanded-skeleton')
                                 @endif
                             </div>
                         </div>
 
                         {{-- ═══ FOOTER: toggle hint ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-table-card.sesi-card-partial.sesi-card-button')
 
                     </div>
                 </div>

@@ -60,6 +60,10 @@
                 
                 {{ $slot }}
 
+                @if (isset($emptys))
+                    {{ $emptys }}
+                @endif
+
             </div>
         </div>
     </div>

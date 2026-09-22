@@ -25,19 +25,22 @@
 @endif
 
 @if ($withDiv)
+    {{-- PERBAIKAN: Gunakan flex-shrink-0 dan divStyle untuk mengunci lebar kolom --}}
     <div class="{{ $borderX || $main ? 'border-x' : '' }}
         {{ $borderL ? 'border-l' : '' }}
-        {{ $borderR ? 'border-r' : '' }} {{ ($divStyle ?? false) ? $divStyle : '' }} p-0 table-head shrink-0 relative shrink-0 flex items-stretch justify-center table-border h-full self-stretch">
+        {{ $borderR ? 'border-r' : '' }} {{ $divStyle ?? 'w-28 shrink-0' }} table-head relative shrink-0 flex items-center justify-center p-0 table-border">
 @endif
 
 <div x-cloak x-data="{
-    @if ($alpine) get sortField() { return this.$store.{{ $alpine }}.sortField },
+    @if ($alpine)
+        get sortField() { return this.$store.{{ $alpine }}.sortField },
         set sortField(val) { this.$store.{{ $alpine }}.sortField = val },
         get sortDirection() { return this.$store.{{ $alpine }}.sortDirection },
         set sortDirection(val) { this.$store.{{ $alpine }}.sortDirection = val },
     @else
         sortField: @entangle('sortField'),
-        sortDirection: @entangle('sortDirection'), @endif
+        sortDirection: @entangle('sortDirection'),
+    @endif
 
     clicked: false,
 
@@ -58,15 +61,13 @@
                 }
             }
         @else
-            await $wire.sortBy('{{ $sortFieldString }}', direction); 
+            await $wire.sortBy('{{ $sortFieldString }}', direction);
         @endif
 
         this.clicked = false;
     }
 }"
-    {{-- PERBAIKAN: Ubah 'h-10' menjadi 'h-full' agar konten menyatu penuh dari atas ke bawah --}}
-    class="w-full h-full {{ $withDiv ? (($rowSpan ?? false) ? 'py-12' : 'py-5')  : '' }} px-6 flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap">
-    {{-- class="w-full {{ $withDiv ? 'min-h-10 px-2' : 'h-full' }} flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap"> --}}
+    class="relative w-full {{ $withDiv ? 'h-10 px-2' : 'h-full' }} flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap overflow-hidden">
 
     {{-- Judul --}}
     <span @click.stop.prevent="doSort()"
@@ -77,7 +78,7 @@
             'font-bold text-[var(--contrast-main-text)]':
                 !(sortField === '{{ $sortFieldString }}' || clicked)
         }"
-        class="transition-colors duration-300 cursor-pointer select-none">
+        class="transition-colors duration-300 cursor-pointer select-none truncate">
         {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
     </span>
 

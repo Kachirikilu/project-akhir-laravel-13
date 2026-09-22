@@ -14,6 +14,9 @@
                 $bobotRaw = $s->bobot_normalisasi ?? '';
                 $bobotClean = str_replace(',', '.', $bobotRaw);
 
+                $wTugas = (int) ($s->w_tugas ?? 0);
+                $wMandiri = (int) ($s->w_mandiri ?? 0);
+
                 return [
                     'id' => $s->id,
                     'dbIndex' => $index,
@@ -21,11 +24,13 @@
                     // Nilai sorting utama
                     'pertemuan_ke' => $p,
                     'total_absensi' => (int) ($s->total_absensi ?? 0),
+                    'total_absensi_all' => (int) ($s->total_absensi_all ?? 0),
 
                     'hari' => trim($s->hari ?? ''),
                     'hari_jam' => trim("{$s->hari}, {$s->jam_pelaksanaan}"),
                     'hari_tanggal' => trim("{$s->hari}, {$s->tanggal_pelaksanaan}"),
 
+                    'jam_pelaksanaan' => $s->jam_pelaksanaan ?? '',
                     'tanggal_pelaksanaan' => $s->tanggal_pelaksanaan ?? '',
                     'tanggal' => $s->tanggal ?? '',
 
@@ -36,11 +41,15 @@
 
                     'tugas' => strtolower($s->tugas ?? ''),
 
+                    // --- FIELD BARU: Materi, Metodologi, Indikator ---
+                    'materi' => strtolower($s->materi ?? ''),
+                    'metodologi' => strtolower($s->metodologi ?? ''),
+                    'indikator' => strtolower($s->indikator ?? ''),
+
                     'kode_scpmk' => strtolower($stringKodeSCPMK),
                     'kode_cpmk' => strtolower($stringKodeCPMK),
 
                     'searchKodeCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeCPMK)),
-
                     'searchKodeSCPMK' => preg_replace('/[^A-Za-z0-9]/', '', strtolower($stringKodeSCPMK)),
 
                     'searchPertemuan' => [
@@ -58,6 +67,41 @@
                         str_replace('.', ',', $bobotClean),
                         $bobotClean . '%',
                         str_replace('.', ',', $bobotClean) . '%',
+                    ],
+
+                    // --- FIELD BARU: Durasi Waktu W_TUGAS & W_MANDIRI ---
+                    'w_tugas' => $wTugas,
+                    'searchWTugas' => [
+                        (string) $wTugas,
+                        $wTugas . 'm',
+                        $wTugas . ' m',
+                        $wTugas . 'mnt',
+                        $wTugas . ' mnt',
+                        $wTugas . 'menit',
+                        $wTugas . ' menit',
+                        $wTugas . 'min',
+                        $wTugas . ' min',
+                        $wTugas . 'minute',
+                        $wTugas . ' minute',
+                        $wTugas . 'minutes',
+                        $wTugas . ' minutes',
+                    ],
+
+                    'w_mandiri' => $wMandiri,
+                    'searchWMandiri' => [
+                        (string) $wMandiri,
+                        $wMandiri . 'm',
+                        $wMandiri . ' m',
+                        $wMandiri . 'mnt',
+                        $wMandiri . ' mnt',
+                        $wMandiri . 'menit',
+                        $wMandiri . ' menit',
+                        $wMandiri . 'min',
+                        $wMandiri . ' min',
+                        $wMandiri . 'minute',
+                        $wMandiri . ' minute',
+                        $wMandiri . 'minutes',
+                        $wMandiri . ' minutes',
                     ],
                 ];
             })
@@ -79,6 +123,7 @@
             ),
         );
     @endphp
+
     <div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
     
@@ -124,6 +169,10 @@
     
                 let metode = String(item.metode || '').toLowerCase();
                 let tugas = String(item.tugas || '').toLowerCase();
+                let materi = String(item.materi || '').toLowerCase();
+                let metodologi = String(item.metodologi || '').toLowerCase();
+                let indikator = String(item.indikator || '').toLowerCase();
+    
                 let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
                 let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
                 let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
@@ -133,18 +182,29 @@
                 let hariJam = String(item.hari_jam || '').toLowerCase().replace(/[\u2013\u2014]/g, '-');
                 let hariTanggal = String(item.hari_tanggal || '').toLowerCase();
     
-                if (metode.includes(query) || tugas.includes(query)) return true;
+                // 1. Pencarian Teks & Field Baru (materi, metodologi, indikator)
+                if (metode.includes(query) || tugas.includes(query) || materi.includes(query) || metodologi.includes(query) || indikator.includes(query)) return true;
+    
+                // 2. Kode CPMK & Sub-CPMK
                 if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
                 if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
+    
+                // 3. Pertemuan Ke
                 if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
     
+                // 4. Hari & Jam
                 if (hari.includes(query) || hariTanggal.includes(query)) return true;
                 if (hariJam.includes(normalizedQuery)) return true;
     
+                // 5. Bobot Normalisasi
                 if (item.bobot?.some(bText => {
                         let text = String(bText).toLowerCase();
                         return text.includes(query) || text.includes(dotQuery);
                     })) return true;
+    
+                // 6. Waktu Tugas & Waktu Mandiri (Variasi menit/mnt/minutes)
+                if (item.searchWTugas?.some(wText => String(wText).toLowerCase().includes(query))) return true;
+                if (item.searchWMandiri?.some(wText => String(wText).toLowerCase().includes(query))) return true;
     
                 return false;
             });
@@ -178,13 +238,15 @@
                 sortedFiltered.sort((a, b) => {
                     const fallbackOrder = () => Number(a.dbIndex) - Number(b.dbIndex);
     
-                    if (field === 'pertemuan_ke' || field === 'total_absensi') {
-                        const numA = Number(field === 'pertemuan_ke' ? (a.pertemuan_ke ?? 0) : (a.total_absensi ?? 0));
-                        const numB = Number(field === 'pertemuan_ke' ? (b.pertemuan_ke ?? 0) : (b.total_absensi ?? 0));
+                    // Sorting Angka
+                    if (['pertemuan_ke', 'total_absensi', 'total_absensi_all', 'w_tugas', 'w_mandiri'].includes(field)) {
+                        const numA = Number(a[field] ?? 0);
+                        const numB = Number(b[field] ?? 0);
                         if (numA !== numB) return (numA - numB) * direction;
                         return fallbackOrder();
                     }
     
+                    // Sorting Metode
                     if (field === 'metode') {
                         const rankA = getMethodPriority(a.metode);
                         const rankB = getMethodPriority(b.metode);
@@ -196,6 +258,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting Bobot
                     if (field === 'bobot') {
                         const safeA = parseNumber(a.bobot_normalisasi);
                         const safeB = parseNumber(b.bobot_normalisasi);
@@ -207,6 +270,7 @@
                         return fallbackOrder();
                     }
     
+                    // Sorting String Umum (Materi, Metodologi, Indikator, Tugas, CPMK, Sub-CPMK, dll.)
                     const valA = a[field];
                     const valB = b[field];
                     const textA = String(valA ?? '').trim().toLowerCase();
@@ -267,22 +331,6 @@
 
         <x-global.main-layout-table-alpine :noTrash="true">
 
-            @php
-                $isAdminOrDosen = Auth::user()->admin || Auth::user()->dosen;
-
-                if ($showMore) {
-                    $gridCols = $isAdminOrDosen
-                        ? 'grid-cols-[100px_180px_180px_150px_200px_150px_180px_180px_200px_150px_minmax(280px,1fr)_150px_150px_200px_120px]'
-                        : 'grid-cols-[100px_180px_180px_150px_200px_150px_180px_180px_200px_150px_minmax(280px,1fr)_150px_150px_200px]';
-                    $minWidthClass = 'min-w-[1500px]';
-                } else {
-                    $gridCols = $isAdminOrDosen
-                        ? 'grid-cols-[0.5fr_1.2fr_1fr_1fr_1.3fr_1fr_1.5fr_0.6fr]'
-                        : 'grid-cols-[1.2fr_1fr_1fr_1.3fr_1fr_1.5fr]';
-                    $minWidthClass = 'w-full';
-                }
-            @endphp
-
             <x-slot:leftSecHead>
                 <div
                     class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
@@ -331,83 +379,184 @@
                 </div>
             </x-slot:rightSecHead>
 
-            {{-- HEADER TABEL --}}
+
+
             <x-slot:header>
-                {{-- CSS Grid Utama untuk Header 2 Baris --}}
                 <div
-                    class="
-                    {{-- py-2 px-3 --}}
-                    grid {{ $gridCols }} {{ $minWidthClass }} w-full items-center text-xs sm:text-sm font-semibold bg-[var(--main-table-color)] border-b table-border gap-y-1">
+                    class="flex flex-col min-w-full w-max text-xs sm:text-sm font-semibold bg-[var(--main-table-color)] border-b table-border">
+
+                    {{-- WADAH INDUK (items-stretch memaksa semua kolom setinggi grup 2 baris) --}}
+                    <div class="flex flex-row items-stretch w-full">
 
                         @include('livewire.global.table.head-table', [
                             'sortFieldString' => 'id',
                             'alpine' => 'sesi',
                             'isCenter' => 1,
-                            'rowSpan' => 2,
                             'withDiv' => 1,
+                            'rowSpan' => 1,
+                            'divStyle' => 'w-32',
                         ])
 
-                    {{-- Metode (Rowspan 2 - Posisi Tengah Vertikal) --}}
-                    <div class="row-span-2 self-center text-center truncate py-1">
-                        Metode
-                    </div>
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'metode',
+                            'alpine' => 'sesi',
+                            'isMain' => 1,
+                            'isCenter' => 1,
+                            'withDiv' => 1,
+                            'rowSpan' => 1,
+                            'divStyle' => 'w-42',
+                        ])
 
-                    {{-- Pertemuan (Rowspan 2 - Posisi Tengah Vertikal) --}}
-                    <div class="row-span-2 self-center text-center truncate py-1">
-                        Pertemuan
-                    </div>
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'pertemuan_ke',
+                            'alpine' => 'sesi',
+                            'headString' => 'Pertemuan',
+                            'isCenter' => 1,
+                            // 'isSticky' => 1,
+                            'withDiv' => 1,
+                            'rowSpan' => 1,
+                            'divStyle' => 'w-48',
+                        ])
 
-                    {{-- Group 1: Informasi Sesi Kelas (Span 4 atau 5 Kolom di Baris 1) --}}
-                    <div
-                        class="{{ $showMore ? 'col-span-5' : 'col-span-4' }} text-center font-bold tracking-wide border-x table-border py-1 px-2 bg-[var(--hover-table-color)]/50 rounded mb-1">
-                        Informasi Sesi Kelas
-                    </div>
-
-                    {{-- Group 2: Informasi Sub-CPMK (Span 6 Kolom di Baris 1) --}}
-                    @if ($showMore)
-                        <div
-                            class="col-span-6 text-center font-bold tracking-wide border-r table-border py-1 px-2 bg-[var(--hover-table-color)]/50 rounded mb-1">
-                            Informasi Sub-CPMK
+                        {{-- Group 1: Informasi Sesi Kelas --}}
+                        <div class="flex flex-col table-border {{ $showMore ? 'shrink-0' : 'flex-1' }}">
+                            <div class="table-head-sub-no-x border-l tracking-wide">
+                                Informasi Sesi Kelas
+                            </div>
+                            <div class="flex flex-row items-stretch h-full">
+                                @include('livewire.global.table.head-table', [
+                                    'sortFieldString' => 'hari_pelaksanaan',
+                                    'alpine' => 'sesi',
+                                    'headString' => 'Hari',
+                                    'isMain' => 1,
+                                    'isCenter' => 1,
+                                    'withDiv' => 1,
+                                    'divStyle' => 'w-32',
+                                ])
+                                @include('livewire.global.table.head-table', [
+                                    'sortFieldString' => 'jam_pelaksanaan',
+                                    'alpine' => 'sesi',
+                                    'headString' => 'Jam',
+                                    'isCenter' => 1,
+                                    'withDiv' => 1,
+                                    'divStyle' => 'w-42',
+                                ])
+                                @include('livewire.global.table.head-table', [
+                                    'sortFieldString' => 'total_absensi',
+                                    'alpine' => 'sesi',
+                                    'headString' => 'Absensi',
+                                    'isCenter' => 1,
+                                    'withDiv' => 1,
+                                    'divStyle' => 'w-32',
+                                ])
+                                @if ($showMore)
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'total_absensi_all',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'Absensi Terdata',
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-56',
+                                    ])
+                                @endif
+                                @include('livewire.global.table.head-table', [
+                                    'sortFieldString' => 'tanggal_pelaksanaan',
+                                    'alpine' => 'sesi',
+                                    'headString' => 'Tanggal',
+                                    'isCenter' => 1,
+                                    'withDiv' => 1,
+                                    'divStyle' => $showMore ? 'w-36' : 'flex-1 min-w-[120px]',
+                                ])
+                            </div>
                         </div>
-                    @endif
+                        @if (!$showMore)
+                            @include('livewire.global.table.head-table', [
+                                'sortFieldString' => 'bobot',
+                                'alpine' => 'sesi',
+                                'isBorderL' => 1,
+                                'isCenter' => 1,
+                                'withDiv' => 1,
+                                'rowSpan' => 1,
+                                'divStyle' => 'w-32',
+                            ])
+                        @endif
+                        {{-- Group 2: Informasi Sub-CPMK --}}
+                        @if ($showMore)
+                            <div class="flex flex-col table-border flex-1">
+                                <div class="table-head-sub-no-x border-l tracking-wide">
+                                    Informasi Sub-CPMK
+                                </div>
+                                <div class="flex flex-row items-stretch h-full">
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'kode_scpmk',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'Sub-CPMK',
+                                        'isMain' => 1,
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-48',
+                                    ])
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'bobot',
+                                        'alpine' => 'sesi',
+                                        'isBorderR' => 1,
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-32',
+                                    ])
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'tugas',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'Deskripsi Tugas',
+                                        'withDiv' => 1,
+                                        'divStyle' => 'flex-1 w-[320px]',
+                                    ])
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'w_tugas',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'W. Tugas',
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-42',
+                                    ])
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'w_mandiri',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'W. Mandiri',
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-42',
+                                    ])
+                                    @include('livewire.global.table.head-table', [
+                                        'sortFieldString' => 'kode_cpmk',
+                                        'alpine' => 'sesi',
+                                        'headString' => 'CPMK',
+                                        'isBorderL' => 1,
+                                        'isCenter' => 1,
+                                        'withDiv' => 1,
+                                        'divStyle' => 'w-48',
+                                    ])
+                                </div>
+                            </div>
+                        @endif
 
-                    {{-- Aksi (Rowspan 2 - Posisi Tengah Vertikal) --}}
-                    @if ($isAdminOrDosen)
-                        <div class="row-span-2 self-center text-center truncate py-1">
+                        {{-- Kolom Aksi --}}
+                        <div class="table-head border-x w-20 flex items-center justify-center">
                             Aksi
                         </div>
-                    @endif
 
-                    {{-- ═══ SUB-KOLOM BARIS 2 ═══ --}}
-
-                    {{-- Sub-kolom Informasi Sesi Kelas --}}
-                    <div class="text-center truncate text-[var(--contrast-second-text)]">Hari</div>
-                    <div class="text-center truncate text-[var(--contrast-second-text)]">Jam</div>
-                    <div class="text-center truncate text-[var(--contrast-second-text)]">Absensi</div>
-
-                    @if ($showMore)
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">Absensi Terdata</div>
-                    @endif
-
-                    <div class="text-center truncate text-[var(--contrast-second-text)]">Tanggal</div>
-
-                    {{-- Sub-kolom Informasi Sub-CPMK --}}
-                    @if ($showMore)
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">Sub-CPMK</div>
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">Bobot</div>
-                        <div class="text-left px-2 truncate text-[var(--contrast-second-text)]">Deskripsi Tugas</div>
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">W. Tugas</div>
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">W. Mandiri</div>
-                        <div class="text-center truncate text-[var(--contrast-second-text)]">CPMK</div>
-                    @endif
-
+                    </div>
                 </div>
             </x-slot:header>
 
-            {{-- BODY TABEL --}}
-            @forelse($sesis as $s)
+            {{-- BODY TABEL DENGAN LEBAR TERPERCAYA DAN PRESISI --}}
+            @foreach($sesis as $s)
                 @php
-                    $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
+                    $isPastDate =
+                        !empty($s->tanggal) &&
+                        \Carbon\Carbon::parse($s->tanggal)->isPast() &&
+                        !\Carbon\Carbon::parse($s->tanggal)->isToday();
+                    // $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
                     $kehadiran_mhs = Auth::user()->mahasiswa
                         ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
                         : null;
@@ -417,17 +566,18 @@
                 <div x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))"
                     class="contents">
 
-                    {{-- Layer 2: Penanganan CSS Order & Dynamic CSS Grid --}}
+                    {{-- Layer 2: CSS Order & Flexbox Layout --}}
                     <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number(
                         {{ $s->id }}))"
                         wire:key="kelas-sesi-row-{{ $s->id }}"
-                        class="py-3 grid {{ $gridCols }} {{ $minWidthClass }} w-full items-center hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200 border-b table-border text-xs sm:text-sm">
+                        class="flex flex-row items-center min-w-full w-max hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200 border-b table-border text-xs sm:text-sm">
 
-                        <div class="text-center font-medium text-[var(--contrast-second-text)] truncate">
+                        <div
+                            class="w-32 shrink-0 text-center font-medium text-[var(--contrast-second-text)] truncate px-6">
                             {{ $s->id }}
                         </div>
 
-                        <div class="flex justify-center">
+                        <div class="table-main w-42 shrink-0 flex justify-center px-6">
                             <flux:dropdown>
                                 <button class="cursor-pointer">
                                     @include('livewire.global.table.badge.metode-badge', [
@@ -441,30 +591,41 @@
                             </flux:dropdown>
                         </div>
 
-                        <div class="text-center font-semibold text-[var(--contrast-main-text)] truncate">
+                        <div class="w-48 shrink-0 text-center font-semibold truncate px-6">
                             P-{{ $s->pertemuan_ke }}
+
+                            @if ($isPastDate)
+                                <span class="ml-2 font-mono">
+                                    Selesai
+                                </span>
+                            @endif
                         </div>
 
-                        <div class="text-center whitespace-nowrap truncate">{{ $s->hari }}</div>
-                        <div class="text-center whitespace-nowrap text-[var(--contrast-second-text)] truncate">
-                            {{ $s->jam_pelaksanaan }}</div>
+                        <div class="table-main w-32 shrink-0 text-center whitespace-nowrap truncate px-6">
+                            {{ $s->hari }}
+                        </div>
 
-                        <div class="text-center whitespace-nowrap truncate">
+                        <div class="table-sub w-42 shrink-0 text-center whitespace-nowrap truncate px-6">
+                            {{ $s->jam_pelaksanaan }}
+                        </div>
+
+                        <div class="table-second w-32 shrink-0 text-center whitespace-nowrap truncate px-6">
                             {{ $s->total_absensi . ' / ' . ($s->count_mahasiswa ?? 0) }}
                         </div>
 
                         @if ($showMore)
-                            <div class="text-center whitespace-nowrap text-[var(--contrast-second-text)] truncate">
+                            <div class="table-sub w-56 shrink-0 text-center whitespace-nowrap truncate px-6">
                                 {{ $s->total_absensi_all ?? 0 }}
                             </div>
                         @endif
 
-                        <div class="text-center whitespace-nowrap truncate">
+                        <div
+                            class="table-second {{ $showMore ? 'w-36 shrink-0' : 'flex-1 min-w-[140px]' }} text-center whitespace-nowrap truncate px-6">
                             {{ $s->tanggal_pelaksanaan }}
                         </div>
 
                         @if ($showMore)
-                            <div class="flex justify-center">
+                            <div class="table-main w-48 shrink-0 flex justify-center px-6">
                                 <flux:dropdown>
                                     <button class="cursor-pointer">
                                         <flux:badge icon="academic-cap" color="fuchsia" size="sm">
@@ -477,19 +638,30 @@
                                     )
                                 </flux:dropdown>
                             </div>
+                        @endif
 
-                            <div class="text-center whitespace-nowrap font-medium truncate">
+                        {{-- @if (!$showMore) --}}
+                            <div
+                                class="{{ $showMore ? 'table-second' : 'table-sub table-border-l' }}  w-32 shrink-0 text-center whitespace-nowrap font-medium truncate px-6">
                                 {{ $s->bobot_normalisasi ? $s->bobot_normalisasi . '%' : '-' }}
                             </div>
+                        {{-- @endif --}}
+                        @if ($showMore)
 
-                            <div class="truncate px-2 text-[var(--contrast-second-text)]" title="{{ $s->tugas }}">
+                            <div class="table-sub w-[320px] truncate px-6" title="{{ $s->tugas }}">
                                 {{ $s->tugas ?? '-' }}
                             </div>
 
-                            <div class="text-center whitespace-nowrap truncate">{{ $s->w_tugas ?? 0 }} mnt</div>
-                            <div class="text-center whitespace-nowrap truncate">{{ $s->w_mandiri ?? 0 }} mnt</div>
 
-                            <div class="flex justify-center">
+                            <div class="table-second w-42 shrink-0 text-center whitespace-nowrap truncate px-6">
+                                {{ $s->w_tugas ?? 0 }} menit
+                            </div>
+
+                            <div class="table-sub w-42 shrink-0 text-center whitespace-nowrap truncate px-6">
+                                {{ $s->w_mandiri ?? 0 }} menit
+                            </div>
+
+                            <div class="table-second table-border-l w-48 shrink-0 flex justify-center px-6">
                                 <flux:dropdown>
                                     <button class="cursor-pointer">
                                         <flux:badge icon="academic-cap" color="sky" size="sm">
@@ -504,30 +676,29 @@
                             </div>
                         @endif
 
-                        @if ($isAdminOrDosen)
-                            <div class="flex justify-center">
-                                <flux:dropdown>
-                                    <flux:button class="cursor-pointer" variant="ghost" size="sm"
-                                        icon="ellipsis-horizontal" inset="top bottom">
-                                    </flux:button>
-                                    @include(
-                                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                                        ['key' => 4]
-                                    )
-                                </flux:dropdown>
-                            </div>
-                        @endif
+                        <div class="table-main w-20 shrink-0 flex justify-center px-2">
+                            <flux:dropdown>
+                                <flux:button class="cursor-pointer" variant="ghost" size="sm"
+                                    icon="ellipsis-horizontal" inset="top bottom">
+                                </flux:button>
+                                @include(
+                                    'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                                    ['key' => 4]
+                                )
+                            </flux:dropdown>
+                        </div>
+
                     </div>
                 </div>
-            @empty
+            {{-- @empty
                 <div class="w-full text-center p-8 text-[var(--contrast-second-text)]">
                     Tidak ada data Sesi Pertemuan Kelas ditemukan!
-                </div>
-            @endforelse
+                </div> --}}
+            @endforeach
 
             <x-slot:emptys>
                 <div x-show="totalFilteredItems === 0"
-                    class="w-full text-center p-12 text-[var(--contrast-second-text)]">
+                    class="w-full text-center px-12 py-5 text-[var(--contrast-second-text)]">
                     Tidak ada data Sesi Pertemuan Kelas ditemukan!
                 </div>
             </x-slot:emptys>
