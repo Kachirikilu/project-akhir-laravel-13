@@ -25,7 +25,9 @@
                 this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
             } else {
                 this.sortField = '{{ $sortFieldString }}';
-                this.sortDirection = 'asc';
+
+                const defaultDescFields = ['pertemuan_ke', 'total_absensi', 'metode', 'bobot'];
+                this.sortDirection = defaultDescFields.includes('{{ $sortFieldString }}') ? 'desc' : 'asc';
             }
         @else
             {{-- LOGIKA SORTIR LIVEWIRE BACKEND --}}

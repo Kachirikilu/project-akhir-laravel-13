@@ -681,4 +681,4 @@
             </tr>
         @endforelse
 
-        </x-admin.global.table.main-layout-table>
+        </x-global.main-layout-table>

@@ -46,12 +46,12 @@
 
                    {{-- Sub info: nama kelas + prodi --}}
                    <div class="flex flex-wrap items-center gap-2">
-                       <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                       <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/64">
                            <flux:icon name="users" class="w-3 h-3" />
                            {{ $nim ?? '-' }}
                        </span>
                        <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
-                       <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                       <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/64">
                            <flux:icon name="academic-cap" class="w-3 h-3" />
                             {{ $mahasiswa->pr_rel->prodi }}
                        </span>

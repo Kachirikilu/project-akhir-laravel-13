@@ -275,7 +275,7 @@
                         'alpine' => 'sesi',
                         'headString' => 'Pertemuan',
                     ])
-
+               
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'total_absensi',
                         'alpine' => 'sesi',
@@ -394,41 +394,43 @@
                     }
                 @endphp
 
+                <div
+                    x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))" class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
+                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number(
+                        {{ $s->id }}))">
 
-                <div x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))"
-                    class="{{ $isUjian ? 'lg:col-span-2' : '' }} contents">
+                        <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{
+                            expanded: false,
+                            hasLoaded: false
+                        }"
+                            @click="expanded = !expanded; hasLoaded = true"
+                            class="{{ $focusDiv }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
 
-                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number({{ $s->id }}))"
-                        wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: false, hasLoaded: false }"
-                        @click="expanded = !expanded; hasLoaded = true"
-                        class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
+                            {{-- ═══ HERO ═══ --}}
+                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
 
+                            {{-- ═══ BODY ═══ --}}
+                            <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
+                                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
 
-
-                        {{-- ═══ HERO ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
-
-                        {{-- ═══ BODY ═══ --}}
-                        <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
-
-                            <div x-show="expanded" x-collapse.duration.300ms>
-                                @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
-                                    @include(
-                                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
-                                        [
-                                            'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
-                                        ]
-                                    )
-                                @else
-                                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
-                                @endif
+                                <div x-show="expanded" x-collapse.duration.300ms>
+                                    @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
+                                        @include(
+                                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
+                                            [
+                                                'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
+                                            ]
+                                        )
+                                    @else
+                                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
+                                    @endif
+                                </div>
                             </div>
+
+                            {{-- ═══ FOOTER: toggle hint ═══ --}}
+                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
+
                         </div>
-
-                        {{-- ═══ FOOTER: toggle hint ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
-
                     </div>
                 </div>
             @endforeach

@@ -43,5 +43,4 @@
         ]"
             wire:key="toolbar-rps-{{ $r->id }}-{{ $key }}" />
     @endif
-
 </flux:menu>

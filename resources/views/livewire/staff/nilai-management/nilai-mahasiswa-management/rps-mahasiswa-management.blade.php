@@ -23,7 +23,7 @@
         'backUrl' => $isNilaiMhs ? route('nilai-mahasiswa') : route('nilai-mahasiswa-management', ['nim' => $nim_url]),
     ])
 
-    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-card')
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-card')
     
     {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-modal-form') --}}
     {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-modal-delete') --}}

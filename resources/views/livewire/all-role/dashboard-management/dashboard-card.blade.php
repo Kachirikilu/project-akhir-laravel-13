@@ -45,7 +45,7 @@
         </p>
 
         <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]/65">
+            <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]/64">
                 <flux:icon name="hashtag" class="w-3 h-3" />
                 {{ $data['id_label'] }}: {{ $data['ID_AKADEMIK'] }}
             </span>

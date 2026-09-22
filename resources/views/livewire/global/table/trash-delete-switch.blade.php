@@ -1,6 +1,6 @@
 @if (Auth::user()->admin || Auth::user()->dosen)
-    @if (!($onlyAdmin ?? false))
-        <div class="flex flex-col w-full">
+    @if (!($noTrash ?? $onlyAdmin ?? false))
+        <div class="{{ $mx ?? 'mx-3' }} flex flex-col">
             @include('livewire.global.table.partial.switch-table', [
                 'xString' => 'showDeleted',
                 'icon' => 'trash',

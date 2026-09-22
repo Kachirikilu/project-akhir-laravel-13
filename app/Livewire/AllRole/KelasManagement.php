@@ -65,7 +65,7 @@ class KelasManagement extends Component
         'perPage' => ['except' => 8],
         'showMore' => ['except' => false],
         'filterKelas' => ['except' => ''],
-        'filterKelasgg' => ['except' => ''],
+        'filterKelasPeriode' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
@@ -85,7 +85,7 @@ class KelasManagement extends Component
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filterKelas', 'filterKelasgg']);
+        $this->reset(['search', 'filterKelas', 'filterKelasPeriode']);
         $this->resetPage();
     }
 

@@ -57,124 +57,243 @@
     @endphp
     <div wire:key="rps-mahasiswa-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
-        currentPage: 1,
-        perPage: 8,
-        sortField: '',
-        sortDirection: 'asc',
-        {{-- isRealtime: true, --}}
+    
+        get currentPage() {
+            return Number(this.$store.periode?.currentPage ?? 1) || 1;
+        },
+        set currentPage(val) {
+            this.$store.periode.currentPage = Number(val) || 1;
+        },
+    
+        get perPage() {
+            return Number(this.$store.periode?.perPage ?? 8) || 8;
+        },
+        set perPage(val) {
+            const next = Number(val) || 8;
+            if (this.$store.periode?.perPage !== next) {
+                this.$store.periode.perPage = next;
+            }
+        },
+    
+        get sortField() {
+            return this.$store.periode?.sortField ?? 'digit_mk';
+        },
+        set sortField(val) {
+            this.$store.periode.sortField = val ?? 'digit_mk';
+        },
+    
+        get sortDirection() {
+            return this.$store.periode?.sortDirection ?? 'desc';
+        },
+        set sortDirection(val) {
+            this.$store.periode.sortDirection = val ?? 'desc';
+        },
     
         get filteredAndSortedIds() {
-            let query = (this.$store.nilai?.search || '').toLowerCase().trim();
-            let filtered = [...this.rawItems];
+            const normalize = (value) => {
+                return String(value ?? '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '');
+            };
     
-            if (query) {
-                let dotQuery = query.replace(',', '.');
-                let alphanumericQuery = query.replace(/[^a-z0-9]/g, '');
-                let queryWords = query.split(/\s+/).filter(word => word.length > 0);
+            const query = (this.$store.periode?.search || '')
+                .toLowerCase()
+                .trim();
     
-                filtered = filtered.filter(item => {
-                    let cleanAkademik = item.akademik.replace(/[^a-z0-9]/g, '');
-                    let cleanKodeMk = item.kode_mk.replace(/[^a-z0-9]/g, '');
-                    let cleanKodeRps = item.kode_rps.replace(/[^a-z0-9]/g, '');
+            const cleanQuery = normalize(query);
     
-                    let sksNum = String(item.sks);
-                    let sksVariations = [
-                        sksNum, sksNum + 'sks', sksNum + ' sks',
-                        sksNum + 'sk', sksNum + ' sk'
-                    ].join(' ');
+            let filtered = this.rawItems.filter(item => {
+                if (!query) return true;
     
-                    if (item.mk.includes(query) || (item.mk + ' ' + item.digit_mk).includes(query)) {
-                        return true;
-                    }
-    
-                    let targetText = [
+                const targetText = [
                         item.kode_mk,
-                        cleanKodeMk,
+                        item.mk,
                         item.digit_mk,
                         item.kode_rps,
-                        cleanKodeRps,
                         item.nim,
                         item.nilai,
                         String(item.nilai_index),
                         String(item.nilai_mutu),
                         item.akademik,
-                        cleanAkademik,
                         item.ganjil_genap,
-                        sksVariations,
+                        String(item.semester),
+                        String(item.sks),
                         'semester ' + item.semester,
-                        's' + item.semester
-                    ].join(' ');
+                        's' + item.semester,
+                    ]
+                    .join(' ')
+                    .toLowerCase();
     
-                    let cocokSemuaKata = queryWords.every(word => targetText.includes(word));
-                    if (cocokSemuaKata) return true;
+                if (targetText.includes(query)) {
+                    return true;
+                }
     
-                    if (alphanumericQuery && targetText.replace(/[^a-z0-9]/g, '').includes(alphanumericQuery)) {
-                        return true;
-                    }
+                if (cleanQuery && normalize(targetText).includes(cleanQuery)) {
+                    return true;
+                }
     
-                    let cleanSksQuery = query.replace(/(sks|sk|bobot|kredit)/g, '').trim();
-                    if (cleanSksQuery && String(item.sks) === cleanSksQuery) {
-                        return true;
-                    }
+                return false;
+            });
     
-                    if (String(item.nilai_index).includes(query) || String(item.nilai_index).includes(dotQuery)) {
-                        return true;
-                    }
+            const field = this.$store.periode?.sortField || this.sortField;
+            const direction =
+                (this.$store.periode?.sortDirection || this.sortDirection) === 'desc' ?
+                -1 :
+                1;
     
-                    return false;
-                });
-            }
+            const sortedFiltered = [...filtered];
     
-            let field = this.$store.nilai?.sortField || this.sortField;
-            let direction = (this.$store.nilai?.sortDirection || this.sortDirection) === 'desc' ? -1 : 1;
+            const parseNumber = (value) => {
+                if (value === null || value === undefined || value === '') {
+                    return 0;
+                }
+    
+                const normalized = String(value)
+                    .trim()
+                    .replace(/[^0-9,.-]/g, '')
+                    .replace(',', '.');
+    
+                const num = Number(normalized);
+    
+                return Number.isFinite(num) ? num : 0;
+            };
     
             if (field) {
-                if (field === 'sks') field = 'sks';
+                sortedFiltered.sort((a, b) => {
+                    const fallbackOrder = () =>
+                        Number(a.dbIndex) - Number(b.dbIndex);
     
-                filtered.sort((a, b) => {
-                    let valA = a[field];
-                    let valB = b[field];
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SORTING NUMERIK
+                    |--------------------------------------------------------------------------
+                    */
+                    if (
+                        field === 'semester' ||
+                        field === 'sks' ||
+                        field === 'nilai' ||
+                        field === 'nilai_index' ||
+                        field === 'nilai_mutu'
+                    ) {
+                        const numA = parseNumber(a[field]);
+                        const numB = parseNumber(b[field]);
     
-                    if (field === 'nilai' || field === 'nilai_index' || field === 'sks') {
-                        let numA = parseFloat(valA) || 0;
-                        let numB = parseFloat(valB) || 0;
-                        if (numA !== numB) return (numA - numB) * direction;
+                        if (numA !== numB) {
+                            return (numA - numB) * direction;
+                        }
+    
+                        return fallbackOrder();
                     }
     
-                    return String(valA).localeCompare(String(valB), undefined, { numeric: true, sensitivity: 'base' }) * direction;
+                    /*
+                    |--------------------------------------------------------------------------
+                    | SORTING TEKS
+                    |--------------------------------------------------------------------------
+                    */
+                    const valA = a[field];
+                    const valB = b[field];
+    
+                    const textA = String(valA ?? '')
+                        .trim()
+                        .toLowerCase();
+    
+                    const textB = String(valB ?? '')
+                        .trim()
+                        .toLowerCase();
+    
+                    const result = textA.localeCompare(
+                        textB,
+                        'id', {
+                            numeric: true,
+                            sensitivity: 'base'
+                        }
+                    );
+    
+                    return result !== 0 ?
+                        result * direction :
+                        fallbackOrder();
                 });
             } else {
-                filtered.sort((a, b) => a.dbIndex - b.dbIndex);
+                sortedFiltered.sort((a, b) =>
+                    Number(a.dbIndex) - Number(b.dbIndex)
+                );
             }
     
-            return filtered;
+            return sortedFiltered;
+        },
+    
+        get pageIds() {
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = Math.min(
+                start + this.perPage,
+                this.filteredAndSortedIds.length
+            );
+    
+            return this.filteredAndSortedIds
+                .slice(start, end)
+                .map(item => item.id);
         },
     
         get itemVisibilityMap() {
             let map = {};
-            this.filteredAndSortedIds.forEach((item, visualIndex) => {
-                let start = (this.currentPage - 1) * this.perPage;
-                let end = start + this.perPage;
+            const visibleIds = new Set(this.pageIds);
     
+            this.filteredAndSortedIds.forEach((item) => {
                 map[item.id] = {
-                    visible: visualIndex >= start && visualIndex < end,
-                    order: visualIndex
+                    visible: visibleIds.has(item.id),
+                    order: this.filteredAndSortedIds.findIndex(
+                        entry => entry.id === item.id
+                    )
                 };
             });
+    
             return map;
         },
     
         get totalFilteredItems() {
             return this.filteredAndSortedIds.length;
         },
+    
         get totalPages() {
-            return Math.ceil(this.totalFilteredItems / this.perPage) || 1;
+            return Math.max(
+                1,
+                Math.ceil(this.totalFilteredItems / this.perPage)
+            );
         },
+    
         init() {
-            this.$watch('$store.sesi.search', () => { this.currentPage = 1; });
-            this.$watch('$store.sesi.perPage', (val) => {
-                this.perPage = val || 8;
+            if (this.$store.periode) {
+                this.$store.periode.sortField = 'digit_mk';
+            }
+    
+            this.$watch('$store.periode.search', () => {
                 this.currentPage = 1;
+            });
+    
+            this.$watch('$store.periode.sortField', () => {
+                this.currentPage = 1;
+            });
+    
+            this.$watch('$store.periode.sortDirection', () => {
+                this.currentPage = 1;
+            });
+    
+            this.$watch('$store.periode.perPage', (val) => {
+                const next = Number(val) || 8;
+    
+                if (this.perPage !== next) {
+                    this.perPage = next;
+                }
+    
+                const totalPages = Math.max(
+                    1,
+                    Math.ceil(this.filteredAndSortedIds.length / this.perPage)
+                );
+    
+                this.currentPage = Math.min(
+                    this.currentPage || 1,
+                    totalPages
+                );
             });
         }
     }" x-init="rawItems = {{ $jsonFreshData }};"
@@ -189,47 +308,65 @@
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'digit_mk',
                         'headString' => 'No MK',
-                        'alpine' => 'nilai',
+                        'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'kode_rps',
-                        'alpine' => 'nilai',
+                        'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'mk',
                         'headString' => 'Mata Kuliah',
-                        'alpine' => 'nilai',
+                        'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'sks',
-                        'alpine' => 'nilai',
+                        'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'nilai',
-                        'alpine' => 'nilai',
+                        'alpine' => 'periode',
                     ])
                 </div>
             </x-slot:leftSecHead>
 
-            {{-- Slot Search --}}
+
             <x-slot:rightSecHead>
-                <div class="w-full md:w-96 xl:w-108">
-                    @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Mutu...',
-                        'alpine' => 'nilai',
-                        'isLive' => 1,
-                        'isBorder' => 2,
-                    ])
+                <div class="w-full md:w-110 xl:w-124">
+                    <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
+                        <div class="flex-shrink-0">
+                            @include('livewire.global.search-and-filters.page-control', [
+                                'perPageOptions' => [2, 4, 8, 16],
+                                'alpine' => 'periode',
+                                'key' => 'page-control-rps-mahasiswa-card',
+                                'withB' => 0,
+                                'isSmall' => 1,
+                            ])
+                        </div>
+
+                        <div class="flex-grow max-w-md">
+                            @include('livewire.global.search-and-filters.main-search', [
+                                'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Mutu...',
+                                'alpine' => 'periode',
+                                'isLive' => 1,
+                                'isBorder' => 2,
+                            ])
+                        </div>
+                    </div>
                 </div>
             </x-slot:rightSecHead>
 
-            {{-- CONTAINER UTAMA WAJIB MEMILIKI CLASS flex ATAU grid UNTUK MENDUKUNG CSS ORDER --}}
-            @foreach ($nilais as $index => $n)
-                <div x-show="itemVisibilityMap[{{ $n->id }}]?.visible" x-transition
-                    :style="'order:' + (itemVisibilityMap[{{ $n->id }}]?.order ?? {{ $index }})">
 
-                    <div wire:key="rps-mahasiswa-{{ $n->id }}"
-                        class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
+            @foreach ($nilais as $index => $n)
+                <div x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $n->id }}))"
+                    class="contents">
+
+                    {{-- Layer 2: Menjadi Direct Child Visual Grid menggunakan CSS 'display: contents' --}}
+                    <div :style="'order: ' + filteredAndSortedIds.findIndex(item => Number(item.id) === Number({{ $n->id }}))"
+                        wire:key="rps-mahasiswa-{{ $n->id }}"
+                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
+
+                        {{-- Layer 3: Card Body dengan wire:key terisolasi --}}
 
                         {{-- ═══ HERO ═══ --}}
                         <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
@@ -243,7 +380,7 @@
                                             {{ $n->text_kode_mk ?? $n->kode_mk }}
                                         </button>
                                         @include(
-                                            'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
+                                            'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
                                             [
                                                 'key' => 1,
                                             ]
@@ -262,7 +399,7 @@
                                         <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
                                     </button>
                                     @include(
-                                        'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
+                                        'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
                                         [
                                             'key' => 2,
                                         ]
@@ -311,7 +448,7 @@
                                     </span>
                                 </div>
                                 @include(
-                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-toolbar-table',
+                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
                                     [
                                         'key' => 3,
                                     ]
@@ -344,32 +481,32 @@
                         <div class="px-4 pb-4 flex items-center gap-1.5">
                             <button
                                 class="flex w-full items-center justify-center gap-1.5 rounded-bl-[11px] rounded-r-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
-                            {{ $n->trashed()
-                                ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
-                                : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
+                {{ $n->trashed()
+                    ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
+                    : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
                                 {{ $n->trashed() ? 'disabled' : '' }}
                                 @if (!$n->trashed()) @click="
-                                $store.nilai?.reset();
-                                $store.nilai?.setEdit(1);
-                                $store.nilai?.setColor('text-cyan-700 dark:text-cyan-400');
-                                $store.nilai?.setValueNilai(
-                                    '{{ $n->id ?? '' }}',
-                                    '{{ $mahasiswa->name ?? '' }}',
-                                    '{{ $mahasiswa->nim ?? '' }}',
+                    $store.nilai?.reset();
+                    $store.nilai?.setEdit(1);
+                    $store.nilai?.setColor('text-cyan-700 dark:text-cyan-400');
+                    $store.nilai?.setValueNilai(
+                        '{{ $n->id ?? '' }}',
+                        '{{ $mahasiswa->name ?? '' }}',
+                        '{{ $mahasiswa->nim ?? '' }}',
 
-                                    '{{ $n->kode_rps ?? '' }}',
-                                    '{{ $n->mk ?? '' }}',
-                                    '{{ $n->sks ?? '' }}',
+                        '{{ $n->kode_rps ?? '' }}',
+                        '{{ $n->mk ?? '' }}',
+                        '{{ $n->sks ?? '' }}',
 
-                                    JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
-                                    JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
-                                    JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
-                                    JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
-                                    JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
-                                );
-                                $flux.modal('rps-mahasiswa-modal').show();
-                                $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });
-                            " @endif>
+                        JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
+                    );
+                    $flux.modal('rps-mahasiswa-modal').show();
+                    $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });
+                " @endif>
                                 @if (Auth::user()->admin || Auth::user()->dosen)
                                     <flux:icon name="pencil-square"
                                         class="w-3.5 h-3.5 {{ $n->trashed() ? 'opacity-40' : '' }}" />
@@ -383,16 +520,16 @@
                             <button
                                 class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
                                 @click="
-                                $store.rps?.resetShow();
-                                $store.rps?.setShowRPS(
-                                    '{{ $n->rps_id ?? '' }}',
-                                    '{{ $n->rps_rel->kode ?? '' }}',
-                                    '{{ $mahasiswa->pr_id ?? '' }}',
-                                );
-                                $store.rps?.setColor('text-green-700 dark:text-green-400');
-                                $flux.modal('rps-detail-modal').show();
-                                $dispatch('open-show-rps-modal', { id: {{ $n->rps_id }}, prId: {{ $mahasiswa->pr_id }} });
-                            ">
+                    $store.rps?.resetShow();
+                    $store.rps?.setShowRPS(
+                        '{{ $n->rps_id ?? '' }}',
+                        '{{ $n->rps_rel->kode ?? '' }}',
+                        '{{ $mahasiswa->pr_id ?? '' }}',
+                    );
+                    $store.rps?.setColor('text-green-700 dark:text-green-400');
+                    $flux.modal('rps-detail-modal').show();
+                    $dispatch('open-show-rps-modal', { id: {{ $n->rps_id }}, prId: {{ $mahasiswa->pr_id }} });
+                ">
                                 <flux:icon name="clipboard-document-list" class="w-3.5 h-3.5" />
                                 <span>Lihat RPS</span>
                             </button>
@@ -400,7 +537,6 @@
 
                     </div>
                 </div>
-                {{-- </template> --}}
             @endforeach
 
             {{-- EMPTY STATE ANCHOR --}}

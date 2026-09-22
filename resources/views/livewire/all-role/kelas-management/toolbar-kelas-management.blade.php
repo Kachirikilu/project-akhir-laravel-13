@@ -1,7 +1,10 @@
 <div>
+
+
+
     @include('livewire.global.table.text-copy', [
-        'xType' => $data['kode'],
-        'typeXString' => 'Kode Kelas',
+        'xType' => $data['copyText'] ?? $data['kode'],
+        'typeXString' => $data['headText'],
     ])
 
     @if (!$data['isTrashed'])

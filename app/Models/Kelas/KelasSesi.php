@@ -329,7 +329,7 @@ class KelasSesi extends Model
     protected function metode(): Attribute
     {
         return Attribute::get(function () {
-            return $this->override->metode ?? $this->scpmk_atr->metode ?? null;
+            return $this->scpmk_atr->metode ?? null;
         });
     }
 

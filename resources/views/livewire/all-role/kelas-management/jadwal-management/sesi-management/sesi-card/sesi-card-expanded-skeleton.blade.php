@@ -2,17 +2,23 @@
 
     {{-- Sub CPMK --}}
     <div
-        class="rounded-md border {{ $bgBorder }}
+        class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                {{ $secondTable }} px-4 py-3 flex flex-col gap-3">
 
+        @if ($showMore)
+            <div class="flex items-center justify-between">
+                <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
+
+                <div class="h-6 w-20 rounded-lg {{ $focusColor }} opacity-30">
+                </div>
+            </div>
+        @endif
         <div class="flex items-center justify-between">
             <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
 
-            <div
-                class="h-6 w-20 rounded-lg {{ $focusColor }} opacity-30">
+            <div class="h-6 w-24 rounded-lg {{ $focusColor }} opacity-30">
             </div>
         </div>
-
         <div class="flex items-center justify-between">
             <div class="h-3 w-24 rounded {{ $subTable }}"></div>
             <div class="h-3 w-14 rounded {{ $mainTable }}"></div>
@@ -26,7 +32,7 @@
 
     {{-- Deskripsi --}}
     <div
-        class="rounded-md border {{ $bgBorder }}
+        class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                {{ $secondTable }} px-4 py-3 space-y-3">
 
         <div class="h-3 w-36 rounded {{ $mainTable }}"></div>
@@ -39,28 +45,30 @@
     </div>
 
     {{-- Referensi --}}
-    <div
-        class="rounded-md border {{ $bgBorder }}
+    @if ($showMore)
+        <div
+            class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                {{ $secondTable }} px-4 py-3 space-y-3">
 
-        <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
+            <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
 
-        <div class="space-y-2">
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 rounded-full {{ $mainTable }}"></div>
-                <div class="h-3 flex-1 rounded {{ $subTable }}"></div>
-            </div>
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full {{ $mainTable }}"></div>
+                    <div class="h-3 flex-1 rounded {{ $subTable }}"></div>
+                </div>
 
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 rounded-full {{ $mainTable }}"></div>
-                <div class="h-3 w-10/12 rounded {{ $subTable }}"></div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full {{ $mainTable }}"></div>
+                    <div class="h-3 w-10/12 rounded {{ $subTable }}"></div>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     {{-- Dosen --}}
     <div
-        class="rounded-md border {{ $bgBorder }}
+        class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                {{ $secondTable }} px-4 py-3 space-y-3">
 
         <div class="h-3 w-28 rounded {{ $mainTable }}"></div>
@@ -73,8 +81,7 @@
 
                     <div class="h-3 w-40 rounded {{ $subTable }}"></div>
 
-                    <div
-                        class="h-4 w-14 rounded-full {{ $subTable }}">
+                    <div class="h-4 w-14 rounded-full {{ $subTable }}">
                     </div>
                 </div>
 
@@ -97,20 +104,17 @@
     {{-- KHUSUS MAHASISWA --}}
     @auth
         @if (Auth::user()->mahasiswa)
-
             {{-- Tombol absensi --}}
-            <div
-                class="rounded-xl h-9 w-full
+            <div class="rounded-xl h-9 w-full
                        {{ $focusColor }} opacity-25">
             </div>
 
             {{-- Status absensi --}}
             <div
-                class="rounded-md border {{ $bgBorder }}
+                class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                        {{ $secondTable }} px-3 py-3 flex items-center justify-between">
 
-                <div
-                    class="h-6 w-24 rounded-full
+                <div class="h-6 w-24 rounded-full
                            {{ $focusColor }} opacity-30">
                 </div>
 
@@ -119,7 +123,7 @@
 
             {{-- Keterangan --}}
             <div
-                class="rounded-md border {{ $bgBorder }}
+                class="rounded-lg border {{ $borderTable }} {{ $secondTable }}
                        {{ $secondTable }} px-3 py-3 space-y-2">
 
                 <div class="h-3 w-20 rounded {{ $mainTable }}"></div>
@@ -129,7 +133,6 @@
                     <div class="h-3 w-9/12 rounded {{ $subTable }}"></div>
                 </div>
             </div>
-
         @endif
     @endauth
 

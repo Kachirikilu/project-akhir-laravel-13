@@ -323,12 +323,48 @@
         }
     }
 
+    .btn-card-focus-state-24 {
+        @apply transition-all duration-200;
+
+        &:hover,
+        &:active {
+            @apply z-10 bg-[var(--focus-color)]/24 text-[var(--main-text)];
+        }
+    }
+
+    .btn-card-focus-state-72 {
+        @apply transition-all duration-200;
+
+        &:hover,
+        &:active {
+            @apply z-10 bg-[var(--focus-color)]/72 text-[var(--main-text)];
+        }
+    }
+
     .btn-card-focus-state-special {
         @apply transition-all duration-200;
 
         &:hover,
         &:active {
             @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
+        }
+    }
+
+    .btn-card-focus-state-special-24 {
+        @apply transition-all duration-200;
+
+        &:hover,
+        &:active {
+            @apply z-10 bg-[var(--focus-color-special)]/24 text-[var(--main-text-special)];
+        }
+    }
+
+    .btn-card-focus-state-special-72 {
+        @apply transition-all duration-200;
+
+        &:hover,
+        &:active {
+            @apply z-10 bg-[var(--focus-color-special)]/72 text-[var(--main-text-special)];
         }
     }
 

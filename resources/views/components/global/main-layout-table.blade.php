@@ -40,11 +40,12 @@
 @props([
     'paginator' => null,
     'onlyAdmin' => false,
+    'noTrash' => false,
 ])
 
 
 @if (isset($leftHead) || isset($rightHead))
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
         <div class="flex flex-row items-center gap-2">
             @if (isset($leftHead))
                 {{ $leftHead }}
@@ -59,7 +60,7 @@
 @endif
 
 @if (isset($leftSecHead) || isset($rightSecHead))
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
         <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
             @if (isset($leftSecHead))
                 {{ $leftSecHead }}
@@ -88,6 +89,8 @@
                 class="bg-[var(--second-table-color)] table-border divide-y">
                 {{ $slot }}
             </tbody>
+
+            
         </table>
     </div>
 
@@ -97,6 +100,7 @@
         @include('livewire.global.table.footer-table', [
             'typeXString' => $paginator,
             'onlyAdmin' => $onlyAdmin,
+            'noTrash' => $noTrash,
         ])
     @endif
 </div>

@@ -263,13 +263,13 @@
                         {{-- Sub info: hari + tanggal --}}
                         <div class="flex flex-wrap items-center gap-2">
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/64">
                                 <flux:icon name="calendar-days" class="w-3 h-3" />
                                 {{ $s->hari ?? '-' }}, {{ $s->jam_pelaksanaan ?? '-' }}
                             </span>
                             <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
                             <span
-                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/65">
+                                class="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--main-text)]/64">
                                 <flux:icon name="clock" class="w-3 h-3" />
                                 {{ $s->tanggal_pelaksanaan ?? '-' }}
                             </span>

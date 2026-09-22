@@ -1,5 +1,5 @@
 <div>
-    @if ($isMK ?? false)
+    @if ($data['isMK'] ?? false)
         @include('livewire.global.table.text-copy', [
             'xType' => $data['kode_mk'],
             'typeXString' => 'Kode MK',

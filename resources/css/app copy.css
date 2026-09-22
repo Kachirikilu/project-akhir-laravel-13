@@ -175,6 +175,15 @@
         }
     }
 
+    .btn-card-focus-state-50 {
+        @apply transition-all duration-200;
+
+        &:hover,
+        &:active {
+            @apply z-10 bg-[var(--focus-color)]/50 text-[var(--main-text)];
+        }
+    }
+
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }

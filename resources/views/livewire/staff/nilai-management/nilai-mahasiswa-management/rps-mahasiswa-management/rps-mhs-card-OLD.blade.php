@@ -1,39 +1,34 @@
-<div wire:key="view-card-nilai-mahasiswa">
+<div wire:key="view-card-rps-mahasiswa">
 
     @php
-        $alpineData = $periodes
-            ->map(function ($p, $index) {
-                $semNum = (string) ($p->semester ?? '');
-                $ganjilGenap = strtolower($p->ganjil_genap ?? '');
-                $akademik = strtolower($p->akademik ?? '');
-                $cleanAkademik = str_replace(['/', '-'], '', $akademik);
+        $alpineData = $nilais
+            ->map(function ($n, $index) use ($mahasiswa) {
+                $semNum = (string) ($n->semester ?? '');
 
                 return [
-                    'id' => $p->id ?? $index,
+                    'id' => (int) $n->id,
                     'dbIndex' => $index,
-                    'semester' => (int) $p->semester,
-                    'akademik' => $akademik,
-                    'ganjil_genap' => $ganjilGenap,
-                    'total_mk' => (int) ($p->total_mk ?? 0),
-                    'total_sks' => (int) ($p->total_sks ?? 0),
-                    'nilai_semester' => $p->nilai_semester ?? '0.00',
-                    'ip_semester' => $p->ip_semester ?? '0.00',
-                    'mutu_semester' => strtoupper($p->mutu_semester ?? ''),
 
-                    'search_combinations' => [
-                        $ganjilGenap . ' ' . $akademik,
-                        $ganjilGenap . ' ' . $cleanAkademik,
-                        $akademik . ' ' . $ganjilGenap,
-                        $cleanAkademik . ' ' . $ganjilGenap,
-                        'semester ' . $semNum . ' ' . $ganjilGenap,
-                    ],
-                    'search_semester' => [
-                        $semNum,
-                        's' . $semNum,
-                        's-' . $semNum,
-                        'semester' . $semNum,
-                        'semester ' . $semNum,
-                    ],
+                    'semester' => (int) $n->semester,
+                    'akademik' => strtolower($n->akademik ?? ''),
+                    'ganjil_genap' => strtolower($n->ganjil_genap ?? ''),
+                    'sks' => (int) ($n->sks ?? ($n->sks ?? 0)),
+
+                    'is_trashed' => $n->trashed(),
+
+                    'kode_mk' => strtolower($n->kode_mk ?? ''),
+                    'mk' => strtolower($n->mk ?? ''),
+                    'digit_mk' => strtolower($n->digit_mk ?? ''),
+                    'kode_rps' => strtolower($n->kode_rps ?? ''),
+                    'nim' => strtolower($mahasiswa->nim ?? ''),
+
+                    'nilai' => strtolower($n->nilai ?? '-'),
+                    'nilai_index' => strtolower($n->nilai_index ?? '-'),
+                    'nilai_mutu' => strtolower($n->nilai_mutu ?? ''),
+
+                    'nilai_semester' => $n->nilai_semester ?? '0.00',
+                    'ip_semester' => $n->ip_semester ?? '0.00',
+                    'mutu_semester' => strtoupper($n->mutu_semester ?? ''),
                 ];
             })
             ->values()
@@ -41,23 +36,26 @@
 
         $jsonFreshData = json_encode($alpineData);
 
+        /*
+    |--------------------------------------------------------------------------
+    | PERUBAHAN
+    |--------------------------------------------------------------------------
+    | Hash ini berubah setiap data berubah
+    */
         $alpineVersion = md5(
-            collect($periodes)
-                ->map(
-                    fn($p) => [
-                        $p->id ?? null,
-                        $p->semester ?? null,
-                        $p->akademik ?? null,
-                        $p->ganjil_genap ?? null,
-                        $p->ip_semester ?? null,
-                        $p->nilai_semester ?? null,
-                    ],
-                )
-                ->toJson(),
+            json_encode(
+                $nilais
+                    ->map(
+                        fn($n) => [
+                            'id' => $n->id,
+                            'updated_at' => optional($n->updated_at)->timestamp,
+                        ],
+                    )
+                    ->values(),
+            ),
         );
     @endphp
-
-    <div wire:key="periode-wrapper-{{ $alpineVersion }}" x-data="{
+    <div wire:key="rps-mahasiswa-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
     
         get currentPage() {
@@ -78,10 +76,10 @@
         },
     
         get sortField() {
-            return this.$store.periode?.sortField ?? 'semester';
+            return this.$store.periode?.sortField ?? 'digit_mk';
         },
         set sortField(val) {
-            this.$store.periode.sortField = val ?? 'semester';
+            this.$store.periode.sortField = val ?? 'digit_mk';
         },
     
         get sortDirection() {
@@ -108,18 +106,20 @@
                 if (!query) return true;
     
                 const targetText = [
+                        item.kode_mk,
+                        item.mk,
+                        item.digit_mk,
+                        item.kode_rps,
+                        item.nim,
+                        item.nilai,
+                        String(item.nilai_index),
+                        String(item.nilai_mutu),
                         item.akademik,
                         item.ganjil_genap,
-                        item.mutu_semester,
                         String(item.semester),
-                        String(item.ip_semester),
-                        String(item.nilai_semester),
-                        String(item.total_mk),
-                        String(item.total_sks),
+                        String(item.sks),
                         'semester ' + item.semester,
                         's' + item.semester,
-                        ...(item.search_combinations || []),
-                        ...(item.search_semester || []),
                     ]
                     .join(' ')
                     .toLowerCase();
@@ -170,10 +170,10 @@
                     */
                     if (
                         field === 'semester' ||
-                        field === 'ip_semester' ||
-                        field === 'nilai_semester' ||
-                        field === 'total_mk' ||
-                        field === 'total_sks'
+                        field === 'sks' ||
+                        field === 'nilai' ||
+                        field === 'nilai_index' ||
+                        field === 'nilai_mutu'
                     ) {
                         const numA = parseNumber(a[field]);
                         const numB = parseNumber(b[field]);
@@ -262,9 +262,8 @@
         },
     
         init() {
-    
             if (this.$store.periode) {
-                this.$store.periode.sortField = 'semester';
+                this.$store.periode.sortField = 'digit_mk';
             }
     
             this.$watch('$store.periode.search', () => {
@@ -297,7 +296,8 @@
                 );
             });
         }
-    }" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
+    }" x-init="rawItems = {{ $jsonFreshData }};"
+        class="w-full">
 
         <x-global.main-layout-card>
 
@@ -306,81 +306,93 @@
                 <div
                     class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                     @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'semester',
+                        'sortFieldString' => 'digit_mk',
+                        'headString' => 'No MK',
                         'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'ip_semester',
+                        'sortFieldString' => 'kode_rps',
                         'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'total_mk',
+                        'sortFieldString' => 'mk',
+                        'headString' => 'Mata Kuliah',
                         'alpine' => 'periode',
                     ])
                     @include('livewire.global.table.head-sortir', [
-                        'sortFieldString' => 'total_sks',
+                        'sortFieldString' => 'sks',
                         'alpine' => 'periode',
                     ])
-
+                    @include('livewire.global.table.head-sortir', [
+                        'sortFieldString' => 'nilai',
+                        'alpine' => 'periode',
+                    ])
                 </div>
             </x-slot:leftSecHead>
 
+            {{-- Slot Search --}}
             <x-slot:rightSecHead>
-                <div class="w-full md:w-110 xl:w-124">
-                    <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
-                        <div class="flex-shrink-0">
-                            @include('livewire.global.search-and-filters.page-control', [
-                                'perPageOptions' => [2, 4, 8, 16],
-                                'alpine' => 'periode',
-                                'key' => 'page-control-nilai-mahasiswa-card',
-                                'withB' => 0,
-                                'isSmall' => 1,
-                            ])
-                        </div>
-
-                        <div class="flex-grow max-w-md">
-                            @include('livewire.global.search-and-filters.main-search', [
-                                'placeholder' => 'Cari Semester, IP, Mutu, atau Tahun Akademik...',
-                                'alpine' => 'periode',
-                                'isLive' => 1,
-                                'isBorder' => 2,
-                            ])
-                        </div>
-                    </div>
+                <div class="w-full md:w-96 xl:w-108">
+                    @include('livewire.global.search-and-filters.main-search', [
+                        'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Mutu...',
+                        'alpine' => 'periode',
+                        'isLive' => 1,
+                        'isBorder' => 2,
+                    ])
                 </div>
             </x-slot:rightSecHead>
 
+            @foreach ($nilais as $index => $n)
+                <template
+                    x-if="(Array.isArray(filteredAndSortedIds) ? filteredAndSortedIds : []).slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $n->id }}))">
+                    <div wire:key="rps-mahasiswa-{{ $n->id }}"
+                        :style="'order:' + ((Array.isArray(filteredAndSortedIds) ? filteredAndSortedIds : []).findIndex(item => Number(item.id) === Number(
+                            {{ $n->id }})))"
+                        class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
-
-
-            @foreach ($periodes as $index => $p)
-                @if (empty($p->ganjil_genap) || empty($p->akademik))
-                    @continue
-                @endif
-                @php $currentId = $p->id ?? $index; @endphp
-                <div x-show="(Array.isArray(filteredAndSortedIds) ? filteredAndSortedIds : []).slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $currentId }}))"
-                    class="contents">
-
-                    {{-- Layer 2: Menjadi Direct Child Visual Grid menggunakan CSS 'display: contents' --}}
-                    <div :style="'order: ' + ((Array.isArray(filteredAndSortedIds) ? filteredAndSortedIds : []).findIndex(item =>
-                        Number(item.id) === Number({{ $currentId }})))"
-                        wire:key="kelas-periode-card-{{ $currentId }}"
-                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
                         {{-- ═══ HERO ═══ --}}
-
-
                         <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
                             <div class="flex items-start justify-between gap-2">
-                                <button
-                                    class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
-                                    <flux:icon name="academic-cap" class="w-3 h-3" />
-                                    Semester {{ $p->semester ?? '-' }}
-                                </button>
+                                {{-- Kode RPS --}}
+                                <div class="flex items-center gap-2">
+                                    <flux:dropdown>
+                                        <button
+                                            class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-white/75 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
+                                            <flux:icon name="academic-cap" class="w-3 h-3" />
+                                            {{ $n->text_kode_mk ?? $n->kode_mk }}
+                                        </button>
+                                        @include(
+                                            'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
+                                            [
+                                                'key' => 1,
+                                            ]
+                                        )
+                                    </flux:dropdown>
+                                    @if (Auth::user()->admin || Auth::user()->dosen)
+                                        <span class="text-xs text-white/60 font-mono">ID:
+                                            {{ $n->id }}</span>
+                                    @endif
+                                </div>
+
+                                {{-- Tombol Menu --}}
+                                <flux:dropdown>
+                                    <button
+                                        class="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 transition-colors hover:bg-white/20 active:bg-white/50 focus:outline-none cursor-pointer">
+                                        <flux:icon name="ellipsis-vertical" class="w-4 h-4" />
+                                    </button>
+                                    @include(
+                                        'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
+                                        [
+                                            'key' => 2,
+                                        ]
+                                    )
+                                </flux:dropdown>
                             </div>
 
+                            {{-- Nama Mata Kuliah --}}
                             <p
-                                class="mt-1 text-[15px] font-bold leading-[1.35] tracking-[0.24em] text-[var(--main-text)]">
-                                {{ $p->ganjil_genap }} - {{ $p->akademik }}
+                                class="mt-1 text-[14px] font-bold leading-[1.35] tracking-[0.1em] text-[var(--main-text)]">
+                                {{ $n->mk ?? '-' }} {{ $n->digit_mk }}
                             </p>
 
                             <div class="flex flex-wrap items-center gap-2">
@@ -394,39 +406,36 @@
                                 <span
                                     class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                     <flux:icon name="academic-cap" class="w-3 h-3" />
-                                    {{ $mahasiswa->pr_rel->prodi }}
+                                    {{ $n->sks ?? ($n->sks ?? '-') }} SKS
                                 </span>
                             </div>
                         </div>
 
                         {{-- ═══ BODY ═══ --}}
                         <div class="flex flex-1 flex-col gap-2.5 p-4">
-
-                            <div class="flex flex-col gap-1.5">
+                            <flux:dropdown>
                                 <div
-                                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
-                                    <flux:icon name="rectangle-stack"
-                                        class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
-                                    <span
-                                        class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Total
-                                        Mata Kuliah</span>
-                                    <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
-                                        {{ $p->total_mk }} MK
-                                    </span>
-                                </div>
-                                <div
-                                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-4 py-2 text-left transition-colors focus:outline-none cursor-pointer">
+                                    class="flex w-full items-center gap-1.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] pl-4 pr-2.5 py-2 text-left transition-colors focus:outline-none cursor-pointer">
                                     <flux:icon name="document-text"
                                         class="w-3.5 h-3.5 text-[var(--contrast-third-text)]" />
                                     <span
-                                        class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">Total
-                                        SKS</span>
+                                        class="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--contrast-third-text)]">RPS</span>
                                     <span class="ml-auto text-xs font-semibold text-[var(--contrast-main-text)]">
-                                        {{ $p->total_sks }} SKS
+                                        <button class="cursor-pointer focus:outline-none">
+                                            @include('livewire.global.table.badge.tingkat-mk-badge', [
+                                                'xValue' => $n->kode_rps,
+                                                'sortir' => $n->rps_rel?->mk_rel?->tingkat_mk,
+                                            ])
+                                        </button>
                                     </span>
                                 </div>
-                            </div>
-
+                                @include(
+                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-toolbar-table',
+                                    [
+                                        'key' => 3,
+                                    ]
+                                )
+                            </flux:dropdown>
 
                             <div class="grid grid-cols-3 gap-1.5">
                                 <div
@@ -434,21 +443,18 @@
                                     <span
                                         class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Nilai</span>
                                     <span
-                                        class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $p->nilai_semester ?? '-' }}</span>
+                                        class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $n->nilai ?? '-' }}</span>
                                 </div>
-
                                 <div
                                     class="py-3 flex flex-col items-center gap-0.5 rounded-[10px] border border-[var(--border-table-color)] bg-[var(--second-table-color)] px-1.5 py-2 text-center">
                                     <span
-                                        class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">IP
-                                        Semester</span>
+                                        class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">Index</span>
                                     <span
-                                        class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ $p->ip_semester ?? '-' }}</span>
+                                        class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ number_format($n->nilai_index, 2) ?? '-' }}</span>
                                 </div>
-
                                 @include(
                                     'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.nilai-mutu',
-                                    ['value' => $p->mutu_semester]
+                                    ['value' => $n->nilai_mutu]
                                 )
                             </div>
                         </div>
@@ -456,25 +462,72 @@
                         {{-- ═══ FOOTER ═══ --}}
                         <div class="px-4 pb-4 flex items-center gap-1.5">
                             <button
-                                class="flex w-full items-center justify-center gap-1.5 rounded-b-[11px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
-                {{ $showDeleted
+                                class="flex w-full items-center justify-center gap-1.5 rounded-bl-[11px] rounded-r-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] transition-all
+                {{ $n->trashed()
                     ? 'cursor-not-allowed bg-gray-100 dark:bg-zinc-800/50 text-gray-400 dark:text-zinc-500 ring-1 ring-gray-200 dark:ring-zinc-800'
                     : 'cursor-pointer bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state active:scale-[0.99]' }}"
-                                {{ $showDeleted ? 'disabled' : 'href=' . ($isNilaiMhs ? route('rps-mahasiswa', ['ganjil_genap' => $p->ganjil_genap, 'akademik' => str_replace('/', '-', $p->akademik)]) : route('rps-mahasiswa-management', ['nim' => $this->nim_url, 'ganjil_genap' => $p->ganjil_genap, 'akademik' => str_replace('/', '-', $p->akademik)])) . ' wire:navigate' }}>
-                                <flux:icon name="eye" class="w-3.5 h-3.5 {{ $showDeleted ? 'opacity-40' : '' }}" />
-                                <span>Lihat Detail Nilai</span>
+                                {{ $n->trashed() ? 'disabled' : '' }}
+                                @if (!$n->trashed()) @click="
+                    $store.nilai?.reset();
+                    $store.nilai?.setEdit(1);
+                    $store.nilai?.setColor('text-cyan-700 dark:text-cyan-400');
+                    $store.nilai?.setValueNilai(
+                        '{{ $n->id ?? '' }}',
+                        '{{ $mahasiswa->name ?? '' }}',
+                        '{{ $mahasiswa->nim ?? '' }}',
+
+                        '{{ $n->kode_rps ?? '' }}',
+                        '{{ $n->mk ?? '' }}',
+                        '{{ $n->sks ?? '' }}',
+
+                        JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
+                    );
+                    $flux.modal('rps-mahasiswa-modal').show();
+                    $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });
+                " @endif>
+                                @if (Auth::user()->admin || Auth::user()->dosen)
+                                    <flux:icon name="pencil-square"
+                                        class="w-3.5 h-3.5 {{ $n->trashed() ? 'opacity-40' : '' }}" />
+                                    <span>Edit Nilai</span>
+                                @else
+                                    <flux:icon name="eye"
+                                        class="w-3.5 h-3.5 {{ $n->trashed() ? 'opacity-40' : '' }}" />
+                                    <span>Lihat Nilai</span>
+                                @endif
+                            </button>
+                            <button
+                                class="cursor-pointer flex w-full items-center justify-center gap-1.5 rounded-br-[11px] rounded-l-[4px] border-0 py-2.5 text-xs font-bold tracking-[0.02em] bg-transparent text-[var(--focus-color)] ring-1 ring-[var(--focus-color)] btn-card-focus-state transition-all active:scale-[0.99]"
+                                @click="
+                    $store.rps?.resetShow();
+                    $store.rps?.setShowRPS(
+                        '{{ $n->rps_id ?? '' }}',
+                        '{{ $n->rps_rel->kode ?? '' }}',
+                        '{{ $mahasiswa->pr_id ?? '' }}',
+                    );
+                    $store.rps?.setColor('text-green-700 dark:text-green-400');
+                    $flux.modal('rps-detail-modal').show();
+                    $dispatch('open-show-rps-modal', { id: {{ $n->rps_id }}, prId: {{ $mahasiswa->pr_id }} });
+                ">
+                                <flux:icon name="clipboard-document-list" class="w-3.5 h-3.5" />
+                                <span>Lihat RPS</span>
                             </button>
                         </div>
+
                     </div>
-                </div>
+                </template>
             @endforeach
 
             {{-- EMPTY STATE ANCHOR --}}
             <x-slot:emptys>
                 <div x-show="totalFilteredItems === 0"
                     class="col-span-6 text-center p-12 rounded-xl border border-dashed table-border bg-[var(--main-table-trans)]">
-                    <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada data Periode Semester
-                        ditemukan!</p>
+                    <p class="text-xs sm:text-sm text-[var(--contrast-second-text)]">Tidak ada rincian nilai Mata Kuliah
+                        yang ditemukan
+                        untuk Periode ini!</p>
                 </div>
             </x-slot:emptys>
 

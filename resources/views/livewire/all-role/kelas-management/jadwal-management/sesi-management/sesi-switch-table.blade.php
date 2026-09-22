@@ -6,18 +6,8 @@
             Sesi Kelas
         </h3>
 
-        <div class="shrink-0 flex lg:hidden">
-            @if ($haveSesiDay == false)
-                <div x-show="activeTab === 'hari-ini'">
-                    @include('livewire.global.search-and-filters.page-control', [
-                        'perPageOptions' => [2, 4, 8, 16],
-                        'alpine' => 'sesi',
-                        'key' => 'page-control-sesi-card',
-                        'withB' => 0,
-                    ])
-                </div>
-            @endif
-            <div x-show="activeTab === 'card'">
+        {{-- <div class="shrink-0 flex lg:hidden">
+            <div x-show="activeTab === 'card' {{ $haveSesiDay ? '' : "|| activeTab === 'hari-ini'" }}">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [2, 4, 8, 16],
                     'alpine' => 'sesi',
@@ -39,7 +29,9 @@
                     'withB' => 0,
                 ])
             </div>
-        </div>
+        </div> --}}
+            @include('livewire.global.table.detail-view-switch')
+
     </div>
 
     <!-- Container Filter & Tab -->
@@ -101,18 +93,8 @@
                 </div>
             @endif
             </div> --}}
-            <div class="shrink-0 hidden lg:flex">
-                @if ($haveSesiDay == false)
-                    <div x-show="activeTab === 'hari-ini'">
-                        @include('livewire.global.search-and-filters.page-control', [
-                            'perPageOptions' => [2, 4, 8, 16],
-                            'alpine' => 'sesi',
-                            'key' => 'page-control-sesi-card',
-                            'withB' => 0,
-                        ])
-                    </div>
-                @endif
-                <div x-show="activeTab === 'card'">
+            {{-- <div class="shrink-0 hidden lg:flex">
+                <div x-show="activeTab === 'card' || (!{{ json_encode($haveSesiDay) }} && activeTab === 'hari-ini')">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [2, 4, 8, 16],
                         'alpine' => 'sesi',
@@ -134,7 +116,7 @@
                         'withB' => 0,
                     ])
                 </div>
-            </div>
+            </div> --}}
 
         </div>
     </div>

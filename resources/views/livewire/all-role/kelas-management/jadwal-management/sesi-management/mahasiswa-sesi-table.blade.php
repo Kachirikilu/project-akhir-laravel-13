@@ -6,9 +6,9 @@
             $showMore = $showMore ?? false;
         @endphp
 
-        <x-slot:rightHead>
+        {{-- <x-slot:rightHead>
             @include('livewire.global.table.detail-view-switch')
-        </x-slot:rightHead>
+        </x-slot:rightHead> --}}
 
         <x-slot:leftSecHead>
             <div
@@ -39,7 +39,7 @@
                 ])
             </div>
         </x-slot:leftSecHead>
-        <x-slot:rightSecHead>
+        {{-- <x-slot:rightSecHead>
             <div class="w-full md:w-96 xl:w-108">
                 <div class="col-start-1 row-start-1 w-full">
                     @include('livewire.global.search-and-filters.main-search', [
@@ -50,6 +50,36 @@
                         'searchOptions' => ['Cari Identitas Mahasiswa', 'Pencarian Cerdas', 'Pencarian Kompleks'],
                         'isBorder' => 2,
                     ])
+                </div>
+            </div>
+        </x-slot:rightSecHead> --}}
+
+        <x-slot:rightSecHead>
+            <div class="w-full md:w-110 xl:w-124">
+                <div class="col-start-1 row-start-1 w-full flex items-center justify-between gap-4">
+                    <div class="flex-shrink-0">
+                        @include('livewire.global.search-and-filters.page-control', [
+                            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                            'key' => 'page-control-mahasiswa',
+                            'withB' => 0,
+                            'isSmall' => 1,
+                        ])
+                    </div>
+
+                    <div class="flex-grow max-w-md">
+                        @include('livewire.global.search-and-filters.main-search', [
+                            'placeholder' => 'Cari Mahasiswa Kelas...',
+                            'defaultLive' => 1,
+                            'searchMode' => $searchMode,
+                            'searchValues' => ['simple', 'smart', 'complex'],
+                            'searchOptions' => [
+                                'Cari Identitas Mahasiswa',
+                                'Pencarian Cerdas',
+                                'Pencarian Kompleks',
+                            ],
+                            'isBorder' => 2,
+                        ])
+                    </div>
                 </div>
             </div>
         </x-slot:rightSecHead>
@@ -405,5 +435,5 @@
             </tr>
         @endforelse
 
-        </x-admin.global.table.main-layout-table>
+        </x-global.main-layout-table>
 </div>

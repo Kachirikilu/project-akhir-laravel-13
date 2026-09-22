@@ -1,18 +1,20 @@
-<div class="grid grid-cols-3 gap-1.5">
+<div class="grid {{ $showMore ? 'grid-cols-3' : 'grid-cols-2' }} gap-1.5">
 
     {{-- Absensi --}}
-    <div
-        class="flex flex-col items-center gap-0.5 rounded-[10px] border {{ $bgBorder }} px-1.5 py-2 text-center">
-        <span class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }}">Absensi</span>
-        <span
-            class="text-base font-bold leading-none {{ $mainText }}">{{ $s->total_absensi ?? 0 }}</span>
-        <span class="text-[9px] font-semibold text-[var(--contrast-second-text)]">/
-            {{ $s->count_mahasiswa }}</span>
-    </div>
+    @if ($showMore)
+        <div
+            class="flex flex-col items-center gap-0.5 rounded-[10px] border {{ $borderTable }} {{  $secondTable }} px-1.5 py-2 text-center">
+            <span class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }}">Absensi</span>
+            <span
+                class="text-base font-bold leading-none {{ $mainText }}">{{ $s->total_absensi ?? 0 }}</span>
+            <span class="text-[9px] font-semibold text-[var(--contrast-second-text)]">/
+                {{ $s->count_mahasiswa }}</span>
+        </div>
+    @endif
 
     {{-- Bobot --}}
     <div
-        class="flex flex-col items-center gap-0.5 rounded-[10px] border {{ $bgBorder }} px-1.5 py-2 text-center">
+        class="flex flex-col items-center gap-0.5 rounded-[10px] border {{ $borderTable }} {{  $secondTable }} px-1.5 py-2 text-center">
         <span class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }}">Bobot</span>
         <span
             class="text-base font-bold leading-none {{ $mainText }}">{{ $s->bobot_normalisasi ?? '-' }}</span>
@@ -21,7 +23,7 @@
 
     {{-- ID Sesi --}}
     <div
-        class="flex flex-col items-center justify-center gap-1 rounded-[10px] border {{ $bgBorder }} px-1.5 py-2 text-center">
+        class="flex flex-col items-center justify-center gap-1 rounded-[10px] border {{ $borderTable }} {{  $secondTable }} px-1.5 py-2 text-center">
         <span class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }}">Metode</span>
         <flux:dropdown>
             <button class="cursor-pointer focus:outline-none">

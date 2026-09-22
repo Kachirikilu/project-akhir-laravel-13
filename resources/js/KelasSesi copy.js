@@ -28,6 +28,206 @@ document.addEventListener("alpine:init", () => {
             this.toItem = next;
         },
 
+initData(items) {
+            this.rawItems = items || [];
+        },
+
+        // Method langsung di store
+        isCardVisible(id) {
+            if (!Array.isArray(this.rawItems) || this.rawItems.length === 0) return false;
+
+            const cp = Number(this.currentPage) || 1;
+            const pp = Number(this.perPage) || 8;
+            const start = (cp - 1) * pp;
+            const end = start + pp;
+
+            const list = this.filteredAndSortedIds || [];
+            return list.slice(start, end).some(item => Number(item?.id) === Number(id));
+        },
+        get filteredAndSortedIds() {
+            if (!Array.isArray(this.rawItems) || this.rawItems.length === 0)
+                return [];
+
+            let query = (Alpine.store("sesi")?.search || "")
+                .toLowerCase()
+                .trim();
+            let cleanQuery = query.replace(/[^a-z0-9]/g, "");
+            let dotQuery = query.replace(",", ".");
+            let normalizedQuery = query.replace(/[\u2013\u2014]/g, "-");
+
+            let filtered = this.rawItems.filter((item) => {
+                if (!item) return false;
+                if (!query) return true;
+
+                let metode = String(item.metode || "").toLowerCase();
+                let tugas = String(item.tugas || "").toLowerCase();
+                let kodeScpmk = String(item.kode_scpmk || "").toLowerCase();
+                let searchScpmk = String(
+                    item.searchKodeSCPMK || "",
+                ).toLowerCase();
+                let kodeCpmk = String(item.kode_cpmk || "").toLowerCase();
+                let searchCpmk = String(
+                    item.searchKodeCPMK || "",
+                ).toLowerCase();
+
+                let hari = String(item.hari || "").toLowerCase();
+                let hariJam = String(item.hari_jam || "")
+                    .toLowerCase()
+                    .replace(/[\u2013\u2014]/g, "-");
+                let hariTanggal = String(item.hari_tanggal || "").toLowerCase();
+
+                if (metode.includes(query) || tugas.includes(query))
+                    return true;
+                if (
+                    kodeScpmk.includes(query) ||
+                    (cleanQuery && searchScpmk.includes(cleanQuery))
+                )
+                    return true;
+                if (
+                    kodeCpmk.includes(query) ||
+                    (cleanQuery && searchCpmk.includes(cleanQuery))
+                )
+                    return true;
+                if (
+                    item.searchPertemuan?.some((pText) =>
+                        String(pText).toLowerCase().includes(query),
+                    )
+                )
+                    return true;
+
+                if (hari.includes(query) || hariTanggal.includes(query))
+                    return true;
+                if (hariJam.includes(normalizedQuery)) return true;
+
+                if (
+                    item.bobot?.some((bText) => {
+                        let text = String(bText).toLowerCase();
+                        return text.includes(query) || text.includes(dotQuery);
+                    })
+                )
+                    return true;
+
+                return false;
+            });
+
+            let field = Alpine.store("sesi")?.sortField || "pertemuan_ke";
+            let direction =
+                (Alpine.store("sesi")?.sortDirection || "asc") === "desc"
+                    ? -1
+                    : 1;
+
+            const getMethodPriority = (value) => {
+                const text = String(value ?? "")
+                    .trim()
+                    .toLowerCase();
+                if (text.includes("uas")) return 3;
+                if (text.includes("uts")) return 2;
+                if (text.includes("teori")) return 1;
+                if (text.includes("praktik")) return 0;
+                if (text.includes("tugas")) return -1;
+                return -2;
+            };
+
+            const parseNumber = (value) => {
+                if (value === null || value === undefined || value === "")
+                    return 0;
+                const normalized = String(value)
+                    .trim()
+                    .replace(/[^0-9,.-]/g, "")
+                    .replace(",", ".");
+                const num = Number(normalized);
+                return Number.isFinite(num) ? num : 0;
+            };
+
+            const sortedFiltered = [...filtered];
+
+            if (field) {
+                sortedFiltered.sort((a, b) => {
+                    const fallbackOrder = () =>
+                        Number(a.dbIndex ?? 0) - Number(b.dbIndex ?? 0);
+
+                    if (field === "pertemuan_ke" || field === "total_absensi") {
+                        const numA = Number(
+                            field === "pertemuan_ke"
+                                ? (a.pertemuan_ke ?? 0)
+                                : (a.total_absensi ?? 0),
+                        );
+                        const numB = Number(
+                            field === "pertemuan_ke"
+                                ? (b.pertemuan_ke ?? 0)
+                                : (b.total_absensi ?? 0),
+                        );
+                        if (numA !== numB) return (numA - numB) * direction;
+                        return fallbackOrder();
+                    }
+
+                    if (field === "metode") {
+                        const rankA = getMethodPriority(a.metode);
+                        const rankB = getMethodPriority(b.metode);
+                        if (rankA !== rankB) return (rankA - rankB) * direction;
+
+                        const perA = Number(a.pertemuan_ke ?? 0);
+                        const perB = Number(b.pertemuan_ke ?? 0);
+                        if (perA !== perB) return (perA - perB) * direction;
+                        return fallbackOrder();
+                    }
+
+                    if (field === "bobot") {
+                        const safeA = parseNumber(a.bobot_normalisasi);
+                        const safeB = parseNumber(b.bobot_normalisasi);
+                        if (safeA !== safeB) return (safeA - safeB) * direction;
+
+                        const perA = Number(a.pertemuan_ke ?? 0);
+                        const perB = Number(b.pertemuan_ke ?? 0);
+                        if (perA !== perB) return (perA - perB) * direction;
+                        return fallbackOrder();
+                    }
+
+                    const valA = a[field];
+                    const valB = b[field];
+                    const textA = String(valA ?? "")
+                        .trim()
+                        .toLowerCase();
+                    const textB = String(valB ?? "")
+                        .trim()
+                        .toLowerCase();
+                    const result = textA.localeCompare(textB, "id", {
+                        numeric: true,
+                        sensitivity: "base",
+                    });
+
+                    return result !== 0 ? result * direction : fallbackOrder();
+                });
+            } else {
+                sortedFiltered.sort(
+                    (a, b) => Number(a.dbIndex ?? 0) - Number(b.dbIndex ?? 0),
+                );
+            }
+
+            return sortedFiltered;
+        },
+
+        // FUNGSI CEK KARTU YANG AMAN DARI ERROR UNDEFINED
+        isCardVisible(id) {
+            const list = this.filteredAndSortedIds;
+            if (!list.length) return false;
+
+            const cp = Number(Alpine.store("sesi")?.currentPage ?? 1) || 1;
+            const pp = Number(Alpine.store("sesi")?.perPage ?? 8) || 8;
+            const start = (cp - 1) * pp;
+            const end = start + pp;
+
+            return list
+                .slice(start, end)
+                .some((item) => Number(item?.id) === Number(id));
+        },
+
+        getCardOrder(id) {
+            return this.filteredAndSortedIds.findIndex(
+                (entry) => Number(entry?.id) === Number(id),
+            );
+        },
+
         search: "",
         perPage: 8,
         sortField: "pertemuan_ke",
@@ -73,7 +273,6 @@ document.addEventListener("alpine:init", () => {
         mhs_nilai_akhir: 0,
         mhs_nilai_index: 0,
         mhs_nilai_mutu: "E",
-
 
         w_pelaksaan: "",
         w_berakhir: "",
@@ -265,7 +464,8 @@ document.addEventListener("alpine:init", () => {
                 }
                 if (item.label === "Terlambat") {
                     return (
-                        sekarang > this.w_pelaksanaan && sekarang <= this.w_berakhir
+                        sekarang > this.w_pelaksanaan &&
+                        sekarang <= this.w_berakhir
                         // sekarang > this.w_telat && sekarang <= this.w_berakhir
                     );
                 }
@@ -300,7 +500,7 @@ document.addEventListener("alpine:init", () => {
 
             this.mhs_poin_absensi = poin;
             this.mhs_masuk = masuk;
-                  
+
             this.mhs_dispensasi = dispensasi;
             this.mhs_terlambat = terlambat;
             this.mhs_izin = izin;
@@ -343,9 +543,9 @@ document.addEventListener("alpine:init", () => {
                 this.sesi_id = "";
                 this.pertemuan_ke = "";
                 this.kode_scpmk = "";
-                this.absen = "",
-                this.keterangan = "",
-                this.jam_mulai = "";
+                ((this.absen = ""),
+                    (this.keterangan = ""),
+                    (this.jam_mulai = ""));
                 this.jam_berakhir = "";
 
                 this.pertemuan_ke_name = "";
@@ -372,15 +572,15 @@ document.addEventListener("alpine:init", () => {
         },
 
         isFloat(val) {
-            if (val === null || val === undefined) return '';
+            if (val === null || val === undefined) return "";
 
             val = String(val);
-            val = val.replace(/,/g, '.');
-            val = val.replace(/[^0-9.]/g, '');
+            val = val.replace(/,/g, ".");
+            val = val.replace(/[^0-9.]/g, "");
 
-            const parts = val.split('.');
+            const parts = val.split(".");
             if (parts.length > 2) {
-                val = parts[0] + '.' + parts.slice(1).join('');
+                val = parts[0] + "." + parts.slice(1).join("");
             }
 
             return val;
@@ -389,14 +589,14 @@ document.addEventListener("alpine:init", () => {
         normalizeFloat(val, max = 100, length = 3) {
             val = this.isFloat(val);
 
-            let parts = val.split('.');
-            parts[0] = (parts[0] || '').slice(0, length);
+            let parts = val.split(".");
+            parts[0] = (parts[0] || "").slice(0, length);
 
             if (parts.length > 1) {
-                parts[1] = (parts[1] || '').slice(0, 2);
+                parts[1] = (parts[1] || "").slice(0, 2);
             }
 
-            val = parts.join('.');
+            val = parts.join(".");
 
             let num = Number(val);
 
@@ -408,7 +608,7 @@ document.addEventListener("alpine:init", () => {
 
             return val;
         },
-                init() {
+        init() {
             // =========================================
             // AUTO JAM BERAKHIR
             // =========================================

@@ -25,11 +25,11 @@
 
         {{-- 1. Isi bagian Sortir --}}
         <x-slot:leftSecHead>
-            <div x-data="{ activeTab: @entangle('filterKelasgg') }"
+            <div x-data="{ activeTab: @entangle('filterKelasPeriode') }"
                 class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
                     'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                     'tabString' => '',
                     'tabNameString' => 'Semua',
@@ -38,10 +38,18 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
                     'tabFilter' => $totalGanjilKelas,
                     'tabString' => 'kelas-ganjil',
                     'tabNameString' => 'Ganjil',
+                    'icon' => 'calendar-days',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
+                    'tabFilter' => $totalGenapKelas,
+                    'tabString' => 'kelas-genap',
+                    'tabNameString' => 'Genap',
                     'icon' => 'calendar-days',
                 ])
             </div>
@@ -151,7 +159,7 @@
                     {{-- Sub info: nama kelas + prodi --}}
                     <div class="flex flex-col gap-1.5">
                         <!-- Baris Atas: Kelas -->
-                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
                             <flux:icon name="users" class="w-3 h-3 mt-[1px] flex-shrink-0" />
                             <span class="leading-tight break-words">
                                 {{ $k->kelas ?? '-' }}
@@ -159,7 +167,7 @@
                         </div>
 
                         <!-- Baris Bawah: Kode PR -->
-                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
+                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
                             <flux:icon name="academic-cap" class="w-3 h-3 mt-[1px] flex-shrink-0" />
                             <span class="leading-tight break-words">
                                 {{ $k->kode_pr ?? '-' }}
@@ -187,7 +195,7 @@
                                 </button>
                             </span>
                         </div>
-                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3])
+                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3, 'isRPS' => 1])
                     </flux:dropdown>
 
                     {{-- Stat boxes --}}

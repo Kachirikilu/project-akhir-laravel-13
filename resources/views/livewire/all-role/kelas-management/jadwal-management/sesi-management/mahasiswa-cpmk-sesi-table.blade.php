@@ -36,9 +36,9 @@
             @else
                 <div
                     class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
-                    <div class="mr-4 sm:mr-6">
+                    {{-- <div class="mr-4 sm:mr-6">
                         @include('livewire.global.table.detail-view-switch')
-                    </div>
+                    </div> --}}
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'pertemuan_ke',
                         'headString' => 'NIM',
@@ -422,5 +422,5 @@
             </tr>
         @endforelse
 
-        </x-admin.global.table.main-layout-table>
+        </x-global.main-layout-table>
 </div>

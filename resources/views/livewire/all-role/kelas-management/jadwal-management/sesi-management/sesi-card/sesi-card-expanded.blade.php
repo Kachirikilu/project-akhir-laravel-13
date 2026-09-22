@@ -7,11 +7,24 @@
         });
     @endphp
     {{-- Sub-CPMK & Bobot detail --}}
-    <div
-        class="rounded-[10px] border {{ $bgBorder }} px-4 py-3 flex flex-col gap-2">
+    <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3 flex flex-col gap-2">
+        @if ($showMore)
+            <div class="flex items-center justify-between gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }}">CPMK</span>
+                <flux:dropdown>
+                    <button class="cursor-pointer focus:outline-none">
+                        <flux:badge icon="academic-cap" color="purple" size="sm">
+                            {{ $s->kode_cpmk ?? '---' }}</flux:badge>
+                    </button>
+                    @include(
+                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                        ['key' => 5, 'isCPMK' => 1]
+                    )
+                </flux:dropdown>
+            </div>
+        @endif
         <div class="flex items-center justify-between gap-2">
-            <span
-                class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }}">Sub-CPMK</span>
+            <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }}">Sub-CPMK</span>
             <flux:dropdown>
                 <button class="cursor-pointer focus:outline-none">
                     <flux:badge icon="academic-cap" color="fuchsia" size="sm">
@@ -19,7 +32,7 @@
                 </button>
                 @include(
                     'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
-                    ['key' => 5]
+                    ['key' => 5, 'isSCPMK' => 1]
                 )
             </flux:dropdown>
         </div>
@@ -36,9 +49,8 @@
     </div>
 
     {{-- Deskripsi Tugas --}}
-    <div class="rounded-[10px] border {{ $bgBorder }} px-4 py-3">
-        <span
-            class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">Deskripsi
+    <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3">
+        <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">Deskripsi
             Tugas / Evaluasi</span>
         <p class="text-xs leading-relaxed {{ $mainText }}">
             {{ $s->tugas ?? 'Tidak ada deskripsi tugas spesifik untuk sesi ini.' }}
@@ -47,35 +59,37 @@
 
     {{-- Tambahkan ini di view --}}
 
-    <div class="rounded-[10px] border {{ $bgBorder }} px-4 py-3">
-        <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">
-            Referensi
-        </span>
-        @php
-            $referensiList = $s->referensi_sesi ?? collect();
-        @endphp
-        @forelse($referensiList as $refs)
-            <div class="text-xs {{ $mainText }} flex items-start gap-2">
-                <div class="{{ $referensiList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+    @if ($showMore)
+        <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3">
+            <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">
+                Referensi
+            </span>
+            @php
+                $referensiList = $s->referensi_sesi ?? collect();
+            @endphp
+            @forelse($referensiList as $refs)
+                <div class="text-xs {{ $mainText }} flex items-start gap-2">
+                    <div class="{{ $referensiList->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
 
-                    @if ($referensiList->count() > 1)
-                        <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                    @endif
-                    <span>{{ $refs->citation }}</span>
-                    @if ($refs->link)
-                        <a href="{{ $refs->link }}" target="_blank"
-                            class="inline-flex items-center ml-2 hover:opacity-70 transition-opacity {{ $theme['link'] ?? 'text-blue-600' }}">
-                            <flux:icon.link variant="micro" />
-                        </a>
-                    @endif
+                        @if ($referensiList->count() > 1)
+                            <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                        @endif
+                        <span>{{ $refs->citation }}</span>
+                        @if ($refs->link)
+                            <a href="{{ $refs->link }}" target="_blank"
+                                class="inline-flex items-center ml-2 hover:opacity-70 transition-opacity {{ $theme['link'] ?? 'text-blue-600' }}">
+                                <flux:icon.link variant="micro" />
+                            </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
-        @empty
-            <div class="text-xs text-zinc-400 italic">Tidak ada data Referensi</div>
-        @endforelse
-    </div>
+            @empty
+                <div class="text-xs text-zinc-400 italic">Tidak ada data Referensi</div>
+            @endforelse
+        </div>
+    @endif
 
-    <div class="rounded-[10px] border {{ $bgBorder }} px-4 py-3">
+    <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-4 py-3">
         <span class="text-[10px] font-bold uppercase tracking-[0.06em] {{ $thirdText }} block mb-1.5">
             Dosen Pengajar
         </span>
@@ -102,8 +116,8 @@
                     {{ $dosen->name }}
 
                     @if ($dosen->is_ketua)
-                        <span class="ml-2 px-1.5 py-0.5 text-[9px] font-semibold bg-blue-100 text-blue-700 rounded">
-                            KETUA
+                        <span class="mb-0.5 ml-1.5 inline-flex items-center px-1 py-0.5 text-[7px] font-bold leading-none bg-blue-100 text-blue-700 rounded-sm select-none align-middle">
+                            Ketua
                         </span>
                     @endif
 
@@ -164,7 +178,7 @@
                 };
             @endphp
             <div
-                class="rounded-[10px] border {{ $bgBorder }} px-2.5 py-2.5 flex items-center justify-between gap-2">
+                class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-2.5 py-2.5 flex items-center justify-between gap-2">
                 <flux:badge color="{{ $badgeColor }}" size="sm" inset-top-bottom>
                     {{ $kehadiran_mhs->status }}</flux:badge>
                 <span class="text-xs {{ $secondText }} flex items-center gap-1">
@@ -173,8 +187,7 @@
                 </span>
             </div>
             @if ($kehadiran_mhs->keterangan)
-                <div
-                    class="rounded-[10px] border {{ $bgBorder }} px-2.5 py-2">
+                <div class="rounded-[10px] border {{ $borderTable }} {{ $secondTable }} px-2.5 py-2">
                     <span
                         class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }} block mb-1">Keterangan</span>
                     <p class="text-xs italic {{ $mainText }}">

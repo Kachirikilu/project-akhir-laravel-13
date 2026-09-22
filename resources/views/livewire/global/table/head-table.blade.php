@@ -1,36 +1,82 @@
-@if ($withTh ?? true)
+@php
+    $alpine = $alpine ?? false;
+    $withDiv = $withDiv ?? false;
+
+    if ($withDiv) {
+        $withTh = false;
+    } else {
+        $withTh = $withTh ?? true;
+    }
+
+    $main = $isMain ?? false;
+    $borderX = $isBorderX ?? false;
+    $boderL = $isBorderL ?? false;
+    $boderR = $isBorderR ?? false;
+@endphp
+
+@if ($withTh)
     <th wire:key="head-table-{{ $sortFieldString }}" rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
         class="bg-[var(--main-table-color)] table-border relative border-b p-6
         {{ $isSticky ?? false ? 'lg:sticky lg:left-0 lg:top-0 lg:z-30' : '' }}
-        {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
-        {{ $isBorderL ?? false ? 'border-l' : '' }}
-        {{ $isBorderR ?? false ? 'border-r' : '' }}
+        {{ $borderX || $main ? 'border-x' : '' }}
+        {{ $borderL ? 'border-l' : '' }}
+        {{ $borderR ? 'border-r' : '' }}
     ">
+@endif
+@if ($withDiv)
+    <div
+        class="{{ $borderX || $main ? 'border-x' : '' }}
+        {{ $borderL ? 'border-l' : '' }}
+        {{ $borderR ? 'border-r' : '' }} table-head border-r row-span-2 self-center text-center truncate relative h-full flex items-center justify-center">
 @endif
 
 <div x-cloak x-data="{
-    sortField: @entangle('sortField'),
-    sortDirection: @entangle('sortDirection'),
+    {{-- KONDISIONAL BINDING STATE SORTIR (ALPINE STORE vs LIVEWIRE) --}}
+    @if ($alpine) get sortField() { return this.$store.{{ $alpine }}.sortField },
+        set sortField(val) { this.$store.{{ $alpine }}.sortField = val },
+        get sortDirection() { return this.$store.{{ $alpine }}.sortDirection },
+        set sortDirection(val) { this.$store.{{ $alpine }}.sortDirection = val },
+    @else
+        sortField: @entangle('sortField'),
+        sortDirection: @entangle('sortDirection'), @endif
+
     clicked: false,
 
-    async doSort(direction) {
-        this.clicked = true;
-        await $wire.sortBy('{{ $sortFieldString }}', direction);
-        this.clicked = false;
-    }
+        async doSort(direction) {
+            this.clicked = true;
+
+            @if ($alpine) {{-- LOGIKA SORTIR LOKAL ALPINE STORE --}}
+            if (direction) {
+                this.sortField = '{{ $sortFieldString }}';
+                this.sortDirection = direction;
+            } else {
+                if (this.sortField === '{{ $sortFieldString }}') {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortField = '{{ $sortFieldString }}';
+                    const defaultDescFields = ['pertemuan_ke', 'total_absensi', 'metode', 'bobot', 'id'];
+                    this.sortDirection = defaultDescFields.includes('{{ $sortFieldString }}') ? 'desc' : 'asc';
+                }
+            }
+        @else
+            {{-- LOGIKA SORTIR LIVEWIRE BACKEND --}}
+            await $wire.sortBy('{{ $sortFieldString }}', direction); @endif
+
+            this.clicked = false;
+        }
 }"
-    class="w-full h-full flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap">
+    class="w-full {{ $withDiv ? 'h-10' : 'h-full' }} flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap">
 
     {{-- Judul --}}
-    <span
+    <span @click.stop.prevent="doSort()"
         :class="{
-            'text-[var(--focus-color)] {{ $isMain ?? false ? 'font-bold' : '' }}': (
+            'text-[var(--focus-color)] {{ $main ? 'font-bold' : '' }}': (
                 sortField === '{{ $sortFieldString }}' || clicked),
         
             'font-bold text-[var(--contrast-main-text)]':
                 !(sortField === '{{ $sortFieldString }}' || clicked)
         }"
-        class="{{ $isCenter ?? false ? 'ml-5' : '' }} transition-colors duration-300 cursor-default">
+        class="{{ $isCenter ?? false ? 'ml-5' : '' }} transition-colors duration-300 cursor-pointer select-none">
         {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
     </span>
 
@@ -39,14 +85,14 @@
 
         {{-- ASC --}}
         <button type="button" @click.stop.prevent="doSort('asc')"
-            class="flex items-center justify-center w-4 h-3 rounded">
+            class="flex items-center justify-center w-4 h-3 rounded outline-none">
 
             <span
                 :class="{
-                    'text-[var(--focus-color)]': sortField === '{{ $sortFieldString }}' &&
+                    'text-[var(--focus-color)] font-bold': sortField === '{{ $sortFieldString }}' &&
                         sortDirection === 'asc',
                 
-                    'opacity-30 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
+                    'opacity-30 hover:opacity-100 {{ $main ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'asc')
                 }"
@@ -58,14 +104,14 @@
 
         {{-- DESC --}}
         <button type="button" @click.stop.prevent="doSort('desc')"
-            class="flex items-center justify-center w-4 h-3 rounded">
+            class="flex items-center justify-center w-4 h-3 rounded outline-none">
 
             <span
                 :class="{
-                    'text-[var(--focus-color)]': sortField === '{{ $sortFieldString }}' &&
+                    'text-[var(--focus-color)] font-bold': sortField === '{{ $sortFieldString }}' &&
                         sortDirection === 'desc',
                 
-                    'opacity-30 hover:opacity-100 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
+                    'opacity-30 hover:opacity-100 {{ $main ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}':
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'desc')
                 }"
@@ -87,6 +133,10 @@
 
 </div>
 
-@if ($withTh ?? true)
+@if ($withDiv)
+    </div>
+@endif
+
+@if ($withTh)
     </th>
 @endif

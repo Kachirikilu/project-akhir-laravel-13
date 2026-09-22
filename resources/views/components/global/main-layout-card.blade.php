@@ -1,6 +1,7 @@
 @props([
     'paginator' => null,
     'onlyAdmin' => false,
+    'noTrash' => false,
     // 'targetLoading' => "
     //             filterByStatus, filterByAngkatan, filterByStrata, filterByMK,
     //             filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByTimDosen, filterByDosen,
@@ -42,7 +43,7 @@
 <div class="space-y-6">
 
     @if (isset($leftHead) || isset($rightHead))
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
             <div class="flex flex-row items-center gap-2">
                 @if (isset($leftHead))
                     {{ $leftHead }}
@@ -57,7 +58,7 @@
     @endif
 
     @if (isset($leftSecHead) || isset($rightSecHead))
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4 border-b table-border pb-2">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
             <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
                 @if (isset($leftSecHead))
                     {{ $leftSecHead }}
@@ -75,7 +76,7 @@
     @php
         if ($layoutGrid) {
             $layout_grid =
-                'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 items-start';
+                'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-6 items-start';
         } else {
             $layout_grid = 'space-y-4';
         }
@@ -105,6 +106,7 @@
             @include('livewire.global.table.footer-table', [
                 'typeXString' => $paginator,
                 'onlyAdmin' => $onlyAdmin,
+                'noTrash' => $noTrash,
                 'mx' => $mx,
             ])
         </div>

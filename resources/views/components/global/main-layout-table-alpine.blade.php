@@ -1,0 +1,77 @@
+@props([
+    'paginator' => null,
+    'onlyAdmin' => false,
+    'noTrash' => false,
+])
+
+{{-- Section Top Header --}}
+@if (isset($leftHead) || isset($rightHead))
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
+        <div class="flex flex-row items-center gap-2">
+            @if (isset($leftHead))
+                {{ $leftHead }}
+            @endif
+        </div>
+        <div class="flex items-center w-full md:w-auto justify-between md:justify-end">
+            @if (isset($rightHead))
+                {{ $rightHead }}
+            @endif
+        </div>
+    </div>
+@endif
+
+{{-- Section Second Header (Search & Filter) --}}
+@if (isset($leftSecHead) || isset($rightSecHead))
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
+        <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
+            @if (isset($leftSecHead))
+                {{ $leftSecHead }}
+            @endif
+        </div>
+        <div class="flex items-center w-full lg:w-auto justify-end lg:justify-end">
+            @if (isset($rightSecHead))
+                {{ $rightSecHead }}
+            @endif
+        </div>
+    </div>
+@endif
+
+<div class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
+    id="table-results-container">
+    
+    <div class="w-full overflow-x-auto scrollbar-x-large max-h-[1000px]">
+        {{-- PERBAIKAN: Gunakan min-w-full w-max agar warna background selalu mekar mengikuti konten saat di-scroll --}}
+        <div class="min-w-full w-max flex flex-col">
+            
+            {{-- HEADER TABEL (Sticky Top) --}}
+            @if (isset($header))
+                <div class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border border-b shadow-sm font-semibold text-xs sm:text-sm min-w-full">
+                    {{ $header }}
+                </div>
+            @endif
+
+            {{-- BODY TABEL --}}
+            <div class="flex flex-col min-w-full divide-y bg-[var(--second-table-color)]"
+                x-data="{ isLoading: false }" 
+                x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });
+                window.addEventListener('stop-loading-trigger', () => { isLoading = false; });"
+                x-bind:class="isLoading ? 'opacity-50 pointer-events-none' : ''"
+                wire:loading.class="opacity-50 pointer-events-none transition-opacity">
+                
+                {{ $slot }}
+
+            </div>
+        </div>
+    </div>
+
+    {{-- FOOTER TABEL --}}
+    @if (isset($footer))
+        {{ $footer }}
+    @elseif($paginator)
+        @include('livewire.global.table.footer-table', [
+            'typeXString' => $paginator,
+            'onlyAdmin' => $onlyAdmin,
+            'noTrash' => $noTrash,
+        ])
+    @endif
+</div>

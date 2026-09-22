@@ -15,7 +15,7 @@ trait WithKelasFilters
 
     public $filterKelas = '';
 
-    public $filterKelasgg = '';
+    public $filterKelasPeriode = '';
 
     public $searchBobotKelas = '';
 
@@ -147,11 +147,11 @@ trait WithKelasFilters
             $q->whereRaw('mata_kuliahs.semester % 2 = 0');
         })->count();
 
-        if ($this->filterKelasgg === 'kelas-ganjil') {
+        if ($this->filterKelasPeriode === 'kelas-ganjil') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->whereRaw('mata_kuliahs.semester % 2 = 1');
             });
-        } elseif ($this->filterKelasgg === 'kelas-genap') {
+        } elseif ($this->filterKelasPeriode === 'kelas-genap') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->whereRaw('mata_kuliahs.semester % 2 = 0');
             });
@@ -166,7 +166,7 @@ trait WithKelasFilters
 
     public function filterByKelasgg($kelas)
     {
-        $this->filterKelasgg = $kelas;
+        $this->filterKelasPeriode = $kelas;
         $this->resetPage();
     }
 

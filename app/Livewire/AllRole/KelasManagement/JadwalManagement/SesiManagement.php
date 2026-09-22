@@ -45,7 +45,7 @@ class SesiManagement extends Component
     public $search = '';
 
     public $searchMode = 'simple';
-    
+
     public $showMore = false;
 
     public $isJadwalOnly = false;
@@ -111,9 +111,7 @@ class SesiManagement extends Component
     #[On('refresh-data-sesi')]
     #[On('refresh-data-jadwal')]
     #[On('refresh-table')]
-    public function refreshSesiList()
-    {
-    }
+    public function refreshSesiList() {}
 
     #[On('refresh-data-rps-mahasiswa')]
     #[On('refresh-data-sesi')]
@@ -503,23 +501,39 @@ class SesiManagement extends Component
             switch ($this->switchTable) {
                 case 'hari-ini':
                     $sesis = (clone $querySesi)->whereDate('tanggal', today())->get();
-                    if ($sesis->count() === 0) {
-                        $sesis = $querySesi->get();
-                        $haveSesiDay = false;
-                    } else {
+
+                    if ($sesis->count() > 0) {
                         $haveSesiDay = true;
-                    }
-                    break;
-                case 'card':
-                    $sesis = $querySesi->get();
-                    break;
-                case 'table':
-                    if ($this->searchMode == 'complex') {
-                        $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
                     } else {
-                        $sesis = $querySesi->paginate($this->perPage);
+                        $nextDate = (clone $querySesi)
+                            ->whereDate('tanggal', '>', today())
+                            ->orderBy('tanggal', 'asc')
+                            ->value('tanggal');
+
+                        if ($nextDate) {
+                            $sesis = (clone $querySesi)
+                                ->whereDate('tanggal', '>=', $nextDate)
+                                ->orderBy('pertemuan_ke', 'asc')
+                                ->get();
+                        } else {
+                            $sesis = $querySesi->orderBy('pertemuan_ke', 'asc')->get();
+                        }
+                        $haveSesiDay = false;
                     }
                     break;
+
+                case 'card':
+                case 'table':
+                    $sesis = $querySesi->orderBy('pertemuan_ke', 'asc')->get();
+                    break;
+
+                // case 'table':
+                //     if ($this->searchMode == 'complex') {
+                //         $sesis = $this->searchOutputSesi($querySesi, $this->search, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);
+                //     } else {
+                //         $sesis = $querySesi->paginate($this->perPage);
+                //     }
+                //     break;
                 case 'mahasiswa':
                     if ($this->searchMode == 'complex') {
                         $users = $this->searchOutputUser($queryUser, $this->search, $this->searchAngkatan, $this->perPage, $this->sortField, $this->sortDirection, $jadwalId);

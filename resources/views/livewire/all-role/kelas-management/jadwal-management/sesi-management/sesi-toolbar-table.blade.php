@@ -1,5 +1,21 @@
 <flux:menu
     class="!bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] text-xs sm:text-sm scrollbar-medium">
+
+    @php
+
+        if ($isCPMK ?? false) {
+            $headText = 'CPMK';
+            $copyText = $s->kode_cpmk;
+        } elseif ($isSCPMK ?? false) {
+            $headText = 'Sub-CPMK';
+            $copyText = $s->kode_scpmk;
+        } else {
+            $headText = 'Sesi';
+            $copyText = null;
+        }
+
+    @endphp
+
     @if (Auth::user()->admin || Auth::user()->dosen)
         <livewire:all-role.kelas-management.jadwal-management.sesi-management.toolbar-sesi-management lazy
             :data="[
@@ -11,9 +27,12 @@
                 'tanggal_fix' => $s->tanggal_fix,
                 'sks' => $kelas->sks,
                 'sent' => $s->sent,
-                'canAccess'         => $canAccess,
+                'canAccess' => $canAccess,
+                'headText' => 'Kode ' . $headText,
+                'copyText' => $copyText,
                 'isTrashed' => $s->trashed(),
-            ]" wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
+            ]"
+            wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
     @elseif (Auth::user()->mahasiswa)
         <livewire:all-role.kelas-management.jadwal-management.sesi-management.toolbar-sesi-management lazy
             :data="[
@@ -31,7 +50,10 @@
                 'mhs_status' => $kehadiran_mhs->status ?? 0,
                 'mhs_waktu_presensi' => $kehadiran_mhs?->waktu_presensi?->format('H:i') ?? 0,
                 'mhs_keterangan' => $kehadiran_mhs->keterangan ?? 0,
+                'headText' => 'Kode ' . $headText,
+                'copyText' => $copyText,
                 'isTrashed' => $s->trashed(),
-            ]" wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
+            ]"
+            wire:key="toolbar-sesi-{{ $s->id }}-{{ $key }}-{{ $s->updated_at?->timestamp }}" />
     @endif
 </flux:menu>

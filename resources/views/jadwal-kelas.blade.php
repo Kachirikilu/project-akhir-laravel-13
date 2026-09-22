@@ -16,6 +16,8 @@
             @endif
         </div>
     </div>
+    
+    <livewire:staff.obe-management.rps-management.show-rps-management />
 
     @if (Auth::user()->admin || Auth::user()->dosen)
         @if (request()->routeIs('jadwal-kelas'))

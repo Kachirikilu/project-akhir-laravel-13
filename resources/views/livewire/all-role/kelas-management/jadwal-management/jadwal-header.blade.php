@@ -99,7 +99,8 @@
                             class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>
                         @if ($dosen->pivot->is_ketua)
                             <span
-                                class="px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded uppercase">KETUA</span>
+                                class="inline-block -translate-y-[1.5px] px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded-sm uppercase">KETUA</span>
+                        </span>
                         @endif
                     </span>
 
@@ -215,7 +216,7 @@
                     $dispatch('open-excel-sesi-modal');
                 "
                 icon="printer" size="sm"
-                class="!cursor-pointer px-4 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                class="text-xs !cursor-pointer px-4 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
                 <span>Import Nilai</span>
             </flux:button>
 

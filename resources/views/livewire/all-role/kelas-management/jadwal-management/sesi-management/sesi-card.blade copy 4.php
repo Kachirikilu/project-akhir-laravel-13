@@ -1,8 +1,6 @@
 <div wire:key="view-card-sesi">
 
     @php
-        $showMore = $showMore ?? false;
-
         $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
 
         $alpineData = $sesis
@@ -79,79 +77,88 @@
             ),
         );
     @endphp
-    <div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
+<div wire:key="sesi-wrapper-{{ $alpineVersion }}" x-data="{
         rawItems: [],
-    
+
         get currentPage() {
-            return Number(this.$store.sesi?.currentPage ?? 1) || 1;
+            return Number(this.$store?.sesi?.currentPage ?? 1) || 1;
         },
         set currentPage(val) {
-            this.$store.sesi.currentPage = Number(val) || 1;
+            if (this.$store?.sesi) {
+                this.$store.sesi.currentPage = Number(val) || 1;
+            }
         },
-    
+
         get perPage() {
-            return Number(this.$store.sesi?.perPage ?? 8) || 8;
+            return Number(this.$store?.sesi?.perPage ?? 8) || 8;
         },
         set perPage(val) {
             const next = Number(val) || 8;
-            if (this.$store.sesi?.perPage !== next) {
+            if (this.$store?.sesi && this.$store.sesi.perPage !== next) {
                 this.$store.sesi.perPage = next;
             }
         },
-    
+
         get sortField() {
-            return this.$store.sesi?.sortField ?? 'pertemuan_ke';
+            return this.$store?.sesi?.sortField ?? 'pertemuan_ke';
         },
         set sortField(val) {
-            this.$store.sesi.sortField = val ?? 'pertemuan_ke';
+            if (this.$store?.sesi) {
+                this.$store.sesi.sortField = val ?? 'pertemuan_ke';
+            }
         },
-    
+
         get sortDirection() {
-            return this.$store.sesi?.sortDirection ?? 'asc';
+            return this.$store?.sesi?.sortDirection ?? 'asc';
         },
         set sortDirection(val) {
-            this.$store.sesi.sortDirection = val ?? 'asc';
+            if (this.$store?.sesi) {
+                this.$store.sesi.sortDirection = val ?? 'asc';
+            }
         },
-    
+
         get filteredAndSortedIds() {
-            let query = (this.$store.sesi?.search || '').toLowerCase().trim();
+            if (!this.rawItems || !Array.isArray(this.rawItems)) return [];
+
+            let query = (this.$store?.sesi?.search || '').toLowerCase().trim();
             let cleanQuery = query.replace(/[^a-z0-9]/g, '');
             let dotQuery = query.replace(',', '.');
             let normalizedQuery = query.replace(/[\u2013\u2014]/g, '-');
-    
+
             let filtered = this.rawItems.filter(item => {
+                if (!item) return false;
                 if (!query) return true;
-    
+
                 let metode = String(item.metode || '').toLowerCase();
                 let tugas = String(item.tugas || '').toLowerCase();
                 let kodeScpmk = String(item.kode_scpmk || '').toLowerCase();
                 let searchScpmk = String(item.searchKodeSCPMK || '').toLowerCase();
                 let kodeCpmk = String(item.kode_cpmk || '').toLowerCase();
                 let searchCpmk = String(item.searchKodeCPMK || '').toLowerCase();
-    
+
                 let hari = String(item.hari || '').toLowerCase();
                 let hariJam = String(item.hari_jam || '').toLowerCase().replace(/[\u2013\u2014]/g, '-');
                 let hariTanggal = String(item.hari_tanggal || '').toLowerCase();
-    
+
                 if (metode.includes(query) || tugas.includes(query)) return true;
                 if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
                 if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
                 if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
-    
+
                 if (hari.includes(query) || hariTanggal.includes(query)) return true;
                 if (hariJam.includes(normalizedQuery)) return true;
-    
+
                 if (item.bobot?.some(bText => {
                         let text = String(bText).toLowerCase();
                         return text.includes(query) || text.includes(dotQuery);
                     })) return true;
-    
+
                 return false;
             });
-    
-            let field = this.$store.sesi?.sortField || this.sortField;
-            let direction = (this.$store.sesi?.sortDirection || this.sortDirection) === 'desc' ? -1 : 1;
-    
+
+            let field = this.$store?.sesi?.sortField || this.sortField;
+            let direction = (this.$store?.sesi?.sortDirection || this.sortDirection) === 'desc' ? -1 : 1;
+
             const getMethodPriority = (value) => {
                 const text = String(value ?? '').trim().toLowerCase();
                 if (text.includes('uas')) return 3;
@@ -161,7 +168,7 @@
                 if (text.includes('tugas')) return -1;
                 return -2;
             };
-    
+
             const parseNumber = (value) => {
                 if (value === null || value === undefined || value === '') return 0;
                 const normalized = String(value)
@@ -171,95 +178,97 @@
                 const num = Number(normalized);
                 return Number.isFinite(num) ? num : 0;
             };
-    
+
             const sortedFiltered = [...filtered];
-    
+
             if (field) {
                 sortedFiltered.sort((a, b) => {
-                    const fallbackOrder = () => Number(a.dbIndex) - Number(b.dbIndex);
-    
+                    const fallbackOrder = () => Number(a.dbIndex ?? 0) - Number(b.dbIndex ?? 0);
+
                     if (field === 'pertemuan_ke' || field === 'total_absensi') {
                         const numA = Number(field === 'pertemuan_ke' ? (a.pertemuan_ke ?? 0) : (a.total_absensi ?? 0));
                         const numB = Number(field === 'pertemuan_ke' ? (b.pertemuan_ke ?? 0) : (b.total_absensi ?? 0));
                         if (numA !== numB) return (numA - numB) * direction;
                         return fallbackOrder();
                     }
-    
+
                     if (field === 'metode') {
                         const rankA = getMethodPriority(a.metode);
                         const rankB = getMethodPriority(b.metode);
                         if (rankA !== rankB) return (rankA - rankB) * direction;
-    
+
                         const perA = Number(a.pertemuan_ke ?? 0);
                         const perB = Number(b.pertemuan_ke ?? 0);
                         if (perA !== perB) return (perA - perB) * direction;
                         return fallbackOrder();
                     }
-    
+
                     if (field === 'bobot') {
                         const safeA = parseNumber(a.bobot_normalisasi);
                         const safeB = parseNumber(b.bobot_normalisasi);
                         if (safeA !== safeB) return (safeA - safeB) * direction;
-    
+
                         const perA = Number(a.pertemuan_ke ?? 0);
                         const perB = Number(b.pertemuan_ke ?? 0);
                         if (perA !== perB) return (perA - perB) * direction;
                         return fallbackOrder();
                     }
-    
+
                     const valA = a[field];
                     const valB = b[field];
                     const textA = String(valA ?? '').trim().toLowerCase();
                     const textB = String(valB ?? '').trim().toLowerCase();
                     const result = textA.localeCompare(textB, 'id', { numeric: true, sensitivity: 'base' });
-    
+
                     return result !== 0 ? result * direction : fallbackOrder();
                 });
             } else {
-                sortedFiltered.sort((a, b) => Number(a.dbIndex) - Number(b.dbIndex));
+                sortedFiltered.sort((a, b) => Number(a.dbIndex ?? 0) - Number(b.dbIndex ?? 0));
             }
-    
+
             return sortedFiltered;
         },
-    
-        get pageIds() {
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = Math.min(start + this.perPage, this.filteredAndSortedIds.length);
-            return this.filteredAndSortedIds.slice(start, end).map(item => item.id);
-        },
-    
-        get itemVisibilityMap() {
-            let map = {};
-            const visibleIds = new Set(this.pageIds);
-    
-            this.filteredAndSortedIds.forEach((item) => {
-                map[item.id] = {
-                    visible: visibleIds.has(item.id),
-                    order: this.filteredAndSortedIds.findIndex(entry => entry.id === item.id)
-                };
-            });
-            return map;
-        },
-    
+
         get totalFilteredItems() {
-            return this.filteredAndSortedIds.length;
+            return (this.filteredAndSortedIds || []).length;
         },
         get totalPages() {
-            return Math.max(1, Math.ceil(this.totalFilteredItems / this.perPage));
+            return Math.max(1, Math.ceil(this.totalFilteredItems / (this.perPage || 8)));
         },
-    
+
+        // Helper presisi untuk x-if agar tidak perlu slice manual di Blade
+isCardVisible(id) {
+    if (!this.rawItems || !Array.isArray(this.filteredAndSortedIds) || this.filteredAndSortedIds.length === 0) {
+        return false;
+    }
+    const list = this.filteredAndSortedIds;
+    const cp = Number(this.currentPage) || 1;
+    const pp = Number(this.perPage) || 8;
+    const start = (cp - 1) * pp;
+    const end = start + pp;
+
+    return Boolean(list.slice(start, end).some(item => Number(item?.id) === Number(id)));
+},
+
+        getCardOrder(id) {
+            if (!Array.isArray(this.filteredAndSortedIds)) return 0;
+            return this.filteredAndSortedIds.findIndex(entry => Number(entry?.id) === Number(id));
+        },
+
         init() {
-            this.$watch('$store.sesi.search', () => { this.currentPage = 1; });
-            this.$watch('$store.sesi.sortField', () => { this.currentPage = 1; });
-            this.$watch('$store.sesi.sortDirection', () => { this.currentPage = 1; });
-            this.$watch('$store.sesi.perPage', (val) => {
-                const next = Number(val) || 8;
-                if (this.perPage !== next) {
-                    this.perPage = next;
-                }
-                const totalPages = Math.max(1, Math.ceil(this.filteredAndSortedIds.length / this.perPage));
-                this.currentPage = Math.min(this.currentPage || 1, totalPages);
-            });
+            if (this.$store?.sesi) {
+                this.$watch('$store.sesi.search', () => { this.currentPage = 1; });
+                this.$watch('$store.sesi.sortField', () => { this.currentPage = 1; });
+                this.$watch('$store.sesi.sortDirection', () => { this.currentPage = 1; });
+                this.$watch('$store.sesi.perPage', (val) => {
+                    const next = Number(val) || 8;
+                    if (this.perPage !== next) {
+                        this.perPage = next;
+                    }
+                    const totalPages = Math.max(1, Math.ceil((this.filteredAndSortedIds || []).length / this.perPage));
+                    this.currentPage = Math.min(this.currentPage || 1, totalPages);
+                });
+            }
         }
     }" x-init="rawItems = {{ $jsonFreshData }};" class="w-full">
 
@@ -275,7 +284,6 @@
                         'alpine' => 'sesi',
                         'headString' => 'Pertemuan',
                     ])
-
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'total_absensi',
                         'alpine' => 'sesi',
@@ -331,107 +339,78 @@
                     </div>
                 </div>
             </x-slot:rightSecHead>
+            @php
+                $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
+                $kehadiran_mhs = Auth::user()->mahasiswa
+                    ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
+                    : null;
 
+                if ($isUjian) {
+                    $mainColor = 'bg-[var(--main-color-special)]';
+                    $bgBorder = 'border-[var(--border-table-color-special)] bg-[var(--second-table-color-special)]';
+                    $mainText = 'text-[var(--contrast-main-text-special)]';
+                    $secondText = 'text-[var(--contrast-second-text-special)]';
+                    $thirdText = 'text-[var(--contrast-third-text-special)]';
 
-            @foreach ($sesis as $index => $s)
-                @php
-                    $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
-                    $isPastDate =
-                        !empty($s->tanggal) &&
-                        \Carbon\Carbon::parse($s->tanggal)->isPast() &&
-                        !\Carbon\Carbon::parse($s->tanggal)->isToday();
+                    $focusColor = 'bg-[var(--focus-color-special)]';
+                    $mainTable = 'bg-[var(--main-table-color-special)]';
+                    $secondTable = 'bg-[var(--second-table-color-special)]';
+                    $subTable = 'bg-[var(--sub-table-color-special)]';
+                } else {
+                    $mainColor = 'bg-[var(--main-color)]';
+                    $bgBorder = 'border-[var(--border-table-color)] bg-[var(--second-table-color)]';
+                    $mainText = 'text-[var(--contrast-main-text)]';
+                    $secondText = 'text-[var(--contrast-second-text)]';
+                    $thirdText = 'text-[var(--contrast-third-text)]';
 
-                    $kehadiran_mhs = Auth::user()->mahasiswa
-                        ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
-                        : null;
+                    $focusColor = 'bg-[var(--focus-color)]';
+                    $mainTable = 'bg-[var(--main-table-color)]';
+                    $secondTable = 'bg-[var(--second-table-color)]';
+                    $subTable = 'bg-[var(--sub-table-color)]';
+                }
+            @endphp
 
-                    // 1. Ekstraksi Sufiks & Variabel Statis (Berdasarkan $isUjian saja)
-                    $suf = $isUjian ? '-special' : '';
+@foreach ($sesis as $index => $s)
+    <div x-cloak
+        x-show="(filteredAndSortedIds || []).slice(((currentPage || 1) - 1) * (perPage || 8), (currentPage || 1) * (perPage || 8)).some(item => Number(item?.id) === Number({{ $s->id }}))"
+        :style="'order: ' + ((filteredAndSortedIds || []).findIndex(entry => Number(entry?.id) === Number({{ $s->id }})))"
+        class="{{ $isUjian ? 'lg:col-span-2' : '' }}">
 
-                    $borderTable = "border-[var(--border-table-color{$suf})]";
-                    $mainText = "text-[var(--contrast-main-text{$suf})]";
-                    $secondText = "text-[var(--contrast-second-text{$suf})]";
-                    $thirdText = "text-[var(--contrast-third-text{$suf})]";
+        <div wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{
+            expanded: false,
+            hasLoaded: false
+        }"
+            @click="expanded = !expanded; hasLoaded = true"
+            class="flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer
+                {{ $isUjian ? 'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]/50' : 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50' }}">
 
-                    $focusColor = "bg-[var(--focus-color{$suf})]";
-                    $mainTable = "bg-[var(--main-table-color{$suf})]";
-                    $secondTable = "bg-[var(--second-table-color{$suf})]";
-                    $subTable = "bg-[var(--sub-table-color{$suf})]";
+            {{-- ═══ HERO ═══ --}}
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
 
-                    // 2. Base String untuk Penggabungan $focusButton
-                    $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
+            {{-- ═══ BODY ═══ --}}
+            <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
+                @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
 
-                    if ($isUjian) {
-                        if ($isPastDate) {
-                            $focusDiv =
-                                'dark:border-[var(--border-table-color-special)]/42 border-[var(--border-table-color-special)]';
-                            $focusButton =
-                                $btnBase .
-                                ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color)]/64';
-                            $mainColor = 'dark:bg-[var(--main-color-special)]/24 bg-[var(--main-color-special)]/72';
-                        } else {
-                            $focusDiv =
-                                'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]/64';
-                            $focusButton =
-                                $btnBase .
-                                ' hover:bg-[var(--focus-color-special)] hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)] active:text-[var(--main-text-special)] text-[var(--focus-color-special)] ring-[var(--focus-color-special)]';
-                            $mainColor = 'bg-[var(--main-color-special)]';
-                        }
-                    } else {
-                        if ($isPastDate) {
-                            $focusDiv = 'dark:border-[var(--border-table-color)]/42 border-[var(--border-table-color)]';
-                            $focusButton =
-                                $btnBase .
-                                ' hover:bg-[var(--focus-color)]/84 hover:text-[var(--main-text)] active:bg-[var(--focus-color)]/84 active:text-[var(--main-text)] dark:hover:bg-[var(--focus-color)]/24 dark:active:bg-[var(--focus-color)]/24 text-[var(--focus-color)] ring-[var(--focus-color)]/64';
-                            $mainColor = 'dark:bg-[var(--main-color)]/24 bg-[var(--main-color)]/72';
-                        } else {
-                            $focusDiv = 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]/64';
-                            $focusButton =
-                                $btnBase .
-                                ' hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:bg-[var(--focus-color)] active:text-[var(--main-text)] text-[var(--focus-color)] ring-[var(--focus-color)]';
-                            $mainColor = 'bg-[var(--main-color)]';
-                        }
-                    }
-                @endphp
-
-
-                <div x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))"
-                    class="{{ $isUjian ? 'lg:col-span-2' : '' }} contents">
-
-                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number({{ $s->id }}))"
-                        wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: false, hasLoaded: false }"
-                        @click="expanded = !expanded; hasLoaded = true"
-                        class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-full flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
-
-
-
-                        {{-- ═══ HERO ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-header')
-
-                        {{-- ═══ BODY ═══ --}}
-                        <div class="flex flex-1 flex-col gap-2.5 p-4" @click.stop>
-                            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-main')
-
-                            <div x-show="expanded" x-collapse.duration.300ms>
-                                @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
-                                    @include(
-                                        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
-                                        [
-                                            'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
-                                        ]
-                                    )
-                                @else
-                                    @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
-                                @endif
-                            </div>
-                        </div>
-
-                        {{-- ═══ FOOTER: toggle hint ═══ --}}
-                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
-
-                    </div>
+                <div x-show="expanded" x-collapse.duration.300ms>
+                    @if (isset($this->dosens_by_sesi[$s->pertemuan_ke]))
+                        @include(
+                            'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded',
+                            [
+                                'allTimDosen' => $this->dosens_by_sesi[$s->pertemuan_ke],
+                            ]
+                        )
+                    @else
+                        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-expanded-skeleton')
+                    @endif
                 </div>
-            @endforeach
+            </div>
+
+            {{-- ═══ FOOTER: toggle hint ═══ --}}
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-card.sesi-card-button')
+
+        </div>
+    </div>
+@endforeach
 
 
             {{-- EMPTY STATE ANCHOR --}}

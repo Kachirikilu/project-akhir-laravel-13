@@ -69,8 +69,16 @@
     <div x-data="{ 
             open: false, 
             @if($alpineStore)
-                get selected() { return this.$store.{{ $alpineStore }}.perPage },
-                set selected(val) { this.$store.{{ $alpineStore }}.perPage = val }
+                get selected() { return Number(this.$store.{{ $alpineStore }}?.perPage ?? 8) || 8 },
+                set selected(val) {
+                    const next = Number(val) || 8;
+
+                    if (this.$store.{{ $alpineStore }}?.setPerPage) {
+                        this.$store.{{ $alpineStore }}.setPerPage(next);
+                    } else {
+                        this.$store.{{ $alpineStore }}.perPage = next;
+                    }
+                }
             @else
                 selected: @entangle('perPage').live
             @endif
@@ -133,7 +141,7 @@
                            hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90
                            hover:text-[var(--main-text)] active:text-[var(--main-text)]/90"
                     :class="{
-                        'bg-[var(--main-color)] text-[var(--main-text)] font-semibold': selected == {{ $option }}
+                        'bg-[var(--main-color)] text-[var(--main-text)] font-semibold': Number(selected) == {{ $option }}
                     }">
                     {{ $option }}
                 </li>

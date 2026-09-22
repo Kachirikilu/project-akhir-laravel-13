@@ -9,11 +9,11 @@
 
         <x-slot:leftSecHead>
 
-            <div x-data="{ activeTab: @entangle('filterMKgg') }"
+            <div x-data="{ activeTab: @entangle('filterMKPeriode') }"
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByMKgg',
-                    'xFilter' => 'filterMKgg',
+                    'xFilter' => 'filterMKPeriode',
                     'tabFilter' => $totalGanjilMK + $totalGenapMK,
                     'tabString' => '',
                     'tabNameString' => 'Semua',
@@ -22,7 +22,7 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByMKgg',
-                    'xFilter' => 'filterMKgg',
+                    'xFilter' => 'filterMKPeriode',
                     'tabFilter' => $totalGanjilMK,
                     'tabString' => 'mk-ganjil',
                     'tabNameString' => 'Ganjil',
@@ -31,7 +31,7 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByMKgg',
-                    'xFilter' => 'filterMKgg',
+                    'xFilter' => 'filterMKPeriode',
                     'tabFilter' => $totalGenapMK,
                     'tabString' => 'mk-genap',
                     'tabNameString' => 'Genap',
@@ -248,5 +248,5 @@
             </tr>
         @endforelse
 
-        </x-admin.global.table.main-layout-table>
+        </x-global.main-layout-table>
 </div>

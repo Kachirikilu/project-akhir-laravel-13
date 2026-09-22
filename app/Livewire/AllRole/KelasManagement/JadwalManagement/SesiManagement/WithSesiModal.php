@@ -75,8 +75,9 @@ trait WithSesiModal
             $sesi = KelasSesi::findOrFail($id);
 
             $this->sesi_input = array_merge($this->sesi_input, $sesi->only([
-                'deskripsi', 'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas',
+                'deskripsi', 'materi', 'metodologi', 'indikator',
             ]), [
+                'deskripsi_tugas' => $sesi->tugas,
                 'waktu_tugas' => $sesi->w_tugas,
                 'waktu_mandiri' => $sesi->w_mandiri,
             ]);

@@ -62,7 +62,7 @@ class MataKuliahManagement extends Component
         'perPage' => ['except' => 8],
         'showMore' => ['except' => false],
         'filterMK' => ['except' => ''],
-        'filterMKgg' => ['except' => ''],
+        'filterMKPeriode' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],

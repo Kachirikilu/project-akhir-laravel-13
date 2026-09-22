@@ -20,9 +20,19 @@ document.addEventListener("alpine:init", () => {
             this.colorIconBg = val2;
         },
 
+        setPerPage(value) {
+            const next = Number(value) || 8;
+            this.perPage = next;
+            this.fromItem = 1;
+            this.toItem = next;
+            this.currentPage = 1;
+        },
+
         search: "",
         perPage: 8,
         sortField: "semester",
+        sortField2: "digit_mk",
+
         sortDirection: "desc",
         currentPage: 1,
         totalPages: 1,

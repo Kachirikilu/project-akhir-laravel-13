@@ -10,6 +10,17 @@
         if ($dosen_id && $k->rps_rel?->tim_dosens) {
             $isDosenClass = $k->rps_rel?->tim_dosens?->where('pr_id', $pr_id)->flatMap->dosens->contains('id', $dosen_id);
         }
+
+        if ($isRPS ?? false) {
+            $headText = 'RPS';
+            $copyText = $k->kode_rps;
+        } elseif ($isMK ?? false) {
+            $headText = 'MK';
+            $copyText = $k->kode_mk;
+        } else {
+            $headText = 'Kelas';
+            $copyText = null;
+        }
     @endphp
     <livewire:all-role.kelas-management.toolbar-kelas-management lazy :data="[
         'id' => $k->id,
@@ -24,6 +35,8 @@
         'kelas' => $k->kelas,
         'deskripsi_kelas' => $k->deskripsi_kelas,
         // 'draf'           => $k->rps_rel->draf ?? null,
+        'headText' => 'Kode '. $headText,
+        'copyText' => $copyText,
         'isDosenClass' => $isDosenClass,
         'isTrashed' => $k->trashed(),
     ]"

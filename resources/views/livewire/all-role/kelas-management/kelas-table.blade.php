@@ -28,11 +28,11 @@
         </x-slot:rightHead>
 
         <x-slot:leftSecHead>
-            <div x-data="{ activeTab: @entangle('filterKelasgg') }"
+            <div x-data="{ activeTab: @entangle('filterKelasPeriode') }"
                 class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
                     'tabFilter' => $totalGanjilKelas + $totalGenapKelas,
                     'tabString' => '',
                     'tabNameString' => 'Semua',
@@ -41,7 +41,7 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
                     'tabFilter' => $totalGanjilKelas,
                     'tabString' => 'kelas-ganjil',
                     'tabNameString' => 'Ganjil',
@@ -50,7 +50,7 @@
 
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'filterByKelasgg',
-                    'xFilter' => 'filterKelasgg',
+                    'xFilter' => 'filterKelasPeriode',
                     'tabFilter' => $totalGenapKelas,
                     'tabString' => 'kelas-genap',
                     'tabNameString' => 'Genap',
@@ -125,61 +125,60 @@
                 @endif
             </tr>
 
-@if ($showMore)
-            
-            <tr class="bg-gray-50">
+            @if ($showMore)
+                <tr class="bg-gray-50">
 
-                {{-- Informasi Kelas --}}
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'hari_pelaksanaan',
-                    'isCenter' => 1,
-                    'headString' => 'Hari',
-                    'isMain' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'jam_pelaksanaan',
-                    'isCenter' => 1,
-                    'headString' => 'Jam',
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'kapasitas',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'tanggal_pelaksanaan',
-                    'isCenter' => 1,
-                    'headString' => 'Tanggal',
-                ])
+                    {{-- Informasi Kelas --}}
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'hari_pelaksanaan',
+                        'isCenter' => 1,
+                        'headString' => 'Hari',
+                        'isMain' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'jam_pelaksanaan',
+                        'isCenter' => 1,
+                        'headString' => 'Jam',
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'kapasitas',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'tanggal_pelaksanaan',
+                        'isCenter' => 1,
+                        'headString' => 'Tanggal',
+                    ])
 
-                {{-- Informasi MK --}}
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'kode_mk',
-                    'isCenter' => 1,
-                    'isMain' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mk',
-                    'headString' => 'Nama MK',
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'semester',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'sks',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'pembelajaran',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'wajib',
-                    'isCenter' => 1,
-                    'isBorderL' => 1,
-                ])
+                    {{-- Informasi MK --}}
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'kode_mk',
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'mk',
+                        'headString' => 'Nama MK',
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'semester',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'sks',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'pembelajaran',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'wajib',
+                        'isCenter' => 1,
+                        'isBorderL' => 1,
+                    ])
 
-            </tr>
+                </tr>
             @endif
         </x-slot:header>
 
@@ -211,7 +210,7 @@
                                 'sortir' => $k->semester,
                             ])
                         </button>
-                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2])
+                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 2, 'isRPS' => 1])
                     </flux:dropdown>
                 </td>
                 <td class="table-second table-border-x text-center whitespace-nowrap">
@@ -231,88 +230,92 @@
                 <td class="table-second min-w-84">{{ $k->kelas ?? '-' }}</td>
                 <td class="table-second min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
 
-@if ($showMore)
+                @if ($showMore)
+                    <td class="table-main text-center align-top table-border-x">
+                        @if ($k->jadwals->isEmpty())
+                            -
+                        @else
+                            <ul class="text-left text-sm whitespace-nowrap">
+                                @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                                    <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong>
+                                        {{ $jadwal->hari ?? '-' }}
+                                    </li>
+                                @endforeach
 
-                <td class="table-main text-center align-top table-border-x">
-                    @if ($k->jadwals->isEmpty())
-                        -
-                    @else
-                        <ul class="text-left text-sm whitespace-nowrap">
-                            @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                                <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong>
-                                    {{ $jadwal->hari ?? '-' }}
-                                </li>
-                            @endforeach
+                                @if ($k->jadwals->count() > 4)
+                                    <li class="text-xs text-gray-500 italic mt-1">
+                                        dan {{ $k->jadwals->count() - 4 }} kelas lainnya...
+                                    </li>
+                                @endif
+                            </ul>
+                        @endif
+                    </td>
+                    <td class="table-sub whitespace-nowrap text-center align-top">
+                        @if ($k->jadwals->isEmpty())
+                            -
+                        @else
+                            <ul class="text-left text-sm whitespace-nowrap">
+                                @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                                    <li class="text-left">{{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
+                    <td class="table-second text-center">
+                        @if ($k->jadwals->isEmpty())
+                            -
+                        @else
+                            <ul class="text-left text-sm whitespace-nowrap align-top">
+                                @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                                    <li class="text-center">{{ $jadwal->count_mhs_jadwal }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
+                    <td class="table-sub whitespace-nowrap text-center align-top">
+                        @if ($k->jadwals->isEmpty())
+                            -
+                        @else
+                            <ul class="text-left text-sm whitespace-nowrap">
+                                @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                                    <li>{{ $jadwal->tanggal_pelaksanaan ?? '-' }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
 
-                            @if ($k->jadwals->count() > 4)
-                                <li class="text-xs text-gray-500 italic mt-1">
-                                    dan {{ $k->jadwals->count() - 4 }} kelas lainnya...
-                                </li>
-                            @endif
-                        </ul>
-                    @endif
-                </td>
-                <td class="table-sub whitespace-nowrap text-center align-top">
-                    @if ($k->jadwals->isEmpty())
-                        -
-                    @else
-                        <ul class="text-left text-sm whitespace-nowrap">
-                            @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                                <li class="text-left">{{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </td>
-                <td class="table-second text-center">
-                    @if ($k->jadwals->isEmpty())
-                        -
-                    @else
-                        <ul class="text-left text-sm whitespace-nowrap align-top">
-                            @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                                <li class="text-center">{{ $jadwal->count_mhs_jadwal }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </td>
-                <td class="table-sub whitespace-nowrap text-center align-top">
-                    @if ($k->jadwals->isEmpty())
-                        -
-                    @else
-                        <ul class="text-left text-sm whitespace-nowrap">
-                            @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
-                                <li>{{ $jadwal->tanggal_pelaksanaan ?? '-' }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </td>
-
-                <td class="table-main text-center table-border-x">
-                    <flux:dropdown>
-                        <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.tingkat-mk-badge', [
-                                'xValue' => $k->kode_mk,
-                                'sortir' => $k->rps_rel?->mk_rel?->tingkat_mk,
+                    <td class="table-main text-center table-border-x">
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @include('livewire.global.table.badge.tingkat-mk-badge', [
+                                    'xValue' => $k->kode_mk,
+                                    'sortir' => $k->rps_rel?->mk_rel?->tingkat_mk,
+                                ])
+                            </button>
+                            @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
+                                'key' => 3,
+                                'isMK' => 1
                             ])
-                        </button>
-                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 3])
-                    </flux:dropdown>
-                </td>
-                <td class="table-second min-w-42">{{ $k->mk ?? '-' }}</td>
-                <td class="table-sub text-center">{{ $k->semester ?? '-' }}</td>
-                <td class="table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
-                <td class="table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
+                        </flux:dropdown>
+                    </td>
+                    <td class="table-second min-w-42">{{ $k->mk ?? '-' }}</td>
+                    <td class="table-sub text-center">{{ $k->semester ?? '-' }}</td>
+                    <td class="table-sub text-center whitespace-nowrap">{{ $k->sks ?? '-' }} SKS</td>
+                    <td class="table-sub text-center whitespace-nowrap">{{ $k->sks_text ?? '-' }}</td>
 
-                <td class="table-second table-border-l text-center">
-                    <flux:dropdown>
-                        <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.wajib-badge', [
-                                'xValue' => $k->wajib_text,
-                                'sortir' => $k->wajib,
+                    <td class="table-second table-border-l text-center">
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @include('livewire.global.table.badge.wajib-badge', [
+                                    'xValue' => $k->wajib_text,
+                                    'sortir' => $k->wajib,
+                                ])
+                            </button>
+                            @include('livewire.all-role.kelas-management.kelas-toolbar-table', [
+                                'key' => 4,
                             ])
-                        </button>
-                        @include('livewire.all-role.kelas-management.kelas-toolbar-table', ['key' => 4])
-                    </flux:dropdown>
-                </td>
+                        </flux:dropdown>
+                    </td>
                 @endif
 
                 <td class="table-main text-center table-border-x">
@@ -337,5 +340,5 @@
             </tr>
         @endforelse
 
-        </x-admin.global.table.main-layout-table>
+        </x-global.main-layout-table>
 </div>
