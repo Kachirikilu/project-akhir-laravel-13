@@ -135,28 +135,37 @@ trait RekapCapaian
         gc_collect_cycles();
     }
 
-private function generateRekapProdi($prId)
-{
-    $nilaiRata = RekapCPLProdi::where('pr_id', $prId)->avg('nilai');
-    Prodi::where('id', $prId)->update(['nilai_pr' => $nilaiRata ?? 0]);
-}
+    private function generateRekapProdi($prId)
+    {
+        $nilaiRata = RekapCPLProdi::where('pr_id', $prId)->avg('nilai');
+        Prodi::where('id', $prId)->update(['nilai_pr' => $nilaiRata ?? 0]);
+    }
 
-private function generateRekapDepartemen($prId)
-{
-    $prodi = Prodi::find($prId);
-    if (! $prodi || ! $prodi->dp_id) return;
-    $nilaiRata = Prodi::where('dp_id', $prodi->dp_id)->avg('nilai_pr');
-    Departemen::where('id', $prodi->dp_id)->update(['nilai_dp' => $nilaiRata ?? 0]);
-}
+    private function generateRekapDepartemen($prId)
+    {
+        $prodi = Prodi::find($prId);
+        if (! $prodi || ! $prodi->dp_id) {
+            return;
+        }
+        $nilaiRata = Prodi::where('dp_id', $prodi->dp_id)->avg('nilai_pr');
+        Departemen::where('id', $prodi->dp_id)->update(['nilai_dp' => $nilaiRata ?? 0]);
+    }
 
-private function generateRekapFakultas($prId)
-{
-    $prodi = Prodi::with('dp_rel')->find($prId);
-    if (! $prodi || ! $prodi->dp_rel || ! $prodi->dp_rel->fk_id) return;
-    $fkId = $prodi->dp_rel->fk_id;
-    $nilaiRata = Departemen::where('fk_id', $fkId)->avg('nilai_dp');
-    Fakultas::where('id', $fkId)->update(['nilai_fk' => $nilaiRata ?? 0]);
-}
+    private function generateRekapFakultas($prId)
+    {
+        $prodi = Prodi::with('dp_rel')->find($prId);
+        if (! $prodi || ! $prodi->dp_rel || ! $prodi->dp_rel->fk_id) {
+            return;
+        }
+        $fkId = $prodi->dp_rel->fk_id;
+        $nilaiRata = Departemen::where('fk_id', $fkId)->avg('nilai_dp');
+        Fakultas::where('id', $fkId)->update(['nilai_fk' => $nilaiRata ?? 0]);
+    }
+
+    public function generateRekapCapaianAll()
+    {
+        $this->generateRekapCapaian();
+    }
 
     public function generateRekapCapaian($prId = null, $cooldown = null)
     {
@@ -168,7 +177,10 @@ private function generateRekapFakultas($prId)
             $prName = $prodi->prodi ?? 'ini';
         }
 
-        $cooldown ??= ($prId === null ? 60 : 15);
+        $cooldown_rekap_all = env('COOLDOWN_REKAP_ALL') ?? 60;
+        $cooldown_rekap_prodi = env('COOLDOWN_REKAP_PRODI') ?? 15;
+
+        $cooldown ??= ($prId === null ? $cooldown_rekap_all : $cooldown_rekap_prodi);
 
         $runningAllKey = 'rekap_capaian_running_all';
         $runningProdiKey = 'rekap_capaian_running_prodi_ids';
@@ -300,7 +312,7 @@ private function generateRekapFakultas($prId)
                         ['mahasiswa_id' => $mahasiswaId],
                         [
                             'nilai' => null,
-                            'nilai_ipk' => null,
+                            // 'nilai_ipk' => null,
                             'count_rps' => 0,
                             'total_sks' => 0,
                         ]
@@ -314,10 +326,7 @@ private function generateRekapFakultas($prId)
                     return collect($group)->sortByDesc('nilai')->first();
                 });
 
-                // 2. Hitung Nilai Rata-Rata Angka Global
                 $nilaiRata = round($nilaiUnik->whereNotNull('nilai')->avg('nilai'), 2);
-
-                // 3. Hitung Jumlah RPS dan Total SKS
                 $jumlahRps = $nilaiUnik->pluck('rps_id')->filter()->count();
 
                 $totalSks = $nilaiUnik->sum(function ($item) {
@@ -327,31 +336,30 @@ private function generateRekapFakultas($prId)
                 // 4. HITUNG IPK AKURAT BERDASARKAN BOBOT SKS × ACCESSOR nilai_index
                 $totalBobotSks = $nilaiUnik->sum(function ($item) {
                     $sks = $item->rps_rel?->mk_rel?->sks_kuliah ?? 0;
-                    // Memanggil $item->nilai_index langsung memicu logika match ($this->nilai_mutu) di model
                     $indexMataKuliah = (float) ($item->nilai_index ?? 0.00);
 
                     return $sks * $indexMataKuliah;
                 });
 
-                $ipk = $totalSks > 0 ? round($totalBobotSks / $totalSks, 2) : 0.00;
-                // 5. Simpan ke database rekap
-                // $r = RekapNilaiMahasiswa::updateOrCreate(
-                RekapNilaiMahasiswa::updateOrCreate(
+                // $ipk = $totalSks > 0 ? round($totalBobotSks / $totalSks, 2) : 0.00;
+                $r = RekapNilaiMahasiswa::updateOrCreate(
+                    // RekapNilaiMahasiswa::updateOrCreate(
                     ['mahasiswa_id' => $mahasiswaId],
                     [
                         'nilai' => $nilaiRata,
-                        'nilai_ipk' => $ipk,
+                        // 'nilai_ipk' => $ipk,
                         'count_rps' => $jumlahRps,
                         'total_sks' => $totalSks,
                     ]
                 );
 
-                // Log::info('IPK Debug', [
-                //     'mahasiswa_id' => $mahasiswaId,
-                //     'ipk' => $ipk,
-                //     'total_sks' => $totalSks,
-                //     'total_bobot' => $totalBobotSks,
-                // ]);
+                Log::info('IPK Debug', [
+                    'mahasiswa_id' => $mahasiswaId,
+                    'nilai' => $nilaiRata,
+                    // 'ipk' => $ipk,
+                    'total_sks' => $totalSks,
+                    'total_bobot' => $totalBobotSks,
+                ]);
                 // dump($ipk, $r);
             }
         });

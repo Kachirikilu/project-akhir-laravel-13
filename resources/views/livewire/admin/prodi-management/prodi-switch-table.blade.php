@@ -33,17 +33,17 @@
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'nameXString' => 'Rekap Capaian',
-                'xString' => "generateRekapCapaian()",
-                'color' => 'blue',
+                'xString' => "generateRekapCapaianAll()",
+                'color' => 'yellow',
                 'icon' => 'academic-cap',
-                'autoSmall' => 'sm',
+                'autoSmall' => 'md',
             ])
         </div>
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'xString' => 'exportProdiExcel()',
-                'autoSmall' => 'sm',
+                'autoSmall' => 'md',
             ])
         </div>
 

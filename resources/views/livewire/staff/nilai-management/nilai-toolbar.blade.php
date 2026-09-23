@@ -38,38 +38,63 @@
             <div class="flex flex-col items-stretch md:items-end gap-3 mb-5 w-full md:w-auto shrink-0">
                 <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
 
-                        <div></div>
-                
-                        <div class="shrink-0">
-                            <flux:dropdown>
-                                <flux:button variant="primary" icon="plus" size="sm"
-                                    class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
-                                    Akses Nilai
-                                </flux:button>
+                    <div></div>
 
-                                <flux:menu
-                                    class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
-                                    <flux:menu.heading>Pengaturan Akses Nilai</flux:menu.heading>
-                                    <flux:menu.separator />
 
-                                    <flux:menu.item
-                                        @click="
-                                            {{-- $store.nilai?.reset(); --}}
-                                            $store.nilai?.setEdit(1);
-                                            $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
-                                            $flux.modal('lock-nilai-modal').show();
-                                            $dispatch('open-edit-lock-nilai-modal')
-                                        "
-                                        class="text-xs sm:text-sm cursor-pointer !text-blue-600 dark:!text-blue-400 hover:!bg-blue-100 dark:hover:!bg-blue-900/30 active:!bg-blue-200 dark:active:!bg-blue-900">
-                                        <flux:icon name="chart-pie"
-                                            class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
-                                        <div class="flex justify-between items-center w-full">
-                                            <span class="mr-7 whitespace-nowrap">Tanggal Akses Nilai Mahasiswa</span>
-                                        </div>
-                                    </flux:menu.item>
-                                </flux:menu>
-                            </flux:dropdown>
-                        </div>
+
+                    <div class="flex flex-row items-center justify-end gap-3 shrink-0">
+                        @if (Auth::user()->admin || Auth::user()->dosen)
+                            <div class="shrink-0">
+                                @include('livewire.global.table.export-button', [
+                                    'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
+                                    'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                                    'color' => 'blue',
+                                    'icon' => 'academic-cap',
+                                    'isNoPb' => 1,
+                                ])
+                            </div>
+                        @endif
+                        @if (Auth::user()->admin)
+                            <div class="shrink-0">
+                                @include('livewire.global.table.export-button', [
+                                    'nameXString' => 'Rekap Capaian ' . env('UNIV') ?? 'UNSRI',
+                                    'xString' => 'generateRekapCapaianAll()',
+                                    'color' => 'yellow',
+                                    'icon' => 'academic-cap',
+                                    'autoSmall' => 'sm',
+                                    'isNoPb' => 1,
+                                ])
+                            </div>
+                        @endif
+
+                        <flux:dropdown>
+                            <flux:button variant="primary" icon="plus" size="sm"
+                                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
+                                Akses Nilai
+                            </flux:button>
+
+                            <flux:menu
+                                class="min-w-48 !bg-[var(--second-pop-up-color)] !table-border !text-[var(--contrast-main-text)] scrollbar-medium">
+                                <flux:menu.heading>Pengaturan Akses Nilai</flux:menu.heading>
+                                <flux:menu.separator />
+
+                                <flux:menu.item
+                                    @click="
+                        $store.nilai?.setEdit(1);
+                        $store.nilai?.setColor('text-blue-700 dark:text-blue-400');
+                        $flux.modal('lock-nilai-modal').show();
+                        $dispatch('open-edit-lock-nilai-modal')
+                    "
+                                    class="text-xs sm:text-sm cursor-pointer !text-blue-600 dark:!text-blue-400 hover:!bg-blue-100 dark:hover:!bg-blue-900/30 active:!bg-blue-200 dark:active:!bg-blue-900">
+                                    <flux:icon name="chart-pie"
+                                        class="!text-blue-600 dark:!text-blue-400 mr-2 h-4 w-4" />
+                                    <div class="flex justify-between items-center w-full">
+                                        <span class="mr-7 whitespace-nowrap">Tanggal Akses Nilai Mahasiswa</span>
+                                    </div>
+                                </flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
+                    </div>
 
                 </div>
 

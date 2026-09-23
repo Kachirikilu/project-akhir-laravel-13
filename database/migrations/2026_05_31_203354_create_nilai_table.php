@@ -60,7 +60,7 @@ return new class extends Migration
             $table->index('mahasiswa_id');
 
             $table->decimal('nilai', 5, 2)->nullable();
-            $table->decimal('nilai_ipk', 3, 2)->nullable();
+            // $table->decimal('nilai_ipk', 3, 2)->nullable();
             $table->unsignedInteger('count_rps')->default(0);
             $table->unsignedInteger('total_sks')->default(0);
 

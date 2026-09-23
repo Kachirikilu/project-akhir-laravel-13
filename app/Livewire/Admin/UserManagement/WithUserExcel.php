@@ -265,6 +265,7 @@ trait WithUserExcel
                         'role' => ucfirst(! empty($data['role']) ? $data['role'] : 'None'),
                         // 'tingkat' => $data['tingkat'] ?? $data['level'] ?? 1,
                         'tingkat' => $this->parseTingkatValue($rawTingkat, $data['tingkat'] ?? null),
+                        'tingkat_target' => $this->parseTingkatValue($rawTingkat, $data['tingkat'] ?? null),
                         'password' => $data['password'] ?? '',
                         'name' => $data['name'] ?? $data['nama'] ?? '',
                         'status' => $data['status'] ?? $data['kabar'] ?? '',
@@ -469,6 +470,7 @@ trait WithUserExcel
                         }
 
                         if ($this->update_or_create_mode) {
+                            $this->tingkatType = $row['tingkat_target'];
                             $this->selected_id_user = $this->resolveExistingUserId($row, $role);
                             $validatedData = $this->inputModalUser(true, $row, strtolower($role));
                             $this->saveUserFromExcelUpdateOrCreate($validatedData, strtolower($role));

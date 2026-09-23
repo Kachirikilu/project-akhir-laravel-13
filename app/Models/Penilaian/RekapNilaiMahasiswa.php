@@ -17,7 +17,7 @@ class RekapNilaiMahasiswa extends Model
     protected $fillable = [
         'mahasiswa_id',
         'nilai',
-        'nilai_ipk',
+        // 'nilai_ipk',
         // 'mutu',
         'count_rps',
         'total_sks',
@@ -25,7 +25,7 @@ class RekapNilaiMahasiswa extends Model
 
     protected $casts = [
         'nilai' => 'decimal:2',
-        'nilai_ipk' => 'decimal:2',
+        // 'nilai_ipk' => 'decimal:2',
     ];
 
     /*
@@ -41,14 +41,14 @@ class RekapNilaiMahasiswa extends Model
         );
     }
 
-    // protected function nilaiIpk(): Attribute
-    // {
-    //     return Attribute::get(function () {
-    //         $nilai = (float) ($this->nilai ?? 0);
-    //         $indeksRasio = ($nilai / 100) * 4;
-    //         return number_format($indeksRasio, 2);
-    //     });
-    // }
+    protected function nilaiIpk(): Attribute
+    {
+        return Attribute::get(function () {
+            $nilai = (float) ($this->nilai ?? 0);
+            $indeksRasio = ($nilai / 100) * 4;
+            return number_format($indeksRasio, 2);
+        });
+    }
 
     protected function nilaiMutu(): Attribute
     {

@@ -716,6 +716,7 @@ trait WithUserModal
             'date',
         ];
 
+
         $rules['pr_id'] = 'required|exists:prodis,id';
         $validator = Validator::make($data, $rules, $this->validationMessagesUser());
         $validator->after(function ($validator) use ($data, $role, $isEditingUser) {
@@ -724,6 +725,8 @@ trait WithUserModal
             $currentUser = Auth::user();
             $currentUserAdminTingkat = (int) ($currentUser?->admin?->tingkat ?? 4);
             $targetTingkatType = (int) ($this->tingkatType ?? ($role === 'admin' ? 4 : 5));
+
+            // dump($data['tingkat'], $targetTingkatType);
 
             if ($isEditingUser) {
                 // 1. Admin tidak bisa mengubah tingkatnya sendiri

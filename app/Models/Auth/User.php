@@ -805,7 +805,6 @@ class User extends Authenticatable
 
                     // KONDISI A: User menyebutkan Role secara spesifik (misal: "admin univ", "dosen prodi")
                     if ($detectedRole) {
-                        // Validasi batasan tingkat per role agar query tidak sia-sia
                         $isAllowed = match ($detectedRole) {
                             'admin' => in_array($tingkatNum, [1, 2, 3, 4]),
                             'dosen' => in_array($tingkatNum, [1, 2, 3, 4, 5]),
@@ -815,7 +814,7 @@ class User extends Authenticatable
 
                         if ($isAllowed) {
                             $q->orWhereHas($detectedRole, function ($r) use ($tingkatNum) {
-                                $r->where('tingkat', $tingkatNum);
+                                $r->where('tingkat_user', $tingkatNum);
                             });
                         }
                         break; // Lanjut ke tingkat berikutnya jika keyword sudah cocok
@@ -826,18 +825,18 @@ class User extends Authenticatable
                         // Hanya cari di Admin & Dosen (karena Tingkat 1-4)
                         if (in_array($tingkatNum, [1, 2, 3, 4])) {
                             $q->orWhereHas('admin', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat', $tingkatNum);
+                                $r->where('tingkat_user', $tingkatNum);
                             })->orWhereHas('dosen', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat', $tingkatNum);
+                                $r->where('tingkat_user', $tingkatNum);
                             });
                         }
 
                         // Jika Tingkat 5 (Umum), cari di Dosen & Mahasiswa
                         if ($tingkatNum === 5) {
                             $q->orWhereHas('dosen', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat', $tingkatNum);
+                                $r->where('tingkat_user', $tingkatNum);
                             })->orWhereHas('mahasiswa', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat', $tingkatNum);
+                                $r->where('tingkat_user', $tingkatNum);
                             });
                         }
                         break;
