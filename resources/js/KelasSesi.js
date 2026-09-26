@@ -74,7 +74,6 @@ document.addEventListener("alpine:init", () => {
         mhs_nilai_index: 0,
         mhs_nilai_mutu: "E",
 
-
         w_pelaksaan: "",
         w_berakhir: "",
         w_telat: "",
@@ -265,7 +264,8 @@ document.addEventListener("alpine:init", () => {
                 }
                 if (item.label === "Terlambat") {
                     return (
-                        sekarang > this.w_pelaksanaan && sekarang <= this.w_berakhir
+                        sekarang > this.w_pelaksanaan &&
+                        sekarang <= this.w_berakhir
                         // sekarang > this.w_telat && sekarang <= this.w_berakhir
                     );
                 }
@@ -300,7 +300,7 @@ document.addEventListener("alpine:init", () => {
 
             this.mhs_poin_absensi = poin;
             this.mhs_masuk = masuk;
-                  
+
             this.mhs_dispensasi = dispensasi;
             this.mhs_terlambat = terlambat;
             this.mhs_izin = izin;
@@ -343,9 +343,9 @@ document.addEventListener("alpine:init", () => {
                 this.sesi_id = "";
                 this.pertemuan_ke = "";
                 this.kode_scpmk = "";
-                this.absen = "",
-                this.keterangan = "",
-                this.jam_mulai = "";
+                ((this.absen = ""),
+                    (this.keterangan = ""),
+                    (this.jam_mulai = ""));
                 this.jam_berakhir = "";
 
                 this.pertemuan_ke_name = "";
@@ -372,15 +372,15 @@ document.addEventListener("alpine:init", () => {
         },
 
         isFloat(val) {
-            if (val === null || val === undefined) return '';
+            if (val === null || val === undefined) return "";
 
             val = String(val);
-            val = val.replace(/,/g, '.');
-            val = val.replace(/[^0-9.]/g, '');
+            val = val.replace(/,/g, ".");
+            val = val.replace(/[^0-9.]/g, "");
 
-            const parts = val.split('.');
+            const parts = val.split(".");
             if (parts.length > 2) {
-                val = parts[0] + '.' + parts.slice(1).join('');
+                val = parts[0] + "." + parts.slice(1).join("");
             }
 
             return val;
@@ -389,14 +389,14 @@ document.addEventListener("alpine:init", () => {
         normalizeFloat(val, max = 100, length = 3) {
             val = this.isFloat(val);
 
-            let parts = val.split('.');
-            parts[0] = (parts[0] || '').slice(0, length);
+            let parts = val.split(".");
+            parts[0] = (parts[0] || "").slice(0, length);
 
             if (parts.length > 1) {
-                parts[1] = (parts[1] || '').slice(0, 2);
+                parts[1] = (parts[1] || "").slice(0, 2);
             }
 
-            val = parts.join('.');
+            val = parts.join(".");
 
             let num = Number(val);
 
@@ -408,32 +408,32 @@ document.addEventListener("alpine:init", () => {
 
             return val;
         },
-                init() {
-            // =========================================
-            // AUTO JAM BERAKHIR
-            // =========================================
-            Alpine.effect(() => {
-                const value = this.jam_mulai;
+        // init() {
+        //     // =========================================
+        //     // AUTO JAM BERAKHIR
+        //     // =========================================
+        //     Alpine.effect(() => {
+        //         const value = this.jam_mulai;
 
-                if (!value) {
-                    this.jam_berakhir = "";
-                    return;
-                }
+        //         if (!value) {
+        //             this.jam_berakhir = "";
+        //             return;
+        //         }
 
-                const [hour, minute] = value.split(":").map(Number);
+        //         const [hour, minute] = value.split(":").map(Number);
 
-                let totalMinute = hour * 60 + minute;
+        //         let totalMinute = hour * 60 + minute;
 
-                totalMinute += Number(this.sks_menit || 0);
+        //         totalMinute += Number(this.sks_menit || 0);
 
-                const endHour = String(
-                    Math.floor(totalMinute / 60) % 24,
-                ).padStart(2, "0");
+        //         const endHour = String(
+        //             Math.floor(totalMinute / 60) % 24,
+        //         ).padStart(2, "0");
 
-                const endMinute = String(totalMinute % 60).padStart(2, "0");
+        //         const endMinute = String(totalMinute % 60).padStart(2, "0");
 
-                this.jam_berakhir = `${endHour}:${endMinute}`;
-            });
-        },
+        //         this.jam_berakhir = `${endHour}:${endMinute}`;
+        //     });
+        // },
     });
 });

@@ -59,7 +59,7 @@
                     'numberOnly' => 1,
                     'maxLength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default: 60 menit/SKS',
+                    'placeholder' => 'Default: '. config('rps.faktor_tugas', 60) . ' menit/SKS',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_tugas'),
                 ])
@@ -73,7 +73,7 @@
                     'numberOnly' => 1,
                     'maxLength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default: 60 menit/SKS',
+                    'placeholder' => 'Default: '. config('rps.faktor_mandiri', 60) . ' menit/SKS',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_mandiri'),
                 ])

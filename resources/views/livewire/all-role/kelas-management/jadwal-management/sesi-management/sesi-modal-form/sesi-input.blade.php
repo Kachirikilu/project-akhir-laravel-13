@@ -14,7 +14,7 @@
     {{-- 🔹 CONTENT --}}
     <div class="mt-4">
         <div x-show="step === 1">
-            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input-partial.sesi-main-input')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input-partial.sesi-main-input-2')
         </div>
         <div x-show="step === 2">
             @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input-partial.sesi-scpmk-input')

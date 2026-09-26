@@ -73,7 +73,7 @@
         {{-- 2. GRID UTAMA KARTU SESI --}}
         @forelse($sesis as $index => $s)
             @php
-                $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
+                $daftarUjian = array_merge(config('rps.uts_fields'), config('rps.uas_fields'));
                 $isUjian = in_array(strtoupper($s->metode), $daftarUjian);
 
                 if (Auth::user()->mahasiswa) {

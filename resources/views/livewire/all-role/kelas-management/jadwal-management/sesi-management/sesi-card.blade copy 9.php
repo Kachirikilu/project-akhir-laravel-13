@@ -1,5 +1,5 @@
 @php
-    $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
+    $daftarUjian = array_merge(config('rps.uts_fields'), config('rps.uas_fields'));
 
     $alpineData = $sesis
         ->map(function ($s, $index) use ($daftarUjian) {

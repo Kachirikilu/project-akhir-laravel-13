@@ -18,7 +18,7 @@ class NilaiSeeder extends Seeder
 
     private function seedByJadwal()
     {
-        KelasJadwal::with(['mahasiswas', 'kelas_rel.rps_rel'])->chunk(100, function ($jadwals) {
+        KelasJadwal::with(['mahasiswas', 'kelas_rel.rps_rel'])->chunk(config('seeder.batch_nilai', 128), function ($jadwals) {
             foreach ($jadwals as $jadwal) {
                 $rps = $jadwal->kelas_rel?->rps_rel;
                 if (!$rps) continue;

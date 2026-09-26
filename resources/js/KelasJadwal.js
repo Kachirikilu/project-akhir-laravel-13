@@ -50,16 +50,28 @@ document.addEventListener("alpine:init", () => {
 
         sks_menit: 0,
         sesi_sent: 0,
-        sesi_sent_edit: 'keep',
+        sesi_sent_edit: "keep",
 
-        digit_tahun: '',
-        digit_tahun_old: '',
+        digit_tahun: "",
+        digit_tahun_old: "",
 
-        sesi_1: '', sesi_2: '', sesi_3: '', sesi_4: '',
-        sesi_5: '', sesi_6: '', sesi_7: '', sesi_8: '',
-        sesi_9: '', sesi_10: '', sesi_11: '', sesi_12: '',
-        sesi_13: '', sesi_14: '', sesi_15: '', sesi_16: '',
-        
+        sesi_1: "",
+        sesi_2: "",
+        sesi_3: "",
+        sesi_4: "",
+        sesi_5: "",
+        sesi_6: "",
+        sesi_7: "",
+        sesi_8: "",
+        sesi_9: "",
+        sesi_10: "",
+        sesi_11: "",
+        sesi_12: "",
+        sesi_13: "",
+        sesi_14: "",
+        sesi_15: "",
+        sesi_16: "",
+
         setValueJadwal(
             label,
             wilayah,
@@ -183,7 +195,7 @@ document.addEventListener("alpine:init", () => {
                 }
                 this.showEdit = 0;
                 this.sesi_sent = 0;
-                this.sesi_sent_edit = 'keep';
+                this.sesi_sent_edit = "keep";
             }
             if (isAdd == 0) {
                 this.isEdit = 0;
@@ -193,32 +205,102 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        mapHari: {
+            Senin: 0,
+            Selasa: 1,
+            Rabu: 2,
+            Kamis: 3,
+            Jumat: 4,
+            Sabtu: 5,
+            Minggu: 6,
+        },
+
+        formatTanggalIndo(dateString, hari = null) {
+            if (!dateString) return "-";
+
+            // 1. Jika formatnya 'YYYY-Www' (Input type week, contoh: 2026-W37)
+            if (dateString.includes("-W")) {
+                let parts = dateString.split("-W");
+                let year = parseInt(parts[0], 10);
+                let week = parseInt(parts[1], 10);
+
+                if (isNaN(year) || isNaN(week)) return dateString;
+
+                // Hitung hari Senin awal minggu ISO
+                let simple = new Date(year, 0, 1 + (week - 1) * 7);
+                let dow = simple.getDay();
+                let ISOweekStart = new Date(simple);
+
+                if (dow <= 4) {
+                    ISOweekStart.setDate(
+                        simple.getDate() - simple.getDay() + 1,
+                    );
+                } else {
+                    ISOweekStart.setDate(
+                        simple.getDate() + (8 - simple.getDay()),
+                    );
+                }
+
+                // Tambahkan offset berdasarkan Hari Pelaksanaan yang dipilih
+                let selectedHari = hari || this.hari_pelaksanaan;
+                let offset =
+                    selectedHari && this.mapHari[selectedHari] !== undefined
+                        ? this.mapHari[selectedHari]
+                        : 0;
+
+                ISOweekStart.setDate(ISOweekStart.getDate() + offset);
+
+                let dd = String(ISOweekStart.getDate()).padStart(2, "0");
+                let mm = String(ISOweekStart.getMonth() + 1).padStart(2, "0");
+                let yyyy = ISOweekStart.getFullYear();
+
+                return `${dd}/${mm}/${yyyy}`;
+            }
+
+            // 2. Jika formatnya 'YYYY-MM-DD'
+            let parts = dateString.split("-");
+            if (parts.length === 3) {
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            return dateString;
+        },
+
+        updateFormattedDates() {
+            this.tanggal_mulai_ddmmyyyy = this.formatTanggalIndo(
+                this.tanggal_mulai,
+            );
+            this.tanggal_berakhir_ddmmyyyy = this.formatTanggalIndo(
+                this.tanggal_berakhir,
+            );
+        },
+
         init() {
             // =========================================
             // AUTO JAM BERAKHIR
             // =========================================
-            Alpine.effect(() => {
-                const value = this.jam_mulai;
+            // Alpine.effect(() => {
+            //     const value = this.jam_mulai;
 
-                if (!value) {
-                    this.jam_berakhir = "";
-                    return;
-                }
+            //     if (!value) {
+            //         this.jam_berakhir = "";
+            //         return;
+            //     }
 
-                const [hour, minute] = value.split(":").map(Number);
+            //     const [hour, minute] = value.split(":").map(Number);
 
-                let totalMinute = hour * 60 + minute;
+            //     let totalMinute = hour * 60 + minute;
 
-                totalMinute += Number(this.sks_menit || 0);
+            //     totalMinute += Number(this.sks_menit || 0);
 
-                const endHour = String(
-                    Math.floor(totalMinute / 60) % 24,
-                ).padStart(2, "0");
+            //     const endHour = String(
+            //         Math.floor(totalMinute / 60) % 24,
+            //     ).padStart(2, "0");
 
-                const endMinute = String(totalMinute % 60).padStart(2, "0");
+            //     const endMinute = String(totalMinute % 60).padStart(2, "0");
 
-                this.jam_berakhir = `${endHour}:${endMinute}`;
-            });
+            //     this.jam_berakhir = `${endHour}:${endMinute}`;
+            // });
 
             // =========================================
             // AUTO TANGGAL BERAKHIR (+6 BULAN)

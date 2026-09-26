@@ -22,8 +22,8 @@ class UserRoleSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
 
-        $totalUsers = 1000;
-        $batchSize = 512;
+        $totalUsers = config('seeder.count_user', 1024);
+        $batchSize = config('seeder.batch_user', 512);
 
         $prodiIds = Prodi::pluck('id')->toArray();
         if (empty($prodiIds)) {
@@ -72,15 +72,16 @@ class UserRoleSeeder extends Seeder
             $this->createMahasiswaProfile($mhsUser5, 'Dzaki Udin', '03041282227062', '6285707091624', 'Laki-laki', 'Islam', $faker, $prodiIds[0], 1, 50);
         });
 
+
         // --- 2. DATA DUMMY ---
-        $countAdmin = (int) ($totalUsers * 0.10) - 1;
-        $countDosen = (int) ($totalUsers * 0.30) - 3; // Dikurangi sesuai jumlah akun dosen utama
-        $countMhs = $totalUsers - $countAdmin - $countDosen - 10;
+        $countAdm = (int) ($totalUsers * config('seeder.persen_admin', 0.10)) - config('seeder.persen_admin', 0.10)*10;
+        $countDsn = (int) ($totalUsers * config('seeder.persen_dosen', 0.30)) - config('seeder.persen_dosen', 0.30)*10;
+        $countMhs = (int) ($totalUsers * config('seeder.persen_mahasiswa', 0.60)) - config('seeder.persen_mahasiswa', 0.60)*10;
 
         $this->command->info("Seeding $totalUsers users in batches of $batchSize...");
 
         // Seed Admins
-        $this->seedInBatches($countAdmin, $batchSize, 'Admin', function () use ($faker, $defaultPw, $prodiIds) {
+        $this->seedInBatches($countAdm, $batchSize, 'Admin', function () use ($faker, $defaultPw, $prodiIds) {
             $name = $faker->name;
             $nip = $faker->unique()->numerify('19#########');
             $telpon = '628985655826';
@@ -91,7 +92,7 @@ class UserRoleSeeder extends Seeder
         });
 
         // Seed Dosens
-        $this->seedInBatches($countDosen, $batchSize, 'Dosen', function () use ($faker, $defaultPw, $prodiIds) {
+        $this->seedInBatches($countDsn, $batchSize, 'Dosen', function () use ($faker, $defaultPw, $prodiIds) {
             $name = $faker->name;
             $nip = $faker->unique()->numerify('19#########');
             $telpon = '628985655826';

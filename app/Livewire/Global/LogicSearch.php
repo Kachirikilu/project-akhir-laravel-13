@@ -189,8 +189,8 @@ trait LogicSearch
         }
 
         // 1. Ambil data alias dari ENV
-        $utsFields = array_map('trim', explode(',', strtolower(env('UTS_FIELDS', 'UTS,EVALUASI AWAL'))));
-        $uasFields = array_map('trim', explode(',', strtolower(env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK'))));
+        $utsFields = array_map('trim', explode(',', strtolower(config('rps.uts_fields'))));
+        $uasFields = array_map('trim', explode(',', strtolower(config('rps.uas_fields'))));
 
         // Normalize target dan search spasi agar rapi
         $targetNormalized = preg_replace('/\s+/', ' ', $target);

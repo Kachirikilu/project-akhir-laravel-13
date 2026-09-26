@@ -849,14 +849,14 @@ trait RekapCapaian
         $mapping = [];
 
         $utsKeywords = collect(
-            explode(',', env('UTS_FIELDS', 'UTS,EVALUASI AWAL'))
+            explode(',', config('rps.uts_fields'))
         )
             ->map(fn ($v) => strtoupper(trim($v)))
             ->filter()
             ->values();
 
         $uasKeywords = collect(
-            explode(',', env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK'))
+            explode(',', config('rps.uas_fields'))
         )
             ->map(fn ($v) => strtoupper(trim($v)))
             ->filter()

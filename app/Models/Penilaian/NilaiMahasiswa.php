@@ -365,8 +365,8 @@ class NilaiMahasiswa extends Model
                 ->values();
 
             // 2. Ambil keywords filter dari .env
-            $envUtsFields = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
-            $envUasFields = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+            $envUtsFields = config('rps.uts_fields');
+            $envUasFields = config('rps.uas_fields');
 
             $utsFields = array_map('trim', explode(',', $envUtsFields));
             $uasFields = array_map('trim', explode(',', $envUasFields));
@@ -485,8 +485,8 @@ class NilaiMahasiswa extends Model
     //             ->values();
 
     //         // 🌟 2. AMBIL KEYWORDS DARI .ENV DAN KONVERSI MENJADI ARRAY
-    //         $envUtsFields = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
-    //         $envUasFields = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+    //         $envUtsFields = config('rps.uts_fields');
+    //         $envUasFields = config('rps.uas_fields');
 
     //         $utsFields = array_map('trim', explode(',', $envUtsFields));
     //         $uasFields = array_map('trim', explode(',', $envUasFields));

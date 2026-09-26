@@ -1,89 +1,89 @@
 <div wire:key="view-table-scpmk">
-<x-global.main-layout-table :paginator="$scpmk">
+    <x-global.main-layout-table :paginator="$scpmk">
 
-    @php
-        $showMore = $showMore ?? false;
-        $withCapaian = $withCapaian ?? false;
-    @endphp
-    <x-slot:leftSecHead>
-        <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'kode',
-                'headString' => 'Kode Sub-CPMK',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'deskripsi',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'metode',
-            ])
-            @include('livewire.global.table.head-sortir', [
-                'sortFieldString' => 'bobot',
-            ])
-        </div>
-    </x-slot:leftSecHead>
-    
-
-    <x-slot:rightSecHead>
-        @include('livewire.global.table.detail-view-switch')
-    </x-slot:rightSecHead>
-
-    <x-slot:header>
-
-        <tr>
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'id',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-
-
-            @if ($switchTable !== 'dosen')
-                @include('livewire.global.table.head-table', [
+        @php
+            $showMore = $showMore ?? false;
+            $withCapaian = $withCapaian ?? false;
+        @endphp
+        <x-slot:leftSecHead>
+            <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
+                @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'kode',
-                    'isMain' => 1,
+                    'headString' => 'Kode Sub-CPMK',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'deskripsi',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'metode',
+                ])
+                @include('livewire.global.table.head-sortir', [
+                    'sortFieldString' => 'bobot',
+                ])
+            </div>
+        </x-slot:leftSecHead>
+
+
+        <x-slot:rightSecHead>
+            @include('livewire.global.table.detail-view-switch')
+        </x-slot:rightSecHead>
+
+        <x-slot:header>
+
+            <tr>
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'id',
                     'isCenter' => 1,
                     'rowSpan' => 2,
-                    'isSticky' => 1,
                 ])
-            @endif
 
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'deskripsi',
-                'rowSpan' => 2,
-            ])
+                @if ($switchTable !== 'dosen')
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'kode',
+                        'isMain' => 1,
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                        'isSticky' => 1,
+                    ])
+                @endif
 
-            @if ($withCapaian)
-                <th colspan="3" class="table-head-sub">
-                    Nilai Capaian
-                </th>
-            @endif
 
-            @if ($showMore)
-                <th colspan="4" class="table-head-sub">
-                    Pembelajaran
-                </th>
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'deskripsi',
+                    'rowSpan' => 2,
+                ])
+
+                @if ($withCapaian)
+                    <th colspan="3" class="table-head-sub">
+                        Nilai Capaian
+                    </th>
+                @endif
+
+                @if ($showMore)
+                    <th colspan="4" class="table-head-sub">
+                        Pembelajaran
+                    </th>
 
                     <th colspan="4" class="table-head-sub">
                         Tugas
                     </th>
-            @else
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'metode',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                    'isMain' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'bobot',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                    'isMain' => 1,
-                ])
-            @endif
+                @else
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'metode',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                        'isMain' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'bobot',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                        'isMain' => 1,
+                    ])
+                @endif
 
-            <th rowspan="2" class="table-head border-x">Aksi</th>
+                <th rowspan="2" class="table-head border-x">Aksi</th>
 
 
                 @if ($showMore)
@@ -93,55 +93,54 @@
                         'rowSpan' => 2,
                     ])
                 @endif
-            @if (!$withCapaian || $showMore)
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'updated_at',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                ])
-            @endif
+                @if (!$withCapaian || $showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'updated_at',
+                        'isCenter' => 1,
+                        'rowSpan' => 2,
+                    ])
+                @endif
 
-        </tr>
+            </tr>
 
-        <tr class="bg-gray-50">
-            @if ($withCapaian)
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'rekap_scpmk_pr',
-                    'headString' => 'Nilai',
-                    'isCenter' => 1,
-                    'isBorderL' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'index_scpmk_pr',
-                    'headString' => 'Index',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mutu_scpmk_pr',
-                    'headString' => 'Mutu',
-                    'isCenter' => 1,
-                    'isMain' => 1,
-                ])
-            @endif
+            <tr class="bg-gray-50">
+                @if ($withCapaian)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'rekap_scpmk_pr',
+                        'headString' => 'Nilai',
+                        'isCenter' => 1,
+                        'isBorderL' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'index_scpmk_pr',
+                        'headString' => 'Index',
+                        'isCenter' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'mutu_scpmk_pr',
+                        'headString' => 'Mutu',
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                @endif
 
-            @if ($showMore)
+                @if ($showMore)
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'metode',
+                        'isCenter' => 1,
+                        'isMain' => 1,
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'materi',
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'metodologi',
+                    ])
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'indikator',
+                    ])
 
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'metode',
-                    'isCenter' => 1,
-                    'isMain' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'materi',
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'metodologi',
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'indikator',
-                ])
-
-                {{-- @include('livewire.global.table.head-table', [
+                    {{-- @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'bobot',
                     'isMain' => 1,
                     'isCenter' => 1,
@@ -173,105 +172,110 @@
                         'isCenter' => 1,
                     ])
                 @endif
-        </tr>
-    </x-slot:header>
+            </tr>
+        </x-slot:header>
 
 
-    @forelse($scpmk as $sc)
-        <tr wire:key="{{ $switchTable }}-{{ $sc->id }}" data-{{ $switchTable }}-id="{{ $sc->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+        @forelse($scpmk as $sc)
+            <tr wire:key="{{ $switchTable }}-{{ $sc->id }}" data-{{ $switchTable }}-id="{{ $sc->id }}"
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
 
-            <td class="table-second text-center">{{ $sc->id }}</td>
+                <td class="table-second text-center">{{ $sc->id }}</td>
 
-            <td class="table-main-sticky text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $sc->kode ?? '---' }}
-                        </flux:badge>
-                    </button>
-
-                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
-                        'key' => 1,
-                    ])
-                </flux:dropdown>
-            </td>
-
-            <td class="table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
-                {{ $sc->deskripsi ?? '-' }}</td>
-
-            @if ($withCapaian)
-                <td class="table-second table-border-l whitespace-nowrap text-center">
-                    {{ $sc->rekap_scpmk_pr ?? '0.00' }}</td>
-                <td class="table-second whitespace-nowrap text-center">
-                    {{ $sc->index_scpmk_pr ?? '0.00' }}</td>
-                <td class="table-sub table-border-l whitespace-nowrap text-center">
+                <td class="table-main-sticky text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                'xValue' => $sc->mutu_scpmk_pr ?? 'E',
-                            ])
+                            <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $sc->kode ?? '---' }}
+                            </flux:badge>
                         </button>
+
                         @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
-                            'key' => 2,
+                            'key' => 1,
                         ])
                     </flux:dropdown>
                 </td>
-            @endif
 
-            <td class="table-main text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @include('livewire.global.table.badge.metode-badge', [
-                            'xValue' => $sc->metode,
+                <td class="table-second min-w-84 text-justify leading-relaxed [hyphens:auto]">
+                    {{ $sc->deskripsi ?? '-' }}</td>
+
+                @if ($withCapaian)
+                    <td class="table-second table-border-l whitespace-nowrap text-center">
+                        {{ $sc->rekap_scpmk_pr ?? '0.00' }}</td>
+                    <td class="table-second whitespace-nowrap text-center">
+                        {{ $sc->index_scpmk_pr ?? '0.00' }}</td>
+                    <td class="table-sub table-border-l whitespace-nowrap text-center">
+                        <flux:dropdown>
+                            <button class="cursor-pointer">
+                                @include('livewire.global.table.badge.nilai-mutu-badge', [
+                                    'xValue' => $sc->mutu_scpmk_pr ?? 'E',
+                                ])
+                            </button>
+                            @include(
+                                'livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table',
+                                [
+                                    'key' => 2,
+                                ]
+                            )
+                        </flux:dropdown>
+                    </td>
+                @endif
+
+                <td class="table-main text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @include('livewire.global.table.badge.metode-badge', [
+                                'xValue' => $sc->metode,
+                            ])
+                        </button>
+
+                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
+                            'key' => 3,
                         ])
-                    </button>
-
-                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
-                        'key' => 3,
-                    ])
-                </flux:dropdown>
-            </td>
-            @if ($showMore)
-                <td class="table-sub min-w-48">{{ $sc->materi ?? '-' }}</td>
-                <td class="table-sub min-w-48">{{ $sc->metodologi ?? '-' }}</td>
-                <td class="table-second min-w-48">{{ $sc->indikator ?? '-' }}</td>
-            @endif
+                    </flux:dropdown>
+                </td>
+                @if ($showMore)
+                    <td class="table-sub min-w-48">{{ $sc->materi ?? '-' }}</td>
+                    <td class="table-sub min-w-48">{{ $sc->metodologi ?? '-' }}</td>
+                    <td class="table-second min-w-48">{{ $sc->indikator ?? '-' }}</td>
+                @endif
                 <td class="{{ $showMore ? 'table-main' : 'table-sub' }} text-center">
                     {{ $sc->bobot_format ? $sc->bobot_format . '%' : '-' }}
                 </td>
                 @if ($showMore)
                     <td class="table-second min-w-48">{{ $sc->tugas ?? '-' }}</td>
                     <td class="table-sub whitespace-nowrap text-center">
-                        {{ $sc->waktu_tugas ? $sc->w_tugas . ' menit' : '60 m/SKS' }}</td>
+                        {{ $sc->waktu_tugas ? $sc->w_tugas . ' menit' : config('rps.faktor_tugas', 60) . ' m/SKS' }}
+                    </td>
                     <td class="table-sub whitespace-nowrap text-center">
-                        {{ $sc->waktu_mandiri ? $sc->w_mandiri . ' menit' : '60 m/SKS' }}</td>
+                        {{ $sc->waktu_mandiri ? $sc->w_mandiri . ' menit' : config('rps.faktor_mandiri', 60) . ' m/SKS' }}
+                    </td>
                 @endif
-            <td class="table-main text-center">
-                <flux:dropdown>
-                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
-                        inset="top bottom">
-                    </flux:button>
-                    @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
-                        'key' => 4,
-                    ])
-                </flux:dropdown>
-            </td>
+                <td class="table-main text-center">
+                    <flux:dropdown>
+                        <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                            inset="top bottom">
+                        </flux:button>
+                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar-table', [
+                            'key' => 4,
+                        ])
+                    </flux:dropdown>
+                </td>
 
                 @if ($showMore)
                     <td class="table-second whitespace-nowrap text-center">{{ $sc->created_day ?? '-' }}</td>
                 @endif
-            @if (!$withCapaian || $showMore)
-                <td class="table-second whitespace-nowrap text-center">{{ $sc->updated_day ?? '-' }}</td>
-            @endif
-        </tr>
-    @empty
-        <tr>
-            <td colspan="{{ $withCapaian ? 11 : 14 }}"
-                class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                Tidak ada data Sub-CPMK ditemukan!
-            </td>
-        </tr>
-    @endforelse
+                @if (!$withCapaian || $showMore)
+                    <td class="table-second whitespace-nowrap text-center">{{ $sc->updated_day ?? '-' }}</td>
+                @endif
+            </tr>
+        @empty
+            <tr>
+                <td colspan="{{ $withCapaian ? 11 : 14 }}"
+                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                    Tidak ada data Sub-CPMK ditemukan!
+                </td>
+            </tr>
+        @endforelse
 
     </x-global.main-layout-table>
 </div>

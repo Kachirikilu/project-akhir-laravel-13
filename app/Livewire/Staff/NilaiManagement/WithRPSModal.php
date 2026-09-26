@@ -204,8 +204,8 @@ trait WithRPSModal
         $hasUAS = false;
 
         if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
-            $utsEnv = env('UTS_FIELDS', 'UTS,EVALUASI AWAL');
-            $uasEnv = env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK');
+            $utsEnv = config('rps.uts_fields');
+            $uasEnv = config('rps.uas_fields');
 
             $utsFields = array_map('trim', array_map('strtoupper', explode(',', $utsEnv)));
             $uasFields = array_map('trim', array_map('strtoupper', explode(',', $uasEnv)));

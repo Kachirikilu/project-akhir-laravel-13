@@ -70,7 +70,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             @forelse($sesis as $index => $s)
                 @php
-                    $daftarUjian = array_merge(config('app.uts_fields'), config('app.uas_fields'));
+                    $daftarUjian = array_merge(config('rps.uts_fields'), config('rps.uas_fields'));
                     $isUjian = in_array(strtoupper($s->metode), $daftarUjian);
 
                     if (Auth::user()->mahasiswa) {

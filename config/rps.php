@@ -91,8 +91,10 @@ return [
     'metode_uts' => $metodeUTS,
     'metode_uas' => $metodeUAS,
 
-    'waktu_telat' => env('WAKTU_TELAT') ?? 15,
-    'faktor_telat' => env('FAKTOR_TELAT') ?? 30,
-    'waktu_dispensasi' => env('WAKTU_DISPENSI') ?? 150,
-    'faktor_dispensasi' => env('FAKTOR_DISPENSI') ?? 120,
+    'faktor_sks' => env('FAKTOR_SKS', 50),
+    'faktor_tugas' => env('FAKTOR_WAKTU_TUGAS', 60),
+    'faktor_mandiri' => env('FAKTOR_WAKTU_MANDIRI', 60),
+    
+    'uts_fields' => explode(',', env('UTS_FIELDS', 'UTS,EVALUASI AWAL')),
+    'uas_fields' => explode(',', env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK')),
 ];

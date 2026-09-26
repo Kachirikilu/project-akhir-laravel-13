@@ -18,8 +18,8 @@ class SubCPMK extends Model
 
     protected static function booted()
     {
-        self::$UTS_FIELDS = config('app.uts_fields', ['UTS', 'EVALUASI AWAL']);
-        self::$UAS_FIELDS = config('app.uas_fields', ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK']);
+        self::$UTS_FIELDS = config('rps.uts_fields', ['UTS', 'EVALUASI AWAL']);
+        self::$UAS_FIELDS = config('rps.uas_fields', ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK']);
     }
 
     protected $table = 'sub_cpmks';
@@ -69,12 +69,12 @@ class SubCPMK extends Model
 
     protected function wTugas(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_tugas ?? 60);
+        return Attribute::get(fn () => $this->waktu_tugas ?? config('rps.faktor_tugas', 60));
     }
 
     protected function wMandiri(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_mandiri ?? 60);
+        return Attribute::get(fn () => $this->waktu_mandiri ?? config('rps.faktor_mandiri', 60));
     }
 
     protected function createdDay(): Attribute

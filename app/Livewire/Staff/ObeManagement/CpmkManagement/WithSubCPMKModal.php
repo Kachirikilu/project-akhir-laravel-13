@@ -9,8 +9,8 @@ use App\Models\Akademik\SCPMK;
 use App\Models\Akademik\SubCPMK;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\WithPagination;
 
 trait WithSubCPMKModal
@@ -101,12 +101,16 @@ trait WithSubCPMKModal
                 'cpmks.rps',
             ])->findOrFail($id);
 
+            // $this->scpmk_input = array_merge($this->scpmk_input, $scpmk->only([
+            //     'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas',
+            // ]), [
+            //     'waktu_tugas' => $scpmk->w_tugas,
+            //     'waktu_mandiri' => $scpmk->w_mandiri,
+            // ]);
+
             $this->scpmk_input = array_merge($this->scpmk_input, $scpmk->only([
-                'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas',
-            ]), [
-                'waktu_tugas' => $scpmk->w_tugas,
-                'waktu_mandiri' => $scpmk->w_mandiri,
-            ]);
+                'materi', 'metodologi', 'indikator', 'metode', 'bobot', 'deskripsi_tugas', 'waktu_tugas', 'waktu_mandiri',
+            ]));
 
             $this->ref_id_array = collect($this->ref_id_array)
                 ->merge($scpmk->refs->pluck('id'))->unique()->values()->all();

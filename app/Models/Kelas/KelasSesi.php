@@ -417,14 +417,14 @@ class KelasSesi extends Model
     protected function wTugas(): Attribute
     {
         return Attribute::get(function () {
-            return $this->override->waktu_tugas ?? $this->scpmk_atr->waktu_tugas ?? 60 * $this->jadwal_rel->kelas_rel->rps_rel->sks ?? null;
+            return $this->override->waktu_tugas ?? $this->scpmk_atr->waktu_tugas ?? config('rps.faktor_tugas', 60) * $this->jadwal_rel->kelas_rel->rps_rel->sks ?? null;
         });
     }
 
     protected function wMandiri(): Attribute
     {
         return Attribute::get(function () {
-            return $this->override->waktu_mandiri ?? $this->scpmk_atr->waktu_mandiri ?? 60 * $this->jadwal_rel->kelas_rel->rps_rel->sks ?? null;
+            return $this->override->waktu_mandiri ?? $this->scpmk_atr->waktu_mandiri ?? config('rps.faktor_mandiri', 60) * $this->jadwal_rel->kelas_rel->rps_rel->sks ?? null;
         });
     }
 
@@ -500,12 +500,10 @@ class KelasSesi extends Model
 
             $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
 
-            // Ambil dari config/rps.php (kembalikan null jika di-comment di .env)
-            $faktorTelat = config('rps.faktor_telat');
-            $waktuTelat = config('rps.waktu_telat');
+            $faktorTelat = config('kelas.faktor_telat');
+            $waktuTelat = config('kelas.waktu_telat');
 
-            // Mengutamakan FAKTOR_TELAT jika ada di .env dan SKS > 0
-            if (! is_null($faktorTelat) && $sks > 0) {
+            if (is_numeric($faktorTelat) && (int) $faktorTelat > 0 && $sks > 0) {
                 $menitTambahan = (int) $faktorTelat * $sks;
             } else {
                 $menitTambahan = (int) ($waktuTelat ?? 15);
@@ -526,12 +524,11 @@ class KelasSesi extends Model
 
             $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
 
-            $faktorDispensasi = config('rps.faktor_dispensasi');
-            $waktuDispensasi = config('rps.waktu_dispensasi');
+            $FD = config('kelas.faktor_dispensi');
+            $waktuDispensasi = config('kelas.waktu_dispensi');
 
-            // Mengutamakan FAKTOR_DISPENSI jika ada di .env dan SKS > 0
-            if (! is_null($faktorDispensasi) && $sks > 0) {
-                $menitTambahan = (int) $faktorDispensasi * $sks;
+            if (is_numeric($FD) && (int) $FD > 0 && $sks > 0) {
+                $menitTambahan = (int) $FD * $sks;
             } else {
                 $menitTambahan = (int) ($waktuDispensasi ?? 150);
             }

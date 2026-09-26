@@ -101,9 +101,6 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'uts_fields' => explode(',', env('UTS_FIELDS', 'UTS,EVALUASI AWAL')),
-    'uas_fields' => explode(',', env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK')),
-
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', '')),
