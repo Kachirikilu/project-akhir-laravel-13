@@ -1,13 +1,12 @@
 # composer install --ignore-platform-reqs
 
-
 APP_NAME="SISTEM INFORMASI AKADEMIK"
 APP_KEY=base64:bQzEFdiwqTipf4JPc/jiPobM8fstUIXLiXrrV3jSN30=
-# APP_ENV=local
-# APP_DEBUG=true
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://simak-unsri.haecloud.my.id
+APP_ENV=local
+APP_DEBUG=true
+# APP_ENV=production
+# APP_DEBUG=false
+APP_URL=http://localhost:8000
 # APP_URL=https://17eb-101-128-109-203.ngrok-free.app
 VITE_HMR_HOST=c1e4-101-128-109-203.ngrok-free.app
 
@@ -15,6 +14,7 @@ APP_TIMEZONE=Asia/Jakarta
 APP_LOCALE=id
 APP_FALLBACK_LOCALE=en
 APP_FAKER_LOCALE=en_US
+
 
 APP_MAINTENANCE_DRIVER=file
 # APP_MAINTENANCE_STORE=database
@@ -64,6 +64,7 @@ SEEDER_BATCH_RPS=16
 SEEDER_BATCH_KELAS=128
 SEEDER_BATCH_NILAI=128
 # Data Seeder
+
 
 BCRYPT_ROUNDS=12
 
