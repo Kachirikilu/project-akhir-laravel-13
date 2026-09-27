@@ -395,7 +395,7 @@
                             @endswitch
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -416,7 +416,7 @@
                             ])
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -437,7 +437,7 @@
                                 'sortir' => $x->wajib,
                             ])
                         </button>
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -474,7 +474,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -504,7 +504,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -527,7 +527,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -559,7 +559,7 @@
                                 'xValue' => $x->mutu_cpl_pr ?? 'E',
                             ])
                         </button>
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -604,7 +604,7 @@
                             ])
                         </button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -651,7 +651,7 @@
                             icon="ellipsis-horizontal" inset="top bottom">
                         </flux:button>
 
-                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,

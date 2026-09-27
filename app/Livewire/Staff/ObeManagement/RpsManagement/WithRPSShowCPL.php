@@ -54,7 +54,7 @@ trait WithRPSShow
             $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
         }
 
-        $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print', [
+        $html = view('livewire.staff.obe-management.rps-management.rps-pdf.rps-pdf-print', [
             'detailRPSData' => $data,
             'logoBase64' => $logoBase64,
         ])->render();

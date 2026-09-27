@@ -12,16 +12,16 @@
 
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.all-role.kelas-management.kelas-toolbar')
-    @include('livewire.all-role.kelas-management.kelas-switch-table')
+    @include('livewire.all-role.kelas-management.kelas-toolbar.kelas-toolbar-header')
+    @include('livewire.all-role.kelas-management.kelas-view.kelas-switch-table')
 
-    @include('livewire.all-role.kelas-management.kelas-search-and-filters')
+    @include('livewire.all-role.kelas-management.kelas-view.kelas-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable, switchingTable2">
         @if ($switchTable2 == 'card')
-            @include('livewire.all-role.kelas-management.kelas-card')
+            @include('livewire.all-role.kelas-management.kelas-view.kelas-card')
         @elseif ($switchTable2 == 'table')
-            @include('livewire.all-role.kelas-management.kelas-table')
+            @include('livewire.all-role.kelas-management.kelas-view.kelas-table')
         @endif
 
     </div>

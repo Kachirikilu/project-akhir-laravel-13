@@ -66,9 +66,9 @@ class ModalUserManagement extends Component
     public function render()
     {
         if ($this->withRPS == true) {
-            return view('livewire.admin.user-management.modal-user-management', ['user_rps_modal_paginator' => $this->user_rps_modal_paginator]);
+            return view('livewire.admin.user-management.user-modal.modal-user-management', ['user_rps_modal_paginator' => $this->user_rps_modal_paginator]);
         } else {
-            return view('livewire.admin.user-management.modal-user-management');
+            return view('livewire.admin.user-management.user-modal.modal-user-management');
         }
     }
 }

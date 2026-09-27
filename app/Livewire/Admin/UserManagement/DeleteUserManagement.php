@@ -21,6 +21,6 @@ class DeleteUserManagement extends Component
     
     public function render()
     {
-        return view('livewire.admin.user-management.delete-user-management');
+        return view('livewire.admin.user-management.user-modal.delete-user-management');
     }
 }

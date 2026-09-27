@@ -24,6 +24,6 @@ class ExcelNilaiSesiManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.excel-nilai-sesi-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.excel-nilai-sesi-management');
     }
 }

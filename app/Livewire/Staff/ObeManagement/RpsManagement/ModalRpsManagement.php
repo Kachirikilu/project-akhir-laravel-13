@@ -123,6 +123,6 @@ class ModalRpsManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.obe-management.rps-management.modal-rps-management');
+        return view('livewire.staff.obe-management.rps-management.rps-modal.modal-rps-management');
     }
 }

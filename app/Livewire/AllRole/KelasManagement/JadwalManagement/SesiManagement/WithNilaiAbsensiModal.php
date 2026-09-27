@@ -107,7 +107,7 @@ trait WithNilaiAbsensiModal
                 if (! in_array($statusDipilih, ['Hadir', 'Terlambat', 'Izin', 'Sakit', 'Dispensasi'])) {
                     $validated['absen'] = 'Hadir';
                 }
-            } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir)) {
+            } elseif ($now->gt($batasTerlambat) && $now->lte($berakhir) && $statusDipilih !== 'Dispensasi') {
                 if ($statusDipilih === 'Sakit') {
                     $validated['absen'] = 'Sakit';
                 } elseif (in_array($statusDipilih, ['Hadir', 'Terlambat', 'Izin'])) {
@@ -122,6 +122,8 @@ trait WithNilaiAbsensiModal
                     $validated['absen'] = 'Absen';
                 }
             }
+
+
 
             MahasiswaKehadiran::updateOrCreate(
                 [

@@ -89,6 +89,6 @@ class ModalTimDosenManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.obe-management.tim-dosen-management.modal-tim-dosen-management', ['tim_dosen_rps_modal_paginator' => $this->tim_dosen_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal.modal-tim-dosen-management', ['tim_dosen_rps_modal_paginator' => $this->tim_dosen_rps_modal_paginator]);
     }
 }

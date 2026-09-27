@@ -11,13 +11,13 @@
 
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.staff.mk-management.mk-toolbar')
-    @include('livewire.staff.mk-management.mk-switch-table')
+    @include('livewire.staff.mk-management.mk-toolbar.mk-toolbar-header')
+    @include('livewire.staff.mk-management.mk-view.mk-switch-table')
 
-    @include('livewire.staff.mk-management.mk-search-and-filters')
+    @include('livewire.staff.mk-management.mk-view.mk-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.staff.mk-management.mk-table')
+        @include('livewire.staff.mk-management.mk-view.mk-table')
     </div>
 
 

@@ -498,15 +498,21 @@ class KelasSesi extends Model
                 return null;
             }
 
-            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+            $WT = (int) config('kelas.waktu_telat', 0);
+            $FT = (int) config('kelas.faktor_telat', 0);
 
-            $faktorTelat = config('kelas.faktor_telat');
-            $waktuTelat = config('kelas.waktu_telat');
-
-            if (is_numeric($faktorTelat) && (int) $faktorTelat > 0 && $sks > 0) {
-                $menitTambahan = (int) $faktorTelat * $sks;
-            } else {
-                $menitTambahan = (int) ($waktuTelat ?? 15);
+            // Prioritas 1: Jika WAKTU_TELAT diisi (> 0)
+            if ($WT > 0) {
+                $menitTambahan = $WT;
+            }
+            // Prioritas 2: Jika FAKTOR_TELAT diisi (> 0) dan SKS valid
+            elseif ($FT > 0) {
+                $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+                $menitTambahan = $FT * $sks;
+            }
+            // Fallback default jika keduanya 0 / invalid
+            else {
+                $menitTambahan = 15;
             }
 
             return Carbon::parse($this->waktu_pelaksanaan)
@@ -522,15 +528,21 @@ class KelasSesi extends Model
                 return null;
             }
 
-            $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+            $WD = (int) config('kelas.waktu_dispensi', 0);
+            $FD = (int) config('kelas.faktor_dispensi', 0);
 
-            $FD = config('kelas.faktor_dispensi');
-            $waktuDispensasi = config('kelas.waktu_dispensi');
-
-            if (is_numeric($FD) && (int) $FD > 0 && $sks > 0) {
-                $menitTambahan = (int) $FD * $sks;
-            } else {
-                $menitTambahan = (int) ($waktuDispensasi ?? 150);
+            // Prioritas 1: Jika WAKTU_DISPENSI diisi (> 0)
+            if ($WD > 0) {
+                $menitTambahan = $WD;
+            }
+            // Prioritas 2: Jika FAKTOR_DISPENSI diisi (> 0) dan SKS valid
+            elseif ($FD > 0) {
+                $sks = (int) ($this->jadwal_rel?->kelas_rel?->rps_rel?->sks ?? 0);
+                $menitTambahan = $FD * $sks;
+            }
+            // Fallback default jika keduanya 0 / invalid
+            else {
+                $menitTambahan = 150;
             }
 
             return Carbon::parse($this->waktu_pelaksanaan)

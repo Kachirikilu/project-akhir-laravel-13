@@ -1,0 +1,237 @@
+{{-- Header Section --}}
+<div class="mb-8">
+    <div class="flex items-center gap-4 mb-6">
+        <a href="{{ $backUrl ?? route('kelas-management') }}" wire:navigate
+            class="mx-2 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
+            <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
+        </a>
+
+        <div class="min-w-0">
+            <h2 class="mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
+                <span>{{ $kelas->kelas }}</span>
+            </h2>
+            <p
+                class="text-[var(--contrast-main-text)] opacity-70 text-xs sm:text-sm flex items-center gap-2 flex-wrap mt-0.5">
+                <span>Manajemen {{ $subHead }} dan Detail untuk {{ $mainHead }} ini</span>
+            </p>
+        </div>
+    </div>
+
+    {{-- Grid Informasi Utama Kelas --}}
+    <div
+        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-10 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
+        <div class="flex flex-col gap-1">
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Kode
+                {{ $mainHead }}</span>
+            <span
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--focus-color)]">{{ $mainKode ?? '---' }}</span>
+
+            @if ($subLabel ?? false)
+                <span
+                    class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">{{ $subLabel ?? '---' }}</span>
+            @endif
+        </div>
+        <div class="flex flex-col gap-1">
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Mata
+                Kuliah</span>
+            <span
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->mk ?? '-----' }}</span>
+            <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
+                {{ $kelas->kode_mk ?? '---' }}
+                <strong class="px-2">|</strong>
+                Semester {{ $kelas->semester ?? '-' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">Program
+                Studi</span>
+            <span
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kelas->prodi ?? '-' }}</span>
+            <span
+                class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">{{ $kelas->kode_pr ?? '---' }}
+                <strong class="px-2">|</strong>
+                {{ $kelas->pr_rel->fakultas_fk ?? '----' }}
+            </span>
+        </div>
+        <div class="flex flex-col gap-1">
+            <span
+                class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">RPS
+                /
+                SKS</span>
+            <span
+                class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">{{ $kode_rps_url ?? '---' }}</span>
+            <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
+                {{ $kelas->sks ?? '-' }} SKS
+                <strong class="px-2">|</strong>
+                {{ $kelas->sks_text ?? '-' }}</span>
+        </div>
+
+        @if ($alpine == 'sesi')
+            @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-view.sesi-absensi-header')
+        @endif
+
+        @foreach ($tim_dosen as $tim)
+            @foreach ($tim->dosens as $dosen)
+                <div class="flex flex-col gap-1">
+                    <span
+                        class="text-[9px] sm:text-xs uppercase tracking-wider text-[var(--contrast-main-text)] opacity-60 font-bold">
+                        @if ($user->admin || $user->dosen)
+                            {{ $loop->first ? 'Tim ' . $tim->kode : 'Tim Dosen' }}
+                        @else
+                            {{ $loop->first ? 'Dosen Pengampu' : 'Tim Dosen' }}
+                        @endif
+                    </span>
+
+                    <div class="flex items-center gap-3 mb-1">
+                        <span
+                            class="text-xs sm:text-sm md:text-md lg:text-lg font-semibold text-[var(--contrast-second-text)]">
+                            {{ $dosen->name }}
+                        </span>
+
+                    </div>
+
+                    <span class="text-[9px] sm:text-xs text-[var(--contrast-main-text)] opacity-70">
+                        NIP. {{ $dosen->nip }}
+                        <strong class="px-1">|</strong>
+                        <span
+                            class="font-medium text-[var(--contrast-second-text)] mr-1">{{ $dosen->pivot->peran }}</span>
+                        @if ($dosen->pivot->is_ketua)
+                            <span
+                                class="inline-block -translate-y-[1.5px] px-1.5 py-0.5 text-[6px] sm:text-[8px] font-bold bg-blue-100 text-blue-700 rounded-sm uppercase">KETUA</span>
+                        </span>
+                        @endif
+                    </span>
+
+                    @if ($dosen->no_hp)
+                        <span class="mt-1 flex items-center gap-1 text-[9px] sm:text-xs text-emerald-600">
+                            <flux:icon.phone variant="micro" />
+                            {{ $dosen->no_wa_full }}
+                        </span>
+                    @endif
+
+                </div>
+            @endforeach
+        @endforeach
+    </div>
+
+    <div class="flex flex-wrap items-stretch sm:items-center gap-2.5 my-4">
+
+        <flux:button
+            @click="
+                $store.rps?.resetShow();
+                $store.rps?.setShowRPS(
+                    '{{ $kelas->rps_id ?? '' }}',
+                    '{{ $kelas->rps_rel->kode ?? '' }}',
+                    '{{ $kelas->pr_id ?? '' }}',
+                );
+                $store.rps?.setColor('text-green-700 dark:text-green-400');
+                $flux.modal('rps-detail-modal').show();
+                $dispatch('open-show-rps-modal', { id: {{ $kelas->rps_id }}, prId: {{ $kelas->pr_id }} });
+            "
+            icon="eye" size="sm"
+            class="text-xs !cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+            <span>Show RPS</span>
+        </flux:button>
+
+        <div class="shrink-0">
+            @include('livewire.global.table.export-button', [
+                'nameXString' => 'Export RPS',
+                'xString' => "printPDFRPS($kelas->rps_id, $kelas->pr_id)",
+                'icon' => 'arrow-down-tray',
+                'isFull' => 1,
+                'valuePx' => 'px-4',
+                'valuePy' => 'py-4',
+                'isTextMd' => 0,
+                'isNoPb' => 1,
+                'color' => 'rose',
+            ])
+        </div>
+
+
+        @if ($canAccess)
+            @if ($alpine == 'jadwal')
+                <flux:button
+                    @click="
+                $store.kelas?.reset();
+                $store.kelas?.setEdit(1);
+                $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.kelas?.setValueKelas(
+                    '{{ $kelas->kode ?? '' }}',
+                    '{{ $kelas->kelas ?? '' }}',
+                    '{{ $kelas->deskripsi_kelas ?? '' }}',
+                    {{-- '{{ $kelas->pr_id ?? '' }}',
+                    '{{ $kelas->kode_pr ?? '' }}',
+                    '{{ $kelas->prodi ?? '' }}',
+                    '{{ $kelas->pr_rel?->departemen_dp ?? '' }}',
+                    '{{ $kelas->pr_rel?->fakultas_fk ?? '' }}',
+                    '{{ $kelas->rps_id ?? '' }}',
+                    '{{ $x->kode_rps ?? '' }}',
+                    '{{ $x->rps_rel?->rps ?? '' }}',
+                    '{{ $x->rps_rel?->sks_full ?? '' }}',
+                    '{{ $x->wajib_text ?? '' }}',
+                    '{{ $x->rps_rel?->draf_full ?? '' }}', --}}
+                );
+                $flux.modal('kelas-modal').show();
+                $dispatch('open-edit-kelas-modal', { id: {{ $kelas->id }} });
+            "
+                    icon="pencil-square" size="sm"
+                    class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                    <span>Edit Kelas</span>
+                </flux:button>
+            @endif
+            @if ($alpine == 'sesi')
+                <flux:button
+                    @click="
+                    $store.jadwal?.reset();
+                    $store.jadwal?.setEdit(1);
+                    $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+                    $store.jadwal?.setValueJadwal(
+                        '{{ $jadwal->label_kelas ?? '' }}',
+                        '{{ $jadwal->kode_wilayah ?? '' }}',
+                        {{-- '{{ $jadwal->hari_pelaksanaan ?? '' }}', --}}
+                        {{-- '{{ $jadwal->jam_mulai ?? '' }}', --}}
+                        {{-- '{{ $jadwal->jam_berakhir ?? '' }}', --}}
+                        '{{ $jadwal->tanggal_mulai ?? '' }}',
+                        {{-- '{{ $jadwal->tanggal_berakhir ?? '' }}', --}}
+                        {{-- '{{ $jadwal->kapasitas ?? '' }}', --}}
+                        '{{ $jadwal->password ?? '' }}',
+                    );
+                    $flux.modal('jadwal-modal').show();
+                    $dispatch('open-edit-jadwal-modal', { id: {{ $kj_id_url }}, kelas_id: {{ $kelas->id }}, kode_kelas: '{{ $kelas->kode }}', sks: '{{ $kelas->sks }}' });
+                "
+                    icon="pencil-square" size="sm"
+                    class="text-xs !cursor-pointer px-4 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                    <span>Edit Jadwal</span>
+                </flux:button>
+            @endif
+
+            <flux:button
+                @click="
+                    $store.sesi?.reset();
+                    $store.sesi?.setEdit(0);
+                    $store.sesi?.setColor('text-green-700 dark:text-green-400', 'file:bg-green-600 hover:file:bg-green-700 active:file:bg-green-800 dark:file:bg-green-500 dark:hover:file:bg-green-600 dark:active:file:bg-green-700');
+                    $flux.modal('nilai-excel-modal').show();
+                    $dispatch('open-excel-sesi-modal');
+                "
+                icon="printer" size="sm"
+                class="text-xs !cursor-pointer px-4 !text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 hover:!bg-emerald-100 dark:!bg-emerald-950/20 dark:hover:!bg-emerald-900/30 !border-emerald-200/60 dark:!border-emerald-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                <span>Import Nilai</span>
+            </flux:button>
+
+            <div class="shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'nameXString' => 'Export Nilai ' . ($jadwal->kode_jadwal ?? $kelas->kode),
+                    'xString' => 'exportNilaiExcel()',
+                    'valuePx' => 'px-4',
+                    'valuePy' => 'py-4',
+                    'isTextMd' => 0,
+                    'isNoPb' => 1,
+                    'isFull' => 1,
+                ])
+            </div>
+        @endif
+
+    </div>
+</div>

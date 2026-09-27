@@ -34,7 +34,7 @@
     @include('livewire.global.header.tag-user')
 
     @if (!$isJadwalOnly)
-        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-header', [
+        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-view.jadwal-header', [
             'alpine' => 'jadwal',
             'mainKode' => $kode_kelas_url ?? '-',
             'mainHead' => 'Kelas',
@@ -42,27 +42,17 @@
         ])
     @endif
 
-    {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal', [
-        'alpineKey' => 'jadwal?.rps_id_show',
-        'isEdit' => 0,
-    ]) --}}
 
-    @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar')
+    @include('livewire.all-role.kelas-management.jadwal-management.jadwal-toolbar.jadwal-toolbar-header')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @if ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] == 0)
-            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-kosong-message')
+            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-view.jadwal-kosong-message')
         @endif
         @if ($this->switchTable == 'card' || ($this->switchTable == 'hari-ini' && $stats['jadwal-hari-ini'] !== 0))
-            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-card')
+            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-view.jadwal-card')
         @elseif ($this->switchTable == 'table')
-            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-table')
+            @include('livewire.all-role.kelas-management.jadwal-management.jadwal-view.jadwal-table')
         @endif
     </div>
-
-    {{-- @if (Auth::user()->admin || Auth::user()->dosen)
-        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-form')
-        @include('livewire.all-role.kelas-management.jadwal-management.jadwal-modal-delete')
-        @include('livewire.all-role.kelas-management.kelas-modal-form')
-    @endif --}}
 </div>

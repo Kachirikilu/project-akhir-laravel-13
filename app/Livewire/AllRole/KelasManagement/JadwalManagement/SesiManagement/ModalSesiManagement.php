@@ -38,6 +38,6 @@ class ModalSesiManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.modal-sesi-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.modal-sesi-management');
     }
 }

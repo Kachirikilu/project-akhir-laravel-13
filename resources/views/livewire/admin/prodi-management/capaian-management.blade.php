@@ -13,7 +13,7 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
     @include('livewire.global.header.tag-user')
 
     <div class="mb-6">
-        {{-- @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar', [
+        {{-- @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar.capaian-toolbar-header', [
             'typeXString' => 'all',
             'withCapaian' => 1,
             'textString' => "Manajemen Capaian $prodi->prodi",
@@ -21,7 +21,7 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
             'textString3' => "$prodi->fakultas_fk ($prodi->kode_fk)",
             'backUrl' => route('program-studi-management'),
         ]) --}}
-        @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar', [
+        @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar.capaian-toolbar-header', [
             'typeXString' => 'all',
             'withCapaian' => 1,
             'textString' => "Manajemen Capaian {$prodi_data['prodi']}",
@@ -35,33 +35,33 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
     {{-- @php
         dump($prodi_data);
     @endphp --}}
-    @include('livewire.admin.prodi-management.capaian-management.capian-switch-table')
-    @include('livewire.admin.prodi-management.capaian-management.capaian-search-and-filters')
+    @include('livewire.admin.prodi-management.capaian-management.capaian-view.capian-switch-table')
+    @include('livewire.admin.prodi-management.capaian-management.capaian-view.capaian-search-and-filters')
     
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @switch($switchTable)
             @case('rps')
-                @include('livewire.staff.obe-management.rps-management.rps-table', ['withCapaian' => 1])
+                @include('livewire.staff.obe-management.rps-management.rps-view.rps-table', ['withCapaian' => 1])
             @break
 
             @case('cpl')
-                @include('livewire.staff.obe-management.cpl-management.cpl-table', ['withCapaian' => 1])
+                @include('livewire.staff.obe-management.cpl-management.cpl-view.cpl-table', ['withCapaian' => 1])
                 {{-- @include('livewire.staff.obe-management.cpl-management.cpl-rps-list', ['withCapaian' => 1]) --}}
             @break
 
             @case('cpmk')
-                @include('livewire.staff.obe-management.cpmk-management.cpmk-table', ['withCapaian' => 1])
+                @include('livewire.staff.obe-management.cpmk-management.cpmk-view.cpmk-table', ['withCapaian' => 1])
             @break
 
             @case('sub-cpmk')
-                @include('livewire.staff.obe-management.scpmk-management.scpmk-table', [
+                @include('livewire.staff.obe-management.scpmk-management.scpmk-view.scpmk-table', [
                     'withCapaian' => 1,
                 ])
             @break
 
             @case('mahasiswa')
-                @include('livewire.staff.nilai-management.mahasiswa-nilai-table')
+                @include('livewire.staff.nilai-management.nilai-view.mahasiswa-nilai-table')
                 {{-- @include('livewire.admin.user-management.user-rps-list') --}}
             @break
         @endswitch

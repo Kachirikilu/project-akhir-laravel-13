@@ -22,6 +22,6 @@ class DeleteRpsManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.obe-management.rps-management.delete-rps-management');
+        return view('livewire.staff.obe-management.rps-management.rps-modal.delete-rps-management');
     }
 }

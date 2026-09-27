@@ -9,8 +9,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use setasign\Fpdi\Fpdi;
-use Spatie\Browsershot\Browsershot;
 use setasign\Fpdi\PdfParser\StreamReader;
+use Spatie\Browsershot\Browsershot;
 
 trait WithRPSShow
 {
@@ -73,6 +73,9 @@ trait WithRPSShow
     #[On('print-rps-pdf')]
     public function printPDFRPS($id, $prId = null)
     {
+        if (property_exists($this, 'refreshTrigger')) {
+            $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+        }
         try {
             $data = $this->handleRpsPdfExport($id, $prId, 'stream', false);
 
@@ -149,7 +152,7 @@ trait WithRPSShow
     //     ])->findOrFail($prodi->id);
     //     $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
 
-    //     $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print-head', [
+    //     $html = view('livewire.staff.obe-management.rps-management.rps-pdf.rps-pdf-print-head', [
     //         'rps' => $rps,
     //         'prodi' => $prodi,
     //         'tim_dosen' => $tim_dosen,
@@ -184,7 +187,7 @@ trait WithRPSShow
     //     $prodi = Prodi::with(['dp_rel', 'dp_rel.fk_rel'])->findOrFail($prodi->id);
     //     $tim_dosen = $rps->tim_dosens->where('pr_id', $prodi->id);
 
-    //     $pdf = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-print-head', [
+    //     $pdf = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf.rps-pdf-print-head', [
     //         'rps' => $rps,
     //         'prodi' => $prodi,
     //         'tim_dosen' => $tim_dosen,
@@ -233,13 +236,13 @@ trait WithRPSShow
         ];
 
         // 1. Render PDF Pertama (Portrait)
-        $pdf1 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-head-print', $dataView)
+        $pdf1 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf.rps-pdf-head-print', $dataView)
             ->setPaper('a4', 'portrait')
             ->setOptions($options);
         $output1 = $pdf1->output();
 
         // 2. Render PDF Kedua (Landscape)
-        $pdf2 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf-body-print', $dataView)
+        $pdf2 = Pdf::loadView('livewire.staff.obe-management.rps-management.rps-pdf.rps-pdf-body-print', $dataView)
             ->setPaper('a4', 'landscape')
             ->setOptions($options);
         $output2 = $pdf2->output();

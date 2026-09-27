@@ -22,6 +22,6 @@ class DeleteJadwalManagement extends Component
     
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.delete-jadwal-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.jadwal-modal.delete-jadwal-management');
     }
 }

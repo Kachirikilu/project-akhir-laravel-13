@@ -53,6 +53,6 @@ class ModalReferensiManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.obe-management.ref-management.modal-ref-management', ['ref_rps_modal_paginator' => $this->ref_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.ref-management.ref-modal.modal-ref-management', ['ref_rps_modal_paginator' => $this->ref_rps_modal_paginator]);
     }
 }

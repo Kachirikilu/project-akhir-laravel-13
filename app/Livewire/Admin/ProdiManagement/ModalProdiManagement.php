@@ -53,6 +53,6 @@ class ModalProdiManagement extends Component
 
     public function render()
     {
-        return view('livewire.admin.prodi-management.modal-prodi-management');
+        return view('livewire.admin.prodi-management.prodi-modal.modal-prodi-management');
     }
 }

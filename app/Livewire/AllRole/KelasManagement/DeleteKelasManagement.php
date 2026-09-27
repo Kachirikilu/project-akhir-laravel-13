@@ -22,6 +22,6 @@ class DeleteKelasManagement extends Component
     
     public function render()
     {
-        return view('livewire.all-role.kelas-management.delete-kelas-management');
+        return view('livewire.all-role.kelas-management.kelas-modal.delete-kelas-management');
     }
 }

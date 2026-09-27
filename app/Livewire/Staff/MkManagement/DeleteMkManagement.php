@@ -22,6 +22,6 @@ class DeleteMkManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.mk-management.delete-mk-management');
+        return view('livewire.staff.mk-management.mk-modal.delete-mk-management');
     }
 }

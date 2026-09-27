@@ -22,6 +22,6 @@ class DeleteRpsMahasiswaManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.delete-rps-mahasiswa-management');
+        return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-modal.delete-rps-mahasiswa-management');
     }
 }
