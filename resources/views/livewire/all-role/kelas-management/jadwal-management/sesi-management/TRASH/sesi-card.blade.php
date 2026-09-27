@@ -188,7 +188,7 @@
                 // 2. Kode CPMK & Sub-CPMK
                 if (kodeScpmk.includes(query) || (cleanQuery && searchScpmk.includes(cleanQuery))) return true;
                 if (kodeCpmk.includes(query) || (cleanQuery && searchCpmk.includes(cleanQuery))) return true;
-
+    
                 // 3. Pertemuan Ke
                 if (item.searchPertemuan?.some(pText => String(pText).toLowerCase().includes(query))) return true;
     
@@ -201,7 +201,7 @@
                         let text = String(bText).toLowerCase();
                         return text.includes(query) || text.includes(dotQuery);
                     })) return true;
-
+    
                 // 6. Waktu Tugas & Waktu Mandiri (Variasi menit/mnt/minutes)
                 if (item.searchWTugas?.some(wText => String(wText).toLowerCase().includes(query))) return true;
                 if (item.searchWMandiri?.some(wText => String(wText).toLowerCase().includes(query))) return true;
@@ -397,20 +397,28 @@
                         ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
                         : null;
 
-                    // 1. Ekstraksi Sufiks & Variabel Statis (Berdasarkan $isUjian saja)
-                    $suf = $isUjian ? '-special' : '';
+                    if ($isUjian) {
+                        $borderTable = 'border-[var(--border-table-color-special)]';
+                        $mainText = 'text-[var(--contrast-main-text-special)]';
+                        $secondText = 'text-[var(--contrast-second-text-special)]';
+                        $thirdText = 'text-[var(--contrast-third-text-special)]';
 
-                    $borderTable = "border-[var(--border-table-color{$suf})]";
-                    $mainText = "text-[var(--contrast-main-text{$suf})]";
-                    $secondText = "text-[var(--contrast-second-text{$suf})]";
-                    $thirdText = "text-[var(--contrast-third-text{$suf})]";
+                        $focusColor = 'bg-[var(--focus-color-special)]';
+                        $mainTable = 'bg-[var(--main-table-color-special)]';
+                        $secondTable = 'bg-[var(--second-table-color-special)]';
+                        $subTable = 'bg-[var(--sub-table-color-special)]';
+                    } else {
+                        $borderTable = 'border-[var(--border-table-color)]';
+                        $mainText = 'text-[var(--contrast-main-text)]';
+                        $secondText = 'text-[var(--contrast-second-text)]';
+                        $thirdText = 'text-[var(--contrast-third-text)]';
 
-                    $focusColor = "bg-[var(--focus-color{$suf})]";
-                    $mainTable = "bg-[var(--main-table-color{$suf})]";
-                    $secondTable = "bg-[var(--second-table-color{$suf})]";
-                    $subTable = "bg-[var(--sub-table-color{$suf})]";
+                        $focusColor = 'bg-[var(--focus-color)]';
+                        $mainTable = 'bg-[var(--main-table-color)]';
+                        $secondTable = 'bg-[var(--second-table-color)]';
+                        $subTable = 'bg-[var(--sub-table-color)]';
+                    }
 
-                    // 2. Base String untuk Penggabungan $focusButton
                     $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
 
                     if ($isUjian) {
@@ -450,7 +458,8 @@
                 <div x-show="filteredAndSortedIds.slice((currentPage - 1) * perPage, currentPage * perPage).some(item => Number(item.id) === Number({{ $s->id }}))"
                     class="{{ $isUjian ? 'lg:col-span-2' : '' }} contents">
 
-                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number({{ $s->id }}))"
+                    <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number(
+                        {{ $s->id }}))"
                         wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: false, hasLoaded: false }"
                         @click="expanded = !expanded; hasLoaded = true"
                         class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-auto flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">

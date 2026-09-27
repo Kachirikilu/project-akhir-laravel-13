@@ -710,22 +710,20 @@
 
     <div x-data="{ showColorMode: true }" @toggle-color-panel.window="showColorMode = $event.detail.open"
         class="relative h-4 w-full flex items-center transition-all mb-3 lg:mb-4 xl:mb-8"
-        :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`" :class="showColorMode ? 'mt-15' : 'mt-0'">
+        :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`" 
+        :class="showColorMode ? 'mt-[60px]' : 'mt-0'">
 
-        <div class="absolute transition-all duration-400 ease-in-out"
+        <div class="absolute transform transition-all duration-400 ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '380ms'}`"
-            :class="showColorMode ? (expanded ? '-translate-y-15 opacity-100' : 'translate-y-0 opacity-100') : ''">
+            :class="showColorMode ? (expanded ? '-translate-y-[60px] opacity-100' : 'translate-y-0 opacity-100') : 'opacity-0'">
             <x-livewire::navigation.dark-mode />
         </div>
 
-        <div class="absolute transition-all duration-400 ease-in-out"
+        <div class="absolute transform transition-all duration-400 ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
             :class="showColorMode
-                ?
-                (expanded ?
-                    'translate-x-0 translate-y-4 opacity-100' :
-                    'translate-x-32 opacity-0') :
-                'opacity-0 pointer-events-none translate-x-32 translate-y-4'">
+                ? (expanded ? 'translate-x-0 translate-y-4 opacity-100' : 'translate-x-32 opacity-0')
+                : 'opacity-0 pointer-events-none translate-x-32 translate-y-4'">
             <x-livewire::navigation.color-mode />
         </div>
     </div>

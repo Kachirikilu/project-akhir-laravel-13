@@ -19,18 +19,27 @@
                     ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
                     : null;
 
-                // 1. Ekstraksi Sufiks & Variabel Statis (Berdasarkan $isUjian saja)
-                $suf = $isUjian ? '-special' : '';
+                if ($isUjian) {
+                    $borderTable = 'border-[var(--border-table-color-special)]';
+                    $mainText = 'text-[var(--contrast-main-text-special)]';
+                    $secondText = 'text-[var(--contrast-second-text-special)]';
+                    $thirdText = 'text-[var(--contrast-third-text-special)]';
 
-                $borderTable = "border-[var(--border-table-color{$suf})]";
-                $mainText = "text-[var(--contrast-main-text{$suf})]";
-                $secondText = "text-[var(--contrast-second-text{$suf})]";
-                $thirdText = "text-[var(--contrast-third-text{$suf})]";
+                    $focusColor = 'bg-[var(--focus-color-special)]';
+                    $mainTable = 'bg-[var(--main-table-color-special)]';
+                    $secondTable = 'bg-[var(--second-table-color-special)]';
+                    $subTable = 'bg-[var(--sub-table-color-special)]';
+                } else {
+                    $borderTable = 'border-[var(--border-table-color)]';
+                    $mainText = 'text-[var(--contrast-main-text)]';
+                    $secondText = 'text-[var(--contrast-second-text)]';
+                    $thirdText = 'text-[var(--contrast-third-text)]';
 
-                $focusColor = "bg-[var(--focus-color{$suf})]";
-                $mainTable = "bg-[var(--main-table-color{$suf})]";
-                $secondTable = "bg-[var(--second-table-color{$suf})]";
-                $subTable = "bg-[var(--sub-table-color{$suf})]";
+                    $focusColor = 'bg-[var(--focus-color)]';
+                    $mainTable = 'bg-[var(--main-table-color)]';
+                    $secondTable = 'bg-[var(--second-table-color)]';
+                    $subTable = 'bg-[var(--sub-table-color)]';
+                }
 
                 $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
 
