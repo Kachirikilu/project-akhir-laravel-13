@@ -22,6 +22,6 @@ class DeleteCpmkManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.obe-management.cpmk-management.delete-cpmk-management');
+        return view('livewire.staff.obe-management.cpmk-management.cpmk-modal.delete-cpmk-management');
     }
 }

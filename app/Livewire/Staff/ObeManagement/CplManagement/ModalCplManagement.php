@@ -60,6 +60,6 @@ class ModalCplManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.obe-management.cpl-management.modal-cpl-management', ['cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.cpl-management.cpl-modal.modal-cpl-management', ['cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator]);
     }
 }

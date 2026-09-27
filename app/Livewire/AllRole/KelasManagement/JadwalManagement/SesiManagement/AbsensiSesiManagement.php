@@ -24,6 +24,6 @@ class AbsensiSesiManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.absensi-sesi-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.absensi-sesi-management');
     }
 }

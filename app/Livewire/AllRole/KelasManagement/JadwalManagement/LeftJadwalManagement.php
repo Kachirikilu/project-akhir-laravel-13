@@ -25,6 +25,6 @@ class LeftJadwalManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.left-jadwal-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.jadwal-modal.left-jadwal-management');
     }
 }

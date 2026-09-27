@@ -43,6 +43,6 @@ class iFrameRpsController extends Controller
         $tim = $tim_dosen->first();
         $allDosens = $tim ? $tim->dosens : collect();
 
-        return view('staff.obe-management.rps-management.rps-pdf-full-print', compact('rps', 'prodi', 'tim_dosen', 'allDosens'));
+        return view('staff.obe-management.rps-management.rps-pdf.rps-pdf-full-print', compact('rps', 'prodi', 'tim_dosen', 'allDosens'));
     }
 }

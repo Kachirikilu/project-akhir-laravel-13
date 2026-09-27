@@ -10,13 +10,13 @@
      
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.admin.prodi-management.prodi-toolbar')
-    @include('livewire.admin.prodi-management.prodi-switch-table')
+    @include('livewire.admin.prodi-management.prodi-toolbar.prodi-toolbar-header')
+    @include('livewire.admin.prodi-management.prodi-view.prodi-switch-table')
 
-    @include('livewire.admin.prodi-management.prodi-search-and-filters')
+    @include('livewire.admin.prodi-management.prodi-view.prodi-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.admin.prodi-management.prodi-table', [
+        @include('livewire.admin.prodi-management.prodi-view.prodi-table', [
             'xResults' => match ($this->switchTable) {
                 '', 'prodi' => $prodis,
                 'departemen' => $departemens,

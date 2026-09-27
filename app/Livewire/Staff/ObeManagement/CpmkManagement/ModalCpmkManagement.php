@@ -109,6 +109,6 @@ class ModalCpmkManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.obe-management.cpmk-management.modal-cpmk-management', ['cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.cpmk-management.cpmk-modal.modal-cpmk-management', ['cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator]);
     }
 }

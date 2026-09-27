@@ -23,7 +23,7 @@ use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
 // use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKDelete;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
-use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKFilters;
+use App\Livewire\Staff\ObeManagement\SubCpmkManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefFilters;
 // use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithDosenFilters;

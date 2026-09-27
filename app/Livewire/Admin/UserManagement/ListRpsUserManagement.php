@@ -51,6 +51,6 @@ class ListRpsUserManagement extends Component
 
     public function render()
     {
-        return view('livewire.admin.user-management.list-rps-user-management', ['user_rps_modal_paginator' => $this->user_rps_modal_paginator]);
+        return view('livewire.admin.user-management.user-modal.list-rps-user-management', ['user_rps_modal_paginator' => $this->user_rps_modal_paginator]);
     }
 }

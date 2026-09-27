@@ -365,11 +365,13 @@ class NilaiMahasiswa extends Model
                 ->values();
 
             // 2. Ambil keywords filter dari .env
-            $envUtsFields = config('rps.uts_fields');
-            $envUasFields = config('rps.uas_fields');
+            // $envUtsFields = config('rps.uts_fields');
+            // $envUasFields = config('rps.uas_fields');
 
-            $utsFields = array_map('trim', explode(',', $envUtsFields));
-            $uasFields = array_map('trim', explode(',', $envUasFields));
+            // $utsFields = array_map('trim', explode(',', $envUtsFields));
+            // $uasFields = array_map('trim', explode(',', $envUasFields));
+            $utsFields = config('rps.uts_fields');
+            $uasFields = config('rps.uas_fields');
 
             // 3. Deteksi apakah RPS sudah punya baris UTS/UAS bawaan
             $hasUts = $allScpmk->contains(function ($item) use ($utsFields) {

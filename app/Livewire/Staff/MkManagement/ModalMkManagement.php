@@ -40,6 +40,6 @@ class ModalMkManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.mk-management.modal-mk-management');
+        return view('livewire.staff.mk-management.mk-modal.modal-mk-management');
     }
 }

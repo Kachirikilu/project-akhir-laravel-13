@@ -44,6 +44,6 @@ class ModalKelasManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.modal-kelas-management');
+        return view('livewire.all-role.kelas-management.kelas-modal.modal-kelas-management');
     }
 }

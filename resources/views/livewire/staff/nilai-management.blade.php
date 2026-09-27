@@ -85,21 +85,21 @@
             </div>
         </div>
     </div> --}}
-    @include('livewire.staff.nilai-management.nilai-toolbar')
+    @include('livewire.staff.nilai-management.nilai-toolbar.nilai-toolbar-header')
 
 
-    @include('livewire.staff.nilai-management.nilai-search-and-filters')
+    @include('livewire.staff.nilai-management.nilai-view.nilai-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @if ($switchTable == 'mahasiswa')
-            @include('livewire.staff.nilai-management.mahasiswa-nilai-table')
+            @include('livewire.staff.nilai-management.nilai-view.mahasiswa-nilai-table')
         @elseif ($switchTable == 'rps')
-            @include('livewire.staff.nilai-management.rps-nilai-table')
-            {{-- @include('livewire.staff.obe-management.rps-management.rps-table') --}}
+            @include('livewire.staff.nilai-management.nilai-view.rps-nilai-table')
+            {{-- @include('livewire.staff.obe-management.rps-management.rps-view.rps-table') --}}
         @endif
     </div>
 
-    {{-- @include('livewire.admin.user-management.user-table', [
+    {{-- @include('livewire.admin.user-management.user-view.user-table', [
         'withRPS' => 1,
         'withNilai' => 1,
         'withCapaian' => 1,
@@ -108,7 +108,7 @@
 
 
     {{-- <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.admin.user-management.user-table')
+        @include('livewire.admin.user-management.user-view.user-table')
     </div> --}}
 
     {{-- @include('livewire.admin.user-management.user-rps-list', ['noModalRPS' => 1]) --}}

@@ -13,11 +13,11 @@
         @include('livewire.global.header.tag-user')
     @endif
     
-    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header', [
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-view.nilai-mahasiswa-header', [
         'alpine' => 'periode',
         'noBackUrl' => $isNilaiMhs ? 1 : 0,
     ])
 
-    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-card')
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-view.nilai-mahasiswa-card')
 
 </div>

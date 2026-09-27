@@ -22,6 +22,6 @@ class DeleteReferensiManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.obe-management.ref-management.delete-ref-management');
+        return view('livewire.staff.obe-management.ref-management.ref-modal.delete-ref-management');
     }
 }

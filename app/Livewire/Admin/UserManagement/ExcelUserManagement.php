@@ -29,6 +29,6 @@ class ExcelUserManagement extends Component
 
     public function render()
     {
-        return view('livewire.admin.user-management.excel-user-management');
+        return view('livewire.admin.user-management.user-modal.excel-user-management');
     }
 }

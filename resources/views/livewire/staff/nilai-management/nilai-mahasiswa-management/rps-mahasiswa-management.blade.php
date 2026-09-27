@@ -18,12 +18,12 @@
         'isEdit' => 0,
     ]) --}}
 
-    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-header', [
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-view.nilai-mahasiswa-header', [
         'alpine' => 'nilai',
         'backUrl' => $isNilaiMhs ? route('nilai-mahasiswa') : route('nilai-mahasiswa-management', ['nim' => $nim_url]),
     ])
 
-    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-card')
+    @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card')
     
     {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-modal-form') --}}
     {{-- @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mhs-modal-delete') --}}

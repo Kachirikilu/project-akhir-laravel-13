@@ -20,6 +20,6 @@ class ModalRpsMahasiswaManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.modal-rps-mahasiswa-management');
+        return view('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-modal.modal-rps-mahasiswa-management');
     }
 }

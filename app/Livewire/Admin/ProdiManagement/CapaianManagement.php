@@ -21,7 +21,7 @@ use App\Livewire\Global\WithSubCPMKSearchFilters;
 use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
-use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKFilters;
+use App\Livewire\Staff\ObeManagement\SubCpmkManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;

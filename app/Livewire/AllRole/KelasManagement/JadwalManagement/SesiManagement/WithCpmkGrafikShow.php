@@ -25,6 +25,10 @@ trait WithCpmkGrafikShow
 
     public function printPDFCpmkGrafik($jadwalRPSId, $isRPS = false)
     {
+        if (property_exists($this, 'refreshTrigger')) {
+            $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+        }
+
         if ($isRPS) {
             // $rpsId = $jadwalRPSId;
             if ($this->filterStatus == '') {
@@ -250,7 +254,7 @@ trait WithCpmkGrafikShow
     //     } elseif ($countCPMK == 14 || $countCPMK == 15 || $countCPMK == 16) {
     //         $chunk_users = $users->chunk(2);
     //     }
-    //     $html = view('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
+    //     $html = view('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-pdf.cpmk-grafik-pdf-print', [
     //         'users' => $users,
     //         'chunk_users' => $chunk_users,
     //         'jadwal' => $jadwal ?? null,
@@ -321,7 +325,7 @@ trait WithCpmkGrafikShow
             $chunk_users = $users->chunk(15);
         }
 
-        $pdf = Pdf::loadView('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-grafik-pdf-print', [
+        $pdf = Pdf::loadView('livewire.all-role.kelas-management.jadwal-management.sesi-management.cpmk-pdf.cpmk-grafik-pdf-print', [
             'users' => $users,
             'chunk_users' => $chunk_users,
             'jadwal' => $jadwal ?? null,

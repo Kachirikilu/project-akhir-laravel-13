@@ -19,6 +19,6 @@ class LockNilaiManagement extends Component
 
     public function render()
     {
-        return view('livewire.staff.nilai-management.lock-nilai-management');
+        return view('livewire.staff.nilai-management.nilai-modal.lock-nilai-management');
     }
 }

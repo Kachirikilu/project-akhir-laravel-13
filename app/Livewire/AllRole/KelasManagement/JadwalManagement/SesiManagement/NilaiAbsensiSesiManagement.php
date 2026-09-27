@@ -30,6 +30,6 @@ class NilaiAbsensiSesiManagement extends Component
 
     public function render()
     {
-        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.nilai-absensi-sesi-management');
+        return view('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-absensi-sesi-management');
     }
 }

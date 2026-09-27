@@ -22,6 +22,6 @@ class DeleteCplManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.obe-management.cpl-management.delete-cpl-management');
+        return view('livewire.staff.obe-management.cpl-management.cpl-modal.delete-cpl-management');
     }
 }

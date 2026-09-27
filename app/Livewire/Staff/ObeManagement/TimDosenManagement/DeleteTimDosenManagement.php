@@ -22,6 +22,6 @@ class DeleteTimDosenManagement extends Component
     
     public function render()
     {
-        return view('livewire.staff.obe-management.tim-dosen-management.delete-tim-dosen-management');
+        return view('livewire.staff.obe-management.tim-dosen-management.tim-dosen-modal.delete-tim-dosen-management');
     }
 }

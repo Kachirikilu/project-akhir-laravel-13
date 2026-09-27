@@ -22,6 +22,6 @@ class DeleteProdiManagement extends Component
     
     public function render()
     {
-        return view('livewire.admin.prodi-management.delete-prodi-management');
+        return view('livewire.admin.prodi-management.prodi-modal.delete-prodi-management');
     }
 }

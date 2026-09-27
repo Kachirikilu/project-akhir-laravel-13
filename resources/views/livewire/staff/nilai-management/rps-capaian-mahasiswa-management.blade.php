@@ -34,10 +34,10 @@
 
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.staff.nilai-management.rps-capaian-mahasiswa-management.rps-capaian-mahasiswa-header')
-    @include('livewire.admin.user-management.user-search-and-filters', ['role' => 'mahasiswa'])
+    @include('livewire.staff.nilai-management.rps-capaian-mahasiswa-management.rps-capaian-mahasiswa-view.rps-capaian-mahasiswa-header')
+    @include('livewire.admin.user-management.user-view.user-search-and-filters', ['role' => 'mahasiswa'])
     @include(
-        'livewire.all-role.kelas-management.jadwal-management.sesi-management.mahasiswa-cpmk-sesi-table',
+        'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-view.mahasiswa-cpmk-sesi-table',
         ['isRPS' => 1]
     )
 

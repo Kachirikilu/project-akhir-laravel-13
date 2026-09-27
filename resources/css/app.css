@@ -1,12 +1,8 @@
-@import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
-@source '../views';
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
-@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
-
-@custom-variant dark (&:where(.dark, .dark *));
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -149,15 +145,35 @@
     }
 
     .form-container {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
-        @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
-        @apply px-2 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300 px-2;
+        border-top-width: 4px;
+        border-bottom-width: 4px;
+        border-color: var(--border-table-color);
     }
+
     .form-container-excel {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300;
-        @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
-        @apply px-0 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300 px-0;
+        border-top-width: 4px;
+        border-bottom-width: 4px;
+        border-color: var(--border-table-color);
     }
+
+    /* Responsif tanpa @apply */
+    @media (max-width: 639px) {
+        .form-container,
+        .form-container-excel {
+            border-color: var(--focus-color);
+        }
+    }
+
+    @media (min-width: 640px) {
+        .form-container,
+        .form-container-excel {
+            @apply px-4 shadow-sm border;
+            background-color: var(--main-table-color);
+        }
+    }
+
     .form-message {
         @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
         @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;
@@ -278,15 +294,6 @@
     .modal-flux-body {
         @apply flex-1 px-4 sm:px-6 py-6;
     }
-    /* .dropdown-menu {
-        left: 0;
-        right: auto;
-    }
-
-    .dropdown-menu.align-right {
-        left: auto;
-        right: 0;
-    } */
 }
 
 @layer utilities {
@@ -540,7 +547,7 @@
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
 /* \[:where(&)\]:size-4 {

@@ -11,15 +11,15 @@
 
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.admin.user-management.user-toolbar')
+    @include('livewire.admin.user-management.user-toolbar.user-toolbar-header')
 
 
     {{-- <livewire:admin.user-management.switch-table-user-management lazy /> --}}
 
-    @include('livewire.admin.user-management.user-switch-table')
-    @include('livewire.admin.user-management.user-search-and-filters')
+    @include('livewire.admin.user-management.user-view.user-switch-table')
+    @include('livewire.admin.user-management.user-view.user-search-and-filters')
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.admin.user-management.user-table')
+        @include('livewire.admin.user-management.user-view.user-table')
     </div>
 
     {{-- @include('livewire.admin.user-management.user-modal-form') --}}

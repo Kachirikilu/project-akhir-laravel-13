@@ -57,6 +57,8 @@ class RpsCapaianMahasiswaManagement extends Component
 
     public $perPage = 8;
 
+    public $showMore = false;
+
     public $switchTable = 'mahasiswa';
 
     protected $paginationTheme = 'tailwind';
@@ -97,6 +99,7 @@ class RpsCapaianMahasiswaManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
+        'showMore' => ['except' => false],
         'filterCapaian' => ['except' => ''],
         // 'switchTable' => ['except' => ''],
         'filterStatus' => ['except' => ''],

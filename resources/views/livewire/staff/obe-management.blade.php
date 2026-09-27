@@ -11,43 +11,43 @@
 
     @include('livewire.global.header.tag-user')
 
-    @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'all'])
+    @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header', ['typeXString' => 'all'])
     @include('livewire.staff.obe-management.obe-switch-table')
     @include('livewire.staff.obe-management.obe-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @switch($switchTable)
             @case('rps')
-                @include('livewire.staff.obe-management.rps-management.rps-table')
+                @include('livewire.staff.obe-management.rps-management.rps-view.rps-table')
             @break
 
             @case('cpl')
-                @include('livewire.staff.obe-management.cpl-management.cpl-table')
+                @include('livewire.staff.obe-management.cpl-management.cpl-view.cpl-table')
                 {{-- @include('livewire.staff.obe-management.cpl-management.cpl-rps-list') --}}
                 {{-- <livewire:staff.obe-management.cpl-management.list-rps-cpl-management lazy /> --}}
             @break
 
             @case('cpmk')
-                @include('livewire.staff.obe-management.cpmk-management.cpmk-table')
+                @include('livewire.staff.obe-management.cpmk-management.cpmk-view.cpmk-table')
             @break
 
             @case('sub-cpmk')
-                @include('livewire.staff.obe-management.scpmk-management.scpmk-table')
+                @include('livewire.staff.obe-management.scpmk-management.scpmk-view.scpmk-table')
             @break
 
             @case('referensi')
-                @include('livewire.staff.obe-management.ref-management.ref-table')
+                @include('livewire.staff.obe-management.ref-management.ref-view.ref-table')
             @break
 
             @case('tim-dosen')
-                @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-table')
+                @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-view.tim-dosen-table')
                 {{-- @include('livewire.staff.obe-management.tim-dosen-management.tim-dosen-rps-list') --}}
             @break
 
             @case('dosen')
-                @include('livewire.staff.obe-management.dosen-management.dosen-table')
+                @include('livewire.staff.obe-management.dosen-management.dosen-view.dosen-table')
                 {{-- @include('livewire.admin.user-management.user-rps-list') --}}
-                {{-- @include('livewire.admin.user-management.user-table', ['withRPS' => true]) --}}
+                {{-- @include('livewire.admin.user-management.user-view.user-table', ['withRPS' => true]) --}}
             @break
         @endswitch
     </div>
@@ -56,8 +56,8 @@
     {{-- --- AREA INCLUDE MODALS --- --}}
     {{-- @include('livewire.staff.obe-management.rps-management.rps-show-modal') --}}
 
-    {{-- <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management lazy />
-    <livewire:staff.obe-management.tim-dosen-management.delete-tim-dosen-management lazy />
+    {{-- <livewire:staff.obe-management.tim-dosen-management.tim-dosen-modal.modal-tim-dosen-management lazy />
+    <livewire:staff.obe-management.tim-dosen-management.tim-dosen-modal.delete-tim-dosen-management lazy />
 
 
     <livewire:admin.user-management.modal-user-management lazy />

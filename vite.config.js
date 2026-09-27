@@ -1,13 +1,13 @@
 import { defineConfig, loadEnv } from "vite";
 import laravel from "laravel-vite-plugin";
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
 
-    console.log("VITE_HMR_HOST =", env.VITE_HMR_HOST);
-
     return {
+        build: {
+            cssMinify: "esbuild",
+        },
         plugins: [
             laravel({
                 input: [
@@ -33,34 +33,13 @@ export default defineConfig(({ mode }) => {
                 ],
                 refresh: true,
             }),
-            tailwindcss(),
         ],
 
         server: {
             cors: true,
             watch: {
-                ignored: ['**/storage/framework/views/**'],
+                ignored: ["**/storage/framework/views/**"],
             },
         },
-
-        // server: {
-        //     host: '0.0.0.0',
-        //     port: 5173,
-
-        //     allowedHosts: [
-        //         '.ngrok-free.app',
-        //     ],
-
-        //     cors: {
-        //         origin: '*',
-        //         credentials: true,
-        //     },
-
-        //     hmr: {
-        //         host: env.VITE_HMR_HOST,
-        //         protocol: 'wss',
-        //         clientPort: 443,
-        //     },
-        // },
     };
 });
