@@ -141,7 +141,7 @@ setNestedValue(
                         ) @endif
                     open=false
                 "
-                class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
+                class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]">
                 <div class="flex justify-between items-center my-1">
                     <span class="text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
                         {{ $label }}

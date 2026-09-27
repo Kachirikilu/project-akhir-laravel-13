@@ -82,7 +82,7 @@
 
         {{-- @for ($i = 0; $i < 8; $i++)
                 <div wire:loading
-                    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/30 min-h-[320px]">
+                    class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)] min-h-[320px]">
                     <div class="flex flex-col gap-3 p-[18px] bg-gray-200/60 dark:bg-zinc-800/60">
                         <div class="flex justify-between items-center">
                             <div class="h-6 w-20 bg-gray-300 dark:bg-zinc-700 rounded-lg"></div>
@@ -112,7 +112,7 @@
         {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
         @forelse($kelas as $k)
             <div wire:key="kelas-card-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
-                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
+                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
                 {{-- ═══ HERO ═══ --}}
                 <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
@@ -159,7 +159,7 @@
                     {{-- Sub info: nama kelas + prodi --}}
                     <div class="flex flex-col gap-1.5">
                         <!-- Baris Atas: Kelas -->
-                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
+                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
                             <flux:icon name="users" class="w-3 h-3 mt-[1px] flex-shrink-0" />
                             <span class="leading-tight break-words">
                                 {{ $k->kelas ?? '-' }}
@@ -167,7 +167,7 @@
                         </div>
 
                         <!-- Baris Bawah: Kode PR -->
-                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
+                        <div class="flex items-start gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
                             <flux:icon name="academic-cap" class="w-3 h-3 mt-[1px] flex-shrink-0" />
                             <span class="leading-tight break-words">
                                 {{ $k->kode_pr ?? '-' }}

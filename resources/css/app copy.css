@@ -187,7 +187,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)]/50 text-[var(--main-text)];
+            @apply z-10 bg-[var(--focus-color)]0 text-[var(--main-text)];
         }
     }
 

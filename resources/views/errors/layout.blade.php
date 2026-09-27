@@ -51,21 +51,21 @@
         {{-- Tombol aksi --}}
         <div class="flex flex-wrap items-center justify-center gap-4">
             <a href="{{ url()->previous() }}"
-                class="flex items-center gap-2 text-xs font-semibold text-[var(--focus-color)] hover:text-[var(--hover-focus-color)] active:text-[var(--hover-focus-color)]/90 transition-colors duration-300">
+                class="flex items-center gap-2 text-xs font-semibold text-[var(--focus-color)] hover:text-[var(--hover-focus-color)] active:text-[var(--hover-focus-color)] transition-colors duration-300">
                 <flux:icon name="arrow-left" class="w-3.5 h-3.5" />
                 Kembali
             </a>
             @if (Auth::user())
                 <span class="w-px h-3.5 bg-[var(--border-table-color)]"></span>
                 <a href="{{ route('dashboard') }}"
-                    class="flex items-center gap-2 text-xs font-semibold text-[var(--contrast-second-text)] hover:text-[var(--contrast-main-text)] active:text-[var(--contrast-main-text)]/90 transition-colors duration-300">
+                    class="flex items-center gap-2 text-xs font-semibold text-[var(--contrast-second-text)] hover:text-[var(--contrast-main-text)] active:text-[var(--contrast-main-text)] transition-colors duration-300">
                     <flux:icon name="squares-2x2" class="w-3.5 h-3.5" />
                     Ke Dashboard
                 </a>
             @endif
             <span class="w-px h-3.5 bg-[var(--border-table-color)]"></span>
             <a href="{{ url('/') }}"
-                class="flex items-center gap-2 text-xs font-semibold text-[var(--contrast-second-text)] hover:text-[var(--contrast-main-text)] active:text-[var(--contrast-main-text)]/90 transition-colors duration-300">
+                class="flex items-center gap-2 text-xs font-semibold text-[var(--contrast-second-text)] hover:text-[var(--contrast-main-text)] active:text-[var(--contrast-main-text)] transition-colors duration-300">
                 <flux:icon name="computer-desktop" class="w-3.5 h-3.5" />
                 Ke Halaman Depan
             </a>

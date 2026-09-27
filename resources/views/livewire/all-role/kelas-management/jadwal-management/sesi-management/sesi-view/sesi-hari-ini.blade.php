@@ -46,14 +46,14 @@
                 if ($isUjian) {
                     if ($isPastDate) {
                         $focusDiv =
-                            'dark:border-[var(--border-table-color-special)]/42 border-[var(--border-table-color-special)]';
+                            'dark:border-[var(--border-table-color-special)] border-[var(--border-table-color-special)]';
                         $focusButton =
                             $btnBase .
-                            ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color)]/64';
-                        $mainColor = 'dark:bg-[var(--main-color-special)]/24 bg-[var(--main-color-special)]/72';
+                            ' hover:bg-[var(--focus-color-special)] hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)] active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)] dark:active:bg-[var(--focus-color-special)] text-[var(--focus-color-special)] ring-[var(--focus-color)]';
+                        $mainColor = 'dark:bg-[var(--main-color-special)] bg-[var(--main-color-special)]';
                     } else {
                         $focusDiv =
-                            'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]/64';
+                            'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]';
                         $focusButton =
                             $btnBase .
                             ' hover:bg-[var(--focus-color-special)] hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)] active:text-[var(--main-text-special)] text-[var(--focus-color-special)] ring-[var(--focus-color-special)]';
@@ -61,13 +61,13 @@
                     }
                 } else {
                     if ($isPastDate) {
-                        $focusDiv = 'dark:border-[var(--border-table-color)]/42 border-[var(--border-table-color)]';
+                        $focusDiv = 'dark:border-[var(--border-table-color)] border-[var(--border-table-color)]';
                         $focusButton =
                             $btnBase .
-                            ' hover:bg-[var(--focus-color)]/84 hover:text-[var(--main-text)] active:bg-[var(--focus-color)]/84 active:text-[var(--main-text)] dark:hover:bg-[var(--focus-color)]/24 dark:active:bg-[var(--focus-color)]/24 text-[var(--focus-color)] ring-[var(--focus-color)]/64';
-                        $mainColor = 'dark:bg-[var(--main-color)]/24 bg-[var(--main-color)]/72';
+                            ' hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:bg-[var(--focus-color)] active:text-[var(--main-text)] dark:hover:bg-[var(--focus-color)] dark:active:bg-[var(--focus-color)] text-[var(--focus-color)] ring-[var(--focus-color)]';
+                        $mainColor = 'dark:bg-[var(--main-color)] bg-[var(--main-color)]';
                     } else {
-                        $focusDiv = 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]/64';
+                        $focusDiv = 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]';
                         $focusButton =
                             $btnBase .
                             ' hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:bg-[var(--focus-color)] active:text-[var(--main-text)] text-[var(--focus-color)] ring-[var(--focus-color)]';

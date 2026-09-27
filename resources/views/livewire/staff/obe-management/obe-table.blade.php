@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] uppercase text-xs ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -358,7 +358,7 @@
 
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
-            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+            class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="table-second text-center">{{ $x->id }}</td>
 

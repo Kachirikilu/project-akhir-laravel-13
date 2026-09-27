@@ -101,7 +101,7 @@
                    bg-[var(--second-table-color)] table-border
                    text-[var(--contrast-second-text)]
                    py-1 px-2 text-xs sm:text-sm w-full
-                   hover:border-[var(--hover-focus-color)] active:border-[var(--hover-focus-color)]/90
+                   hover:border-[var(--hover-focus-color)] active:border-[var(--hover-focus-color)]
                    transition-[border-color] duration-200">
             <span x-text="selected"></span>
 
@@ -138,8 +138,8 @@
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"
                     class="block px-3 py-1 text-xs sm:text-sm cursor-pointer transition-colors duration-200
-                           hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]/90
-                           hover:text-[var(--main-text)] active:text-[var(--main-text)]/90"
+                           hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]
+                           hover:text-[var(--main-text)] active:text-[var(--main-text)]"
                     :class="{
                         'bg-[var(--main-color)] text-[var(--main-text)] font-semibold': Number(selected) == {{ $option }}
                     }">

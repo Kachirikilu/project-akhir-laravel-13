@@ -35,7 +35,7 @@
         "
         class="px-4 py-2 cursor-pointer transition-colors duration-200
                bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-               hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
+               hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]">
 
         <div class="flex flex-wrap items-start gap-x-4 gap-y-1">
             

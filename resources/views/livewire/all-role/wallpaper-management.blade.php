@@ -15,7 +15,7 @@
         class="flex gap-3 overflow-x-auto scrollbar-medium snap-x pb-2 mb-2">
         <!-- 1. Opsi None -->
         <div class="relative flex-shrink-0 w-[90px] h-[210px] rounded-xl overflow-hidden snap-center border-2 border-dashed bg-[var(--main-color)] flex items-center justify-center cursor-pointer border-[var(--border-table-color)]"
-            :class="$store.theme_manager.activeWallpaper === null ? '!border-[var(--border-table-color)]/50' : ''"
+            :class="$store.theme_manager.activeWallpaper === null ? '!border-[var(--border-table-color)]0' : ''"
             @click="$store.theme_manager.setWallpaper(null)">
 
             <div class="flex flex-col items-center justify-center text-[var(--border-main-color)]">

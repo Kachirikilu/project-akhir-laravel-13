@@ -570,7 +570,7 @@
                     <div :style="'order: ' + filteredAndSortedIds.findIndex(entry => Number(entry.id) === Number(
                         {{ $s->id }}))"
                         wire:key="kelas-sesi-row-{{ $s->id }}"
-                        class="flex flex-row items-center min-w-full w-max hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200 border-b table-border text-xs sm:text-sm">
+                        class="flex flex-row items-center min-w-full w-max hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200 border-b table-border text-xs sm:text-sm">
 
                         <div
                             class="w-32 shrink-0 text-center font-medium text-[var(--contrast-second-text)] truncate px-6">

@@ -35,7 +35,7 @@
                     ? 'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' 
                     : (
                         {{ $isBtnActiveSub ? 'true' : 'false' }}
-                        ? 'border-l-2 border-[var(--border-main-color)] text-[var(--contrast-main-text)] bg-[var(--main-pop-up-color)]/30 dark:bg-white/5' 
+                        ? 'border-l-2 border-[var(--border-main-color)] text-[var(--contrast-main-text)] bg-[var(--main-pop-up-color)] dark:bg-white/5' 
                         : 'border-l-2 border-transparent text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5'
                     )"
                     style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px;"

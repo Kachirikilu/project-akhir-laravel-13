@@ -25,7 +25,7 @@
         <template x-if="$store.{{ $alpine ?? 'config' }}?.typeModal !== 'excel'" x-cloak>
             <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="{{ $targetX }}"
                 class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto
-                bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90
+                bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]
                 shadow-sm text-white border-none transition-all duration-200">
 
                 <span x-text="$store.{{ $alpine ?? 'config' }}?.isEdit ? 'Perbarui Data' : 'Simpan Data'"
@@ -42,7 +42,7 @@
             <flux:button variant="primary"
                 class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto 
                 {{-- bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 --}}
-                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]/90
+                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                 text-[var(--contrast-second-text)]
                 
                 border-none transition-colors duration-200">

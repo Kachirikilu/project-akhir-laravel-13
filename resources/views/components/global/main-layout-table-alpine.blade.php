@@ -36,7 +36,7 @@
     </div>
 @endif
 
-<div class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
+<div class="bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
     id="table-results-container">
     
     <div class="w-full overflow-x-auto scrollbar-x-large max-h-[1000px]">

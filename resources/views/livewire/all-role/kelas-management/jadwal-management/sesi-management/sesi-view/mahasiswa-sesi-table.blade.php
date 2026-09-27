@@ -238,7 +238,7 @@
             {{-- @php dd($user); @endphp --}}
 
             <tr wire:key="mahasiswa-sesi-{{ $user->mahasiswa->id }}" data-mahasiswa-sesi-id="{{ $user->mahasiswa->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
 
                 @if ($showMore)
                     <td class="table-main text-center">{{ $user->role_id }}</td>

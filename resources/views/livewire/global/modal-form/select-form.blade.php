@@ -213,7 +213,7 @@ setNestedValue(
                     @if ($isLivewireState) valueInput = selectedValue; @endif
                     open = false;
                 "
-                    class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]/90">
+                    class="px-4 py-2 cursor-pointer hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]">
                     <div class="flex flex-wrap items-start gap-x-4 gap-y-1 my-1">
                         <span class="my-2 flex-1 text-xs sm:text-sm text-[var(--contrast-main-text)] font-semibold">
                             {{ $label }}

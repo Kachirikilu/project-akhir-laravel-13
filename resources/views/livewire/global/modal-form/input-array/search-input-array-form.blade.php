@@ -143,7 +143,7 @@
                 {{-- <template x-for="(id, index) in items" :key="id"> --}}
                 <template x-for="(id, index) in items" :key="id + '-' + index">
                     <div
-                        class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-1 sm:px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
+                        class="group relative flex items-start justify-between bg-[var(--second-table-color)] border table-border px-1 sm:px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)] active:border-[var(--focus-color)]">
                         <div class="flex items-start gap-3 flex-1">
 
                             <div class="flex flex-col items-center leading-none">

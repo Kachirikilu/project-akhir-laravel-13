@@ -24,7 +24,7 @@
                     <flux:modal.close>
                         <flux:button variant="ghost"
                             class="cursor-pointer w-full sm:w-auto 
-                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]/90
+                bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                 text-[var(--contrast-second-text)]
                 transition-colors duration-200">
                             Batal</flux:button>

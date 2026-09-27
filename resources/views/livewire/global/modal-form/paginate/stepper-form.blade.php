@@ -11,8 +11,8 @@
             class="text-xs sm:text-sm relative px-4 py-2 text-sm font-medium
                     flex items-center gap-2 transition group"
             x-bind:class="step === 1 ?
-                'opacity-50 cursor-not-allowed text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90' :
-                'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90 cursor-pointer'">
+                'opacity-50 cursor-not-allowed text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]' :
+                'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)] cursor-pointer'">
             <span>←</span>
             <span>Back</span>
 
@@ -27,7 +27,7 @@
 
 
         {{-- 🔹 INDICATOR --}}
-        <div class="text-xs sm:text-sm cursor-pointer text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90">
+        <div class="text-xs sm:text-sm cursor-pointer text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
             Step <span x-text="step"></span> / {{ $maxStep }}
         </div>
 
@@ -37,8 +37,8 @@
             class="text-xs sm:text-sm relative px-4 py-2 text-sm font-medium
                     flex items-center gap-2 transition group"
             x-bind:class="step === {{ $maxStep }} ?
-                'opacity-50 cursor-not-allowed text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90' :
-                'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90 cursor-pointer'">
+                'opacity-50 cursor-not-allowed text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]' :
+                'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)] cursor-pointer'">
             <span>Next</span>
             <span>→</span>
 

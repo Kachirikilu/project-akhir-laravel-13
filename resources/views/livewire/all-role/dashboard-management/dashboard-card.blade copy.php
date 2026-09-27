@@ -25,7 +25,7 @@
          HEADER: IDENTITAS PENGGUNA (Tampil untuk SEMUA role)
          ============================================================ --}}
     <div
-        class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200">
+        class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200">
 
         {{-- Hero --}}
         <div class="flex flex-col gap-3 p-4 sm:p-[18px] bg-[var(--main-color)]">
@@ -49,7 +49,7 @@
             </p>
 
             <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]/64">
+                <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]">
                     <flux:icon name="hashtag" class="w-3 h-3" />
                     {{ $data['id_label'] }}: {{ $data['ID_AKADEMIK'] }}
                 </span>
@@ -147,7 +147,7 @@
                     {{-- Tombol pop-up modal --}}
                     <flux:modal.trigger name="wa-activation">
                         <button
-                            class="cursor-pointer transition-all flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out text-white transition-all active:scale-[0.97]">
+                            class="cursor-pointer transition-all flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out text-white transition-all active:scale-[0.97]">
                             <flux:icon name="cog-6-tooth" class="w-3.5 h-3.5" />
                             <span class="hidden sm:inline">{{ $data['wa_aktif'] ? 'Kelola' : 'Aktifkan' }}</span>
                         </button>
@@ -194,7 +194,7 @@
             {{-- Step 1: Kirim kode aktivasi --}}
             <div class="flex flex-col gap-2">
                 <flux:button variant="primary" icon="paper-airplane"
-                    class="cursor-pointer transition-all w-full justify-center bg-[var(--main-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out"
+                    class="cursor-pointer transition-all w-full justify-center bg-[var(--main-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
                     wire:click="kirimTokenWhatsapp">
                     Kirim Kode Aktivasi via WhatsApp
                 </flux:button>
@@ -235,7 +235,7 @@
                 <p class="text-[11px] sm:text-xs text-center text-[var(--contrast-third-text)]">
                     Tidak menerima kode?
                     <button wire:click="kirimTokenWhatsapp"
-                        class="font-semibold text-[var(--focus-color)] hover:text-[var(--hover-focus-color)] active:text-[var(--hover-focus-color)]/90 cursor-pointer">
+                        class="font-semibold text-[var(--focus-color)] hover:text-[var(--hover-focus-color)] active:text-[var(--hover-focus-color)] cursor-pointer">
                         Kirim ulang
                     </button>
                 </p>

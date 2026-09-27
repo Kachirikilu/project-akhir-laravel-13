@@ -9,7 +9,7 @@
 <body class="min-h-screen antialiased bg-[var(--wadah-color)] dark:bg-neutral-950">
 
     {{-- ═══ NAVBAR ═══ --}}
-    <nav class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)]/80 backdrop-blur-md">
+    <nav class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)] backdrop-blur-md">
         <div class="flex items-center gap-2">
             <div class="flex h-8 w-8 items-center justify-center rounded-[10px]" style="background: var(--main-color);">
                 <x-app-logo-icon class="h-4 w-auto" />
@@ -42,7 +42,7 @@
 
     {{-- ═══ HERO ═══ --}}
     <header class="py-16 px-5 text-center space-y-6">
-        <span class="inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)]/20 bg-[var(--focus-color)]/10 px-4 py-1.5 text-xs font-semibold text-[var(--focus-color)]">
+        <span class="inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)] bg-[var(--focus-color)] px-4 py-1.5 text-xs font-semibold text-[var(--focus-color)]">
             <flux:icon name="shield-check" class="w-3.5 h-3.5" />
             {{ env('UNIVERSITAS', 'Portal Akademik') }}
         </span>

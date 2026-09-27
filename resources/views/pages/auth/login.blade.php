@@ -47,7 +47,7 @@
                             style="color: #ffffff; letter-spacing: -0.02em;">
                             Sistem Manajemen<br>Pembelajaran OBE
                         </h1>
-                        <p class="text-[var(--main-text)]/70 text-sm leading-relaxed max-w-xs">
+                        <p class="text-[var(--main-text)] text-sm leading-relaxed max-w-xs">
                             Platform akademik terintegrasi untuk pengelolaan RPS, Kelas, dan Capaian Pembelajaran
                             berbasis Kurikulum OBE.
                         </p>
@@ -60,7 +60,7 @@
                                 <span
                                     class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
 
-                                <span class="text-[var(--main-text)]/70 text-xs">{{ $feat }}</span>
+                                <span class="text-[var(--main-text)] text-xs">{{ $feat }}</span>
                             </div>
                         @endforeach
                         <div class="flex items-center mt-6 gap-4">
@@ -74,7 +74,7 @@
 
             {{-- ═══ PANEL KANAN: Form Login ═══ --}}
             <div
-                class="w-full md:w-[375px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)]/70 backdrop-blur-lg p-8 sm:p-10">
+                class="w-full md:w-[375px] lg:w-[420px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)] backdrop-blur-lg p-8 sm:p-10">
 
                 {{-- Header --}}
                 <div class="mb-7">
@@ -86,7 +86,7 @@
                         </div>
 
                         <span
-                            class="text-xs font-bold uppercase tracking-[0.08em] text-[var(--contrast-second-text)]/70">
+                            class="text-xs font-bold uppercase tracking-[0.08em] text-[var(--contrast-second-text)]">
                             {{ config('app.name') }}
                         </span>
                     </a>
@@ -146,7 +146,7 @@
                     {{-- Remember Me --}}
                     <div class="flex items-center gap-2">
                         <flux:checkbox class="cursor-pointer" name="remember" :checked="old('remember')" />
-                        <span class="text-xs text-[var(--contrast-second-text)]/70">Ingat saya</span>
+                        <span class="text-xs text-[var(--contrast-second-text)]">Ingat saya</span>
                     </div>
 
                     <flux:button variant="primary" type="submit"

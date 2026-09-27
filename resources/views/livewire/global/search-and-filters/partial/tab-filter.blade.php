@@ -8,7 +8,7 @@
     class="text-xs sm:text-sm relative cursor-pointer tab-mode px-2 py-2 font-medium rounded-t-lg transition duration-200 whitespace-nowrap group focus:outline-none"
     :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
         ? 'text-[var(--focus-color)]' 
-        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90'">
+        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'">
 
     <div class="flex items-center">
         <i class="fas fa-users mr-2"></i>

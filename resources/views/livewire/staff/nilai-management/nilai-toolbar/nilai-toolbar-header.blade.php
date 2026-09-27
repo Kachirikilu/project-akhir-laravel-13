@@ -69,7 +69,7 @@
 
                         <flux:dropdown>
                             <flux:button variant="primary" icon="plus" size="sm"
-                                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out whitespace-nowrap">
+                                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out whitespace-nowrap">
                                 Akses Nilai
                             </flux:button>
 

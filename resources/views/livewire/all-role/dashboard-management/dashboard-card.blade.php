@@ -22,7 +22,7 @@
          HEADER: IDENTITAS PENGGUNA
          ============================================================ --}}
 <div
-    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200">
+    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200">
 
     {{-- Hero --}}
     <div class="flex flex-col gap-3 p-4 sm:p-[18px] bg-[var(--main-color)]">
@@ -45,7 +45,7 @@
         </p>
 
         <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]/64">
+            <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-[var(--main-text)]">
                 <flux:icon name="hashtag" class="w-3 h-3" />
                 {{ $data['id_label'] }}: {{ $data['ID_AKADEMIK'] }}
             </span>
@@ -144,7 +144,7 @@
                                 $flux.modal('wa-activation-modal').show();
                                 $dispatch('open-edit-wa-activation-modal');
                             "
-                        class="cursor-pointer flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 text-white active:scale-[0.97]">
+                        class="cursor-pointer flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 text-white active:scale-[0.97]">
                         <flux:icon name="cog-6-tooth" class="w-3.5 h-3.5" />
                         <span class="hidden sm:inline">{{ $data['wa_aktif'] ? 'Kelola' : 'Aktifkan' }}</span>
                     </button>
@@ -165,13 +165,12 @@
                     <div
                         class="flex items-center gap-2.5 rounded-[10px] border pl-3 pr-5 py-2.5 
                 {{ $device->is_current
-                    ? 'bg-[var(--focus-color)]/[0.1] border-[var(--focus-color)]/30'
+                    ? 'border-[var(--focus-color)]'
                     : 'border-[var(--border-table-color)] bg-[var(--second-table-color)]' }}">
 
                         {{-- Ikon --}}
                         <div
-                            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg 
-                    {{ $device->is_current ? 'bg-[var(--focus-color)]/20' : 'bg-[var(--sub-table-color)]' }}">
+                            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg">
                             <flux:icon name="{{ $device->is_desktop ? 'computer-desktop' : 'device-phone-mobile' }}"
                                 class="w-4 h-4 {{ $device->is_current ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-third-text)]' }}" />
                         </div>

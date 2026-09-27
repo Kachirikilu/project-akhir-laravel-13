@@ -268,7 +268,7 @@ new #[Title('Profile Settings')] class extends Component {
 
                 @if ($this->hasUnverifiedEmail)
                     <div
-                        class="mt-4 p-3 rounded-[10px] bg-[var(--focus-color)]/[0.1] border border-[var(--focus-color)]/20">
+                        class="mt-4 p-3 rounded-[10px] bg-[var(--focus-color)]/[0.1] border border-[var(--focus-color)]">
                         <flux:text class="text-[var(--contrast-main-text)]">
                             {{ __('Your email address is unverified!') }}
 

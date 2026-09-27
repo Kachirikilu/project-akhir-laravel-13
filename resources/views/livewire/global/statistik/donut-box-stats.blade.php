@@ -9,7 +9,7 @@
     $offset = $circumference - ($rawPct / 100) * $circumference;
 @endphp
 
-<div class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--main-table-color)]/80 p-4 sm:p-5 gap-5">
+<div class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--main-table-color)] p-4 sm:p-5 gap-5">
 
     {{-- Header: icon + judul --}}
     <div class="flex items-center gap-3">

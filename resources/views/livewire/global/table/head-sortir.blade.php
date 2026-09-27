@@ -40,7 +40,7 @@
     class="relative cursor-pointer flex items-center pt-2.5 pb-3 px-3 text-xs sm:text-sm font-medium transition-all duration-300 whitespace-nowrap outline-none bg-transparent group {{ $isCenter ?? false ? 'justify-center' : 'justify-start' }}"
     :class="sortField === '{{ $sortFieldString }}' || clicked
         ? 'text-[var(--focus-color)] font-semibold' 
-        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90'">
+        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'">
 
     <div class="flex items-center gap-2">
         <span class="tracking-wider text-[9px] sm:text-xs uppercase transition-colors duration-300">
@@ -52,7 +52,7 @@
             :class="[
                 (sortField === '{{ $sortFieldString }}' || clicked) 
                     ? 'opacity-100 transform text-[var(--focus-color)]' 
-                    : 'opacity-0 group-hover:opacity-60 text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90',
+                    : 'opacity-0 group-hover:opacity-60 text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]',
                 (sortField === '{{ $sortFieldString }}' && sortDirection === 'desc') 
                     ? 'rotate-180' 
                     : 'rotate-0'

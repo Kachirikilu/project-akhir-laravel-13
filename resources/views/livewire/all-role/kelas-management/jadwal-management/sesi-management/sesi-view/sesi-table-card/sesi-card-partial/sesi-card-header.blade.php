@@ -6,7 +6,7 @@
                 ? 'dark:border-white/10 dark:bg-white/5 dark:text-white/50 dark:hover:bg-white/10 dark:active:bg-white/25 '
                 : '') . 'border-white/20 bg-white/10 text-white/75 hover:bg-white/20 active:bg-white/50';
         $dateText =
-            'inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64 ' .
+            'inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)] ' .
             ($isPastDate ? 'dark:text-[var(--main-text)]/32 line-through' : '');
     @endphp
     <div class="flex items-start justify-between gap-2">
@@ -40,7 +40,7 @@
             @endif
 
             <span
-                class="text-xs {{ $isPastDate ? 'text-[var(--main-text)]/64' : 'text-[var(--main-text)]' }} font-mono">ID:
+                class="text-xs {{ $isPastDate ? 'text-[var(--main-text)]' : 'text-[var(--main-text)]' }} font-mono">ID:
                 {{ $s->id }}</span>
         </div>
 
@@ -60,7 +60,7 @@
 
     {{-- Judul: Sub-CPMK atau label Ujian --}}
     <p
-        class="mt-1 text-[15px] font-bold leading-[1.35] tracking-[0.1em] {{ $isPastDate ? 'dark:text-[var(--main-text)]/64' : '' }} text-[var(--main-text)]">
+        class="mt-1 text-[15px] font-bold leading-[1.35] tracking-[0.1em] {{ $isPastDate ? 'dark:text-[var(--main-text)]' : '' }} text-[var(--main-text)]">
 
         {{ $s->kode_cpmk ?? 'Sesi Evaluasi Utama' }}
 
@@ -78,7 +78,7 @@
         <span class="{{ $dateText }}" <flux:icon name="calendar-days" class="w-3 h-3" />
         {{ $s->tanggal_pelaksanaan ?? '-' }}
         </span>
-        <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
+        <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]"></span>
 
         <span class="{{ $dateText }}" <flux:icon name="clock" class="w-3 h-3" />
         {{ $s->hari ?? '-' }}, {{ $s->jam_pelaksanaan ?? '-' }}

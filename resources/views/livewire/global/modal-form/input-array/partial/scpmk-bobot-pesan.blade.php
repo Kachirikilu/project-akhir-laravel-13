@@ -1,6 +1,6 @@
 <template x-if="items.length > 0">
     <div
-        class="mt-2 px-4 py-3 bg-[var(--focus-color)]/10 border border-[var(--focus-color)]/20 rounded-lg flex justify-between items-center">
+        class="mt-2 px-4 py-3 bg-[var(--focus-color)] border border-[var(--focus-color)] rounded-lg flex justify-between items-center">
         <span class="text-xs font-bold uppercase"
             x-text="
                             grandTotalBobot <= {{ $nilai1 }} ? '{{ $pNilai1 }}' : 

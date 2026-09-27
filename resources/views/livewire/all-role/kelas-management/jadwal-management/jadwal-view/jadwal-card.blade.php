@@ -53,7 +53,7 @@
         {{-- 2. Isi Utama (Looping Card) --}}
         @forelse($jadwals as $j)
             <div wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]/50 transition-all duration-200 hover:shadow-lg active:shadow-lg">
+                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
                 {{-- ═══ HERO ═══ --}}
                 <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">
@@ -101,13 +101,13 @@
                     {{-- Sub info: hari + jam --}}
                     <div class="flex flex-wrap items-center gap-2">
                         <span
-                            class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
+                            class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
                             <flux:icon name="calendar-days" class="w-3 h-3" />
                             {{ $j->hari ?? '-' }}
                         </span>
-                        <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
+                        <span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]"></span>
                         <span
-                            class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/64">
+                            class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
                             <flux:icon name="clock" class="w-3 h-3" />
                             {{ $j->jam_pelaksanaan ?? '-' }}
                         </span>

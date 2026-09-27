@@ -86,7 +86,7 @@
         <div class="flex items-center gap-2 sm:gap-4 min-w-0 w-full">
             @if (!($noBackUrl ?? false))
                 <a href="{{ $backUrl ?? route('nilai-management') }}" wire:navigate
-                    class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
+                    class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors shrink-0 flex items-center justify-center">
                     <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
                 </a>
             @endif
@@ -97,7 +97,7 @@
                     <span class="break-words">{{ $mahasiswa->name ?? 'Wildan Athif Muttaqien' }}</span>
                     @if ($ganjil_genap || $akademik)
                         <span
-                            class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)]/10 text-[var(--focus-color)] border border-[var(--focus-color)]/20 whitespace-nowrap">
+                            class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)] text-[var(--focus-color)] border border-[var(--focus-color)] whitespace-nowrap">
                             {{ ucfirst($ganjil_genap) }} {{ $akademik }}
                         </span>
                     @endif
@@ -210,7 +210,7 @@
     @endphp
 
     <div
-        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
+        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)] p-6 rounded-xl border table-border shadow-sm">
 
         {{-- 1. SKS — ada rasio, donut penuh --}}
         @include('livewire.global.statistik.donut-mini-stats', [

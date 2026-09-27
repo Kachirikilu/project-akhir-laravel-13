@@ -348,7 +348,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)]/24 text-[var(--main-text)];
+            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
 
@@ -357,7 +357,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)]/72 text-[var(--main-text)];
+            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
 
@@ -375,7 +375,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color-special)]/24 text-[var(--main-text-special)];
+            @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
 
@@ -384,7 +384,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color-special)]/72 text-[var(--main-text-special)];
+            @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
 

@@ -160,7 +160,7 @@
 
         @forelse($mks as $mk)
             <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
 
                 <td class="table-second text-center">{{ $mk->id }}</td>
                 <td class="table-second text-center">

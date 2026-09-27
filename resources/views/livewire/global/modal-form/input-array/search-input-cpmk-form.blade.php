@@ -203,7 +203,7 @@
                 {{-- <template x-for="(id, index) in items" :key="id"> --}}
                 <template x-for="(id, index) in items" :key="id + '-' + index">
                     <div
-                        class="flex flex-col bg-[var(--second-table-color)] border table-border rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90">
+                        class="flex flex-col bg-[var(--second-table-color)] border table-border rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)] active:border-[var(--focus-color)]">
                         @include('livewire.global.modal-form.input-array.partial.scpmk-header')
                         @include('livewire.global.modal-form.input-array.partial.scpmk-table')
                     </div>
@@ -230,7 +230,7 @@
 
             <template x-if="items.length > 0">
                 <div
-                    class="mt-2 px-4 py-3 bg-[var(--focus-color)]/10 border border-[var(--focus-color)]/20 rounded-lg flex justify-between items-center">
+                    class="mt-2 px-4 py-3 bg-[var(--focus-color)] border border-[var(--focus-color)] rounded-lg flex justify-between items-center">
                     <span class="text-xs font-bold uppercase"
                         x-text="
                             totalSubCPMK >= 14 ? 'Jumlah Sub-CPMK mencapai 14:' : 

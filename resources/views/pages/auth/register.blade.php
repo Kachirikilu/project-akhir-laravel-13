@@ -42,7 +42,7 @@
                         <h1 class="text-2xl sm:text-3xl font-bold leading-tight text-white tracking-tighter">
                             Registrasi Akun<br>Administrator
                         </h1>
-                        <p class="text-[var(--main-text)]/70 text-sm leading-relaxed max-w-xs">
+                        <p class="text-[var(--main-text)] text-sm leading-relaxed max-w-xs">
                             Halaman ini disediakan sebagai portal pendaftaran untuk membuat akun Administratif, yang
                             akan memberikan akses penuh dalam mengelola Sistem Manajemen Pembelajaran berbasis kurikulum
                             OBE.
@@ -53,12 +53,12 @@
                         <div class="flex items-center gap-2.5">
                             <span
                                 class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
-                            <span class="text-[var(--main-text)]/70 text-xs">Akses penuh Sistem</span>
+                            <span class="text-[var(--main-text)] text-xs">Akses penuh Sistem</span>
                         </div>
                         <div class="flex items-center gap-2.5">
                             <span
                                 class="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--main-text)] shadow-[0_0_8px_var(--main-text)]"></span>
-                            <span class="text-[var(--main-text)]/70 text-xs">Manajemen User & Hak Akses</span>
+                            <span class="text-[var(--main-text)] text-xs">Manajemen User & Hak Akses</span>
                         </div>
                         <div class="flex items-center mt-6 gap-4">
                             <x-livewire::navigation.dark-mode :noPadding="1" :noToggle="1" />
@@ -70,7 +70,7 @@
 
             {{-- ═══ PANEL KANAN: Form Register ═══ --}}
             <div
-                class="w-full lg:w-[600px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)]/70 backdrop-blur-lg p-8 sm:p-10 overflow-y-auto">
+                class="w-full lg:w-[600px] flex-shrink-0 flex flex-col justify-center bg-[var(--second-table-color)] backdrop-blur-lg p-8 sm:p-10 overflow-y-auto">
 
                 <div class="mb-6">
                     <h2 class="text-xl font-bold tracking-tight text-[var(--contrast-main-text)]">Buat Akun Admin</h2>
@@ -171,7 +171,7 @@
                     </div>
 
                     <div
-                        class="mt-2 p-4 rounded-xl border border-[var(--main-color)] bg-[var(--main-color)]/30 bg-opacity-5">
+                        class="mt-2 p-4 rounded-xl border border-[var(--main-color)] bg-[var(--main-color)] bg-opacity-5">
                         {{-- <flux:input name="admin_key" label="Admin Secret Key" type="password" required viewable
                             placeholder="Kunci otorisasi Admin..." /> --}}
                         @include('livewire.global.modal-form.input-form', [

@@ -6,7 +6,7 @@
         {{-- Sisi Kiri: Profil Mahasiswa --}}
         <div class="mb-2 xl:mb-0 flex items-center gap-2 sm:gap-4 min-w-0 w-full">
             <a href="{{ route('nilai-management', ['switchTable' => 'rps']) }}" wire:navigate
-                class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
+                class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors shrink-0 flex items-center justify-center">
                 <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
             </a>
 
@@ -15,7 +15,7 @@
                     class="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex flex-wrap items-center gap-4 min-w-0">
                     <span class="break-words"><span class="mr-2">Kode RPS: </span> {{ $rps->kode }}</span>
                     <span
-                        class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)]/10 text-[var(--focus-color)] border border-[var(--focus-color)]/20 whitespace-nowrap">
+                        class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)] text-[var(--focus-color)] border border-[var(--focus-color)] whitespace-nowrap">
                         {{ $rps->draf_text }}
                     </span>
                 </h2>

@@ -14,9 +14,9 @@
 
         {{-- ═══ NAVBAR ═══ --}}
         <nav
-            class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)]/50 backdrop-blur-lg">
+            class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)]0 backdrop-blur-lg">
             <div class="flex items-center gap-4">
-                <div class="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--main-color)]/90">
+                <div class="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--main-color)]">
                     <x-app-logo-icon class="h-5 w-auto text-white" />
                 </div>
                 <span class="text-sm font-bold tracking-widest hidden sm:block">
@@ -55,7 +55,7 @@
         {{-- ═══ HERO ═══ --}}
         <header class="py-24 px-5 text-center space-y-8">
             <span
-                class="text-[var(--focus-color)] inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)]/30 bg-[var(--focus-color)]/10 px-3 py-1 text-xs sm:text-sm font-bold uppercase tracking-[0.07em]">
+                class="text-[var(--focus-color)] inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)] bg-[var(--focus-color)] px-3 py-1 text-xs sm:text-sm font-bold uppercase tracking-[0.07em]">
                 <flux:icon name="shield-check" class="w-4 h-4" />
                 {{ env('UNIVERSITAS') }}
             </span>
@@ -99,7 +99,7 @@
 
                 @foreach ($stats as $index => $stat)
                     <div
-                        class="group relative overflow-hidden rounded-3xl border border-[var(--border-table-color)] bg-[var(--second-table-color)]/30 backdrop-blur-lg shadow-sm {{ $loop->last ? 'col-span-2 sm:col-span-1' : '' }}">
+                        class="group relative overflow-hidden rounded-3xl border border-[var(--border-table-color)] bg-[var(--second-table-color)] backdrop-blur-lg shadow-sm {{ $loop->last ? 'col-span-2 sm:col-span-1' : '' }}">
 
                         {{-- Background Hover --}}
                         <div
@@ -143,7 +143,7 @@
 
         {{-- ═══ FITUR + ROLE (2 kolom desktop) ═══ --}}
         <section
-            class="relative z-10 bg-[var(--sub-table-color)]/50 border-t border-[var(--border-table-color)] px-5 sm:px-8 py-12">
+            class="relative z-10 bg-[var(--sub-table-color)]0 border-t border-[var(--border-table-color)] px-5 sm:px-8 py-12">
             <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
 
                 {{-- Fitur --}}

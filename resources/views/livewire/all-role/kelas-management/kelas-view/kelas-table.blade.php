@@ -185,7 +185,7 @@
 
         @forelse($kelas as $k)
             <tr wire:key="kelas-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
 
                 @if (Auth::user()->admin || Auth::user()->dosen)
                     <td class="table-second text-center">{{ $k->id }}</td>

@@ -45,7 +45,7 @@
                                 class="group relative flex flex-col items-center gap-1.5 rounded-[12px] border px-2 py-3 text-center transition-all duration-200 cursor-pointer"
                                 :class="$store.sesi.absen === item.label ?
                                     item.bg_active +
-                                    ' ring-2 shadow-md scale-[1.02] border-[var(--focus-color)] bg-[var(--focus-color)]/10 ring-1 ring-[var(--focus-color)]' :
+                                    ' ring-2 shadow-md scale-[1.02] border-[var(--focus-color)] bg-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' :
                                     'border-[var(--border-table-color)] bg-[var(--second-table-color)] hover:bg-[var(--sub-table-color)]'">
 
                                 {{-- Indikator centang aktif --}}
@@ -137,7 +137,7 @@
                     </flux:modal.close>
                     <flux:button type="submit" variant="primary" icon="check-circle" wire:loading.attr="disabled"
                         wire:target="absensiSesi"
-                        class="cursor-pointer flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 text-white border-none transition-all ">
+                        class="cursor-pointer flex-1 justify-center bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] text-white border-none transition-all ">
                         <span wire:loading.remove wire:target="absensiSesi">Absen</span>
                         <span wire:loading wire:target="absensiSesi">Memproses...</span>
                     </flux:button>

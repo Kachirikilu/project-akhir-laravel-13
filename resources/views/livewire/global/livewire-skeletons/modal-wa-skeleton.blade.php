@@ -58,7 +58,7 @@
     {{-- Footer --}}
     <div class="flex gap-2 pt-1">
         <div class="h-10 flex-1 rounded-xl bg-[var(--main-table-color)]"></div>
-        <div class="h-10 flex-1 rounded-xl bg-[var(--focus-color)]/25"></div>
+        <div class="h-10 flex-1 rounded-xl bg-[var(--focus-color)]"></div>
     </div>
 
 </div>

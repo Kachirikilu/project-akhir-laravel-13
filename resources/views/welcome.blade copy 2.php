@@ -49,7 +49,7 @@
 
     {{-- ═══ HERO ═══ --}}
     <section class="flex flex-col items-center text-center px-5 sm:px-8 py-14 sm:py-20 gap-5 bg-[var(--sub-table-color)]">
-        <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--focus-color)]/30 bg-[var(--focus-color)]/10 px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.07em] text-[var(--focus-color)]">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-[var(--focus-color)] bg-[var(--focus-color)] px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.07em] text-[var(--focus-color)]">
             <flux:icon name="shield-check" class="w-3 h-3" />
             {{ env('UNIVERSITAS') }}
         </span>

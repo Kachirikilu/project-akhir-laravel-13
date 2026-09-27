@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2 sm:gap-4 min-w-0 w-full">
             @if (!$noBackUrl)
                 <a href="{{ $backUrl ?? route('nilai-management') }}" wire:navigate
-                    class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
+                    class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors shrink-0 flex items-center justify-center">
                     <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
                 </a>
             @endif

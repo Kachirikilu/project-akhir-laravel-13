@@ -155,7 +155,7 @@
         @forelse($users as $user)
             <tr wire:key="mahasiswa-nilai-{{ $user->mahasiswa->id }}"
                 data-mahasiswa-nilai-id="{{ $user->mahasiswa->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
 
                 <td class="table-second text-center">
                     <flux:dropdown>

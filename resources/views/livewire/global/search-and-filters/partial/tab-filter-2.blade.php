@@ -2,7 +2,7 @@
     class="text-xs sm:text-sm relative cursor-pointer flex items-center justify-center pt-2.5 pb-3 pl-3 pr-8 font-medium transition-all duration-300 whitespace-nowrap outline-none bg-transparent group"
     :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
         ? 'text-[var(--focus-color)] font-semibold' 
-        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90'">
+        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'">
 
     <!-- Wrapper Konten -->
     <div class="flex items-center gap-2">
@@ -10,7 +10,7 @@
         <!-- Icon Flux -->
         @if(isset($icon))
             <flux:icon :name="$icon" class="h-4 w-4 transition-colors duration-300" 
-                ::class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90'" />
+                ::class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'" />
         @endif
         
         <!-- Label Text -->
@@ -21,7 +21,7 @@
             <span class="text-[9px] sm:text-xs px-1.5 py-0.5 font-bold rounded-sm transition-colors duration-300 border"
                 :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}'
                     ? 'bg-[var(--focus-color)] text-white border-transparent' 
-                    : 'bg-transparent text-[var(--contrast-second-text)] table-border group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90 group-hover:border-[var(--focus-color)] active:border-[var(--focus-color)]/90/40'">
+                    : 'bg-transparent text-[var(--contrast-second-text)] table-border group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)] group-hover:border-[var(--focus-color)] active:border-[var(--focus-color)]'">
                 {{ $tabFilter }}
             </span>
         @endif

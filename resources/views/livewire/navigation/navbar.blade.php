@@ -153,7 +153,7 @@
                     class="flex items-center text-xs mx-1 p-2 rounded-lg overflow-hidden transition-colors
                             {{ $isActive
                                 ? 'bg-white/20 text-[var(--main-text)]'
-                                : 'text-[var(--main-text)]/80 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 active:bg-white/20 active:text-[var(--main-text)]/90' }}"
+                                : 'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)] active:bg-white/20 active:text-[var(--main-text)]' }}"
                     title="{{ $item['label'] }}">
                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
                     <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"

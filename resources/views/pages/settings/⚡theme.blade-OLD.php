@@ -122,7 +122,7 @@ new #[Title('Theme Settings')] class extends Component {
                     </div>
                 </div>
                 <label
-                    class="bg-[var(--main-color)]/20 flex-shrink-0 w-[90px] h-[210px] rounded-xl border-2 border-dashed border-[var(--border-table-color)] flex items-center justify-center cursor-pointer hover:border-[var(--main-color)] transition-colors">
+                    class="bg-[var(--main-color)] flex-shrink-0 w-[90px] h-[210px] rounded-xl border-2 border-dashed border-[var(--border-table-color)] flex items-center justify-center cursor-pointer hover:border-[var(--main-color)] transition-colors">
                     <input type="file" class="hidden" accept="image/*" wire:model.live="wallpaper">
 
                     <div wire:loading wire:target="wallpaper">

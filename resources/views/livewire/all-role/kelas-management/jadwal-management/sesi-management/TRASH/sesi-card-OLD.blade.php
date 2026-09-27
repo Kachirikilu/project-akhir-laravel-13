@@ -117,7 +117,7 @@
                     <div class="flex flex-col gap-2 text-xs text-[var(--contrast-main-text)]">
 
                         <div
-                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)]/40 px-3 py-2">
+                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)] px-3 py-2">
                             <span class="text-[var(--contrast-second-text)]">
                                 Waktu
                             </span>
@@ -127,7 +127,7 @@
                         </div>
 
                         <div
-                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)]/40 px-3 py-2">
+                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)] px-3 py-2">
                             <span class="text-[var(--contrast-second-text)]">
                                 Tanggal
                             </span>
@@ -137,7 +137,7 @@
                         </div>
 
                         <div
-                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)]/40 px-3 py-2">
+                            class="flex items-center justify-between rounded-md bg-[var(--main-table-color)] px-3 py-2">
                             <span class="text-[var(--contrast-second-text)]">
                                 Absensi
                             </span>

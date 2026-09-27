@@ -6,7 +6,7 @@
 
             @foreach ($tabs as $i => $label)
                 <button type="button" @click="step = {{ $i }}"
-                    class="text-xs sm:text-sm relative cursor-pointer px-2 py-2 font-medium rounded-t-lg transition duration-200 whitespace-nowrap group focus:outline-none hover:text-[var(--focus-color)] active:text-[var(--focus-color)]/90"
+                    class="text-xs sm:text-sm relative cursor-pointer px-2 py-2 font-medium rounded-t-lg transition duration-200 whitespace-nowrap group focus:outline-none hover:text-[var(--focus-color)] active:text-[var(--focus-color)]"
                     :class="step === {{ $i }} ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)]'">
                     <div class="flex items-center gap-1">
                         <span>{{ $label }}</span>

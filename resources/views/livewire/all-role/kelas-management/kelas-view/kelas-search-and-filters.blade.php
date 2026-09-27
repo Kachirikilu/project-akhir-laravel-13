@@ -1,5 +1,5 @@
 <div x-data="{ activeFilter: @entangle('filterKelas') }"
-    class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
 
     <div x-transition:enter="transition ease-out duration-1000"
