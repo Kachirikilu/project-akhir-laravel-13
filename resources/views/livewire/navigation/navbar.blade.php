@@ -153,7 +153,7 @@
                     class="flex items-center text-xs mx-1 p-2 rounded-lg overflow-hidden transition-colors
                             {{ $isActive
                                 ? 'bg-white/20 text-[var(--main-text)]'
-                                : 'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)] active:bg-white/20 active:text-[var(--main-text)]' }}"
+                                : 'text-[var(--main-text)]/80 hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 active:bg-white/20 active:text-[var(--main-text)]/90' }}"
                     title="{{ $item['label'] }}">
                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
                     <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
@@ -632,8 +632,7 @@
                         if (isset($groupedRps[$nim])) {
                             foreach ($groupedRps[$nim] as $rps) {
                                 $subMenus[] = [
-                                    'label' =>
-                                        ucfirst($rps['ganjil_genap'] ?? '') . ' ' . ($rps['akademik'] ?? ''),
+                                    'label' => ucfirst($rps['ganjil_genap'] ?? '') . ' ' . ($rps['akademik'] ?? ''),
                                     'url' => $rps['url'] ?? '#',
                                     'param' => 'rps-mahasiswa-management',
                                     'icon' => 'chart-bar',
@@ -642,8 +641,7 @@
                                     'active' =>
                                         request()->routeIs('rps-mahasiswa-management') &&
                                         request()->route('nim') == $nim &&
-                                        request()->route('akademik') ==
-                                            str_replace('/', '-', $rps['akademik'] ?? ''),
+                                        request()->route('akademik') == str_replace('/', '-', $rps['akademik'] ?? ''),
                                 ];
                             }
                         }
@@ -710,23 +708,24 @@
 
     <div x-data="{ showColorMode: true }" @toggle-color-panel.window="showColorMode = $event.detail.open"
         class="relative h-4 w-full flex items-center transition-all mb-3 lg:mb-4 xl:mb-8"
-        :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`" 
-        :class="showColorMode ? 'mt-[60px]' : 'mt-0'">
+        :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`" :class="showColorMode ? 'mt-[60px]' : 'mt-0'">
 
-        <div class="absolute transform transition-all duration-400 ease-in-out"
+        <div class="absolute transition-all duration-400 ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '380ms'}`"
-            :class="showColorMode ? (expanded ? '-translate-y-[60px] opacity-100' : 'translate-y-0 opacity-100') : 'opacity-0'">
+            :class="showColorMode ? (expanded ? '-translate-y-[60px] opacity-100' : 'translate-y-0 opacity-100') : ''">
             <x-livewire::navigation.dark-mode />
         </div>
 
-        <div class="absolute transform transition-all duration-400 ease-in-out"
+        <div class="absolute transition-all duration-400 ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
             :class="showColorMode
-                ? (expanded ? 'translate-x-0 translate-y-4 opacity-100' : 'translate-x-32 opacity-0')
-                : 'opacity-0 pointer-events-none translate-x-32 translate-y-4'">
+                ?
+                (expanded ? 'translate-x-0 translate-y-4 opacity-100' : 'translate-x-32 opacity-0') :
+                'opacity-0 pointer-events-none translate-x-32 translate-y-4'">
             <x-livewire::navigation.color-mode />
         </div>
     </div>
+
 
     {{-- Profile --}}
     <div class="lg:pb-3 xl:pb-6">
