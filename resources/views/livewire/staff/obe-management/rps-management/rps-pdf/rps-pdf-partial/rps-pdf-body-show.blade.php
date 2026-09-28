@@ -747,6 +747,10 @@
                 @endphp
                 <tr class="{{ $isExam ? 'exam-row bg-gray-200' : '' }} align-top">
                     {{-- CPMK --}}
+                    @php
+                        $labelSubCpmk = isset($row->kode_scpmk) ? "({$row->kode_scpmk})" : $row->name ?? '---';
+                    @endphp
+
                     <td class="{{ $textStyle }} cpmk-cell" colspan="{{ $row->general_exam ? 2 : 1 }}">
                         @if (isset($showCpmk[$index]))
                             @if ($row->general_exam)
@@ -757,10 +761,10 @@
                                 <span class="font-bold">
                                     {{ $row->kode_cpmk }}
                                 </span><br>
-                                ({{ $row->kode_scpmk }})
+                                {{ $labelSubCpmk }}
                             @endif
                         @else
-                            ({{ $row->kode_scpmk }})
+                            {{ $labelSubCpmk }}
                         @endif
                     </td>
 
@@ -775,15 +779,19 @@
                         <!-- Kolom Referensi -->
                         <td class="{{ $textStyle }}">
                             @php
-                                $refNumbers = optional($row->refs)
-                                    ->map(
-                                        fn($ref) => isset($refOrderMap[$ref->id])
-                                            ? '[' . $refOrderMap[$ref->id] . ']'
-                                            : null,
-                                    )
-                                    ->filter()
-                                    ->sort()
-                                    ->implode(', ');
+                                $refsData = data_get($row, 'refs');
+
+                                $refNumbers = !empty($refsData)
+                                    ? collect($refsData)
+                                        ->map(
+                                            fn($ref) => isset($refOrderMap[$ref->id ?? null])
+                                                ? '[' . $refOrderMap[$ref->id] . ']'
+                                                : null,
+                                        )
+                                        ->filter()
+                                        ->sort()
+                                        ->implode(', ')
+                                    : '';
                             @endphp
 
                             {{ !empty($refNumbers) ? $refNumbers : '-' }}
@@ -887,21 +895,19 @@
                     <td class="skala-td">A</td>
                     <td class="skala-td">86-100</td>
                     <td class="skala-td">4.00</td>
-                    <td class="skala-td nowrap">Sangat Baik
-                    </td>
+                    <td class="skala-td nowrap">Sangat Memuaskan</td>
                 </tr>
                 <tr>
                     <td class="skala-td">A-</td>
                     <td class="skala-td">80-85</td>
                     <td class="skala-td">3.70</td>
-                    <td class="skala-td nowrap">Sangat Baik
-                    </td>
+                    <td class="skala-td nowrap">Sangat Baik</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B+</td>
                     <td class="skala-td">75-79</td>
                     <td class="skala-td">3.30</td>
-                    <td class="skala-td">Baik</td>
+                    <td class="skala-td nowrap">Baik Sekali</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B</td>
@@ -913,7 +919,7 @@
                     <td class="font-medium skala-td">B-</td>
                     <td class="skala-td">65-69</td>
                     <td class="skala-td">2.70</td>
-                    <td class="skala-td">Baik</td>
+                    <td class="skala-td">Cukup Baik</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">C+</td>
@@ -925,7 +931,7 @@
                     <td class="font-medium skala-td">C</td>
                     <td class="skala-td">56-59</td>
                     <td class="skala-td">2.00</td>
-                    <td class="skala-td">Cukup</td>
+                    <td class="skala-td">Hampir Cukup</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">D</td>

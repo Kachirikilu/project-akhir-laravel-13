@@ -18,12 +18,15 @@
                         </span>
                         <span class="flex flex-wrap gap-2 sm:gap-3">
                             <x-label-card type="sm">{{ $item['tanggal_carbon'] }}</x-label-card>
+                            
+                           <flux:badge icon="academic-cap" color="violet" size="sm">
+                                {{ $item['kode_cpmk'] ?? '---' }}
+                            </flux:badge>
+
                             <flux:badge icon="academic-cap" color="fuchsia" size="sm">
                                 {{ $item['kode_scpmk'] ?? '---' }}
                             </flux:badge>
-                            <flux:badge icon="academic-cap" color="sky" size="sm">
-                                {{ $item['kode_cpmk'] ?? '---' }}
-                            </flux:badge>
+
                             @include('livewire.global.table.badge.metode-badge', [
                                 'xValue' => $item['metode'],
                             ])
@@ -55,7 +58,7 @@
                                         'isReadonly' => 1,
                                         'nameXString' => 'Bobot',
                                         'modelString' => 'list_absensi_array',
-                                        'itemsString' => "$index.bobot",
+                                        'itemsString' => "$index.bobot_text",
                                         'iconString' => 'scale',
                                         'placeholder' => 'Masukkan Bobot...',
                                         'isRequired' => 0,

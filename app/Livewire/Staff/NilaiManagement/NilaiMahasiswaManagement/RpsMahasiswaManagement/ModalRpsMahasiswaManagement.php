@@ -12,10 +12,12 @@ class ModalRpsMahasiswaManagement extends Component
     use WithRPSMahasiswaModal;
 
     public $isReady;
-  
+
     #[On('open-edit-rps-mahasiswa-modal')]
-    public function handleEditRPSMahasiswa() {
+    public function handleEditRPSMahasiswa($id)
+    {
         $this->isReady = true;
+        $this->editNilaiMahasiswa($id);
     }
 
     public function render()

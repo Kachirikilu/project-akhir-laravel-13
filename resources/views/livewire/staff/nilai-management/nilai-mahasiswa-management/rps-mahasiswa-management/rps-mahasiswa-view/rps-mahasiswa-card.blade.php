@@ -498,11 +498,11 @@
                         '{{ $n->mk ?? '' }}',
                         '{{ $n->sks ?? '' }}',
 
-                        JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
+                        {{-- JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
-                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'), --}}
                     );
                     $flux.modal('rps-mahasiswa-modal').show();
                     $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });

@@ -28,6 +28,7 @@ document.addEventListener("alpine:init", () => {
             this.toItem = next;
         },
 
+        list_absensi_array: [],
         search: "",
         perPage: 8,
         sortField: "pertemuan_ke",
@@ -362,6 +363,8 @@ document.addEventListener("alpine:init", () => {
                 this.sks = "";
                 this.sent = 1;
                 this.showEdit = 0;
+
+                this.list_absensi_array = [];
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

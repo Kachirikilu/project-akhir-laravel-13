@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        
+
 
         <div class="flex flex-wrap items-center gap-2 lg:justify-end">
             <span
@@ -45,6 +45,7 @@
         </div>
 
     </div>
+
 
     <div x-data="{
         getIndex(n) {
@@ -72,15 +73,26 @@
             },
     
             getStats() {
-                let data = $store.sesi?.list_absensi_array ?? [];
+                let rawAbsensi = $store.sesi?.list_absensi_array ?? [];
+                let dataAbsensi = Array.isArray(rawAbsensi) ? rawAbsensi : Object.values(rawAbsensi);
     
-                if (!Array.isArray(data)) {
-                    data = Object.values(data);
-                }
+                let totalNilaiAkhir = 0;
     
-                let totalBobot = 0;
-                let nilaiBobot = 0;
+                dataAbsensi.forEach(item => {
+                    let n = parseFloat(item?.nilai);
     
+                    let rawBobot = item?.bobot ?? item?.bobot_text ?? 0;
+                    let b = parseFloat(String(rawBobot).replace('%', ''));
+    
+                    if (!isNaN(n) && !isNaN(b)) {
+                        let bobotDesimal = b > 1 ? (b / 100) : b;
+                        totalNilaiAkhir += n * bobotDesimal;
+                    }
+                });
+    
+                const nilaiAkhir = isNaN(totalNilaiAkhir) ? 0 : totalNilaiAkhir;
+    
+                // 2. Hitung Statistik Presensi
                 let hadir = 0;
                 let dispensasi = 0;
                 let terlambat = 0;
@@ -89,25 +101,7 @@
                 let tidakMasuk = 0;
                 let poin = 0;
     
-                data.forEach(item => {
-                    // PERBAIKAN: Validasi ekstra jika hasil parsing NaN atau string kosong, set ke 0
-                    let nilaiParsed = parseFloat(item?.nilai);
-                    const nilai = (!isNaN(nilaiParsed) && item?.nilai !== '') ? nilaiParsed : 0;
-    
-                    let bobot = item?.bobot ?? '0%';
-                    bobot = parseFloat(String(bobot).replace('%', ''));
-    
-                    if (isNaN(bobot)) bobot = 0;
-    
-                    const bobotDecimal = bobot / 100;
-                    totalBobot += bobotDecimal;
-                    nilaiBobot += nilai * bobotDecimal;
-                });
-    
-                // PERBAIKAN: Memastikan pembagian tidak menghasilkan NaN jika totalBobot 0
-                const nilaiAkhir = (totalBobot > 0 && !isNaN(nilaiBobot)) ? (nilaiBobot / totalBobot) : 0;
-    
-                data.forEach(item => {
+                dataAbsensi.forEach(item => {
                     const status = item?.status ?? '';
     
                     switch (status) {
@@ -139,7 +133,7 @@
                     }
                 });
     
-                const maxPoin = data.length * 2;
+                const maxPoin = dataAbsensi.length * 2;
     
                 return {
                     masuk: (hadir + dispensasi + terlambat),
@@ -149,15 +143,21 @@
                     izin,
                     sakit,
                     tidakMasuk,
-                    poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : 0, // Ubah null ke 0 agar konsisten teksnya
+                    poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : 0,
                     nilai_akhir: nilaiAkhir.toFixed(2),
                     nilai_index: this.getIndex(nilaiAkhir),
                     nilai_mutu: this.getMutu(nilaiAkhir)
                 };
             }
-    }">
+    }"
+        x-effect="
+        // Memicu reaktivitas Alpine secara mendalam saat isi store berubah
+        JSON.stringify($store.sesi?.list_absensi_array);
+        JSON.stringify($store.nilai?.list_nilai_array);
+    ">
+
         <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--contrast-second-text)] mb-3">
-            Akumulasi Rekap Absensi
+            Akumulasi Rekap Absensi & Nilai
         </label>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 justify-center">
@@ -238,11 +238,13 @@
                 </span>
             </div>
 
+            {{-- Section Nilai Akhir, Index, & Mutu --}}
             <div
                 class="sm:col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai Akhir</span>
                 <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
-                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_akhir ?? '0.00'"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_akhir ?? '0.00'"></span>
                     <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_akhir"></span>
                 </span>
             </div>
@@ -251,7 +253,8 @@
                 class="sm:col-span-1 md:col-span-3 px-2.5 py-4 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
                 <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Index (0-4)</span>
                 <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
-                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_index ?? '0.00'"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_index ?? '0.00'"></span>
                     <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_index"></span>
                 </span>
             </div>
@@ -260,7 +263,8 @@
                 class="sm:col-span-1 md:col-span-2 px-2.5 py-4 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
                 <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Mutu</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
-                    <span wire:loading wire:target="editNilaiAbsensi" x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
                     <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_mutu"></span>
                 </span>
             </div>

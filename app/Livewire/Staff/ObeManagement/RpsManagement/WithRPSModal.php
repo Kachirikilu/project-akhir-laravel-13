@@ -206,11 +206,14 @@ trait WithRPSModal
         $hasUAS = false;
 
         if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
-            $utsEnv = config('rps.uts_fields');
-            $uasEnv = config('rps.uas_fields');
+            $utsEnv = config('rps.uts_fields', []);
+            $uasEnv = config('rps.uas_fields', []);
 
-            $utsFields = array_map('trim', array_map('strtoupper', explode(',', $utsEnv)));
-            $uasFields = array_map('trim', array_map('strtoupper', explode(',', $uasEnv)));
+            $rawUts = is_array($utsEnv) ? $utsEnv : explode(',', (string) $utsEnv);
+            $rawUas = is_array($uasEnv) ? $uasEnv : explode(',', (string) $uasEnv);
+
+            $utsFields = array_map('trim', array_map('strtoupper', $rawUts));
+            $uasFields = array_map('trim', array_map('strtoupper', $rawUas));
 
             foreach ($data['cpmk_sub_items_array'] as $cpmkItem) {
                 $scpmkList = $cpmkItem['scpmk'] ?? [];

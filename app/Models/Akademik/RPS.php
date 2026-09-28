@@ -123,6 +123,10 @@ class RPS extends Model
             $program = collect();
             $scpmkIndex = 0;
 
+            // Variabel pelacak untuk menyimpan kode_cpmk dan cpmk_id dari pertemuan sebelumnya
+            $lastKodeCpmk = '-';
+            $lastCpmkId = null;
+
             // Helper untuk generate deskripsi ujian yang adaptif & naratif
             $generateExamDescription = function (string $type, int $pertemuan) {
                 $isLast = ($pertemuan === 16);
@@ -142,19 +146,11 @@ class RPS extends Model
 
             for ($p = 1; $p <= 16; $p++) {
 
-                $isAssignedToMeeting = function ($dosen, $pertemuanKe) use ($p) {
-                    if (is_null($pertemuanKe)) {
-                        return true;
-                    }
-                    $pertemuanArr = is_array($pertemuanKe) ? $pertemuanKe : json_decode($pertemuanKe, true);
-
-                    return in_array($p, $pertemuanArr ?? []);
-                };
-
                 if ($p == 8 && ! $hasUts) {
                     $item = (object) [
                         'kode' => 'UTS',
-                        'kode_cpmk' => 'CPMK-UTS',
+                        'kode_cpmk' => $lastKodeCpmk !== '-' ? $lastKodeCpmk : 'CPMK-UTS', // Mengambil kode CPMK sebelumnya
+                        'cpmk_id' => $lastCpmkId,
                         'bobot' => (float) $this->bobot_uts,
                         'metode' => 'UTS',
                         'name' => 'Ujian Tengah Semester (UTS)',
@@ -164,7 +160,8 @@ class RPS extends Model
                 } elseif ($p == 16 && ! $hasUas) {
                     $item = (object) [
                         'kode' => 'UAS',
-                        'kode_cpmk' => 'CPMK-UAS',
+                        'kode_cpmk' => $lastKodeCpmk !== '-' ? $lastKodeCpmk : 'CPMK-UAS', // Mengambil kode CPMK sebelumnya
+                        'cpmk_id' => $lastCpmkId,
                         'bobot' => (float) $this->bobot_uas,
                         'metode' => 'UAS',
                         'name' => 'Ujian Akhir Semester (UAS)',
@@ -193,6 +190,7 @@ class RPS extends Model
                         $item = (object) [
                             'kode' => '-',
                             'kode_cpmk' => '-',
+                            'cpmk_id' => null,
                             'deskripsi' => 'Materi perkuliahan belum ditentukan',
                             'bobot' => 0,
                             'general_exam' => 0,
@@ -200,9 +198,17 @@ class RPS extends Model
                     }
                 }
 
+                // Normalisasi kode_cpmk dari cpmk_list jika kosong/strip
                 if (! isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
                     $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
                 }
+
+                // Simpan lacakan CPMK paling akhir yang valid untuk digunakan oleh UTS / UAS otomatis
+                if (isset($item->kode_cpmk) && $item->kode_cpmk !== '-' && $item->kode_cpmk !== 'CPMK-UTS' && $item->kode_cpmk !== 'CPMK-UAS') {
+                    $lastKodeCpmk = $item->kode_cpmk;
+                    $lastCpmkId = $item->cpmk_id ?? data_get($item, 'cpmk_id');
+                }
+
                 $program->push($item);
             }
 
@@ -223,6 +229,118 @@ class RPS extends Model
             return $program;
         });
     }
+
+    // protected function scpmkAtr(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $allScpmk = $this->all_scpmk;
+
+    //         $hasUts = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true));
+    //         $hasUas = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true));
+
+    //         $program = collect();
+    //         $scpmkIndex = 0;
+
+    //         // Helper untuk generate deskripsi ujian yang adaptif & naratif
+    //         $generateExamDescription = function (string $type, int $pertemuan) {
+    //             $isLast = ($pertemuan === 16);
+    //             $prevMeeting = $pertemuan - 1;
+    //             $label = ($type === 'UTS') ? 'Tengah' : 'Akhir';
+
+    //             if ($isLast) {
+    //                 return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Comprehensive yang Mencakup Seluruh Keseluruhan Materi Perkuliahan";
+    //             }
+
+    //             if ($prevMeeting <= 1) {
+    //                 return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Capaian Pembelajaran pada Pertemuan ke-1";
+    //             }
+
+    //             return "Evaluasi Pembelajaran {$label} Semester Berupa Ujian/Penilaian Capaian Pembelajaran dengan Ruang Lingkup Materi dari Pertemuan 1–{$prevMeeting}";
+    //         };
+
+    //         for ($p = 1; $p <= 16; $p++) {
+
+    //             $isAssignedToMeeting = function ($dosen, $pertemuanKe) use ($p) {
+    //                 if (is_null($pertemuanKe)) {
+    //                     return true;
+    //                 }
+    //                 $pertemuanArr = is_array($pertemuanKe) ? $pertemuanKe : json_decode($pertemuanKe, true);
+
+    //                 return in_array($p, $pertemuanArr ?? []);
+    //             };
+
+    //             if ($p == 8 && ! $hasUts) {
+    //                 $item = (object) [
+    //                     'kode' => 'UTS',
+    //                     'kode_cpmk' => 'CPMK-UTS',
+    //                     'bobot' => (float) $this->bobot_uts,
+    //                     'metode' => 'UTS',
+    //                     'name' => 'Ujian Tengah Semester (UTS)',
+    //                     'deskripsi' => $generateExamDescription('UTS', $p),
+    //                     'general_exam' => 1,
+    //                 ];
+    //             } elseif ($p == 16 && ! $hasUas) {
+    //                 $item = (object) [
+    //                     'kode' => 'UAS',
+    //                     'kode_cpmk' => 'CPMK-UAS',
+    //                     'bobot' => (float) $this->bobot_uas,
+    //                     'metode' => 'UAS',
+    //                     'name' => 'Ujian Akhir Semester (UAS)',
+    //                     'deskripsi' => $generateExamDescription('UAS', $p),
+    //                     'general_exam' => 1,
+    //                 ];
+    //             } else {
+    //                 $rawItem = $allScpmk->get($scpmkIndex);
+    //                 if ($rawItem) {
+    //                     $item = clone $rawItem;
+
+    //                     // Jika item dari DB merupakan UTS/UAS custom yang terdeteksi via keyword
+    //                     $isCustomUts = Str::contains($item->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UTS_FIELDS, true);
+    //                     $isCustomUas = Str::contains($item->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UAS_FIELDS, true);
+
+    //                     if ($isCustomUts || $isCustomUas) {
+    //                         $examType = $isCustomUts ? 'UTS' : 'UAS';
+    //                         // Bila deskripsi kosong atau bawaan seeder, perbarui dengan deskripsi adaptif
+    //                         if (empty($item->deskripsi) || $item->deskripsi === 'UTS' || $item->deskripsi === 'UAS') {
+    //                             $item->deskripsi = $generateExamDescription($examType, $p);
+    //                         }
+    //                     }
+
+    //                     $scpmkIndex++;
+    //                 } else {
+    //                     $item = (object) [
+    //                         'kode' => '-',
+    //                         'kode_cpmk' => '-',
+    //                         'deskripsi' => 'Materi perkuliahan belum ditentukan',
+    //                         'bobot' => 0,
+    //                         'general_exam' => 0,
+    //                     ];
+    //                 }
+    //             }
+
+    //             if (! isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
+    //                 $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
+    //             }
+    //             $program->push($item);
+    //         }
+
+    //         $totalInput = $program->sum(fn ($i) => (float) ($i->bobot ?? 0));
+    //         if ($totalInput > 0) {
+    //             $program->transform(function ($item) use ($totalInput) {
+    //                 $item->bobot_normalisasi = round(((float) ($item->bobot ?? 0) / $totalInput) * 100, 2);
+
+    //                 return $item;
+    //             });
+    //             $totalNormalisasi = $program->sum(fn ($i) => (float) $i->bobot_normalisasi);
+    //             $diff = round(100 - $totalNormalisasi, 2);
+    //             if ($diff != 0 && $last = $program->last()) {
+    //                 $last->bobot_normalisasi = round($last->bobot_normalisasi + $diff, 2);
+    //             }
+    //         }
+
+    //         return $program;
+    //     });
+    // }
 
     public function getAllRefsAttribute()
     {
@@ -571,7 +689,7 @@ class RPS extends Model
                 if ($searchAkademik !== '' && preg_match('/\d{4}/', $searchAkademik, $m)) {
                     $tahun = $m[0];
                     $q->orWhere(function ($aq) use ($tahun) {
-                        $aq->where('akademik', 'like', "%{$tahun}%");
+                        $aq->where('akademik', 'like', $tahun);
                     });
                 }
 

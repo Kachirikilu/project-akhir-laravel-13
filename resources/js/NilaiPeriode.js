@@ -68,11 +68,11 @@ document.addEventListener("alpine:init", () => {
             mk,
             sks,
      
-            nilaiArray,
-            bobotArray,
-            cpmkArray,
-            scpmkArray,
-            metodeArray,
+            // nilaiArray,
+            // bobotArray,
+            // cpmkArray,
+            // scpmkArray,
+            // metodeArray,
         ) {
             this.nilai_mahasiswa_id = id;
             this.nama = name;
@@ -82,37 +82,37 @@ document.addEventListener("alpine:init", () => {
             this.mk = mk;
             this.sks = sks;
 
-            const arrNilai = Array.isArray(nilaiArray) ? nilaiArray : [];
-            const arrBobot = Array.isArray(bobotArray) ? bobotArray : [];
-            const arrCpmk = Array.isArray(cpmkArray) ? cpmkArray : [];
-            const arrScpmk = Array.isArray(scpmkArray) ? scpmkArray : [];
-            const arrMetode = Array.isArray(metodeArray) ? metodeArray : [];
+            // const arrNilai = Array.isArray(nilaiArray) ? nilaiArray : [];
+            // const arrBobot = Array.isArray(bobotArray) ? bobotArray : [];
+            // const arrCpmk = Array.isArray(cpmkArray) ? cpmkArray : [];
+            // const arrScpmk = Array.isArray(scpmkArray) ? scpmkArray : [];
+            // const arrMetode = Array.isArray(metodeArray) ? metodeArray : [];
 
-            for (let i = 1; i <= 16; i++) {
-                const rawNilai = arrNilai[i - 1];
-                const rawBobot = arrBobot[i - 1];
-                const rawCpmk = arrCpmk[i - 1];
-                const rawScpmk = arrScpmk[i - 1];
-                const rawMetode = arrMetode[i - 1];
+            // for (let i = 1; i <= 16; i++) {
+            //     const rawNilai = arrNilai[i - 1];
+            //     const rawBobot = arrBobot[i - 1];
+            //     const rawCpmk = arrCpmk[i - 1];
+            //     const rawScpmk = arrScpmk[i - 1];
+            //     const rawMetode = arrMetode[i - 1];
 
-                this[`nilai_${i}`] = rawNilai ?? "";
-                this[`bobot_${i}`] = rawBobot ?? "";
-                this[`cpmk_${i}`] = rawCpmk ?? "";
-                this[`scpmk_${i}`] = rawScpmk ?? "";
-                this[`metode_${i}`] = rawMetode ?? "";
+            //     this[`nilai_${i}`] = rawNilai ?? "";
+            //     this[`bobot_${i}`] = rawBobot ?? "";
+            //     this[`cpmk_${i}`] = rawCpmk ?? "";
+            //     this[`scpmk_${i}`] = rawScpmk ?? "";
+            //     this[`metode_${i}`] = rawMetode ?? "";
 
-                if (
-                    rawBobot !== undefined &&
-                    rawBobot !== null &&
-                    rawBobot !== ""
-                ) {
-                    let hitungPersen = parseFloat(rawBobot) * 100;
-                    this[`bobot_persen_${i}`] =
-                        parseFloat(hitungPersen.toFixed(2)) + "%";
-                } else {
-                    this[`bobot_persen_${i}`] = "";
-                }
-            }
+            //     if (
+            //         rawBobot !== undefined &&
+            //         rawBobot !== null &&
+            //         rawBobot !== ""
+            //     ) {
+            //         let hitungPersen = parseFloat(rawBobot) * 100;
+            //         this[`bobot_persen_${i}`] =
+            //             parseFloat(hitungPersen.toFixed(2)) + "%";
+            //     } else {
+            //         this[`bobot_persen_${i}`] = "";
+            //     }
+            // }
         },
 
         reset(isAdd = 0) {
