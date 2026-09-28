@@ -18,7 +18,7 @@
         }">
     </div> --}}
     <div x-show="$store.theme_manager.activeWallpaper !== null"
-        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
+        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-320"
         :style="$store.theme_manager.activeWallpaper ? {
             'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
             'opacity': $store.theme_manager.opacity,
@@ -707,11 +707,11 @@
     {{-- <flux:spacer /> --}}
 
     <div x-data="{ showColorMode: true }" @toggle-color-panel.window="showColorMode = $event.detail.open"
-        class="relative h-4 w-full flex items-center transition-all mb-3 lg:mb-4 xl:mb-8"
-        :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`" :class="showColorMode ? 'mt-[60px]' : 'mt-0'">
+        class="relative h-5 w-full flex items-center transition-all mb-4 xl:mb-8"
+        :style="`transition-delay: ${showColorMode ? '0ms' : '500ms'}`" :class="showColorMode ? 'mt-[60px]' : 'mt-0'">
 
-        <div class="absolute transition-all duration-400 ease-in-out"
-            :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '380ms'}`"
+        <div class="absolute transition-all duration-[320ms] ease-in-out"
+            :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '500ms'}`"
             :class="showColorMode ? (expanded ? '-translate-y-[60px] opacity-100' : 'translate-y-0 opacity-100') : ''">
             <x-livewire::navigation.dark-mode />
         </div>

@@ -6,8 +6,8 @@
             Sesi Kelas
         </h3>
 
-     
-            @include('livewire.global.table.detail-view-switch')
+
+        @include('livewire.global.table.detail-view-switch')
 
     </div>
 
@@ -16,7 +16,8 @@
 
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
 
-            <div class="scrollbar-tiny -mb-px flex items-center space-x-3 overflow-x-auto w-full lg:w-auto pb-1">
+            {{-- Menggunakan flex-wrap dan gap agar tab berpindah baris secara rapi saat layar sempit --}}
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
