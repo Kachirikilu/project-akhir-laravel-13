@@ -4,7 +4,7 @@
 <div x-data class="flex flex-col items-center gap-1 {{ !$noBar ? 'mb-6' : '' }}">
 
     {{-- Container Tema --}}
-    <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.400ms x-cloak
+    <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.200ms x-cloak
         x-ref="themeContainer"
         class="@if ($autoSmall ?? false) w-[83.8px] sm:w-[138px] md:w-[165.6px] lg:w-[220px] @else w-[220px] @endif gap-[7.25px] p-1 flex items-center bg-gray-100 dark:bg-white/90 rounded-full border border-gray-200 dark:border-white/10 overflow-x-auto no-scrollbar snap-x">
 
@@ -26,7 +26,7 @@
 
     {{-- PIL NAVIGASI DENGAN PREVIEW WARNA --}}
     @if (!$noBar)
-        <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.400ms
+        <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.200ms
             class="w-[220px] flex justify-between items-center bg-gray-900/80 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg overflow-hidden">
 
             <button @click="$store.theme_manager.scrollThemes('left', 'themeContainer')" type="button"

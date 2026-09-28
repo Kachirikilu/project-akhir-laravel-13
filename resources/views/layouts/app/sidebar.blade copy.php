@@ -37,35 +37,44 @@
 <body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }"
     x-data="{
         expanded: $persist(false).as('sidebar_expanded'),
-    
+        expanded2: false,
         isDesktop: window.matchMedia('(min-width: 970px)').matches,
     
         toggleExpanded() {
             this.expanded = !this.expanded;
+            if (this.isDesktop) {
+                this.expanded2 = this.expanded;
+            }
         },
-    
         init() {
-            const media = window.matchMedia('(min-width: 970px)');
-    
-            this.isDesktop = media.matches;
-    
             $watch('expanded', value => {
                 window.sidebarExpanded = value;
             });
     
             window.sidebarExpanded = this.expanded;
     
+            const media = window.matchMedia('(min-width: 970px)');
+    
+            this.isDesktop = media.matches;
+            this.expanded2 = this.expanded;
+    
             media.addEventListener('change', e => {
                 this.isDesktop = e.matches;
+    
+                if (!e.matches) {
+                    this.expanded = false;
+                } else {
+                    this.expanded = this.expanded2;
+                }
             });
         }
     }">
 
     <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
-        x-transition:enter="transition transform duration-400 ease-in-out" x-transition:enter-start="-translate-x-full"
-        x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-250 ease-in-out"
+        x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-        class="z-[200] fixed inset-y-0 left-0 transition-all duration-400"
+        class="z-[200] fixed inset-y-0 left-0 transition-all duration-300"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
         <livewire:navigation.navbar />
     </div>

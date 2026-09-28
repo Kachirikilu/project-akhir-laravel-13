@@ -1,34 +1,45 @@
 <flux:header class="lg:hidden">
     {{-- <flux:sidebar.toggle class="lg:hidden" icon="bars-3" inset="left" /> --}}
 
-    <button type="button" x-cloak @click.stop="toggleExpanded()"
-        class="lg:hidden fixed z-[160] top-4 left-4 p-2.5 sm:p-3 text-white rounded-xl shadow-lg border backdrop-blur-xs bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] active:scale-90 hover:scale-105 active:shadow-inner group"
-        :class="{
-            'translate-x-64 rotate-90 bg-[var(--hover-main-color)] shadow-xl transition-all duration-[320ms] ease-out': expanded &&
-                !isDesktop,
-            'translate-x-0 rotate-0 transition-all duration-[250ms] ease-in-out': !expanded || isDesktop
-        }"
-        aria-label="Toggle Menu">
+<button type="button" x-cloak 
+    @click.stop="toggleExpanded()"
+    :disabled="isAnimating"
+    class="lg:hidden fixed z-[210] top-4 left-4 p-2.5 sm:p-3 text-white rounded-xl shadow-lg border backdrop-blur-xs bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] active:scale-90 hover:scale-105 active:shadow-inner group"
+    :class="{
+        'pointer-events-none opacity-90': isAnimating,
+        'translate-x-64 rotate-90 bg-[var(--hover-main-color)] shadow-xl transition-transform duration-[300ms] ease-in-out': expanded && !isDesktop,
+        'translate-x-0 rotate-0 transition-transform duration-[200ms] ease-in-out': !expanded || isDesktop
+    }"
+    aria-label="Toggle Menu">
 
-        <flux:icon name="bars-3" variant="outline"
-            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-300 ease-out group-hover:rotate-6"
-            x-show="!expanded || isDesktop" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-50 rotate-[-45deg]"
-            x-transition:enter-end="opacity-100 scale-100 rotate-0" />
+    {{-- Ikon Hamburger (Saat Tertutup) --}}
+    <flux:icon name="bars-3" variant="outline"
+        class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-200 ease-out group-hover:rotate-6"
+        x-show="!expanded || isDesktop" 
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 scale-50 rotate-[-45deg]"
+        x-transition:enter-end="opacity-100 scale-100 rotate-0" />
 
-        <flux:icon name="x-mark" variant="outline"
-            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-300 ease-out" x-show="expanded && !isDesktop"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-50 rotate-[45deg]"
-            x-transition:enter-end="opacity-100 scale-100 rotate-0" />
-    </button>
-
-    <div x-show="expanded && !isDesktop" x-cloak @click="toggleExpanded()"
-        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 backdrop-blur-none"
-        x-transition:enter-end="opacity-100 backdrop-blur-xs" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 backdrop-blur-xs" x-transition:leave-end="opacity-0 backdrop-blur-none"
-        class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[150] lg:hidden">
-    </div>
+    {{-- Ikon Silang / Close (Saat Terbuka) --}}
+    <flux:icon name="x-mark" variant="outline"
+        class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-200 ease-out" 
+        x-show="expanded && !isDesktop"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 scale-50 rotate-[45deg]"
+        x-transition:enter-end="opacity-100 scale-100 rotate-0" />
+</button>
+    
+<div x-show="expanded && !isDesktop" x-cloak 
+    @click="if(!isAnimating) toggleExpanded()"
+    x-transition:enter="transition ease-in-out duration-300" 
+    x-transition:enter-start="opacity-0 backdrop-blur-none"
+    x-transition:enter-end="opacity-100 backdrop-blur-xs" 
+    x-transition:leave="transition ease-in-out duration-200"
+    x-transition:leave-start="opacity-100 backdrop-blur-xs" 
+    x-transition:leave-end="opacity-0 backdrop-blur-none"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[150] lg:hidden"
+    :class="{ 'pointer-events-none': isAnimating }">
+</div>
 
     {{-- <flux:spacer />
 
