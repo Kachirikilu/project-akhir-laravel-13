@@ -14,7 +14,7 @@
                             'icon' => 'arrow-down-tray',
                             'isFull' => 1,
                             'valuePx' => 'px-8',
-                            'valuePy' => 'py-4.5',
+                            // 'valuePy' => 'py-4.5',
                             'color' => 'rose',
                             'wireLoading' => 'printPDFRPS()',
                         ])

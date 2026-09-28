@@ -600,13 +600,13 @@
                 :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`"
                 :class="showColorMode ? 'mt-15' : 'mt-0'">
 
-                <div class="absolute transition-all duration-400 ease-in-out"
+                <div class="absolute transition-all duration-[400ms] ease-in-out"
                     :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '380ms'}`"
                     :class="showColorMode ? (expanded ? '-translate-y-15 opacity-100' : 'translate-y-0 opacity-100') : ''">
                     <x-livewire::navigation.dark-mode />
                 </div>
 
-                <div class="absolute transition-all duration-400 ease-in-out"
+                <div class="absolute transition-all duration-[400ms] ease-in-out"
                     :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
                     :class="showColorMode
                         ?

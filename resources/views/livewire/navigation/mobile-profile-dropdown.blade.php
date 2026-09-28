@@ -11,21 +11,21 @@
         aria-label="Toggle Menu">
 
         <flux:icon name="bars-3" variant="outline"
-            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-300 ease-out group-hover:rotate-6"
-            x-show="!expanded || isDesktop" x-transition:enter="transition ease-out duration-200"
+            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-[300ms] ease-out group-hover:rotate-6"
+            x-show="!expanded || isDesktop" x-transition:enter="transition ease-out duration-[200ms]"
             x-transition:enter-start="opacity-0 scale-50 rotate-[-45deg]"
             x-transition:enter-end="opacity-100 scale-100 rotate-0" />
 
         <flux:icon name="x-mark" variant="outline"
-            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-300 ease-out" x-show="expanded && !isDesktop"
-            x-transition:enter="transition ease-out duration-200"
+            class="w-6 h-6 sm:w-8 sm:h-8 transition-transform duration-[300ms] ease-out" x-show="expanded && !isDesktop"
+            x-transition:enter="transition ease-out duration-[200ms]"
             x-transition:enter-start="opacity-0 scale-50 rotate-[45deg]"
             x-transition:enter-end="opacity-100 scale-100 rotate-0" />
     </button>
 
     <div x-show="expanded && !isDesktop" x-cloak @click="toggleExpanded()"
-        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 backdrop-blur-none"
-        x-transition:enter-end="opacity-100 backdrop-blur-xs" x-transition:leave="transition ease-in duration-200"
+        x-transition:enter="transition ease-out duration-[300ms]" x-transition:enter-start="opacity-0 backdrop-blur-none"
+        x-transition:enter-end="opacity-100 backdrop-blur-xs" x-transition:leave="transition ease-in duration-[200ms]"
         x-transition:leave-start="opacity-100 backdrop-blur-xs" x-transition:leave-end="opacity-0 backdrop-blur-none"
         class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[150] lg:hidden">
     </div>

@@ -62,10 +62,10 @@
     }">
 
     <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
-        x-transition:enter="transition transform duration-400 ease-in-out" x-transition:enter-start="-translate-x-full"
+        x-transition:enter="transition transform duration-[400ms] ease-in-out" x-transition:enter-start="-translate-x-full"
         x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-250 ease-in-out"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-        class="z-[200] fixed inset-y-0 left-0 transition-all duration-400"
+        class="z-[200] fixed inset-y-0 left-0 transition-all duration-[400ms]"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
         <livewire:navigation.navbar />
     </div>

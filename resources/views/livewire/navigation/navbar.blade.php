@@ -716,7 +716,7 @@
             <x-livewire::navigation.dark-mode />
         </div>
 
-        <div class="absolute transition-all duration-400 ease-in-out"
+        <div class="absolute transition-all duration-[400ms] ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
             :class="showColorMode
                 ?
