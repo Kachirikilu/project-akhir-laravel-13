@@ -10,7 +10,7 @@ document.addEventListener("alpine:init", () => {
         showEdit: 0,
         isForceDelete: 0,
         colorIcon: "text-[var(--contrast-second-text)]",
-        colorIconBg: "bg-[var(--contrast-second-text)]",
+        colorIconBg: "bg-[var(--contrast-second-text)]/40",
 
         scpmk_delete: "",
         kode_scpmk_delete: "",
@@ -136,7 +136,7 @@ document.addEventListener("alpine:init", () => {
                 this.isEdit = 0;
                 this.isForceDelete = 0;
                 this.colorIcon = "text-[var(--contrast-second-text)]";
-                this.colorIconBg = "bg-[var(--contrast-second-text)]";
+                this.colorIconBg = "bg-[var(--contrast-second-text)]/40";
             }
         },
     });

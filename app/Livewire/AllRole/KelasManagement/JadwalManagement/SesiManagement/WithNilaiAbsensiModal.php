@@ -4,15 +4,15 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
-use App\Models\Kelas\KelasSesi;
 use App\Models\Kelas\KelasJadwal;
+use App\Models\Kelas\KelasSesi;
 use App\Models\Kelas\MahasiswaKehadiran;
 use App\Models\Penilaian\NilaiMahasiswa;
 use Carbon\Carbon;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 trait WithNilaiAbsensiModal
 {
@@ -30,7 +30,7 @@ trait WithNilaiAbsensiModal
     public $showSesiAbsen = false;
 
     public $sesi_input = [
-        'list_absensi_array' => []
+        'list_absensi_array' => [],
     ];
 
     public $isEditingSesi = false;
@@ -38,7 +38,7 @@ trait WithNilaiAbsensiModal
     public $showEditSesi = false;
 
     public $showMahasiswaAbsen = false;
-    
+
     public KelasJadwal $jadwal;
 
     public function absensiSesi($data)
@@ -122,8 +122,6 @@ trait WithNilaiAbsensiModal
                     $validated['absen'] = 'Absen';
                 }
             }
-
-
 
             MahasiswaKehadiran::updateOrCreate(
                 [
@@ -245,9 +243,18 @@ trait WithNilaiAbsensiModal
             $nilaiRaw = $nilaiArray[$index] ?? null;
             $nilaiFinal = ($nilaiRaw === null || $nilaiRaw === '') ? 0 : (float) $nilaiRaw;
 
-            // Mengambil data bobot desimal dari database untuk dikalikan 100% kembali pada tampilan
             $rawBobot = $bobotArray[$index] ?? null;
-            $tampilanBobot = ($rawBobot !== null) ? round((float) $rawBobot * 100, 2).'%' : '0%';
+
+            $bobotMurni = ($rawBobot !== null) ? (float) $rawBobot : 0;
+
+            if ($rawBobot !== null) {
+                $numBobot = (float) $rawBobot;
+                $tampilanBobot = $numBobot > 1
+                    ? round($numBobot, 2).'%'
+                    : round($numBobot * 100, 2).'%';
+            } else {
+                $tampilanBobot = '0%';
+            }
 
             return [
                 'sesi_id' => $sesi->id,
@@ -269,7 +276,8 @@ trait WithNilaiAbsensiModal
                 'waktu_presensi' => $kehadiran?->waktu_presensi,
 
                 'nilai' => $nilaiFinal,
-                'bobot' => $tampilanBobot,
+                'bobot' => $bobotMurni,    // Float murni (misal: 0.15 atau 15)
+                'bobot_text' => $tampilanBobot, // String untuk UI (misal: "15%")
             ];
         })->toArray();
 
@@ -299,7 +307,7 @@ trait WithNilaiAbsensiModal
             }
 
             $merged = array_merge($listAbsensi[$index], $item);
-            
+
             if (empty(trim($merged['status'] ?? ''))) {
                 $merged['status'] = 'Belum Presensi';
             }

@@ -364,7 +364,7 @@
                     {{-- Layer 2: Menjadi Direct Child Visual Grid menggunakan CSS 'display: contents' --}}
                     <div :style="'order: ' + filteredAndSortedIds.findIndex(item => Number(item.id) === Number({{ $n->id }}))"
                         wire:key="rps-mahasiswa-{{ $n->id }}"
-                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
+                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)] transition-all duration-200 hover:shadow-lg active:shadow-lg">
 
                         {{-- Layer 3: Card Body dengan wire:key terisolasi --}}
 
@@ -415,14 +415,14 @@
 
                             <div class="flex flex-wrap items-center gap-2">
                                 <span
-                                    class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
+                                    class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                     <flux:icon name="users" class="w-3 h-3" />
                                     {{ $nim_url ?? '-' }}
                                 </span>
                                 <span
-                                    class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]"></span>
+                                    class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-[var(--main-text)]/30"></span>
                                 <span
-                                    class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]">
+                                    class="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--main-text)]/65">
                                     <flux:icon name="academic-cap" class="w-3 h-3" />
                                     {{ $n->sks ?? ($n->sks ?? '-') }} SKS
                                 </span>
@@ -498,11 +498,11 @@
                         '{{ $n->mk ?? '' }}',
                         '{{ $n->sks ?? '' }}',
 
-                        JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
+                        {{-- JSON.parse('{{ json_encode($n->nilai_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->bobot_rps_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->kode_cpmk_array ?? []) }}'),
                         JSON.parse('{{ json_encode($n->kode_scpmk_array ?? []) }}'),
-                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'),
+                        JSON.parse('{{ json_encode($n->metode_array ?? []) }}'), --}}
                     );
                     $flux.modal('rps-mahasiswa-modal').show();
                     $dispatch('open-edit-rps-mahasiswa-modal', { id: {{ $n->id }} });

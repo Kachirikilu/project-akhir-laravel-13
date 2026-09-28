@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="rps-mahasiswa-modal" wire:model.live="showEditNilai" x-data wire:key="rps-mahasiswa-modal"
+    <flux:modal name="rps-mahasiswa-modal" wire:model.live="showModalNilai" x-data wire:key="rps-mahasiswa-modal"
         @refresh-data-rps-mahasiswa.window="$store.nilai?.reset()"
         class="modal-flux md:w-4xl max-w-5xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
@@ -18,7 +18,7 @@
                 {{-- 2. Konten & Form --}}
                 <div class="modal-flux-body">
                     <form
-                        @if (Auth::user()->admin || Auth::user()->dosen) x-on:submit.prevent="$wire.updateNilaiMahasiswa($store.nilai.getDataNilai())" enctype="multipart/form-data" id="nilaiForm" @endif>
+                        @if (Auth::user()->admin || Auth::user()->dosen) x-on:submit.prevent="$wire.updateNilaiMahasiswa()" enctype="multipart/form-data" id="nilaiForm" @endif>
 
                         @include('livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-modal.rps-mahasiswa-modal-partial.rps-mahasiswa-input')
 
@@ -38,6 +38,4 @@
             @endif
         </div>
     </flux:modal>
-
-
 </div>

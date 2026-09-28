@@ -1,5 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-[300ms]">
+    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <div
         class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
 
@@ -39,30 +39,36 @@
 
     </div>
 
+
     <div x-data="{
         nilaiAkhir: 0,
         nilaiMutu: 'E',
         nilaiIndex: '0.00',
     
         hitungRekap() {
+            let rawList = $store.nilai?.list_nilai_array || [];
+            let list = Object.values(rawList);
+    
             let totalNilaiAkhir = 0;
-            let totalBobotTerpakai = 0;
     
-            for (let i = 1; i <= 16; i++) {
-                let n = parseFloat($store.nilai['nilai_' + i]);
-                let b = parseFloat($store.nilai['bobot_' + i]);
+            list.forEach(item => {
+                let n = parseFloat(item?.nilai);
     
-                // Hanya hitung jika input nilai dan bobot valid (bukan NaN atau kosong)
+                // Ambil bobot murni atau parse dari bobot_text
+                let rawBobot = item?.bobot ?? item?.bobot_text;
+                let b = parseFloat(rawBobot);
+    
                 if (!isNaN(n) && !isNaN(b)) {
-                    totalNilaiAkhir += n * b;
-                    totalBobotTerpakai += b;
+                    // Normalisasi jika bobot berbentuk persentase (> 1, misal 15 atau 20)
+                    let bobotDesimal = b > 1 ? (b / 100) : b;
+                    totalNilaiAkhir += n * bobotDesimal;
                 }
-            }
+            });
     
-            // 1. Set Nilai Akhir (dibulatkan maksimal 2 angka di belakang koma)
+            // 1. Set Nilai Akhir
             this.nilaiAkhir = parseFloat(totalNilaiAkhir.toFixed(2));
     
-            // 2. Evaluasi Huruf Mutu berdasarkan Nilai Akhir
+            // 2. Evaluasi Huruf Mutu
             let na = this.nilaiAkhir;
             if (na >= 85) this.nilaiMutu = 'A';
             else if (na >= 80) this.nilaiMutu = 'A-';
@@ -74,7 +80,7 @@
             else if (na >= 40) this.nilaiMutu = 'D';
             else this.nilaiMutu = 'E';
     
-            // 3. Evaluasi Angka Index berdasarkan Huruf Mutu
+            // 3. Evaluasi Angka Index
             switch (this.nilaiMutu) {
                 case 'A':
                     this.nilaiIndex = '4.00';
@@ -104,7 +110,12 @@
                     this.nilaiIndex = '0.00';
             }
         }
-    }" x-effect="hitungRekap()">
+        }"
+            x-effect="
+        JSON.stringify($store.nilai?.list_nilai_array);
+        JSON.stringify($store.sesi?.list_absensi_array);
+        hitungRekap();
+    ">
 
         <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--contrast-second-text)] mb-3">
             Akumulasi Rekap Nilai
@@ -135,6 +146,7 @@
                     <span x-text="nilaiMutu">E</span>
                 </span>
             </div>
+
         </div>
     </div>
 </div>

@@ -584,40 +584,56 @@ trait LogicSearch
 
         [, $tahun1, $tahun2] = $m;
 
-        // Hilangkan kata-kata umum
-        $search = preg_replace(
+        // Hilangkan kata-kata umum seputar akademik
+        $searchClean = preg_replace(
             '/\b(kurikulum|akademik|tahun|ta|tahun akademik)\b/u',
             '',
             $search
         );
 
-        // Rapikan spasi
-        $search = preg_replace('/\s+/', ' ', trim($search));
+        // Rapikan spasi & karakter pemisah umum
+        $searchClean = trim(preg_replace('/\s+/', ' ', $searchClean));
 
-        // Format lengkap
-        if (preg_match('/^\d{4}\/\d{4}$/', $search)) {
-            return $akademik === $search;
+        // =========================================================================
+        // 1. FORMAT AKADEMIK LENGKAP: "2021/2022" atau "2021-2022"
+        // =========================================================================
+        if (preg_match('/^(\d{4})[\/\-](\d{4})$/', $searchClean, $sm)) {
+            return $sm[1] === $tahun1 && $sm[2] === $tahun2;
         }
 
-        // Ambil tahun pertama yang ditemukan
-        if (! preg_match('/\d{4}/', $search, $sm)) {
-            return false;
+        // =========================================================================
+        // 2. FORMAT AKADEMIK RINGKAS 4 DIGIT DUA TAHUN: "2122" -> 2021/2022
+        // =========================================================================
+        if (preg_match('/^(\d{2})(\d{2})$/', $searchClean, $sm)) {
+            $shortY1 = substr($tahun1, -2);
+            $shortY2 = substr($tahun2, -2);
+            if ($sm[1] === $shortY1 && $sm[2] === $shortY2) {
+                return true;
+            }
         }
 
-        $queryYear = $sm[0];
-
-        // "/2025"
-        if (str_starts_with($search, '/')) {
-            return $queryYear === $tahun2;
+        // =========================================================================
+        // 3. FORMAT SPESIFIK DENGAN SLASH: "2021/" atau "/2022"
+        // =========================================================================
+        if (preg_match('/^(\d{4})\/$/', $searchClean, $sm)) {
+            return $sm[1] === $tahun1;
         }
 
-        // "2024/"
-        if (str_contains($search, '/')) {
-            return $queryYear === $tahun1;
+        if (preg_match('/^\/(\d{4})$/', $searchClean, $sm)) {
+            return $sm[1] === $tahun2;
         }
 
-        // Default: cocokkan tahun pertama
-        return $queryYear === $tahun1;
+        // =========================================================================
+        // 4. FORMAT TAHUN TUNGGAL EKSAK: "2021" (Atau "TA 2021" setelah kata umum dibersihkan)
+        //    DITOLAK jika ada kode semester/MK seperti "2021-01", "2021-01-TK", dsb.
+        // =========================================================================
+        if (preg_match('/^(\d{4})$/', $searchClean, $sm)) {
+            return $sm[1] === $tahun1 || $sm[1] === $tahun2;
+        }
+
+        // Jika string pencarian mengandung karakter/pola lain (seperti "2021-01-TK"),
+        // anggap BUKAN pencarian khusus akademik tunggal!
+        return false;
     }
 
     protected function matchDateField($date, string $search, array $keywords): bool
