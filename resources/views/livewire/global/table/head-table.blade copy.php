@@ -18,7 +18,7 @@
         this.clicked = false
     }
 }" @click.prevent="doSort()"
-    class="w-full h-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap transition-all duration-200">
+    class="w-full h-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} items-center gap-1 text-xs sm:text-sm font-medium uppercase whitespace-nowrap transition-all duration-[200ms]">
 
     <div class="flex items-center gap-1">
 
@@ -30,7 +30,7 @@
                     !(
                         sortField === '{{ $sortFieldString }}' || clicked)
             }"
-            class="{{ $isCenter ?? false ? 'ml-3' : '' }} text-xs sm:text-sm transition-colors duration-200">
+            class="{{ $isCenter ?? false ? 'ml-3' : '' }} text-xs sm:text-sm transition-colors duration-[200ms]">
             {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
         </span>
 
@@ -43,14 +43,14 @@
                 'rotate-180' :
                 'rotate-0'
             ]"
-            class="inline-block transition-transform duration-200 ease-in-out">
+            class="inline-block transition-transform duration-[200ms] ease-in-out">
             ↑
         </span>
 
         <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--focus-color)] origin-left"
             x-show="sortField === '{{ $sortFieldString }}' || clicked"
-            x-transition:enter="transition transform ease-out duration-200" x-transition:enter-start="scale-x-0"
-            x-transition:enter-end="scale-x-100" x-transition:leave="transition transform ease-in duration-200"
+            x-transition:enter="transition transform ease-out duration-[200ms]" x-transition:enter-start="scale-x-0"
+            x-transition:enter-end="scale-x-100" x-transition:leave="transition transform ease-in duration-[200ms]"
             x-transition:leave-start="scale-x-100" x-transition:leave-end="scale-x-0">
         </div>
 

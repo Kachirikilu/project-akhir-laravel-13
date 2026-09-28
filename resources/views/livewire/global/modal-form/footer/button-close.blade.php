@@ -5,7 +5,7 @@
             class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto sm:px-12 
                                 bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                                 text-[var(--contrast-second-text)]
-                                border-none transition-colors duration-200">
+                                border-none transition-colors duration-[200ms]">
             Close
         </flux:button>
     </flux:modal.close>

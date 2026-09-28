@@ -30,7 +30,7 @@
             'font-bold text-[var(--contrast-main-text)]':
                 !(sortField === '{{ $sortFieldString }}' || clicked)
         }"
-        class="{{ $isCenter ?? false ? 'ml-5' : '' }} transition-colors duration-300 cursor-default">
+        class="{{ $isCenter ?? false ? 'ml-5' : '' }} transition-colors duration-[300ms] cursor-default">
         {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
     </span>
 
@@ -50,7 +50,7 @@
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'asc')
                 }"
-                class="cursor-pointer text-[9px] leading-none transition-all duration-300">
+                class="cursor-pointer text-[9px] leading-none transition-all duration-[300ms]">
                 ▲
             </span>
 
@@ -69,7 +69,7 @@
                         !(sortField === '{{ $sortFieldString }}' &&
                             sortDirection === 'desc')
                 }"
-                class="cursor-pointer text-[9px] leading-none transition-all duration-300">
+                class="cursor-pointer text-[9px] leading-none transition-all duration-[300ms]">
                 ▼
             </span>
 
@@ -80,8 +80,8 @@
     {{-- Garis bawah aktif --}}
     <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--focus-color)] origin-left"
         x-show="sortField === '{{ $sortFieldString }}' || clicked"
-        x-transition:enter="transition transform ease-out duration-200" x-transition:enter-start="scale-x-0"
-        x-transition:enter-end="scale-x-100" x-transition:leave="transition transform ease-in duration-200"
+        x-transition:enter="transition transform ease-out duration-[200ms]" x-transition:enter-start="scale-x-0"
+        x-transition:enter-end="scale-x-100" x-transition:leave="transition transform ease-in duration-[200ms]"
         x-transition:leave-start="scale-x-100" x-transition:leave-end="scale-x-0">
     </div>
 

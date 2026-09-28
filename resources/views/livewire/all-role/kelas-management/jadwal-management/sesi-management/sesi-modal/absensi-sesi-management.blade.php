@@ -42,7 +42,7 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         <template x-for="item in $store.sesi.getOpsiStatus()" :key="item.label">
                             <button type="button" @click="$store.sesi.absen = item.label"
-                                class="group relative flex flex-col items-center gap-1.5 rounded-[12px] border px-2 py-3 text-center transition-all duration-200 cursor-pointer"
+                                class="group relative flex flex-col items-center gap-1.5 rounded-[12px] border px-2 py-3 text-center transition-all duration-[200ms] cursor-pointer"
                                 :class="$store.sesi.absen === item.label ?
                                     item.bg_active +
                                     ' ring-2 shadow-md scale-[1.02] border-[var(--focus-color)] bg-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' :

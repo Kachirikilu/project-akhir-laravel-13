@@ -20,7 +20,7 @@
                     :class="(currentDropdownTable === '{{ $sub['param'] }}' || (currentDropdownTable === '' && '{{ $sub['param'] }}' === 'rps')) ?
                         'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' :
                         'text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5'"
-                    class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0"
+                    class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-[300ms] ease-in-out min-w-0"
                     style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px;">
 
                     <flux:icon :name="$sub['icon']" class="{{ $sub['color'] ?? '' }} mr-2 h-4 w-4 shrink-0" />

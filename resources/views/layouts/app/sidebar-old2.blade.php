@@ -72,10 +72,10 @@
 
 
     <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
-        x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full"
-        x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out"
+        x-transition:enter="transition transform duration-[300ms] ease-in-out" x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-[200ms] ease-in-out"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-        class="fixed inset-y-0 left-0 z-50 transition-all duration-300"
+        class="fixed inset-y-0 left-0 z-50 transition-all duration-[300ms]"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
 
         <flux:sidebar
@@ -192,10 +192,10 @@
                                 : 'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]' }}"
                             title="{{ $item['label'] }}">
                             <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
-                            <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+                            <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-[300ms] ease-out"
                                 x-transition:enter-start="opacity-0 translate-x-4"
                                 x-transition:enter-end="opacity-100 translate-x-0"
-                                x-transition:leave="transition-all duration-200 ease-in"
+                                x-transition:leave="transition-all duration-[200ms] ease-in"
                                 x-transition:leave-start="opacity-100 translate-x-0"
                                 x-transition:leave-end="opacity-0 translate-x-4"
                                 class="ml-3 whitespace-nowrap overflow-hidden text-ellipsis block">{{ $item['label'] }}</span>
@@ -292,7 +292,7 @@
                                                     === 'rps')) && {{ $isOBEActive ? 'true' : 'false' }}) ?
                                                 'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' :
                                                 'text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5'"
-                                                class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0">
+                                                class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-[300ms] ease-in-out min-w-0">
 
                                                 <flux:icon :name="$iconName"
                                                     class="{{ $colorClasses }} mr-2 h-4 w-4 shrink-0" />
@@ -320,10 +320,10 @@
                                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
 
                                     <div x-show="expanded" x-cloak
-                                        x-transition:enter="transition-all duration-300 ease-out"
+                                        x-transition:enter="transition-all duration-[300ms] ease-out"
                                         x-transition:enter-start="opacity-0 translate-x-4"
                                         x-transition:enter-end="opacity-100 translate-x-0"
-                                        x-transition:leave="transition-all duration-200 ease-in"
+                                        x-transition:leave="transition-all duration-[200ms] ease-in"
                                         x-transition:leave-start="opacity-100 translate-x-0"
                                         x-transition:leave-end="opacity-0 translate-x-4"
                                         class="flex flex-1 items-center justify-between overflow-hidden ml-3">
@@ -333,7 +333,7 @@
                                             {{ $item['label'] }}
                                         </span>
 
-                                        <span class="transition-transform duration-200 shrink-0 ml-auto"
+                                        <span class="transition-transform duration-[200ms] shrink-0 ml-auto"
                                             :class="{ 'rotate-180': openOBEMenu }">
                                             <flux:icon name="chevron-down" class="w-3 h-3" />
                                         </span>
@@ -345,10 +345,10 @@
                             <div x-data="{ currentTable: '{{ request()->route('switchTable') ?? 'rps' }}' }"
                                 @table-switched.window="currentTable = $event.detail.switchTable === '' ? 'rps' : $event.detail.switchTable"
                                 x-show="expanded && openOBEMenu" x-cloak
-                                x-transition:enter="transition-all duration-300 ease-out"
+                                x-transition:enter="transition-all duration-[300ms] ease-out"
                                 x-transition:enter-start="opacity-0 -translate-y-4 max-h-0 origin-top"
                                 x-transition:enter-end="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                                x-transition:leave="transition-all duration-200 ease-in"
+                                x-transition:leave="transition-all duration-[200ms] ease-in"
                                 x-transition:leave-start="opacity-100 translate-y-0 max-h-[500px] origin-top"
                                 x-transition:leave-end="opacity-0 -translate-y-4 max-h-0 origin-top"
                                 class="mt-1 space-y-1 pl-4 w-full ml-1 overflow-hidden">
@@ -360,7 +360,7 @@
                                             === 'rps')) && {{ $isOBEActive ? 'true' : 'false' }}) ?
                                         'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' :
                                         'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)] border-transparent pl-4'"
-                                        class="block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95">
+                                        class="block text-[11px] p-2 rounded-md border-l-4 transition-all duration-[300ms] ease-in-out transform active:scale-95">
                                         <div class="flex items-center">
                                             <flux:icon :name="$sub['icon']" class="mr-2 h-4 w-4 shrink-0" />
 
@@ -492,7 +492,7 @@
                                                 ) ?
                                                 'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' :
                                                 'text-[var(--contrast-main-text)] group-hover:text-[var(--contrast-third-text)] group-hover:bg-[var(--main-pop-up-color)] dark:group-hover:bg-white/5'"
-                                                class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0"
+                                                class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-[300ms] ease-in-out min-w-0"
                                                 style="margin-left: {{ $sub['level'] == 1 ? 18 : ($sub['level'] == 2 ? 48 : '') }}px;">
 
                                                 <flux:icon :name="$sub['icon']"
@@ -520,10 +520,10 @@
                                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
 
                                     <div x-show="expanded" x-cloak
-                                        x-transition:enter="transition-all duration-300 ease-out"
+                                        x-transition:enter="transition-all duration-[300ms] ease-out"
                                         x-transition:enter-start="opacity-0 translate-x-4"
                                         x-transition:enter-end="opacity-100 translate-x-0"
-                                        x-transition:leave="transition-all duration-200 ease-in"
+                                        x-transition:leave="transition-all duration-[200ms] ease-in"
                                         x-transition:leave-start="opacity-100 translate-x-0"
                                         x-transition:leave-end="opacity-0 translate-x-4"
                                         class="flex flex-1 items-center justify-between overflow-hidden ml-3">
@@ -533,7 +533,7 @@
                                             {{ $item['label'] }}
                                         </span>
 
-                                        <span class="transition-transform duration-200 shrink-0 ml-auto"
+                                        <span class="transition-transform duration-[200ms] shrink-0 ml-auto"
                                             :class="{ 'rotate-180': openKelasMenu }">
                                             <flux:icon name="chevron-down" class="w-3 h-3" />
                                         </span>
@@ -542,10 +542,10 @@
                             </button>
 
                             <div x-show="expanded && openKelasMenu" x-cloak
-                                x-transition:enter="transition-all duration-300 ease-out"
+                                x-transition:enter="transition-all duration-[300ms] ease-out"
                                 x-transition:enter-start="opacity-0 -translate-y-4 max-h-0 origin-top"
                                 x-transition:enter-end="opacity-100 translate-y-0 max-h-[500px] origin-top"
-                                x-transition:leave="transition-all duration-200 ease-in"
+                                x-transition:leave="transition-all duration-[200ms] ease-in"
                                 x-transition:leave-start="opacity-100 translate-y-0 max-h-[500px] origin-top"
                                 x-transition:leave-end="opacity-0 -translate-y-4 max-h-0 origin-top"
                                 class="mt-1 space-y-1 pl-4 w-full ml-1 overflow-hidden">
@@ -554,7 +554,7 @@
                                     <a href="{{ $sub['url'] }}" wire:navigate
                                         style="margin-left: {{ $sub['level'] == 1 ? 18 : ($sub['level'] == 2 ? 48 : '') }}px"
                                         @class([
-                                            'block text-[11px] p-2 rounded-md border-l-4 transition-all duration-300 ease-in-out transform active:scale-95',
+                                            'block text-[11px] p-2 rounded-md border-l-4 transition-all duration-[300ms] ease-in-out transform active:scale-95',
                                             'bg-white/20 text-white font-semibold border-[var(--main-text)] pl-3 shadow-sm' =>
                                                 $sub['active'],
                                             'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)] border-transparent pl-4' => !$sub[
@@ -572,10 +572,10 @@
                     @endif
                 @endforeach
 
-                <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+                <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-[300ms] ease-out"
                     x-transition:enter-start="opacity-0 translate-x-4"
                     x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition-all duration-200 ease-in"
+                    x-transition:leave="transition-all duration-[200ms] ease-in"
                     x-transition:leave-start="opacity-100 translate-x-0"
                     x-transition:leave-end="opacity-0 translate-x-4" class="mx-1 flex justify-end">
                     <button type="button" @click="toggleExpanded()"
@@ -600,13 +600,13 @@
                 :style="`transition-delay: ${showColorMode ? '0ms' : '380ms'}`"
                 :class="showColorMode ? 'mt-15' : 'mt-0'">
 
-                <div class="absolute transition-all duration-400 ease-in-out"
+                <div class="absolute transition-all duration-[400ms] ease-in-out"
                     :style="`transition-delay: ${showColorMode ? (expanded ? '0ms' : '200ms') : '380ms'}`"
                     :class="showColorMode ? (expanded ? '-translate-y-15 opacity-100' : 'translate-y-0 opacity-100') : ''">
                     <x-livewire::navigation.dark-mode />
                 </div>
 
-                <div class="absolute transition-all duration-400 ease-in-out"
+                <div class="absolute transition-all duration-[400ms] ease-in-out"
                     :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
                     :class="showColorMode
                         ?
@@ -629,9 +629,9 @@
     <livewire:navigation.mobile-profile-dropdown />
 
 
-    <main x-cloak class="min-h-screen transition-all duration-300 w-full"
+    <main x-cloak class="min-h-screen transition-all duration-[300ms] w-full"
         :style="isDesktop ? `padding-left: var(--sidebar-width)` : ''">
-        <div class="py-2 lg:py-6 px-0 2xl:px-6 transition-all duration-300"
+        <div class="py-2 lg:py-6 px-0 2xl:px-6 transition-all duration-[300ms]"
             :class="expanded ? 'md:px-0 xl:px-2' : 'md:px-2 lg:px-4 xl:px-4'">
             {{ $slot }}
         </div>

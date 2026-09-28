@@ -546,13 +546,13 @@ new #[Title('Profile Settings')] class extends Component {
                     <flux:spacer />
                     <flux:modal.close>
                         <flux:button variant="ghost"
-                            class="cursor-pointer w-full sm:w-auto bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)] text-[var(--contrast-second-text)] transition-colors duration-200">
+                            class="cursor-pointer w-full sm:w-auto bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)] text-[var(--contrast-second-text)] transition-colors duration-[200ms]">
                             Batal
                         </flux:button>
                     </flux:modal.close>
 
                     <flux:button wire:click="updatePassword" wire:loading.attr="disabled" variant="primary"
-                        class="text-white cursor-pointer w-full sm:w-auto bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] border-none transition-colors duration-200">
+                        class="text-white cursor-pointer w-full sm:w-auto bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] border-none transition-colors duration-[200ms]">
                         <span wire:loading.remove wire:target="updatePassword">Ya, Simpan</span>
                         <span wire:loading wire:target="updatePassword">Menyimpan...</span>
                     </flux:button>
@@ -582,13 +582,13 @@ new #[Title('Profile Settings')] class extends Component {
                             class="cursor-pointer w-full sm:w-auto 
                             bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                             text-[var(--contrast-second-text)]
-                            transition-colors duration-200">
+                            transition-colors duration-[200ms]">
                             Batal
                         </flux:button>
                     </flux:modal.close>
 
                     <flux:button wire:click="deletePhoto" wire:loading.attr="disabled" variant="primary"
-                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 border-none transition-colors duration-200">
+                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 border-none transition-colors duration-[200ms]">
 
                         <span wire:loading.remove wire:target="deletePhoto">Ya, Hapus Foto</span>
                         <span wire:loading wire:target="deletePhoto">Menghapus...</span>

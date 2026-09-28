@@ -10,7 +10,7 @@
     </div>
 
     {{-- <div x-show="$store.theme_manager.activeWallpaper !== null"
-        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
+        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-[300ms]"
         :style="{
             'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
             'opacity': $store.theme_manager.opacity,
@@ -18,7 +18,7 @@
         }">
     </div> --}}
     <div x-show="$store.theme_manager.activeWallpaper !== null"
-        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-320"
+        class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-[320ms]"
         :style="$store.theme_manager.activeWallpaper ? {
             'background-image': 'url(' + $store.theme_manager.activeWallpaper + ')',
             'opacity': $store.theme_manager.opacity,
@@ -156,10 +156,10 @@
                                 : 'text-[var(--main-text)] hover:bg-white/10 active:bg-white/20 hover:text-[var(--main-text)] active:text-[var(--main-text)]/90 active:bg-white/20 active:text-[var(--main-text)]/90' }}"
                     title="{{ $item['label'] }}">
                     <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
-                    <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+                    <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-[300ms] ease-out"
                         x-transition:enter-start="opacity-0 translate-x-4"
                         x-transition:enter-end="opacity-100 translate-x-0"
-                        x-transition:leave="transition-all duration-200 ease-in"
+                        x-transition:leave="transition-all duration-[200ms] ease-in"
                         x-transition:leave-start="opacity-100 translate-x-0"
                         x-transition:leave-end="opacity-0 translate-x-4"
                         class="ml-3 whitespace-nowrap overflow-hidden text-ellipsis block">{{ $item['label'] }}</span>
@@ -690,9 +690,9 @@
             @endif
         @endforeach
 
-        <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+        <div x-show="isDesktop" x-cloak x-transition:enter="transition-all duration-[300ms] ease-out"
             x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
-            x-transition:leave="transition-all duration-200 ease-in"
+            x-transition:leave="transition-all duration-[200ms] ease-in"
             x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
             class="mx-1 flex justify-end">
             <button type="button" @click="toggleExpanded()"
@@ -716,7 +716,7 @@
             <x-livewire::navigation.dark-mode />
         </div>
 
-        <div class="absolute transition-all duration-400 ease-in-out"
+        <div class="absolute transition-all duration-[400ms] ease-in-out"
             :style="`transition-delay: ${showColorMode ? (expanded ? '200ms' : '0ms') : '250ms'}`"
             :class="showColorMode
                 ?

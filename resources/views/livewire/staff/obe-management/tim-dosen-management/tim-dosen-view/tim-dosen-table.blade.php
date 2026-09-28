@@ -150,7 +150,7 @@
 
         @forelse($tim_dosens as $d)
             <tr wire:key="{{ $switchTable }}-{{ $d->id }}" data-{{ $switchTable }}-id="{{ $d->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-[200ms]">
 
                 <td class="table-second text-center">{{ $d->id }}</td>
 

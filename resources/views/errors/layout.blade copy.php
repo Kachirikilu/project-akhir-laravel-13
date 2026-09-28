@@ -6,7 +6,7 @@
     <title>@yield('title') - @yield('code')</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 dark:bg-zinc-950 flex items-center justify-center min-h-screen transition-colors duration-200">
+<body class="bg-gray-50 dark:bg-zinc-950 flex items-center justify-center min-h-screen transition-colors duration-[200ms]">
     <div class="text-center p-6 max-w-md mx-auto">
         <h1 class="text-7xl font-black text-gray-300 dark:text-zinc-800 tracking-tight animate-pulse">
             @yield('code')

@@ -93,7 +93,7 @@
                                             </flux:badge>
                                         @endif
                                         <flux:icon.chevron-down variant="micro"
-                                            class="text-zinc-400 transition-transform duration-200"
+                                            class="text-zinc-400 transition-transform duration-[200ms]"
                                             x-bind:class="expanded ? 'rotate-180' : ''" />
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@
                                                 class="col-span-2 flex items-center gap-6 pt-3 mt-1 border-t border-zinc-200/50 dark:border-zinc-700/50">
 
                                                 <button type="button"
-                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
+                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-[200ms]"
                                                     @click="
                                                         $store.rps?.resetShow();
                                                         $store.rps?.setShowRPS(
@@ -186,7 +186,7 @@
                                                     @dblclick="isWaiting = false"
                                                     wire:dblclick="printPDFRPS({{ $r['id'] }})"
                                                     :class="isWaiting ? 'ring-2 ring-rose-300 rounded-md px-1' : ''"
-                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all duration-200">
+                                                    class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-all duration-[200ms]">
 
                                                     <div class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors"
                                                         :class="isWaiting ? 'bg-rose-100' : ''">
@@ -217,7 +217,7 @@
                                                         {{-- @unless ($this->showRPSModal && !(($this->isEditingCPMK && !$this->isFlyoutCPMK) || ($this->isEditingSCPMK && !$this->isFlyoutSCPMK) || ($this->isEditingCPL && !$this->isFlyoutCPL) || ($this->isEditingRef && !$this->isFlyoutRef))) --}}
                                                         {{-- Action Link: Edit --}}
                                                         <button type="button"
-                                                            class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
+                                                            class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-[200ms]"
                                                             @click="
                                                                     $store.rps?.reset();
                                                                     $store.rps?.setEdit(1);

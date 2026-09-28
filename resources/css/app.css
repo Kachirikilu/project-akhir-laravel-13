@@ -145,14 +145,14 @@
     }
 
     .form-container {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300 px-2;
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms] px-2;
         border-top-width: 4px;
         border-bottom-width: 4px;
         border-color: var(--border-table-color);
     }
 
     .form-container-excel {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-300 px-0;
+        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms] px-0;
         border-top-width: 4px;
         border-bottom-width: 4px;
         border-color: var(--border-table-color);
@@ -175,13 +175,13 @@
     }
 
     .form-message {
-        @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-300;
+        @apply text-xs sm:text-sm py-4 rounded-xl backdrop-blur-sm transition-colors duration-[300ms];
         @apply sm:px-4 sm:bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] sm:border sm:shadow-sm;
     }
 
     .form-message-container {
         @apply border-[var(--border-table-color)];
-        @apply p-4 mt-4 gap-4 rounded-lg shadow-sm border-t transition-colors duration-300;
+        @apply p-4 mt-4 gap-4 rounded-lg shadow-sm border-t transition-colors duration-[300ms];
         @apply bg-[var(--second-table-trans)] sm:bg-[var(--sub-table-color)];
         @apply flex-1 text-xs text-[var(--second-text)] space-y-3;
     }
@@ -335,7 +335,7 @@
     }
      */
     .btn-card-focus-state {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {
@@ -344,7 +344,7 @@
     }
 
     .btn-card-focus-state-24 {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {
@@ -353,7 +353,7 @@
     }
 
     .btn-card-focus-state-72 {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {
@@ -362,7 +362,7 @@
     }
 
     .btn-card-focus-state-special {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {
@@ -371,7 +371,7 @@
     }
 
     .btn-card-focus-state-special-24 {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {
@@ -380,7 +380,7 @@
     }
 
     .btn-card-focus-state-special-72 {
-        @apply transition-all duration-200;
+        @apply transition-all duration-[200ms];
 
         &:hover,
         &:active {

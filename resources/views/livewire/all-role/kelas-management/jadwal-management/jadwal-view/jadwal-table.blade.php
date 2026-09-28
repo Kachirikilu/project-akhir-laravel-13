@@ -139,7 +139,7 @@
 
         @forelse($jadwals as $j)
             <tr wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-[200ms]">
 
                 @if (Auth::user()->admin || Auth::user()->dosen)
                     <td class="table-second text-center">{{ $j->id }}</td>
@@ -176,7 +176,7 @@
                         @else
                             @php
                                 $buttonClass =
-                                    'inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/35 transition-all duration-200 text-sm font-medium shadow-sm cursor-pointer';
+                                    'inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/35 transition-all duration-[200ms] text-sm font-medium shadow-sm cursor-pointer';
                             @endphp
                             @if (!empty($j->with_pw))
                                 <x-button-action color="blue"

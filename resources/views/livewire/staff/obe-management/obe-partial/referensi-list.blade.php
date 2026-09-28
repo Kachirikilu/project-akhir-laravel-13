@@ -105,7 +105,7 @@
                                 x-text="ref.penulis + ' (' + (ref.tahun || '-') + ')'"></p>
                         </div>
                         <flux:icon.chevron-down variant="micro"
-                            class="text-zinc-400 transition-transform duration-200 flex-shrink-0"
+                            class="text-zinc-400 transition-transform duration-[200ms] flex-shrink-0"
                             x-bind:class="expanded ? 'rotate-180' : ''" />
                     </div>
 

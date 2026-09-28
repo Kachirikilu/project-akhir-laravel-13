@@ -16,7 +16,7 @@
             {{-- KODE SEBAGAI BADGE DI ATAS --}}
             <div class="text-xs sm:text-sm flex items-center gap-2">
                 <div class="flex items-center gap-1.5 mb-1.5">
-                    <flux:icon icon="chevron-right" variant="mini" class="transition-transform duration-200"
+                    <flux:icon icon="chevron-right" variant="mini" class="transition-transform duration-[200ms]"
                         x-bind:class="expanded.includes(index) ? 'rotate-90 text-[var(--hover-focus-color)]' :
                             'text-gray-400'" />
                     <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white uppercase"

@@ -102,7 +102,7 @@
                    text-[var(--contrast-second-text)]
                    py-1 px-2 text-xs sm:text-sm w-full
                    hover:border-[var(--hover-focus-color)] active:border-[var(--hover-focus-color)]
-                   transition-[border-color] duration-200">
+                   transition-[border-color] duration-[200ms]">
             <span x-text="selected"></span>
 
             <svg
@@ -126,9 +126,9 @@
         </button>
 
         {{-- dropdown --}}
-        <ul x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+        <ul x-show="open" x-cloak x-transition:enter="transition ease-out duration-[200ms]"
             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-[100ms]" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             class="max-h-40 overflow-y-auto scrollbar-tiny
                    bg-[var(--main-pop-up-color)]
@@ -137,7 +137,7 @@
                    ring-1 ring-opacity-5 focus:outline-none overflow-hidden">
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"
-                    class="block px-3 py-1 text-xs sm:text-sm cursor-pointer transition-colors duration-200
+                    class="block px-3 py-1 text-xs sm:text-sm cursor-pointer transition-colors duration-[200ms]
                            hover:bg-[var(--hover-main-color)] active:bg-[var(--hover-main-color)]
                            hover:text-[var(--main-text)] active:text-[var(--main-text)]"
                     :class="{

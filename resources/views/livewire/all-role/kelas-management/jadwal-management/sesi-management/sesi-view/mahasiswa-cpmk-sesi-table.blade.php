@@ -238,7 +238,7 @@
             @endphp
 
             <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-[200ms]">
 
                 @if ($showMore)
                     <td class="table-main text-center">{{ $user->role_id }}</td>

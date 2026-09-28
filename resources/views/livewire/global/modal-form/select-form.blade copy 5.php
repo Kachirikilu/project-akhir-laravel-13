@@ -71,7 +71,7 @@
             :class="isDisabled ?
                 'bg-gray-100 dark:bg-zinc-800 cursor-not-allowed opacity-70 text-gray-500 border-gray-200' :
                 'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
-            class="w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
+            class="w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-[200ms]">
 
         {{-- 2. Tombol Reset (Sembunyikan jika disable) --}}
         <template x-if="!isDisabled">
@@ -84,9 +84,9 @@
     </div>
 
     {{-- Dropdown Result --}}
-    <div x-show="open && !isDisabled" x-cloak x-transition:enter="transition ease-out duration-200"
+    <div x-show="open && !isDisabled" x-cloak x-transition:enter="transition ease-out duration-[200ms]"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-[100ms]" x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
         class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
 

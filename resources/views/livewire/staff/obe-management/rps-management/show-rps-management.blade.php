@@ -14,14 +14,14 @@
                             'icon' => 'arrow-down-tray',
                             'isFull' => 1,
                             'valuePx' => 'px-8',
-                            'valuePy' => 'py-4.5',
+                            // 'valuePy' => 'py-[18px]',
                             'color' => 'rose',
                             'wireLoading' => 'printPDFRPS()',
                         ])
                     </div>
 
                     <div wire:loading.class="opacity-50 pointer-events-none" wire:target="showRPS"
-                        class="transition-opacity duration-200 flex-grow min-w-[250px]">
+                        class="transition-opacity duration-[200ms] flex-grow min-w-[250px]">
                         @php $prodisCollection = collect($prodisRPS); @endphp
                         @include('livewire.global.modal-form.select-form', [
                             'alpine' => 'rps',
@@ -62,7 +62,7 @@
 
 
 
-            <div class="p-4 relative bg-white rounded-md border-2" x-data="{
+            <div class="p-4 relative bg-white rounded-md border-2 border-gray-200 dark:border-gray-800" x-data="{
                 get rpsId() { return $store.rps?.rps_id_show; },
                 get prId() { return $store.rps?.pr_id_show; }
             }">
@@ -79,7 +79,7 @@
                     </button>
                 </div>
 
-                <div class="w-full h-[2000px] border" wire:ignore
+                <div class="w-full h-[2000px] border border-gray-200 dark:border-gray-800" wire:ignore
                     x-effect="
                 const frame = document.getElementById('pdf-frame');
                 if (rpsId && rpsId !== 'null' && rpsId !== 'undefined') {

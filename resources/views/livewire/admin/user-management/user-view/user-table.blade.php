@@ -255,7 +255,7 @@
             @endphp
 
             <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-[200ms]">
 
                 <td class="table-main text-center table-border-x">{{ $user->id }}</td>
 

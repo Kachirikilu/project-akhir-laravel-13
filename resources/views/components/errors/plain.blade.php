@@ -15,7 +15,7 @@
 </head>
 
 <body
-    class="flex min-h-full flex-col bg-zinc-50 text-zinc-900 transition-colors duration-200 dark:bg-zinc-900 dark:text-zinc-100">
+    class="flex min-h-full flex-col bg-zinc-50 text-zinc-900 transition-colors duration-[200ms] dark:bg-zinc-900 dark:text-zinc-100">
 
     <main class="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-6 py-16 sm:py-24">
         <div class="text-center">

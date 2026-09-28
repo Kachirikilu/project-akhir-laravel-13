@@ -145,7 +145,7 @@
 
         @forelse($cpmk as $c)
             <tr wire:key="{{ $switchTable }}-{{ $c->id }}" data-{{ $switchTable }}-id="{{ $c->id }}"
-                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-200">
+                class="table-border hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)] transition-colors duration-[200ms]">
 
                 <td class="table-second text-center">{{ $c->id }}</td>
 

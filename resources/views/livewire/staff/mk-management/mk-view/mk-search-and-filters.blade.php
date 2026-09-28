@@ -1,9 +1,9 @@
 <div x-data="{ activeFilter: @entangle('filterMK') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    <div x-transition:enter="transition ease-out duration-1000"
+    <div x-transition:enter="transition ease-out duration-[100ms]0"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
-        x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-[200ms]"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
         class="table-border flex items-end justify-between border-b mb-4 gap-4">
@@ -82,10 +82,10 @@
     <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
         <div x-show="activeFilter == '' || activeFilter == 'mk-saya' || activeFilter == 'mk-prodi' || activeFilter == 'mk-uni'"
-            x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter="transition ease-out duration-[100ms]0"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave="transition ease-in duration-[200ms]"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
@@ -100,10 +100,10 @@
         </div>
 
         <div x-show="activeFilter !== '' && activeFilter !== 'mk-saya' && activeFilter !== 'mk-prodi' && activeFilter !== 'mk-uni'"
-            x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter="transition ease-out duration-[100ms]0"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave="transition ease-in duration-[200ms]"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4" class="col-start-1 row-start-1 w-full">
             <div class=" grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">

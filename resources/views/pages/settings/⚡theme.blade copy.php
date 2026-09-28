@@ -38,7 +38,7 @@ new #[Title('Theme Settings')] class extends Component {}; ?>
                         <div class="flex gap-2 items-center mx-auto w-max px-1.5">
                             <template x-for="theme in $store.theme_manager.allThemes" :key="theme.id">
                                 <button type="button" @click="$store.theme_manager.setTheme(theme.id)"
-                                    class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none snap-center"
+                                    class="cursor-pointer relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-[300ms] hover:scale-105 focus:outline-none snap-center"
                                     :class="$store.theme_manager.currentTheme === theme.id ?
                                         'ring-2 ring-[var(--main-color)] ring-offset-1' : 'opacity-70 hover:opacity-100'"
                                     :style="`background-color: ${theme.color}`">
@@ -68,15 +68,15 @@ new #[Title('Theme Settings')] class extends Component {}; ?>
                             class="flex items-center gap-1.5 px-4 group cursor-pointer"
                             :title="$store.theme_manager.isAutoPlaying ? 'Stop Auto Mode' : 'Secret Party Mode!'">
 
-                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+                            <div class="w-2 h-2 rounded-full transition-all duration-[500ms] opacity-50 group-hover:opacity-100"
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(-1)}`"
                                 :class="$store.theme_manager.isAutoPlaying && 'animate-bounce translate-y-[1px]'"></div>
 
-                            <div class="w-2.5 h-2.5 rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(255,255,255,0.5)]"
+                            <div class="w-2.5 h-2.5 rounded-full transition-all duration-[500ms] shadow-[0_0_6px_rgba(255,255,255,0.5)]"
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(0)}`"
                                 :class="$store.theme_manager.isAutoPlaying && 'animate-pulse scale-125'"></div>
 
-                            <div class="w-2 h-2 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+                            <div class="w-2 h-2 rounded-full transition-all duration-[500ms] opacity-50 group-hover:opacity-100"
                                 :style="`background-color: ${$store.theme_manager.getThemeColor(1)}`"
                                 :class="$store.theme_manager.isAutoPlaying &&
                                     'animate-bounce [animation-delay:0.2s] translate-y-[1px]'">
@@ -108,11 +108,11 @@ new #[Title('Theme Settings')] class extends Component {}; ?>
     </button>
 
     <button @click="toggleAutoPlay()" type="button" class="flex items-center gap-2 px-3 group cursor-pointer">
-        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100"
+        <div class="w-1.5 h-1.5 rounded-full transition-all duration-[300ms] opacity-50 group-hover:opacity-100"
             :style="`background-color: ${getThemeColor(-1)}`"></div>
-        <div class="w-2 h-2 rounded-full transition-all duration-300 shadow-sm"
+        <div class="w-2 h-2 rounded-full transition-all duration-[300ms] shadow-sm"
             :style="`background-color: ${getThemeColor(0)}`"></div>
-        <div class="w-1.5 h-1.5 rounded-full transition-all duration-300 opacity-50 group-hover:opacity-100"
+        <div class="w-1.5 h-1.5 rounded-full transition-all duration-[300ms] opacity-50 group-hover:opacity-100"
             :style="`background-color: ${getThemeColor(1)}`"></div>
     </button>
 
@@ -214,7 +214,7 @@ if (isAutoPlaying) { startInterval(); }" class="flex flex-col gap-3">
         <div class="flex gap-2 items-center mx-auto w-max px-1.5">
             <template x-for="theme in allThemes" :key="theme.id">
                 <button type="button" @click="setTheme(theme.id); if(isAutoPlaying) toggleAutoPlay();"
-                    class="relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none snap-center"
+                    class="relative flex-shrink-0 w-7 h-7 rounded-lg transition-all duration-[300ms] hover:scale-105 focus:outline-none snap-center"
                     :class="currentTheme === theme.id ? 'ring-2 ring-[var(--main-color)] ring-offset-1' :
                         'opacity-70 hover:opacity-100'"
                     :style="`background-color: ${theme.color}`">

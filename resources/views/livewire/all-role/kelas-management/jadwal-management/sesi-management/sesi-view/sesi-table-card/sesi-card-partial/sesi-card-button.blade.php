@@ -9,7 +9,7 @@
                         }
                         expanded = !expanded;
         ">
-          <flux:icon name="chevron-down" class="w-3.5 h-3.5 transition-transform duration-300"
+          <flux:icon name="chevron-down" class="w-3.5 h-3.5 transition-transform duration-[300ms]"
               ::class="{ 'rotate-180': expanded }" />
 
           <span x-text="expanded ? 'Sembunyikan Detail' : 'Lihat Detail'"></span>

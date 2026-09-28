@@ -71,7 +71,7 @@
     {{-- ===================== --}}
     {{-- TOGGLE ICON (SUN / MOON) --}}
     {{-- ===================== --}}
-    <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 {{ !$noPadding ? 'mr-6' : '' }}">
+    <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-[300ms] {{ !$noPadding ? 'mr-6' : '' }}">
         <button type="button" @click="manualToggle()"
             class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg 
             bg-white/20 border border-black/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] 
@@ -93,8 +93,8 @@
     {{-- ===================== --}}
     @if (!($noToggle ?? false))
         <div class="cursor-pointer flex items-center space-x-2 whitespace-nowrap" x-show="expanded" x-cloak
-            x-transition:enter="transition-all duration-300 ease-out" x-transition:enter-start="opacity-0 translate-x-4"
-            x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-200 ease-in"
+            x-transition:enter="transition-all duration-[300ms] ease-out" x-transition:enter-start="opacity-0 translate-x-4"
+            x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-[200ms] ease-in"
             x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">
 
             {{-- CHECKBOX --}}
@@ -133,7 +133,7 @@
                 <button type="button" @click="toggleColorMenu()"
                     class="ml-2 cursor-pointer flex items-center justify-center p-1 rounded hover:bg-white/10 active:bg-white/20 text-white/70 hover:text-white transition-colors"
                     aria-label="Toggle Color Menu">
-                    <flux:icon name="chevron-down" variant="mini" class="w-4 h-4 transition-transform duration-300"
+                    <flux:icon name="chevron-down" variant="mini" class="w-4 h-4 transition-transform duration-[300ms]"
                         ::class="!colorMenuOpen ? 'rotate-180' : ''" />
                 </button>
             </div>

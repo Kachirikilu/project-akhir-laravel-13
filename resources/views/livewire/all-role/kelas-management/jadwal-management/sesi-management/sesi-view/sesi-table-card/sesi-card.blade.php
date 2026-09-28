@@ -89,7 +89,7 @@
                 $subTable = 'bg-[var(--sub-table-color)]';
             }
 
-            $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
+            $btnBase = 'transition-all duration-[200ms] hover:z-10 active:z-10';
 
             if ($isUjian) {
                 if ($isPastDate) {
@@ -132,7 +132,7 @@
                 {{ $s->id }}))"
                 wire:key="kelas-sesi-card-{{ $s->id }}" x-data="{ expanded: false, hasLoaded: false }"
                 @click="expanded = !expanded; hasLoaded = true"
-                class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-auto flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-200 hover:shadow-lg active:shadow-lg cursor-pointer">
+                class="{{ $focusDiv }} {{ $isUjian ? 'lg:col-span-2' : '' }} flex flex-col h-auto flex-shrink-0 rounded-[20px] overflow-hidden border transition-all duration-[200ms] hover:shadow-lg active:shadow-lg cursor-pointer">
 
 
 

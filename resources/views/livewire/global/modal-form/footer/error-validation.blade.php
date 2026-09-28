@@ -1,6 +1,6 @@
 @if (($show ?? true) && $errors->any())
     <div
-        class="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl shadow-sm transition-colors duration-300">
+        class="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl shadow-sm transition-colors duration-[300ms]">
         <div class="flex items-center gap-2 mb-3">
             <flux:icon name="exclamation-triangle" variant="mini" class="text-red-700 dark:text-red-400" />
             <h4 class="font-bold text-red-700 dark:text-red-400 text-xs sm:text-sm  uppercase tracking-wider">

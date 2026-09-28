@@ -46,7 +46,7 @@
             $dispatch('open-show-rps-modal', { id: {{ $rps->id }} });
         "
                 icon="eye" size="sm"
-                class="text-xs !cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-200 h-[34px] flex items-center justify-center">
+                class="text-xs !cursor-pointer px-4 !text-cyan-600 dark:!text-cyan-400 !bg-cyan-50 hover:!bg-cyan-100 active:!bg-cyan-200 dark:!bg-cyan-950/20 dark:hover:!bg-cyan-900/30 dark:active:!bg-cyan-900 !border-cyan-200/60 dark:!border-cyan-800/40 transition-all duration-[200ms] h-[34px] flex items-center justify-center">
                 <span>Show RPS</span>
             </flux:button>
 

@@ -160,7 +160,7 @@ setNestedValue(
                 'bg-[var(--second-table-color)] table-border text-[var(--contrast-main-text)] cursor-pointer'"
             class="placeholder-shown:pr-2 text-xs sm:text-sm
             {{  $isReadonly ? 'focus:ring-[var(--hover-table-color)]' : 'focus:ring-[var(--focus-color)]'  }} 
-            focus:ring-2 outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-200">
+            focus:ring-2 outline-none w-full border rounded-lg pl-10 px-3 py-2 pr-10 transition-all duration-[200ms]">
 
         @if (!$isReadonly)
             <template x-if="!isDisabled">

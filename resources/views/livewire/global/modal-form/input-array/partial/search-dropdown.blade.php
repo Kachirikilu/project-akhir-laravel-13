@@ -33,7 +33,7 @@
                 isManual = false;
             });
         "
-        class="px-4 py-2 cursor-pointer transition-colors duration-200
+        class="px-4 py-2 cursor-pointer transition-colors duration-[200ms]
                bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
                hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]">
 

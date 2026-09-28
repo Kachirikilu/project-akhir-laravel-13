@@ -33,7 +33,7 @@
             </h4>
 
             <button type="button" wire:click="togglePreview"
-                class="cursor-pointer text-sm px-8 py-1 rounded border transition-all duration-200 
+                class="cursor-pointer text-sm px-8 py-1 rounded border transition-all duration-[200ms] 
            {{ $noPreview
                ? 'bg-[var(--focus-color)] text-white border-[var(--focus-color)] hover:opacity-90'
                : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700' }}">

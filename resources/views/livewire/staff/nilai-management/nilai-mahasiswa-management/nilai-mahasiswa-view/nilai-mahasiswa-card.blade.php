@@ -365,7 +365,7 @@
                     <div :style="'order: ' + ((Array.isArray(filteredAndSortedIds) ? filteredAndSortedIds : []).findIndex(item =>
                         Number(item.id) === Number({{ $currentId }})))"
                         wire:key="kelas-periode-card-{{ $currentId }}"
-                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200 hover:shadow-lg active:shadow-lg">
+                        class="h-full flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
                         {{-- ═══ HERO ═══ --}}
 
 

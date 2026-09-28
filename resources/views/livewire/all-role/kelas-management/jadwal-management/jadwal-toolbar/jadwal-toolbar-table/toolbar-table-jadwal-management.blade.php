@@ -68,7 +68,7 @@
                             !text-emerald-600 dark:!text-emerald-400
                             hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 
                             active:!bg-emerald-200 dark:active:!bg-emerald-900
-                            transition-all duration-300 select-none rounded-md">
+                            transition-all duration-[300ms] select-none rounded-md">
                 <div class="flex items-center">
                     <flux:icon name="arrow-down-tray" class="mr-2 h-4 w-4" />
                     <span x-text="isWaiting ? 'Double click...' : 'Export Nilai'"></span>

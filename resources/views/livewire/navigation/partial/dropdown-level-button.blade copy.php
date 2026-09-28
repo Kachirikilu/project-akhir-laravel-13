@@ -15,7 +15,7 @@
             <flux:menu.item :href="$sub['url']" wire:navigate
                 class="group overflow-hidden rounded-md cursor-pointer !shadow-none !border-none hover:!bg-transparent focus:!bg-transparent active:!bg-transparent">
                 <span @class([
-                    'pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0',
+                    'pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-[300ms] ease-in-out min-w-0',
                     // ACTIVE
                     'bg-[var(--main-table-color)] dark:bg-white/10 text-[var(--contrast-main-text)] font-semibold border-l-2 border-[var(--border-main-color)] shadow-sm' =>
                         ($sub['active'] ?? false),

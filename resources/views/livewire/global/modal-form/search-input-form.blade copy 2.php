@@ -88,7 +88,7 @@
     </div>
 
     {{-- DROPDOWN HASIL --}}
-    <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-cloak x-transition:enter="transition ease-out duration-200"
+    <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-cloak x-transition:enter="transition ease-out duration-[200ms]"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
         class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-80 overflow-y-auto custom-scrollbar">
 
@@ -119,7 +119,7 @@
 
                     $wire.{{ $selectX }}(itemId, newSearch)
                 "
-                class="px-4 py-2 cursor-pointer transition-colors duration-200
+                class="px-4 py-2 cursor-pointer transition-colors duration-[200ms]
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
                 hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)]
                 {{-- border-b last:border-none  --}}

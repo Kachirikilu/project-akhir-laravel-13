@@ -3,7 +3,7 @@
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" :size="($isSmall ?? false) ? 'xs' : 'sm'"
-                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
+                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-[200ms] ease-in-out"
                 wire:target="addRPS, addCPL, addCPMK, addSCPMK. addRef, addUser">
                 Tambah
                 @if ($typeXString == 'rps')

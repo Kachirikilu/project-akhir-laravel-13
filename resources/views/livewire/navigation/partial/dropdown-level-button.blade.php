@@ -77,7 +77,7 @@
                         'border-l-2 border-transparent text-[var(--contrast-main-text)] group-hover:bg-[var(--main-table-color)] group-hover:dark:bg-[var(--main-table-color)] group-active:bg-[var(--main-table-color)] group-active:dark:bg-[var(--main-table-color)]'
                     )"
                     style="margin-left: {{ ($sub['level'] ?? false) == 1 ? 18 : (($sub['level'] ?? false) == 2 ? 48 : '') }}px;"
-                    class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-300 ease-in-out min-w-0">
+                    class="pr-7 flex items-center rounded-md w-full h-full text-xs px-3 py-1.5 transition-all duration-[300ms] ease-in-out min-w-0">
 
                     <flux:icon :name="$sub['icon']" class="{{ $sub['color'] ?? '' }} mr-2 h-4 w-4 shrink-0" />
 

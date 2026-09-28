@@ -195,7 +195,7 @@
                 <p
                     class="mt-5 text-center text-[10px] text-[var(--contrast-third-text)] flex items-center justify-center gap-1.5">
                     <a href="/"
-                        class="flex items-center justify-center gap-1.5 transition-colors duration-300 hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
+                        class="flex items-center justify-center gap-1.5 transition-colors duration-[300ms] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]">
                         <flux:icon name="shield-check" class="w-3 h-3 text-[var(--focus-color)]" />
                         Sistem Informasi {{ env('UNIVERSITAS', 'Universitas Sriwijaya') }}
                     </a>

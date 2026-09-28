@@ -111,27 +111,27 @@
                             <div
                                 class="absolute bottom-0 right-0 w-16 h-16 flex items-end justify-end p-2 pointer-events-none">
                                 <div
-                                    class="w-8 h-8 border-r-4 border-b-4 border-[var(--focus-color)] rounded-br-2xl transition-colors duration-500 group-hover:border-white group-active:border-white">
+                                    class="w-8 h-8 border-r-4 border-b-4 border-[var(--focus-color)] rounded-br-2xl transition-colors duration-[500ms] group-hover:border-white group-active:border-white">
                                 </div>
                             </div>
 
                             <div class="p-8">
                                 <flux:icon name="{{ $stat['icon'] }}"
-                                    class="w-7 h-7 mb-4 text-[var(--focus-color)] transition-colors duration-500 group-hover:text-white group-active:text-white" />
+                                    class="w-7 h-7 mb-4 text-[var(--focus-color)] transition-colors duration-[500ms] group-hover:text-white group-active:text-white" />
 
                                 <div
-                                    class="text-3xl font-black tracking-tight transition-colors duration-500 group-hover:text-white group-active:text-white">
+                                    class="text-3xl font-black tracking-tight transition-colors duration-[500ms] group-hover:text-white group-active:text-white">
                                     {{ $stat['val'] }}
                                 </div>
 
                                 <div
-                                    class="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] mt-2 text-[var(--contrast-third-text)] transition-colors duration-500 group-hover:text-white/80 group-active:text-white/70">
+                                    class="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] mt-2 text-[var(--contrast-third-text)] transition-colors duration-[500ms] group-hover:text-white/80 group-active:text-white/70">
                                     {{ $stat['label'] }}
                                 </div>
 
                                 {{-- Sub Information --}}
                                 <div
-                                    class="mt-1 text-[10px] font-medium text-[var(--contrast-third-text)] transition-colors duration-500 group-hover:text-white/60 group-active:text-white/50">
+                                    class="mt-1 text-[10px] font-medium text-[var(--contrast-third-text)] transition-colors duration-[500ms] group-hover:text-white/60 group-active:text-white/50">
                                     {{ $stat['sub'] }}
                                 </div>
                             </div>

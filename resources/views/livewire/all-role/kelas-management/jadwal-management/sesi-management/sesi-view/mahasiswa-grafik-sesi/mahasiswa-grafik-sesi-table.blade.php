@@ -147,7 +147,7 @@
                         );
                     ">
                 <flux:icon name="arrow-path"
-                    class="w-4 h-4 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-200" />
+                    class="w-4 h-4 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-[200ms]" />
             </button>
             @foreach ($daftarCpmk as $index => $kodeCpmk)
                 @php

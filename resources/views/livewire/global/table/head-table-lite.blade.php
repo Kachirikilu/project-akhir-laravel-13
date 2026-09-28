@@ -14,11 +14,11 @@
     wire:click="sortBy('{{ $sortFieldString }}')"
     class="w-full h-full cursor-pointer group flex items-center gap-2 text-xs font-medium uppercase whitespace-nowrap {{ $isCenter ?? false ? 'justify-center' : '' }}">
     
-    <span class="transition-colors duration-200 {{ $isSorted ? 'text-[var(--focus-color)] font-bold' : 'text-[var(--contrast-main-text)]' }}">
+    <span class="transition-colors duration-[200ms] {{ $isSorted ? 'text-[var(--focus-color)] font-bold' : 'text-[var(--contrast-main-text)]' }}">
         {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
     </span>
 
-    <span class="inline-block transition-transform duration-200 {{ $isSorted && $sortDirection === 'desc' ? 'rotate-180' : '' }} {{ $isSorted ? 'text-[var(--focus-color)]' : 'opacity-0 group-hover:opacity-50' }}">
+    <span class="inline-block transition-transform duration-[200ms] {{ $isSorted && $sortDirection === 'desc' ? 'rotate-180' : '' }} {{ $isSorted ? 'text-[var(--focus-color)]' : 'opacity-0 group-hover:opacity-50' }}">
         ↑
     </span>
 

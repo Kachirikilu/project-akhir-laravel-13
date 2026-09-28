@@ -13,6 +13,6 @@
     ]
 @endphp
 
-<button {{ $attributes->merge(['class' => "inline-flex items-center justify-center gap-1.5 rounded-lg border font-medium shadow-sm cursor-pointer transition-all duration-200 " . $colors[$color] . " " . $types[$type]]) }}>
+<button {{ $attributes->merge(['class' => "inline-flex items-center justify-center gap-1.5 rounded-lg border font-medium shadow-sm cursor-pointer transition-all duration-[200ms] " . $colors[$color] . " " . $types[$type]]) }}>
     {{ $slot }}
 </button>

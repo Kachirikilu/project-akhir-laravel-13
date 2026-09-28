@@ -37,7 +37,7 @@
                     !text-rose-600 dark:!text-rose-400
                     hover:!bg-rose-100 dark:hover:!bg-rose-900/30 
                     active:!bg-rose-200 dark:active:!bg-rose-900
-                    transition-all duration-300 select-none rounded-md">
+                    transition-all duration-[300ms] select-none rounded-md">
             <div class="flex items-center">
                 <flux:icon name="arrow-down-tray" class="mr-2 h-4 w-4" />
                 <span x-text="isWaiting ? 'Double click...' : 'Export RPS'"></span>

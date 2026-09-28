@@ -38,7 +38,7 @@
         {{-- CARD ITEM --}}
         <div wire:key="kelas-{{ $s->id }}" data-kelas-id="{{ $s->id }}" x-data="{ expanded: {{ $isUjian ? 'true' : 'false' }} }"
             {{-- Klik area kartu untuk toggle expand (Kecuali jika UTS/UAS) --}} @if (!$isUjian) @click="expanded = !expanded" @endif
-            class="{{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }} relative flex flex-col self-start p-3 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-300">
+            class="{{ $isUjian ? 'lg:col-span-2 ring-1 ring-amber-500/30 bg-gradient-to-r from-[var(--main-table-trans)] to-amber-500/5' : 'cursor-pointer select-none' }} relative flex flex-col self-start p-3 rounded-xl border table-border bg-[var(--main-table-trans)] shadow-sm hover:shadow-md transition-all duration-[300ms]">
 
             {{-- CARD HEADER --}}
             <div class="flex items-start justify-between gap-4 pb-3 border-b table-border"
@@ -150,7 +150,7 @@
                 </div>
 
                 {{-- INTERACTIVE DROPDOWN AREA --}}
-                <div x-show="expanded" x-collapse class="mt-2 transition-all duration-300">
+                <div x-show="expanded" x-collapse class="mt-2 transition-all duration-[300ms]">
 
                     <div class="grid grid-cols-1 {{ $isUjian ? 'sm:grid-cols-3' : '' }} gap-2">
 
@@ -338,7 +338,7 @@
                             class="flex items-center gap-1 text-[10px] font-medium text-[var(--contrast-second-text)] transition-colors duration-150">
                             <span
                                 x-text="expanded ? 'Klik untuk merapatkan' : 'Klik kartu untuk detail (Sub-CPMK & Tugas)'"></span>
-                            <flux:icon name="chevron-down" class="w-3 h-3 transition-transform duration-300"
+                            <flux:icon name="chevron-down" class="w-3 h-3 transition-transform duration-[300ms]"
                                 ::class="{ 'rotate-180': expanded }" />
                         </div>
                     </div>

@@ -166,7 +166,7 @@
                         icon="eye"
                         variant="mini"
                         x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon"
-                        class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
+                        class="cursor-pointer group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-[200ms]" />
                 </template>
 
                 {{-- Icon Mata Tertutup --}}
@@ -174,7 +174,7 @@
                     <flux:icon
                         icon="eye-slash"
                         variant="mini"
-                        class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-200" />
+                        class="cursor-pointer text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400 group-active:text-red-500/90 dark:group-active:text-red-400/90 transition duration-[200ms]" />
                 </template>
 
             </button>

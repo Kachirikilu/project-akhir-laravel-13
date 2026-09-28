@@ -95,7 +95,7 @@ class="flex flex-col items-center gap-1 mb-6">
         :style="!(typeof expanded === 'undefined' ? true : expanded) ? 'scroll-behavior: auto !important' : ''">
         <template x-for="theme in allThemes" :key="theme.id">
             <button type="button" @click="setTheme(theme.id); if(isAutoPlaying) toggleAutoPlay();"
-                class="relative flex-shrink-0 w-5 h-5 rounded-full transition-all duration-500 hover:scale-110 focus:outline-none snap-center"
+                class="relative flex-shrink-0 w-5 h-5 rounded-full transition-all duration-[500ms] hover:scale-110 focus:outline-none snap-center"
                 :class="currentTheme === theme.id ? 'ring-2 ring-[var(--main-color)] ring-offset-2' : 'opacity-60'"
                 :style="`background-color: ${theme.color}`">
                 <span x-show="currentTheme === theme.id" class="absolute inset-0 flex items-center justify-center">
@@ -118,15 +118,15 @@ class="flex flex-col items-center gap-1 mb-6">
         <button @click="toggleAutoPlay()" type="button" class="flex items-center gap-1.5 px-4 group cursor-pointer"
             :title="isAutoPlaying ? 'Stop Auto Mode' : 'Secret Party Mode!'">
 
-            <div class="w-1.5 h-1.5 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+            <div class="w-1.5 h-1.5 rounded-full transition-all duration-[500ms] opacity-50 group-hover:opacity-100"
                 :style="`background-color: ${getThemeColor(-1)}`"
                 :class="isAutoPlaying && 'animate-bounce translate-y-[1px]'"></div>
 
-            <div class="w-2 h-2 rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(255,255,255,0.5)]"
+            <div class="w-2 h-2 rounded-full transition-all duration-[500ms] shadow-[0_0_6px_rgba(255,255,255,0.5)]"
                 :style="`background-color: ${getThemeColor(0)}`" :class="isAutoPlaying && 'animate-pulse scale-125'">
             </div>
 
-            <div class="w-1.5 h-1.5 rounded-full transition-all duration-500 opacity-50 group-hover:opacity-100"
+            <div class="w-1.5 h-1.5 rounded-full transition-all duration-[500ms] opacity-50 group-hover:opacity-100"
                 :style="`background-color: ${getThemeColor(1)}`"
                 :class="isAutoPlaying && 'animate-bounce [animation-delay:0.2s] translate-y-[1px]'"></div>
         </button>

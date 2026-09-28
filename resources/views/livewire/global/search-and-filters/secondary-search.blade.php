@@ -51,9 +51,9 @@
 
 
         {{-- DROPDOWN --}}
-        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
+        <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-[200ms]"
             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-[100ms]" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95" x-ref="dropdown"
             :class="align === 'right' ? 'right-0' : 'left-0'"
             class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full {{ $minW ?? 'sm:min-w-[450px]' }} mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
@@ -64,7 +64,7 @@
                     open = false;
                     $wire.{{ $selectXForFilterString }}({{ $x['id'] }});
                 "
-                    class="px-4 py-2 cursor-pointer transition-colors duration-200
+                    class="px-4 py-2 cursor-pointer transition-colors duration-[200ms]
                         bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
                         hover:bg-[var(--hover-pop-up-color)] active:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)] active:text-[var(--main-text)]
                         text-xs sm:text-sm">

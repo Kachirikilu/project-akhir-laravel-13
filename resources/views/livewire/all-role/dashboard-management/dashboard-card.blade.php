@@ -22,7 +22,7 @@
          HEADER: IDENTITAS PENGGUNA
          ============================================================ --}}
 <div
-    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-200">
+    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms]">
 
     {{-- Hero --}}
     <div class="flex flex-col gap-3 p-4 sm:p-[18px] bg-[var(--main-color)]">
@@ -144,7 +144,7 @@
                                 $flux.modal('wa-activation-modal').show();
                                 $dispatch('open-edit-wa-activation-modal');
                             "
-                        class="cursor-pointer flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-200 text-white active:scale-[0.97]">
+                        class="cursor-pointer flex items-center gap-1.5 rounded-[10px] border-0 px-3 py-2 text-[11px] sm:text-xs font-bold tracking-[0.02em] bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-[200ms] text-white active:scale-[0.97]">
                         <flux:icon name="cog-6-tooth" class="w-3.5 h-3.5" />
                         <span class="hidden sm:inline">{{ $data['wa_aktif'] ? 'Kelola' : 'Aktifkan' }}</span>
                     </button>

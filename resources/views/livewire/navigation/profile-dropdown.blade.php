@@ -35,15 +35,15 @@
             @endif
 
             <!-- Name -->
-            <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+            <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-[300ms] ease-out"
                 x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
-                x-transition:leave="transition-all duration-200 ease-in"
+                x-transition:leave="transition-all duration-[200ms] ease-in"
                 x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
                 class="w-full text-white text-left text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
                 {{ Auth()->user()->name }}
             </span>
 
-            <svg class="mr-2 w-5 h-5 text-white transition-all duration-300" :class="!open ? 'rotate-180' : ''"
+            <svg class="mr-2 w-5 h-5 text-white transition-all duration-[300ms]" :class="!open ? 'rotate-180' : ''"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>

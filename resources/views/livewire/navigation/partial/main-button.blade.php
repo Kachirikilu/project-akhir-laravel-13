@@ -21,10 +21,10 @@
         <div
             x-show="expanded"
             x-cloak
-            x-transition:enter="transition-all duration-300 ease-out"
+            x-transition:enter="transition-all duration-[300ms] ease-out"
             x-transition:enter-start="opacity-0 translate-x-4"
             x-transition:enter-end="opacity-100 translate-x-0"
-            x-transition:leave="transition-all duration-200 ease-in"
+            x-transition:leave="transition-all duration-[200ms] ease-in"
             x-transition:leave-start="opacity-100 translate-x-0"
             x-transition:leave-end="opacity-0 translate-x-4"
             class="flex flex-1 items-center justify-between overflow-hidden ml-3"
@@ -35,7 +35,7 @@
             </span>
 
             <span
-                class="transition-transform duration-200 shrink-0 ml-auto"
+                class="transition-transform duration-[200ms] shrink-0 ml-auto"
                 :class="{ 'rotate-180': {{ $menu }} }"
             >
                 <flux:icon name="chevron-down" class="w-3 h-3" />

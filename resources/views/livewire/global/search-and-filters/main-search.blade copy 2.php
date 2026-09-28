@@ -86,7 +86,7 @@
         @if (!$isLive)
             <button type="button" @click="handleAction" wire:loading.attr="disabled"
                 :class="{
-                    'cursor-pointer h-8 px-5 rounded-md flex items-center shadow-sm transition-all duration-200 select-none': true,
+                    'cursor-pointer h-8 px-5 rounded-md flex items-center shadow-sm transition-all duration-[200ms] select-none': true,
                     'bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] text-white': !isRealtime,
                     'bg-[var(--hover-focus-color)] text-white ring-2 ring-white/10': isRealtime
                 }">

@@ -27,13 +27,13 @@
                             class="cursor-pointer w-full sm:w-auto 
                 bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                 text-[var(--contrast-second-text)]
-                transition-colors duration-200">
+                transition-colors duration-[200ms]">
                             Batal</flux:button>
                     </flux:modal.close>
 
                     <flux:button wire:click="destroyRPS" wire:loading.attr="disabled"
                         wire:target="deleteRPS, destroyRPS" type="submit" variant="primary"
-                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 border-none transition-colors duration-200">
+                        class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 border-none transition-colors duration-[200ms]">
                         <span wire:loading.remove wire:target="destroyRPS">Ya, Hapus RPS
                         </span>
 

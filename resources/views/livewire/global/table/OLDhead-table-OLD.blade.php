@@ -27,7 +27,7 @@
             this.clicked = false
         }
     }" @click="doSort()"
-        class="w-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap transition-colors duration-200">
+        class="w-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap transition-colors duration-[200ms]">
 
         <span :class="clicked ? 'text-indigo-600 font-bold' : ''">
             {{ $headString ?? $sortFieldString }}
@@ -43,7 +43,7 @@
                 'rotate-180' :
                 'rotate-0'
             ]"
-            class="inline-block transition-all transition-transform duration-300 ease-in-out">↑</span>
+            class="inline-block transition-all transition-transform duration-[300ms] ease-in-out">↑</span>
 
     </button>
 

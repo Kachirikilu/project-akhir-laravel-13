@@ -36,7 +36,7 @@
                         );
                     ">
                     <flux:icon name="arrow-path"
-                        class="w-3 h-3 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-200" />
+                        class="w-3 h-3 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-[200ms]" />
                 </button>
             </div>
         </div>
@@ -72,7 +72,7 @@
                         );
                     ">
                 <flux:icon name="arrow-path"
-                    class="w-2.5 h-2.5 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-200" />
+                    class="w-2.5 h-2.5 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-[200ms]" />
             </button>
         </div>
     </div>

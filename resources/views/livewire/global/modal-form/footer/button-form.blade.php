@@ -9,7 +9,7 @@
         <template x-if="$store.{{ $alpine ?? 'config' }}?.typeModal == 'excel'" x-cloak>
             <flux:button type="submit" variant="primary" wire:loading.attr="disabled"
                 wire:target="{{ $wireLoading ?? null }}, {{ $wireLoading2 ?? null }}"
-                class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 active:hover:bg-green-700 text-white border-none transition-all duration-200 shadow-sm dark:shadow-green-500/20">
+                class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 active:hover:bg-green-700 text-white border-none transition-all duration-[200ms] shadow-sm dark:shadow-green-500/20">
 
                 <span wire:loading.remove wire:target="{{ $wireLoading2 ?? $wireLoading ?? null }}" class="text-white">
                     Simpan Semua Data
@@ -26,7 +26,7 @@
             <flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="{{ $targetX }}"
                 class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto
                 bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]
-                shadow-sm text-white border-none transition-all duration-200">
+                shadow-sm text-white border-none transition-all duration-[200ms]">
 
                 <span x-text="$store.{{ $alpine ?? 'config' }}?.isEdit ? 'Perbarui Data' : 'Simpan Data'"
                     wire:loading.remove wire:target="{{ $targetX }}" class="text-white">
@@ -45,7 +45,7 @@
                 bg-[var(--sub-table-color)] hover:bg-[var(--main-table-color)] active:bg-[var(--main-table-color)]
                 text-[var(--contrast-second-text)]
                 
-                border-none transition-colors duration-200">
+                border-none transition-colors duration-[200ms]">
                 Batal
             </flux:button>
         </flux:modal.close>
