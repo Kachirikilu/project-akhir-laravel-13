@@ -1,275 +1,273 @@
-@php
-    // $totalSks = $mahasiswa->total_sks;
-    // $totalMk = $mahasiswa->count_rps;
-    // $calculatedIndex = $mahasiswa->ipk_mhs ?? '0.00';
-    // $mutuMhs = $mahasiswa->mutu_mhs ?? 'E';
-
-    if ($alpine === 'nilai') {
-        $safeNilais = collect($nilais ?? []);
-
-        $nilaiUnik = $safeNilais->groupBy('rps_id')->map(function ($group) {
-            return collect($group)->sortByDesc('nilai')->first();
-        });
-
-        $totalSks = $nilaiUnik->sum('sks');
-        // $totalMk = $nilaiUnik->where('nilai', '>=', 50)->count();
-        $totalMk = $nilaiUnik->count();
-
-        $totalBobotSks = $nilaiUnik->sum(function ($n) {
-            return ($n->sks ?? 0) * (float) ($n->nilai_index ?? 0);
-        });
-
-        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
-    } else {
-        $safePeriodes = collect($periodes ?? []);
-        $totalSks = $safePeriodes->sum('total_sks');
-        $totalMk = $safePeriodes->sum('total_mk');;
-
-        $calculatedIndex = (float) ($safePeriodes->avg('ip_semester') ?? 0);
-
-        $totalBobotSks = $safePeriodes->sum(function ($n) {
-            return ($n->total_sks ?? 0) * (float) ($n->ip_semester ?? 0);
-        });
-        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
-    }
-
-    $mutuMhs = match (true) {
-        $calculatedIndex >= 3.75 => 'A', 
-        $calculatedIndex >= 3.5 => 'A-',
-        $calculatedIndex >= 3.0 => 'B+',
-        $calculatedIndex >= 2.75 => 'B',
-        $calculatedIndex >= 2.0 => 'C',
-        $calculatedIndex >= 1.0 => 'D',
-        default => 'E',
-    };
-    // dump(collect($nilais ?? $periodes));
-
-    // --- 3. LOGIKA WARNA BERDASARKAN MUTU AKTIF ---
-    $colorClass = 'text-zinc-500';
-    switch ($mutuMhs) {
-        case 'A':
-            $colorClass = 'text-cyan-500 dark:text-cyan-400';
-            break;
-        case 'A-':
-            $colorClass = 'text-green-500 dark:text-green-400';
-            break;
-        case 'B+':
-            $colorClass = 'text-emerald-500 dark:text-emerald-400';
-            break;
-        case 'B':
-            $colorClass = 'text-yellow-500 dark:text-yellow-400';
-            break;
-        case 'B-':
-            $colorClass = 'text-amber-500 dark:text-amber-400';
-            break;
-        case 'C+':
-        case 'C':
-            $colorClass = 'text-orange-500 dark:text-orange-400';
-            break;
-        case 'D':
-        case 'E':
-            $colorClass = 'text-red-500 dark:text-red-400';
-            break;
-    }
-
-    $ganjil_genap = $ganjil_genap_url ?? null;
-    $akademik = $akademik_fix_url ?? null;
-@endphp
-
-{{-- Header Section --}}
-<div class="mb-8">
-    {{-- Container Utama --}}
+<div
+    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <div
-        class="flex flex-col lg:flex-col xl:flex-row xl:items-center xl:justify-between mb-2 lg:mb-6 gap-4 min-w-0 w-full">
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
 
-        {{-- Sisi Kiri: Profil Mahasiswa --}}
-        <div class="flex items-center gap-2 sm:gap-4 min-w-0 w-full">
-            @if (!($noBackUrl ?? false))
-                <a href="{{ $backUrl ?? route('nilai-management') }}" wire:navigate
-                    class="mx-1 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
-                    <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
-                </a>
-            @endif
+
+        <div class="flex items-start gap-3 min-w-0 flex-1">
+            <div
+                class="p-2.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-lg shrink-0 mt-0.5">
+                <flux:icon icon="user" variant="mini" class="w-5 h-5" />
+            </div>
 
             <div class="min-w-0 flex-1">
-                <h2
-                    class="mb-1 sm:mb-2 text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] flex flex-wrap items-center gap-4 min-w-0">
-                    <span class="break-words">{{ $mahasiswa->name ?? 'Wildan Athif Muttaqien' }}</span>
-                    @if ($ganjil_genap || $akademik)
-                        <span
-                            class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)]/10 text-[var(--focus-color)] border border-[var(--focus-color)]/20 whitespace-nowrap">
-                            {{ ucfirst($ganjil_genap) }} {{ $akademik }}
-                        </span>
-                    @endif
-                </h2>
-                <p
-                    class="text-[var(--contrast-main-text)] opacity-70 text-xs sm:text-sm flex items-center gap-x-1 gap-y-1 flex-wrap mt-0.5 min-w-0">
-                    <span>NIM. {{ $nim_url ?? '03041282227063' }}</span>
-                    <strong class="opacity-40 mx-1">|</strong>
-                    <span>{{ $mahasiswa->pr_rel->prodi ?? '---' }} ({{ $mahasiswa->pr_rel->kode_dp ?? '---' }})</span>
-                    <strong class="opacity-40 mx-1">|</strong>
-                    <span>{{ $mahasiswa->pr_rel->fakultas_fk ?? '---' }}
-                        ({{ $mahasiswa->pr_rel->kode_fk ?? '---' }})</span>
-                </p>
+                <h3 class="text-base font-bold text-[var(--contrast-main-text)] tracking-wide leading-tight break-words"
+                    x-text="$store.sesi?.nama"></h3>
+
+                <div class="text-xs text-[var(--contrast-second-text)] mt-1">
+                    <span class="font-mono font-medium" x-text="'NIM. ' + $store.sesi?.nim"></span>
+                </div>
+
+                <div
+                    class="mt-1 text-xs text-[var(--contrast-second-text)] flex items-start gap-1.5 font-semibold min-w-0">
+                    <flux:icon icon="book-open" variant="mini" class="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <span class="break-words leading-relaxed">{{ $jadwal->kelas_rel->mk ?? 'Mata Kuliah' }}</span>
+                </div>
             </div>
         </div>
 
-        {{-- Sisi Kanan / Bawah: Grup Tombol dengan Trik Full CSS --}}
-        {{-- Kombinasi flex-row-reverse, justify-start, dan xl:ml-auto menjamin posisi start dari kanan dan scrollbar aktif --}}
-        <div
-            class="flex flex-row-reverse items-center justify-start xl:ml-auto gap-3 w-full xl:w-auto overflow-x-auto scrollbar-tiny flex-nowrap shrink-0 pb-2 pr-2 pl-2 sm:pl-0">
 
-            {{-- TOMBOL UTAMA (Excel) ditaruh paling atas karena urutan flex-row-reverse akan merendernya di posisi paling kanan layar --}}
-            @if ($alpine == 'nilai')
-                <div class="shrink-0 mt-1">
-                    @include('livewire.global.table.export-button', [
-                        'xString' => "exportNilaiMahasiswaExcel($mahasiswa->id, '$ganjil_genap', '$akademik')",
-                        'nameXString' => "Rekap Nilai Mahasiswa $ganjil_genap $akademik",
-                        'autoSmall' => 'sm',
-                    ])
-                </div>
-            @else
-                <div class="shrink-0 mt-1">
-                    @include('livewire.global.table.export-button', [
-                        'xString' => "exportNilaiMahasiswaExcel($mahasiswa->id)",
-                        'nameXString' => 'Rekap Nilai Mahasiswa',
-                        'autoSmall' => 'sm',
-                    ])
-                </div>
-            @endif
 
-            {{-- TOMBOL KEDUA (Capaian) ditaruh di bawahnya, otomatis akan berjejer di sebelah kirinya tombol Excel --}}
-            @if (Auth::user()->admin || Auth::user()->dosen)
-                <div class="shrink-0 mt-1">
-                    @include('livewire.global.table.export-button', [
-                        'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                        'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
-                        'color' => 'blue',
-                        'icon' => 'academic-cap',
-                    ])
-                </div>
-            @endif
-
+        <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+            <span
+                class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-100/60 dark:border-white/10 dark:bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-zinc-600 dark:text-white/70">
+                <span>{{ $jadwal->kelas_rel->sks ?? 0 }} SKS</span>
+            </span>
+            <span
+                class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-100/60 dark:border-white/10 dark:bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-zinc-600 dark:text-white/70">
+                <flux:icon name="clipboard-document-list" class="w-3.5 h-3.5 opacity-80" />
+                <span>RPS: {{ $jadwal->kelas_rel->rps_rel->kode ?? 'Kode-RPS' }}</span>
+            </span>
+            @include('livewire.global.table.badge.kode-wilayah-badge', [
+                'xValue' => $jadwal->kode_jadwal ?? 'Kelas',
+                'sortir' => $jadwal->kode_wilayah ?? null,
+            ])
         </div>
+
     </div>
-    {{--
-    ============================================================
-    GRID INFORMASI UTAMA MAHASISWA — Versi Donut Mini
-    Kolom 1 & 3 pakai donut ring (ada rasio persentase).
-    Kolom 2 & 4 pakai donut tanpa ring (hanya angka di tengah).
-    ============================================================
---}}
 
-    @php
-        $isIps = ($alpine ?? '') === 'nilai';
 
-        // SKS
-        $targetSks = $mahasiswa->pr_rel->target_sks ?? 144;
-        $sksValue = (int) ($totalSks ?? 0);
-        $sksDisplay = $sksValue . ' / ' . $targetSks;
-        $sksSub = $isIps ? 'Kredit terdaftar KHS' : 'Terakumulasi di transkrip';
+    <div x-data="{
+        getIndex(n) {
+                if (n >= 86) return '4.00';
+                if (n >= 80) return '3.70';
+                if (n >= 75) return '3.30';
+                if (n >= 70) return '3.00';
+                if (n >= 65) return '2.70';
+                if (n >= 60) return '2.30';
+                if (n >= 56) return '2.00';
+                if (n >= 40) return '1.00';
+                return '0.00';
+            },
+    
+            getMutu(n) {
+                if (n >= 86) return 'A';
+                if (n >= 80) return 'A-';
+                if (n >= 75) return 'B+';
+                if (n >= 70) return 'B';
+                if (n >= 65) return 'B-';
+                if (n >= 60) return 'C+';
+                if (n >= 56) return 'C';
+                if (n >= 40) return 'D';
+                return 'E';
+            },
+    
+            getStats() {
+                let rawAbsensi = $store.sesi?.list_absensi_array ?? [];
+                let dataAbsensi = Array.isArray(rawAbsensi) ? rawAbsensi : Object.values(rawAbsensi);
+    
+                let totalNilaiAkhir = 0;
+    
+                dataAbsensi.forEach(item => {
+                    let n = parseFloat(item?.nilai);
+    
+                    let rawBobot = item?.bobot ?? item?.bobot_text ?? 0;
+                    let b = parseFloat(String(rawBobot).replace('%', ''));
+    
+                    if (!isNaN(n) && !isNaN(b)) {
+                        let bobotDesimal = b > 1 ? (b / 100) : b;
+                        totalNilaiAkhir += n * bobotDesimal;
+                    }
+                });
+    
+                const nilaiAkhir = isNaN(totalNilaiAkhir) ? 0 : totalNilaiAkhir;
+    
+                // 2. Hitung Statistik Presensi
+                let hadir = 0;
+                let dispensasi = 0;
+                let terlambat = 0;
+                let izin = 0;
+                let sakit = 0;
+                let tidakMasuk = 0;
+                let poin = 0;
+    
+                dataAbsensi.forEach(item => {
+                    const status = item?.status ?? '';
+    
+                    switch (status) {
+                        case 'Hadir':
+                            hadir++;
+                            poin += 2;
+                            break;
+                        case 'Dispensasi':
+                            dispensasi++;
+                            poin += 2;
+                            break;
+                        case 'Terlambat':
+                            terlambat++;
+                            poin += 1;
+                            break;
+                        case 'Izin':
+                            izin++;
+                            tidakMasuk++;
+                            poin += 1;
+                            break;
+                        case 'Sakit':
+                            sakit++;
+                            tidakMasuk++;
+                            poin += 1;
+                            break;
+                        default:
+                            tidakMasuk++;
+                            break;
+                    }
+                });
+    
+                const maxPoin = dataAbsensi.length * 2;
+    
+                return {
+                    masuk: (hadir + dispensasi + terlambat),
+                    hadir,
+                    dispensasi,
+                    terlambat,
+                    izin,
+                    sakit,
+                    tidakMasuk,
+                    poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : 0,
+                    nilai_akhir: nilaiAkhir.toFixed(2),
+                    nilai_index: this.getIndex(nilaiAkhir),
+                    nilai_mutu: this.getMutu(nilaiAkhir)
+                };
+            }
+    }"
+        x-effect="
+        // Memicu reaktivitas Alpine secara mendalam saat isi store berubah
+        JSON.stringify($store.sesi?.list_absensi_array);
+        JSON.stringify($store.nilai?.list_nilai_array);
+    ">
 
-        // MK
-        $mkValue = (int) ($totalMk ?? 0);
-        $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Rencana Pembelajaran Semester';
+        <label class="block text-xs font-semibold uppercase tracking-wider text-[var(--contrast-second-text)] mb-3">
+            Akumulasi Rekap Absensi & Nilai
+        </label>
 
-        // IPK / IPS
-        $ipValue = is_numeric($calculatedIndex) ? (float) $calculatedIndex : 0;
-        $ipDisplay = is_numeric($calculatedIndex)
-            ? number_format($calculatedIndex, 2) . ' / 4.00'
-            : $calculatedIndex . ' / 4.00';
-        $ipLabel = $isIps ? 'IP Semester (IPS)' : 'IPK Akumulatif';
-        $ipSub = $isIps ? 'Indeks Prestasi Semester Aktif' : 'Skala Penilaian Kurikulum OBE';
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 justify-center">
+            <div
+                class="col-span-2 p-2.5 rounded-lg border border-lime-200 dark:border-lime-900/60 bg-lime-50/50 dark:bg-lime-950/20 text-center">
+                <span class="block text-xs font-medium text-lime-700 dark:text-lime-400">Poin</span>
+                <span class="block text-lg font-bold text-lime-800 dark:text-lime-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_poin_absensi ?? 0) + '%'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats()?.poinPersen ?? $store.sesi?.mhs_poin_absensi ?? 0) + '%'"></span>
+                </span>
+            </div>
 
-        // Predikat Mutu — tidak ada rasio, tampilkan huruf di tengah
-        $mutuDisplay = $mutuMhs ?? 'E';
-        $mutuLabel = $isIps ? 'Mutu Semester' : 'Predikat Mutu';
-        $mutuSub = 'Bobot Standar Akademik';
-        // Warna accent predikat
-        $mutuAccent = match (strtoupper($mutuDisplay)) {
-            'A', 'A+' => '#10b981', // 4.0
-            'A-', 'B+', 'B' => '#1d6fb8', // 3.0 - 3.7
-            'B-', 'C+', 'C' => '#f59e0b', // 2.0 - 2.7
-            'D' => '#ef4444', // 1.0 (D)
-            default => '#991b1b', // E (Merah Gelap)
-        };
+            <div
+                class="p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
+                <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Hadir</span>
+                <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_masuk ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().masuk ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-        $mutuSoftBg =
-            'rgba(' .
-            implode(
-                ',',
-                match (strtoupper($mutuDisplay)) {
-                    'A', 'A+' => [16, 185, 129],
-                    'A-', 'B+', 'B' => [29, 111, 184],
-                    'B-', 'C+', 'C' => [245, 158, 11],
-                    'D' => [239, 68, 68],
-                    default => [153, 27, 27],
-                },
-            ) .
-            ',0.12)';
-    @endphp
+            <div
+                class="p-2.5 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
+                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Dispensasi</span>
+                <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_dispensasi ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().dispensasi ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-    <div
-        class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
+            <div
+                class="p-2.5 rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-center">
+                <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Terlambat</span>
+                <span class="block text-lg font-bold text-amber-800 dark:text-amber-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_terlambat ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().terlambat ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-        {{-- 1. SKS — ada rasio, donut penuh --}}
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'scale',
-            'title' => $isIps ? 'SKS Semester' : 'SKS Ditempuh',
-            'sub' => $sksSub,
-            'value' => $sksValue,
-            'max' => $targetSks,
-            'display' => $sksDisplay,
-            'accent' => '#10b981',
-            'softBg' => 'rgba(16,185,129,0.12)',
-            'textColor' => '#10b981',
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            <div
+                class="p-2.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
+                <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Izin</span>
+                <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_izin ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().izin ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-        {{-- 2. MATA KULIAH — tidak ada rasio, angka saja di tengah --}}
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'rectangle-stack',
-            'title' => $isIps ? 'Mata Kuliah Diambil' : 'Mata Kuliah',
-            'sub' => $mkSub,
-            'mainValue' => $mkValue,
-            'display' => 'Mata Kuliah',
-            'accent' => 'var(--focus-color)',
-            'softBg' => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
-            'textColor' => 'var(--focus-color)',
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            <div
+                class="p-2.5 rounded-lg border border-sky-200 dark:border-sky-900/60 bg-sky-50/50 dark:bg-sky-950/20 text-center">
+                <span class="block text-xs font-medium text-sky-700 dark:text-sky-400">Sakit</span>
+                <span class="block text-lg font-bold text-sky-800 dark:text-sky-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_sakit ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().sakit ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-        {{-- 3. IPK / IPS — ada rasio /4.00 --}}
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'trophy',
-            'title' => $ipLabel,
-            'sub' => $ipSub,
-            'value' => $ipValue,
-            'max' => 4,
-            'display' => $ipDisplay,
-            'accent' => 'var(--focus-color)',
-            'softBg' => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
-            'textColor' => 'var(--focus-color)',
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            <div
+                class="p-2.5 rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 text-center">
+                <span class="block text-xs font-medium text-rose-700 dark:text-rose-400">Tidak Hadir</span>
+                <span class="block text-lg font-bold text-rose-800 dark:text-rose-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="($store.sesi?.mhs_tidak_masuk ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi"
+                        x-text="(getStats().tidakMasuk ?? 0) + ' / ' + '{{ $count_sesi ?? 16 }}'"></span>
+                </span>
+            </div>
 
-        {{-- 4. PREDIKAT MUTU — tidak ada rasio, huruf di tengah --}}
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'academic-cap',
-            'title' => $mutuLabel,
-            'sub' => $mutuSub,
-            'value' => $ipValue,
-            'max' => 4,
-            'display' => $mutuDisplay,
-            'accent' => $mutuAccent,
-            'softBg' => $mutuSoftBg,
-            'textColor' => $mutuAccent,
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            {{-- Section Nilai Akhir, Index, & Mutu --}}
+            <div
+                class="col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
+                <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai Akhir</span>
+                <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_akhir ?? '0.00'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_akhir"></span>
+                </span>
+            </div>
 
+            <div
+                class="sm:col-span-1 md:col-span-3 px-2.5 py-4 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
+                <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Index (0-4)</span>
+                <span class="block text-lg font-bold text-blue-800 dark:text-blue-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_index ?? '0.00'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_index"></span>
+                </span>
+            </div>
+
+            <div
+                class="sm:col-span-1 md:col-span-2 px-2.5 py-4 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
+                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Mutu</span>
+                <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
+                    <span wire:loading wire:target="editNilaiAbsensi"
+                        x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_mutu"></span>
+                </span>
+            </div>
+        </div>
     </div>
 </div>
