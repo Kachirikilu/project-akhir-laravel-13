@@ -50,7 +50,7 @@ new class extends Component {
                 {{ __('Are you sure you want to cancel the invitation for :email?', ['email' => $invitationEmail]) }}
             </flux:subheading>
         </div>
-        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+        <div class="flex justify-end gap-x-2 rtl:space-x-reverse">
             <flux:modal.close>
                 <flux:button variant="filled">{{ __('Keep invitation') }}</flux:button>
             </flux:modal.close>

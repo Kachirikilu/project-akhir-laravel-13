@@ -132,7 +132,7 @@ new class extends Component {
             <flux:input wire:model="teamName" :label="__('Team name')" type="text" required autofocus
                 data-test="switcher-create-team-name" />
 
-            <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+            <div class="flex justify-end gap-x-2 rtl:space-x-reverse">
                 <flux:modal.close>
                     <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
                 </flux:modal.close>

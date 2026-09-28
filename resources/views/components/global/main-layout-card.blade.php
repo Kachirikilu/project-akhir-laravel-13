@@ -78,7 +78,7 @@
             $layout_grid =
                 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 gap-4 lg:gap-6 items-start';
         } else {
-            $layout_grid = 'space-y-4';
+            $layout_grid = 'gap-y-4';
         }
     @endphp
     <div class="max-w-[4600px] {{ $layout_grid ?? null }}" x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });

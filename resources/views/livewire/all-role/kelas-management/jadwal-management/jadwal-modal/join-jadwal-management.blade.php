@@ -4,7 +4,7 @@
         @if ($isReady)
 
         <form x-on:submit.prevent="$wire.joinJadwal($store.jadwal.getDataJoinJadwal())" id="jadwalForm">
-            <div class="py-4 space-y-4">
+            <div class="py-4 gap-y-4">
 
                 <div class="flex items-center gap-3.5 pb-2">
                     <div

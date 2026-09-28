@@ -35,7 +35,7 @@
     ])
 
 <div class="relative">
-        <div class="space-y-4">
+        <div class="gap-y-4">
 
 
             <div>
@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <div class="space-y-4">
+            <div class="gap-y-4">
                 <div>
                     <div class="grid grid-cols-4 gap-2 sm:gap-4 items-end" x-data="{}"
                         x-init="$watch('$store.rps.akademik_1', value => {

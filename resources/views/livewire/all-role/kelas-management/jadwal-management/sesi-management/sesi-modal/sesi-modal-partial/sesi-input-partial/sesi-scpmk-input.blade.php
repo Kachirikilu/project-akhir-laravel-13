@@ -5,7 +5,7 @@
         Input Materi Sub-CPMK</h4>
 
 
-    <div class="relative space-y-4">
+    <div class="relative gap-y-4">
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'sesi',
@@ -57,7 +57,7 @@
         Input Metode Sub-CPMK</h4>
 
 
-    <div class="relative space-y-4">
+    <div class="relative gap-y-4">
 
         @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'sesi',

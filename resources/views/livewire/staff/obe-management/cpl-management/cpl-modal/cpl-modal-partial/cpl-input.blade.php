@@ -28,7 +28,7 @@
                         'wireLoading' => 'addCPL, editCPL',
                     ])
 
-                    <div class="space-y-4">
+                    <div class="gap-y-4">
                         <div>
                             @include('livewire.global.modal-form.partial.label', [
                                 'nameXString' => 'Kode CPL',

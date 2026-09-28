@@ -1,5 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-[300ms]">
+    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border gap-y-4 transition-colors duration-[300ms]">
     <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
         <div class="flex items-center gap-3">

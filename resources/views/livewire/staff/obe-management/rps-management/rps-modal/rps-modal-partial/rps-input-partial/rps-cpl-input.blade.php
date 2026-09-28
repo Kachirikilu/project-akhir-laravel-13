@@ -22,7 +22,7 @@
 
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
 
             @include('livewire.staff.obe-management.obe-partial.cpl-list')
 

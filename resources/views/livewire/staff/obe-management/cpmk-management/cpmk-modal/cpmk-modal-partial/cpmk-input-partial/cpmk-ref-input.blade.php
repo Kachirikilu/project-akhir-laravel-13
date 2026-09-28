@@ -17,7 +17,7 @@
 
 
 
-    <div class="space-y-4">
+    <div class="gap-y-4">
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 

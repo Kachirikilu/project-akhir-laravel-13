@@ -12,7 +12,7 @@
             'wireLoading' => 'editNilaiMahasiswa, updateNilaiMahasiswa',
         ])
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             @forelse($nilai_input['list_cpmk_array'] ?? [] as $index => $item)
                 @php
                     $nilaiKon = (float) ($item['nilai_kontribusi'] ?? 0);

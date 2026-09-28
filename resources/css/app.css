@@ -145,14 +145,14 @@
     }
 
     .form-container {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms] px-2;
+        @apply py-6 mt-4 gap-y-4 rounded-lg transition-colors duration-[300ms] px-2;
         border-top-width: 4px;
         border-bottom-width: 4px;
         border-color: var(--border-table-color);
     }
 
     .form-container-excel {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms] px-0;
+        @apply py-6 mt-4 gap-y-4 rounded-lg transition-colors duration-[300ms] px-0;
         border-top-width: 4px;
         border-bottom-width: 4px;
         border-color: var(--border-table-color);

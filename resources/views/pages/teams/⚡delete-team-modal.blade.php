@@ -79,12 +79,12 @@ new class extends Component {
             </flux:subheading>
         </div>
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             <flux:input wire:model="deleteName" :label="$this->deleteConfirmLabel" required
                 data-test="delete-team-name" />
         </div>
 
-        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+        <div class="flex justify-end gap-x-2 rtl:space-x-reverse">
             <flux:modal.close>
                 <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>

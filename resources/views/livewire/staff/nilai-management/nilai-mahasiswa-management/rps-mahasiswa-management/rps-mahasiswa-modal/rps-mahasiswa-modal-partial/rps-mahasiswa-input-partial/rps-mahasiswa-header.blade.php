@@ -1,5 +1,5 @@
 <div
-    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+    class="px-4 py-6 mt-4 bg-[var(--main-table-color)] table-border shadow-sm rounded-lg border gap-y-4 transition-colors duration-300">
     <div
         class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--contrast-second-text)] pb-4">
 
@@ -124,7 +124,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 justify-center">
 
             <div
-                class="sm:col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
+                class="col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai Akhir</span>
                 <span class="block text-lg font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
                     <span x-text="nilaiAkhir">0</span>

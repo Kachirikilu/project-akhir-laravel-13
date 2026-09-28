@@ -148,7 +148,7 @@ new class extends Component {
 
 <flux:modal name="two-factor-setup-modal" class="max-w-md md:min-w-md" @close="closeModal">
     <div class="space-y-6">
-        <div class="flex flex-col items-center space-y-4">
+        <div class="flex flex-col items-center gap-y-4">
             <div
                 class="p-0.5 w-auto rounded-full border border-stone-100 dark:border-stone-600 bg-white dark:bg-stone-800 shadow-sm">
                 <div
@@ -227,7 +227,7 @@ new class extends Component {
             </flux:button>
         </div>
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             <div class="relative flex items-center justify-center w-full">
                 <div class="absolute inset-0 w-full h-px top-1/2 bg-stone-200 dark:bg-stone-600"></div>
                 <span class="relative px-2 text-sm bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400">
@@ -235,7 +235,7 @@ new class extends Component {
                 </span>
             </div>
 
-            <div class="flex items-center space-x-2" x-data="{
+            <div class="flex items-center gap-x-2" x-data="{
                 copied: false,
                 async copy() {
                     try {

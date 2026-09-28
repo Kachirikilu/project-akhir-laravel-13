@@ -1,4 +1,4 @@
-<div class="space-y-4">
+<div class="gap-y-4">
     @if (Auth::user()->tingkat < 3)
         @include('livewire.global.modal-form.input-array.search-input-form', [
             'alpine' => 'cpl',

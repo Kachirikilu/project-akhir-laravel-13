@@ -1,4 +1,4 @@
-<div class="space-y-4">
+<div class="gap-y-4">
     {{-- HEADER --}}
     <div class="flex items-center gap-3">
         <div class="p-2 bg-emerald-600 rounded-lg shadow-sm shadow-emerald-200">

@@ -92,7 +92,7 @@
     {{-- SYSTEM TOGGLE --}}
     {{-- ===================== --}}
     @if (!($noToggle ?? false))
-        <div class="cursor-pointer flex items-center space-x-2 whitespace-nowrap" x-show="expanded" x-cloak
+        <div class="cursor-pointer flex items-center gap-x-2 whitespace-nowrap" x-show="expanded" x-cloak
             x-transition:enter="transition-all duration-[300ms] ease-out" x-transition:enter-start="opacity-0 translate-x-4"
             x-transition:enter-end="opacity-100 translate-x-0" x-transition:leave="transition-all duration-[200ms] ease-in"
             x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4">

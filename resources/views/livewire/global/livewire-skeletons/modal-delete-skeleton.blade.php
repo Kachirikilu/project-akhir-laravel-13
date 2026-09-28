@@ -1,5 +1,5 @@
 <div class="animate-pulse space-y-8 p-2">
-    <div class="space-y-4">
+    <div class="gap-y-4">
         <div class="h-6 w-2/3 md:w-1/2 rounded bg-[var(--main-table-color)]"></div>
         
         <div class="space-y-3">

@@ -55,7 +55,7 @@ new class extends Component {
                 {{ __('Are you sure you want to remove :name from this team?', ['name' => $memberName]) }}
             </flux:subheading>
         </div>
-        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+        <div class="flex justify-end gap-x-2 rtl:space-x-reverse">
             <flux:modal.close>
                 <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>

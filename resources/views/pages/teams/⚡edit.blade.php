@@ -156,7 +156,7 @@ new class extends Component {
         <div class="space-y-10">
             <div class="space-y-6">
                 @if ($this->permissions->canUpdateTeam)
-                    <div class="space-y-4">
+                    <div class="gap-y-4">
                         <form wire:submit="updateTeam" class="space-y-6">
                             <flux:input wire:model="teamName" :label="__('Team name')" required
                                 data-test="team-name-input" />
@@ -294,7 +294,7 @@ new class extends Component {
                     </div>
 
                     <div
-                        class="space-y-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-200/10 dark:bg-red-900/20 dark:text-red-100">
+                        class="gap-y-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-200/10 dark:bg-red-900/20 dark:text-red-100">
                         <div>
                             <p class="font-medium">{{ __('Warning') }}</p>
                             <p class="text-sm">{{ __('Please proceed with caution, this cannot be undone.') }}</p>

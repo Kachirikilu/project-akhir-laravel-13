@@ -18,7 +18,7 @@
 
     <div class="relative">
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
 
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
 

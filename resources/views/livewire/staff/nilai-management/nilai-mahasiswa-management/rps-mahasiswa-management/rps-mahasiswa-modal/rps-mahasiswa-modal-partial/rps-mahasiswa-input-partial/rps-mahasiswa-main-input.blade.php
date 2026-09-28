@@ -12,7 +12,7 @@
             'wireLoading' => 'editNilaiMahasiswa, updateNilaiMahasiswa',
         ])
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             @forelse(array_slice($nilai_input['list_nilai_array'] ?? [], $indexStart ?? 0, $indexLenght ?? 16, true) as $index => $item)
                 <div
                     class="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 flex flex-col">
@@ -40,7 +40,7 @@
                     </div>
 
                     {{-- Form Input Nilai & Bobot --}}
-                    <div class="grid sm:grid-cols-4 space-y-4 sm:space-y-0 gap-4 mt-3">
+                    <div class="grid sm:grid-cols-4 gap-y-4 sm:space-y-0 gap-4 mt-3">
                         <div class="sm:col-span-4 w-full">
                             <div class="grid grid-cols-4 gap-3">
 

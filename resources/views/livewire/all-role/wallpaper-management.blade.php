@@ -69,7 +69,7 @@
     @endif
 
     <!-- Kontrol Opacity & Brightness -->
-    <div class="pt-4 border-t border-[var(--border-table-color)] space-y-4">
+    <div class="pt-4 border-t border-[var(--border-table-color)] gap-y-4">
         @include('livewire.all-role.wallpaper-manager.wallpaper-slider-input', ['type' => 'opacity'])
         @include('livewire.all-role.wallpaper-manager.wallpaper-slider-input', ['type' => 'brightness'])
     </div>

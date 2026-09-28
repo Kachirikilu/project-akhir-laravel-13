@@ -81,7 +81,7 @@ new #[Title('Theme Settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Theme Settings') }}</flux:heading>
     <x-pages::settings.layout :heading="__('Theme')" :subheading="__('Atur Tema pada Dashboard Akun Anda')">
-        <div class="space-y-4 w-full max-w-lg">
+        <div class="gap-y-4 w-full max-w-lg">
             {{-- Radio Group Appearance --}}
             <flux:radio.group x-data variant="segmented" x-model="$flux.appearance"
                 class="!bg-[var(--sub-table-color)] !border !border-[var(--border-table-color)] p-1 rounded-lg w-full flex">
@@ -188,7 +188,7 @@ new #[Title('Theme Settings')] class extends Component {
             
 
             <!-- Kontrol Opacity & Brightness -->
-            <div class="pt-4 border-t border-[var(--border-table-color)] space-y-4">
+            <div class="pt-4 border-t border-[var(--border-table-color)] gap-y-4">
                 <div class="flex flex-col gap-1">
                     <div class="flex justify-between text-xs text-[var(--contrast-main-text)] opacity-70">
                         <span>Opacity</span>
@@ -215,7 +215,7 @@ new #[Title('Theme Settings')] class extends Component {
         </div>
 
 
-        <div class="space-y-4 w-full max-w-lg">
+        <div class="gap-y-4 w-full max-w-lg">
             {{-- Container Tema (Atas) --}}
             <div class="space-y-2 w-full">
                 <div class="w-full flex justify-center">

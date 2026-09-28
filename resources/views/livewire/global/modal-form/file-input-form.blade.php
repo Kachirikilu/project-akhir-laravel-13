@@ -23,7 +23,7 @@
                 {{-- Status Loading --}}
                 <div wire:loading.flex wire:target="{{ $modelString }}, {{ $wireLoading ?? null }}"
                     class="absolute inset-y-0 right-3 items-center">
-                    <div class="text-[var(--focus-color)] flex items-center space-x-2 text-xs pl-2 rounded-r-lg">
+                    <div class="text-[var(--focus-color)] flex items-center gap-x-2 text-xs pl-2 rounded-r-lg">
                         <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"

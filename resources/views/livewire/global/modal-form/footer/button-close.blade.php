@@ -1,5 +1,5 @@
 <div
-    class="py-2 sm:py-4 mt-4 space-y-4 rounded-lg border-[var(--border-table-color)] px-2 sm:px-4 bg-[var(--main-table-color)] shadow-sm border">
+    class="py-2 sm:py-4 mt-4 gap-y-4 rounded-lg border-[var(--border-table-color)] px-2 sm:px-4 bg-[var(--main-table-color)] shadow-sm border">
     <flux:modal.close>
         <flux:button variant="primary"
             class="text-xs sm:text-sm cursor-pointer w-full sm:w-auto sm:px-12 

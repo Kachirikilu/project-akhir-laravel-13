@@ -25,7 +25,7 @@
                                 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
                                 Input Tanggal Akses Nilai Mahasiswa</h4>
 
-                            <div class="space-y-4">
+                            <div class="gap-y-4">
 
                                 <div class="space-y-2">
 

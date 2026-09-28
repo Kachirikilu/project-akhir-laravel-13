@@ -1,59 +1,121 @@
-<div x-data="{ step: 1, isOpen: false }"
-    x-effect="
-        if ($wire.showSesiModal && !isOpen) {
-            step = 1
-        }
-        isOpen = $wire.showSesiModal
-    ">
-    {{-- 🔹 HEADER TAB CONTAINER --}}
-    @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'Pertemuan 1-4', 2 => 'Pertemuan 5-8', 3 => 'Pertemuan 9-12', 4 => 'Pertemuan 13-16'],
-        'errorsCount' => $this->getAbsenErrorSections(),
-    ])
+<div
+    class="form-container">
 
-    {{-- 🔹 CONTENT --}}
-    <div class="mt-4">
-        @include('livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-modal-partial.nilai-absensi-input-partial.nilai-absensi-header')
-        <div x-show="step === 1">
-            @include(
-                'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-modal-partial.nilai-absensi-input-partial.nilai-absensi-main-input',
-                [
-                    'indexStart' => 0,
-                    'indexLenght' => 4,
-                ]
-            )
-        </div>
-        <div x-show="step === 2">
-            @include(
-                'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-modal-partial.nilai-absensi-input-partial.nilai-absensi-main-input',
-                [
-                    'indexStart' => 4,
-                    'indexLenght' => 4,
-                ]
-            )
-        </div>
-        <div x-show="step === 3">
-            @include(
-                'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-modal-partial.nilai-absensi-input-partial.nilai-absensi-main-input',
-                [
-                    'indexStart' => 8,
-                    'indexLenght' => 4,
-                ]
-            )
-        </div>
-        <div x-show="step === 4">
-            @include(
-                'livewire.all-role.kelas-management.jadwal-management.sesi-management.sesi-modal.nilai-modal-partial.nilai-absensi-input-partial.nilai-absensi-main-input',
-                [
-                    'indexStart' => 12,
-                    'indexLenght' => null,
-                ]
-            )
-        </div>
+    <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
+
+        <h4 class="text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium">
+            Histori Nilai & Absensi Mahasiswa</h4>
     </div>
 
-    {{-- 🔹 FOOTER STEPPER --}}
-    @include('livewire.global.modal-form.paginate.stepper-form', [
-        'maxStep' => 4,
-    ])
+    <div class="relative">
+        <div class="gap-y-4">
+            @forelse(array_slice($sesi_input['list_absensi_array'], $indexStart, $indexLenght, true) as $index => $item)
+                <div
+                    class="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 flex flex-col">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-[var(--focus-color)]">
+                            Pertemuan Ke-{{ $item['pertemuan_ke'] }}
+                        </span>
+                        <span class="flex flex-wrap gap-2 sm:gap-3">
+                            <x-label-card type="sm">{{ $item['tanggal_carbon'] }}</x-label-card>
+                            
+                           <flux:badge icon="academic-cap" color="violet" size="sm">
+                                {{ $item['kode_cpmk'] ?? '---' }}
+                            </flux:badge>
+
+                            <flux:badge icon="academic-cap" color="fuchsia" size="sm">
+                                {{ $item['kode_scpmk'] ?? '---' }}
+                            </flux:badge>
+
+                            @include('livewire.global.table.badge.metode-badge', [
+                                'xValue' => $item['metode'],
+                            ])
+                        </span>
+                    </div>
+
+                    <div class="grid sm:grid-cols-4 gap-y-4 gap-x-2 mt-3">
+                        <div class="sm:col-span-2">
+                            <div class="grid grid-cols-3 space-x-1">
+                                <div class="sm:col-span-2">
+                                    @include('livewire.global.modal-form.input-form', [
+                                        'alpine' => 'sesi',
+                                        'isLivewire' => 1,
+                                        'nameXString' => 'Nilai',
+                                        'modelString' => 'list_absensi_array',
+                                        'floatOnly' => 1,
+                                        'maxValue' => 100,
+                                        'itemsString' => "$index.nilai",
+                                        'iconString' => 'chart-bar',
+                                        'placeholder' => 'Masukkan Nilai...',
+                                        'isRequired' => 0,
+                                        'message' => $errors->first("list_absensi_array.$index.nilai"),
+                                    ])
+                                </div>
+                                <div class="sm:col-span-1">
+                                    @include('livewire.global.modal-form.input-form', [
+                                        'alpine' => 'sesi',
+                                        'isLivewire' => 1,
+                                        'isReadonly' => 1,
+                                        'nameXString' => 'Bobot',
+                                        'modelString' => 'list_absensi_array',
+                                        'itemsString' => "$index.bobot_text",
+                                        'iconString' => 'scale',
+                                        'placeholder' => 'Masukkan Bobot...',
+                                        'isRequired' => 0,
+                                        'message' => $errors->first("list_absensi_array.$index.bobot"),
+                                    ])
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            @include('livewire.global.modal-form.select-form', [
+                                'alpine' => 'sesi',
+                                'isLivewire' => 1,
+                                'nameXString' => 'Status',
+                                'modelString' => 'list_absensi_array',
+                                'itemsString' => "$index.status",
+                                'xOptions' => [
+                                    'Hadir',
+                                    'Dispensasi',
+                                    'Terlambat',
+                                    'Izin',
+                                    'Sakit',
+                                    'Absen',
+                                    'Belum Presensi',
+                                ],
+                                'iconString' => 'tag',
+                                'placeholder' => 'Pilih Status...',
+                                'isRequired' => 0,
+                                'message' => $errors->first("list_absensi_array.$index.status"),
+                            ])
+                        </div>
+                        <div class="sm:col-span-4">
+                            @include('livewire.global.modal-form.input-form', [
+                                'alpine' => 'sesi',
+                                'isLivewire' => 1,
+                                'nameXString' => 'Keterangan',
+                                'modelString' => 'list_absensi_array',
+                                'itemsString' => "$index.keterangan",
+                                'iconString' => 'pencil-square',
+                                'placeholder' => 'Masukkan Keterangan',
+                                'isRequired' => 0,
+                                'message' => $errors->first("list_absensi_array.$index.keterangan"),
+                            ])
+                        </div>
+
+                    </div>
+
+                </div>
+            @empty
+                <div
+                    class="h-48 flex justify-center items-center p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 flex flex-col gap-2">
+                    Tidak ada Sesi Perkuliahan pada Jadwal Kelas ini!
+                </div>
+            @endforelse
+        </div>
+
+    </div>
+
+
 </div>

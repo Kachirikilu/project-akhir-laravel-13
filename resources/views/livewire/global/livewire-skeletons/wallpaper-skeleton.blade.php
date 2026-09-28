@@ -9,7 +9,7 @@
         @endfor
     </div>
 
-    <div class="pt-4 border-t border-[var(--border-table-color)] space-y-4">
+    <div class="pt-4 border-t border-[var(--border-table-color)] gap-y-4">
         <div class="h-5 w-full bg-[var(--border-table-color)] rounded-lg"></div>
         <div class="h-5 w-full bg-[var(--border-table-color)] rounded-lg"></div>
     </div>

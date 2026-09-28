@@ -5,7 +5,7 @@
         Input Metode Sub-CPMK</h4>
 
 
-    <div class="relative space-y-4">
+    <div class="relative gap-y-4">
 
         <div class="grid sm:grid-cols-4 gap-3 items-start">
 

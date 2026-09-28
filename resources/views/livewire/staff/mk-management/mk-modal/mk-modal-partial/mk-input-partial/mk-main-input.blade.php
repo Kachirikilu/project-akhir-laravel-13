@@ -17,7 +17,7 @@
     <div class="relative">
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'handleAddMK, editMK'])
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             <div>
                 <div class="grid grid-cols-6 gap-2 items-end">
 

@@ -64,7 +64,7 @@ new class extends Component {
             <flux:subheading>{{ __('Send an invitation to join this team.') }}</flux:subheading>
         </div>
 
-        <div class="space-y-4">
+        <div class="gap-y-4">
             <flux:input wire:model="inviteEmail" type="email" :label="__('Email address')" required
                 data-test="invite-email" />
 
@@ -75,7 +75,7 @@ new class extends Component {
             </flux:select>
         </div>
 
-        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+        <div class="flex justify-end gap-x-2 rtl:space-x-reverse">
             <flux:modal.close>
                 <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>

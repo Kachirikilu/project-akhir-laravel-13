@@ -127,7 +127,7 @@ new #[Title('Profile Settings')] class extends Component {
         </flux:subheading>
 
         <form wire:submit.prevent="updatePhotoProfile" class="my-6 w-full space-y-6">
-            <div class="space-y-4 mb-9">
+            <div class="gap-y-4 mb-9">
                 <flux:label :label="__('Profile Photo')" for="photo" />
 
                 <div class="flex items-center space-x-6 mb-4">

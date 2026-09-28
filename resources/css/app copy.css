@@ -39,12 +39,12 @@
     /* Border */
 
     .form-container {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms];
+        @apply py-6 mt-4 gap-y-4 rounded-lg transition-colors duration-[300ms];
         @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
         @apply px-2 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
     }
     .form-container-excel {
-        @apply py-6 mt-4 space-y-4 rounded-lg transition-colors duration-[300ms];
+        @apply py-6 mt-4 gap-y-4 rounded-lg transition-colors duration-[300ms];
         @apply border-y-4 max-sm:border-[var(--focus-color)] border-[var(--border-table-color)];
         @apply px-0 sm:px-4 sm:bg-[var(--main-table-color)] sm:shadow-sm sm:border;
     }
