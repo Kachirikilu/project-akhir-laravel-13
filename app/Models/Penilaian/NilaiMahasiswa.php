@@ -364,14 +364,15 @@ class NilaiMahasiswa extends Model
                 })
                 ->values();
 
-            // 2. Ambil keywords filter dari .env
-            // $envUtsFields = config('rps.uts_fields');
-            // $envUasFields = config('rps.uas_fields');
+            // 2. Ambil & Normalisasi Config UTS/UAS secara Aman
+            $utsConfig = config('rps.uts_fields', []);
+            $uasConfig = config('rps.uas_fields', []);
 
-            // $utsFields = array_map('trim', explode(',', $envUtsFields));
-            // $uasFields = array_map('trim', explode(',', $envUasFields));
-            $utsFields = config('rps.uts_fields');
-            $uasFields = config('rps.uas_fields');
+            $rawUts = is_array($utsConfig) ? $utsConfig : explode(',', (string) $utsConfig);
+            $rawUas = is_array($uasConfig) ? $uasConfig : explode(',', (string) $uasConfig);
+
+            $utsFields = array_map('trim', array_map('strtoupper', $rawUts));
+            $uasFields = array_map('trim', array_map('strtoupper', $rawUas));
 
             // 3. Deteksi apakah RPS sudah punya baris UTS/UAS bawaan
             $hasUts = $allScpmk->contains(function ($item) use ($utsFields) {

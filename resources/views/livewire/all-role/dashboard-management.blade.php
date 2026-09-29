@@ -13,19 +13,19 @@
 
     <div class="flex flex-col gap-6 p-1 sm:p-3 max-w-5xl mx-auto">
         @if (Auth::user()->admin)
-            @include('livewire.all-role.dashboard-management.dashboard-admin')
+            @include('livewire.all-role.dashboard-management.dashboard-view.dashboard-admin')
         @endif
 
         @if (Auth::user()->dosen)
-            @include('livewire.all-role.dashboard-management.dashboard-dosen')
+            @include('livewire.all-role.dashboard-management.dashboard-view.dashboard-dosen')
         @endif
 
         @if (Auth::user()->mahasiswa)
-            @include('livewire.all-role.dashboard-management.dashboard-mahasiswa')
+            @include('livewire.all-role.dashboard-management.dashboard-view.dashboard-mahasiswa')
         @endif
     </div>
     <div class="mt-6 gap-6 px-1 sm:px-3 max-w-5xl mx-auto">
-        @include('livewire.all-role.dashboard-management.dashboard-card')
+        @include('livewire.all-role.dashboard-management.dashboard-view.dashboard-card')
     </div>
 
 </div>

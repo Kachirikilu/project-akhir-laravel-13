@@ -188,9 +188,19 @@ trait LogicSearch
             return false;
         }
 
-        // 1. Ambil data alias dari ENV
-        $utsFields = array_map('trim', explode(',', strtolower(config('rps.uts_fields'))));
-        $uasFields = array_map('trim', explode(',', strtolower(config('rps.uas_fields'))));
+        // Helper closure untuk normalisasi config
+        $parseFields = function ($key) {
+            $val = config($key, []);
+            if (is_string($val)) {
+                $val = explode(',', $val);
+            }
+
+            return array_map('trim', array_map('strtolower', (array) $val));
+        };
+
+        // 1. Ambil data alias dari config/ENV
+        $utsFields = $parseFields('rps.uts_fields');
+        $uasFields = $parseFields('rps.uas_fields');
 
         // Normalize target dan search spasi agar rapi
         $targetNormalized = preg_replace('/\s+/', ' ', $target);

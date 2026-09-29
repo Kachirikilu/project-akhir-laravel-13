@@ -18,32 +18,35 @@ class ProcessRekapCapaian implements ShouldQueue
 
     protected $cooldown;
 
-    public function __construct($prId = null, $cooldown = 60)
+    public function __construct($prId = null, $cooldown = null)
     {
         $this->prId = $prId;
-        $this->cooldown = $cooldown;
+
+        $defaultCooldown = $prId === null
+            ? env('COOLDOWN_REKAP_ALL', 60)
+            : env('COOLDOWN_REKAP_PRODI', 15);
+
+        $this->cooldown = (int) ($cooldown ?? $defaultCooldown);
     }
 
     public $timeout = 86400;
+
     public $failOnTimeout = true;
 
     public function handle()
     {
         try {
-            // =========================================================================
-            // TRIK ANONYMOUS CLASS: Memakai Trait secara instan tanpa membuat file baru
-            // =========================================================================
             $rekapService = new class
             {
                 use RekapCapaian;
             };
 
-            // Sekarang method di dalam Trait bisa dipanggil langsung dengan aman!
             $rekapService->generateRekapCapaianQueue($this->prId);
 
             $cacheKey = 'cooldown_rekap_pr_'.($this->prId ?? 'all');
             $waktuSelesaiCooldown = time() + ($this->cooldown * 60);
-            Cache::put($cacheKey, $waktuSelesaiCooldown, now()->addMinutes($this->cooldown));
+
+            Cache::put($cacheKey, $waktuSelesaiCooldown, now()->addMinutes((int) $this->cooldown));
 
         } finally {
             $runningAllKey = 'rekap_capaian_running_all';

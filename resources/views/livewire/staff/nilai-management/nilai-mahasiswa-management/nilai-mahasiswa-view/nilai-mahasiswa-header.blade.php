@@ -97,7 +97,7 @@
                     <span class="break-words">{{ $mahasiswa->name ?? 'Wildan Athif Muttaqien' }}</span>
                     @if ($ganjil_genap || $akademik)
                         <span
-                            class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md bg-[var(--focus-color)] text-[var(--focus-color)] border border-[var(--focus-color)] whitespace-nowrap">
+                            class="text-[10px] sm:text-xs font-semibold px-2 sm:px-4 py-0.5 sm:py-1 rounded-md text-[var(--focus-color)] border border-[var(--focus-color)] whitespace-nowrap">
                             {{ ucfirst($ganjil_genap) }} {{ $akademik }}
                         </span>
                     @endif
