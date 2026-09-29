@@ -31,13 +31,13 @@
         </div>
 
         @if (!$customWallpapers->isNotEmpty())
-            @include('livewire.all-role.wallpaper-manager.wallpaper-input')
+            @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-input')
         @endif
 
 
         <!-- 2. Loop Wallpaper -->
         @foreach ($defaultWallpapers as $wp)
-            @include('livewire.all-role.wallpaper-manager.wallpaper-items', ['noDelete' => 1])
+            @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-items', ['noDelete' => 1])
         @endforeach
 
     </div>
@@ -54,9 +54,9 @@
 
         <div wire:target="loadingCustomWallpaper, deleteWallpaper" wire:loading.class="opacity-50 pointer-events-none"
             class="flex gap-3 overflow-x-auto scrollbar-medium snap-x pb-2 mb-2">
-            @include('livewire.all-role.wallpaper-manager.wallpaper-input')
+            @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-input')
             @foreach ($customWallpapers as $wp)
-                @include('livewire.all-role.wallpaper-manager.wallpaper-items')
+                @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-items')
             @endforeach
         </div>
 
@@ -70,8 +70,8 @@
 
     <!-- Kontrol Opacity & Brightness -->
     <div class="pt-4 border-t border-[var(--border-table-color)] space-y-4">
-        @include('livewire.all-role.wallpaper-manager.wallpaper-slider-input', ['type' => 'opacity'])
-        @include('livewire.all-role.wallpaper-manager.wallpaper-slider-input', ['type' => 'brightness'])
+        @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-slider-input', ['type' => 'opacity'])
+        @include('livewire.all-role.wallpaper-management.wallpaper-view.wallpaper-slider-input', ['type' => 'brightness'])
     </div>
 
 </div>

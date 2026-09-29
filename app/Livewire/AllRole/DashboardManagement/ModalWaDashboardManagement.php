@@ -23,6 +23,6 @@ class ModalWaDashboardManagement extends Component
 
     public function render()
     {
-            return view('livewire.all-role.dashboard-management.modal-wa-dashboard-management');
+            return view('livewire.all-role.dashboard-management.dashboard-modal.modal-wa-dashboard-management');
     }
 }

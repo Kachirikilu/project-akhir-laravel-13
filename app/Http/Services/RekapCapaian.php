@@ -826,68 +826,69 @@ trait RekapCapaian
         }
     }
 
-    protected function buildCpmkMeetingMap(RPS $rps): array
-    {
-        $mapping = [];
+protected function buildCpmkMeetingMap(RPS $rps): array
+{
+    $mapping = [];
 
-        $utsKeywords = collect(
-            explode(',', config('rps.uts_fields'))
-        )
+    // Helper closure untuk normalisasi config baik array maupun string koma
+    $parseConfig = function ($configKey) {
+        $val = config($configKey, []);
+        if (is_string($val)) {
+            $val = explode(',', $val);
+        }
+        return collect($val)
             ->map(fn ($v) => strtoupper(trim($v)))
             ->filter()
             ->values();
+    };
 
-        $uasKeywords = collect(
-            explode(',', config('rps.uas_fields'))
-        )
-            ->map(fn ($v) => strtoupper(trim($v)))
-            ->filter()
-            ->values();
+    $utsKeywords = $parseConfig('rps.uts_fields');
+    $uasKeywords = $parseConfig('rps.uas_fields');
 
-        $meetingIndex = 0;
+    $meetingIndex = 0;
 
-        $allScpmks = $rps->cpmks
-            ->flatMap(fn ($cpmk) => $cpmk->scpmks);
+    $allScpmks = $rps->cpmks
+        ->flatMap(fn ($cpmk) => $cpmk->scpmks);
 
-        $hasUTS = $allScpmks->contains(function ($scpmk) use ($utsKeywords) {
-            return $utsKeywords->contains(
-                strtoupper(trim($scpmk->metode ?? ''))
-            );
-        });
+    $hasUTS = $allScpmks->contains(function ($scpmk) use ($utsKeywords) {
+        return $utsKeywords->contains(
+            strtoupper(trim($scpmk->metode ?? ''))
+        );
+    });
 
-        $hasUAS = $allScpmks->contains(function ($scpmk) use ($uasKeywords) {
-            return $uasKeywords->contains(
-                strtoupper(trim($scpmk->metode ?? ''))
-            );
-        });
+    $hasUAS = $allScpmks->contains(function ($scpmk) use ($uasKeywords) {
+        return $uasKeywords->contains(
+            strtoupper(trim($scpmk->metode ?? ''))
+        );
+    });
 
-        $cpmks = $rps->cpmks->sortBy(function ($cpmk) {
-            return $cpmk->pivot->sort_order ?? 0;
-        });
+    $cpmks = $rps->cpmks->sortBy(function ($cpmk) {
+        return $cpmk->pivot->sort_order ?? 0;
+    });
 
-        foreach ($cpmks as $cpmk) {
+    foreach ($cpmks as $cpmk) {
 
-            $mapping[$cpmk->id] = [];
+        $mapping[$cpmk->id] = [];
 
-            $scpmks = $cpmk->scpmks
-                ->sortBy(function ($scpmk) {
-                    return $scpmk->pivot->sort_order ?? 0;
-                });
+        $scpmks = $cpmk->scpmks
+            ->sortBy(function ($scpmk) {
+                return $scpmk->pivot->sort_order ?? 0;
+            });
 
-            foreach ($scpmks as $scpmk) {
-                if (! $hasUTS && $meetingIndex === 7) {
-                    $meetingIndex++;
-                }
-                if (! $hasUAS && $meetingIndex === 15) {
-                    $meetingIndex++;
-                }
-
-                $mapping[$cpmk->id][] = $meetingIndex;
-
+        foreach ($scpmks as $scpmk) {
+            if (! $hasUTS && $meetingIndex === 7) {
                 $meetingIndex++;
             }
-        }
+            if (! $hasUAS && $meetingIndex === 15) {
+                $meetingIndex++;
+            }
 
-        return $mapping;
+            $mapping[$cpmk->id][] = $meetingIndex;
+
+            $meetingIndex++;
+        }
     }
+
+    return $mapping;
+}
 }
