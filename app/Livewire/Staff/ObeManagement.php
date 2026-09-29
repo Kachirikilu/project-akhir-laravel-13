@@ -149,7 +149,7 @@ class ObeManagement extends Component
         'filterDosen' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
-        'sortDirection' => ['except' => 'asc'],
+        'sortDirection' => ['except' => 'desc'],
         'showDeleted' => ['except' => false],
     ];
 

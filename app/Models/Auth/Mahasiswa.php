@@ -102,7 +102,8 @@ class Mahasiswa extends Model
     protected function tingkat(): Attribute
     {
         return Attribute::get(function () {
-            return $this->tingkat_user;
+            $val = $this->attributes['tingkat_user'] ?? null;
+            return $val !== null ? (int) $val : null;
         });
     }
 
@@ -261,7 +262,7 @@ class Mahasiswa extends Model
             $mahasiswaKeywords = ['5', 'umum', 'mahasiswa umum', 'mahasiswa'];
 
             if (in_array($searchLower, $mahasiswaKeywords)) {
-                $q->orWhere('mahasiswas.tingkat_user', 5);
+                $q->orWhere('mahasiswas.tingkat_user', '5');
             }
 
             /*

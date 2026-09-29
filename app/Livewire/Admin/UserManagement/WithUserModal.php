@@ -382,67 +382,79 @@ trait WithUserModal
     {
         $role = strtolower(trim($role ?? ''));
 
-        if ($value === null || $value === '' || empty($value)) {
-            return $role === 'admin' ? 4 : 5;
+        // 1. Tentukan nilai awal (secara default/fallback)
+        $tingkat = null;
+
+        if ($value !== null && $value !== '') {
+            if (is_numeric($value)) {
+                // Jika numeric (int/numeric-string), paksa cast ke integer
+                $tingkat = (int) $value;
+            } else {
+                // Jika string teks, lakukan lookup di mapping
+                $mapTingkat = [
+                    // Admin Mapping
+                    'admin program studi' => 4,
+                    'admin departemen' => 3,
+                    'admin fakultas' => 2,
+                    'admin '.strtolower(config('app.univ')) => 1,
+                    'admin univ' => 1,
+                    'admin universitas' => 1,
+                    'admin' => 4,
+                    'super admin' => 1,
+                    'admin uni' => 1,
+                    'admin fk' => 2,
+                    'admin dp' => 3,
+                    'admin pr' => 4,
+
+                    // Dosen Mapping
+                    'dosen umum' => 5,
+                    'dosen program studi' => 4,
+                    'dosen departemen' => 3,
+                    'dosen fakultas' => 2,
+                    'dosen '.strtolower(config('app.univ')) => 1,
+                    'dosen univ' => 1,
+                    'dosen universitas' => 1,
+                    'super dosen' => 1,
+                    'dosen uni' => 1,
+                    'dosen fk' => 2,
+                    'dosen dp' => 3,
+                    'dosen pr' => 4,
+                    'dosen' => 5,
+
+                    // Mahasiswa Mapping
+                    'mahasiswa' => 5,
+
+                    'univ' => 1,
+                    'uni' => 1,
+                    'fk' => 2,
+                    'dp' => 3,
+                    'pr' => 4,
+                    'umum' => 5,
+
+                    'program studi' => 4,
+                    'departemen' => 3,
+                    'fakultas' => 2,
+                    'universitas' => 1,
+                    'universitas sriwijaya' => 1,
+                    'unsri' => 1,
+                    strtolower(config('app.univ')) => 1,
+                    strtolower(config('app.universitas')) => 1,
+                ];
+
+                $key = strtolower(trim((string) $value));
+                if (isset($mapTingkat[$key])) {
+                    $tingkat = (int) $mapTingkat[$key];
+                }
+            }
         }
 
-        if (! is_numeric($value)) {
-            $mapTingkat = [
-                'admin program studi' => 4,
-                'admin departemen' => 3,
-                'admin fakultas' => 2,
-                'admin '.strtolower(config('app.univ')) => 1,
-                'admin univ' => 1,
-                'admin universitas' => 1,
-                'admin' => 4,
-                'super admin' => 1,
-                'admin uni' => 1,
-                'admin fk' => 2,
-                'admin dp' => 3,
-                'admin pr' => 4,
-
-
-                // Dosen Mapping
-                'dosen umum' => 5,
-                'dosen program studi' => 4,
-                'dosen departemen' => 3,
-                'dosen fakultas' => 2,
-                'dosen '.strtolower(config('app.univ')) => 1,
-                'dosen univ' => 1,
-                'dosen universitas' => 1,
-                'super dosen' => 1,
-                'dosen uni' => 1,
-                'dosen fk' => 2,
-                'dosen dp' => 3,
-                'dosen pr' => 4,
-                'dosen' => 5,
-
-                // Mahasiswa Mapping
-                'mahasiswa' => 5,
-
-                'univ' => 1,
-                'uni' => 1,
-                'fk' => 2,
-                'dp' => 3,
-                'pr' => 4,
-                'umum' => 5,
-
-                'program studi' => 4,
-                'departemen' => 3,
-                'fakultas' => 2,
-                'universitas' => 1,
-                'universitas sriwijaya' => 1,
-                'unsri' => 1,
-                strtolower(config('app.univ')) => 1,
-                strtolower(config('app.universitas')) => 1,
-            ];
-
-            $key = strtolower(trim((string) $value));
-
-            return $mapTingkat[$key] ?? ($role === 'admin' ? 4 : 5);
-        }
-
-        return (int) $value;
+        // 2. Terapkan aturan batas (Constraint) berdasarkan Role
+        return match ($role) {
+            'admin' => in_array($tingkat, [1, 2, 3, 4], true) ? $tingkat : 4,
+            'dosen' => in_array($tingkat, [1, 2, 3, 4, 5], true) ? $tingkat : 5,
+            'mahasiswa' => 5,
+            default => ($tingkat !== null) ? $tingkat : 5,
+        };
     }
 
     private function inputModalUser($isEditingUser, $data, $role)
@@ -716,7 +728,6 @@ trait WithUserModal
             'date',
         ];
 
-
         $rules['pr_id'] = 'required|exists:prodis,id';
         $validator = Validator::make($data, $rules, $this->validationMessagesUser());
         $validator->after(function ($validator) use ($data, $role, $isEditingUser) {
@@ -898,7 +909,7 @@ trait WithUserModal
 
                 $data = [
                     'user_id' => $user->id,
-                    'tingkat_user' => $validated['tingkat'],
+                    'tingkat_user' => (string) $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
@@ -1032,7 +1043,7 @@ trait WithUserModal
                 };
 
                 $data = [
-                    'tingkat_user' => $validated['tingkat'],
+                    'tingkat_user' => (string) $validated['tingkat'],
                     'name' => $validated['name'],
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],

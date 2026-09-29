@@ -77,13 +77,13 @@ class User extends Authenticatable
             $roles = ['admin', 'dosen', 'mahasiswa'];
             foreach ($roles as $role) {
                 $q->orWhereHas($role.($type !== 'prodi' ? '.pr_rel' : ''), function ($r) use ($type, $id) {
-                    if ($type === 'prodi') {
+                    if ($type == 'prodi') {
                         $r->where('pr_id', $id);
                     }
-                    if ($type === 'departemen') {
+                    if ($type == 'departemen') {
                         $r->where('dp_id', $id);
                     }
-                    if ($type === 'fakultas') {
+                    if ($type == 'fakultas') {
                         $r->whereHas('dp_rel', fn ($j) => $j->where('fk_id', $id));
                     }
                 });
@@ -202,20 +202,23 @@ class User extends Authenticatable
     protected function tingkat(): Attribute
     {
         return Attribute::get(function () {
-            return data_get($this->getProfile(), 'tingkat_user');
-        });
-    }
-    protected function tingkatReverse(): Attribute
-    {
-        return Attribute::get(function () {
-            $tingkat = (int) $this->tingkat;
-            if (! $tingkat) {
-                return 0;
-            }
-            return 6 - $tingkat;
+            $val = data_get($this->getProfile(), 'tingkat_user');
+
+            return $val !== null ? (int) $val : null;
         });
     }
 
+    protected function tingkatReverse(): Attribute
+    {
+        return Attribute::get(function () {
+            $tingkat = $this->tingkat; // Sudah pasti int atau null
+            if (! $tingkat) {
+                return 0;
+            }
+
+            return 6 - $tingkat;
+        });
+    }
 
     protected function tingkatText(): Attribute
     {
@@ -236,15 +239,15 @@ class User extends Authenticatable
             ];
 
             // Validasi khusus sesuai batasan role
-            if ($role === 'admin' && in_array($tingkat, [1, 2, 3, 4])) {
+            if ($role == 'admin' && in_array($tingkat, [1, 2, 3, 4])) {
                 return $map[$tingkat];
             }
 
-            if ($role === 'dosen' && in_array($tingkat, [1, 2, 3, 4, 5])) {
+            if ($role == 'dosen' && in_array($tingkat, [1, 2, 3, 4, 5])) {
                 return $map[$tingkat];
             }
 
-            if ($role === 'mahasiswa' && $tingkat === 5) {
+            if ($role == 'mahasiswa' && $tingkat == 5) {
                 return 'Umum';
             }
 
@@ -274,7 +277,7 @@ class User extends Authenticatable
             $isValid = match ($roleRaw) {
                 'admin' => in_array($tingkat, [1, 2, 3, 4]),
                 'dosen' => in_array($tingkat, [1, 2, 3, 4, 5]),
-                'mahasiswa' => $tingkat === 5,
+                'mahasiswa' => $tingkat == 5,
                 default => false,
             };
 
@@ -284,7 +287,7 @@ class User extends Authenticatable
 
             $singkatan = $map[$tingkat] ?? null;
 
-            if ($singkatan === null) {
+            if ($singkatan == null) {
                 return $roleName;
             }
 
@@ -799,22 +802,25 @@ class User extends Authenticatable
 
             foreach ($tingkatMap as $tingkatNum => $keywords) {
                 foreach ($keywords as $kw) {
-                    if (! str_contains($searchLower, $kw)) {
+                    if ($kw === '' || ! str_contains($searchLower, $kw)) {
                         continue;
                     }
+
+                    // Konversi ke string agar pas dengan kolom ENUM MySQL
+                    $tingkatStr = (string) $tingkatNum;
 
                     // KONDISI A: User menyebutkan Role secara spesifik (misal: "admin univ", "dosen prodi")
                     if ($detectedRole) {
                         $isAllowed = match ($detectedRole) {
                             'admin' => in_array($tingkatNum, [1, 2, 3, 4]),
                             'dosen' => in_array($tingkatNum, [1, 2, 3, 4, 5]),
-                            'mahasiswa' => $tingkatNum === 5,
+                            'mahasiswa' => $tingkatNum == 5,
                             default => false,
                         };
 
                         if ($isAllowed) {
-                            $q->orWhereHas($detectedRole, function ($r) use ($tingkatNum) {
-                                $r->where('tingkat_user', $tingkatNum);
+                            $q->orWhereHas($detectedRole, function ($r) use ($tingkatStr) {
+                                $r->where('tingkat_user', $tingkatStr);
                             });
                         }
                         break; // Lanjut ke tingkat berikutnya jika keyword sudah cocok
@@ -824,19 +830,19 @@ class User extends Authenticatable
                     else {
                         // Hanya cari di Admin & Dosen (karena Tingkat 1-4)
                         if (in_array($tingkatNum, [1, 2, 3, 4])) {
-                            $q->orWhereHas('admin', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat_user', $tingkatNum);
-                            })->orWhereHas('dosen', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat_user', $tingkatNum);
+                            $q->orWhereHas('admin', function ($r) use ($tingkatStr) {
+                                $r->where('tingkat_user', $tingkatStr);
+                            })->orWhereHas('dosen', function ($r) use ($tingkatStr) {
+                                $r->where('tingkat_user', $tingkatStr);
                             });
                         }
 
                         // Jika Tingkat 5 (Umum), cari di Dosen & Mahasiswa
-                        if ($tingkatNum === 5) {
-                            $q->orWhereHas('dosen', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat_user', $tingkatNum);
-                            })->orWhereHas('mahasiswa', function ($r) use ($tingkatNum) {
-                                $r->where('tingkat_user', $tingkatNum);
+                        if ($tingkatNum == 5) {
+                            $q->orWhereHas('dosen', function ($r) use ($tingkatStr) {
+                                $r->where('tingkat_user', $tingkatStr);
+                            })->orWhereHas('mahasiswa', function ($r) use ($tingkatStr) {
+                                $r->where('tingkat_user', $tingkatStr);
                             });
                         }
                         break;
