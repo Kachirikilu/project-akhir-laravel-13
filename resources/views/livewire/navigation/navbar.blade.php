@@ -3,7 +3,7 @@
                     bg-[var(--main-color)] border-[var(--border-main-color)]
                     flex flex-col min-h-0">
 
-    <div class="flex items-center h-10 mt-2 mx-1 z-20">
+    <div class="flex items-center h-10 mt-2 mx-1 z-[20]">
         <a href="#" @click.prevent="window.location.reload()" class="flex items-center gap-2">
             <x-app-logo />
         </a>
@@ -49,7 +49,7 @@
                 );
             });
         }
-    }" class="flex-1 z-20 min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
+    }" class="flex-1 z-[20] min-h-0 overflow-y-auto overflow-x-hidden space-y-1 scrollbar-tiny">
         @php
             $user = Auth::user();
             $lastKelas = session('kelas.last');

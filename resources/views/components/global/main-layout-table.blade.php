@@ -79,7 +79,7 @@
     id="table-results-container">
     <div class="scrollbar-x-large overflow-auto max-h-[1000px]">
         <table class="min-w-full divide-y">
-            <thead class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border">
+            <thead class="sticky top-0 z-[30] bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
             <tbody x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });

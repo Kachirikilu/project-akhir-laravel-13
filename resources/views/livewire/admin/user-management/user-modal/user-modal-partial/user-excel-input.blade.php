@@ -158,7 +158,7 @@
                             class="min-w-full border-separate border-spacing-0 text-sm">
 
 
-                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-10">
+                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-[10]">
                                 <tr class="text-left">
                                     <th class="{{ $headColumn }}">#</th>
                                     <th class="{{ $headColumn }}">Email</th>

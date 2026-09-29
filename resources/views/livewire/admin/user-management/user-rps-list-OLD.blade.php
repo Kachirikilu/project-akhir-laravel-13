@@ -4,7 +4,7 @@
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser">
         <div
-            class="absolute inset-0 z-50 bg-[var(--second-table-color)] backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
+            class="absolute inset-0 z-[50] bg-[var(--second-table-color)] backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-[var(--contrast-second-text)] italic">Menyinkronkan...</p>
         </div>

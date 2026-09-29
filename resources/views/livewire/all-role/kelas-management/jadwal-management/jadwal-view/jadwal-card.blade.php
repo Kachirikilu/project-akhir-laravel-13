@@ -53,7 +53,7 @@
         {{-- 2. Isi Utama (Looping Card) --}}
         @forelse($jadwals as $j)
             <div wire:key="kelas-jadwal-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
-                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
+                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)] transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
 
                 {{-- ═══ HERO ═══ --}}
                 <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">

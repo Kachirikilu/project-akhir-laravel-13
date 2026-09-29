@@ -107,7 +107,7 @@
             class="max-h-40 overflow-y-auto scrollbar-tiny
                    bg-[var(--main-pop-up-color)]
                    ring-[var(--focus-color)]
-                   absolute z-100 mt-1 w-full rounded-md shadow-lg
+                   absolute z-[10] mt-1 w-full rounded-md shadow-lg
                    ring-1 ring-opacity-5 focus:outline-none overflow-hidden">
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"

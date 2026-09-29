@@ -33,7 +33,7 @@
     <!-- Garis Indikator Aktif/Hover (Lebih Tebal & Animasi Meluncur dari Kiri) -->
     <span 
         x-cloak
-        class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-[3px] transition-transform duration-[300ms] ease-out origin-left w-full z-10"
+        class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-[3px] transition-transform duration-[300ms] ease-out origin-left w-full z-[10]"
         :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
             ? 'scale-x-100' 
             : 'scale-x-0 group-hover:scale-x-100 group-active:scale-x-100'"

@@ -22,7 +22,7 @@
          HEADER: IDENTITAS PENGGUNA
          ============================================================ --}}
 <div
-    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms]">
+    class="sm:mb-12 md:mb-24 lg:mb-32 flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)] transition-all duration-[200ms]">
 
     {{-- Hero --}}
     <div class="flex flex-col gap-3 p-4 sm:p-[18px] bg-[var(--main-color)]">

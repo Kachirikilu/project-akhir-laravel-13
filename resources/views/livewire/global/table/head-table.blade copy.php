@@ -1,7 +1,7 @@
 @if ($withTh ?? true)
     <th wire:key="head-table-{{ $sortFieldString }}" rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
         class="bg-[var(--main-table-color)] table-border p-6 relative border-b
-        {{ $isSticky ?? false ? 'lg:sticky lg:left-0 lg:top-0 lg:z-30' : '' }}
+        {{ $isSticky ?? false ? 'lg:sticky lg:left-0 lg:top-0 lg:z-[30]' : '' }}
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}

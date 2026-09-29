@@ -229,7 +229,7 @@
         @apply border-x border-[var(--border-table-color)];
         @apply bg-[var(--main-table-color)];
         @apply text-[var(--contrast-main-text)];
-        @apply lg:sticky lg:left-0 lg:z-20;
+        @apply lg:sticky lg:left-0 lg:z-[20];
     }
 
     /* Isi Sekunder */
@@ -243,7 +243,7 @@
         @apply px-6 py-4 text-xs sm:text-sm;
         @apply bg-[var(--second-table-color)];
         @apply text-[var(--contrast-second-text)];
-        @apply lg:sticky lg:left-0 lg:z-20;
+        @apply lg:sticky lg:left-0 lg:z-[20];
     }
 
     /* Header Sub Kolom */
@@ -339,7 +339,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
+            @apply z-[10] bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
 
@@ -348,7 +348,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
+            @apply z-[10] bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
 
@@ -357,7 +357,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color)] text-[var(--main-text)];
+            @apply z-[10] bg-[var(--focus-color)] text-[var(--main-text)];
         }
     }
 
@@ -366,7 +366,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
+            @apply z-[10] bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
 
@@ -375,7 +375,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
+            @apply z-[10] bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
 
@@ -384,7 +384,7 @@
 
         &:hover,
         &:active {
-            @apply z-10 bg-[var(--focus-color-special)] text-[var(--main-text-special)];
+            @apply z-[10] bg-[var(--focus-color-special)] text-[var(--main-text-special)];
         }
     }
 

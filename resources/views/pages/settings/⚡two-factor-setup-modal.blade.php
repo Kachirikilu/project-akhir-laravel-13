@@ -167,7 +167,7 @@ new class extends Component {
                         @endfor
                     </div>
 
-                    <flux:icon.qr-code class="relative z-20 dark:text-accent-foreground" />
+                    <flux:icon.qr-code class="relative z-[20] dark:text-accent-foreground" />
                 </div>
             </div>
 

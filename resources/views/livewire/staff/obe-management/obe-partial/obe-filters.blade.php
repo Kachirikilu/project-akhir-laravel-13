@@ -1,4 +1,4 @@
-<div x-show="activeTab == 'rps'" x-transition:enter="transition ease-out duration-[100ms]0"
+<div x-show="activeTab == 'rps'" x-transition:enter="transition ease-out duration-[100ms]"
     x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
     x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-[200ms]"
     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
@@ -77,7 +77,7 @@
 </div>
 
 @if (!($rpsOnly ?? false))
-    <div x-show="activeTab == 'cpl'" x-transition:enter="transition ease-out duration-[100ms]0"
+    <div x-show="activeTab == 'cpl'" x-transition:enter="transition ease-out duration-[100ms]"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
         x-transition:leave="transition ease-in duration-[200ms]"
@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <div x-show="activeTab == 'cpmk'" x-transition:enter="transition ease-out duration-[100ms]0"
+    <div x-show="activeTab == 'cpmk'" x-transition:enter="transition ease-out duration-[100ms]"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
         x-transition:leave="transition ease-in duration-[200ms]"
@@ -149,7 +149,7 @@
         </div>
     </div>
 
-    <div x-show="activeTab == 'sub-cpmk'" x-transition:enter="transition ease-out duration-[100ms]0"
+    <div x-show="activeTab == 'sub-cpmk'" x-transition:enter="transition ease-out duration-[100ms]"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
         x-transition:leave="transition ease-in duration-[200ms]"

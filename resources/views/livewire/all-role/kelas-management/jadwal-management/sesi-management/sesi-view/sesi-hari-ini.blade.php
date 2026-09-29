@@ -41,7 +41,7 @@
                     $subTable = 'bg-[var(--sub-table-color)]';
                 }
                 
-                $btnBase = 'transition-all duration-[200ms] hover:z-10 active:z-10';
+                $btnBase = 'transition-all duration-[200ms] hover:z-[10] active:z-[10]';
 
                 if ($isUjian) {
                     if ($isPastDate) {

@@ -64,7 +64,7 @@
     <span class="absolute bottom-0 left-0 w-full h-[1px] bg-[var(--border-table-color)]"></span>
 
     <span 
-        class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-[3px] transition-transform duration-[300ms] ease-out origin-left w-full z-10"
+        class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-[3px] transition-transform duration-[300ms] ease-out origin-left w-full z-[10]"
         :class="sortField === '{{ $sortFieldString }}' || clicked
             ? 'scale-x-100' 
             : 'scale-x-0 group-hover:scale-x-100 group-active:scale-x-100'"

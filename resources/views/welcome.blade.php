@@ -14,7 +14,7 @@
 
         {{-- ═══ NAVBAR ═══ --}}
         <nav
-            class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)]0 backdrop-blur-lg">
+            class="sticky top-0 z-[50] flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)] backdrop-blur-lg">
             <div class="flex items-center gap-4">
                 <div class="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--main-color)]">
                     <x-app-logo-icon class="h-5 w-auto text-white" />
@@ -107,7 +107,7 @@
                         </div>
 
                         {{-- Isi --}}
-                        <div class="relative z-10">
+                        <div class="relative z-[10]">
                             <div
                                 class="absolute bottom-0 right-0 w-16 h-16 flex items-end justify-end p-2 pointer-events-none">
                                 <div
@@ -143,7 +143,7 @@
 
         {{-- ═══ FITUR + ROLE (2 kolom desktop) ═══ --}}
         <section
-            class="relative z-10 bg-[var(--sub-table-color)]0 border-t border-[var(--border-table-color)] px-5 sm:px-8 py-12">
+            class="relative z-[10] bg-[var(--sub-table-color)] border-t border-[var(--border-table-color)] px-5 sm:px-8 py-12">
             <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
 
                 {{-- Fitur --}}

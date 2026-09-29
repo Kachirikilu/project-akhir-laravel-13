@@ -50,7 +50,7 @@
                 <div class="h-4 w-10 bg-gray-300 dark:bg-gray-700 rounded ml-2"></div>
             </div>
         </div>
-        <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40 animate-pulse">
+        <div class="grid grid-cols-1 grid-rows-1 relative isolate z-[40] animate-pulse">
             <div class="col-start-1 row-start-1 w-full grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 items-center">
                 <div class="sm:col-span-7 relative">
                     <div class="relative flex items-center">

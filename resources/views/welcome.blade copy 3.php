@@ -9,7 +9,7 @@
 <body class="min-h-screen antialiased bg-[var(--wadah-color)] dark:bg-neutral-950">
 
     {{-- ═══ NAVBAR ═══ --}}
-    <nav class="sticky top-0 z-50 flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)] backdrop-blur-md">
+    <nav class="sticky top-0 z-[50] flex items-center justify-between px-5 py-4 border-b border-[var(--border-table-color)] bg-[var(--second-table-color)] backdrop-blur-md">
         <div class="flex items-center gap-2">
             <div class="flex h-8 w-8 items-center justify-center rounded-[10px]" style="background: var(--main-color);">
                 <x-app-logo-icon class="h-4 w-auto" />

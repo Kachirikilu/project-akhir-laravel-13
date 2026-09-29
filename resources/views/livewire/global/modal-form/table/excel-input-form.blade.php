@@ -13,7 +13,7 @@
         : '';
 @endphp
 
-<td class="{{ $bgClass }} {{ $isSticky ?? null ? 'lg:sticky lg:left-0 lg:z-10' : '' }} p-0 border border-gray-200 dark:border-neutral-700 align-top">
+<td class="{{ $bgClass }} {{ $isSticky ?? null ? 'lg:sticky lg:left-0 lg:z-[10]' : '' }} p-0 border border-gray-200 dark:border-neutral-700 align-top">
     <div class="flex flex-col h-full min-h-[34px] w-full">
         <div class="grid w-full items-center" style="{{ $widthStyle }}">
 

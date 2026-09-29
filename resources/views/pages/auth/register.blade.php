@@ -22,7 +22,7 @@
                     style="background: linear-gradient(150deg, var(--main-color) 0%, var(--hover-main-color) 100%);">
                 </div>
 
-                <div class="relative z-10 flex flex-col justify-between h-full gap-8">
+                <div class="relative z-[10] flex flex-col justify-between h-full gap-8">
                     <a href="/" class="flex items-center gap-5">
                         <div
                             class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 flex-shrink-0">

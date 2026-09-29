@@ -1,11 +1,11 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
-    <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
+    <div class="grid grid-cols-1 grid-rows-1 relative isolate z-[40]">
         @include('livewire.staff.obe-management.obe-partial.obe-filters')
 
         
-        <div x-show="activeTab == 'mahasiswa'" x-transition:enter="transition ease-out duration-[100ms]0"
+        <div x-show="activeTab == 'mahasiswa'" x-transition:enter="transition ease-out duration-[100ms]"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
             x-transition:leave="transition ease-in duration-[200ms]"
@@ -40,7 +40,7 @@
 
 
     {{-- BAGIAN SEARCH UTAMA --}}
-    <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 z-20">
+    <div class="grid grid-cols-1 sm:grid-cols-7 gap-x-3 gap-y-2 z-[20]">
 
         <div x-show="activeTab == 'mahasiswa'" class="sm:col-span-7 w-full">
             @include('livewire.global.search-and-filters.main-search', [

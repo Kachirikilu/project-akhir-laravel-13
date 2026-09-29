@@ -112,7 +112,7 @@
         {{-- 2. Isi Utama (Looping Card) masuk ke Default Slot --}}
         @forelse($kelas as $k)
             <div wire:key="kelas-card-{{ $k->id }}" data-kelas-id="{{ $k->id }}"
-                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)]0 transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
+                class="flex flex-col rounded-[20px] overflow-hidden border border-[var(--border-table-color)] bg-[var(--main-table-trans)] transition-all duration-[200ms] hover:shadow-lg active:shadow-lg">
 
                 {{-- ═══ HERO ═══ --}}
                 <div class="flex flex-col gap-3 p-[18px] bg-[var(--main-color)]">

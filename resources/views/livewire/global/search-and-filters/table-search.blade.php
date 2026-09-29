@@ -6,7 +6,7 @@
         bg-[var(--main-table-color)] table-border relative border-b
         
         {{ ($isSticky ?? false) 
-            ? 'sticky left-0 border-x z-30' 
+            ? 'sticky left-0 border-x z-[30]' 
             : '' 
         }}
 

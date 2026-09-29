@@ -137,11 +137,11 @@
         color: #1f2937;
     }
 
-    .z-30 {
+    .z-[30] {
         z-index: 30;
     }
 
-    .z-50 {
+    .z-[50] {
         z-index: 50;
     }
 
@@ -544,7 +544,7 @@
                     <div class="relative" style="height: 360px; padding-top: 68px;">
 
                         {{-- Hapus left: 0 dan pastikan posisi merapat ke kanan --}}
-                        <div class="absolute z-30 cpmk-legend-box" style="top:0; right:0;">
+                        <div class="absolute z-[30] cpmk-legend-box" style="top:0; right:0;">
                             @foreach ($daftarCpmk as $index => $kodeCpmk)
                                 <div class="cpmk-legend-item">
                                     <table class="cpmk-legend-table">
@@ -596,7 +596,7 @@
                                         @endfor
 
                                         {{-- Garis Batas Kelulusan 70% --}}
-                                        <div class="absolute z-50" style="left:0; width:100%; bottom: 70%;">
+                                        <div class="absolute z-[50]" style="left:0; width:100%; bottom: 70%;">
                                             <div class="chart-threshold-line" style="border-color: #ef4444;">
                                             </div>
                                             <span class="absolute font-bold rounded bg-white chart-threshold-label"

@@ -96,7 +96,7 @@
                             wire:target="excel_nilai_file, parseExcelNilaiFile, removeParsedNilaiRow"
                             class="min-w-full border-separate border-spacing-0 text-sm">
 
-                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-10">
+                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-[10]">
 
                                 {{-- ============================= --}}
                                 {{-- ROW 1 = CPMK (COLSPAN) --}}
@@ -107,7 +107,7 @@
                                     <th rowspan="3" class="{{ $headColumn }}">Nama MK</th>
                                     <th rowspan="3" class="{{ $headColumn }}">Nama Kelas</th>
 
-                                    <th rowspan="3" class="{{ $headColumn }} lg:sticky lg:left-0 lg:z-20">
+                                    <th rowspan="3" class="{{ $headColumn }} lg:sticky lg:left-0 lg:z-[20]">
                                         NIM
                                     </th>
                                     <th rowspan="3" class="{{ $headColumn }}">Nama Mahasiswa</th>

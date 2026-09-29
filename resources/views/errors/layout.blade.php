@@ -15,7 +15,7 @@
 
 
     {{-- Card utama --}}
-    <div class="relative z-10 w-full max-w-md px-6 flex flex-col items-center text-center gap-5">
+    <div class="relative z-[10] w-full max-w-md px-6 flex flex-col items-center text-center gap-5">
 
         {{-- Kode error besar + ikon di tengah --}}
         <div class="relative inline-flex items-center justify-center select-none">

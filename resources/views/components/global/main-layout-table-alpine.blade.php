@@ -45,7 +45,7 @@
             
             {{-- HEADER TABEL (Sticky Top) --}}
             @if (isset($header))
-                <div class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border border-b shadow-sm font-semibold text-xs sm:text-sm min-w-full">
+                <div class="sticky top-0 z-[30] bg-[var(--main-table-color)] table-border border-b shadow-sm font-semibold text-xs sm:text-sm min-w-full">
                     {{ $header }}
                 </div>
             @endif
