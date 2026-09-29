@@ -51,7 +51,8 @@ class Dosen extends Model
     protected function tingkat(): Attribute
     {
         return Attribute::get(function () {
-            return $this->tingkat_user;
+            $val = $this->attributes['tingkat_user'] ?? null;
+            return $val !== null ? (int) $val : null;
         });
     }
 
@@ -269,7 +270,7 @@ class Dosen extends Model
                     if ($searchLower === (string) $tingkatNum ||
                         $searchLower === $kw ||
                         $searchLower === "dosen {$kw}") {
-                        $q->orWhere('dosens.tingkat_user', $tingkatNum);
+                        $q->orWhere('dosens.tingkat_user', (string) $tingkatNum);
                         break;
                     }
                 }

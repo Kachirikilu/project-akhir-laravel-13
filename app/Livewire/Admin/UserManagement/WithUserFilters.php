@@ -383,12 +383,11 @@ trait WithUserFilters
             'mahasiswa_id' => 'mahasiswas.id',
 
             'role' => 'CASE
-                WHEN admins.id IS NOT NULL THEN (10 + COALESCE(admins.tingkat_user, 99))
-                WHEN dosens.id IS NOT NULL THEN (20 + COALESCE(dosens.tingkat_user, 99))
-                WHEN mahasiswas.id IS NOT NULL THEN (30 + COALESCE(mahasiswas.tingkat_user, 99))
-                
-                ELSE 400
-            END',
+    WHEN admins.id IS NOT NULL THEN (10 + COALESCE(CAST(admins.tingkat_user AS UNSIGNED), 99))
+    WHEN dosens.id IS NOT NULL THEN (20 + COALESCE(CAST(dosens.tingkat_user AS UNSIGNED), 99))
+    WHEN mahasiswas.id IS NOT NULL THEN (30 + COALESCE(CAST(mahasiswas.tingkat_user AS UNSIGNED), 99))
+    ELSE 400
+END',
 
             'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
             'kode' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',

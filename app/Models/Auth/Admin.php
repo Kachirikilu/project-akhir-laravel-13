@@ -51,10 +51,10 @@ class Admin extends Model
     protected function tingkat(): Attribute
     {
         return Attribute::get(function () {
-            return $this->tingkat_user;
+            $val = $this->attributes['tingkat_user'] ?? null;
+            return $val !== null ? (int) $val : null;
         });
     }
-
 
     protected function tingkatText(): Attribute
     {
