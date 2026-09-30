@@ -58,6 +58,9 @@ trait WithNilaiExcel
         if (! $this->AuthCheck('staff')) {
             return;
         }
+        if (property_exists($this, 'refreshTrigger')) {
+            $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+        }
 
         if (! empty($idJadwal)) {
             $jadwal = KelasJadwal::where('id', $idJadwal)->first();
@@ -568,14 +571,18 @@ trait WithNilaiExcel
         $messageText = "Import Data Nilai Mahasiswa Selesai | Sukses: $successCount | Gagal: $failCount";
         $this->uploadedFileNames = [];
         if ($failCount === 0) {
+            $this->showNilaiExcelModal = false;
+
             $this->toast(text: $messageText);
             $this->dispatch('refresh-data-sesi');
             $this->reset('excel_nilai_file');
-            $this->showNilaiExcelModal = false;
         } else {
             $this->toast(text: $messageText, variant: 'warning');
         }
-        $this->dispatch('refresh-table');
+        // $this->dispatch('refresh-table');
+        //         if (property_exists($this, 'refreshTrigger')) {
+        //     $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+        // }
     }
 
     private function getSesiImportNilai($jadwalId)

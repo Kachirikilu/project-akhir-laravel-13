@@ -25,7 +25,7 @@
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['rps'] ?? null,
                             'tabString' => 'rps',
-                            'tabNameString' => 'Rencana Pembelajaran Semester',
+                            'tabNameString' => 'Capaian RPS',
                             'icon' => 'clipboard-document-list',
                         ])
                     </div>

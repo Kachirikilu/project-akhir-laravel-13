@@ -119,13 +119,10 @@ class SesiManagement extends Component
     #[On('refresh-table')]
     public function refreshCapaiansList()
     {
+        // dump($this->refreshTrigger);
+        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
+        // dump($this->refreshTrigger);
         $this->resetPage();
-        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
-    }
-
-    public function updatedShowDeletedd()
-    {
-        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
     }
 
     #[On('refresh-stats-kelas')]
@@ -326,6 +323,7 @@ class SesiManagement extends Component
 
     public function updatedShowDeleted()
     {
+        $this->refreshTrigger = $this->refreshTrigger === 0 ? 1 : 0;
         if ($this->switchTable == '' || $this->switchTable == 'hari-ini' || $this->switchTable == 'card' || $this->switchTable == 'table' || (Auth::user()->dosen && ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk')) || Auth::user()->mahasiswa) {
             $this->showDeleted = false;
         }
