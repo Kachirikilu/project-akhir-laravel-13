@@ -500,6 +500,7 @@ trait WithNilaiExcel
             'excel_nilai_file.*.mimes' => 'Setiap file Excel Data Nilai Mahasiswa harus berformat .xlsx atau .xls!',
             'excel_nilai_file.*.max' => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
         ]);
+        
         if (empty($this->parsedNilaiRows)) {
             $this->toast(text: 'Tidak ada data nilai untuk disimpan!', variant: 'warning');
 

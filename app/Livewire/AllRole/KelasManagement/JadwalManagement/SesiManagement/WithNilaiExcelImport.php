@@ -119,6 +119,8 @@ trait WithNilaiExcelImport
         $this->validate([
             'excel_nilai_file' => 'required|array',
             'excel_nilai_file.*' => 'file|mimes:xlsx,xls|max:10240',
+            'excel_nilai_file.uploaded' => 'File Excel Nilai gagal diunggah!',
+            'excel_nilai_file.*.uploaded' => 'File Excel Nilai gagal diunggah!',
         ]);
 
         $this->parsedNilaiRows = [];
