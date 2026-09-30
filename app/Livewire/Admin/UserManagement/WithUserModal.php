@@ -1157,6 +1157,8 @@ trait WithUserModal
             'excel_user_file.*.file' => 'Salah satu file Excel Data Pengguna harus berupa file yang valid!',
             'excel_user_file.*.mimes' => 'Setiap file Excel Data Pengguna harus berformat .xlsx atau .xls!',
             'excel_user_file.*.max' => 'Ukuran masing-masing file tidak boleh lebih dari 27 MB!',
+            'excel_user_file.uploaded' => 'File Excel Data Pengguna gagal diunggah!',
+            'excel_user_file.*.uploaded' => 'File Excel Data Pengguna gagal diunggah!',
             'kode_wilayah.required' => 'Kode Wilayah untuk Admin & Mahasiswa wajib dipilih!',
             'kode_wilayah.in' => "Kode Wilayah hanya boleh 'IDL' & 'PLG'!",
             'status.required' => 'Status pengguna wajib dipilih!',

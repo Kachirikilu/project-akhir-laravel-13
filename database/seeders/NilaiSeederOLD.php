@@ -18,24 +18,13 @@ class NilaiSeeder extends Seeder
 
     private function seedByJadwal()
     {
-        $nilaiCount = (int) config('seeder.nilai_count', 200);
-
-        KelasJadwal::with(['mahasiswas', 'kelas_rel.rps_rel'])->chunk(config('seeder.batch_nilai', 128), function ($jadwals) use ($nilaiCount) {
+        KelasJadwal::with(['mahasiswas', 'kelas_rel.rps_rel'])->chunk(config('seeder.batch_nilai', 128), function ($jadwals) {
             foreach ($jadwals as $jadwal) {
                 $rps = $jadwal->kelas_rel?->rps_rel;
                 if (!$rps) continue;
 
-                $existingCount = NilaiMahasiswa::where('rps_id', $rps->id)->count();
-                if ($existingCount >= $nilaiCount) {
-                    continue;
-                }
-
-                $sisaKuota = $nilaiCount - $existingCount;
                 $data = $this->getMappingFromRps($rps);
-
-                $mahasiswas = $jadwal->mahasiswas->take($sisaKuota);
-
-                foreach ($mahasiswas as $mahasiswa) {
+                foreach ($jadwal->mahasiswas as $mahasiswa) {
                     $this->saveNilai($mahasiswa, $rps, $data, $jadwal->id, $jadwal->ganjil_genap, $jadwal->akademik);
                 }
             }
@@ -44,13 +33,6 @@ class NilaiSeeder extends Seeder
 
     private function seedByRps()
     {
-        // 1. Ambil nilai_count & nilai_prodi_count
-        $nilaiCount = (int) config('seeder.nilai_count', 200);
-        $configuredProdiCount = (int) config('seeder.nilai_prodi_count', 50);
-
-        // Max per prodi 1:1 dengan nilai_count (aturan 1/3 dicabut)
-        $limitProdi = min($configuredProdiCount, $nilaiCount);
-
         $rpsList = RPS::with(['mk_rel.prodis'])->get();
 
         foreach ($rpsList as $rps) {
@@ -61,6 +43,7 @@ class NilaiSeeder extends Seeder
             }
 
             $semesterMk = (int) $mk->semester;
+
             if ($semesterMk < 1 || $semesterMk > 8) {
                 continue;
             }
@@ -68,48 +51,25 @@ class NilaiSeeder extends Seeder
             $data = $this->getMappingFromRps($rps);
 
             foreach ($mk->prodis as $prodi) {
-                // Total nilai saat ini untuk RPS ini
-                $currentTotalRps = NilaiMahasiswa::where('rps_id', $rps->id)->count();
-                if ($currentTotalRps >= $nilaiCount) {
-                    break; // Total nilai RPS sudah penuh
-                }
-
-                // Cek jumlah nilai pada RPS ini khusus untuk Mahasiswa yang terdaftar di prodi terkait
-                // Menggunakan relasi mahasiswa_rel -> pr_id
-                $existingProdiCount = NilaiMahasiswa::where('rps_id', $rps->id)
-                    ->whereHas('mahasiswa_rel', function ($q) use ($prodi) {
-                        $q->where('pr_id', $prodi->id);
-                    })->count();
-
-                if ($existingProdiCount >= $limitProdi) {
-                    continue; // Kuota untuk prodi ini pada RPS ini sudah penuh
-                }
-
-                // Hitung sisa target yang harus diisi untuk prodi ini
-                $sisaKuotaProdi = $limitProdi - $existingProdiCount;
-                $sisaKuotaRps = $nilaiCount - $currentTotalRps;
-                $targetTake = min($sisaKuotaProdi, $sisaKuotaRps);
-
-                // Ambil mahasiswa prodi secara konsisten berdasarkan order ID
-                $mahasiswas = Mahasiswa::where('pr_id', $prodi->id)
-                    ->orderBy('id', 'asc')
-                    ->get();
-
-                $insertedForThisProdi = 0;
+                $mahasiswas = Mahasiswa::where('pr_id', $prodi->id)->get();
 
                 foreach ($mahasiswas as $mahasiswa) {
-                    if ($insertedForThisProdi >= $targetTake) {
-                        break;
-                    }
-
                     $angkatan = (int) $mahasiswa->angkatan;
 
+                    // Semester 1-2 = offset 0
+                    // Semester 3-4 = offset 1
+                    // Semester 5-6 = offset 2
+                    // Semester 7-8 = offset 3
                     $tahunOffset = intdiv($semesterMk - 1, 2);
+
                     $tahunAwal = $angkatan + $tahunOffset;
                     $tahunAkhir = $tahunAwal + 1;
 
                     $akademik = "{$tahunAwal}/{$tahunAkhir}";
-                    $ganjilGenap = $semesterMk % 2 === 1 ? 'Ganjil' : 'Genap';
+
+                    $ganjilGenap = $semesterMk % 2 === 1
+                        ? 'Ganjil'
+                        : 'Genap';
 
                     $exists = NilaiMahasiswa::where('mahasiswa_id', $mahasiswa->id)
                         ->where('rps_id', $rps->id)
@@ -129,8 +89,6 @@ class NilaiSeeder extends Seeder
                         $ganjilGenap,
                         $akademik
                     );
-
-                    $insertedForThisProdi++;
                 }
             }
         }

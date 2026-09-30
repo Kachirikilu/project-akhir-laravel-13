@@ -29,9 +29,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (! app()->runningInConsole()) {
-            set_time_limit(3600);
-        }
+        // if (! app()->runningInConsole()) {
+        //     set_time_limit(3600);
+        // }
+        @ini_set('memory_limit', '1024M');
+        @ini_set('max_execution_time', '3600');
         if (config('app.env') !== 'local' || isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
             \URL::forceScheme('https');
         }
