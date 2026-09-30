@@ -149,6 +149,19 @@
                 <flux:icon name="arrow-path"
                     class="w-4 h-4 text-[var(--contrast-third-text)] hover:text-[var(--focus-color)] transition-colors duration-[200ms]" />
             </button>
+            <div class="flex-shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'nameXString' => 'Export Grafik',
+                    'xString' =>
+                    'printPDFCpmkGrafik(' . ($kj_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
+                    'icon' => 'arrow-down-tray',
+                    'isFull' => 1,
+                    'valuePx' => 'px-6',
+                    'valuePy' => 'py-2.5',
+                    'color' => 'rose',
+                    'wireLoading' => 'printPDFCpmkGrafik()',
+                ])
+            </div>
             @foreach ($daftarCpmk as $index => $kodeCpmk)
                 @php
                     $currentColor = $colorPalette[$index % count($colorPalette)];
@@ -170,19 +183,6 @@
                     </div>
                 </div>
             @endforeach
-            <div class="flex-shrink-0">
-                @include('livewire.global.table.export-button', [
-                    'nameXString' => 'Export Grafik',
-                    'xString' =>
-                        'printPDFCpmkGrafik(' . ($kj_id_url ?? $rps_id_url) . ', ' . ($isRPS ?? false) . ')',
-                    'icon' => 'arrow-down-tray',
-                    'isFull' => 1,
-                    'valuePx' => 'px-6',
-                    'valuePy' => 'py-2.5',
-                    'color' => 'rose',
-                    'wireLoading' => 'printPDFCpmkGrafik()',
-                ])
-            </div>
         </div>
     </div>
 
