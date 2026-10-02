@@ -1,6 +1,6 @@
 <button @click="activeTab = '{{ $tabString }}'; $wire.{{ $xString }}('{{ $tabString }}')"
     class="text-xs sm:text-sm relative cursor-pointer flex items-center justify-center pt-2.5 pb-3 pl-3 pr-8 font-medium transition-all duration-[300ms] whitespace-nowrap outline-none bg-transparent group"
-    :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
+    :class="($data.activeTab ?? '') == '{{ $tabString }}' || ($data.activeTab ?? '') == '{{ $tabHiddenString ?? $tabString }}' 
         ? 'text-[var(--focus-color)] font-semibold' 
         : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'">
 
@@ -10,7 +10,7 @@
         <!-- Icon Flux -->
         @if(isset($icon))
             <flux:icon :name="$icon" class="h-4 w-4 transition-colors duration-[300ms]" 
-                ::class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'" />
+                ::class="($data.activeTab ?? '') == '{{ $tabString }}' || ($data.activeTab ?? '') == '{{ $tabHiddenString ?? $tabString }}' ? 'text-[var(--focus-color)]' : 'text-[var(--contrast-second-text)] group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)]'" />
         @endif
         
         <!-- Label Text -->
@@ -19,7 +19,7 @@
         <!-- Badge Jumlah Minimalis -->
         @if (!is_null($tabFilter ?? null))
             <span class="text-[9px] sm:text-xs px-1.5 py-0.5 font-bold rounded-sm transition-colors duration-[300ms] border"
-                :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}'
+                :class="($data.activeTab ?? '') == '{{ $tabString }}' || ($data.activeTab ?? '') == '{{ $tabHiddenString ?? $tabString }}'
                     ? 'bg-[var(--focus-color)] text-white border-transparent' 
                     : 'bg-transparent text-[var(--contrast-second-text)] table-border group-hover:text-[var(--focus-color)] active:text-[var(--focus-color)] group-hover:border-[var(--focus-color)] active:border-[var(--focus-color)]'">
                 {{ $tabFilter }}
@@ -34,7 +34,7 @@
     <span 
         x-cloak
         class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-[3px] transition-transform duration-[300ms] ease-out origin-left w-full z-[10]"
-        :class="activeTab == '{{ $tabString }}' || activeTab == '{{ $tabHiddenString ?? $tabString }}' 
+        :class="($data.activeTab ?? '') == '{{ $tabString }}' || ($data.activeTab ?? '') == '{{ $tabHiddenString ?? $tabString }}' 
             ? 'scale-x-100' 
             : 'scale-x-0 group-hover:scale-x-100 group-active:scale-x-100'"
     ></span>

@@ -34,7 +34,7 @@
 
         {{-- Ganti bagian div tombol Anda menjadi seperti ini --}}
         <div class="flex flex-wrap justify-end items-center gap-2.5 w-full">
-            <flux:button
+            <flux:button title="Show RPS"
                 @click="
             $store.rps?.resetShow();
             $store.rps?.setShowRPS(
@@ -62,9 +62,6 @@
                     'isNoPb' => 1,
                     'color' => 'rose',
                 ])
-            </div>
-            <div class="shrink-0">
-                @include('livewire.global.table.detail-view-switch')
             </div>
         </div>
 

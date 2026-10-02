@@ -13,6 +13,9 @@
         <x-slot:leftSecHead>
             <div
                 class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+                
+                @include('livewire.global.table.detail-view-switch', ['autoSmall' => 'lg', 'textTrue' => 'Detailed', 'textFalse' => 'Simple'])
+                
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'pertemuan_ke',
                     'headString' => 'NIM',
@@ -43,7 +46,7 @@
             <div class="w-full md:w-96 xl:w-108">
                 <div class="col-start-1 row-start-1 w-full">
                     @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Mahasiswa Kelas...',
+                        'placeholder' => 'Cari Mahasiswa...',
                         'defaultLive' => 1,
                         'searchMode' => $searchMode,
                         'searchValues' => ['simple', 'smart', 'complex'],
@@ -68,7 +71,7 @@
 
                     <div class="flex-grow max-w-md">
                         @include('livewire.global.search-and-filters.main-search', [
-                            'placeholder' => 'Cari Mahasiswa Kelas...',
+                            'placeholder' => 'Cari Mahasiswa...',
                             'defaultLive' => 1,
                             'searchMode' => $searchMode,
                             'searchValues' => ['simple', 'smart', 'complex'],

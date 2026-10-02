@@ -72,7 +72,7 @@
                     @endif
                     <div class="shrink-0">
                         <flux:dropdown>
-                            <flux:button variant="primary" icon="plus" size="sm"
+                            <flux:button title="Tambah Jadwal Kelas" variant="primary" icon="plus" size="sm"
                                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-[200ms] ease-in-out whitespace-nowrap"
                                 wire:target="addJadwal">
                                 Tambah Jadwal

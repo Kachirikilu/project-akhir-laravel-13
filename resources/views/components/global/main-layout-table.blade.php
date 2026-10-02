@@ -45,7 +45,7 @@
 
 
 @if (isset($leftHead) || isset($rightHead))
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 mb-6 border-b table-border pb-2">
         <div class="flex flex-row items-center gap-2">
             @if (isset($leftHead))
                 {{ $leftHead }}
@@ -60,13 +60,13 @@
 @endif
 
 @if (isset($leftSecHead) || isset($rightSecHead))
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b table-border pb-2">
-        <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full lg:w-auto">
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 mb-6 border-b table-border pb-2">
+        <div class="scrollbar-tiny overflow-x-auto flex flex-row items-center gap-2 w-full xl:w-auto">
             @if (isset($leftSecHead))
                 {{ $leftSecHead }}
             @endif
         </div>
-        <div class="flex items-center w-full lg:w-auto justify-end lg:justify-end">
+        <div class="flex items-center w-full xl:w-auto justify-end xl:justify-end">
             @if (isset($rightSecHead))
                 {{ $rightSecHead }}
             @endif
@@ -75,11 +75,11 @@
     </div>
 @endif
 
-<div class="bg-[var(--main-table-color)] border-[var(--border-table-color)] table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
+<div class="bg-[var(--main-table-color)]/70 border-[var(--border-table-color)]/20 table-border text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden"
     id="table-results-container">
     <div class="scrollbar-x-large overflow-auto max-h-[1000px]">
         <table class="min-w-full divide-y">
-            <thead class="sticky top-0 z-[30] bg-[var(--main-table-color)] table-border">
+            <thead class="sticky top-0 z-30 bg-[var(--main-table-color)] table-border">
                 {{ $header }}
             </thead>
             <tbody x-data="{ isLoading: false }" x-init="window.addEventListener('table-loading-trigger', () => { isLoading = true; });
@@ -90,7 +90,7 @@
                 {{ $slot }}
             </tbody>
 
-            
+
         </table>
     </div>
 

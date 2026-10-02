@@ -1,9 +1,9 @@
 @php
-    $breakpoint = $autoSmall ?? null;
+    $pointAutoSmall = $autoSmall ?? null;
     $manualSmall = $isSmall ?? false;
 
     // kapan teks muncul
-    $autoSmallClass = match ($breakpoint) {
+    $autoSmallClass = match ($pointAutoSmall) {
         'sm' => 'hidden sm:inline',
         'md' => 'hidden md:inline',
         'lg' => 'hidden lg:inline',
@@ -13,7 +13,7 @@
     };
 
     // padding horizontal tombol
-    $buttonWidthClass = match ($breakpoint) {
+    $buttonWidthClass = match ($pointAutoSmall) {
         'sm' => 'px-2 sm:px-3',
         'md' => 'px-2 md:px-3',
         'lg' => 'px-2 lg:px-3',
@@ -54,7 +54,7 @@
         default => '!border-emerald-300 dark:!border-emerald-700 !bg-emerald-100 dark:!bg-emerald-900/40 ring-2 ring-emerald-400/30',
     };
 
-    $iconMarginClass = match ($breakpoint) {
+    $iconMarginClass = match ($pointAutoSmall) {
         'sm' => 'hidden sm:mr-2',
         'md' => 'hidden md:mr-2',
         'lg' => 'hidden lg:mr-2',
@@ -94,7 +94,7 @@
         }, 3000);
     }
 }">
-    <flux:button @click="handleClick" size="sm" 
+    <flux:button @click="handleClick" size="sm" title="{{ $name }}"
         {{-- :icon="$full ? $icon ?? 'printer' : null" --}}
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}
@@ -106,7 +106,7 @@
             ''">
         <div class="flex items-center">
                 <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}" class="h-3.5 w-3.5" />
-                {{-- <flux:icon name="{{ $icon ?? 'printer' }}" @class(['h-3.5 w-3.5', 'mr-2' => !$manualSmall && !$breakpoint]) /> --}}
+                {{-- <flux:icon name="{{ $icon ?? 'printer' }}" @class(['h-3.5 w-3.5', 'mr-2' => !$manualSmall && !$pointAutoSmall]) /> --}}
 
             <div class="relative inline-flex justify-center items-center">
                 @if (!$manualSmall)

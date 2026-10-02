@@ -3,7 +3,7 @@
     @if (Auth::user()->tingkat < 4)
         <div class="ml-auto">
             <flux:dropdown>
-                <flux:button variant="primary" icon="plus" size="sm"
+                <flux:button title="Tambah Program Studi" variant="primary" icon="plus" size="sm"
                     class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)] transition-all duration-[200ms] ease-in-out"
                     wire:target="addProdi">
                     Tambah Program Studi

@@ -388,6 +388,8 @@
                     {{-- WADAH INDUK (items-stretch memaksa semua kolom setinggi grup 2 baris) --}}
                     <div class="flex flex-row items-stretch w-full">
 
+                        @include('livewire.global.table.detail-view-switch', ['autoSmall' => 'md', 'textTrue' => 'Detailed', 'textFalse' => 'Simple'])
+
                         @include('livewire.global.table.head-table', [
                             'sortFieldString' => 'id',
                             'alpine' => 'sesi',

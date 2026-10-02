@@ -3,6 +3,9 @@
     <x-slot:leftSecHead>
         <div
             class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+            
+            @include('livewire.global.table.detail-view-switch', ['autoSmall' => 'md', 'textTrue' => 'Detailed', 'textFalse' => 'Simple'])
+            
             @include('livewire.global.table.head-sortir', [
                 'sortFieldString' => 'pertemuan_ke',
                 'alpine' => 'sesi',

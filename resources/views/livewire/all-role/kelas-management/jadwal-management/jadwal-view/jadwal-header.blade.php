@@ -118,7 +118,7 @@
 
     <div class="flex flex-wrap items-stretch sm:items-center gap-2.5 my-4">
 
-        <flux:button
+        <flux:button title="Show RPS"
             @click="
                 $store.rps?.resetShow();
                 $store.rps?.setShowRPS(
@@ -152,7 +152,7 @@
 
         @if ($canAccess)
             @if ($alpine == 'jadwal')
-                <flux:button
+                <flux:button title="Edit Kelas"
                     @click="
                 $store.kelas?.reset();
                 $store.kelas?.setEdit(1);
@@ -182,7 +182,7 @@
                 </flux:button>
             @endif
             @if ($alpine == 'sesi')
-                <flux:button
+                <flux:button title="Edit Jadwal"
                     @click="
                     $store.jadwal?.reset();
                     $store.jadwal?.setEdit(1);
@@ -207,7 +207,7 @@
                 </flux:button>
             @endif
 
-            <flux:button
+            <flux:button title="Import Nilai"
                 @click="
                     $store.sesi?.reset();
                     $store.sesi?.setEdit(0);

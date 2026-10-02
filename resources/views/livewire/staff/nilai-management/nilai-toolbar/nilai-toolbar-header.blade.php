@@ -4,9 +4,9 @@
         <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
         Manajemen Nilai & Capaian Mahasiswa
     </h3>
-    <div class="mt-3 flex flex-col md:flex-row md:items-end md:justify-between gap-4 w-full" x-data="{ activeTab: @entangle('switchTable') }">
+    <div class="mt-3 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4 w-full" x-data="{ activeTab: @entangle('switchTable') }">
 
-        <div class="flex items-center min-w-0 w-full md:w-auto pb-1.5 md:pb-0.5">
+        <div class="flex items-center min-w-0 w-full xl:w-auto pb-1.5 xl:pb-0.5">
             <div class="w-full">
 
                 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 w-full">
@@ -17,6 +17,7 @@
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['mahasiswa-opsi'] ?? null,
                             'tabString' => 'mahasiswa',
+                            'tabNameString' => 'Nilai Mahasiswa',
                             'icon' => 'users',
                         ])
 
@@ -35,11 +36,10 @@
         </div>
 
         @if (Auth::user()->tingkat < 4 && (Auth::user()->admin?->pr_rel || Auth::user()->dosen?->pr_rel))
-            <div class="flex flex-col items-stretch md:items-end gap-3 mb-5 w-full md:w-auto shrink-0">
-                <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+            <div class="flex flex-col items-stretch xl:items-end gap-3 mb-5 w-full xl:w-auto shrink-0">
+                <div class="flex items-center justify-between xl:justify-end gap-3 w-full xl:w-auto">
 
                     <div></div>
-
 
 
                     <div class="flex flex-row items-center justify-end gap-3 shrink-0">
