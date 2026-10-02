@@ -1,14 +1,44 @@
 <div class="px-6 my-3 flex items-center justify-end gap-3 p-2 bg-[var(--second-pop-up-color)] border table-border rounded-xl shadow-sm"
     x-data="{ localSwitch: @entangle($xString).live }">
-    <span class="text-xs sm:text-sm font-medium text-[var(--contrast-main-text)]">
-        <template x-if="localSwitch">
-            <span>{{ $textTrue }}</span>
-        </template>
-        <template x-if="!localSwitch">
-            <span>{{ $textFalse }}</span>
-        </template>
-    </span>
-    <flux:icon name="check-circle" class="h-4 w-4 transition-colors duration-200"
+
+    @php
+        $pointAutoSmall = $autoSmall ?? null;
+        $manualSmall = $isSmall ?? false;
+
+        // ===== small mode state =====
+        $isResponsiveSmall = match ($pointAutoSmall) {
+            'sm' => 'sm',
+            'md' => 'md',
+            'lg' => 'lg',
+            'xl' => 'xl',
+            '2xl' => '2xl',
+            default => null,
+        };
+
+        // ===== label auto-small =====
+        $autoSmallClass = match ($pointAutoSmall) {
+            'sm' => 'sm:inline hidden',
+            'md' => 'md:inline hidden',
+            'lg' => 'lg:inline hidden',
+            'xl' => 'xl:inline hidden',
+            '2xl' => '2xl:inline hidden',
+            default => '',
+        };
+
+    @endphp
+
+    @if (!$manualSmall)
+        <span class="display {{ $autoSmallClass }} text-xs sm:text-sm font-medium text-[var(--contrast-main-text)]">
+            <template x-if="localSwitch">
+                <span class="whitespace-nowrap">{{ $textTrue }}</span>
+            </template>
+            <template x-if="!localSwitch">
+                <span class="whitespace-nowrap">{{ $textFalse }}</span>
+            </template>
+        </span>
+    @endif
+
+    <flux:icon name="check-circle" class="display {{ $autoSmallClass }} h-4 w-4 transition-colors duration-200"
         ::class="localSwitch ? '{{ $colorCheckTrue ?? $colorTrue }}' : '{{ $colorCheckFalse ?? $colorFalse }}'" />
 
     <!-- 1. Diberi p-0.5 (padding) & items-center agar bola berada di tengah vertikal secara otomatis -->

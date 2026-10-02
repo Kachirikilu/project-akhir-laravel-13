@@ -18,7 +18,7 @@ class NilaiSeeder extends Seeder
 
     private function seedByJadwal()
     {
-        $nilaiCount = (int) config('seeder.nilai_count', 200);
+        $nilaiCount = (int) config('seeder.count_nilai_per_rps', 1000);
 
         KelasJadwal::with(['mahasiswas', 'kelas_rel.rps_rel'])->chunk(config('seeder.batch_nilai', 128), function ($jadwals) use ($nilaiCount) {
             foreach ($jadwals as $jadwal) {
@@ -44,11 +44,11 @@ class NilaiSeeder extends Seeder
 
     private function seedByRps()
     {
-        // 1. Ambil nilai_count & nilai_prodi_count
-        $nilaiCount = (int) config('seeder.nilai_count', 200);
-        $configuredProdiCount = (int) config('seeder.nilai_prodi_count', 50);
+        // 1. Ambil count_nilai_per_rps & count_nilai_per_prodi_rps
+        $nilaiCount = (int) config('seeder.count_nilai_per_rps', 1000);
+        $configuredProdiCount = (int) config('seeder.count_nilai_per_prodi_rps', 50);
 
-        // Max per prodi 1:1 dengan nilai_count (aturan 1/3 dicabut)
+        // Max per prodi 1:1 dengan count_nilai_per_rps (aturan 1/3 dicabut)
         $limitProdi = min($configuredProdiCount, $nilaiCount);
 
         $rpsList = RPS::with(['mk_rel.prodis'])->get();

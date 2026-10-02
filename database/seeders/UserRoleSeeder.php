@@ -289,7 +289,7 @@ class UserRoleSeeder extends Seeder
             'no_hp' => $telpon,
             'is_wa_active' => $wa,
             'wa_limit' => $token,
-            'angkatan' => $faker->numberBetween(2018, 2024),
+            'angkatan' => $faker->numberBetween(config('seeder.angkatan_mahasiswa_min', 2012), config('seeder.angkatan_mahasiswa_max', 2026)),
             'status' => 'Aktif',
         ]);
 

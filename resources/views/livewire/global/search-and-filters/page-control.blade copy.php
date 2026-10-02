@@ -1,9 +1,9 @@
 @php
-    $breakpoint = $autoSmall ?? null;
+    $pointAutoSmall = $autoSmall ?? null;
     $manualSmall = $isSmall ?? false;
 
     // ===== small mode state =====
-    $isResponsiveSmall = match ($breakpoint) {
+    $isResponsiveSmall = match ($pointAutoSmall) {
         'sm' => 'sm',
         'md' => 'md',
         'lg' => 'lg',
@@ -13,7 +13,7 @@
     };
 
     // ===== label auto-small =====
-    $autoSmallClass = match ($breakpoint) {
+    $autoSmallClass = match ($pointAutoSmall) {
         'sm' => 'sm:inline hidden',
         'md' => 'md:inline hidden',
         'lg' => 'lg:inline hidden',
@@ -29,7 +29,7 @@
     $autoBSmall = $autoBSmall ?? $withBValue;
     $autoTSmall = $autoTSmall ?? $withTValue;
 
-    $pbClass = match ($breakpoint) {
+    $pbClass = match ($pointAutoSmall) {
         'sm' => "pb-{$autoBSmall} sm:pb-{$withBValue}",
         'md' => "pb-{$autoBSmall} md:pb-{$withBValue}",
         'lg' => "pb-{$autoBSmall} lg:pb-{$withBValue}",
@@ -38,7 +38,7 @@
         default => "pb-{$withBValue}",
     };
 
-    $ptClass = match ($breakpoint) {
+    $ptClass = match ($pointAutoSmall) {
         'sm' => "pt-{$autoTSmall} sm:pt-{$withTValue}",
         'md' => "pt-{$autoTSmall} md:pt-{$withTValue}",
         'lg' => "pt-{$autoTSmall} lg:pt-{$withTValue}",
@@ -62,12 +62,12 @@
     <div x-data="{ open: false, selected: @entangle('perPage').live }" @class([
         'relative',
         'w-14' => $manualSmall,
-        'w-16' => !$manualSmall && !$breakpoint,
-        'w-14 sm:w-16' => $breakpoint === 'sm' && !$manualSmall,
-        'w-14 md:w-16' => $breakpoint === 'md' && !$manualSmall,
-        'w-14 lg:w-16' => $breakpoint === 'lg' && !$manualSmall,
-        'w-14 xl:w-16' => $breakpoint === 'xl' && !$manualSmall,
-        'w-14 2xl:w-16' => $breakpoint === '2xl' && !$manualSmall,
+        'w-16' => !$manualSmall && !$pointAutoSmall,
+        'w-14 sm:w-16' => $pointAutoSmall === 'sm' && !$manualSmall,
+        'w-14 md:w-16' => $pointAutoSmall === 'md' && !$manualSmall,
+        'w-14 lg:w-16' => $pointAutoSmall === 'lg' && !$manualSmall,
+        'w-14 xl:w-16' => $pointAutoSmall === 'xl' && !$manualSmall,
+        'w-14 2xl:w-16' => $pointAutoSmall === '2xl' && !$manualSmall,
     ]) @click.away="open = false">
         {{-- Tombol utama --}}
         <button type="button" @click="open = !open"
@@ -83,11 +83,11 @@
                 @class([
                     'h-4 w-4 ml-1 text-gray-400 dark:text-gray-500',
                     'hidden' => $manualSmall && !($withArr ?? false),
-                    'hidden sm:block' => $breakpoint === 'sm' && !$manualSmall && !($withArr ?? false),
-                    'hidden md:block' => $breakpoint === 'md' && !$manualSmall && !($withArr ?? false),
-                    'hidden lg:block' => $breakpoint === 'lg' && !$manualSmall && !($withArr ?? false),
-                    'hidden xl:block' => $breakpoint === 'xl' && !$manualSmall && !($withArr ?? false),
-                    'hidden 2xl:block' => $breakpoint === '2xl' && !$manualSmall && !($withArr ?? false),
+                    'hidden sm:block' => $pointAutoSmall === 'sm' && !$manualSmall && !($withArr ?? false),
+                    'hidden md:block' => $pointAutoSmall === 'md' && !$manualSmall && !($withArr ?? false),
+                    'hidden lg:block' => $pointAutoSmall === 'lg' && !$manualSmall && !($withArr ?? false),
+                    'hidden xl:block' => $pointAutoSmall === 'xl' && !$manualSmall && !($withArr ?? false),
+                    'hidden 2xl:block' => $pointAutoSmall === '2xl' && !$manualSmall && !($withArr ?? false),
                 ])
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"

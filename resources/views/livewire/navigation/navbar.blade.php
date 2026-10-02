@@ -594,7 +594,7 @@
 
                     $subMenus = [
                         [
-                            'label' => 'Daftar Mahasiswa',
+                            'label' => 'Nilai Mahasiswa',
                             'url' => route('nilai-management', ['switchTable' => 'mahasiswa']),
                             'param' => 'mahasiswa',
                             'icon' => 'user-group',
@@ -649,7 +649,7 @@
 
                     // --- MENU UTAMA: RPS ---
                     $subMenus[] = [
-                        'label' => 'Daftar RPS',
+                        'label' => 'Capaian RPS',
                         'url' => route('nilai-management', ['switchTable' => 'rps']),
                         'param' => 'rps',
                         'icon' => 'book-open',

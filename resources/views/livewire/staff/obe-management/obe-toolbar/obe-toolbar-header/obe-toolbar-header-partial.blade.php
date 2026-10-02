@@ -1,28 +1,30 @@
 @if (Auth::user()->tingkat < 5)
 
     <div class="ml-auto">
+        @php
+            if ($typeXString == 'rps') {
+                $nameOBE = 'RPS';
+            } elseif ($typeXString == 'cpl') {
+                $nameOBE = 'CPL';
+            } elseif ($typeXString == 'cpmk' || $typeXString == 'cpmk-scpmk') {
+                $nameOBE = 'CPMK';
+            } elseif ($typeXString == 'scpmk') {
+                $nameOBE = 'Sub-CPMK';
+            } elseif ($typeXString == 'ref') {
+                $nameOBE = 'Referensi';
+            } elseif ($typeXString == 'tim_dosen') {
+                $nameOBE = 'Tim Dosen';
+            } elseif ($typeXString == 'dosen') {
+                $nameOBE = 'Dosen';
+            } else {
+                $nameOBE = 'OBE';
+            }
+        @endphp
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" :size="($isSmall ?? false) ? 'xs' : 'sm'"
+            <flux:button title="Tambah {{ $nameOBE }}" variant="primary" icon="plus" :size="($isSmall ?? false) ? 'xs' : 'sm'"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out"
                 wire:target="addRPS, addCPL, addCPMK, addSCPMK. addRef, addUser">
-                Tambah
-                @if ($typeXString == 'rps')
-                    RPS
-                @elseif ($typeXString == 'cpl')
-                    CPL
-                @elseif ($typeXString == 'cpmk' || $typeXString == 'cpmk-scpmk')
-                    CPMK
-                @elseif ($typeXString == 'scpmk')
-                    Sub-CPMK
-                @elseif ($typeXString == 'ref')
-                    Referensi
-                @elseif ($typeXString == 'tim_dosen')
-                    Tim Dosen
-                @elseif ($typeXString == 'dosen')
-                    Dosen
-                @else
-                    OBE
-                @endif
+                Tambah {{ $nameOBE }}
             </flux:button>
 
             <flux:menu

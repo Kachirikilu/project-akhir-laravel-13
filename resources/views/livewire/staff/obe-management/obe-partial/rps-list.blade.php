@@ -157,7 +157,7 @@
                                             <div
                                                 class="col-span-2 flex items-center gap-6 pt-3 mt-1 border-t border-zinc-200/50 dark:border-zinc-700/50">
 
-                                                <button type="button"
+                                                <button type="button" title="Show RPS"
                                                     class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
                                                     @click="
                                                         $store.rps?.resetShow();

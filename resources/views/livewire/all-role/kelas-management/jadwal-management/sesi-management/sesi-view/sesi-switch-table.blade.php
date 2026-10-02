@@ -5,10 +5,6 @@
             <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
             Sesi Kelas
         </h3>
-
-
-        @include('livewire.global.table.detail-view-switch')
-
     </div>
 
     <!-- Container Filter & Tab -->

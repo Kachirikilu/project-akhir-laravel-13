@@ -5,7 +5,7 @@
 
         <div class="ml-auto">
             <flux:dropdown>
-                <flux:button variant="primary" icon="plus" size="sm"
+                <flux:button title="Tambah Mata Kuliah" variant="primary" icon="plus" size="sm"
                     class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] active:bg-[var(--hover-focus-color)]/90 transition-all duration-200 ease-in-out"
                     wire:target="addMK">
                     Tambah Mata Kuliah

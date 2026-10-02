@@ -14,6 +14,8 @@
                 <div x-data="{ activeTab: @entangle('filterAngkatan') }"
                     class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
 
+                    @include('livewire.global.table.detail-view-switch', ['autoSmall' => 'xl', 'textTrue' => 'Detailed', 'textFalse' => 'Simple'])
+
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'filterByAngkatan',
                         'xFilter' => 'filterAngkatan',
@@ -39,6 +41,8 @@
                     {{-- <div class="mr-4 sm:mr-6">
                         @include('livewire.global.table.detail-view-switch')
                     </div> --}}
+                    @include('livewire.global.table.detail-view-switch', ['textTrue' => 'Detailed', 'textFalse' => 'Simple'])
+
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'pertemuan_ke',
                         'headString' => 'NIM',
@@ -70,7 +74,7 @@
 
                     <div class="flex-grow max-w-md">
                         @include('livewire.global.search-and-filters.main-search', [
-                            'placeholder' => 'Cari Mahasiswa Kelas...',
+                            'placeholder' => 'Cari Mahasiswa...',
                             'defaultLive' => 1,
                             'searchMode' => $searchMode,
                             'searchValues' => ['simple', 'smart', 'complex'],

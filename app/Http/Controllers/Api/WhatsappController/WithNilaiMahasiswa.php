@@ -10,7 +10,7 @@ trait WithNilaiMahasiswa
 {
     private function processNilaiMahasiswa(string $noWA, string $nameWA, string $pesan)
     {
-        Log::info('=== SEDANG MENCARI NILAI MAHASISWA ===');
+        Log::info('=== SEDANG MENCari Mahasiswa ===');
 
         $sufiksNomor = substr($noWA, -9);
         $user = $this->searchUserWhatsApp($sufiksNomor);
