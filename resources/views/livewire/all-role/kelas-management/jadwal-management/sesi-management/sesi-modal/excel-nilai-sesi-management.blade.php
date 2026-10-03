@@ -31,6 +31,7 @@
                                     'wireLoading2' => 'saveNilaiExcel',
                                     'targetX' => 'addNilai, saveNilai, editNilai, updateNilai',
                                     'isLeft' => 1,
+                                    'typeX' => 'excel',
                                     'mt' => '',
                                 ])
                         </div>

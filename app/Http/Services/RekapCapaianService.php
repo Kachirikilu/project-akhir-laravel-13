@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\Jobs\ProcessRekapCapaian;
+use App\Jobs\ProcessRekapCapaianJob;
 use App\Models\Akademik\RPS;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Penilaian\NilaiMahasiswa;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-trait RekapCapaian
+trait RekapCapaianService
 {
     // public function generateRekapCapaianQueue(?int $prId = null)
     // {
@@ -277,7 +277,7 @@ trait RekapCapaian
             Cache::put($runningProdiKey, array_unique($runningProdiIds), now()->addHours(2));
         }
 
-        ProcessRekapCapaian::dispatch($prId, $cooldown);
+        ProcessRekapCapaianJob::dispatch($prId, $cooldown);
 
         $this->toast(
             text: 'Rekap data berhasil dimasukkan ke antrean sistem, silakan tunggu beberapa saat.',

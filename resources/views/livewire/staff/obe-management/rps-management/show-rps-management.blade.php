@@ -9,7 +9,7 @@
                 <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-2/3 order-2 xl:order-1">
                     <div class="flex-shrink-0">
                         @include('livewire.global.table.export-button', [
-                            'nameXString' => 'Export PDF',
+                            'nameXString' => 'Export RPS',
                             'xString' => 'printPDFRPS($store.rps?.rps_id_show, $store.rps?.pr_id_show)',
                             'icon' => 'arrow-down-tray',
                             'isFull' => 1,

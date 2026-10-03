@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Staff;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 // use App\Livewire\Admin\UserManagement\WithUserModal;
@@ -35,7 +35,7 @@ class NilaiManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     // use WithRPSDelete;
     use WithOBEExcel;
 
@@ -360,6 +360,9 @@ class NilaiManagement extends Component
                     $stats = array_merge($stats, $this->getStatsRps($this->showDeleted));
                     break;
             }
+
+            $n = \App\Models\Penilaian\NilaiMahasiswa::count();
+            dump($n);
 
             return view('livewire.staff.nilai-management', array_merge($data, [
                 'stats' => $stats,

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithNilaiSearchFilters;
 use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\RpsMahasiswaManagement\WithRPSMahasiswaDelete;
@@ -24,7 +24,7 @@ use Livewire\WithPagination;
 class RpsMahasiswaManagement extends Component
 {
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     use WithNilaiMahasiswaExcel;
     use WithNilaiMahasiswaFilters;
 

@@ -63,8 +63,7 @@
                             $dispatch('open-add-prodi-modal', { type: 'fakultas' });
                         "
                                 class="text-xs sm:text-sm cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30 active:!bg-indigo-200 dark:active:!bg-indigo-900">
-                                <flux:icon name="building-library"
-                                    class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
+                                <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                                 <div class="flex justify-between items-center w-full">
                                     <span class="mr-7 whitespace-nowrap">Fakultas</span>
                                 </div>

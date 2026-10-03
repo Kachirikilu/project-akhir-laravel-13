@@ -11,7 +11,7 @@ use App\Livewire\Staff\NilaiManagement\WithNilaiMahasiswaExcel;
 
 // use App\Livewire\Admin\UserManagement\WithUserDelete;
 // use App\Livewire\Admin\UserManagement\WithUserModal;
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 
 use App\Models\Auth\User;
 use App\Models\Auth\Mahasiswa;
@@ -24,7 +24,7 @@ use Livewire\WithPagination;
 class NilaiMahasiswaManagement extends Component
 {
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     // use WithKelasDelete;
     use WithNilaiMahasiswaFilters;
     use WithNilaiSearchFilters;

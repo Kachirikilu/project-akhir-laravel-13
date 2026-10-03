@@ -88,6 +88,22 @@
                         <span class="mr-7 whitespace-nowrap">Input File Excel</span>
                     </div>
                 </flux:menu.item>
+
+                <flux:menu.item
+                    @click="
+                        $store.user?.setType('antrian');
+                        $store.user?.setEdit(0);
+                        $store.user?.setColor('text-yellow-700 dark:text-yellow-400', 'file:bg-yellow-600 hover:file:bg-yellow-700 active:file:bg-yellow-800 dark:file:bg-yellow-500 dark:hover:file:bg-yellow-600 dark:active:file:bg-yellow-700');
+                        $store.user?.reset(1);
+                        $flux.modal('user-antrian-modal').show();
+                        $dispatch('open-antrian-user-modal');
+                    "
+                    class="text-xs sm:text-sm cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900">
+                    <flux:icon name="queue-list" class="!text-yellow-600 dark:!text-yellow-400 mr-2 h-4 w-4" />
+                    <div class="flex justify-between items-center w-full">
+                        <span class="mr-7 whitespace-nowrap">Input Antrian Excel</span>
+                    </div>
+                </flux:menu.item>
             </flux:menu>
         </flux:dropdown>
     </div>

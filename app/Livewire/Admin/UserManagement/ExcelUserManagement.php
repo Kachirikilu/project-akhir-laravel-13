@@ -19,7 +19,6 @@ class ExcelUserManagement extends Component
     public $fk_id;
     public $dp_id;
 
-
     #[On('open-excel-user-modal')]
     public function handleExcelUser()
     {
