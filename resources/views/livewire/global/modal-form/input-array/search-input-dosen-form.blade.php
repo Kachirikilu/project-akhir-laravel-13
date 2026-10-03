@@ -1,4 +1,4 @@
-<div>
+<div class="my-3">
     <div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
         x-data="{
             open: false,

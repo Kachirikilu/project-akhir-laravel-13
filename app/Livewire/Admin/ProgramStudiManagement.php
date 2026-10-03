@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
@@ -26,7 +26,7 @@ class ProgramStudiManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     use WithDepartemenFilters;
     use WithDepartemenSearchFilters;
     use WithFakultasFilters;

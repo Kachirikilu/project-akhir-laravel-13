@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -10,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 
-class ProcessRekapCapaian implements ShouldQueue
+class ProcessRekapCapaianJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -38,7 +38,7 @@ class ProcessRekapCapaian implements ShouldQueue
         try {
             $rekapService = new class
             {
-                use RekapCapaian;
+                use RekapCapaianService;
             };
 
             $rekapService->generateRekapCapaianQueue($this->prId);

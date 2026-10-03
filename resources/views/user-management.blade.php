@@ -8,6 +8,7 @@
     @if (Auth::user()->tingkat < 5)
         <livewire:admin.user-management.modal-user-management />
         <livewire:admin.user-management.excel-user-management />
+        <livewire:admin.user-management.antrian-user-management />
         <livewire:admin.user-management.delete-user-management />
     @endif
 </x-layouts::app>

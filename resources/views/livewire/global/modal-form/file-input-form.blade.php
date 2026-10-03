@@ -1,4 +1,4 @@
-<div wire:key="file-input-{{ $modelString }}-{{ $alpine ?? 'config' }}">
+<div class="my-3" wire:key="file-input-{{ $modelString }}-{{ $alpine ?? 'config' }}">
     @include('livewire.global.modal-form.partial.label')
 
     <div class="{{ $noLabel ?? false ? '' : 'mt-1' }}">

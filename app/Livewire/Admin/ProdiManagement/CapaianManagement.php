@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use App\Livewire\Admin\ProdiManagement\CapaianManagement\WithRekapExcel;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
@@ -41,7 +41,7 @@ class CapaianManagement extends Component
     use HasSortir;
     use HasStats;
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     use WithCPLFilters;
     use WithCPLSearchFilters;
     use WithCPMKFilters;

@@ -1,4 +1,4 @@
-<div>
+<div class="my-3">
     <div class="relative"
         wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}-{{ $alpine }}"
         x-data="{

@@ -1,4 +1,4 @@
-<div>
+<div class="my-3">
     @php
         $alpineState = $alpine ?? 'config';
         $isLivewireState = $isLivewire ?? null;

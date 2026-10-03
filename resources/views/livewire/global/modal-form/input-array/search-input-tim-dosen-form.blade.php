@@ -1,5 +1,5 @@
 <div>
-    <div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
+    <div class="relative my-3" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
         x-data="{
             open: false,
             search: @entangle($nameSearchString).live,

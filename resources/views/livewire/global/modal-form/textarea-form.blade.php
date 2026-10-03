@@ -6,7 +6,7 @@
         $isBlur = $isLivewireBlur ?? false;
 @endphp
 
-<div x-data="{ 
+<div class="my-3" x-data="{ 
         @if (!$noEntangle)
             @if ($isLivewireState)
                 @if (isset($itemsString))

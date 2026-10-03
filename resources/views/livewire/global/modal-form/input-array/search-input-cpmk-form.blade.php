@@ -1,4 +1,4 @@
-<div>
+<div class="my-3">
     @php
         $bobotMin = config('rps.bobot_min', 70);
         $bobotMax = config('rps.bobot_max', 200);

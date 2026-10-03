@@ -298,6 +298,10 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
+        reset_antrian() {
+            this.update_or_create_mode = false;
+        },
+
         resetLite(isAdd = 0) {
             if ((this.showEdit == 1 && isAdd == 1) || isAdd == 0) {
                 this.email = "";

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Staff\NilaiManagement;
 
-use App\Http\Services\RekapCapaian;
+use App\Http\Services\RekapCapaianService;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 // use App\Livewire\AllRole\KelasManagement\WithKelasDelete;
@@ -39,7 +39,7 @@ class RpsCapaianMahasiswaManagement extends Component
     use HasGetByKode;
     use HasNilaiAbsensi;
     use HasToast;
-    use RekapCapaian;
+    use RekapCapaianService;
     use WithCpmkGrafikShow;
     use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;

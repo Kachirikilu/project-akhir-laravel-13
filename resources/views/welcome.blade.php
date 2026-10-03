@@ -55,7 +55,7 @@
         {{-- ═══ HERO ═══ --}}
         <header class="py-24 px-5 text-center space-y-8">
             <span
-                class="text-[var(--focus-color)] inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)] bg-[var(--focus-color)] px-3 py-1 text-xs sm:text-sm font-bold uppercase tracking-[0.07em]">
+                class="text-[var(--focus-color)] inline-flex items-center gap-2 rounded-full border border-[var(--focus-color)] px-3 py-1 text-xs sm:text-sm font-bold uppercase tracking-[0.07em]">
                 <flux:icon name="shield-check" class="w-4 h-4" />
                 {{ env('UNIVERSITAS') }}
             </span>

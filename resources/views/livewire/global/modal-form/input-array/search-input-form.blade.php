@@ -1,4 +1,4 @@
-<div>
+<div class="my-3">
     @php
         $idEntangle = !empty($idString ?? null) ? str_replace(['[', ']'], ['.', ''], $idString) : null;
         $itemAllEntangle = !empty($itemsAllString ?? null) ? str_replace(['[', ']'], ['.', ''], $itemsAllString) : null;

@@ -14,7 +14,7 @@
     $fullModelPath = isset($itemsString) ? "{$modelString}.{$itemsString}" : $modelString;
 @endphp
 
-<div class="relative" wire:key="select-form-{{ $modelString }}-{{ $alpineState }}" x-data="{
+<div class="relative my-3" wire:key="select-form-{{ $modelString }}-{{ $alpineState }}" x-data="{
     open: false,
     options: [],
     values: [],

@@ -94,7 +94,7 @@
         }, 3000);
     }
 }">
-    <flux:button @click="handleClick" size="sm" title="{{ $name }}"
+    <flux:button @click="handleClick" size="sm" title="Klik 2x untuk {{ $name }}"
         {{-- :icon="$full ? $icon ?? 'printer' : null" --}}
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}

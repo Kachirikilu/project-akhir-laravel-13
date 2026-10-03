@@ -106,7 +106,7 @@
             </h4>
 
             <button type="button" wire:click="togglePreview"
-                class="cursor-pointer text-sm px-8 py-1 rounded border transition-all duration-[200ms] 
+                class="cursor-pointer text-sm px-8 py-1 rounded border transition-all duration-200 
            {{ $noPreview
                ? 'bg-[var(--focus-color)] text-white border-[var(--focus-color)] hover:opacity-90'
                : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700' }}">
@@ -158,7 +158,7 @@
                             class="min-w-full border-separate border-spacing-0 text-sm">
 
 
-                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-[10]">
+                            <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-10">
                                 <tr class="text-left">
                                     <th class="{{ $headColumn }}">#</th>
                                     <th class="{{ $headColumn }}">Email</th>

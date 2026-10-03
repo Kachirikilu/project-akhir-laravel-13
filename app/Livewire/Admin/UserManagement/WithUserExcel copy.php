@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Exports\UserExport;
 use App\Http\Services\UserService;
+use App\Exports\UserExport;
 use App\Jobs\ProcessUserExcelQueueJob;
 use App\Livewire\Global\HasToast;
+use App\Models\Auth\Admin;
 // use App\Models\Auth\Membership;
 // use App\Models\Auth\Team;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
+use App\Models\Auth\User;
 use App\Models\Auth\UserExcelQueue;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
@@ -15,8 +19,11 @@ use App\Models\ProgramStudi\Prodi;
 use Illuminate\Pagination\LengthAwarePaginator;
 // use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
@@ -133,13 +140,9 @@ trait WithUserExcel
         );
     }
 
-    // Pakau Service
     public function importUserExcel()
     {
-        if (! $this->AuthCheck()) {
-            return;
-        }
-        if ($this->roleType !== 'excel') {
+        if (! $this->AuthCheck() || $this->roleType !== 'excel') {
             return;
         }
 
@@ -153,14 +156,12 @@ trait WithUserExcel
             'excel_user_file.*' => 'file|mimes:xlsx,xls|max:10240',
         ]);
 
-        // Panggil UserService menggunakan Service Container Laravel (app()):
-        $parsingService = app(UserService::class);
-
+        $service = app(UserService::class);
         $this->parsedUserRows = [];
 
-        // Gunakan properti yang BENAR: $this->excel_user_file
         foreach ($this->excel_user_file as $singleFile) {
-            $rows = $parsingService->parseSingleExcelFile($singleFile->getRealPath());
+            // Panggil service untuk membaca real path file temporary Livewire
+            $rows = $service->parseExcelToArray($singleFile->getRealPath());
             $this->parsedUserRows = array_merge($this->parsedUserRows, $rows);
         }
 
@@ -236,8 +237,8 @@ trait WithUserExcel
             'excel_user_file.*' => 'file|mimes:xlsx,xls|max:27648',
             'pr_id' => 'required|exists:prodis,id',
             'user_input.role' => 'nullable|in:Admin,Dosen,Mahasiswa',
+            'user_input.update_or_create_mode' => 'boolean',
             'user_input.update_or_create' => 'nullable|required_if:update_or_create_mode,1,true|in:identity1,nik,email',
-            'update_or_create_mode' => 'boolean',
         ];
     }
 
@@ -264,8 +265,6 @@ trait WithUserExcel
 
     public function saveUserAntrian()
     {
-        $currentUser = Auth::user();
-
         $this->validate(
             $this->rulesUserExcelImport(),
             $this->validationMessagesUser()
@@ -276,18 +275,21 @@ trait WithUserExcel
             $prId = $this->pr_id;
 
             $role = ! empty($this->user_input['role']) ? $this->user_input['role'] : null;
-            $isUpdateOrCreate = ! empty($this->update_or_create_mode);
+            $isUpdateOrCreate = ! empty($this->user_input['update_or_create_mode']);
             $updateBy = $isUpdateOrCreate ? ($this->user_input['update_or_create'] ?? 'identity1') : null;
+
             $dispatchedCount = 0;
 
             foreach ($files as $file) {
                 $originalName = $file->getClientOriginalName();
 
+                // 1. Simpan file fisik ke storage
                 $storedPath = $file->storeAs(
                     'imports/users/temp',
-                    time().'_'.uniqid().'_'.\Str::slug(pathinfo($originalName, PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension()
+                    time().'_'.uniqid().'_'.Str::slug(pathinfo($originalName, PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension()
                 );
 
+                // 2. Buat Record Tracking di Database
                 $importRecord = UserExcelQueue::create([
                     'user_id' => auth()->id(),
                     'type' => 'user',
@@ -298,43 +300,102 @@ trait WithUserExcel
                         'role' => $role,
                         'update_or_create_mode' => $isUpdateOrCreate,
                         'update_or_create' => $updateBy,
-
-                        'auth_user_id' => $currentUser->id,
-                        'auth_user_tingkat' => $currentUser->admin?->tingkat ?? 4,
                     ],
                     'status' => 'pending',
                 ]);
 
                 ProcessUserExcelQueueJob::dispatch($importRecord->id);
+
                 $dispatchedCount++;
             }
 
             $this->resetInputUser();
-            $this->clearUserExcelFile();
-            $this->update_or_create_mode = false;
-            $this->dispatch('refresh-data-user-antrian');
 
             $this->toast(
                 text: "Berhasil memasukkan {$dispatchedCount} file ke dalam antrean sistem!",
                 variant: 'success'
             );
 
-            if (method_exists($this, 'dispatch')) {
-                $this->dispatch('next-antrian-step');
-                $this->dispatch('refresh-table');
-                $this->dispatch('refresh-stats-user');
-            }
+            $this->dispatch('refresh-table');
+            $this->dispatch('refresh-stats-user');
+            $this->dispatch('next-antrian-step');
 
         } catch (\Throwable $e) {
             $this->toast(text: '❌ Gagal memproses antrean: '.$e->getMessage(), variant: 'danger');
         }
     }
 
+    public function downloadFile($importId)
+    {
+        $import = UserExcelQueue::findOrFail($importId);
+
+        if (Storage::exists($import->file_path)) {
+            return Storage::download($import->file_path, $import->original_name);
+        }
+
+        $this->toast(text: 'File fisik sudah tidak tersedia di server!', variant: 'danger');
+    }
+
+    public $selectedErrorLogs = [];
+
+    public $showErrorModal = false;
+
+    public function showErrorDetail($importId)
+    {
+        $import = UserExcelQueue::findOrFail($importId);
+        $this->selectedErrorLogs = $import->row_errors ?? [];
+        $this->showErrorModal = true;
+    }
+
     private function resolveExistingUserId(array $row, string $role): ?int
     {
         $mode = $this->user_input['update_or_create'] ?? 'identity1';
+        $lowerRole = strtolower($role);
 
-        return app(UserService::class)->resolveExistingUserId($row, $role, $mode);
+        if ($mode === 'email') {
+            $email = $row['email'] ?? null;
+            if (! empty($email)) {
+                $user = User::where('email', $email)->first();
+
+                return $user ? $user->id : null;
+            }
+
+            return null;
+        }
+
+        $modelClass = match ($lowerRole) {
+            'admin' => Admin::class,
+            'dosen' => Dosen::class,
+            'mahasiswa' => Mahasiswa::class,
+            default => null,
+        };
+
+        if (! $modelClass) {
+            return null;
+        }
+
+        $query = $modelClass::query();
+
+        if ($mode === 'identity1') {
+            $identityColumn = ($lowerRole === 'mahasiswa') ? 'nim' : 'nip';
+            $searchValue = $row[$identityColumn] ?? null;
+
+            if ($searchValue) {
+                $record = $query->where($identityColumn, $searchValue)->first();
+
+                return $record ? $record->user_id : null;
+            }
+        } elseif ($mode === 'nik') {
+            $searchValue = $row['nik'] ?? null;
+
+            if ($searchValue) {
+                $record = $query->where('nik', $searchValue)->first();
+
+                return $record ? $record->user_id : null;
+            }
+        }
+
+        return null;
     }
 
     public function procesImportUserExcel()
@@ -443,50 +504,198 @@ trait WithUserExcel
 
     private function saveUserFromExcel($validated, $role)
     {
-        app(UserService::class)->saveUserFromExcel($validated, $role);
+        DB::transaction(function () use ($validated, $role) {
+            $user = User::create([
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            if ($role === 'admin') {
+                Admin::create([
+                    'user_id' => $user->id,
+                    'tingkat_user' => (string) $validated['tingkat'],
+                    'name' => $validated['name'],
+                    'status' => $validated['status'],
+                    'nip' => $validated['nip'],
+                    'nitk' => $validated['nitk'] ?? null,
+                    'nik' => $validated['nik'],
+                    'pr_id' => $validated['pr_id'],
+                    'kode_wilayah' => $validated['kode_wilayah'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+
+                    'status' => $validated['status'],
+                ]);
+            } elseif ($role === 'dosen') {
+                Dosen::create([
+                    'user_id' => $user->id,
+                    'tingkat_user' => (string) $validated['tingkat'],
+                    'name' => $validated['name'],
+                    'status' => $validated['status'],
+                    'nip' => $validated['nip'],
+                    'nidn' => $validated['nidn'] ?? null,
+                    'nidk' => $validated['nidk'] ?? null,
+                    'nik' => $validated['nik'],
+                    'pr_id' => $validated['pr_id'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+
+                    'status' => $validated['status'],
+                ]);
+            } elseif ($role === 'mahasiswa') {
+                Mahasiswa::create([
+                    'user_id' => $user->id,
+                    'tingkat_user' => (string) $validated['tingkat'],
+                    'name' => $validated['name'],
+                    'status' => $validated['status'],
+                    'nim' => $validated['nim'],
+                    'nik' => $validated['nik'],
+                    'angkatan' => $validated['angkatan'],
+                    'pr_id' => $validated['pr_id'],
+                    'kode_wilayah' => $validated['kode_wilayah'],
+                    'no_hp' => $validated['no_hp'],
+
+                    'agama' => $validated['agama'],
+                    'jenis_kelamin' => $validated['jenis_kelamin'],
+                    'tanggal_lahir' => $validated['tanggal_lahir'],
+                    'tempat_lahir' => $validated['tempat_lahir'],
+
+                    'status' => $validated['status'],
+                ]);
+            }
+        });
     }
 
     private function saveUserFromExcelUpdateOrCreate($validated, $role)
     {
-        $mode = $this->user_input['update_or_create'] ?? 'identity1';
-        app(UserService::class)->saveUserFromExcelUpdateOrCreate($validated, $role, $this->selected_id_user, $mode);
+        DB::transaction(function () use ($validated, $role) {
+            $userMatchAttributes = $this->selected_id_user
+                ? ['id' => $this->selected_id_user]
+                : ['email' => $validated['email']];
+
+            $userData = [
+                'email' => $validated['email'],
+            ];
+            if (! empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            } else {
+                if (! $this->selected_id_user) {
+                    $defaultPass = $validated['nip'] ?? $validated['nim'] ?? $validated['nik'] ?? $validated['email'] ?? 'defaultpassword';
+                    $userData['password'] = Hash::make($defaultPass);
+                }
+            }
+
+            $user = User::updateOrCreate(
+                $userMatchAttributes,
+                $userData
+            );
+
+            $mode = $this->user_input['update_or_create'] ?? 'identity1';
+
+            if ($role === 'admin') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nip',
+                };
+
+                $adminMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Admin::updateOrCreate(
+                    $adminMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'tingkat_user' => (string) $validated['tingkat'],
+                        'name' => $validated['name'],
+                        'status' => $validated['status'],
+                        'nip' => $validated['nip'],
+                        'nitk' => $validated['nitk'] ?? null,
+                        'nik' => $validated['nik'],
+                        'pr_id' => $validated['pr_id'],
+                        'kode_wilayah' => $validated['kode_wilayah'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            } elseif ($role === 'dosen') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nip',
+                };
+
+                $dosenMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Dosen::updateOrCreate(
+                    $dosenMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'tingkat_user' => (string) $validated['tingkat'],
+                        'name' => $validated['name'],
+                        'status' => $validated['status'],
+                        'nip' => $validated['nip'],
+                        'nidn' => $validated['nidn'] ?? null,
+                        'nidk' => $validated['nidk'] ?? null,
+                        'nik' => $validated['nik'],
+                        'pr_id' => $validated['pr_id'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            } elseif ($role === 'mahasiswa') {
+                $matchField = match ($mode) {
+                    'nik' => 'nik',
+                    'email' => 'email',
+                    default => 'nim',
+                };
+
+                $mahasiswaMatchAttributes = $this->selected_id_user
+                    ? ['user_id' => $this->selected_id_user]
+                    : [$matchField => $validated[$matchField]];
+
+                Mahasiswa::updateOrCreate(
+                    $mahasiswaMatchAttributes,
+                    [
+                        'user_id' => $user->id,
+                        'tingkat_user' => (string) $validated['tingkat'],
+                        'name' => $validated['name'],
+                        'status' => $validated['status'],
+                        'nim' => $validated['nim'],
+                        'nik' => $validated['nik'],
+                        'angkatan' => $validated['angkatan'],
+                        'pr_id' => $validated['pr_id'],
+                        'kode_wilayah' => $validated['kode_wilayah'],
+                        'no_hp' => $validated['no_hp'],
+                        'agama' => $validated['agama'],
+                        'jenis_kelamin' => $validated['jenis_kelamin'],
+                        'tanggal_lahir' => $validated['tanggal_lahir'],
+                        'tempat_lahir' => $validated['tempat_lahir'],
+                        'status' => $validated['status'],
+                    ]
+                );
+            }
+        });
     }
 
     public function loadingUserExcel() {}
-
-    public function downloadFile($importId)
-    {
-        $import = UserExcelQueue::findOrFail($importId);
-
-        if (Storage::exists($import->file_path)) {
-            return Storage::download($import->file_path, $import->original_name);
-        }
-
-        $this->toast(text: 'File fisik sudah tidak tersedia di server!', variant: 'danger');
-    }
-
-    // public $showErrorModal = false;
-
-    // public array $selectedRowErrors = [];
-
-    // public function showErrorDetail(int $importId)
-    // {
-    //     $importRecord = UserExcelQueue::find($importId);
-
-    //     if (! $importRecord) {
-    //         $this->toast(text: 'Data antrean tidak ditemukan!', variant: 'danger');
-
-    //         return;
-    //     }
-    //     $errors = $importRecord->row_errors;
-
-    //     if (is_string($errors)) {
-    //         $errors = json_decode($errors, true) ?? [];
-    //     }
-
-    //     $this->selectedRowErrors = is_array($errors) ? $errors : [];
-
-    //     // Buka Modal Flux UI
-    //     $this->dispatch('modal-show', name: 'error-detail-modal');
-    // }
 }

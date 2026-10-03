@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\WhatsappController;
 
 use App\Exports\MultiNilaiExport;
 use App\Exports\NilaiExport;
-use App\Jobs\SendSesiExpiredNotification;
+use App\Jobs\SendSesiExpiredNotificationJob;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithCpmkGrafikShow;
 use App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement\WithNilaiExcel;
@@ -61,7 +61,7 @@ trait WithExcelCapaianNilai
         if ($oldJobId) {
             \DB::table('jobs')->where('id', $oldJobId)->delete();
         }
-        $job = (new SendSesiExpiredNotification($user, $noWA))->delay(now()->addMinutes(10));
+        $job = (new SendSesiExpiredNotificationJob($user, $noWA))->delay(now()->addMinutes(10));
         $jobId = app(Dispatcher::class)->dispatch($job);
         if (is_object($jobId)) {
             $jobId = uniqid('sync_');

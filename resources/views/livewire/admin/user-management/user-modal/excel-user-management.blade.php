@@ -33,6 +33,7 @@
                                     'wireLoading' => 'excel_user_file, parseExcelUserFile, procesImportUserExcel',
                                     'wireLoading2' => 'saveUserExcel',
                                     'targetX' => 'addUser, saveUser, editUser, updateUser',
+                                    'typeX' => 'excel',
                                     'isLeft' => 1,
                                 ])
                         </div>
