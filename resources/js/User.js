@@ -298,7 +298,7 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        reset_antrian() {
+        reset_antrean() {
             this.update_or_create_mode = false;
         },
 

@@ -751,7 +751,7 @@ trait WithUserExcel
 
 
 
-    public function saveUserAntrian()
+    public function saveUserAntrean()
     {
         $this->validate(
             $this->rulesUserExcelImport(),
@@ -806,7 +806,7 @@ trait WithUserExcel
 
             $this->dispatch('refresh-table');
             $this->dispatch('refresh-stats-user');
-            $this->dispatch('next-antrian-step');
+            $this->dispatch('next-antrean-step');
 
         } catch (\Throwable $e) {
             $this->toast(text: '❌ Gagal memproses antrean: '.$e->getMessage(), variant: 'danger');
