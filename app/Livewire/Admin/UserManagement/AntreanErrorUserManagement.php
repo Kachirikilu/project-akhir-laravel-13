@@ -10,7 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class AntrianErrorUserManagement extends Component
+class AntreanErrorUserManagement extends Component
 {
     use HasToast;
     use WithPagination;
@@ -20,12 +20,12 @@ class AntrianErrorUserManagement extends Component
 
     public $parent;
 
-    public bool $showErrorUserAntrianModal = false;
+    public bool $showErrorUserAntreanModal = false;
 
     public ?int $selectedImportId = null;
 
-    #[On('open-error-antrian-user-modal')]
-    public function handleErrorAntrianUser($id)
+    #[On('open-error-antrean-user-modal')]
+    public function handleErrorAntreanUser($id)
     {
         $this->isReady = true;
         $this->showErrorDetail($id);
@@ -43,12 +43,12 @@ class AntrianErrorUserManagement extends Component
 
         $this->selectedImportId = $id;
         $this->resetPage();
-        $this->showErrorUserAntrianModal = true;
+        $this->showErrorUserAntreanModal = true;
     }
 
     public function render()
     {
-        $errorAntrians = null;
+        $errorAntreans = null;
 
         if ($this->selectedImportId) {
             $importRecord = UserExcelQueue::find($this->selectedImportId);
@@ -67,23 +67,23 @@ class AntrianErrorUserManagement extends Component
                 $offset = ($currentPage - 1) * $perPage;
                 $currentPageItems = array_slice($errorsArray, $offset, $perPage);
 
-                $errorAntrians = new LengthAwarePaginator(
+                $errorAntreans = new LengthAwarePaginator(
                     $currentPageItems,
                     count($errorsArray),
                     $perPage,
                     $currentPage,
                     [
                         'path' => LengthAwarePaginator::resolveCurrentPath(),
-                        // 'pageName' => 'errorAntrianPage',
+                        // 'pageName' => 'errorAntreanPage',
                     ]
                 );
             }
         }
 
-        return view('livewire.admin.user-management.user-modal.user-modal-partial.user-antrian-input-partial.error-antrian-user-management', [
-            'errorAntrians' => $errorAntrians,
+        return view('livewire.admin.user-management.user-modal.user-modal-partial.user-antrean-input-partial.error-antrean-user-management', [
+            'errorAntreans' => $errorAntreans,
         ]);
     }
 
-    public function loadingErrorAntrianUsersList() {}
+    public function loadingErrorAntreanUsersList() {}
 }

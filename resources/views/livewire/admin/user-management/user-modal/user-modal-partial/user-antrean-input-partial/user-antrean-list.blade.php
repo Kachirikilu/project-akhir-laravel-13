@@ -1,9 +1,9 @@
 <div class="form-container"
-    @php $hasActiveQueue = $antrianImports->contains(fn($i) => in_array($i->status, ['pending', 'processing'])); @endphp
+    @php $hasActiveQueue = $antreanImports->contains(fn($i) => in_array($i->status, ['pending', 'processing'])); @endphp
     @if ($hasActiveQueue) wire:poll.3s @endif>
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6 flex items-center justify-between">
-        <span>List Antrian Data Excel Pengguna</span>
+        <span>List Antrean Data Excel Pengguna</span>
 
         {{-- @if ($hasActiveQueue)
             <span class="text-xs text-[var(--focus-color)] font-normal flex items-center gap-1.5">
@@ -11,8 +11,8 @@
                 Memperbarui otomatis...
             </span>
         @endif --}}
-        @if (!empty($antrianImports) && $antrianImports->count() > 0)
-            @include('livewire.admin.user-management.user-modal.user-modal-partial.user-antrian-input-partial.delete-antrian-list')
+        @if (!empty($antreanImports) && $antreanImports->count() > 0)
+            @include('livewire.admin.user-management.user-modal.user-modal-partial.user-antrean-input-partial.delete-antrean-list')
         @endif
     </h4>
 
@@ -32,9 +32,9 @@
                     <th class="px-3 py-3 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="loadingAntrianUsersList"
+            <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="loadingAntreanUsersList"
                 class="divide-y divide-[var(--border-table-color)] bg-[var(--second-table-color)]">
-                @forelse ($antrianImports as $item)
+                @forelse ($antreanImports as $item)
                     <tr class="hover:bg-[var(--hover-table-color)]/40 active:bg-[var(--hover-table-color)]/32 transition-colors duration-150"
                         wire:key="queue-item-{{ $item->id }}"> {{-- Nama File & Waktu --}}
                         <td class="px-3 py-2 font-medium text-[var(--contrast-main-text)] whitespace-nowrap">
@@ -144,8 +144,8 @@
                                             active:!bg-red-200 dark:active:!bg-red-900/60"
                                             size="xs"
                                             @click="
-                                                $flux.modal('error-user-antrian-modal').show();
-                                                $dispatch('open-error-antrian-user-modal', { id: {{ $item->id }} });
+                                                $flux.modal('error-user-antrean-modal').show();
+                                                $dispatch('open-error-antrean-user-modal', { id: {{ $item->id }} });
                                             "
                                             variant="subtle" icon="exclamation-triangle" title="Lihat Detail Error" />
                                     </flux:modal.trigger>
@@ -162,10 +162,10 @@
             </tbody>
         </table>
 
-        @if ($antrianImports->hasPages())
+        @if ($antreanImports->hasPages())
             <div class="py-4" id="pagination-links-container">
-                {{ $antrianImports->links('vendor.pagination.tailwind', [
-                    'typeXLoading' => 'loadingAntrianUsersList()',
+                {{ $antreanImports->links('vendor.pagination.tailwind', [
+                    'typeXLoading' => 'loadingAntreanUsersList()',
                     'isSmall' => 1,
                     'maxButtons' => 8,
                 ]) }}

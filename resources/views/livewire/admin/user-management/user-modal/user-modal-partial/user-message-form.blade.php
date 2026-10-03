@@ -11,7 +11,7 @@
         </div>
 
         <div class="space-y-3">
-            <template x-if="$store.user?.typeModal == 'excel' || $store.user?.typeModal == 'antrian'" x-cloak>
+            <template x-if="$store.user?.typeModal == 'excel' || $store.user?.typeModal == 'antrean'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-xs sm:text-sm text-[var(--contrast-second-text)] leading-relaxed">
@@ -22,7 +22,7 @@
                 </div>
             </template>
 
-            <template x-if="$store.user?.typeModal !== 'antrian'" x-cloak>
+            <template x-if="$store.user?.typeModal !== 'antrean'" x-cloak>
 
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>

@@ -1,7 +1,7 @@
 <div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
-        Input Antrian Excel Data Pengguna</h4>
+        Input Antrean Excel Data Pengguna</h4>
 
 
     @include('livewire.global.modal-form.file-input-form', [

@@ -11,7 +11,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class AntrianUserManagement extends Component
+class AntreanUserManagement extends Component
 {
     use HasToast;
     use WithPagination;
@@ -29,22 +29,22 @@ class AntrianUserManagement extends Component
 
     public string $deleteScope = 'own';
 
-    #[On('open-antrian-user-modal')]
-    public function handleAntrianUser()
+    #[On('open-antrean-user-modal')]
+    public function handleAntreanUser()
     {
         $this->isReady = true;
     }
 
     public function render()
     {
-        $antrianImports = UserExcelQueue::latest()->paginate(8);
+        $antreanImports = UserExcelQueue::latest()->paginate(8);
 
-        return view('livewire.admin.user-management.user-modal.antrian-user-management', [
-            'antrianImports' => $antrianImports,
+        return view('livewire.admin.user-management.user-modal.antrean-user-management', [
+            'antreanImports' => $antreanImports,
         ]);
     }
 
-    public function deleteAntrianList(string $scope = 'own')
+    public function deleteAntreanList(string $scope = 'own')
     {
         if (! $this->AuthCheck()) {
             return;
@@ -122,5 +122,5 @@ class AntrianUserManagement extends Component
         $this->toast(text: "Berhasil menghapus {$deletedCount} data antrean!", variant: 'success');
     }
 
-    public function loadingAntrianUsersList() {}
+    public function loadingAntreanUsersList() {}
 }

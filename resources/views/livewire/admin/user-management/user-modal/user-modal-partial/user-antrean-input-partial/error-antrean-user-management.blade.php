@@ -1,6 +1,6 @@
 <div>
-    <flux:modal name="error-user-antrian-modal" wire:model.live="showErrorUserAntrianModal" :flyout="!!$parent"
-        wire:key="user-antrian-modal-{{ $parent }}" @refresh-data-user-antrian.window="$store.user.reset_antrian()"
+    <flux:modal name="error-user-antrean-modal" wire:model.live="showErrorUserAntreanModal" :flyout="!!$parent"
+        wire:key="user-antrean-modal-{{ $parent }}" @refresh-data-user-antrean.window="$store.user.reset_antrean()"
         class="md:min-w-xl md:max-w-2xl">
 
         @if ($isReady)
@@ -14,16 +14,16 @@
                         </flux:heading>
 
                         {{-- Badge Jumlah Error --}}
-                        @if (!empty($errorAntrians))
+                        @if (!empty($errorAntreans))
                             <flux:badge color="red" size="sm" class="font-semibold">
-                                {{ $errorAntrians->total() }} Error
+                                {{ $errorAntreans->total() }} Error
                             </flux:badge>
                         @endif
                     </div>
 
                     <flux:subheading size="sm" class="text-[var(--contrast-second-text)] mt-1">
-                        @if (!empty($errorAntrians))
-                            Ditemukan <b class="text-red-600 dark:text-red-400">{{ $errorAntrians->total() }}</b>
+                        @if (!empty($errorAntreans))
+                            Ditemukan <b class="text-red-600 dark:text-red-400">{{ $errorAntreans->total() }}</b>
                             baris
                             data
                             yang memerlukan perbaikan.
@@ -36,10 +36,10 @@
                 <flux:separator />
 
                 {{-- Container List Error --}}
-                <div wire:loading.class="opacity-50 pointer-events-none" wire:target="loadingErrorAntrianUsersList"
+                <div wire:loading.class="opacity-50 pointer-events-none" wire:target="loadingErrorAntreanUsersList"
                     class="max-h-[60vh] overflow-y-auto space-y-3 pr-1 scrollbar-medium">
-                    @if (!empty($errorAntrians))
-                        @foreach ($errorAntrians as $index => $error)
+                    @if (!empty($errorAntreans))
+                        @foreach ($errorAntreans as $index => $error)
                             <div
                                 class="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 rounded-lg text-xs space-y-2.5">
 
@@ -162,10 +162,10 @@
                 </div>
 
 
-                @if ($errorAntrians->hasPages())
+                @if ($errorAntreans->hasPages())
                     <div class="py-4" id="pagination-links-container">
-                        {{ $errorAntrians->links('vendor.pagination.tailwind', [
-                            'typeXLoading' => 'loadingErrorAntrianUsersList()',
+                        {{ $errorAntreans->links('vendor.pagination.tailwind', [
+                            'typeXLoading' => 'loadingErrorAntreanUsersList()',
                             'isSmall' => 1,
                             'maxButtons' => 8,
                         ]) }}

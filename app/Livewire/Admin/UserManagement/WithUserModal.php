@@ -727,7 +727,7 @@ trait WithUserModal
         ];
     }
 
-    public function getUserAntrianErrorSections()
+    public function getUserAntreanErrorSections()
     {
         return [
             1 => $this->getErrorCount([

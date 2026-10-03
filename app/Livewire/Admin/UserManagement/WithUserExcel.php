@@ -262,7 +262,7 @@ trait WithUserExcel
         }
     }
 
-    public function saveUserAntrian()
+    public function saveUserAntrean()
     {
         $currentUser = Auth::user();
 
@@ -312,7 +312,7 @@ trait WithUserExcel
             $this->resetInputUser();
             $this->clearUserExcelFile();
             $this->update_or_create_mode = false;
-            $this->dispatch('refresh-data-user-antrian');
+            $this->dispatch('refresh-data-user-antrean');
 
             $this->toast(
                 text: "Berhasil memasukkan {$dispatchedCount} file ke dalam antrean sistem!",
@@ -320,7 +320,7 @@ trait WithUserExcel
             );
 
             if (method_exists($this, 'dispatch')) {
-                $this->dispatch('next-antrian-step');
+                $this->dispatch('next-antrean-step');
                 $this->dispatch('refresh-table');
                 $this->dispatch('refresh-stats-user');
             }
