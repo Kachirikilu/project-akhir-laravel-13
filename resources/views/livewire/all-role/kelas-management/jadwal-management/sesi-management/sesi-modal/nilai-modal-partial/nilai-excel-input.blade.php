@@ -27,19 +27,24 @@
 
     <div class="form-container-excel">
 
-        <div class="flex justify-between items-end mx-2 sm:mx-0 mb-6 border-b border-[var(--contrast-second-text)] pb-2">
-            <h4 class="text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium">
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mx-2 sm:mx-0 mb-6 border-b border-[var(--contrast-second-text)] pb-2">
+            <h4 class="whitespace-nowrap text-[var(--contrast-main-text)] text-sm sm:text-md md:text-lg font-medium">
                 {{ $noPreview ? 'Mode Tanpa Preview Data Nilai Mahasiswa' : 'Preview & Edit Data Nilai Mahasiswa' }}
             </h4>
 
-            <button type="button" wire:click="togglePreview"
-                class="cursor-pointer text-sm px-8 py-1 rounded border transition-all duration-200 
-           {{ $noPreview
-               ? 'bg-[var(--focus-color)] text-white border-[var(--focus-color)] hover:opacity-90'
-               : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700' }}">
-                {{ $noPreview ? 'Mode: File' : 'Mode: Preview' }}
-            </button>
+            <div class="flex items-center justify-between xl:justify-end gap-3 w-full xl:w-auto">
+                <div></div>
+                <button type="button" wire:click="togglePreview"
+                    class="cursor-pointer text-sm px-6 sm:px-8 py-1 rounded border transition-all duration-200 whitespace-nowrap shrink-0 
+                {{ $noPreview
+                    ? 'bg-[var(--focus-color)] text-white border-[var(--focus-color)] hover:opacity-90'
+                    : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700' }}">
+                    {{ $noPreview ? 'Mode: File' : 'Mode: Preview' }}
+                </button>
+            </div>
         </div>
+
         <div class="relative">
             @if ($noPreview)
                 <div class="mx-2 sm:mx-0 text-sm text-[var(--contrast-third-text)] italic min-h-[64px]">
