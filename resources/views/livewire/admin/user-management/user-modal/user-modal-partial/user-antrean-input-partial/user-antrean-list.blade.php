@@ -1,20 +1,24 @@
 <div class="form-container"
     @php $hasActiveQueue = $antreanImports->contains(fn($i) => in_array($i->status, ['pending', 'processing'])); @endphp
     @if ($hasActiveQueue) wire:poll.3s @endif>
-    <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6 flex items-center justify-between">
-        <span>List Antrean Data Excel Pengguna</span>
+    
+    <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mx-2 sm:mx-0 mb-6 border-b border-[var(--contrast-second-text)] pb-2">
 
-        {{-- @if ($hasActiveQueue)
-            <span class="text-xs text-[var(--focus-color)] font-normal flex items-center gap-1.5">
-                <flux:icon name="arrow-path" class="w-3.5 h-3.5 animate-spin" />
-                Memperbarui otomatis...
-            </span>
-        @endif --}}
-        @if (!empty($antreanImports) && $antreanImports->count() > 0)
-            @include('livewire.admin.user-management.user-modal.user-modal-partial.user-antrean-input-partial.delete-antrean-list')
-        @endif
-    </h4>
+        <h4
+            class="whitespace-nowrap text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium">
+            List Antrean Data Excel Pengguna
+        </h4>
+
+
+        <div class="flex items-center justify-between xl:justify-end gap-3 w-full xl:w-auto">
+            <div></div>
+            @if (!empty($antreanImports) && $antreanImports->count() > 0)
+                @include('livewire.admin.user-management.user-modal.user-modal-partial.user-antrean-input-partial.delete-antrean-list')
+            @endif
+        </div>
+    </div>
+
 
 
     {{-- Tabel List Antrean --}}
