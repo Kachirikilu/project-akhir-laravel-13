@@ -361,8 +361,8 @@ class NilaiManagement extends Component
                     break;
             }
 
-            $n = \App\Models\Penilaian\NilaiMahasiswa::count();
-            dump($n);
+            // $n = \App\Models\Penilaian\NilaiMahasiswa::count();
+            // dump($n);
 
             return view('livewire.staff.nilai-management', array_merge($data, [
                 'stats' => $stats,
