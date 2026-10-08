@@ -104,6 +104,7 @@ class CreateNewUser implements CreatesNewUsers
                     'pr_id' => null,
                     'nip' => $input['nip'],
                     'nik' => $input['nik'],
+                    'tingkat_user' => '1',
                 ]);
             }
 

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
+use App\Models\Auth\Dosen;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
@@ -156,6 +157,8 @@ trait WithProdiModal
         if ($data['target_sks'] == null || $data['target_sks'] == 0) {
             $data['target_sks'] = 144;
         }
+
+        $dosen_count = Dosen::count();
 
         /* ===================== PROGRAM STUDI ===================== */
         if ($this->prodiType === 'prodi') {
@@ -439,7 +442,6 @@ trait WithProdiModal
             array_fill(0, 6, null),
             array_filter($this->dosen_id_array ?? [], fn ($val) => ! is_null($val) && $val !== '')
         );
-
 
         if (empty($data['strata'])) {
             $data['strata'] = 'Sarjana';

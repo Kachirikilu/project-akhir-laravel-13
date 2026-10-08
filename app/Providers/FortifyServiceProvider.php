@@ -58,12 +58,12 @@ class FortifyServiceProvider extends ServiceProvider
             $user = User::where('email', $identifier)->first();
             if (! $user) {
                 $user = User::whereHas('admin', function ($query) use ($identifier) {
-                    $query->where('nip', $identifier);
+                    $query->where('nip', $identifier)->orwhere('nitk', $identifier);
                 })->first();
             }
             if (! $user) {
                 $user = User::whereHas('dosen', function ($query) use ($identifier) {
-                    $query->where('nip', $identifier);
+                    $query->where('nip', $identifier)->orwhere('nidn', $identifier)->orwhere('nidk', $identifier);
                 })->first();
             }
             if (! $user) {
@@ -78,9 +78,9 @@ class FortifyServiceProvider extends ServiceProvider
             }
         });
 
-        Fortify::registerView(function () {
-            return view('auth.register');
-        });
+        // Fortify::registerView(function () {
+        //     return view('auth.register');
+        // });
         Route::middleware(['web', 'check.registration'])->group(function () {});
     }
 
