@@ -43,7 +43,7 @@
         <div>
             @include('livewire.global.table.export-button', [
                 'nameXString' => "Rekap Capaian $kode_pr_url",
-                'xString' => "generateRekapCapaian($pr_id_url, 15)",
+                'xString' => "rekapCapaian($pr_id_url, 15)",
                 'color' => 'blue',
                 'icon' => 'academic-cap',
                 'isNoPb' => 1,

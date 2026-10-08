@@ -47,7 +47,7 @@
                             <div class="shrink-0">
                                 @include('livewire.global.table.export-button', [
                                     'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                                    'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                                    'xString' => 'rekapCapaian(' . Auth::user()->pr_id . ', 15)',
                                     'color' => 'blue',
                                     'icon' => 'academic-cap',
                                     'isNoPb' => 1,
@@ -58,7 +58,7 @@
                             <div class="shrink-0">
                                 @include('livewire.global.table.export-button', [
                                     'nameXString' => 'Rekap Capaian ' . env('UNIV') ?? 'UNSRI',
-                                    'xString' => 'generateRekapCapaianAll()',
+                                    'xString' => 'rekapCapaianAll()',
                                     'color' => 'yellow',
                                     'icon' => 'academic-cap',
                                     'autoSmall' => 'sm',

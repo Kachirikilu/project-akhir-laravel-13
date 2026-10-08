@@ -143,7 +143,7 @@
                 <div class="shrink-0 mt-1">
                     @include('livewire.global.table.export-button', [
                         'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                        'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                        'xString' => 'rekapCapaian(' . Auth::user()->pr_id . ', 15)',
                         'color' => 'blue',
                         'icon' => 'academic-cap',
                     ])

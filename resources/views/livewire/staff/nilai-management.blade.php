@@ -39,7 +39,7 @@
                     <div x-show="activeTab !== ''" class="shrink-0">
                         @include('livewire.global.table.export-button', [
                             'nameXString' => 'Rekap Capaian',
-                            'xString' => 'generateRekapCapaian()',
+                            'xString' => 'rekapCapaian()',
                             'color' => 'blue',
                             'icon' => 'academic-cap',
                         ])
@@ -47,7 +47,7 @@
                     <div x-show="activeTab == ''" class="shrink-0">
                         @include('livewire.global.table.export-button', [
                             'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                            'xString' => 'generateRekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                            'xString' => 'rekapCapaian(' . Auth::user()->pr_id . ', 15)',
                             'color' => 'blue',
                             'icon' => 'academic-cap',
                         ])

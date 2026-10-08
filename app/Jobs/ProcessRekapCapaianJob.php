@@ -41,7 +41,7 @@ class ProcessRekapCapaianJob implements ShouldQueue
                 use RekapCapaianService;
             };
 
-            $rekapService->generateRekapCapaianQueue($this->prId);
+            $rekapService->rekapCapaianQueue($this->prId);
 
             $cacheKey = 'cooldown_rekap_pr_'.($this->prId ?? 'all');
             $waktuSelesaiCooldown = time() + ($this->cooldown * 60);
