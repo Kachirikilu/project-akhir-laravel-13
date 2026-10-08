@@ -33,7 +33,7 @@
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'nameXString' => 'Rekap Capaian',
-                'xString' => "generateRekapCapaianAll()",
+                'xString' => "rekapCapaianAll()",
                 'color' => 'yellow',
                 'icon' => 'academic-cap',
                 'autoSmall' => 'md',

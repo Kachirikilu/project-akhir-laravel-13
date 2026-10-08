@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 
 trait RekapCapaianService
 {
-    // public function generateRekapCapaianQueue(?int $prId = null)
+    // public function rekapCapaianQueue(?int $prId = null)
     // {
     //     set_time_limit(0);
     //     DB::disableQueryLog();
@@ -33,14 +33,14 @@ trait RekapCapaianService
     //         $prodiIds = Prodi::pluck('id')->toArray();
 
     //         foreach ($prodiIds as $id) {
-    //             $this->generateRekapNilaiMahasiswa($id);
-    //             $this->generateRekapRPSProdi($id);
-    //             $this->generateRekapSubCPMKMahasiswa($id);
-    //             $this->generateRekapCPMKMahasiswa($id);
-    //             $this->generateRekapCPLMahasiswa($id);
-    //             $this->generateRekapSubCPMKProdi($id);
-    //             $this->generateRekapCPMKProdi($id);
-    //             $this->generateRekapCPLProdi($id);
+    //             $this->rekapNilaiMahasiswa($id);
+    //             $this->rekapRPSProdi($id);
+    //             $this->rekapSubCPMKMhs($id);
+    //             $this->rekapCPMKMhs($id);
+    //             $this->rekapCPLMhs($id);
+    //             $this->rekapSubCPMKProdi($id);
+    //             $this->rekapCPMKProdi($id);
+    //             $this->rekapCPLProdi($id);
 
     //             RekapSubCPMKMahasiswa::flushEventListeners();
     //             RekapCPMKMahasiswa::flushEventListeners();
@@ -54,20 +54,20 @@ trait RekapCapaianService
     //             gc_collect_cycles();
     //         }
     //     } else {
-    //         $this->generateRekapNilaiMahasiswa($prId);
-    //         $this->generateRekapRPSProdi($prId);
-    //         $this->generateRekapSubCPMKMahasiswa($prId);
-    //         $this->generateRekapCPMKMahasiswa($prId);
-    //         $this->generateRekapCPLMahasiswa($prId);
-    //         $this->generateRekapSubCPMKProdi($prId);
-    //         $this->generateRekapCPMKProdi($prId);
-    //         $this->generateRekapCPLProdi($prId);
+    //         $this->rekapNilaiMahasiswa($prId);
+    //         $this->rekapRPSProdi($prId);
+    //         $this->rekapSubCPMKMhs($prId);
+    //         $this->rekapCPMKMhs($prId);
+    //         $this->rekapCPLMhs($prId);
+    //         $this->rekapSubCPMKProdi($prId);
+    //         $this->rekapCPMKProdi($prId);
+    //         $this->rekapCPLProdi($prId);
 
     //         gc_collect_cycles();
     //     }
     // }
 
-    public function generateRekapCapaianQueue(?int $prId = null)
+    public function rekapCapaianQueue(?int $prId = null)
     {
         set_time_limit(0);
         DB::disableQueryLog();
@@ -80,19 +80,19 @@ trait RekapCapaianService
                     $id = $prodi->id;
 
                     // Urutan eksekusi dijaga ketat: Nilai & IPK Mahasiswa wajib selesai duluan
-                    $this->generateRekapNilaiMahasiswa($id);
-                    $this->generateRekapRPSProdi($id);
-                    $this->generateRekapSubCPMKMahasiswa($id);
-                    $this->generateRekapCPMKMahasiswa($id);
-                    $this->generateRekapCPLMahasiswa($id);
-                    $this->generateRekapSubCPMKProdi($id);
-                    $this->generateRekapCPMKProdi($id);
-                    $this->generateRekapCPLProdi($id);
+                    $this->rekapNilaiMahasiswa($id);
+                    $this->rekapRPSProdi($id);
+                    $this->rekapSubCPMKMhs($id);
+                    $this->rekapCPMKMhs($id);
+                    $this->rekapCPLMhs($id);
+                    $this->rekapSubCPMKProdi($id);
+                    $this->rekapCPMKProdi($id);
+                    $this->rekapCPLProdi($id);
 
                     // Baru
-                    $this->generateRekapProdi($id);
-                    $this->generateRekapDepartemen($id);
-                    $this->generateRekapFakultas($id);
+                    $this->rekapProdi($id);
+                    $this->rekapDepartemen($id);
+                    $this->rekapFakultas($id);
 
                     unset($id);
                     gc_collect_cycles();
@@ -102,19 +102,19 @@ trait RekapCapaianService
             $this->cleanupGlobalListeners();
 
         } else {
-            $this->generateRekapNilaiMahasiswa($prId);
-            $this->generateRekapRPSProdi($prId);
-            $this->generateRekapSubCPMKMahasiswa($prId);
-            $this->generateRekapCPMKMahasiswa($prId);
-            $this->generateRekapCPLMahasiswa($prId);
-            $this->generateRekapSubCPMKProdi($prId);
-            $this->generateRekapCPMKProdi($prId);
-            $this->generateRekapCPLProdi($prId);
+            $this->rekapNilaiMahasiswa($prId);
+            $this->rekapRPSProdi($prId);
+            $this->rekapSubCPMKMhs($prId);
+            $this->rekapCPMKMhs($prId);
+            $this->rekapCPLMhs($prId);
+            $this->rekapSubCPMKProdi($prId);
+            $this->rekapCPMKProdi($prId);
+            $this->rekapCPLProdi($prId);
 
             // Baru
-            $this->generateRekapProdi($prId);
-            $this->generateRekapDepartemen($prId);
-            $this->generateRekapFakultas($prId);
+            $this->rekapProdi($prId);
+            $this->rekapDepartemen($prId);
+            $this->rekapFakultas($prId);
 
             gc_collect_cycles();
         }
@@ -135,13 +135,13 @@ trait RekapCapaianService
         gc_collect_cycles();
     }
 
-    private function generateRekapProdi($prId)
+    private function rekapProdi($prId)
     {
         $nilaiRata = RekapCPLProdi::where('pr_id', $prId)->avg('nilai');
         Prodi::where('id', $prId)->update(['nilai_pr' => $nilaiRata ?? 0]);
     }
 
-    private function generateRekapDepartemen($prId)
+    private function rekapDepartemen($prId)
     {
         $prodi = Prodi::find($prId);
         if (! $prodi || ! $prodi->dp_id) {
@@ -151,7 +151,7 @@ trait RekapCapaianService
         Departemen::where('id', $prodi->dp_id)->update(['nilai_dp' => $nilaiRata ?? 0]);
     }
 
-    private function generateRekapFakultas($prId)
+    private function rekapFakultas($prId)
     {
         $prodi = Prodi::with('dp_rel')->find($prId);
         if (! $prodi || ! $prodi->dp_rel || ! $prodi->dp_rel->fk_id) {
@@ -162,12 +162,12 @@ trait RekapCapaianService
         Fakultas::where('id', $fkId)->update(['nilai_fk' => $nilaiRata ?? 0]);
     }
 
-    public function generateRekapCapaianAll()
+    public function rekapCapaianAll()
     {
-        $this->generateRekapCapaian();
+        $this->rekapCapaian();
     }
 
-    public function generateRekapCapaian($prId = null, $cooldown = null)
+    public function rekapCapaian($prId = null, $cooldown = null)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -287,7 +287,7 @@ trait RekapCapaianService
         );
     }
 
-    public function generateRekapNilaiMahasiswa(?int $prId = null): void
+    public function rekapNilaiMahasiswa(?int $prId = null): void
     {
         $mahasiswaQuery = Mahasiswa::query();
 
@@ -365,13 +365,13 @@ trait RekapCapaianService
         });
     }
 
-    public function generateRekapRPSProdi(?int $prId = null): void
+    public function rekapRPSProdi(?int $prId = null): void
     {
         if ($prId === null) {
             // Optimasi 1: Pecah pengambilan data Prodi agar tidak membebani memori
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapRPSProdi($prodi->id);
+                    $this->rekapRPSProdi($prodi->id);
                 }
             });
 
@@ -446,12 +446,12 @@ trait RekapCapaianService
         }
     }
 
-    public function generateRekapCPLProdi(?int $prId = null): void
+    public function rekapCPLProdi(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapCPLProdi($prodi->id);
+                    $this->rekapCPLProdi($prodi->id);
                 }
             });
 
@@ -544,12 +544,12 @@ trait RekapCapaianService
         }
     }
 
-    public function generateRekapCPMKProdi(?int $prId = null): void
+    public function rekapCPMKProdi(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapCPMKProdi($prodi->id);
+                    $this->rekapCPMKProdi($prodi->id);
                 }
             });
 
@@ -576,12 +576,12 @@ trait RekapCapaianService
             });
     }
 
-    public function generateRekapSubCPMKProdi(?int $prId = null): void
+    public function rekapSubCPMKProdi(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapSubCPMKProdi($prodi->id);
+                    $this->rekapSubCPMKProdi($prodi->id);
                 }
             });
 
@@ -608,12 +608,12 @@ trait RekapCapaianService
             });
     }
 
-    public function generateRekapCPLMahasiswa(?int $prId = null): void
+    public function rekapCPLMhs(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapCPLMahasiswa($prodi->id);
+                    $this->rekapCPLMhs($prodi->id);
                 }
             });
 
@@ -705,12 +705,12 @@ trait RekapCapaianService
         }
     }
 
-    public function generateRekapCPMKMahasiswa(?int $prId = null): void
+    public function rekapCPMKMhs(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapCPMKMahasiswa($prodi->id);
+                    $this->rekapCPMKMhs($prodi->id);
                 }
             });
 
@@ -757,12 +757,12 @@ trait RekapCapaianService
         }
     }
 
-    public function generateRekapSubCPMKMahasiswa(?int $prId = null): void
+    public function rekapSubCPMKMhs(?int $prId = null): void
     {
         if ($prId === null) {
             Prodi::select('id')->chunkById(50, function ($prodis) {
                 foreach ($prodis as $prodi) {
-                    $this->generateRekapSubCPMKMahasiswa($prodi->id);
+                    $this->rekapSubCPMKMhs($prodi->id);
                 }
             });
 
