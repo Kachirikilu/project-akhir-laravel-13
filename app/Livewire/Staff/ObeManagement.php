@@ -23,11 +23,11 @@ use App\Livewire\Global\WithUserSearchFilters;
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
 // use App\Livewire\Staff\ObeManagement\CpmkManagement\WithSubCPMKDelete;
 use App\Livewire\Staff\ObeManagement\CpmkManagement\WithCPMKFilters;
-use App\Livewire\Staff\ObeManagement\SubCpmkManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefFilters;
-// use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithDosenFilters;
+// use App\Livewire\Staff\ObeManagement\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\ObeManagement\RpsManagement\WithRPSFilters;
+use App\Livewire\Staff\ObeManagement\SubCpmkManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\ObeManagement\TimDosenManagement\WithTimDosenFilters;
 use App\Livewire\Staff\ObeManagement\WithOBEExcel;
 use App\Models\Akademik\CPL;
@@ -160,7 +160,6 @@ class ObeManagement extends Component
         }
         $this->switchTable = $switchTable;
 
-
         $this->updatedShowDeleted();
         // $this->cplNameSearch = [
         //     // 'rps' => '',
@@ -265,9 +264,17 @@ class ObeManagement extends Component
     {
         $this->clearObeStatsCache();
         $this->clearObeProdiStatsCache();
+        $this->clearRpsProdiStatsCache();
         $this->clearCplProdiStatsCache();
         $this->clearCpmkProdiStatsCache();
         $this->clearScpmkProdiStatsCache();
+        $this->clearReferensiStatsCache();
+        $this->clearTimDosenStatsCache();
+
+        $this->clearRpsStatsCache();
+        $this->clearCplStatsCache();
+        $this->clearCpmkStatsCache();
+        $this->clearScpmkStatsCache();
         $this->clearReferensiStatsCache();
         $this->clearTimDosenStatsCache();
     }
