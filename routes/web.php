@@ -36,21 +36,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['is_admin'])->group(function () {
         Route::view('user-management/{switchTable?}', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
-        Route::view('program-studi-management/{switchTable?}', 'program-studi-management')->name('program-studi-management');
-        Route::view('program-studi-management/kode/{kode_pr}/{switchTable?}', 'program-studi-management')->name('capaian-management');
-        Route::view('program-studi-management/kode/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
+        Route::view('study-program-management/{switchTable?}', 'program-studi-management')->name('study-program-management');
+        Route::view('study-program-management/kode/{kode_pr}/{switchTable?}', 'program-studi-management')->name('capaian-management');
+        Route::view('study-program-management/kode/{kode_pr}/cpl/{kode_cpl}', 'program-studi-management')->name('rps-capaian-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {
+        Route::view('course-management/{switchTable?}', 'mata-kuliah-management')->name('course-management');
         Route::view('mata-kuliah-management/{switchTable?}', 'mata-kuliah-management')->name('mata-kuliah-management');
+
         Route::view('obe-management/{switchTable?}', 'obe-management')->name('obe-management');
         Route::view('rps-management/{switchTable?}', 'obe-management')->name('obe-management');
         // Route::get('/download-nilai/{jadwal}', DownloadNilaiController::class)->name('download.nilai');
 
-        Route::view('nilai-management/{switchTable?}', 'nilai-management')->name('nilai-management');
-        Route::view('nilai-management/nim/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
-        Route::view('nilai-management/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
-        Route::view('nilai-management/rps/{kode_rps}', 'nilai-management')->name('rps-capaian-mahasiswa-management');
+        Route::view('nilai-capaian/{switchTable?}', 'nilai-management')->name('nilai-capaian');
+        Route::view('nilai-capaian/nim/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
+        Route::view('nilai-capaian/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
+        Route::view('nilai-capaian/rps/{kode_rps}', 'nilai-management')->name('rps-capaian-mahasiswa-management');
     });
 
     Route::middleware(['is_dosen'])->group(function () {
@@ -67,9 +69,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('jadwal-kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'jadwal-kelas')->name('sesi-jadwal-kelas');
     });
 
+    Route::view('class-management/{switchTable2?}/{switchTable?}', 'kelas-management')->name('class-management');
     Route::view('kelas-management/{switchTable2?}/{switchTable?}', 'kelas-management')->name('kelas-management');
-    Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{switchTable?}', 'kelas-management')->name('jadwal-management');
-    Route::view('kelas-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'kelas-management')->name('sesi-management');
+    Route::view('class-management/kelas/{kode_kelas}/jadwal/{switchTable?}', 'kelas-management')->name('jadwal-management');
+    Route::view('class-management/kelas/{kode_kelas}/jadwal/{kode_jadwal_short}/sesi/{switchTable?}', 'kelas-management')->name('sesi-management');
+
 
     Route::get('/rps/pdf-preview/{rps_id}/{pr_id?}', [iFrameRpsController::class, 'preview'])->name('rps.pdf.preview');
 

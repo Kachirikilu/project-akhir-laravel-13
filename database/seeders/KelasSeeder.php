@@ -108,10 +108,8 @@ class KelasSeeder extends Seeder
                                 'pr_id' => $prodi->id,
 
                                 'nama_kelas' => 'Kelas '.
-                                    $rps->deskripsi.
-                                    ' - '.
                                     $prodi->nama_pr.
-                                    ' - '.
+                                    ' '.
                                     chr(64 + $kelasIndex),
                             ]);
 
@@ -163,46 +161,45 @@ class KelasSeeder extends Seeder
                                             'jam_berakhir' => '10:30:00',
                                             'kapasitas' => rand(30, 40),
                                         ]);
-                                    // ==========================
-                                    // FILTER mahasiswa yang masih bisa ambil kelas
-                                    // ==========================
-$candidateIds = collect($targetKelasMahasiswa)
-    ->filter(function ($target, $mhsId) use ($kelasDiambilMahasiswa) {
-        return ($kelasDiambilMahasiswa[$mhsId] ?? 0) < $target;
-    });
+                                // ==========================
+                                // FILTER mahasiswa yang masih bisa ambil kelas
+                                // ==========================
+                                $candidateIds = collect($targetKelasMahasiswa)
+                                    ->filter(function ($target, $mhsId) use ($kelasDiambilMahasiswa) {
+                                        return ($kelasDiambilMahasiswa[$mhsId] ?? 0) < $target;
+                                    });
 
-$candidateIds = $candidateIds
-    ->sortBy(function ($target, $mhsId) use ($kelasDiambilMahasiswa) {
-        return $kelasDiambilMahasiswa[$mhsId] ?? 0;
-    })
-    ->keys()
-    ->shuffle()
-    ->values();
-                                        $maxMahasiswa = min(
-                                            $jadwal->kapasitas,
-                                            $candidateIds->count()
-                                        );
-                                        $mhsIds = collect();
+                                $candidateIds = $candidateIds
+                                    ->sortBy(function ($target, $mhsId) use ($kelasDiambilMahasiswa) {
+                                        return $kelasDiambilMahasiswa[$mhsId] ?? 0;
+                                    })
+                                    ->keys()
+                                    ->shuffle()
+                                    ->values();
+                                $maxMahasiswa = min(
+                                    $jadwal->kapasitas,
+                                    $candidateIds->count()
+                                );
+                                $mhsIds = collect();
 
-                                        if ($maxMahasiswa > 0) {
-                                            $minMahasiswa = min(20, $maxMahasiswa);
-                                            if ($candidateIds->count() <= $jadwal->kapasitas) {
-                                                $jumlahMahasiswa = $maxMahasiswa;
-                                            } else {
-                                                $jumlahMahasiswa = rand($minMahasiswa, $maxMahasiswa);
-                                            }
+                                if ($maxMahasiswa > 0) {
+                                    $minMahasiswa = min(20, $maxMahasiswa);
+                                    if ($candidateIds->count() <= $jadwal->kapasitas) {
+                                        $jumlahMahasiswa = $maxMahasiswa;
+                                    } else {
+                                        $jumlahMahasiswa = rand($minMahasiswa, $maxMahasiswa);
+                                    }
 
-                                            $mhsIds = $candidateIds
-                                                ->take($jumlahMahasiswa)
-                                                ->values();
+                                    $mhsIds = $candidateIds
+                                        ->take($jumlahMahasiswa)
+                                        ->values();
 
-                                            $jadwal->mahasiswas()->attach($mhsIds);
-                                            foreach ($mhsIds as $mhsId) {
-                                                $kelasDiambilMahasiswa[$mhsId] =
-                                                    ($kelasDiambilMahasiswa[$mhsId] ?? 0) + 1;
-                                            }
-                                        }
-
+                                    $jadwal->mahasiswas()->attach($mhsIds);
+                                    foreach ($mhsIds as $mhsId) {
+                                        $kelasDiambilMahasiswa[$mhsId] =
+                                            ($kelasDiambilMahasiswa[$mhsId] ?? 0) + 1;
+                                    }
+                                }
 
                                 $scpmkIndex = 0;
 

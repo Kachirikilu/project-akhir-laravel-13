@@ -1,17 +1,17 @@
 @php
-    $pageTitle = __('Nilai Management');
+    $pageTitle = __('Nlai dan Capaian Mahasiswa');
     
     if (request()->routeIs('nilai-mahasiswa-management')) {
-        $pageTitle = __('Manajemen Periode Nilai Mahasiswa');
+        $pageTitle = __('Periode Nilai Mahasiswa Mahasiswa');
     } elseif (request()->routeIs('rps-mahasiswa-management')) {
-        $pageTitle = __('Manajemen Nilai Mahasiswa');
+        $pageTitle = __('Nilai Mahasiswa');
     }
 @endphp
 
 <x-layouts::app :title="$pageTitle">
     <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
-            @if(request()->routeIs('nilai-management'))
+            @if(request()->routeIs('nilai-capaian'))
                 <livewire:staff.nilai-management :switch-table="request()->route('switchTable')" />
             @elseif (request()->routeIs('nilai-mahasiswa-management'))
                 <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" />
@@ -24,16 +24,16 @@
         </div>
     </div>
 
-    @if(request()->routeIs('nilai-management'))
+    @if(request()->routeIs('nilai-capaian'))
         @if (Auth::user()->tingkat < 4 && (Auth::user()->admin?->pr_rel || Auth::user()->dosen?->pr_rel))
             <livewire:staff.nilai-management.lock-nilai-management />
         @endif
     @endif
-    @if(request()->routeIs('nilai-management') && Auth::user()->admin)
+    @if(request()->routeIs('nilai-capaian') && Auth::user()->admin)
         <livewire:admin.user-management.modal-user-management />
         <livewire:admin.user-management.delete-user-management />
     @endif
-    @if (request()->routeIs('nilai-management') || request()->routeIs('rps-mahasiswa-management'))
+    @if (request()->routeIs('nilai-capaian') || request()->routeIs('rps-mahasiswa-management'))
         <livewire:admin.user-management.list-rps-user-management :noModalRPS="1" />
     @endif
     @if (request()->routeIs('rps-mahasiswa-management'))
@@ -44,7 +44,7 @@
         <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.modal-rps-mahasiswa-management />
     @endif
 
-    @if (request()->routeIs('nilai-management') || request()->routeIs('rps-mahasiswa-management') || request()->routeIs('rps-capaian-mahasiswa-management'))
+    @if (request()->routeIs('nilai-capaian') || request()->routeIs('rps-mahasiswa-management') || request()->routeIs('rps-capaian-mahasiswa-management'))
         <livewire:staff.obe-management.rps-management.show-rps-management />
     @endif
 </x-layouts::app>

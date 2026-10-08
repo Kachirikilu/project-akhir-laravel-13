@@ -1,7 +1,7 @@
 {{-- Header Section --}}
 <div class="mb-8">
     <div class="flex items-center gap-4 mb-6">
-        <a href="{{ $backUrl ?? route('kelas-management') }}" wire:navigate
+        <a href="{{ $backUrl ?? route('class-management') }}" wire:navigate
             class="mx-2 px-2 py-2 sm:p-3 rounded-full hover:bg-[var(--hover-table-color)] active:bg-[var(--hover-table-color)]/90 transition-colors shrink-0 flex items-center justify-center">
             <flux:icon name="arrow-left" class="h-5 w-5 sm:h-6 sm:w-6 text-[var(--contrast-second-text)]" />
         </a>

@@ -309,7 +309,7 @@ class SesiManagement extends Component
             $this->showDeleted = false;
         }
 
-        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
+        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'class-management/kelas';
         $suffix = ($table && $table !== 'hari-ini') ? "/{$table}" : '';
 
         $targetPath = "/{$base}/{$this->kode_kelas_url}/jadwal/{$this->kode_jadwal_short_url}/sesi{$suffix}";

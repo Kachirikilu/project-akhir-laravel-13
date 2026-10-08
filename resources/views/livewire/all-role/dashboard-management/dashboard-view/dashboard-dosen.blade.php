@@ -6,18 +6,18 @@
 --}}
 
 @php
-    $dummy = [
-        'capaianProdi' => ['persen' => 82, 'label' => 'Capaian prodi tempat saya mengajar'],
-        'rpsSaya' => ['aktif' => 5, 'total' => 6],
-        'timKetua' => ['aktif' => 3, 'total' => 4],
-        'totalTim' => ['aktif' => 9, 'total' => 11],
+    // $dummy = [
+    //     'capaianProdi' => ['persen' => 82, 'label' => 'Capaian prodi tempat saya mengajar'],
+    //     'rpsSaya' => ['aktif' => 5, 'total' => 6],
+    //     'timKetua' => ['aktif' => 3, 'total' => 4],
+    //     'totalTim' => ['aktif' => 9, 'total' => 11],
 
-        'mkDiampu' => ['jumlah' => 4, 'sks' => 12],
-        'totalSksSemester' => 18,
-        'kelasHariIni' => ['jumlah' => 2, 'sks' => 6],
-        'kelasSemesterIni' => 7,
-        'totalKelas' => 22,
-    ];
+    //     'mkDiampu' => ['jumlah' => 4, 'sks' => 12],
+    //     'totalSksSemester' => 18,
+    //     'kelasHariIni' => ['jumlah' => 2, 'sks' => 6],
+    //     'kelasSemesterIni' => 7,
+    //     'totalKelas' => 22,
+    // ];
 
     $prodi = Auth::user()->dosen->pr_rel->prodi ?? 'Program Studi';
     $rekapProdi = Auth::user()->dosen->pr_rel->rekap_pr ?? 0;

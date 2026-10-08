@@ -1,17 +1,17 @@
 @php
-    $pageTitle = __('Kelas Management');
+    $pageTitle = __('Class Management');
 
     if (request()->routeIs('jadwal-management')) {
-        $pageTitle = __('Jadwal Kelas Management');
+        $pageTitle = __('Jadwal Kelas');
     } elseif (request()->routeIs('sesi-management')) {
-        $pageTitle = __('Sesi Kelas Management');
+        $pageTitle = __('Sesi Kelas');
     }
 @endphp
 
 <x-layouts::app :title="$pageTitle">
     <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
-            @if (request()->routeIs('kelas-management'))
+            @if (request()->routeIs('class-management'))
                 <livewire:all-role.kelas-management :switchTable="request()->route('switchTable') ?? ''" :switchTable2="request()->route('switchTable2') ?? 'card'" />
             @elseif (request()->routeIs('jadwal-management'))
                 <livewire:all-role.kelas-management.jadwal-management :isJadwalOnly="false" :kode_kelas="request()->route('kode_kelas')" :switchTable="request()->route('switchTable')" />
@@ -23,7 +23,7 @@
     </div>
     <livewire:staff.obe-management.rps-management.show-rps-management />
     @if (Auth::user()->admin || Auth::user()->dosen)
-        @if (request()->routeIs('kelas-management'))
+        @if (request()->routeIs('class-management'))
             <livewire:all-role.kelas-management.modal-kelas-management />
             <livewire:all-role.kelas-management.delete-kelas-management />
         @elseif (request()->routeIs('jadwal-management'))

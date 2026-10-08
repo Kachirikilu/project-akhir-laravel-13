@@ -97,7 +97,7 @@ class SendClassReminderJob implements ShouldQueue
         $bobot = $sesi->bobot_normalisasi ?? 0;
 
         $appUrl = env('APP_URL');
-        $linkKelas = "$appUrl/kelas-management/kelas/{$kodeKelas}/jadwal/{$kodeJadwal}/sesi";
+        $linkKelas = "$appUrl/class-management/kelas/{$kodeKelas}/jadwal/{$kodeJadwal}/sesi";
 
         $berhasil = 0;
         $gagal = 0;

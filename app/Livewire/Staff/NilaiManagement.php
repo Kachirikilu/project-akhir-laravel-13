@@ -108,7 +108,7 @@ class NilaiManagement extends Component
     public function mount($switchTable)
     {
         if (empty($switchTable)) {
-            return redirect()->route('nilai-management', ['switchTable' => 'mahasiswa']);
+            return redirect()->route('nilai-capaian', ['switchTable' => 'mahasiswa']);
         }
         $this->switchTable = $switchTable;
         $this->updatedShowDeleted();
@@ -247,7 +247,7 @@ class NilaiManagement extends Component
         // $suffix = ($table && $table !== 'mahasiswa') ? "/{$table}" : '';
         $suffix = $table ? "/{$table}" : '';
 
-        $targetPath = "/nilai-management{$suffix}";
+        $targetPath = "/nilai-capaian{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }

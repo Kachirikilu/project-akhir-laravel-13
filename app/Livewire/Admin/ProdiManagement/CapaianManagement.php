@@ -481,7 +481,7 @@ class CapaianManagement extends Component
 
         $suffix = ($table && $table !== 'cpl') ? "/{$table}" : '';
 
-        $targetPath = "/program-studi-management/kode/{$this->kode_pr_url}{$suffix}";
+        $targetPath = "/study-program-management/kode/{$this->kode_pr_url}{$suffix}";
 
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }

@@ -6,14 +6,14 @@
 --}}
 
 @php
-    $dummy = [
-        'ipk' => 3.78,
-        'nilaiBaik' => ['jumlah' => 21, 'total' => 24], // nilai >= B
-        'sksTempuh' => ['jumlah' => 96, 'total' => 144], // progres menuju lulus
+    // $dummy = [
+    //     'ipk' => 3.78,
+    //     'nilaiBaik' => ['jumlah' => 21, 'total' => 24], // nilai >= B
+    //     'sksTempuh' => ['jumlah' => 96, 'total' => 144], // progres menuju lulus
 
-        'jumlahKelas' => 6,
-        'mkSelesai' => ['jumlah' => 24, 'sks' => 96],
-    ];
+    //     'jumlahKelas' => 6,
+    //     'mkSelesai' => ['jumlah' => 24, 'sks' => 96],
+    // ];
 
     $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
     $ipkSaya = Auth::user()->mahasiswa->ipk_mhs ?? 0;

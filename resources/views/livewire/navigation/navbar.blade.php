@@ -26,12 +26,12 @@
         } : {}">
     </div>
     <nav x-data="{
-        openProdiMenu: {{ request()->routeIs('program-studi-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
+        openProdiMenu: {{ request()->routeIs('study-program-management', 'capaian-management', 'rps-capaian-management') ? 'true' : 'false' }},
         openOBEMenu: {{ request()->routeIs('obe-management') ? 'true' : 'false' }},
         openJadwalMenu: {{ request()->routeIs('jadwal-kelas', 'sesi-jadwal-kelas') ? 'true' : 'false' }},
-        openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
+        openKelasMenu: {{ request()->routeIs('class-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
         openRpsNilaiMenu: {{ request()->routeIs('nilai-mahasiswa', 'rps-mahasiswa') ? 'true' : 'false' }},
-        openNilaiMenu: {{ request()->routeIs('nilai-management', 'nilai-mahasiswa-management', 'rps-mahasiswa-management', 'rps-capaian-mahasiswa-management') ? 'true' : 'false' }},
+        openNilaiMenu: {{ request()->routeIs('nilai-capaian', 'nilai-mahasiswa-management', 'rps-mahasiswa-management', 'rps-capaian-mahasiswa-management') ? 'true' : 'false' }},
     
         init() {
             this.$nextTick(() => {
@@ -88,7 +88,7 @@
                 [
                     'type' => 'link',
                     'icon' => 'rectangle-stack',
-                    'route' => 'mata-kuliah-management',
+                    'route' => 'course-management',
                     'label' => 'Mata Kuliah',
                     'roles' => ['admin', 'dosen'],
                 ],
@@ -109,22 +109,22 @@
                 [
                     'type' => 'dropdown-kelas',
                     'icon' => 'rectangle-group',
-                    'route' => 'kelas-management',
-                    'label' => 'Kelas Management',
+                    'route' => 'class-management',
+                    'label' => 'Class Management',
                     'roles' => ['admin', 'dosen', 'mahasiswa'],
-                    'active_routes' => ['kelas-management', 'jadwal-management', 'sesi-management'],
+                    'active_routes' => ['class-management', 'jadwal-management', 'sesi-management'],
                 ],
                 [
                     'type' => 'dropdown-rps-nilai',
                     'icon' => 'chart-pie',
-                    'route' => 'nilai-management',
+                    'route' => 'nilai-capaian',
                     'label' => 'Nilai Saya',
                     'roles' => ['mahasiswa'],
                 ],
                 [
                     'type' => 'dropdown-nilai',
                     'icon' => 'chart-pie',
-                    'route' => 'nilai-management',
+                    'route' => 'nilai-capaian',
                     'label' => 'Nilai & Capaian',
                     'roles' => ['admin', 'dosen'],
                 ],
@@ -168,7 +168,7 @@
                 @php
                     $currentTable = (string) request()->route('switchTable');
                     $isProdiActive =
-                        request()->routeIs('program-studi-management') ||
+                        request()->routeIs('study-program-management') ||
                         request()->routeIs('capaian-management') ||
                         request()->routeIs('rps-capaian-management');
 
@@ -197,13 +197,13 @@
                     $subMenus = [
                         [
                             'label' => 'Program Studi',
-                            'url' => route('program-studi-management', [
+                            'url' => route('study-program-management', [
                                 'switchTable' => '',
                             ]),
                             'param' => 'default-null',
                             'icon' => 'clipboard-document-list',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'active' => request()->routeIs('program-studi-management') && $currentTable,
+                            'active' => request()->routeIs('study-program-management') && $currentTable,
                             'active-sub' => request()->routeIs('capaian-management', 'rps-capaian-management'),
                         ],
                     ];
@@ -251,7 +251,7 @@
 
                     $subMenus[] = [
                         'label' => 'Departemen',
-                        'url' => route('program-studi-management', [
+                        'url' => route('study-program-management', [
                             'switchTable' => 'departemen',
                         ]),
                         'param' => 'departemen',
@@ -262,7 +262,7 @@
 
                     $subMenus[] = [
                         'label' => 'Fakultas',
-                        'url' => route('program-studi-management', [
+                        'url' => route('study-program-management', [
                             'switchTable' => 'fakultas',
                         ]),
                         'param' => 'fakultas',
@@ -453,11 +453,11 @@
                     $subMenus = [
                         [
                             'label' => 'Daftar Kelas',
-                            'url' => route('kelas-management'),
-                            'param' => 'kelas-management',
+                            'url' => route('class-management'),
+                            'param' => 'class-management',
                             'icon' => 'rectangle-group',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
-                            'active' => request()->routeIs('kelas-management'),
+                            'active' => request()->routeIs('class-management'),
                             'active-sub' => request()->routeIs('jadwal-management', 'sesi-management'),
                         ],
                     ];
@@ -505,7 +505,7 @@
                     }
 
                     $openMenuVar = 'openKelasMenu';
-                    $isKelasActive = request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management');
+                    $isKelasActive = request()->routeIs('class-management', 'jadwal-management', 'sesi-management');
                 @endphp
 
                 <div class="relative mr-2" @toggle-menu-obe.window="openKelasMenu = !openKelasMenu">
@@ -573,7 +573,7 @@
                 @php
                     $currentTable = (string) request()->route('switchTable');
                     $isNilaiActive = request()->routeIs(
-                        'nilai-management',
+                        'nilai-capaian',
                         'nilai-mahasiswa-management',
                         'rps-mahasiswa-management',
                         'rps-capaian-mahasiswa-management',
@@ -595,12 +595,12 @@
                     $subMenus = [
                         [
                             'label' => 'Nilai Mahasiswa',
-                            'url' => route('nilai-management', ['switchTable' => 'mahasiswa']),
+                            'url' => route('nilai-capaian', ['switchTable' => 'mahasiswa']),
                             'param' => 'mahasiswa',
                             'icon' => 'user-group',
                             'color' => 'text-emerald-600 dark:text-emerald-400',
                             'active' =>
-                                request()->routeIs('nilai-management') &&
+                                request()->routeIs('nilai-capaian') &&
                                 ($currentTable == 'mahasiswa' || $currentTable !== 'rps'),
                             'active-sub' => request()->routeIs(
                                 'nilai-mahasiswa-management',
@@ -650,13 +650,13 @@
                     // --- MENU UTAMA: RPS ---
                     $subMenus[] = [
                         'label' => 'Capaian RPS',
-                        'url' => route('nilai-management', ['switchTable' => 'rps']),
+                        'url' => route('nilai-capaian', ['switchTable' => 'rps']),
                         'param' => 'rps',
                         'icon' => 'book-open',
                         'color' => 'text-blue-600 dark:text-blue-400',
                         // Deteksi cerdas: Aktif jika di route rps ATAU jika route saat ini adalah capaian-mahasiswa-management
                         'active' =>
-                            (request()->routeIs('nilai-management') && $currentTable === 'rps') ||
+                            (request()->routeIs('nilai-capaian') && $currentTable === 'rps') ||
                             request()->routeIs('rps-capaian-mahasiswa-management'),
                         'active-sub' => request()->routeIs('rps-capaian-mahasiswa-management'),
                     ];
@@ -680,7 +680,7 @@
                 @endphp
 
                 <div class="relative mr-2">
-                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Nilai Management"
+                    <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus" title="Nlai dan Capaian Mahasiswa"
                         :isActive="$isNilaiActive" :isSubMenu="$isSubMenu" triggerRef="nilaiDropdownTrigger" />
                     <x-livewire::navigation.partial.main-button :item="$item" menu="openNilaiMenu"
                         trigger="nilaiDropdownTrigger" :active="$isNilaiActive" />

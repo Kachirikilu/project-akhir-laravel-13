@@ -93,7 +93,7 @@
 
             <nav x-data="{
                 openOBEMenu: {{ request()->routeIs('rps-management') ? 'true' : 'false' }},
-                openKelasMenu: {{ request()->routeIs('kelas-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
+                openKelasMenu: {{ request()->routeIs('class-management', 'jadwal-management', 'sesi-management') ? 'true' : 'false' }},
             
                 init() {
                     this.$nextTick(() => {
@@ -138,14 +138,14 @@
                         [
                             'type' => 'link',
                             'icon' => 'academic-cap',
-                            'route' => 'program-studi-management',
+                            'route' => 'study-program-management',
                             'label' => 'Study Program',
                             'roles' => ['admin'],
                         ],
                         [
                             'type' => 'link',
                             'icon' => 'rectangle-stack',
-                            'route' => 'mata-kuliah-management',
+                            'route' => 'course-management',
                             'label' => 'Mata Kuliah',
                             'roles' => ['admin', 'dosen'],
                         ],
@@ -158,10 +158,10 @@
                         [
                             'type' => 'dropdown-kelas',
                             'icon' => 'rectangle-group',
-                            'route' => 'kelas-management',
+                            'route' => 'class-management',
                             'label' => 'Kelas Management',
                             'roles' => ['admin', 'dosen'],
-                            'active_routes' => ['kelas-management', 'jadwal-management', 'sesi-management'],
+                            'active_routes' => ['class-management', 'jadwal-management', 'sesi-management'],
                         ],
                     ];
 
@@ -389,12 +389,12 @@
                             $subMenus = [
                                 [
                                     'label' => 'Daftar Kelas',
-                                    'url' => route('kelas-management'),
-                                    'param' => 'kelas-management',
+                                    'url' => route('class-management'),
+                                    'param' => 'class-management',
                                     'icon' => 'rectangle-group',
                                     'color' => 'text-emerald-600 dark:text-emerald-400',
                                     'level' => 0,
-                                    'active' => request()->routeIs('kelas-management'),
+                                    'active' => request()->routeIs('class-management'),
                                 ],
                             ];
 
@@ -435,7 +435,7 @@
                             }
 
                             $isKelasActive = request()->routeIs(
-                                'kelas-management',
+                                'class-management',
                                 'jadwal-management',
                                 'sesi-management',
                             );
@@ -474,8 +474,8 @@
                                             <span
                                                 :class="(
                                                     ('{{ $sub['param'] }}'
-                                                        === 'kelas-management' &&
-                                                        currentRoute === 'kelas-management') ||
+                                                        === 'class-management' &&
+                                                        currentRoute === 'class-management') ||
                                                     (
                                                         '{{ $sub['param'] }}'
                                                         === 'jadwal-management' &&

@@ -1,16 +1,16 @@
 @php
-    $data = [
-        'capaianProdi' => ['persen' => 78, 'label' => '8 dari 12 indikator tercapai'],
-        'rps' => ['aktif' => 96, 'total' => 142],
-        'dosen' => ['aktif' => 41, 'total' => 48],
-        'mahasiswa' => ['aktif' => 1042, 'total' => 1204],
+    // $data = [
+    //     'capaianProdi' => ['persen' => 78, 'label' => '8 dari 12 indikator tercapai'],
+    //     'rps' => ['aktif' => 96, 'total' => 142],
+    //     'dosen' => ['aktif' => 41, 'total' => 48],
+    //     'mahasiswa' => ['aktif' => 1042, 'total' => 1204],
 
-        'jumlahMk' => 142,
-        'targetSks' => Auth::user()->admin->pr_rel->target_sks ?? 144,
-        'kelasHariIni' => 9,
-        'kelasSemesterIni' => 37,
-        'totalKelas' => 214,
-    ];
+    //     'jumlahMk' => 142,
+    //     'targetSks' => Auth::user()->admin->pr_rel->target_sks ?? 144,
+    //     'kelasHariIni' => 9,
+    //     'kelasSemesterIni' => 37,
+    //     'totalKelas' => 214,
+    // ];
 
     $prodi = Auth::user()->admin->pr_rel->prodi ?? 'Program Studi';
     $rekapProdi = Auth::user()->admin->pr_rel->rekap_pr ?? 0;

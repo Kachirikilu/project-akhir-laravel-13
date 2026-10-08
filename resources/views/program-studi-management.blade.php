@@ -11,7 +11,7 @@
 <x-layouts::app :title="$pageTitle">
     <div class="flex h-full max-w-[4600px] flex-1 flex-col rounded-xl">
         <div class="relative h-full flex-1 mb-96 rounded-xl sm:border-2 sm:border-[var(--border-wadah-color)]">
-            @if (request()->routeIs('program-studi-management'))
+            @if (request()->routeIs('study-program-management'))
                 <livewire:admin.program-studi-management :switch-table="request()->route('switchTable') ?? ''" />
             @elseif (request()->routeIs('capaian-management'))
                 <livewire:admin.prodi-management.capaian-management :kode_pr="request()->route('kode_pr')" :switch-table="request()->route('switchTable') ?? 'cpl'" />
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    @if (request()->routeIs('program-studi-management'))
+    @if (request()->routeIs('study-program-management'))
         @if (Auth::user()->tingkat < 5)
             <livewire:admin.prodi-management.modal-prodi-management />
             <livewire:admin.prodi-management.delete-prodi-management />

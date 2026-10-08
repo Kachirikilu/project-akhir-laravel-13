@@ -1,5 +1,5 @@
 @php
-    $pageTitle = __('Manajemen Periode Nilai Saya');
+    $pageTitle = __('Periode Nilai Mahasiswa Saya');
     
     if (request()->routeIs('rps-mahasiswa')) {
         $pageTitle = __('Manajemen Nilai Saya');

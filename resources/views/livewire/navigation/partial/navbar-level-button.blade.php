@@ -9,7 +9,7 @@
         let routeName = '{{ request()->route()->getName() }}';
 
         if (
-            routeName === 'program-studi-management' &&
+            routeName === 'study-program-management' &&
             value === ''
         ) {
             return 'default-null';
@@ -32,7 +32,7 @@
     let routeName = '{{ request()->route()->getName() }}';
 
     currentTable =
-        routeName === 'program-studi-management' && value === ''
+        routeName === 'study-program-management' && value === ''
             ? 'default-null'
             : value;
 "

@@ -187,7 +187,7 @@ class KelasManagement extends Component
 
     private function buildTargetPath($table, $table2)
     {
-        $path = '/kelas-management';
+        $path = '/class-management';
 
         if ($table2) {
             $path .= '/'.$table2;

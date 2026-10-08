@@ -205,7 +205,7 @@ class RpsCapaianManagement extends Component
 
         $this->resetPage();
 
-        $targetPath = '/program-studi-management'.(in_array($table, ['prodi', '', null], true) ? '' : '/'.$table);
+        $targetPath = '/study-program-management'.(in_array($table, ['prodi', '', null], true) ? '' : '/'.$table);
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 

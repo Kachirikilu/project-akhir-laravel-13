@@ -176,7 +176,7 @@ class JadwalManagement extends Component
         $this->switchTable = $table;
         $this->resetPage();
 
-        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'kelas-management/kelas';
+        $base = $this->isJadwalOnly ? 'jadwal-kelas' : 'class-management/kelas';
         // $suffix = ($table && $table !== 'card') ? "/{$table}" : '';
         $suffix = $table ? "/{$table}" : '';
 

@@ -20,7 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['is_admin'])->group(function () {
         Route::view('user-management', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
-        Route::view('program-studi-management', 'program-studi-management')->name('program-studi-management');
+        Route::view('study-program-management', 'program-studi-management')->name('study-program-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {

@@ -12,8 +12,8 @@
     @include('livewire.global.header.tag-user')
 
     @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header', ['typeXString' => 'all'])
-    @include('livewire.staff.obe-management.obe-switch-table')
-    @include('livewire.staff.obe-management.obe-search-and-filters')
+    @include('livewire.staff.obe-management.obe-view.obe-switch-table')
+    @include('livewire.staff.obe-management.obe-view.obe-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @switch($switchTable)

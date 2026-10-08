@@ -225,11 +225,11 @@ class RpsMahasiswaManagement extends Component
 
     //     $this->resetPage();
 
-    //     $targetUrl = route('nilai-management', ['switchTable' => $table]);
+    //     $targetUrl = route('nilai-capaian', ['switchTable' => $table]);
     //     if ($table == '' || $table == null) {
-    //         $targetPath = '/nilai-management';
+    //         $targetPath = '/nilai-capaian';
     //     } else {
-    //         $targetPath = '/nilai-management/'.$table;
+    //         $targetPath = '/nilai-capaian/'.$table;
     //     }
 
     //     $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);

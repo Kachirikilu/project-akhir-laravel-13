@@ -5,7 +5,7 @@
      "
     @navigate.window="
         let segment = window.location.pathname.split('/').pop();
-        activeTable = (segment === 'nilai-management' || segment === '') ? 'mahasiswa' : segment;
+        activeTable = (segment === 'nilai-capaian' || segment === '') ? 'mahasiswa' : segment;
      "
     class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
 
@@ -14,7 +14,7 @@
     {{-- <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
 
         <h2 class="text-xl sm:text-2xl font-bold text-[var(--contrast-second-text)] min-w-0 break-words">
-            Manajemen Nilai Mahasiswa
+            Nilai Mahasiswa
         </h2>
 
         <div

@@ -4,6 +4,7 @@ namespace App\Livewire\Staff\ObeManagement\CplManagement;
 
 use App\Models\Akademik\CPL;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 trait WithCPLFilters
 {
@@ -105,7 +106,9 @@ trait WithCPLFilters
 
     public function buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
     {
-        if ($this->filterCPL === 'cpl-month') {
+        if ($this->filterCPL == 'cpl-prodi' || $this->filterCPL == '') {
+            $queryCPL->whereHas('prodis', fn ($q) => $q->where('prodis.id', Auth::user()->pr_id));
+        } elseif ($this->filterCPL === 'cpl-month') {
             $queryCPL->whereMonth('created_at', $now->month)
                 ->whereYear('created_at', $currentYear);
         } elseif ($this->filterCPL === 'cpl-6-months') {

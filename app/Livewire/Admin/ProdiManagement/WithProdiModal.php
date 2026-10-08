@@ -4,10 +4,10 @@ namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
-use App\Models\Auth\Dosen;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use App\Models\Auth\Dosen;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -158,7 +158,7 @@ trait WithProdiModal
             $data['target_sks'] = 144;
         }
 
-        $dosen_count = Dosen::count();
+        $dosenRule = Dosen::count() > 0 ? 'required' : 'nullable';
 
         /* ===================== PROGRAM STUDI ===================== */
         if ($this->prodiType === 'prodi') {
@@ -209,8 +209,8 @@ trait WithProdiModal
                     },
                 ],
                 'dp_id' => ['required', 'integer', 'exists:departemens,id'],
-                'dosen_id_array.4' => ['required', 'integer', 'exists:dosens,id'],
-                'dosen_id_array.5' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.4' => [$dosenRule, 'integer', 'exists:dosens,id'],
+                'dosen_id_array.5' => [$dosenRule, 'integer', 'exists:dosens,id'],
                 'strata' => [
                     'required',
                     Rule::in(['Sarjana', 'Magister', 'Doktor']),
@@ -272,8 +272,8 @@ trait WithProdiModal
                     },
                 ],
                 'fk_id' => ['required', 'integer', 'exists:fakultas,id'],
-                'dosen_id_array.2' => ['required', 'integer', 'exists:dosens,id'],
-                'dosen_id_array.3' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.2' => [$dosenRule, 'integer', 'exists:dosens,id'],
+                'dosen_id_array.3' => [$dosenRule, 'integer', 'exists:dosens,id'],
             ];
         }
 
@@ -307,8 +307,8 @@ trait WithProdiModal
                         }
                     },
                 ],
-                'dosen_id_array.0' => ['required', 'integer', 'exists:dosens,id'],
-                'dosen_id_array.1' => ['required', 'integer', 'exists:dosens,id'],
+                'dosen_id_array.0' => [$dosenRule, 'integer', 'exists:dosens,id'],
+                'dosen_id_array.1' => [$dosenRule, 'integer', 'exists:dosens,id'],
             ];
         }
 
@@ -442,6 +442,7 @@ trait WithProdiModal
             array_fill(0, 6, null),
             array_filter($this->dosen_id_array ?? [], fn ($val) => ! is_null($val) && $val !== '')
         );
+
 
         if (empty($data['strata'])) {
             $data['strata'] = 'Sarjana';

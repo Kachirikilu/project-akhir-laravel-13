@@ -19,7 +19,7 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
             'textString' => "Manajemen Capaian $prodi->prodi",
             'textString2' => "$prodi->prodi ($kode_pr_url)",
             'textString3' => "$prodi->fakultas_fk ($prodi->kode_fk)",
-            'backUrl' => route('program-studi-management'),
+            'backUrl' => route('study-program-management'),
         ]) --}}
         @include('livewire.admin.prodi-management.capaian-management.capaian-toolbar.capaian-toolbar-header', [
             'typeXString' => 'all',
@@ -27,7 +27,7 @@ x-data="{ activeTable: '{{ $switchTable ?? '' }}' }"
             'textString' => "Manajemen Capaian {$prodi_data['prodi']}",
             'textString2' => "{$prodi_data['prodi']} ($kode_pr_url)",
             'textString3' => "{$prodi_data['fakultas_fk']} ({$prodi_data['kode_fk']})",
-            'backUrl' => !$isProdiDsn ? route('program-studi-management') : '',
+            'backUrl' => !$isProdiDsn ? route('study-program-management') : '',
             'noBackUrl' => $isProdiDsn ? 1 : 0,
         ])
     </div>

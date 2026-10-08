@@ -265,6 +265,11 @@ class ObeManagement extends Component
     {
         $this->clearObeStatsCache();
         $this->clearObeProdiStatsCache();
+        $this->clearCplProdiStatsCache();
+        $this->clearCpmkProdiStatsCache();
+        $this->clearScpmkProdiStatsCache();
+        $this->clearReferensiStatsCache();
+        $this->clearTimDosenStatsCache();
     }
 
     #[On('refresh-stats-rps')]
@@ -647,6 +652,7 @@ class ObeManagement extends Component
                 'rps-older-5' => '⏳',
 
                 'cpl' => '🎯',
+                'cpl-prodi' => '🏦',
                 'cpl-month' => '🎯',
                 'cpl-6-months' => '⏱️',
                 'cpl-year' => '📆',
@@ -750,6 +756,7 @@ class ObeManagement extends Component
                     'rps-older-5' => '-',
 
                     'cpl' => '-',
+                    'cpl-prodi' => '-',
                     'cpl-month' => '-',
                     'cpl-6-months' => '-',
                     'cpl-year' => '-',

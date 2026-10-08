@@ -531,25 +531,46 @@ trait HasStats
     private function getStatsKurikulum(string $prefix, bool $isTrash = false): array
     {
         $suffix = $isTrash ? '_trash' : '_normal';
+        $prId = Auth::user()->pr_id ?? 'all';
 
         $modelMap = ['cpl' => CPL::class, 'cpmk' => CPMK::class, 'scpmk' => SubCPMK::class];
         $modelClass = $modelMap[$prefix];
 
-        return Cache::remember("stats_{$prefix}_{$suffix}", now()->addMinutes($this->cacheDurationMinutes), function () use ($modelClass, $prefix, $isTrash) {
+        // 1. Cache Global untuk statistik berbasis waktu (tidak tergantung prodi)
+        $globalStats = Cache::remember("stats_{$prefix}_{$suffix}", now()->addMinutes($this->cacheDurationMinutes), function () use ($modelClass, $prefix, $isTrash) {
             $query = $modelClass::query();
             if ($isTrash) {
                 $query->onlyTrashed();
             }
 
             $now = now();
-            $stats = [];
-            $stats["{$prefix}-month"] = (clone $query)->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year)->count();
-            $stats["{$prefix}-6-months"] = (clone $query)->where('created_at', '>=', $now->subMonths(6))->count();
-            $stats["{$prefix}-year"] = (clone $query)->whereYear('created_at', $now->year)->count();
-            $stats["{$prefix}-older-5"] = (clone $query)->where('created_at', '<', now()->subYears(5))->count();
 
-            return $stats;
+            return [
+                "{$prefix}-month" => (clone $query)->whereMonth('created_at', $now->month)->whereYear('created_at', $now->year)->count(),
+                "{$prefix}-6-months" => (clone $query)->where('created_at', '>=', (clone $now)->subMonths(6))->count(),
+                "{$prefix}-year" => (clone $query)->whereYear('created_at', $now->year)->count(),
+                "{$prefix}-older-5" => (clone $query)->where('created_at', '<', (clone $now)->subYears(5))->count(),
+            ];
         });
+
+        // 2. Cache Khusus untuk cpl-prodi (memakai key khusus berbasis $prId & $suffix)
+        if ($prefix === 'cpl') {
+            $prodiStat = Cache::remember("stats_{$prefix}_prodi_{$prId}_{$suffix}", now()->addMinutes($this->cacheDurationMinutes), function () use ($modelClass, $prefix, $isTrash, $prId) {
+                $query = $modelClass::query();
+                if ($isTrash) {
+                    $query->onlyTrashed();
+                }
+
+                return [
+                    "{$prefix}-prodi" => $query->whereHas('prodis', fn ($q) => $q->where('prodis.id', $prId))->count(),
+                ];
+            });
+
+            // Gabungkan hasil cache prodi ke dalam array statistik
+            return array_merge($globalStats, $prodiStat);
+        }
+
+        return $globalStats;
     }
 
     public function clearCplStatsCache()

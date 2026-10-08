@@ -153,7 +153,7 @@ class MataKuliahManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        $targetPath = '/mata-kuliah-management'.($table ? '/'.$table : '');
+        $targetPath = '/course-management'.($table ? '/'.$table : '');
         $this->dispatch('table-switched', switchTable: $table, targetUrl: $targetPath);
     }
 
