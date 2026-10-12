@@ -125,6 +125,7 @@ trait WithMKFilters
             'sks' => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
             'wajib' => $queryMK->orderBy('is_wajib', $this->sortDirection),
 
+            'tipe_sks' => $queryMK->orderBy('tipe_sks', $this->sortDirection),
             'sks_tm' => $this->applyMKSksTypeSort($queryMK),
             'sks_pr' => $this->applyMKSksTypeSort($queryMK),
             'sks_pl' => $this->applyMKSksTypeSort($queryMK),

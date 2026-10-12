@@ -192,7 +192,7 @@ trait WithTimDosenSearchFilters
                     }
                     $this->timDosenResults = [];
                 } else {
-                    $this->timDosenNameSearch;
+                    $this->timDosenNameSearch = '';
                     $this->tim_dosen_id_array[] = $exactMatch->id;
                     $this->tim_dosen_items_array[] = $this->itemsTimDosen($exactMatch);
                     $this->tim_dosen_id_array = collect($this->tim_dosen_id_array)

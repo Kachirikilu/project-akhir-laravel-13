@@ -2,7 +2,7 @@
     $pageTitle = __('Study Program Management');
 
     if (request()->routeIs('capaian-management')) {
-        $pageTitle = __('Capaian Mahasiswa Management');
+        $pageTitle = __('Capaian Program Studi');
     } elseif (request()->routeIs('rps-capaian-management')) {
         $pageTitle = __('RPS Capaian Management');
     }

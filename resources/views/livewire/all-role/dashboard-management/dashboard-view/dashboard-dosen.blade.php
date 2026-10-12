@@ -6,18 +6,27 @@
 --}}
 
 @php
-    // $dummy = [
-    //     'capaianProdi' => ['persen' => 82, 'label' => 'Capaian prodi tempat saya mengajar'],
-    //     'rpsSaya' => ['aktif' => 5, 'total' => 6],
-    //     'timKetua' => ['aktif' => 3, 'total' => 4],
-    //     'totalTim' => ['aktif' => 9, 'total' => 11],
+    // $prodi = Auth::user()->dosen->pr_rel->prodi ?? 'Program Studi';
+    // $rekapProdi = 85.7 ?? 0;
+    // $cplProdi = 524 ?? 0;
 
-    //     'mkDiampu' => ['jumlah' => 4, 'sks' => 12],
-    //     'totalSksSemester' => 18,
-    //     'kelasHariIni' => ['jumlah' => 2, 'sks' => 6],
-    //     'kelasSemesterIni' => 7,
-    //     'totalKelas' => 22,
-    // ];
+    // $rpsSayaAktif = 14 ?? 0;
+    // $rpsSaya = 18 ?? 0;
+
+    // $timDosenKetuaAktif = 2 ?? 0;
+    // $timDosenKetua = 5 ?? 0;
+    // $timDosenAktif = 12 ?? 0;
+    // $timDosen = 15 ?? 0;
+
+    // $mkSaya = 14 ?? 0;
+    // $mkSemesterSaya = 7 ?? 0;
+    // $mkSksSaya = 32 ?? 0;
+    // $mkSksSemesterSaya = 17 ?? 0;
+
+    // $kelasSaya = 12 ?? 0;
+    // $kelasSemesterSaya = 6 ?? 0;
+    // $jadwalHariIni = 4 ?? 0;
+    // $sksHariIni = 10 ?? 0;
 
     $prodi = Auth::user()->dosen->pr_rel->prodi ?? 'Program Studi';
     $rekapProdi = Auth::user()->dosen->pr_rel->rekap_pr ?? 0;
@@ -32,10 +41,12 @@
     $timDosen = $stats['tim-dosen-saya'] ?? 0;
 
     $mkSaya = $stats['mk-saya'] ?? 0;
+    $mkSemesterSaya = $stats['mk-semester-saya'] ?? 0;
     $mkSksSaya = $stats['mk-sks-saya'] ?? 0;
     $mkSksSemesterSaya = $stats['mk-sks-semester-saya'] ?? 0;
 
     $kelasSaya = $stats['kelas-saya'] ?? 0;
+    $kelasSemesterSaya = $stats['kelas-semester-saya'] ?? 0;
     $jadwalHariIni = $stats['jadwal-saya-hari-ini'] ?? 0;
     $sksHariIni = $stats['jadwal-sks-saya-hari-ini'] ?? 0;
 @endphp
@@ -70,6 +81,7 @@
             'icon' => 'book-open',
             'title' => 'RPS Saya',
             'subtitle' => 'dari RPS terdaftar',
+            'textPersentase' => 'Aktif',
             'value' => $rpsSayaAktif,
             'max' => $rpsSaya,
             'displayValue' => $rpsSayaAktif . ' / ' . $rpsSaya,
@@ -81,6 +93,7 @@
             'icon' => 'user-group',
             'title' => 'Tim Saya Sebagai Ketua',
             'subtitle' => 'dari Tim yang Diketuai',
+            'textPersentase' => 'Aktif',
             'value' => $timDosenKetuaAktif,
             'max' => $timDosenKetua,
             'displayValue' => $timDosenKetuaAktif . ' / ' . $timDosenKetua,
@@ -92,9 +105,10 @@
             'icon' => 'users',
             'title' => 'Total Tim Dosen Saya',
             'subtitle' => 'dari total Tim',
-            'value' => $timDosenKetua,
+            'textPersentase' => 'Aktif',
+            'value' => $timDosenAktif,
             'max' => $timDosen,
-            'displayValue' => $timDosenKetua . ' / ' . $timDosen,
+            'displayValue' => $timDosenAktif . ' / ' . $timDosen,
             'accent' => '#d97706',
             'accentSoft' => 'rgba(217,119,6,0.12)',
         ])
@@ -123,7 +137,7 @@
                 'label' => 'Total SKS Semester Ini',
                 'value' => $mkSksSemesterSaya,
                 'unit' => 'SKS',
-                'sub' => null,
+                'sub' => 'dari '.$mkSemesterSaya . ' Mata Kuliah',
                 'accent' => '#0d9488',
                 'accentSoft' => 'rgba(13,148,136,0.12)',
             ])
@@ -151,9 +165,9 @@
             @include('livewire.global.statistik.info-box-stats', [
                 'icon' => 'rectangle-group',
                 'label' => 'Total Kelas Saya',
-                'value' => $kelasSaya,
-                'unit' => 'Kelas',
-                'sub' => null,
+                'value' => $kelasSemesterSaya,
+                'unit' => 'Kelas di Semester Ini',
+                'sub' => 'dari '.$kelasSaya.' Kelas',
                 'accent' => '#7c3aed',
                 'accentSoft' => 'rgba(124,58,237,0.12)',
             ])

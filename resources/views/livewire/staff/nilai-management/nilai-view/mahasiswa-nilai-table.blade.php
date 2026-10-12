@@ -169,7 +169,7 @@
                     </flux:dropdown>
                 </td>
 
-                <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->identity1 ?? '-' }}</td>
+                <td class="table-main-sticky whitespace-nowrap">{{ $user->identity1 ?? '-' }}</td>
 
 
                 <td class="table-second whitespace-nowrap">{{ $user->name ?? '-' }}</td>

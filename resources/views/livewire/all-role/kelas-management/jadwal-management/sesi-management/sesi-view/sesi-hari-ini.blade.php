@@ -10,10 +10,29 @@
         @foreach ($sesis as $index => $s)
             @php
                 $isUjian = in_array(strtoupper($s->metode ?? ''), $daftarUjian);
+                $now = \Carbon\Carbon::now();
+
                 $isPastDate =
                     !empty($s->tanggal) &&
                     \Carbon\Carbon::parse($s->tanggal)->isPast() &&
                     !\Carbon\Carbon::parse($s->tanggal)->isToday();
+
+                $waktuMulai = !empty($s->waktu_pelaksanaan) ? \Carbon\Carbon::parse($s->waktu_pelaksanaan) : null;
+                $waktuSelesai = !empty($s->waktu_berakhir) ? \Carbon\Carbon::parse($s->waktu_berakhir) : null;
+
+                $kelasText = null;
+
+                if ($waktuMulai && $waktuSelesai) {
+                    if ($now->greaterThanOrEqualTo($waktuSelesai)) {
+                        $kelasText = 'Selesai';
+                    } elseif ($now->between($waktuMulai, $waktuSelesai)) {
+                        $kelasText = 'Berlangsung';
+                    } elseif ($waktuMulai->isToday()) {
+                        $kelasText = 'Hari Ini';
+                    }
+                } elseif (!empty($s->tanggal) && \Carbon\Carbon::parse($s->tanggal)->isToday()) {
+                    $kelasText = 'Hari Ini';
+                }
 
                 $kehadiran_mhs = Auth::user()->mahasiswa
                     ? $s->kehadirans->where('mahasiswa_id', Auth::user()->mahasiswa->id)->first()
@@ -43,20 +62,29 @@
 
                 $btnBase = 'transition-all duration-200 hover:z-10 active:z-10';
 
+                $isLive = $kelasText === 'Berlangsung';
+
                 if ($isUjian) {
                     if ($isPastDate) {
                         $focusDiv =
                             'dark:border-[var(--border-table-color-special)]/42 border-[var(--border-table-color-special)]';
                         $focusButton =
                             $btnBase .
-                            ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color)]/64';
+                            ' hover:bg-[var(--focus-color-special)]/80 hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)]/80 active:text-[var(--main-text-special)] dark:hover:bg-[var(--focus-color-special)]/24 dark:active:bg-[var(--focus-color-special)]/24 text-[var(--focus-color-special)] ring-[var(--focus-color-special)]/64';
                         $mainColor = 'dark:bg-[var(--main-color-special)]/24 bg-[var(--main-color-special)]/72';
                     } else {
                         $focusDiv =
                             'ring-1 ring-[var(--focus-color-special)] border-[var(--border-table-color-special)] bg-[var(--main-table-trans-spceial)]/64';
                         $focusButton =
                             $btnBase .
-                            ' hover:bg-[var(--focus-color-special)] hover:text-[var(--main-text-special)] active:bg-[var(--focus-color-special)] active:text-[var(--main-text-special)] text-[var(--focus-color-special)] ring-[var(--focus-color-special)]';
+                            ' active:bg-[var(--focus-color-special))] active:text-[var(--main-text-special))] text-[var(--focus-color-special))] ring-[var(--focus-color-special))]';
+                        if ($isLive) {
+                            $focusButton .=
+                                ' !bg-[var(--focus-color-special))] text-[var(--main-text-special))] hover:!bg-[var(--focus-color-special))]/80';
+                        } else {
+                            $focusButton .=
+                                ' hover:bg-[var(--focus-color-special))] hover:text-[var(--main-text-special))]';
+                        }
                         $mainColor = 'bg-[var(--main-color-special)]';
                     }
                 } else {
@@ -70,7 +98,13 @@
                         $focusDiv = 'border-[var(--border-table-color)] bg-[var(--main-table-trans)]/64';
                         $focusButton =
                             $btnBase .
-                            ' hover:bg-[var(--focus-color)] hover:text-[var(--main-text)] active:bg-[var(--focus-color)] active:text-[var(--main-text)] text-[var(--focus-color)] ring-[var(--focus-color)]';
+                            ' active:bg-[var(--focus-color)] active:text-[var(--main-text)] text-[var(--focus-color)] ring-[var(--focus-color)]';
+                        if ($isLive) {
+                            $focusButton .=
+                                ' !bg-[var(--focus-color)] text-[var(--main-text)] hover:!bg-[var(--focus-color)]/80';
+                        } else {
+                            $focusButton .= ' hover:bg-[var(--focus-color)] hover:text-[var(--main-text)]';
+                        }
                         $mainColor = 'bg-[var(--main-color)]';
                     }
                 }

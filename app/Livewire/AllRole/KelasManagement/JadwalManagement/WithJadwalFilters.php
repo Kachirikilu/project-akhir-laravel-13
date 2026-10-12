@@ -16,72 +16,57 @@ trait WithJadwalFilters
 
     public $searchBobotJadwal = '';
 
-    public function inputJadwalSearch($idKelas = null, $isHariIni = false)
-    {
-        $user = Auth::user();
+public function inputJadwalSearch($idKelas = null, $isHariIni = false)
+{
+    $user = Auth::user();
+    $userId = Auth::user()->id;
 
-        $filterRole = function ($queryJadwal) use ($user) {
-            if ($user->dosen) {
-                $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
-                    $q->where('dosens.id', $user->dosen->id);
-                });
-            } elseif ($user->mahasiswa) {
-                $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
-                    $q->where('mahasiswas.id', $user->mahasiswa->id);
-                });
-            }
-        };
+    $eagerLoads = [
+        'kelas_rel', 
+        'kelas_rel.rps_rel.mk_rel.prodis', 
+        'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 
+        'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel'
+    ];
 
-        
-
-        if (! empty($idKelas)) {
-            $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)
-                ->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
+    if (! empty($idKelas)) {
+        $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)->with($eagerLoads);
+    } else {
+        if ($user->dosen) {
+            $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($userId) {
+                $q->where('dosens.user_id', $userId);
+            })->with($eagerLoads);
+        } elseif ($user->mahasiswa) {
+            // PERBAIKAN: Pastikan kelas_rel ada dan tidak null/trashed saat query mahasiswa
+            $queryJadwal = KelasJadwal::whereHas('kelas_rel')
+                ->whereHas('mahasiswas', function ($q) use ($userId) {
+                    $q->where('mahasiswas.user_id', $userId);
+                })
+                ->with($eagerLoads);
         } else {
-            if (Auth::user()->dosen) {
-                $queryJadwal = KelasJadwal::whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) {
-                    $q->where('dosens.id', Auth::user()->dosen->id);
-                })->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
-            } elseif (Auth::user()->mahasiswa) {
-                $queryJadwal = KelasJadwal::whereHas('mahasiswas', function ($q) {
-                    $q->where('mahasiswas.id', Auth::user()->mahasiswa->id);
-                })->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
-            } else {
-                $queryJadwal = KelasJadwal::query()->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
-            }
+            $queryJadwal = KelasJadwal::has('kelas_rel')->with($eagerLoads);
         }
-
-        if ($isHariIni) {
-            $queryJadwal->whereHas('sesis', function ($query) {
-                $query->whereDate('tanggal', today());
-            });
-        }
-        // dump($queryJadwal->count(), $idKelas);
-
-        // if ($user->dosen) {
-        //     $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', function ($q) use ($user) {
-        //         $q->where('dosens.id', $user->dosen->id);
-        //     });
-        // } elseif ($user->mahasiswa) {
-        //     $queryJadwal->whereHas('mahasiswas', function ($q) use ($user) {
-        //         $q->where('mahasiswas.id', $user->mahasiswa->id);
-        //     });
-        // }
-
-        if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
-            $search = $this->search;
-            if (! empty($search)) {
-                if ($this->searchMode == 'smart') {
-                    $queryJadwal->searchKelasJadwalSmart($search);
-                } else {
-                    $queryJadwal->searchKelasJadwal($search);
-                }
-            }
-            $this->sortFieldOrderJadwal($queryJadwal);
-        }
-
-        return $queryJadwal;
     }
+
+    if ($isHariIni) {
+        $queryJadwal->whereHas('sesis', function ($query) {
+            $query->whereDate('tanggal', today());
+        });
+    }
+
+    if ($this->hasProperty('searchMode') && ($this->searchMode == 'simple' || $this->searchMode == 'smart')) {
+        $search = $this->search;
+        if (! empty($search)) {
+            if ($this->searchMode == 'smart') {
+                $queryJadwal->searchKelasJadwalSmart($search);
+            } else {
+                $queryJadwal->searchKelasJadwal($search);
+            }
+        }
+        $this->sortFieldOrderJadwal($queryJadwal);
+    }
+
+    return $queryJadwal;
+}
 
     public function filterByJadwal($kelas)
     {

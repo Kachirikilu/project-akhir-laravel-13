@@ -660,6 +660,7 @@ class CapaianManagement extends Component
                 'rps-draf' => '📝',
                 'rps-older-5' => '⏳',
 
+                'cpl-prodi' => '🎯',
                 'cpl-month' => '🎯',
                 'cpl-6-months' => '⏱️',
                 'cpl-year' => '📆',

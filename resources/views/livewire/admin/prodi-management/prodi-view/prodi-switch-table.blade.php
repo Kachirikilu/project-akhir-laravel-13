@@ -30,20 +30,29 @@
             </div>
         </div>
 
-        <div class="shrink-0">
+
+        @php
+            $runningAllKey = 'rekap_capaian_running_all';
+            $isProcessAll = Cache::has($runningAllKey);
+        @endphp
+
+        <div class="shrink-0" @if ($isProcessAll) wire:poll.12s @endif>
             @include('livewire.global.table.export-button', [
-                'nameXString' => 'Rekap Capaian',
-                'xString' => "rekapCapaianAll()",
+                'nameXString' => $isProcessAll
+                    ? 'Process Capaian ' . (env('UNIV') ?? 'UNSRI')
+                    : 'Rekap Capaian ' . (env('UNIV') ?? 'UNSRI'),
+                        'isLoading' => $isProcessAll,
+                'xString' => 'rekapCapaianAll()',
                 'color' => 'yellow',
                 'icon' => 'academic-cap',
-                'autoSmall' => 'md',
+                'autoSmall' => 'lg',
             ])
         </div>
 
         <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'xString' => 'exportProdiExcel()',
-                'autoSmall' => 'md',
+                'autoSmall' => 'sm',
             ])
         </div>
 

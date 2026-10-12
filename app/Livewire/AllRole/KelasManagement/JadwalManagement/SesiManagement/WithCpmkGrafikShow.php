@@ -4,18 +4,16 @@ namespace App\Livewire\AllRole\KelasManagement\JadwalManagement\SesiManagement;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Models\Akademik\RPS;
-
-use App\Models\ProgramStudi\Prodi;
-use App\Models\ProgramStudi\Departemen;
-use App\Models\ProgramStudi\Fakultas;
-
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Penilaian\NilaiMahasiswa;
-use Carbon\Carbon;
-use Spatie\Browsershot\Browsershot;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Prodi;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Browsershot\Browsershot;
 
 trait WithCpmkGrafikShow
 {
@@ -162,6 +160,7 @@ trait WithCpmkGrafikShow
 
             $this->addNilaiRPSSubquery($queryUser, $jadwalRPSId, 'mhs_nilai_array', 'nilai_array');
             $this->addNilaiRPSSubquery($queryUser, $jadwalRPSId, 'mhs_bobot_array', 'bobot_array');
+
         } else {
             $queryUser = $this->inputUserSearch('mahasiswa', $jadwalRPSId, null, 1);
             $jadwal = KelasJadwal::where('id', $jadwalRPSId)->firstOrFail();
@@ -170,6 +169,10 @@ trait WithCpmkGrafikShow
             $this->addNilaiJadwalSubquery($queryUser, $jadwalRPSId, 'mhs_nilai_array', 'nilai_array');
             $this->addNilaiJadwalSubquery($queryUser, $jadwalRPSId, 'mhs_bobot_array', 'bobot_array');
         }
+
+        $this->addMahasiswaNilaiAkhir($queryUser, $jadwalRPSId, 'mhs_nilai_akhir');
+        $this->addMahasiswaNilaiIndex($queryUser, $jadwalRPSId, 'mhs_nilai_index');
+        $this->addMahasiswaNilaiMutu($queryUser, $jadwalRPSId, 'mhs_nilai_mutu');
 
         $sampleNilai = NilaiMahasiswa::where('rps_id', $rps->id)->first() ?? new NilaiMahasiswa(['rps_id' => $rps->id]);
         $mappingData = $sampleNilai->mapping_pertemuan ?? [];
@@ -201,22 +204,30 @@ trait WithCpmkGrafikShow
         if ($isRPS) {
             $parts = [
                 str_replace(['/', '\\'], '-', $rps->mk),
-                str_replace(['/', '\\'], '-', $rps->kode)
+                str_replace(['/', '\\'], '-', $rps->kode),
             ];
-            if (!empty($angkatan)) $parts[] = 'Angkatan ' . $angkatan;
-            if (!empty($prName))   $parts[] = str_replace(['/', '\\'], '-', $prName);
-            if (!empty($dpName))   $parts[] = str_replace(['/', '\\'], '-', $dpName);
-            if (!empty($fkName))   $parts[] = str_replace(['/', '\\'], '-', $fkName);
-            $fileName = implode('_', $parts) . '.pdf';
+            if (! empty($angkatan)) {
+                $parts[] = 'Angkatan '.$angkatan;
+            }
+            if (! empty($prName)) {
+                $parts[] = str_replace(['/', '\\'], '-', $prName);
+            }
+            if (! empty($dpName)) {
+                $parts[] = str_replace(['/', '\\'], '-', $dpName);
+            }
+            if (! empty($fkName)) {
+                $parts[] = str_replace(['/', '\\'], '-', $fkName);
+            }
+            $fileName = implode('_', $parts).'.pdf';
 
         } else {
             $parts = [
                 str_replace('/', '-', $jadwal->kode),
                 str_replace(['/', '\\'], '-', $rps->mk),
                 str_replace(['/', '\\'], '-', $rps->kode),
-                str_replace(' ', '-', $tahunAkademik)
+                str_replace(' ', '-', $tahunAkademik),
             ];
-            $fileName = implode('_', $parts) . '.pdf';
+            $fileName = implode('_', $parts).'.pdf';
         }
 
         return ['content' => $pdfContent, 'name' => $fileName, 'jadwal' => $jadwal ?? null];
@@ -298,7 +309,7 @@ trait WithCpmkGrafikShow
             $dataLogo = file_get_contents($logoPath);
             $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
         }
-        
+
         $countCPMK = $rps->count_cpmk;
 
         if ($countCPMK == 1 || $countCPMK == 2) {
@@ -343,7 +354,7 @@ trait WithCpmkGrafikShow
         ]);
 
         $pdf->setPaper('a4', 'landscape');
-        
+
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,

@@ -17,6 +17,7 @@
                 @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
+                    // 'tabFilter' => 1 ?? null,
                     'tabFilter' => $stats['sesi-hari-ini'] ?? null,
                     'tabString' => 'hari-ini',
                     'tabNameString' => 'Sesi Hari Ini',

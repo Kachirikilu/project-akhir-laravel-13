@@ -609,7 +609,7 @@ class RPS extends Model
         }
 
         $search = trim($search);
-        $searchLower = '%'.strtolower($search).'%';
+        // $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
 
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
@@ -633,7 +633,7 @@ class RPS extends Model
             $yearPart = substr($yearPart, -2);
         }
 
-        return $query->where(function ($q) use ($yearPart, $semesterPart, $mkPart, $search, $withBobot) {
+        return $query->where(function ($q) use ($yearPart, $semesterPart, $mkPart, $search, $withBobot, $searchTerm) {
             $mkPartClean = $mkPart ? preg_replace('/[^A-Za-z0-9]/', '', $mkPart) : null;
 
             if ($withBobot == false) {
@@ -677,6 +677,10 @@ class RPS extends Model
                 if (is_numeric($search)) {
                     $q->orWhere('rps.id', 'like', $search);
                 }
+
+                $q->orWhereHas('mk_rel', function ($mq) use ($searchTerm) {
+                    $mq->where('nama_mk', 'like', $searchTerm);
+                });
 
                 // 5. Tahun Akademik / Kurikulum
                 $searchAkademik = strtolower($search);

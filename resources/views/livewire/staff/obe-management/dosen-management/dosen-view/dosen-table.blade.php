@@ -132,12 +132,12 @@
                 </td>
                 {{-- Role --}}
                 @if ($showMore)
-                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }}</td>
-                    <td class="table-sub whitespace-nowrap text-center">{{ $user->dosen->nidn ?? '-' }}</td>
-                    <td class="table-sub whitespace-nowrap text-center">{{ $user->dosen->nidk ?? '-' }}</td>
-                    <td class="table-second table-border-x whitespace-nowrap text-center">{{ $user->dosen->nik ?? '-' }}</td>
+                    <td class="table-main-sticky whitespace-nowrap">{{ $user->dosen->nip ?? '-' }}</td>
+                    <td class="table-sub whitespace-nowrap">{{ $user->dosen->nidn ?? '-' }}</td>
+                    <td class="table-sub whitespace-nowrap">{{ $user->dosen->nidk ?? '-' }}</td>
+                    <td class="table-second table-border-x whitespace-nowrap">{{ $user->dosen->nik ?? '-' }}</td>
                 @else
-                    <td class="table-main-sticky whitespace-nowrap text-center">{{ $user->dosen->nip ?? '-' }} /
+                    <td class="table-main-sticky whitespace-nowrap">{{ $user->dosen->nip ?? '-' }} /
                         {{ $user->dosen->nidn ?? '-' }}</td>
                 @endif
 

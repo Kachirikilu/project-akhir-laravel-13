@@ -5,6 +5,28 @@
     ============================================================
 --}}
 
+{{-- @php
+    $akred = 'A-' ?? 'E';
+
+    [$akredAccent, $akredRgb] = match ($akred) {
+        'A'        => ['#06b6d4', [6,182,212]],
+        'A-'       => ['#22c55e', [34,197,94]],
+        'B+'       => ['#10b981', [16,185,129]],
+        'B'        => ['#eab308', [234,179,8]],
+        'B-'       => ['#f59e0b', [245,158,11]],
+        'C+', 'C'  => ['#f97316', [249,115,22]],
+        default    => ['#ef4444', [239,68,68]],
+    };
+    $akredSoftBg = 'rgba(' . implode(',', $akredRgb) . ',0.12)';
+
+    $targetSks = (int) ($prodi_data['target_sks'] ?? 144);
+    $cplValue  = (float) (85.7 ?? 0);
+    $ikRaw     = 3.70 ?? 0;
+    $ikValue   = is_numeric($ikRaw) ? (float) $ikRaw : 0;
+    $mkValue   = (int) (131 ?? 0);
+    $rpsValue  = (int) (131 ?? 0);
+@endphp --}}
+
 @php
     $akred = $prodi_data['akreditas_pr'] ?? 'E';
 
@@ -44,7 +66,26 @@
         'pctSize'   => 'text-sm',
     ])
 
-    {{-- 2. INDEKS KINERJA — donut ring /4.00 --}}
+    {{-- 2. MK / RPS AKTIF — tanpa ring, angka MK di tengah --}}
+    @include('livewire.global.statistik.donut-mini-stats', [
+        'icon'      => 'book-open',
+        'title'     => 'RPS Aktif',
+        'sub'       => "Target $targetSks SKS",
+        'value'     => 1,
+        'max'       => 1,
+        'mainValue'   => $mkValue,
+        'textPersentase' => 'RPS',
+        'display'   =>  'dari ' . $mkValue . ' MK',
+        'accent'    => 'var(--focus-color)',
+        'softBg'    => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
+        'textColor' => 'var(--focus-color)',
+        'size'      => 64,
+        'pctSize'   => 'text-sm',
+        'centerText'=> (string) $mkValue,
+    ])
+
+
+    {{-- 3. INDEKS KINERJA — donut ring /4.00 --}}
     @include('livewire.global.statistik.donut-mini-stats', [
         'icon'      => 'trophy',
         'title'     => 'Indeks Kinerja (IK)',
@@ -74,29 +115,15 @@
         'pctSize'   => 'text-sm',
     ]) --}}
 
-    {{-- 4. MK / RPS AKTIF — tanpa ring, angka MK di tengah --}}
-    @include('livewire.global.statistik.donut-mini-stats', [
-        'icon'      => 'book-open',
-        'title'     => 'Mata Kuliah / RPS Aktif',
-        'sub'       => "Taerget $targetSks SKS",
-        'value'     => 0,
-        'max'       => 0,
-        'display'   => $mkValue . ' MK / ' . $rpsValue . ' RPS',
-        'accent'    => 'var(--focus-color)',
-        'softBg'    => 'color-mix(in srgb, var(--focus-color) 14%, transparent)',
-        'textColor' => 'var(--focus-color)',
-        'size'      => 64,
-        'pctSize'   => 'text-sm',
-        'centerText'=> (string) $mkValue,
-    ])
-
-    {{-- 5. AKREDITASI — tanpa ring, huruf di tengah --}}
+    {{-- 4. AKREDITASI — tanpa ring, huruf di tengah --}}
     @include('livewire.global.statistik.donut-mini-stats', [
         'icon'      => 'academic-cap',
-        'title'     => 'Akreditasi Prodi',
+        'title'     => 'Akreditasi Program Studi',
         'sub'       => 'Status Mutu Akademik',
-        'value'     => 0,
-        'max'       => 0,
+        'value'     => $ikValue,
+        'max'       => 4,
+        'textPersentase' => '/ 4.00',
+        'mainValue'   => (is_numeric($ikRaw) ? number_format($ikRaw, 2) : $ikRaw),
         'display'   => $akred,
         'accent'    => $akredAccent,
         'softBg'    => $akredSoftBg,

@@ -156,7 +156,7 @@ trait WithMKSearchFilters
                     $this->mk_items = $this->itemsMK($exactMatch);
                     $this->mkResults = [];
                 } else {
-                    $this->mkNameSearch;
+                    $this->mkNameSearch = '';
                     $this->mk_id_array[] = $exactMatch->id;
                     $this->mk_items_array[] = $this->itemsMK($exactMatch);
 
@@ -465,6 +465,8 @@ trait WithMKSearchFilters
 
                 'mk' => fn ($mk) => $mk->mk,
                 'semester' => fn ($mk) => (int) $mk->semester,
+
+                'tipe_sks' => fn ($mk) => (int) $mk->tipe_sks,
                 'sks' => fn ($mk) => (int) $mk->sks,
                 'sks_tm' => fn ($mk) => (int) $mk->sks_tm,
                 'sks_pr' => fn ($mk) => (int) $mk->sks_pr,

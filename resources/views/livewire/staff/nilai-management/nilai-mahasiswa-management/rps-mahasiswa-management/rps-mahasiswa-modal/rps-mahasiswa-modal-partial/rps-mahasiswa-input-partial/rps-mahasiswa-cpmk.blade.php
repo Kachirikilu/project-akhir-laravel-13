@@ -18,7 +18,7 @@
                     $nilaiKon = (float) ($item['nilai_kontribusi'] ?? 0);
 
                     $predikat = match (true) {
-                        $nilaiKon >= 85 => [
+                        $nilaiKon >= 86 => [
                             'huruf' => 'A',
                             'badge' => 'emerald',
                             'teks' => 'Sangat Memuaskan',
@@ -28,7 +28,7 @@
                         $nilaiKon >= 70 => ['huruf' => 'B', 'badge' => 'sky', 'teks' => 'Baik'],
                         $nilaiKon >= 65 => ['huruf' => 'B-', 'badge' => 'blue', 'teks' => 'Cukup Baik'],
                         $nilaiKon >= 60 => ['huruf' => 'C+', 'badge' => 'amber', 'teks' => 'Cukup'],
-                        $nilaiKon >= 55 => ['huruf' => 'C', 'badge' => 'yellow', 'teks' => 'Hampir Cukup'],
+                        $nilaiKon >= 56 => ['huruf' => 'C', 'badge' => 'yellow', 'teks' => 'Hampir Cukup'],
                         $nilaiKon >= 40 => ['huruf' => 'D', 'badge' => 'orange', 'teks' => 'Kurang'],
                         default => ['huruf' => 'E', 'badge' => 'rose', 'teks' => 'Sangat KUrang'],
                     };

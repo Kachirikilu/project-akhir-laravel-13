@@ -64,12 +64,12 @@
 
         {{ $s->kode_cpmk ?? 'Sesi Evaluasi Utama' }}
 
-        @if ($isPastDate)
+        @if ($kelasText ?? false)
             <span class="mx-2">
                 |
             </span>
             <span class="font-mono">
-                Selesai
+                {{ $kelasText }}
             </span>
         @endif
     </p>

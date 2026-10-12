@@ -5,10 +5,10 @@
     $c = 2 * M_PI * $r;
     $vb = 64;
     $value = $value ?? $mainValue;
-    $max = $max ?? $value ?? $mainValue;
+    $max = $max ?? ($value ?? $mainValue);
     $rawPct = ($max ?? 0) > 0 ? min(100, ($value / $max) * 100) : 0;
     $offset = $c - ($rawPct / 100) * $c;
-    $pctDisplay = round($rawPct, 1);
+    $pct = round($rawPct, 1);
 @endphp
 <div class="flex flex-col gap-3">
 
@@ -38,13 +38,17 @@
                     stroke-dasharray="{{ round($c, 2) }}" stroke-dashoffset="{{ round($offset, 2) }}"
                     style="transition: stroke-dashoffset 0.5s ease;" />
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                 <span class="{{ $pctSize }} font-black leading-none text-[var(--contrast-main-text)]">
-                    {{ $mainValue ?? ($pctDisplay . '%') }}
+                    {{ $mainValue ?? $pct . '%' }}
                 </span>
+                @if (!empty($textPersentase))
+                    <span class="mt-0.5 text-[8px] font-bold leading-none opacity-80 text-[var(--contrast-main-text)]">
+                        {{ $textPersentase }}
+                    </span>
+                @endif
             </div>
         </div>
-
         <div class="flex flex-col gap-1 min-w-0">
             <span class="text-md sm:text-lg font-black leading-tight" style="color: {{ $textColor }};">
                 {{ $display }}

@@ -53,7 +53,7 @@
 
 
                     @include('livewire.global.table.badge.draft-badge', [
-                        'xValue' => $rps_data->draf ?? null,
+                        'xValue' => $rps_data->is_draf ?? null,
                         'size' => 'lg',
                     ])
 

@@ -9,7 +9,8 @@
     $offset = $circumference - ($rawPct / 100) * $circumference;
 @endphp
 
-<div class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--main-table-color)]/80 p-4 sm:p-5 gap-5">
+<div
+    class="flex flex-col rounded-[20px] border border-[var(--border-table-color)] bg-[var(--main-table-color)]/80 p-4 sm:p-5 gap-5">
 
     {{-- Header: icon + judul --}}
     <div class="flex items-center gap-3">
@@ -25,7 +26,7 @@
     {{-- Body: donut chart (SVG) + nilai --}}
     {{-- PERUBAHAN DI SINI: flex-col untuk mobile, sm:flex-row untuk layar lebih lebar --}}
     <div class="flex flex-col sm:flex-row items-center sm:items-center gap-4">
-        
+
         {{-- Chart --}}
         <div class="relative flex-shrink-0" style="width: 84px; height: 84px;">
             <svg width="84" height="84" viewBox="0 0 84 84" class="-rotate-90">
@@ -36,13 +37,18 @@
                     stroke-dasharray="{{ $circumference }}" stroke-dashoffset="{{ $offset }}"
                     style="transition: stroke-dashoffset 0.6s ease;" />
             </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-sm font-black leading-none text-[var(--contrast-main-text)]">
-                    {{ $pct }}%
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span class="{{ $largeMain ?? null ? 'text-lg' : 'text-sm' }} font-black leading-none text-[var(--contrast-main-text)]">
+                    {{ $mainValue ?? $pct . '%' }}
                 </span>
+                @if (!empty($textPersentase))
+                    <span
+                        class="mt-0.5 text-[9px] font-semibold leading-none opacity-80 text-[var(--contrast-main-text)]">
+                        {{ $textPersentase }}
+                    </span>
+                @endif
             </div>
         </div>
-
         {{-- Text Info --}}
         {{-- Menambahkan text-center untuk mobile agar rapi saat menjadi kolom --}}
         <div class="flex flex-col gap-1 min-w-0 text-center sm:text-left">

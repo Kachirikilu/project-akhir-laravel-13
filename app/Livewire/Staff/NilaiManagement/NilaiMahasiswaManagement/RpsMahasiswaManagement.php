@@ -150,7 +150,7 @@ class RpsMahasiswaManagement extends Component
             'url' => url()->current(),
         ];
 
-        $rpsHistory = array_slice($rpsHistory, -10, null, true);
+        $rpsHistory = array_slice($rpsHistory, -16, null, true);
         uasort($rpsHistory, function ($a, $b) {
             // 1. Urutkan berdasarkan NIM
             $nimCompare = strcmp($a['nim'] ?? '', $b['nim'] ?? '');

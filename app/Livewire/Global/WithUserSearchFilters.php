@@ -163,7 +163,7 @@ trait WithUserSearchFilters
                     $this->user_id = $exactMatch->id;
                     $this->user_items = $this->itemsUser($exactMatch);
                 } else {
-                    $this->userNameSearch;
+                    $this->userNameSearch = '';
                     $this->user_id_array[] = $exactMatch->id;
                     $this->user_items_array[] = $this->itemsUser($exactMatch);
 

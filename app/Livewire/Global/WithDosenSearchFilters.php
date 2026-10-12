@@ -174,7 +174,7 @@ trait WithDosenSearchFilters
                     $this->dosen_id = $exactMatch->id;
                     $this->dosen_items = $this->itemsDosen($exactMatch);
                 } else {
-                    $this->dosenNameSearch;
+                    $this->dosenNameSearch = '';
                     $this->dosen_id_array[] = $exactMatch->id;
                     $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
 

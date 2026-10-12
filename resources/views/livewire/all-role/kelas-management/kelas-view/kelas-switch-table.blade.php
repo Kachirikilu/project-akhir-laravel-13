@@ -6,7 +6,41 @@
 
         <div class="min-w-0 flex-1">
             <div class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1 w-full">
-                {{-- Mata Kuliah --}}
+                {{-- @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 5526 ?? null,
+                    'tabString' => '',
+                    'tabNameString' => 'Semua Kelas',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 4559 ?? null,
+                    'tabString' => 'tatap-muka',
+                    'tabNameString' => 'Tatap Muka',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 751 ?? null,
+                    'tabString' => 'praktikum',
+                    'tabNameString' => 'Praktikum',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 120 ?? null,
+                    'tabString' => 'praktek-lapangan',
+                    'tabNameString' => 'Praktek Lapangan',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 96 ?? null,
+                    'tabString' => 'simulasi',
+                    'tabNameString' => 'Simulasi',
+                ]) --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -14,7 +48,6 @@
                     'tabString' => '',
                     'tabNameString' => 'Semua Kelas',
                 ])
-                {{-- Tab Tatap Muka --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -22,7 +55,6 @@
                     'tabString' => 'tatap-muka',
                     'tabNameString' => 'Tatap Muka',
                 ])
-                {{-- Tab Praktikum --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -30,7 +62,6 @@
                     'tabString' => 'praktikum',
                     'tabNameString' => 'Praktikum',
                 ])
-                {{-- Tab Praktek Lapangan --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,
@@ -38,7 +69,6 @@
                     'tabString' => 'praktek-lapangan',
                     'tabNameString' => 'Praktek Lapangan',
                 ])
-                {{-- Tab Simulasi --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,

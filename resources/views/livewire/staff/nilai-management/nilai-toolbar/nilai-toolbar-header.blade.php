@@ -43,22 +43,46 @@
 
 
 
-                    <div class="flex flex-row items-center justify-end gap-3 shrink-0">
+                    @php
+                        $runningAllKey = 'rekap_capaian_running_all';
+                        $runningProdiKey = 'rekap_capaian_running_prodi_ids';
+
+                        $isProcessAll = Cache::has($runningAllKey);
+
+                        $runningProdiIds = Cache::get($runningProdiKey, []);
+
+                        $currentProdiId = (int) (Auth::user()->pr_id ?? 0);
+                        $isCurrentProdiRunning = in_array($currentProdiId, array_map('intval', $runningProdiIds));
+
+                        $isProcessProdi = $isProcessAll || $isCurrentProdiRunning;
+                        $isAnyJobRunning = $isProcessAll || !empty($runningProdiIds);
+                    @endphp
+
+                    <div class="flex flex-row items-center justify-end gap-3 shrink-0"
+                        @if ($isAnyJobRunning) wire:poll.12s @endif>
+
                         @if (Auth::user()->admin || Auth::user()->dosen)
                             <div class="shrink-0">
                                 @include('livewire.global.table.export-button', [
-                                    'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                                    'xString' => 'rekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                                    'nameXString' => $isProcessProdi
+                                        ? 'Process Capaian ' . Auth::user()->kode_pr
+                                        : 'Rekap Capaian ' . Auth::user()->kode_pr,
+                                    'isLoading' => $isProcessProdi,
+                                    'xString' => 'rekapCapaian(' . (Auth::user()->pr_id ?? 'null') . ', 15)',
                                     'color' => 'blue',
                                     'icon' => 'academic-cap',
                                     'isNoPb' => 1,
                                 ])
                             </div>
                         @endif
-                        @if (Auth::user()->admin)
+
+                        @if (Auth::user()->admin || Auth::user()->dosen->tingkat_user == 1)
                             <div class="shrink-0">
                                 @include('livewire.global.table.export-button', [
-                                    'nameXString' => 'Rekap Capaian ' . env('UNIV') ?? 'UNSRI',
+                                    'nameXString' => $isProcessAll
+                                        ? 'Process Capaian ' . (env('UNIV') ?? 'UNSRI')
+                                        : 'Rekap Capaian ' . (env('UNIV') ?? 'UNSRI'),
+                                    'isLoading' => $isProcessAll,
                                     'xString' => 'rekapCapaianAll()',
                                     'color' => 'yellow',
                                     'icon' => 'academic-cap',

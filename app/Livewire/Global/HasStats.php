@@ -150,7 +150,7 @@ trait HasStats
                 }
 
                 return [
-                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
+                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens', fn ($q) => $q->where('dosens.user_id', $userId))->count(),
                 ];
             });
         }
@@ -339,19 +339,33 @@ trait HasStats
                     });
 
                 if (Auth::user()->dosen) {
-                    $queryBase = (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
-                    $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryBase = (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens', fn ($q) => $q->where('dosens.user_id', $userId));
+                    $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens', fn ($q) => $q->where('dosens.user_id', $userId));
                 } elseif (Auth::user()->mahasiswa) {
-                    $queryBase = (clone $queryKelas)->whereHas('jadwals.mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
-                    $queryJadwal->whereHas('mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
+                    $queryBase = (clone $queryKelas)->whereHas('jadwals.mahasiswas', fn ($q) => $q->where('mahasiswas.user_id', $userId));
+                    $queryJadwal->whereHas('mahasiswas', fn ($q) => $q->where('mahasiswas.user_id', $userId));
                 } else {
                     return [
                         'kelas-saya' => 0,
+                        'kelas-semester-saya' => 0,
                         'jadwal-saya-hari-ini' => 0,
                         'jadwal-sks-saya-hari-ini' => 0,
                         'kelas-sks-saya' => 0,
                     ];
                 }
+
+                $currentMonth = now()->month;
+                $isGanjil = ($currentMonth >= 9 || $currentMonth <= 2);
+
+                $kelasSemesterSaya = (clone $queryBase)
+                    ->whereHas('rps_rel.mk_rel', function ($q) use ($isGanjil) {
+                        if ($isGanjil) {
+                            $q->whereRaw('semester % 2 != 0');
+                        } else {
+                            $q->whereRaw('semester % 2 = 0');
+                        }
+                    })
+                    ->count();
 
                 $totalSksHariIni = (clone $queryJadwal)
                     ->with('kelas_rel.rps_rel.mk_rel')
@@ -366,48 +380,10 @@ trait HasStats
 
                 return [
                     'kelas-saya' => (clone $queryBase)->count(),
+                    'kelas-semester-saya' => $kelasSemesterSaya,
                     'jadwal-saya-hari-ini' => (clone $queryJadwal)->count(),
                     'jadwal-sks-saya-hari-ini' => $totalSksHariIni,
                     'kelas-sks-saya' => $totalSksSaya,
-                ];
-            });
-        }        $userStats = [];
-        if (Auth::check()) {
-            $userStats = Cache::remember($keyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
-                $today = now()->format('Y-m-d');
-
-                $queryKelas = Kelas::query();
-                if ($isTrash) {
-                    $queryKelas->onlyTrashed();
-                }
-
-                $queryJadwal = KelasJadwal::query()
-                    ->whereHas('sesis', fn ($q) => $q->whereDate('tanggal', $today))
-                    ->whereHas('kelas_rel', function ($q) use ($isTrash) {
-                        if ($isTrash) {
-                            $q->onlyTrashed();
-                        }
-                    });
-
-                if (Auth::user()->dosen) {
-                    $queryBase = (clone $queryKelas)->whereHas('rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
-                    $queryJadwal->whereHas('kelas_rel.rps_rel.tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId));
-                } elseif (Auth::user()->mahasiswa) {
-                    $queryBase = (clone $queryKelas)->whereHas('jadwals.mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
-                    $queryJadwal->whereHas('mahasiswas.user', fn ($q) => $q->where('users.id', $userId));
-                } else {
-                    return ['kelas-saya' => 0, 'jadwal-saya-hari-ini' => 0, 'jadwal-sks-saya-hari-ini' => 0];
-                }
-
-                $totalSksHariIni = (clone $queryJadwal)
-                    ->with('kelas_rel.rps_rel.mk_rel')
-                    ->get()
-                    ->sum(fn ($jadwal) => $jadwal->kelas_rel?->rps_rel?->mk_rel?->sks_kuliah ?? 0);
-
-                return [
-                    'kelas-saya' => (clone $queryBase)->count(),
-                    'jadwal-saya-hari-ini' => (clone $queryJadwal)->count(),
-                    'jadwal-sks-saya-hari-ini' => $totalSksHariIni,
                 ];
             });
         }
@@ -509,8 +485,8 @@ trait HasStats
                 }
 
                 return [
-                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
-                    'rps-saya-aktif' => (clone $queryRPS)->where('is_draf', false)->whereHas('tim_dosens.dosens.user', fn ($q) => $q->where('users.id', $userId))->count(),
+                    'rps-saya' => (clone $queryRPS)->whereHas('tim_dosens.dosens', fn ($q) => $q->where('dosens.user_id', $userId))->count(),
+                    'rps-saya-aktif' => (clone $queryRPS)->where('is_draf', false)->whereHas('tim_dosens.dosens', fn ($q) => $q->where('dosens.user_id', $userId))->count(),
                 ];
             });
         }
@@ -649,15 +625,15 @@ trait HasStats
                 'tim-dosen-rps' => (clone $query)->whereHas('rps')->count(),
                 'tim-dosen-non-rps' => (clone $query)->whereDoesntHave('rps')->count(),
                 'tim-dosen-all' => (clone $query)->count(),
-                'tim-dosen-saya' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('user_id', $userId))->count(),
-                'tim-dosen-saya-aktif' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('user_id', $userId))
+                'tim-dosen-saya' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('dosens.user_id', $userId))->count(),
+                'tim-dosen-saya-aktif' => (clone $query)->whereHas('dosens', fn ($q) => $q->where('dosens.user_id', $userId))
                     ->whereHas('rps', fn ($q) => $q->where('is_draf', false))->count(),
                 'tim-dosen-saya-ketua' => (clone $query)->whereHas('dosens', function ($q) use ($userId) {
-                    $q->where('user_id', $userId)
+                    $q->where('dosens.user_id', $userId)
                         ->where('tim_dosen_pivot_dosen.is_ketua', true);
                 })->count(),
                 'tim-dosen-saya-ketua-aktif' => (clone $query)->whereHas('dosens', function ($q) use ($userId) {
-                    $q->where('user_id', $userId)
+                    $q->where('dosens.user_id', $userId)
                         ->where('tim_dosen_pivot_dosen.is_ketua', true);
                 })->whereHas('rps', fn ($q) => $q->where('is_draf', false))->count(),
 
@@ -859,8 +835,8 @@ trait HasStats
         $userStats = [];
         if (Auth::user()->dosen) {
             $userStats = Cache::remember($cacheKeyUser, now()->addMinutes($this->cacheDurationMinutes), function () use ($isTrash, $userId) {
-                $queryMK = MataKuliah::whereHas('rps.tim_dosens.dosens.user', function ($q) use ($userId) {
-                    $q->where('users.id', $userId);
+                $queryMK = MataKuliah::whereHas('rps.tim_dosens.dosens', function ($q) use ($userId) {
+                    $q->where('dosens.user_id', $userId);
                 });
                 if ($isTrash) {
                     $queryMK->onlyTrashed();
@@ -874,6 +850,7 @@ trait HasStats
 
                 return [
                     'mk-saya' => $mkSaya->count(),
+                    'mk-semester-saya' => $mkSemesterSaya->count(),
                     'mk-sks-saya' => $mkSaya->sum('sks'),
                     'mk-sks-semester-saya' => $mkSemesterSaya->sum('sks'),
                 ];

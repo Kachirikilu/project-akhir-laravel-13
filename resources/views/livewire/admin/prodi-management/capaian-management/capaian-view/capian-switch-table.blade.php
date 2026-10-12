@@ -6,6 +6,41 @@
 
         <div class="min-w-0 flex-1">
             <div class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1 w-full">
+                {{-- @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 524 ?? null,
+                    'tabString' => 'cpl',
+                    'tabNameString' => 'Capaian ' . $kode_pr_url,
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 152 ?? null,
+                    'tabString' => 'rps',
+                    'tabNameString' => 'RPS',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 644 ?? null,
+                    'tabString' => 'cpmk',
+                    'tabNameString' => 'CPMK',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 1737 ?? null,
+                    'tabString' => 'sub-cpmk',
+                    'tabNameString' => 'Sub-CPMK',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => $stats['mahasiswa'] ?? null,
+                    'tabString' => 'mahasiswa',
+                    'tabNameString' => 'Mahasiswa',
+                ]) --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,

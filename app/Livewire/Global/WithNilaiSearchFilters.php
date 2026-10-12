@@ -134,7 +134,7 @@ trait WithNilaiSearchFilters
                     $this->nilai_items = $this->itemsNilai($exactMatch);
                     $this->nilaiResults = [];
                 } else {
-                    $this->nilaiNameSearch;
+                    $this->nilaiNameSearch = '';
                     $this->nilai_id_array[] = $exactMatch->id;
                     $this->nilai_items_array[] = $this->itemsNilai($exactMatch);
                     $this->nilai_id_array = collect($this->nilai_id_array)

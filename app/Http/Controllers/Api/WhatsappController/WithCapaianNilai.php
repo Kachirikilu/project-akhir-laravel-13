@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
-trait WithExcelCapaianNilai
+trait WithCapaianNilai
 {
     use HasGetByKode;
     use HasNilaiAbsensi;

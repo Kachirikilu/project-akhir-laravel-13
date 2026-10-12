@@ -183,7 +183,7 @@ trait WithCPMKSearchFilters
                     }
                     $this->cpmkResults = [];
                 } else {
-                    $this->cpmkNameSearch;
+                    $this->cpmkNameSearch = '';
                     $this->cpmk_id_array[] = $exactMatch->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($exactMatch);
 

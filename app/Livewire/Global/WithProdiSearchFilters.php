@@ -192,7 +192,7 @@ trait WithProdiSearchFilters
                 $this->pr_id = $exactMatch->id;
                 $this->pr_items = $this->itemsPr($exactMatch);
             } else {
-                $this->prNameSearch;
+                $this->prNameSearch = '';
                 foreach ($matches as $match) {
                     if (! in_array($match->id, $this->pr_id_array)) {
                         $this->pr_id_array[] = $match->id;

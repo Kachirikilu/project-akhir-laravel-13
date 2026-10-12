@@ -63,13 +63,13 @@ class Fakultas extends Model
             get: function () {
                 $nilai = $this->nilai_fk ?? 0;
                 $index = match (true) {
-                    $nilai >= 85 => 4.00,
+                    $nilai >= 86 => 4.00,
                     $nilai >= 80 => 3.70,
                     $nilai >= 75 => 3.30,
                     $nilai >= 70 => 3.00,
                     $nilai >= 65 => 2.70,
                     $nilai >= 60 => 2.30,
-                    $nilai >= 55 => 2.00,
+                    $nilai >= 56 => 2.00,
                     $nilai >= 40 => 1.00,
                     default => 0.00,
                 };
@@ -86,13 +86,13 @@ class Fakultas extends Model
                 $nilai = $this->nilai_fk ?? 0;
 
                 return match (true) {
-                    $nilai >= 85 => 'A',
+                    $nilai >= 86 => 'A',
                     $nilai >= 80 => 'A-',
                     $nilai >= 75 => 'B+',
                     $nilai >= 70 => 'B',
                     $nilai >= 65 => 'B-',
                     $nilai >= 60 => 'C+',
-                    $nilai >= 55 => 'C',
+                    $nilai >= 56 => 'C',
                     $nilai >= 40 => 'D',
                     default => 'E',
                 };
@@ -264,14 +264,14 @@ class Fakultas extends Model
                         );
 
                         $mapIndex = [
-                            '4.00' => [85, 100],
-                            '3.70' => [80, 84.99],
+                            '4.00' => [86, 100],
+                            '3.70' => [80, 85.99],
                             '3.30' => [75, 79.99],
                             '3.00' => [70, 74.99],
                             '2.70' => [65, 69.99],
                             '2.30' => [60, 64.99],
-                            '2.00' => [55, 59.99],
-                            '1.00' => [40, 54.99],
+                            '2.00' => [56, 59.99],
+                            '1.00' => [40, 55.99],
                             '0.00' => [0, 39.99],
                         ];
 

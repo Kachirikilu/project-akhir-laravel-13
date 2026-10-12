@@ -193,7 +193,7 @@ trait WithRPSSearchFilters
                     $this->rps_items = $this->itemsRPS($exactMatch);
                     $this->rpsResults = [];
                 } else {
-                    $this->rpsNameSearch;
+                    $this->rpsNameSearch = '';
                     $this->rps_id_array[] = $exactMatch->id;
                     $this->rps_items_array[] = $this->itemsRPS($exactMatch);
 

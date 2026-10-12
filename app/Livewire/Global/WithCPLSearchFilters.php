@@ -162,7 +162,7 @@ trait WithCPLSearchFilters
                     $this->cpl_items = $this->itemsCPL($exactMatch);
                     $this->cplResults = [];
                 } else {
-                    $this->cplNameSearch;
+                    $this->cplNameSearch = '';
                     $this->cpl_id_array[] = $exactMatch->id;
                     $this->cpl_items_array[] = $this->itemsCPL($exactMatch);
                     $this->cpl_id_array = collect($this->cpl_id_array)

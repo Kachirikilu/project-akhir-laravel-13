@@ -32,7 +32,7 @@
 </div>
 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
     <div class="flex items-center gap-3 shrink-0">
-        <div>
+        <div class="shrink-0">
             @include('livewire.global.table.export-button', [
                 'xString' => 'exportRekapExcel()',
                 'autoSmall' => 'sm',
@@ -40,18 +40,56 @@
             ])
         </div>
 
-        <div>
-            @include('livewire.global.table.export-button', [
-                'nameXString' => "Rekap Capaian $kode_pr_url",
-                'xString' => "rekapCapaian($pr_id_url, 15)",
-                'color' => 'blue',
-                'icon' => 'academic-cap',
-                'isNoPb' => 1,
-            ])
+        @php
+            $runningAllKey = 'rekap_capaian_running_all';
+            $runningProdiKey = 'rekap_capaian_running_prodi_ids';
+
+            $isProcessAll = Cache::has($runningAllKey);
+
+            $runningProdiIds = Cache::get($runningProdiKey, []);
+
+            $currentProdiId = (int) $pr_id_url;
+            $isCurrentProdiRunning = in_array($currentProdiId, array_map('intval', $runningProdiIds));
+
+            $isProcessProdi = $isProcessAll || $isCurrentProdiRunning;
+            $isAnyJobRunning = $isProcessAll || !empty($runningProdiIds);
+        @endphp
+
+        <div class="flex items-center gap-2" @if ($isAnyJobRunning) wire:poll.12s @endif>
+            <div class="shrink-0">
+                @include('livewire.global.table.export-button', [
+                    'nameXString' => $isProcessProdi
+                        ? "Process Capaian $kode_pr_url"
+                        : "Rekap Capaian $kode_pr_url",
+                    'isLoading' => $isProcessProdi,
+                    'xString' => "rekapCapaian($pr_id_url, 15)",
+                    'color' => 'blue',
+                    'icon' => 'academic-cap',
+                    'isNoPb' => 1,
+                ])
+            </div>
+            @if (Auth::user()->admin || Auth::user()->dosen->tingkat_user == 1)
+                <div class="shrink-0">
+                    @include('livewire.global.table.export-button', [
+                        'nameXString' => $isProcessAll
+                            ? 'Process Capaian ' . (env('UNIV') ?? 'UNSRI')
+                            : 'Rekap Capaian ' . (env('UNIV') ?? 'UNSRI'),
+                        'isLoading' => $isProcessAll,
+                        'xString' => 'rekapCapaianAll()',
+                        'color' => 'yellow',
+                        'icon' => 'academic-cap',
+                        'autoSmall' => 'md',
+                        'isNoPb' => 1,
+                    ])
+                </div>
+            @endif
         </div>
     </div>
 
     <div class="flex items-center shrink-0 ml-auto">
-        @include('livewire.staff.obe-management.obe-toolbar.obe-toolbar-header.obe-toolbar-header-partial', ['typeXString' => $typeXString])
+        @include(
+            'livewire.staff.obe-management.obe-toolbar.obe-toolbar-header.obe-toolbar-header-partial',
+            ['typeXString' => $typeXString]
+        )
     </div>
 </div>

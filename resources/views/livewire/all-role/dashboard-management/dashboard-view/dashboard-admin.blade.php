@@ -1,16 +1,20 @@
 @php
-    // $data = [
-    //     'capaianProdi' => ['persen' => 78, 'label' => '8 dari 12 indikator tercapai'],
-    //     'rps' => ['aktif' => 96, 'total' => 142],
-    //     'dosen' => ['aktif' => 41, 'total' => 48],
-    //     'mahasiswa' => ['aktif' => 1042, 'total' => 1204],
+    // $prodi = Auth::user()->admin->pr_rel->prodi ?? 'Program Studi';
+    // $rekapProdi = 85.7 ?? 0;
+    // $cplProdi = 524 ?? 0;
 
-    //     'jumlahMk' => 142,
-    //     'targetSks' => Auth::user()->admin->pr_rel->target_sks ?? 144,
-    //     'kelasHariIni' => 9,
-    //     'kelasSemesterIni' => 37,
-    //     'totalKelas' => 214,
-    // ];
+    // $rpsProdi = 152 ?? 0;
+    // $rpsProdiAktif = 131 ?? 0;
+
+    // $dsnProdiAktif = 30 ?? 0;
+    // $dsnProdi = 36 ?? 0;
+
+    // $mhsProdiAktif = 488 ?? 0;
+    // $mhsProdi = 512 ?? 0;
+
+    // $mkProdi = 131 ?? 0;
+    // $targetSks = Auth::user()->admin->pr_rel->target_sks ?? 144;
+    // $kelasProdi = 262 ?? 0;
 
     $prodi = Auth::user()->admin->pr_rel->prodi ?? 'Program Studi';
     $rekapProdi = Auth::user()->admin->pr_rel->rekap_pr ?? 0;
@@ -60,6 +64,7 @@
             'icon' => 'book-open',
             'title' => 'RPS Aktif',
             'subtitle' => 'dari Jumlah RPS',
+            'textPersentase' => 'Aktif',
             'value' => $rpsProdiAktif,
             'max' => $rpsProdi,
             'displayValue' => $rpsProdiAktif . ' / ' . $rpsProdi,
@@ -71,6 +76,7 @@
             'icon' => 'user-circle',
             'title' => 'Dosen Aktif',
             'subtitle' => 'dari total Dosen',
+            'textPersentase' => 'Aktif',
             'value' => $dsnProdiAktif,
             'max' => $dsnProdi,
             'displayValue' => $dsnProdiAktif . ' / ' . $dsnProdi,
@@ -82,6 +88,7 @@
             'icon' => 'users',
             'title' => 'Mahasiswa Aktif',
             'subtitle' => 'dari Mahasiswa',
+            'textPersentase' => 'Aktif',
             'value' => $mhsProdiAktif,
             'max' => $mhsProdi,
             'displayValue' => $mhsProdiAktif . ' / ' . $mhsProdi,

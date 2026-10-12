@@ -105,7 +105,12 @@
             '{{ $colorClassActive }}' :
             ''">
         <div class="flex items-center">
-                <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}" class="h-3.5 w-3.5" />
+                @if ($isLoading ?? false)
+                    <flux:icon name="arrow-path" class="animate-spin h-3.5 w-3.5 text-current" />
+                @else
+                    <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}" class="h-3.5 w-3.5" />
+                @endif
+                
                 {{-- <flux:icon name="{{ $icon ?? 'printer' }}" @class(['h-3.5 w-3.5', 'mr-2' => !$manualSmall && !$pointAutoSmall]) /> --}}
 
             <div class="relative inline-flex justify-center items-center">

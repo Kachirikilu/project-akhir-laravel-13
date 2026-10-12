@@ -147,7 +147,7 @@ trait WithReferensiSearchFilters
                     $this->ref_items = $this->itemsRef($exactMatch);
                     $this->refResults = [];
                 } else {
-                    $this->refNameSearch;
+                    $this->refNameSearch = '';
                     $this->ref_id_array[] = $exactMatch->id;
                     $this->ref_items_array[] = $this->itemsRef($exactMatch);
                     $this->ref_id_array = collect($this->ref_id_array)

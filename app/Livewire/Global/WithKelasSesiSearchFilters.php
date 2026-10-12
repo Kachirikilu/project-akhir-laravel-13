@@ -145,7 +145,7 @@ trait WithKelasSesiSearchFilters
                     $this->sesi_items = $this->itemsSesi($exactMatch);
                     $this->sesiResults = [];
                 } else {
-                    $this->sesiNameSearch;
+                    $this->sesiNameSearch = '';
                     $this->sesi_id_array[] = $exactMatch->id;
                     $this->sesi_items_array[] = $this->itemsSesi($exactMatch);
                     $this->sesi_id_array = collect($this->sesi_id_array)

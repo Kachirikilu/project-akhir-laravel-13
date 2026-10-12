@@ -70,14 +70,14 @@ class KelasJadwal extends Model
     protected function kodeKelas(): Attribute
     {
         return Attribute::get(function () {
-            return $this->kelas_rel->kode;
+            return $this->kelas_rel->kode ?? null;
         });
     }
 
     protected function kodeMk(): Attribute
     {
         return Attribute::get(function () {
-            return $this->kelas_rel->kode_mk;
+            return $this->kelas_rel->kode_mk ?? null;
         });
     }
 
@@ -98,7 +98,7 @@ class KelasJadwal extends Model
     protected function mk(): Attribute
     {
         return Attribute::get(function () {
-            return $this->kelas_rel->rps_rel?->mk;
+            return $this->kelas_rel->rps_rel?->mk ?? null;
         });
     }
 
@@ -112,14 +112,14 @@ class KelasJadwal extends Model
     protected function semester(): Attribute
     {
         return Attribute::get(function () {
-            return $this->kelas_rel->rps_rel?->semester;
+            return $this->kelas_rel->rps_rel?->semester ?? null;
         });
     }
 
     protected function sks(): Attribute
     {
         return Attribute::get(function () {
-            return $this->kelas_rel->rps_rel?->sks;
+            return $this->kelas_rel->rps_rel?->sks ?? null;
         });
     }
 

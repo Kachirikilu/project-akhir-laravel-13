@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\WhatsappController\WithDataDiri;
 use App\Http\Controllers\Api\WhatsappController\WithDeactivation;
-use App\Http\Controllers\Api\WhatsappController\WithExcelCapaianNilai;
+use App\Http\Controllers\Api\WhatsappController\WithCapaianNilai;
 use App\Http\Controllers\Api\WhatsappController\WithKelas;
-use App\Http\Controllers\Api\WhatsappController\WithRPS;
 use App\Http\Controllers\Api\WhatsappController\WithNilaiMahasiswa;
+use App\Http\Controllers\Api\WhatsappController\WithRPS;
 use App\Http\Controllers\Api\WhatsappController\WithVerification;
 use App\Http\Controllers\Controller;
 use App\Models\Auth\User;
@@ -19,53 +19,85 @@ class WhatsappController extends Controller
 {
     use WithDataDiri;
     use WithDeactivation;
-    use WithExcelCapaianNilai;
+    use WithCapaianNilai;
     use WithKelas;
-    use WithRPS;
     use WithNilaiMahasiswa;
+    use WithRPS;
     use WithVerification;
 
-    public $verifyKey = ['VERIFIKASI', 'VERIFY', 'VERYFICATION', 'IDENTITAS', 'REGISTRASI', 'LOGIN', 'LOG IN', 'MASUK'];
+    public array $verifyKey;
 
-    public $dataDiriKey = ['DATA DIRI', 'MY SELF', 'DATA', 'AUTH', 'AKUN', 'USER', 'TOKEN', 'CHECK TOKEN', 'CEK TOKEN', 'INFORMASI TOKEN', 'LIMTI', 'CHECK LIMIT', 'LIMIT'];
+    public array $dataDiriKey;
 
-    public $updateTokenKey = ['ISI TOKEN', 'PERBARUI TOKEN', 'TOKEN BARU', 'RESET TOKEN', 'TAMBAH TOKEN', 'PERBARUI LIMIT', 'UPDATE TOKEN', 'TOKEN UPDATE'];
+    public array $updateTokenKey;
 
-    public $deactivateKey = ['NONAKTIFKAN', 'MATIKAN', 'DIAM', 'SILENT', 'LOGOUT', 'KELUAR', 'LOG OUT', 'MUTE', 'MIC MATI'];
+    public array $deactivateKey;
 
-    public $kelasKey = ['LIST KELAS', 'SEMUA KELAS', 'DAFTAR KELAS', 'KELAS HARI INI',  'KELAS MINGGU INI', 'KELAS HARI',  'KELAS MINGGU',  'CHECK KELAS',  'KELAS SAYA',  'KELAS', 'JADWAL KELAS', 'JADWAL', 'KELAS JADWAL'];
+    public array $daftarKelasKey;
 
-    public $daftarKelasKey = ['LIST KELAS', 'SEMUA KELAS', 'DAFTAR KELAS'];
+    public array $kelasMingguKey;
 
-    public $kelasMingguKey = ['MINGGU INI', 'KELAS MINGGU', 'JADWAL KELAS', 'KELAS JADWAL', 'JADWAL'];
+    public array $kelasHariKey;
 
-    public $kelasHariKey = ['HARI INI', 'KELAS HARI'];
+    public array $kelasKey;
 
-    public $excelNilaiKey = ['EXCEL NILAI',
-        'INPUT NILAI EXCEL',
-        'UPLOAD NILAI EXCEL',
-        'INPUT FILE NILAI',
-        'FILE NILAI'
-    ];
+    public array $excelNilaiKey;
 
-    public $excelGetNilaiKey = ['DOWNLOAD NILAI', 'DOWNLOAD EXCEL NILAI', 'GET EXCEL NILAI', 'GET NILAI', 'DOWNLOAD EXCEL NILAI'];
+    public array $excelGetNilaiKey;
 
-    public $pdfGetCapaianKey = ['DOWNLOAD CAPAIAN', 'DOWNLOAD PDF CAPAIAN', 'GET PDF CAPAIAN', 'GET CAPAIAN', 'DOWNLOAD PDF CAPAIAN', 'PRINT CAPAIAN', 'PRINT PDF CAPAIAN', 'PRINT CAPAIAN PDF',
-                                'DOWNLOAD CPMK', 'DOWNLOAD PDF CPMK', 'GET PDF CPMK', 'GET CPMK', 'DOWNLOAD PDF CPMK', 'PRINT CPMK', 'PRINT PDF CPMK', 'PRINT CPMK PDF',
-                                'DOWNLOAD CPL', 'DOWNLOAD PDF CPL', 'GET PDF CPL', 'GET CPL', 'DOWNLOAD PDF CPL', 'PRINT CPL', 'PRINT PDF CPL', 'PRINT CPL PDF',
-                            ];
+    public array $pdfGetCapaianKey;
 
-    public $nilaiMahasiswaKey = ['NILAI', 'NILAI SAYA', 'LIHAT NILAI', 'NILAI SEMESTER'];
+    public array $nilaiMahasiswaKey;
 
-    public $rpsKey = ['LIST RPS', 'SEMUA RPS', 'DAFTAR RPS', 'RPS SAYA',  'RPS'];
+    public array $daftarRPSKey;
 
-    public $daftarRPSKey = ['LIST RPS', 'SEMUA RPS', 'DAFTAR RPS'];
+    public array $rpsKey;
 
-    public $pdfGetRPSKey = ['DOWNLOAD RPS', 'DOWNLOAD PDF RPS', 'GET PDF RPS', 'GET RPS', 'DOWNLOAD PDF RPS', 'PRINT RPS', 'PRINT PDF RPS', 'PRINT RPS PDF'];
+    public array $pdfGetRPSKey;
+
+    public function __construct()
+    {
+        // 1. Keyword Sederhana / Spesifik
+        $this->verifyKey = config('wa.keywords.verify');
+        $this->dataDiriKey = config('wa.keywords.data_diri');
+        $this->updateTokenKey = config('wa.keywords.update_token');
+        $this->deactivateKey = config('wa.keywords.deactivate');
+
+        // 2. Keyword Kelas & Jadwal (Penggabungan Elemen Terkait)
+        $this->daftarKelasKey = config('wa.keywords.daftar_kelas');
+        $this->kelasMingguKey = config('wa.keywords.kelas_minggu');
+        $this->kelasHariKey = config('wa.keywords.kelas_hari');
+
+        // $kelasKey gabungan dari $daftarKelasKey + $kelasMingguKey + $kelasHariKey + $kelasExtra
+        $this->kelasKey = array_values(array_unique(array_merge(
+            $this->daftarKelasKey,
+            $this->kelasHariKey,
+            $this->kelasMingguKey,
+            config('wa.keywords.kelas_extra')
+        )));
+
+        // 3. Keyword Excel & Capaian
+        $this->excelNilaiKey = config('wa.keywords.excel_nilai');
+        $this->excelGetNilaiKey = array_values(array_unique(config('wa.keywords.excel_get_nilai')));
+        $this->pdfGetCapaianKey = array_values(array_unique(config('wa.keywords.pdf_get_capaian')));
+        $this->nilaiMahasiswaKey = config('wa.keywords.nilai_mahasiswa');
+
+        // 4. Keyword RPS (Penggabungan Elemen Terkait)
+        $this->daftarRPSKey = config('wa.keywords.daftar_rps');
+
+        // $rpsKey gabungan dari $daftarRPSKey + $rpsExtra
+        $this->rpsKey = array_values(array_unique(array_merge(
+            $this->daftarRPSKey,
+            config('wa.keywords.rps_extra')
+        )));
+
+        $this->pdfGetRPSKey = array_values(array_unique(config('wa.keywords.pdf_get_rps')));
+    }
 
     private function isTrigger(string $pesan, array $key): bool
     {
         $pesanUpper = strtoupper($pesan);
+
         return Str::startsWith($pesanUpper, $key);
     }
 
@@ -73,6 +105,7 @@ class WhatsappController extends Controller
     {
         $pesanBersih = trim(strtoupper($pesan));
         $keyUpper = array_map('strtoupper', $key);
+
         return in_array($pesanBersih, $keyUpper);
     }
 

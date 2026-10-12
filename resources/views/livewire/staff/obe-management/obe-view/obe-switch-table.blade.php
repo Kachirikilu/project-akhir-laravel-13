@@ -6,6 +6,48 @@
 
         <div class="min-w-0 flex-1">
             <div class="scrollbar-tiny flex space-x-4 overflow-x-auto pb-1 w-full">
+                {{-- @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 3620 ?? null,
+                    'tabString' => 'rps',
+                    'tabNameString' => 'RPS',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 524 ?? null,
+                    'tabString' => 'cpl',
+                    'tabNameString' => 'CPL',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 13514 ?? null,
+                    'tabString' => 'cpmk',
+                    'tabNameString' => 'CPMK',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 40544 ?? null,
+                    'tabString' => 'sub-cpmk',
+                    'tabNameString' => 'Sub-CPMK',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 2560 ?? null,
+                    'tabString' => 'referensi',
+                    'tabNameString' => 'Referensi',
+                ])
+                @include('livewire.global.search-and-filters.partial.tab-filter', [
+                    'xString' => 'switchingTable',
+                    'xFilter' => $switchTable,
+                    'tabFilter' => 256 ?? null,
+                    'tabString' => 'tim-dosen',
+                    'tabNameString' => 'Tim Dosen',
+                ]) --}}
                 @include('livewire.global.search-and-filters.partial.tab-filter', [
                     'xString' => 'switchingTable',
                     'xFilter' => $switchTable,

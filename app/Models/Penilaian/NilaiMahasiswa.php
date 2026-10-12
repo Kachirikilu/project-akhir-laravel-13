@@ -103,13 +103,13 @@ class NilaiMahasiswa extends Model
             $nilai = $this->nilai;
 
             return match (true) {
-                $nilai >= 85 => 'A',
+                $nilai >= 86 => 'A',
                 $nilai >= 80 => 'A-',
                 $nilai >= 75 => 'B+',
                 $nilai >= 70 => 'B',
                 $nilai >= 65 => 'B-',
                 $nilai >= 60 => 'C+',
-                $nilai >= 55 => 'C',
+                $nilai >= 56 => 'C',
                 $nilai >= 40 => 'D',
                 default => 'E',
             };
@@ -417,7 +417,7 @@ class NilaiMahasiswa extends Model
                         'kode_scpmk' => 'UTS',
                         'kode_cpmk' => $getNearestCpmk($sourceIndex),
                         'metode' => 'UTS',
-                        'bobot' => $rps->bobot_uts / 100,
+                        'bobot' => (float) str_replace('%', '', $rps->bobot_uts ?? 0) / 100,
                     ];
 
                     continue;
@@ -431,7 +431,7 @@ class NilaiMahasiswa extends Model
                         'kode_scpmk' => 'UAS',
                         'kode_cpmk' => $getNearestCpmk($sourceIndex),
                         'metode' => 'UAS',
-                        'bobot' => $rps->bobot_uas / 100,
+                        'bobot' => (float) str_replace('%', '', $rps->bobot_uas ?? 0) / 100,
                     ];
 
                     continue;

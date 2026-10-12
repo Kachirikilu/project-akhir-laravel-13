@@ -39,13 +39,14 @@ class DashboardManagement extends Component
 
         if (Auth::user()->admin || Auth::user()->dosen) {
             $this->clearObeProdiStatsCache();
-            $this->clearRpsProdiStatsCache();
             $this->clearMkStatsCache();
 
             if (Auth::user()->admin) {
+                $this->clearRpsProdiStatsCache();
                 $this->clearDosenStatsCache();
                 $this->clearMahasiswaProdiStatsCache();
             } else {
+                $this->clearRpsStatsCache();
                 $this->clearTimDosenStatsCache();
             }
         }
@@ -68,10 +69,10 @@ class DashboardManagement extends Component
 
         if (Auth::user()->admin || Auth::user()->dosen) {
             $statsObe = $this->getStatsObeProdi(false, $prId);
-            $statsRps = $this->getStatsRpsProdi(false, $prId);
             $statsMk = $this->getStatsMk(false);
         }
         if (Auth::user()->admin) {
+            $statsRps = $this->getStatsRpsProdi(false, $prId);
             $statsDsn = $this->getStatsDosen(false);
             $statsMhs = $this->getStatsMahasiswaProdi(false, $prId);
             $stats = array_merge(
@@ -84,6 +85,7 @@ class DashboardManagement extends Component
             );
         } elseif (Auth::user()->dosen) {
             $statsTimDosen = $this->getStatsTimDosen(false);
+            $statsRps = $this->getStatsRps(false);
             $stats = array_merge(
                 $statsObe,
                 $statsRps,

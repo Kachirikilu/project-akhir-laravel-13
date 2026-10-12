@@ -6,32 +6,38 @@
 --}}
 
 @php
-    // $dummy = [
-    //     'ipk' => 3.78,
-    //     'nilaiBaik' => ['jumlah' => 21, 'total' => 24], // nilai >= B
-    //     'sksTempuh' => ['jumlah' => 96, 'total' => 144], // progres menuju lulus
+    // // $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
+    // $ipkSaya = 3.96 ?? 0;
+    // $mutuSaya = 'A+' ?? 'E';
 
-    //     'jumlahKelas' => 6,
-    //     'mkSelesai' => ['jumlah' => 24, 'sks' => 96],
-    // ];
+    // $mkSaya = 61 ?? 0;
+    // $mkSksSaya = 141;
 
-    $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
+    // $mkSksSayaB = 141;
+
+    // $targetSks = Auth::user()->admin->pr_rel->target_sks ?? 144;
+
+    // $kelasSaya = 1 ?? 0;
+    // $sksSaya = 6 ?? 0;
+    // $jadwalHariIni = 1 ?? 0;
+    // $sksHariIni = 6 ?? 0;
+
+    // $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
     $ipkSaya = Auth::user()->mahasiswa->ipk_mhs ?? 0;
     $mutuSaya = Auth::user()->mahasiswa->mutu_mhs ?? 'E';
 
     $mkSaya = Auth::user()->mahasiswa->nilai_mahasiswas->count() ?? 0;
-    $sksSaya = Auth::user()->mahasiswa->nilai_mahasiswas
+    $mkSksSaya = Auth::user()->mahasiswa->nilai_mahasiswas
         ->pluck('rps_rel.mk_rel')
         ->filter()
         ->unique('id')
         ->sum('sks_kuliah');
 
-    $sksSayaB = Auth::user()->mahasiswa->nilai_mahasiswas
+    $mkSksSayaB = Auth::user()->mahasiswa->nilai_mahasiswas
         ->filter(fn($item) => $item->nilai > 70)
         ->groupBy('rps_rel.mk_rel.id')
         ->map(fn($group) => $group->sortByDesc('nilai')->first())
         ->sum('rps_rel.mk_rel.sks_kuliah');
-    
 
     $targetSks = Auth::user()->admin->pr_rel->target_sks ?? 144;
 
@@ -39,6 +45,7 @@
     $sksSaya = $stats['kelas-sks-saya'] ?? 0;
     $jadwalHariIni = $stats['jadwal-saya-hari-ini'] ?? 0;
     $sksHariIni = $stats['jadwal-sks-saya-hari-ini'] ?? 0;
+
 @endphp
 
 <div class="flex flex-col gap-5">
@@ -61,6 +68,8 @@
             'title' => 'IPK Saya',
             'subtitle' => "dari $sksSaya SKS",
             'value' => $ipkSaya,
+            'mainValue' => $mutuSaya,
+            'largeMain' => 1,
             'max' => 4,
             'displayValue' => number_format($ipkSaya, 2) . ' / 4.00',
             'accent' => 'var(--focus-color)',
@@ -71,9 +80,9 @@
             'icon' => 'arrow-trending-up',
             'title' => 'Nilai Baik (≥ B)',
             'subtitle' => "dari $mkSaya Mata Kuliah",
-            'value' => $sksSayaB,
-            'max' => $sksSaya,
-            'displayValue' => $sksSayaB . ' / ' . $sksSaya . ' SKS',
+            'value' => $mkSksSayaB,
+            'max' => $mkSksSaya,
+            'displayValue' => $mkSksSayaB . ' / ' . $mkSksSaya . ' SKS',
             'accent' => '#0d9488',
             'accentSoft' => 'rgba(13,148,136,0.12)',
         ])
@@ -82,9 +91,9 @@
             'icon' => 'rectangle-stack',
             'title' => 'Progres SKS Lulus',
             'subtitle' => "dari $targetSks SKS kelulusan",
-            'value' => $sksSaya,
+            'value' => $mkSksSaya,
             'max' => $targetSks,
-            'displayValue' => $sksSaya . ' / ' . $targetSks,
+            'displayValue' => $mkSksSaya . ' / ' . $targetSks,
             'accent' => '#7c3aed',
             'accentSoft' => 'rgba(124,58,237,0.12)',
         ])
@@ -123,7 +132,7 @@
                 'label' => 'Mata Kuliah Selesai',
                 'value' => $mkSaya,
                 'unit' => 'MK',
-                'sub' => $sksSaya . ' SKS Total',
+                'sub' => $mkSksSaya . ' SKS Total',
                 'accent' => '#0d9488',
                 'accentSoft' => 'rgba(13,148,136,0.12)',
             ])

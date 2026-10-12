@@ -54,17 +54,22 @@
         'message' => $errors->first('tempat_lahir'),
     ])
 
-    @include('livewire.global.modal-form.input-form', [
-        'alpine' => 'user',
-        'isLivewire' => 1,
-        'modelString' => 'tanggal_lahir',
-        'iconString' => 'calendar',
-        'placeholder' => 'Contoh: Kota Palembang',
-        'isDate' => 1,
-        'isRequired' => 0,
-        'message' => $errors->first('tanggal_lahir'),
-    ])
 
+    <div class="sm:col-span-2 mt-1 sm:mt-0">
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            'isLivewire' => 1,
+            'modelString' => 'tanggal_lahir',
+            'iconString' => 'calendar',
+            'placeholder' => 'Contoh: Kota Palembang',
+            'isDate' => 1,
+            'isRequired' => 0,
+            'message' => $errors->first('tanggal_lahir'),
+        ])
+        <div class="text-[9px] sm:text-xs mt-1 text-[var(--secondary-text)]"
+            x-text="$store.jadwal.formatHari($store.user.tanggal_lahir)">
+        </div>
+    </div>
 
 
 </div>

@@ -1,9 +1,4 @@
 @php
-    // $totalSks = $mahasiswa->total_sks;
-    // $totalMk = $mahasiswa->count_rps;
-    // $calculatedIndex = $mahasiswa->ipk_mhs ?? '0.00';
-    // $mutuMhs = $mahasiswa->mutu_mhs ?? 'E';
-
     if ($alpine === 'nilai') {
         $safeNilais = collect($nilais ?? []);
 
@@ -12,7 +7,6 @@
         });
 
         $totalSks = $nilaiUnik->sum('sks');
-        // $totalMk = $nilaiUnik->where('nilai', '>=', 50)->count();
         $totalMk = $nilaiUnik->count();
 
         $totalBobotSks = $nilaiUnik->sum(function ($n) {
@@ -21,11 +15,15 @@
 
         $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
     } else {
+        // $safePeriodes = collect($periodes ?? []);
+        // $totalSks = 144;
+        // $totalMk = 63;
+
+        // $calculatedIndex = 3.99;
+
         $safePeriodes = collect($periodes ?? []);
         $totalSks = $safePeriodes->sum('total_sks');
-        $totalMk = $safePeriodes->sum('total_mk');;
-
-        $calculatedIndex = (float) ($safePeriodes->avg('ip_semester') ?? 0);
+        $totalMk = $safePeriodes->sum('total_mk');
 
         $totalBobotSks = $safePeriodes->sum(function ($n) {
             return ($n->total_sks ?? 0) * (float) ($n->ip_semester ?? 0);
@@ -34,7 +32,7 @@
     }
 
     $mutuMhs = match (true) {
-        $calculatedIndex >= 3.75 => 'A', 
+        $calculatedIndex >= 3.75 => 'A',
         $calculatedIndex >= 3.5 => 'A-',
         $calculatedIndex >= 3.0 => 'B+',
         $calculatedIndex >= 2.75 => 'B',
@@ -138,12 +136,29 @@
                 </div>
             @endif
 
-            {{-- TOMBOL KEDUA (Capaian) ditaruh di bawahnya, otomatis akan berjejer di sebelah kirinya tombol Excel --}}
+            @php
+                $runningAllKey = 'rekap_capaian_running_all';
+                $runningProdiKey = 'rekap_capaian_running_prodi_ids';
+
+                $isProcessAll = Cache::has($runningAllKey);
+
+                $runningProdiIds = Cache::get($runningProdiKey, []);
+
+                $currentProdiId = (int) (Auth::user()->pr_id ?? 0);
+                $isCurrentProdiRunning = in_array($currentProdiId, array_map('intval', $runningProdiIds));
+
+                $isProcessProdi = $isProcessAll || $isCurrentProdiRunning;
+                $isAnyJobRunning = $isProcessAll || !empty($runningProdiIds);
+            @endphp
+
             @if (Auth::user()->admin || Auth::user()->dosen)
-                <div class="shrink-0 mt-1">
+                <div class="shrink-0 mt-1" @if ($isAnyJobRunning) wire:poll.12s @endif>
                     @include('livewire.global.table.export-button', [
-                        'nameXString' => 'Rekap Capaian ' . Auth::user()->kode_pr,
-                        'xString' => 'rekapCapaian(' . Auth::user()->pr_id . ', 15)',
+                        'nameXString' => $isProcessProdi
+                            ? 'Process Capaian ' . Auth::user()->kode_pr
+                            : 'Rekap Capaian ' . Auth::user()->kode_pr,
+                        'isLoading' => $isProcessProdi,
+                        'xString' => 'rekapCapaian(' . (Auth::user()->pr_id ?? 'null') . ', 15)',
                         'color' => 'blue',
                         'icon' => 'academic-cap',
                     ])
@@ -171,7 +186,7 @@
 
         // MK
         $mkValue = (int) ($totalMk ?? 0);
-        $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Rencana Pembelajaran Semester';
+        $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Semua Mata Kuliah di Transkrip';
 
         // IPK / IPS
         $ipValue = is_numeric($calculatedIndex) ? (float) $calculatedIndex : 0;
@@ -263,6 +278,8 @@
             'sub' => $mutuSub,
             'value' => $ipValue,
             'max' => 4,
+            'textPersentase' => '/ 4.00',
+            'mainValue'   => number_format($calculatedIndex, 2),
             'display' => $mutuDisplay,
             'accent' => $mutuAccent,
             'softBg' => $mutuSoftBg,

@@ -55,6 +55,8 @@ document.addEventListener("alpine:init", () => {
         digit_tahun: "",
         digit_tahun_old: "",
 
+        // mahasiswa_id_array: [],
+
         sesi_1: "",
         sesi_2: "",
         sesi_3: "",
@@ -203,6 +205,7 @@ document.addEventListener("alpine:init", () => {
                 this.colorIcon = "text-[var(--contrast-second-text)]";
                 this.colorIconBg = "bg-[var(--contrast-second-text)]/40";
             }
+                // this.mahasiswa_id_array = [];
         },
 
         mapHari: {

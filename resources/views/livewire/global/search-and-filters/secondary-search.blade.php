@@ -33,8 +33,12 @@
                 "
                 @input.debounce.300ms="
                     open = true;
-                    $wire.set('{{ $xSearchQueryString }}', localSearch);
-                    $wire.{{ $inputXFilterString }}(); 
+                    if (!localSearch || localSearch.trim() === '') {
+                        $wire.{{ $resetXFilter }}();
+                    } else {
+                        $wire.set('{{ $xSearchQueryString }}', localSearch);
+                        $wire.{{ $inputXFilterString }}(); 
+                    }
                 "
                 @click.outside="open = false" @keydown.escape.window="open = false"
                 class="text-xs sm:text-sm focus:ring-2 focus:ring-[var(--focus-color)] outline-none w-full h-10 pl-10 px-4 pr-10 rounded-lg shadow-sm
@@ -50,13 +54,14 @@
         </div>
 
 
+
         {{-- DROPDOWN --}}
         <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95" x-ref="dropdown"
             :class="align === 'right' ? 'right-0' : 'left-0'"
-            class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full {{ $minW ?? 'sm:min-w-[450px]' }} mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-80' }} overflow-y-auto">
+            class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full {{ $minW ?? 'sm:min-w-[450px]' }} mt-1 rounded-lg shadow-xl {{ $maxH ?? 'max-h-90 sm:max-h-108 md:max-h-132 lg:max-h-156 xl:max-h-180' }} overflow-y-auto">
             @forelse ($xSearchResults as $x)
                 <div wire:key="x-{{ $x['id'] }}"
                     @click="

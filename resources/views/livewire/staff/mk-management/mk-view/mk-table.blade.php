@@ -80,11 +80,23 @@
 
                 {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
                 @if ($showMore)
-                    <th colspan="{{ $switchTable == '' ? 5 : 2 }}" class="table-head-sub table-border-l">
+                    <th colspan="{{ $switchTable == '' ? 6 : 2 }}" class="table-head-sub table-border-l">
                         Bobot Mata Kuliah (SKS)
                     </th>
                 @else
-                    <th rowspan="2" class="table-head border-x">SKS</th>
+                    @include('livewire.global.table.head-table', [
+                        'sortFieldString' => 'sks',
+                        'rowSpan' => 2,
+                        'isCenter' => 1,
+                        'isBorderX' => 1,
+                    ])
+                    @if ($switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'tipe_sks',
+                            'rowSpan' => 2,
+                            'isCenter' => 1,
+                        ])
+                    @endif
                 @endif
 
                 @include('livewire.global.table.head-table', [
@@ -153,6 +165,14 @@
                             'isCenter' => 1,
                         ])
                     @endif
+                    @if ($switchTable == '')
+                        @include('livewire.global.table.head-table', [
+                            'sortFieldString' => 'tipe_sks',
+                            'rowSpan' => 2,
+                            'isCenter' => 1,
+                            'isBorderX' => 1,
+                        ])
+                    @endif
                 </tr>
             @endif
         </x-slot:header>
@@ -213,6 +233,10 @@
                     @endif
                 @endif
 
+                @if ($switchTable == '')
+                    <td class="table-second table-border-l whitespace-nowrap text-center">{{ $mk->sks_text ?? '-' }}
+                    </td>
+                @endif
                 <td class="table-second table-border-l text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-mk-modal')">
@@ -241,12 +265,12 @@
             </tr>
         @empty
             <tr>
-                <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
+                <td colspan="{{ $switchTable == '' ? 15 : 11 }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Mata Kuliah ditemukan!
                 </td>
             </tr>
         @endforelse
 
-        </x-global.main-layout-table>
+    </x-global.main-layout-table>
 </div>

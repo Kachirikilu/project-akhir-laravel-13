@@ -1,6 +1,7 @@
 <div wire:key="view-card-rps-mahasiswa">
 
     @php
+        // dump($nilais);
         $alpineData = $nilais
             ->map(function ($n, $index) use ($mahasiswa) {
                 $semNum = (string) ($n->semester ?? '');

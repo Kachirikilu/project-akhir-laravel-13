@@ -237,6 +237,7 @@ class JadwalManagement extends Component
                     return $jadwal;
                 });
             }
+            // dd($jadwals);
 
             return view('livewire.all-role.kelas-management.jadwal-management', [
                 'jadwals' => $jadwals,

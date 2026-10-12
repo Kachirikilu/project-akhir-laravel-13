@@ -542,6 +542,7 @@ trait WithTimDosenModal
         $fields = [
             'selected_id_tim_dosen',
             'pr_id', 'prNameSearch',
+            'dosenNameSearch',
         ];
         $this->reset($fields);
 

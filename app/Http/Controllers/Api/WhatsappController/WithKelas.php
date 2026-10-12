@@ -209,7 +209,7 @@ trait WithKelas
                                 $teksKelas .= "     •  ```{$jadwal->kode_jadwal}```";
 
                                 if (isset($jadwal->hari_pelaksanaan)) {
-                                    $teksKelas .= " - {$jadwal->hari_pelaksanaan}";
+                                    $teksKelas .= ": {$jadwal->hari_pelaksanaan} ({$jadwal->count_mahasiswa}/{$jadwal->kapasitas})";
                                 }
 
                                 $teksKelas .= "\n";

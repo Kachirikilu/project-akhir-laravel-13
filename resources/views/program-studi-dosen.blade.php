@@ -1,5 +1,5 @@
 @php
-    $pageTitle = __('Capaian Mahasiswa Management');
+    $pageTitle = __('Capaian Program Studi');
 @endphp
 
 <x-layouts::app :title="$pageTitle">
@@ -27,6 +27,6 @@
         <livewire:staff.obe-management.sub-cpmk-management.delete-sub-cpmk-management />
 
         <livewire:staff.obe-management.referensi-management.modal-referensi-management />
-        <livewire:staff.obe-management.tim-dosen-management.tim-dosen-modal.modal-tim-dosen-management />
+        <livewire:staff.obe-management.tim-dosen-management.modal-tim-dosen-management />
     @endif
 </x-layouts::app>

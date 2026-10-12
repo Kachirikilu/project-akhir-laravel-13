@@ -70,13 +70,13 @@
     
             // 2. Evaluasi Huruf Mutu
             let na = this.nilaiAkhir;
-            if (na >= 85) this.nilaiMutu = 'A';
+            if (na >= 86) this.nilaiMutu = 'A';
             else if (na >= 80) this.nilaiMutu = 'A-';
             else if (na >= 75) this.nilaiMutu = 'B+';
             else if (na >= 70) this.nilaiMutu = 'B';
             else if (na >= 65) this.nilaiMutu = 'B-';
             else if (na >= 60) this.nilaiMutu = 'C+';
-            else if (na >= 55) this.nilaiMutu = 'C';
+            else if (na >= 56) this.nilaiMutu = 'C';
             else if (na >= 40) this.nilaiMutu = 'D';
             else this.nilaiMutu = 'E';
     

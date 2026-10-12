@@ -295,22 +295,22 @@
                 <td class="table-second">{{ $user->email }}</td>
 
                 <td
-                    class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}  text-center">
+                    class="table-main {{ $switchTable == 'mahasiswa' ? 'table-border-l' : 'table-border-x' }}">
                     {{ $user->identity1 ?? '-' }}</td>
 
                 @if ($showMore)
                     @if ($switchTable != 'mahasiswa')
-                        <td class="table-sub text-center">
+                        <td class="table-sub">
                             {{ $user->identity2 ?? '-' }}
                         </td>
                     @endif
 
                     @if ($switchTable == 'dosen' || $switchTable == '')
-                        <td class="table-sub text-center">
+                        <td class="table-sub">
                             {{ $user->identity3 ?? '-' }}
                         </td>
                     @endif
-                    <td class="table-sub table-border-x text-center">{{ $user->nik ?? '-' }}</td>
+                    <td class="table-sub table-border-x">{{ $user->nik ?? '-' }}</td>
                 @endif
 
                 @if ($switchTable == 'mahasiswa')
