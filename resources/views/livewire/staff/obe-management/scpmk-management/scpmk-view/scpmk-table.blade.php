@@ -256,10 +256,10 @@
                 @if ($showMore)
                     <td class="table-second min-w-48">{{ $sc->tugas ?? '-' }}</td>
                     <td class="table-sub whitespace-nowrap text-center">
-                        {{ $sc->waktu_tugas ? $sc->w_tugas . ' menit' : config('rps.faktor_tugas', 60) . ' m/SKS' }}
+                        {{ $sc->w_tugas_fix }}
                     </td>
                     <td class="table-sub whitespace-nowrap text-center">
-                        {{ $sc->waktu_mandiri ? $sc->w_mandiri . ' menit' : config('rps.faktor_mandiri', 60) . ' m/SKS' }}
+                        {{ $sc->w_mandiri_fix }}
                     </td>
                 @endif
                 <td class="table-main text-center">

@@ -1,67 +1,69 @@
-@switch($sortir ?? $xValue)
-    @case('Teori')
+@php
+    $rawVal = $sortir ?? $xValue ?? '';
+    $normVal = strtoupper(trim((string) $rawVal));
+
+    $utsFields = array_map('strtoupper', config('rps.uts_fields', ['UTS', 'EVALUASI AWAL']));
+    $uasFields = array_map('strtoupper', config('rps.uas_fields', ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK']));
+    $proyekFields = ['HASIL PROYEK', 'HASIL PROJEK', 'PORTOFOLIO'];
+    $pureUasFields = array_diff($uasFields, $proyekFields);
+@endphp
+
+@switch(true)
+    @case($normVal === 'TEORI')
         <flux:badge icon="book-open" color="emerald" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Praktik')
-    @case('Responsi')
+    @case(in_array($normVal, ['PRAKTIK', 'RESPONSI']))
         <flux:badge icon="beaker" color="cyan" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Tugas')
-    @case('Logbook')
+    @case(in_array($normVal, ['TUGAS', 'LOGBOOK', 'KUIS']))
         <flux:badge icon="pencil-square" color="blue" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('UTS')
-    @case('Evaluasi Awal')
-    @case('Kuis')
+    @case(in_array($normVal, $utsFields))
         <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('UAS')
-    @case('Evaluasi Akhir')
-    @case('Laporan Akhir')
+    @case(in_array($normVal, $pureUasFields))
         <flux:badge icon="document-check" color="orange" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Hasil Proyek')
-    @case('Hasil Projek') {{-- Cadangan jika ada variasi ketikan c --}}
-    @case('Portofolio')
+    @case(in_array($normVal, $proyekFields))
         <flux:badge icon="light-bulb" color="indigo" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Kerja Praktek')
+    @case($normVal === 'KERJA PRAKTEK')
         <flux:badge icon="briefcase" color="violet" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Skripsi')
+    @case($normVal === 'SKRIPSI')
         <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Aktivitas Partisipasif')
+    @case($normVal === 'AKTIVITAS PARTISIPASIF')
         <flux:badge icon="user-group" color="rose" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>
     @break
 
-    @case('Mandiri')
+    @case($normVal === 'MANDIRI')
         <flux:badge icon="user" color="slate" size="sm" variant="{{ $variant ?? 'pill' }}">
             {{ $xValue }}
         </flux:badge>

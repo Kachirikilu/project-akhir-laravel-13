@@ -13,13 +13,13 @@ if ($min !== null && $max === null) {
 }
 
 if (($min !== null && $min < 20) || ($max !== null && $max < 20)) {
-    throw new \InvalidArgumentException(
-        "Konfigurasi batas bobot RPS tidak valid: RPS_BOBOT_MIN dan RPS_BOBOT_MAX tidak boleh di bawah 20%."
+    throw new InvalidArgumentException(
+        'Konfigurasi batas bobot RPS tidak valid: RPS_BOBOT_MIN dan RPS_BOBOT_MAX tidak boleh di bawah 20%.'
     );
 }
 
 if ($min !== null && $max !== null && $max < $min) {
-    throw new \InvalidArgumentException(
+    throw new InvalidArgumentException(
         "Konfigurasi batas bobot RPS tidak valid: RPS_BOBOT_MAX ({$max}%) tidak boleh lebih kecil dari RPS_BOBOT_MIN ({$min}%)."
     );
 }
@@ -58,7 +58,7 @@ $invalidMetode = array_diff($metodeList, $masterAllowedMetode);
 
 if (! empty($invalidMetode)) {
     $invalidItems = implode(', ', $invalidMetode);
-    throw new \InvalidArgumentException(
+    throw new InvalidArgumentException(
         "Konfigurasi METODE_SCPMK tidak valid! Nilai berikut tidak terdaftar dalam sistem: [{$invalidItems}]."
     );
 }
@@ -72,14 +72,14 @@ $metodeUAS = array_values(array_intersect($metodeList, $masterUAS));
 
 // 2. VALIDASI: Memastikan elemen minimal UTS & UAS tetap terpenuhi
 if (empty($metodeUTS)) {
-    throw new \InvalidArgumentException(
-        "Konfigurasi METODE_SCPMK tidak valid: Wajib mengandung minimal satu metode kategorisasi UTS (pilihan: " . implode(', ', $masterUTS) . ")."
+    throw new InvalidArgumentException(
+        'Konfigurasi METODE_SCPMK tidak valid: Wajib mengandung minimal satu metode kategorisasi UTS (pilihan: '.implode(', ', $masterUTS).').'
     );
 }
 
 if (empty($metodeUAS)) {
-    throw new \InvalidArgumentException(
-        "Konfigurasi METODE_SCPMK tidak valid: Wajib mengandung minimal satu metode kategorisasi UAS (pilihan: " . implode(', ', $masterUAS) . ")."
+    throw new InvalidArgumentException(
+        'Konfigurasi METODE_SCPMK tidak valid: Wajib mengandung minimal satu metode kategorisasi UAS (pilihan: '.implode(', ', $masterUAS).').'
     );
 }
 
@@ -94,7 +94,7 @@ return [
     'faktor_sks' => env('FAKTOR_SKS', 50),
     'faktor_tugas' => env('FAKTOR_WAKTU_TUGAS', 60),
     'faktor_mandiri' => env('FAKTOR_WAKTU_MANDIRI', 60),
-    
+
     'uts_fields' => explode(',', env('UTS_FIELDS', 'UTS,EVALUASI AWAL')),
     'uas_fields' => explode(',', env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK')),
 

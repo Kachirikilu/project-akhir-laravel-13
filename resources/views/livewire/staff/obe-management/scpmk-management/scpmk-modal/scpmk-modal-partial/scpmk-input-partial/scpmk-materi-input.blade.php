@@ -16,7 +16,7 @@
                 'placeholder' => 'Masukkan Materi Sub-CPMK...',
                 'message' => $errors->first('materi'),
             ])
-            @include('livewire.global.modal-form.input-form', [
+            @include('livewire.global.modal-form.textarea-form', [
                 'alpine' => 'scpmk',
                 'isLivewire' => 1,
                 'modelString' => 'metodologi',
@@ -24,7 +24,7 @@
                 'placeholder' => 'Masukkan Metodologi Sub-CPMK...',
                 'message' => $errors->first('metodologi'),
             ])
-            @include('livewire.global.modal-form.input-form', [
+            @include('livewire.global.modal-form.textarea-form', [
                 'alpine' => 'scpmk',
                 'isLivewire' => 1,
                 'modelString' => 'indikator',

@@ -109,98 +109,84 @@ class CPL extends Model
 
         $search = strtoupper(trim($search));
         $searchTerm = '%'.$search.'%';
-        $searchLower = '%'.strtolower($search).'%';
+        $normalized = preg_replace('/[^A-Z0-9]/', '', $search);
 
         $prefixPart = null;
         $kodePart = null;
 
-        $normalized = strtoupper(
-            preg_replace('/[^A-Z0-9]/', '', $search)
-        );
-
-        $prefixPart = null;
-        $kodePart = null;
-
-        $cplPos = strpos($normalized, 'C');
+        // Cari posisi kata 'CPL' agar tidak terpotong huruf 'C' pada kode prodi/departemen (misal: TKC)
+        $cplPos = strpos($normalized, 'CPL');
 
         if ($cplPos !== false) {
-
-            $prefixPart = substr($normalized, 0, $cplPos);
-            $kodePart = substr($normalized, $cplPos);
-
-            if ($prefixPart === '') {
-                $prefixPart = null;
-            }
-
-            if ($kodePart === '') {
-                $kodePart = null;
-            }
-
+            $prefixPart = substr($normalized, 0, $cplPos) ?: null;
+            $kodePart = substr($normalized, $cplPos) ?: null;
         } else {
-            $prefixPart = $normalized;
+            $prefixPart = $normalized ?: null;
         }
 
-        return $query->where(function ($q) use (
-            $search,
-            $searchTerm,
-            $prefixPart,
-            $kodePart
-        ) {
-            $q->where('cpls.deskripsi', 'like', $searchTerm);
+        return $query->where(function ($q) use ($search, $searchTerm, $prefixPart, $kodePart) {
+            $q->where('cpls.deskripsi', 'like', $searchTerm)
+                ->orWhere('cpls.kode_cpl', 'like', $searchTerm);
+
             if (is_numeric($search)) {
                 $q->orWhere('cpls.id', $search);
             }
-            $q->orWhere('cpls.kode_cpl', $searchTerm);
 
             if ($prefixPart) {
                 $q->orWhere(function ($sub) use ($prefixPart, $kodePart) {
+                    // Jika user menyertakan nomor CPL (misal: S1-TKE-CPL01), wajib cocok dengan kode_cpl-nya
                     if ($kodePart) {
-                        $sub->orWhere('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
+                        $sub->whereRaw("REPLACE(UPPER(cpls.kode_cpl), '-', '') LIKE ?", ['%'.$kodePart.'%']);
                     }
-                    $sub->where(function ($low) use ($prefixPart, $kodePart) {
 
-                        // 1. CPL Level 1: Prodi
-                        $low->orWhere(function ($q) use ($prefixPart, $kodePart) {
-
-                            $q->where('cpls.tingkat_cpl', 1)
-                                ->when($kodePart, function ($q) use ($kodePart) {
-                                    $q->where('cpls.kode_cpl', 'like', '%'.$kodePart.'%');
-                                })
-                                ->whereHas('prodis', function ($pro) use ($prefixPart) {
-
-                                    $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
-                                        ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
-                                        ->where(function ($x) use ($prefixPart) {
-
-                                            $x->whereRaw("
-                                            REPLACE(
-                                                CONCAT(
-                                                    CASE
-                                                        WHEN prodis.strata='Sarjana' THEN 'S1'
-                                                        WHEN prodis.strata='Magister' THEN 'S2'
-                                                        WHEN prodis.strata='Doktor' THEN 'S3'
-                                                        ELSE ''
-                                                    END,
-                                                    COALESCE(
-                                                        NULLIF(prodis.kode_pr,''),
-                                                        NULLIF(departemens.kode_dp,''),
-                                                        NULLIF(fakultas.kode_fk,''),
-                                                        'UNI'
-                                                    )
-                                                ),
-                                            '-','')
-                                            LIKE ?
-                                        ", [$prefixPart.'%']);
-
+                    $sub->where(function ($low) use ($prefixPart) {
+                        // 1. Tingkat Prodi (1), Departemen (2), dan Fakultas (3) — semua lewat relasi prodis
+                        $low->whereHas('prodis', function ($pro) use ($prefixPart) {
+                            $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+                                ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                ->where(function ($x) use ($prefixPart) {
+                                    // Tingkat 1: Prodi (cocokkan 'S1TKE' maupun 'TKE')
+                                    $x->orWhere(function ($q1) use ($prefixPart) {
+                                        $q1->where('cpls.tingkat_cpl', 1)
+                                            ->where(function ($p) use ($prefixPart) {
+                                                // Dengan strata (S1TKE)
+                                                $p->whereRaw("
+                                               REPLACE(UPPER(CONCAT(
+                                                   CASE
+                                                       WHEN prodis.strata = 'Sarjana' THEN 'S1'
+                                                       WHEN prodis.strata = 'Magister' THEN 'S2'
+                                                       WHEN prodis.strata = 'Doktor' THEN 'S3'
+                                                       ELSE ''
+                                                   END,
+                                                   COALESCE(NULLIF(prodis.kode_pr, ''), '')
+                                               )), '-', '') LIKE ?
+                                           ", [$prefixPart.'%'])
+                                                // Tanpa strata (TKE)
+                                                    ->orWhereRaw("
+                                               REPLACE(UPPER(COALESCE(NULLIF(prodis.kode_pr, ''), '')), '-', '') LIKE ?
+                                           ", [$prefixPart.'%']);
+                                            });
+                                    })
+                                    // Tingkat 2: Departemen (via prodis -> departemens)
+                                        ->orWhere(function ($q2) use ($prefixPart) {
+                                            $q2->where('cpls.tingkat_cpl', 2)
+                                                ->whereRaw("REPLACE(UPPER(COALESCE(departemens.kode_dp, '')), '-', '') LIKE ?", [$prefixPart.'%']);
+                                        })
+                                    // Tingkat 3: Fakultas (via prodis -> departemens -> fakultas)
+                                        ->orWhere(function ($q3) use ($prefixPart) {
+                                            $q3->where('cpls.tingkat_cpl', 3)
+                                                ->whereRaw("REPLACE(UPPER(COALESCE(fakultas.kode_fk, '')), '-', '') LIKE ?", [$prefixPart.'%']);
                                         });
-
                                 });
-
                         });
+
+                        // 2. Tingkat 4: Universitas ('UNI')
+                        if (str_starts_with('UNI', $prefixPart)) {
+                            $low->orWhere('cpls.tingkat_cpl', 4);
+                        }
                     });
                 });
             }
-            $q->orWhere('cpls.kode_cpl', 'like', $searchTerm);
         });
     }
 

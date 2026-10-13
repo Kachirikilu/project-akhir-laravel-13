@@ -77,6 +77,24 @@ class SubCPMK extends Model
         return Attribute::get(fn () => $this->waktu_mandiri ?? config('rps.faktor_mandiri', 60));
     }
 
+    protected function wTugasFix(): Attribute
+    {
+        return Attribute::get(
+            fn () => $this->waktu_tugas
+                ? $this->w_tugas.' menit'
+                : config('rps.faktor_tugas', 60).' m/SKS'
+        );
+    }
+
+    protected function wMandiriFix(): Attribute
+    {
+        return Attribute::get(
+            fn () => $this->waktu_mandiri
+                ? $this->w_mandiri.' menit'
+                : config('rps.faktor_mandiri', 60).' m/SKS'
+        );
+    }
+
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {

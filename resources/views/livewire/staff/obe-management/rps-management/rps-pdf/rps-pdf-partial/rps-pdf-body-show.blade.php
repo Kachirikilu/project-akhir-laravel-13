@@ -797,8 +797,28 @@
                             {{ !empty($refNumbers) ? $refNumbers : '-' }}
                         </td>
 
-                        <td class="{{ $textStyle }}">{{ $row->metodologi ?? '-' }}</td>
-                        <td class="{{ $textStyle }}">{{ $row->tugas ?? '-' }}</td>
+                        @php
+                            $sks = (int) ($rps->mk_rel->sks ?? 0);
+                            $isTatapMuka = ($rps->mk_rel->sks_text ?? 'Tatap Muka') === 'Tatap Muka';
+                            $menitPerSks = $isTatapMuka ? 50 : 170;
+                            $totalMenit = $sks * $menitPerSks;
+                        @endphp
+
+                        <td class="{{ $textStyle }}">
+                            {{ $row->metodologi ?? '-' }}
+                            <br>
+                            - TM: {{ $sks }}×{{ $menitPerSks }}'
+                        </td>
+
+                        <td class="{{ $textStyle }}">
+                            @if ($row->tugas)
+                                {{ $row->tugas }}
+                                <br>
+                            @endif
+                            - Tugas: {{ $row->w_tugas }} menit
+                            <br>
+                            - Mandiri: {{ $row->w_mandiri }} menit
+                        </td>
                         <td class="{{ $textStyle }}">{{ $row->indikator ?? '-' }}</td>
                         <td class="{{ $textStyle }}">{{ $row->metode ?? 'Teori' }}</td>
                     @endif
@@ -905,7 +925,8 @@
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B+</td>
-                    <td class="skala-td">{{ config('rps.min_b_plus', 75) }}-{{ config('rps.min_a_min', 80) - 0.01 }}</td>
+                    <td class="skala-td">{{ config('rps.min_b_plus', 75) }}-{{ config('rps.min_a_min', 80) - 0.01 }}
+                    </td>
                     <td class="skala-td">3.30</td>
                     <td class="skala-td nowrap">Baik Sekali</td>
                 </tr>
@@ -923,7 +944,8 @@
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">C+</td>
-                    <td class="skala-td">{{ config('rps.min_c_plus', 60) }}-{{ config('rps.min_b_min', 65) - 0.01 }}</td>
+                    <td class="skala-td">{{ config('rps.min_c_plus', 60) }}-{{ config('rps.min_b_min', 65) - 0.01 }}
+                    </td>
                     <td class="skala-td">2.30</td>
                     <td class="skala-td">Cukup</td>
                 </tr>

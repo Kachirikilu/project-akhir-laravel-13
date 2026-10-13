@@ -23,8 +23,10 @@
                 </thead>
                 <tbody class="divide-y divide-[var(--border-table-color)]">
                     <template x-for="sub in subItems[index]?.scpmk" :key="sub.id">
-                        <tr class="hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-colors">
-                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed text-center" x-text="sub.id || '-'">
+                        <tr
+                            class="hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-colors">
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed text-center"
+                                x-text="sub.id || '-'">
                             </td>
                             <td class="text-xs sm:text-sm py-2.5 px-2">
                                 <flux:badge color="fuchsia" size="sm"
@@ -34,30 +36,130 @@
                             </td>
                             <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
                             </td>
-                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.metodologi || '-'"></td>
+                            <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.metodologi || '-'">
+                            </td>
                             <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
                             </td>
                             <td class="text-xs sm:text-sm py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
                             </td>
+                            @php
+                                $utsFields = array_map(
+                                    'strtoupper',
+                                    config('rps.uts_fields', ['UTS', 'EVALUASI AWAL']),
+                                );
+                                $uasFields = array_map(
+                                    'strtoupper',
+                                    config('rps.uas_fields', [
+                                        'UAS',
+                                        'EVALUASI AKHIR',
+                                        'LAPORAN AKHIR',
+                                        'HASIL PROYEK',
+                                        'HASIL PROJEK',
+                                    ]),
+                                );
+                                $proyekFields = ['HASIL PROYEK', 'HASIL PROJEK', 'PORTOFOLIO'];
+                                // Keluarkan item proyek dari pengecekan warna UAS agar tetap mendapat badge indigo (light-bulb)
+                                $pureUasFields = array_values(array_diff($uasFields, $proyekFields));
+                            @endphp
+
                             <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed">
-                                <div class="flex justify-center">
-                                    <template x-if="sub.metode === 'UTS' || sub.metode === 'UAS'">
-                                        <flux:badge color="amber" size="sm" class="text-xs font-bold uppercase"
-                                            x-text="sub.metode"></flux:badge>
-                                    </template>
-                                    <template x-if="sub.metode === 'Teori'">
-                                        <flux:badge color="emerald" size="sm" class="text-xs font-bold">Teori
+                                <div class="flex justify-center" x-data="{
+                                    utsList: @js($utsFields),
+                                    uasList: @js($pureUasFields),
+                                    proyekList: @js($proyekFields),
+                                    norm(val) { return (val || '').toString().trim().toUpperCase(); }
+                                }">
+
+                                    {{-- Teori --}}
+                                    <template x-if="norm(sub.metode) === 'TEORI'">
+                                        <flux:badge icon="book-open" color="emerald" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
                                         </flux:badge>
                                     </template>
-                                    <template x-if="['Praktik', 'Tugas', 'Hasil Proyek'].includes(sub.metode)">
-                                        <flux:badge color="cyan" size="sm" class="text-xs font-bold"
-                                            x-text="sub.metode">
+
+                                    {{-- Praktik & Responsi --}}
+                                    <template x-if="['PRAKTIK', 'RESPONSI'].includes(norm(sub.metode))">
+                                        <flux:badge icon="beaker" color="cyan" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
                                         </flux:badge>
                                     </template>
+
+                                    {{-- Tugas, Logbook & Kuis --}}
+                                    <template x-if="['TUGAS', 'LOGBOOK', 'KUIS'].includes(norm(sub.metode))">
+                                        <flux:badge icon="pencil-square" color="blue" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- UTS & Evaluasi Awal (Dinamis dari config rps.uts_fields) --}}
+                                    <template x-if="utsList.includes(norm(sub.metode))">
+                                        <flux:badge icon="clipboard-document-check" color="amber" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- UAS, Evaluasi Akhir & Laporan Akhir (Dinamis dari config rps.uas_fields) --}}
+                                    <template x-if="uasList.includes(norm(sub.metode))">
+                                        <flux:badge icon="document-check" color="orange" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Hasil Proyek, Hasil Projek & Portofolio --}}
+                                    <template x-if="proyekList.includes(norm(sub.metode))">
+                                        <flux:badge icon="light-bulb" color="indigo" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Kerja Praktek --}}
+                                    <template x-if="norm(sub.metode) === 'KERJA PRAKTEK'">
+                                        <flux:badge icon="briefcase" color="violet" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Skripsi --}}
+                                    <template x-if="norm(sub.metode) === 'SKRIPSI'">
+                                        <flux:badge icon="academic-cap" color="fuchsia" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Aktivitas Partisipasif --}}
+                                    <template x-if="norm(sub.metode) === 'AKTIVITAS PARTISIPASIF'">
+                                        <flux:badge icon="user-group" color="rose" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Mandiri --}}
+                                    <template x-if="norm(sub.metode) === 'MANDIRI'">
+                                        <flux:badge icon="user" color="slate" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode"></span>
+                                        </flux:badge>
+                                    </template>
+
+                                    {{-- Default / Lainnya --}}
                                     <template
-                                        x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Proyek'].includes(sub.metode)">
-                                        <flux:badge color="zinc" size="sm" class="text-xs font-bold"
-                                            x-text="sub.metode || '-'">
+                                        x-if="![
+            'TEORI', 'PRAKTIK', 'RESPONSI', 'TUGAS', 'LOGBOOK', 'KUIS',
+            'KERJA PRAKTEK', 'SKRIPSI', 'AKTIVITAS PARTISIPASIF', 'MANDIRI',
+            ...utsList, ...uasList, ...proyekList
+        ].includes(norm(sub.metode))">
+                                        <flux:badge icon="information-circle" color="zinc" size="sm"
+                                            variant="{{ $variant ?? 'pill' }}">
+                                            <span x-text="sub.metode || '-'"></span>
                                         </flux:badge>
                                     </template>
                                 </div>
@@ -72,7 +174,8 @@
                                 x-text="sub.w_mandiri || '-'"></td>
 
                             @unless ($parent == 'cpmk')
-                                <td class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
+                                <td
+                                    class="text-xs sm:text-sm py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
 
                                     {{-- 3. Tombol Aksi (Minimalist Style) --}}
                                     <div
@@ -101,8 +204,7 @@
                                                 $flux.modal('scpmk-modal').show();
                                                 $dispatch('open-edit-scpmk-modal', { id: sub.id, parent: '{{ $withParent ?? '' }}' });
                                             "
-                                                {{-- wire:click="editSCPMK(sub.id)" --}}
-                                            >
+                                            {{-- wire:click="editSCPMK(sub.id)" --}}>
 
                                             <div
                                                 class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yellow-50 dark:group-hover:bg-yellow-900/30 transition-colors">

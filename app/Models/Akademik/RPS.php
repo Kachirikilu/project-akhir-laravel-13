@@ -117,17 +117,26 @@ class RPS extends Model
         return Attribute::get(function () {
             $allScpmk = $this->all_scpmk;
 
-            $hasUts = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UTS_FIELDS, true));
-            $hasUas = $allScpmk->contains(fn ($i) => Str::contains($i->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($i->metode ?? '', SubCPMK::$UAS_FIELDS, true));
+            $matchesKeyword = function (?string $text, array $keywords): bool {
+                if (empty($text) || empty($keywords)) {
+                    return false;
+                }
+
+                $escaped = array_map(fn ($k) => preg_quote(trim($k), '/'), $keywords);
+                $pattern = '/\b(' . implode('|', $escaped) . ')\b/i';
+
+                return (bool) preg_match($pattern, $text);
+            };
+
+            $hasUts = $allScpmk->contains(fn ($i) => $matchesKeyword($i->metode, SubCPMK::$UTS_FIELDS));
+            $hasUas = $allScpmk->contains(fn ($i) => $matchesKeyword($i->metode, SubCPMK::$UAS_FIELDS));
 
             $program = collect();
             $scpmkIndex = 0;
 
-            // Variabel pelacak untuk menyimpan kode_cpmk dan cpmk_id dari pertemuan sebelumnya
             $lastKodeCpmk = '-';
             $lastCpmkId = null;
 
-            // Helper untuk generate deskripsi ujian yang adaptif & naratif
             $generateExamDescription = function (string $type, int $pertemuan) {
                 $isLast = ($pertemuan === 16);
                 $prevMeeting = $pertemuan - 1;
@@ -173,13 +182,11 @@ class RPS extends Model
                     if ($rawItem) {
                         $item = clone $rawItem;
 
-                        // Jika item dari DB merupakan UTS/UAS custom yang terdeteksi via keyword
-                        $isCustomUts = Str::contains($item->deskripsi ?? '', SubCPMK::$UTS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UTS_FIELDS, true);
-                        $isCustomUas = Str::contains($item->deskripsi ?? '', SubCPMK::$UAS_FIELDS, true) || Str::contains($item->metode ?? '', SubCPMK::$UAS_FIELDS, true);
+                        $isCustomUts = $matchesKeyword($item->metode, SubCPMK::$UTS_FIELDS);
+                        $isCustomUas = $matchesKeyword($item->metode, SubCPMK::$UAS_FIELDS);
 
                         if ($isCustomUts || $isCustomUas) {
                             $examType = $isCustomUts ? 'UTS' : 'UAS';
-                            // Bila deskripsi kosong atau bawaan seeder, perbarui dengan deskripsi adaptif
                             if (empty($item->deskripsi) || $item->deskripsi === 'UTS' || $item->deskripsi === 'UAS') {
                                 $item->deskripsi = $generateExamDescription($examType, $p);
                             }
@@ -198,12 +205,9 @@ class RPS extends Model
                     }
                 }
 
-                // Normalisasi kode_cpmk dari cpmk_list jika kosong/strip
                 if (! isset($item->kode_cpmk) || $item->kode_cpmk == '-') {
                     $item->kode_cpmk = isset($item->cpmk_list) ? $item->cpmk_list->pluck('kode')->unique()->implode(', ') : '-';
                 }
-
-                // Simpan lacakan CPMK paling akhir yang valid untuk digunakan oleh UTS / UAS otomatis
                 if (isset($item->kode_cpmk) && $item->kode_cpmk !== '-' && $item->kode_cpmk !== 'CPMK-UTS' && $item->kode_cpmk !== 'CPMK-UAS') {
                     $lastKodeCpmk = $item->kode_cpmk;
                     $lastCpmkId = $item->cpmk_id ?? data_get($item, 'cpmk_id');

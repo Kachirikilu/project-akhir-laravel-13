@@ -13,56 +13,49 @@
         
             expanded: [],
         
-            init() {
-                if (!Array.isArray(this.items)) this.items = [];
-                if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-                if (!Array.isArray(this.subItems)) this.subItems = [];
-        
-                // 1. Amati transisi isEdit dengan membaca (newVal, oldVal)
-                this.$watch('$store.{{ $alpine ?? 'rps' }}.isEdit', (newVal, oldVal) => {
-                    console.log(`Transisi isEdit: ${oldVal} -> ${newVal}`);
-        
-                    // Kasus Khusus: Transisi dari Edit (1) ke Create (0)
-                    if (oldVal === 1 && newVal === 0) {
-                        // Kosongkan array lokal
-                        this.items = [];
-                        this.itemsAll = [];
-                        this.subItems = [];
-        
-                        // Bypass sync berat: Langsung set store ke 0 secara instan
-                        if (typeof $store.rps !== 'undefined') {
-                            $store.rps.update([]);
-                            $store.rps.setCountSCPMK(0);
-                            $store.rps.total_bobot = 0;
-                        }
-                        return; // Hentikan eksekusi, jangan panggil syncToRpsStore()
-                    }
-        
-                    // Transisi normal lainnya (misal: 0 ke 0 atau awal load)
-                    if (newVal === 0) {
-                        this.$nextTick(() => this.syncToRpsStore());
-                    }
-                });
-        
-                // 2. Watcher rutin (hanya jalan jika posisi stabil di isEdit === 0)
-                this.$watch('subItems', () => {
-                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
-                        this.syncToRpsStore();
-                    }
-                });
-        
-                this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uts', () => {
-                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
-                        this.syncToRpsStore();
-                    }
-                });
-        
-                this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uas', () => {
-                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
-                        this.syncToRpsStore();
-                    }
-                });
-            },
+init() {
+    if (!Array.isArray(this.items)) this.items = [];
+    if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
+    if (!Array.isArray(this.subItems)) this.subItems = [];
+
+    this.$nextTick(() => {
+        if (this.subItems.length > 0) {
+            this.syncToRpsStore();
+        }
+    });
+
+    this.$watch('$store.{{ $alpine ?? 'rps' }}.isEdit', (newVal, oldVal) => {
+        // Kasus Khusus: Transisi dari Edit (1) ke Create (0)
+        if (oldVal === 1 && newVal === 0) {
+            this.items = [];
+            this.itemsAll = [];
+            this.subItems = [];
+
+            if (typeof $store.rps !== 'undefined') {
+                $store.rps.update([]);
+                $store.rps.setCountSCPMK(0);
+                $store.rps.total_bobot = 0;
+            }
+            return;
+        }
+
+        this.$nextTick(() => this.syncToRpsStore());
+    });
+
+    this.$watch('subItems', (val) => {
+        if (Array.isArray(val) && val.length > 0) {
+            this.syncToRpsStore();
+        }
+    });
+
+    this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uts', () => {
+        this.syncToRpsStore();
+    });
+
+    this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uas', () => {
+        this.syncToRpsStore();
+    });
+},
         
             syncToRpsStore() {
                 if (typeof $store.{{ $alpine ?? 'rps' }} !== 'undefined') {
@@ -99,16 +92,6 @@
                         if (p === 16) defaultUas += parseFloat(sub?.bobot) || 0;
                     });
                 }
-        
-                {{-- console.log('Grand Total Bobot Calculation:', {
-                    arraySubCPMK: uniqueSubs,
-                    totalSubCPMK: totalSubCPMK,
-                    customUts: customUts,
-                    customUas: customUas,
-                    defaultUts: defaultUts,
-                    defaultUas: defaultUas,
-                    grandTotal: totalSubCPMK + (customUts || defaultUts) + (customUas || defaultUas)
-                }); --}}
         
                 return totalSubCPMK + (customUts || defaultUts) + (customUas || defaultUas);
             },
