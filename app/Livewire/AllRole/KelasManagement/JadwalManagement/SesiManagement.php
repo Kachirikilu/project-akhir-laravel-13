@@ -215,6 +215,7 @@ class SesiManagement extends Component
             'kj_id' => $jadwal->id,
             'kode_kelas' => $currentKode,
             'kode_jadwal_short' => $jadwal->kode_jadwal,
+            'kode_wilayah' => $jadwal->kode_wilayah ?? '',
             'switchTable' => $switchTable,
             'url' => url()->current(),
         ];

@@ -85,7 +85,7 @@
         </span>
 
         <span class="{{ $dateText }} flex items-center gap-1">
-            <flux:icon :name="$s->reminder_sent ? 'chat-bubble-left-right' : 'clock'"
+            <flux:icon :name="$s->reminder_sent ? 'clock' : 'chat-bubble-left-right'"
                 class="w-3 h-3 {{ $dateText }}" />
         </span>
 

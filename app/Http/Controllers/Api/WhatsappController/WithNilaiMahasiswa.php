@@ -198,7 +198,7 @@ foreach ($groupedNilai as $periode => $listNilai) {
     
     $semester = $sampleItem->semester ?? '-';
 
-    $teksNilai .= "🔹 *Periode {$periode}*\n";
+    $teksNilai .= "🔷 *Periode {$periode}*\n";
     $teksNilai .= "🔹 *Semester {$semester}*\n";
 
     $nomor = 1;
@@ -209,6 +209,7 @@ foreach ($groupedNilai as $periode => $listNilai) {
                 $mkNama = $nilaiMhs->rps_rel->mk_rel->nama_mk ?? $nilaiMhs->rps_rel->nama_skm ?? 'Mata Kuliah';
                 $rps = $nilaiMhs->rps_rel->kode ?? '2';
                 $sks = $nilaiMhs->rps_rel->mk_rel->sks ?? 2;
+                $sksText = $nilaiMhs->rps_rel->mk_rel->sks_text ?? 'Tatap Muka';
 
                 $skor = isset($nilaiMhs->nilai) ? number_format((float) $nilaiMhs->nilai, 2, '.', '') : '-';
                 $indexValue = isset($nilaiMhs->nilai_index) ? (float) $nilaiMhs->nilai_index : null;
@@ -220,11 +221,12 @@ foreach ($groupedNilai as $periode => $listNilai) {
                     $totalBobotIps += ($indexValue * $sks);
                 }
 
-                $teksNilai .= "  {$nomor}. *{$mkNama}* - `{$sks} SKS`\n";
-                $teksNilai .= "     » RPS: ```{$rps}```\n";
-                $teksNilai .= "     » Nilai: *{$skor}*\n";
-                $teksNilai .= "     » Index: *{$index}*\n";
-                $teksNilai .= "     » Mutu: *{$mutu}*\n";
+                $teksNilai .= "{$nomor}. *{$mkNama}*\n";
+                $teksNilai .= "        » `{$sks}` - {$sksText}\n";
+                $teksNilai .= "        » RPS: ```{$rps}```\n";
+                $teksNilai .= "        » Nilai: *{$skor}*\n";
+                $teksNilai .= "        » Index: *{$index}*\n";
+                $teksNilai .= "        » Mutu: *{$mutu}*\n";
                 $nomor++;
             }
 

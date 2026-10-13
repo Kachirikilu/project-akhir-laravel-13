@@ -6,14 +6,21 @@
         <x-slot:leftSecHead>
             <div
                 class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
+                @if ($isJadwalOnly)
+                    @include('livewire.global.table.head-sortir', [
+                        'sortFieldString' => 'kode',
+                        'headString' => 'Kode',
+                    ])
+                @endif
                 @include('livewire.global.table.head-sortir', [
-                    'sortFieldString' => 'kode',
-                    'headString' => 'Kode',
+                    'sortFieldString' => 'kode_wilayah',
+                    'headString' => 'Wilayah',
                 ])
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'label_kelas',
                     'headString' => 'Label',
                 ])
+
                 @if ($kelas == null)
                     @include('livewire.global.table.head-sortir', [
                         'sortFieldString' => 'kode_mk',

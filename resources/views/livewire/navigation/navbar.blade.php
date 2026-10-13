@@ -484,6 +484,10 @@
                         ];
 
                         if (isset($groupedJadwal[$kodeKelas])) {
+                            usort($groupedJadwal[$kodeKelas], function ($a, $b) {
+                                return strcmp($a['kode_wilayah'] ?? '', $b['kode_wilayah'] ?? '');
+                            });
+
                             foreach ($groupedJadwal[$kodeKelas] as $sesi) {
                                 $subMenus[] = [
                                     'label' =>

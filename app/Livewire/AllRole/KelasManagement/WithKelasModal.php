@@ -115,7 +115,7 @@ trait WithKelasModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $data['nama_kelas'] = $this->normalizeNama($data['nama_kelas'] ?? '');
+        // $data['nama_kelas'] = $this->normalizeNama($data['nama_kelas'] ?? '');
 
         $rps = DB::table('rps')->where('id', $this->rps_id ?? null)->first();
         $desRPS = $rps?->deskripsi ?? '';

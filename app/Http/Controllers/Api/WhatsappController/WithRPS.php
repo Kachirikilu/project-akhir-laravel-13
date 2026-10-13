@@ -131,10 +131,12 @@ trait WithRPS
             foreach ($daftarRpsSmt as $rps) {
                 $namaMK = $rps->mk_rel->mk ?? 'Mata Kuliah Tanpa Nama';
                 $kodeMK = $rps->mk_rel->kode ?? '-';
-                $sks = $rps->mk_rel->sks ?? 0;
+                $sks = $rps->mk_rel->sks ?? 2;
+                $sksText = $rps->mk_rel->sks_text ?? 'Tatap Muka';
                 $kodeRps = $rps->kode ?? 'RPS-Code';
 
-                $teksRPS .= "  {$nomorGlobal}. *{$namaMK}* - `{$sks} SKS`\n";
+                $teksRPS .= "  {$nomorGlobal}. *{$namaMK}*\n";
+                $teksRPS .= "     - `{$sks} SKS` - {$sksText}\n";
                 $teksRPS .= "     - Kode MK: ```{$kodeMK}```\n";
                 $teksRPS .= "     - Kode RPS: *{$kodeRps}*\n";
                 if ($rps->is_draf == 1) {

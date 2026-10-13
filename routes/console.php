@@ -28,6 +28,6 @@ Schedule::call(function () {
             SendClassReminderJob::dispatch($sesi);
         }
     }
-})->everyFiveMinutes();
+})->everyMinute();
 
 Schedule::command('excel:purge-old --months=6')->monthlyOn(1, '02:00');

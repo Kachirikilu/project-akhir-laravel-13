@@ -50,7 +50,7 @@ class JadwalManagement extends Component
 
     public $perPage = 8;
 
-    public $sortField = 'label_kelas';
+    public $sortField = 'kode_wilayah';
 
     public $sortDirection = 'asc';
 
@@ -74,7 +74,7 @@ class JadwalManagement extends Component
         'searchMode' => ['except' => 'simple'],
         'perPage' => ['except' => 8],
         'showMore' => ['except' => false],
-        'sortField' => ['except' => 'label_kelas'],
+        'sortField' => ['except' => 'kode_wilayah'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted' => ['except' => false],
     ];

@@ -87,8 +87,9 @@ public function inputJadwalSearch($idKelas = null, $isHariIni = false)
         return match ($this->sortField) {
             // 'kode' => $this->applyJadwalKodeSort($queryJadwal),
             'kode' => $queryJadwal->orderByRaw('CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah, kelas_jadwals.tanggal_mulai) '.$this->sortDirection),
-            'kelas' => $queryJadwal->orderBy('kelas_jadwals.nama_kelas', $this->sortDirection),
+            'kode_wilayah' => $queryJadwal->orderByRaw('kelas_jadwals.kode_wilayah '.$this->sortDirection),
             'label_kelas' => $queryJadwal->orderByRaw('CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah) '.$this->sortDirection),
+            'kelas' => $queryJadwal->orderBy('kelas_jadwals.nama_kelas', $this->sortDirection),
             'hari_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.hari_pelaksanaan', $this->sortDirection),
             'jam_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.jam_mulai', $this->sortDirection),
             'kapasitas' => $queryJadwal

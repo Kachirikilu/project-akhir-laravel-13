@@ -12,7 +12,7 @@
                 class="w-full pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto shrink-0">
 
                 @include('livewire.global.table.detail-view-switch', [
-                    'autoSmall' => 'md',
+                    'autoSmall' => 'lg',
                     'textTrue' => 'Detailed',
                     'textFalse' => 'Simple',
                 ])
