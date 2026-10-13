@@ -121,7 +121,7 @@ class SendClassReminderJob implements ShouldQueue
 
                     $pesanDosen = "Halo {$sapaan} _{$namaDosen}_, pengingat Kelas untuk hari ini.\n\n";
                     $pesanDosen .= "Pukul *{$jamMulai} WIB* akan dilaksanakan Pertemuan ke-{$pertemuan} dari Kelas:\n";
-                    $pesanDosen = $this->formatNotifTeks($pesanDosen, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $kodeScpmk, $metode, $bobot, $linkKelas);
+                    $pesanDosen = $this->formatNotifTeks($pesanDosen, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $metode, $bobot, $linkKelas);
 
                     $responseDosen = Http::withHeaders([
                         'Authorization' => $token,
@@ -170,7 +170,7 @@ class SendClassReminderJob implements ShouldQueue
 
                 $pesan = "Halo _{$nama}_, hari ini ada Kelas!\n\n";
                 $pesan .= "Pukul *{$jamMulai} WIB* akan dilaksanakan Pertemuan ke-{$pertemuan} dari Kelas:\n";
-                $pesan = $this->formatNotifTeks($pesan, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $kodeScpmk, $metode, $bobot, $linkKelas);
+                $pesan = $this->formatNotifTeks($pesan, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $metode, $bobot, $linkKelas);
 
                 $response = Http::withHeaders([
                     'Authorization' => $token,
@@ -256,14 +256,14 @@ class SendClassReminderJob implements ShouldQueue
         ]);
     }
 
-    public function formatNotifTeks($pesan, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $kodeScpmk, $metode, $bobot, $linkKelas) {
+    public function formatNotifTeks($pesan, $kodeKelas, $labelJadwal, $kodeRps, $namaMk, $sks, $sksText, $metode, $bobot, $linkKelas) {
         $pesan .= "- `{$kodeKelas} {$labelJadwal}`\n\n";
         
         $pesan .= "Informasi Kelas:\n";
         $pesan .= "- RPS: ```{$kodeRps}```\n";
         $pesan .= "- {$namaMk}\n";
         $pesan .= "- {$sks} SKS – *{$sksText}*\n";
-        $pesan .= "- ```{$kodeScpmk}```\n";
+        // $pesan .= "- ```{$kodeScpmk}```\n";
         $pesan .= "- Metode: *{$metode}*\n";
         $pesan .= "- Bobot: {$bobot}%\n\n";
 
