@@ -9,28 +9,36 @@
 
         <x-slot:leftSecHead>
             @if ($switchTable == 'mahasiswa')
-                <div x-data="{ activeTab: @entangle('filterAngkatan') }"
-                    class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+  {{-- Pembungkus Luar (Permanen, tidak ter-destroy saat switchTable berubah) --}}
+<div x-data="{ activeTab: @entangle('filterAngkatan').live }">
 
-                    @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                        'xString' => 'filterByAngkatan',
-                        'xFilter' => 'filterAngkatan',
-                        'tabFilter' => $totalSeluruhAngkatan ?? null,
-                        'tabString' => '',
-                        'tabNameString' => 'Semua',
-                        'icon' => 'users',
-                    ])
-                    @foreach ($angkatanFilter as $angkatan)
-                        @include('livewire.global.search-and-filters.partial.tab-filter-2', [
-                            'xString' => 'filterByAngkatan',
-                            'xFilter' => 'filterAngkatan',
-                            'tabFilter' => $totalAngkatan[$angkatan] ?? 0,
-                            'tabString' => $angkatan,
-                            'tabNameString' => $angkatan,
-                            'icon' => 'calendar-days',
-                        ])
-                    @endforeach
-                </div>
+    @if ($switchTable == 'mahasiswa')
+        <div wire:key="tab-filter-angkatan-wrapper"
+            class="pb-1 scrollbar-tiny flex items-center space-x-3 overflow-x-auto overflow-y-hidden w-full lg:w-auto">
+
+            @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                'xString' => 'filterByAngkatan',
+                'xFilter' => 'filterAngkatan',
+                'tabFilter' => $totalSeluruhAngkatan ?? null,
+                'tabString' => '',
+                'tabNameString' => 'Semua',
+                'icon' => 'users',
+            ])
+
+            @foreach ($angkatanFilter ?? [] as $angkatan)
+                @include('livewire.global.search-and-filters.partial.tab-filter-2', [
+                    'xString' => 'filterByAngkatan',
+                    'xFilter' => 'filterAngkatan',
+                    'tabFilter' => $totalAngkatan[$angkatan] ?? 0,
+                    'tabString' => (string) $angkatan,
+                    'tabNameString' => (string) $angkatan,
+                    'icon' => 'calendar-days',
+                ])
+            @endforeach
+        </div>
+    @endif
+
+</div>
             @else
                 <div class="w-full pb-1 flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:justify-end">
                     @if ($switchTable !== 'mahasiswa')

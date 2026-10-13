@@ -319,15 +319,14 @@ class KelasJadwal extends Model
         $searchLower = '%'.strtolower($search).'%';
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($search, $searchClean) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchClean) {
             $q->where(function ($jq) use ($searchClean) {
 
                 preg_match(
-                    '/^([A-Za-z]+\-?\d+)?(?:\-?([A-Za-z]))?(?:\-?([A-Za-z]{0,10}))?(?:\-?(\d{0,4}))?$/i',
+                    '/^([A-Za-z]+\-?\d*)?(?:\-?([A-Za-z]))?(?:\-?([A-Za-z]{0,10}))?(?:\-?(\d{0,4}))?$/i',
                     $searchClean,
                     $matches
                 );
-
                 $kodeKelas = $matches[1] ?? null;
                 $label = strtoupper($matches[2] ?? '');
                 $wilayah = strtoupper($matches[3] ?? '');
@@ -392,8 +391,8 @@ class KelasJadwal extends Model
                     ) LIKE ?
                 ", ['%'.$searchClean.'%']);
 
-                            // Tetap dukung APLG / AIDL
-                            $jq->orWhereRaw("
+                // Tetap dukung APLG / AIDL
+                $jq->orWhereRaw("
                     REPLACE(
                         CONCAT(label_kelas,kode_wilayah,RIGHT(YEAR(tanggal_mulai),2)),
                         '-',
@@ -408,6 +407,9 @@ class KelasJadwal extends Model
             if (is_numeric($search)) {
                 $q->orWhere('kelas_jadwals.id', $search);
             }
+            $q->orWhereHas('kelas_rel.rps_rel.mk_rel', function ($query) use ($searchTerm) {
+                $query->where('nama_mk', 'LIKE', "%{$searchTerm}%");
+            });
         });
     }
 

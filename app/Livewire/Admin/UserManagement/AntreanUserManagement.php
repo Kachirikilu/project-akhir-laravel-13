@@ -19,6 +19,8 @@ class AntreanUserManagement extends Component
     use WithUserExcel;
     use WithUserModal;
 
+    public $showUserAntreanModal;
+
     public $isReady;
 
     public $parent;
