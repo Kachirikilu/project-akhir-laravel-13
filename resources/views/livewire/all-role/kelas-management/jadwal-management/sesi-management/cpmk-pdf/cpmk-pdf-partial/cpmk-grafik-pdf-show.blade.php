@@ -374,8 +374,9 @@
             'data' => [],
         ];
     }
-    $daftarNim = [];
 
+    $daftarNim = [];
+    // $index = 0;
     foreach ($users as $user) {
         $daftarNim[] = $user->identity1;
 
@@ -399,16 +400,31 @@
                 );
 
                 $nilaiPertemuan = $arrayNilai[$originalIndex] ?? 0;
-                $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
-                $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+                // $rasioBobotDiCpmk = $bobotCpmkArray[$originalIndex] ?? 0;
+                // $skorMurniCpmk += $nilaiPertemuan * $rasioBobotDiCpmk;
+                $rasioBobot = $pertemuan['bobot'] / 100;
+                $skorMurniCpmk += $nilaiPertemuan * $rasioBobot;
             }
             $totalNilaiKontribusiCpmk = ($skorMurniCpmk / $bobotNormalisasiGlobalCpmk) * 100;
             $seriesData[$kodeCpmk]['data'][] = round($totalNilaiKontribusiCpmk, 1);
         }
+
+        // if ($index === 0) {
+        //     dump('Mapping:', $allMapping->toArray());
+        //     dump('Nilai User:', $arrayNilai);
+        //     dump('Bobot User:', $bobotCpmkArray);
+        // }
+        // $index++;
+        // if ($nilaiPertemuan * $rasioBobotDiCpmk > 100) {
+        //     dump('Anomali pada User: ' . $user->id);
+        //     dump('Nilai: ' . $nilaiPertemuan);
+        //     dump('Rasio Bobot: ' . $rasioBobotDiCpmk);
+        // }
     }
 
     $bobotCpmkLegend = [];
     $rataKeberhasilanCpmk = [];
+
     foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
         $bobotMentah = collect($pertemuans)->sum('bobot');
         $bobotNormalisasi = ($bobotMentah / $globalTotalBobotMentah) * 100;
@@ -420,7 +436,31 @@
             $totalMahasiswa > 0 ? round(array_sum($semuaNilaiCpmk) / $totalMahasiswa, 1) : 0;
     }
 
+    // foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
+    //     $bobotMentah = collect($pertemuans)->sum('bobot');
+    //     $bobotNormalisasi = ($bobotMentah / $globalTotalBobotMentah) * 100;
+
+    //     $bobotCpmkLegend[$kodeCpmk] = number_format($bobotNormalisasi, 2, '.', '');
+
+    //     $semuaNilaiCpmk = $seriesData[$kodeCpmk]['data'];
+    //     $totalMahasiswa = count($semuaNilaiCpmk);
+    //     $totalSkorMahasiswa = array_sum($semuaNilaiCpmk);
+
+    //     $rataKeberhasilanCpmk[$kodeCpmk] = $totalMahasiswa > 0 ? round($totalSkorMahasiswa / $totalMahasiswa, 1) : 0;
+
+    //     // --- DUMP DIAGNOSTIK ---
+    //     dump('Diagnostik untuk CPMK: ' . $kodeCpmk);
+    //     dump([
+    //         'Bobot Mentah CPMK' => $bobotMentah,
+    //         'Global Total Bobot Mentah' => $globalTotalBobotMentah,
+    //         'Bobot Normalisasi (Pembagi)' => $bobotNormalisasi,
+    //         'Total Mahasiswa' => $totalMahasiswa,
+    //         'Total Skor dari Semua Mahasiswa' => $totalSkorMahasiswa,
+    //         'Rata-rata Keberhasilan (Hasil)' => $rataKeberhasilanCpmk[$kodeCpmk],
+    //     ]);
+    // }
     $finalSeries = array_values($seriesData);
+
     $colorPalette = [
         '#3b82f6', // Blue-500
         '#8b5cf6', // Violet-500
