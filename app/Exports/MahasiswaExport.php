@@ -166,7 +166,7 @@ class MahasiswaExport extends DefaultValueBinder implements FromCollection, Shou
         $sheet->mergeCells('L4:N4'); // Rencana Pembelajaran Semester
 
         // Alignment untuk seluruh kolom ID, Role, Status, Prodi (Center)
-        $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'M', 'N'];
+        $alignmentMerges = ['A', 'B', 'G', 'H', 'I', 'J', 'M', 'N'];
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

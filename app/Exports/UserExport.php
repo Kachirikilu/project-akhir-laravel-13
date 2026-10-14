@@ -499,19 +499,19 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         if ($this->switchTable == 'admin') {
             $verticalMerges = ['A', 'B', 'E', 'F', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
             $horizontalMerges = ['C4:D4' ,'G4:I4', 'K4:L4', 'S4:W4', 'X4:Y4', 'Z4:AC4', 'AD4:AG4', 'AH4:AK4'];
-            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'AB', 'AC', 'AF', 'AG', 'AJ', 'AK'];
+            $alignmentMerges = ['A', 'B', 'J', 'K', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'AB', 'AC', 'AF', 'AG', 'AJ', 'AK'];
         } elseif ($this->switchTable == 'dosen') {
             $verticalMerges = ['A', 'B', 'E', 'F', 'K', 'N', 'O', 'P', 'Q', 'R', 'S'];
             $horizontalMerges = ['C4:D4' ,'G4:J4', 'L4:M4', 'T4:X4', 'Y4:Z4', 'AA4:AD4', 'AE4:AH4', 'AI4:AL4'];
-            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'L', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Z', 'AC', 'AD', 'AG', 'AH', 'AK', 'AL'];
+            $alignmentMerges = ['A', 'B', 'K', 'L', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Z', 'AC', 'AD', 'AG', 'AH', 'AK', 'AL'];
         } elseif ($this->switchTable == 'mahasiswa') {
             $verticalMerges = ['A', 'B', 'E', 'F', 'I', 'J', 'M', 'N', 'O', 'P', 'Q', 'R'];
             $horizontalMerges = ['C4:D4', 'G4:H4', 'K4:L4', 'S4:T4', 'U4:X4', 'Y4:AB4', 'AC4:AF4'];
-            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'M', 'O', 'P', 'R', 'T', 'W', 'X', 'AA', 'AB', 'AE', 'AF'];
+            $alignmentMerges = ['A', 'B', 'I', 'J', 'K', 'M', 'O', 'P', 'R', 'T', 'W', 'X', 'AA', 'AB', 'AE', 'AF'];
         } else {
             $verticalMerges = ['A', 'B', 'E', 'F', 'M', 'N', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'];
             $horizontalMerges = ['C4:D4' ,'G4:L4', 'O4:P4', 'X4:AB4', 'AC4:AG4', 'AH4:AI4', 'AJ4:AM4', 'AN4:AQ4', 'AR4:AU4'];
-            $alignmentMerges = ['A', 'B', 'C', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AP', 'AQ', 'AT', 'AU'];
+            $alignmentMerges = ['A', 'B', 'M', 'N', 'O', 'Q', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AP', 'AQ', 'AT', 'AU'];
         }
         $headerRange = "A4:{$highestColumn}5";
 

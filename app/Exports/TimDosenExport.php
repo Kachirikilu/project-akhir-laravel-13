@@ -172,7 +172,7 @@ public function map($tim): array
         $sheet->mergeCells('Q4:R4'); // Kelas
 
         // Alignment untuk seluruh kolom ID, Role, Status, Prodi (Center)
-        $alignmentMerges = ['A', 'B', 'E', 'I', 'J', 'L', 'M', 'O', 'P', 'R'];
+        $alignmentMerges = ['A', 'B', 'I', 'J', 'L', 'M', 'O', 'P', 'R'];
         foreach ($alignmentMerges as $c) {
             $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
