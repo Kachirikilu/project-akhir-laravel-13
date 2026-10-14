@@ -136,7 +136,7 @@ class UserExport extends DefaultValueBinder implements FromCollection, ShouldAut
         } else {
             return [
                 [
-                    'ID', 'RL ID', 'Role', 'Nama', 'Email',
+                    'ID', 'Role ID', 'Role', 'Nama', 'Email',
                     'Identitas (ID)', '', '', '', '', '',
                     'Angkatan', 'Status', 'Program Studi', '', 'Kode Kampus',
                     'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'No. HP', 'No. Karpeg',
