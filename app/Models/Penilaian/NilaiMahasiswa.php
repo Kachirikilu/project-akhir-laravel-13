@@ -72,6 +72,30 @@ class NilaiMahasiswa extends Model
     |--------------------------------------------------------------------------
     */
 
+    public function getSemesterAttribute(): int
+    {
+        $angkatan = $this->mahasiswa_rel->angkatan
+            ?? (int) substr($this->mahasiswa_rel->nim ?? '', 4, 2)
+            ?? null;
+
+        if (! $angkatan) {
+            return 0;
+        }
+
+        if ($angkatan < 100) {
+            $angkatan += 2000;
+        }
+
+        $tahunAkademikAwal = (int) explode('/', $this->akademik)[0];
+
+        $selisihTahun = $tahunAkademikAwal - $angkatan;
+
+        $isGanjil = strcasecmp($this->ganjil_genap, 'Ganjil') === 0;
+        $semester = ($selisihTahun * 2) + ($isGanjil ? 1 : 2);
+
+        return max(1, $semester);
+    }
+
     public function hitungNilaiAkhir(): float
     {
         $nilai = $this->nilai_array ?? [];

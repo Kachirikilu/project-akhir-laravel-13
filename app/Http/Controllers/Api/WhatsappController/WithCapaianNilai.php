@@ -53,7 +53,7 @@ trait WithCapaianNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Akses Gagal!*',
-                'message' => 'Mahasiswa tidak memiliki akses untuk menginput File Excel!',
+                'message' => 'Mahasiswa tidak memiliki akses untuk input File Excel!',
             ], 403);
         }
 
@@ -95,7 +95,7 @@ trait WithCapaianNilai
             return response()->json([
                 'status' => false,
                 'head' => '*❌ Akses Gagal!*',
-                'message' => 'Mahasiswa tidak memiliki akses untuk menginput File Excel!',
+                'message' => 'Mahasiswa tidak memiliki akses untuk input File Excel!',
             ], 403);
         }
 

@@ -21,6 +21,7 @@ trait WithDataDiri
                 'head' => '*👤 Informasi Data Diri*',
                 'message' => "- Nama: {$user->name}".
                             "\n- Role: {$user->role}".
+                            ($user->mahasiswa ? "\n- Token: {$user->mahasiswa->angkatan}" : ''),
                             "\n- {$user->label_id1}: {$user->identity1}".
                             "\n- WA: {$user->no_wa_full}".
                             ($user->mahasiswa ? "\n- Token: {$user->mahasiswa->wa_limit}" : ''),

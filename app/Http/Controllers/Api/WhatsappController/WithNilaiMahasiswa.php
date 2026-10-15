@@ -193,12 +193,17 @@ trait WithNilaiMahasiswa
             return $item->akademik.' -  '.$item->ganjil_genap;
         });
 
-        foreach ($groupedNilai as $periode => $listNilai) {
-            $teksNilai .= "🔹 *Periode {$periode}*\n";
-            $nomor = 1;
+foreach ($groupedNilai as $periode => $listNilai) {
+    $sampleItem = $listNilai->first();
+    
+    $semester = $sampleItem->semester ?? '-';
 
-            $totalSksIps = 0;
-            $totalBobotIps = 0;
+    $teksNilai .= "🔹 *Periode {$periode}*\n";
+    $teksNilai .= "🔹 *Semester {$semester}*\n";
+
+    $nomor = 1;
+    $totalSksIps = 0;
+    $totalBobotIps = 0;
 
             foreach ($listNilai as $nilaiMhs) {
                 $mkNama = $nilaiMhs->rps_rel->mk_rel->nama_mk ?? $nilaiMhs->rps_rel->nama_skm ?? 'Mata Kuliah';

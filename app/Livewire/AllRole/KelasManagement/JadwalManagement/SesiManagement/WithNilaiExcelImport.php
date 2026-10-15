@@ -153,7 +153,7 @@ trait WithNilaiExcelImport
             return [
                 'status' => true,
                 'head' => '*❌ Akses Gagal!*',
-                'message' => 'Mahasiswa tidak memiliki akses untuk menginput File Excel!',
+                'message' => 'Mahasiswa tidak memiliki akses untuk input File Excel!',
             ];
         }
         // Auth::login($user);
