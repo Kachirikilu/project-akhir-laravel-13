@@ -84,6 +84,11 @@
         {{ $s->hari ?? '-' }}, {{ $s->jam_pelaksanaan ?? '-' }}
         </span>
 
+        <span class="{{ $dateText }} flex items-center gap-1">
+            <flux:icon :name="$s->reminder_sent ? 'chat-bubble-left-right' : 'clock'"
+                class="w-3 h-3 {{ $dateText }}" />
+        </span>
+
     </div>
 
 </div>

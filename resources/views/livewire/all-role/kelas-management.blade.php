@@ -21,7 +21,7 @@
         @if ($switchTable2 == 'card')
             @include('livewire.all-role.kelas-management.kelas-view.kelas-card')
         @elseif ($switchTable2 == 'table')
-            @include('livewire.all-role.class-management.kelas-view.kelas-table')
+            @include('livewire.all-role.kelas-management.kelas-view.kelas-table')
         @endif
 
     </div>
