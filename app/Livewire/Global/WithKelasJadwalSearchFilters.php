@@ -607,7 +607,7 @@ trait WithKelasJadwalSearchFilters
                 'kode' => fn ($j) => $j->kode,
                 'kode_rps' => fn ($j) => $j->kode_rps,
                 'kode_mk' => fn ($j) => $j->kode_mk,
-                'kode_wilayah' => fn ($j) => $j->kode_wilayah,
+                'kode_wilayah' => fn ($j) => $j->kode_wilayah . $j->label_kelas,
 
                 'label_kelas' => fn ($j) => $j->label_full,
                 'password' => fn ($j) => $j->password,

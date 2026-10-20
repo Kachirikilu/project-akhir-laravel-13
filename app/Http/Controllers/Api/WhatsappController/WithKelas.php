@@ -184,6 +184,7 @@ trait WithKelas
                 if ($roleClean === 'admin' || $isDaftarKelasMurni) {
                     $mk = $item->rps_rel->mk ?? 'Mata Kuliah';
                     $sks = $item->rps_rel->mk->sks ?? 2;
+                    $sksText = $item->rps_rel->mk->sks_text ?? 'Tatap Muka';
                     $kode = $item->kode ?? 'MBG-121104';
                     $kodeRPS = $item->kode_rps;
 
@@ -197,9 +198,10 @@ trait WithKelas
                     }
 
                     if ($sesis->isEmpty()) {
-                        $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
-                        $teksKelas .= "- Kode: {$kode}\n";
-                        $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
+                        $teksKelas .= "{$nomor}. *{$mk}*\n";
+                        $teksKelas .= "        » `{$sks} SKS` - {$sksText}\n";
+                        $teksKelas .= "        » Kode: {$kode}\n";
+                        $teksKelas .= "        » RPS: ```{$kodeRPS}```\n";
 
                         $jadwals = $item->jadwals;
 
@@ -226,10 +228,11 @@ trait WithKelas
                             $kodeJadwal = $sesi->jadwal_rel->kode;
                             $label = $sesi->jadwal_rel->label_extra;
 
-                            $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
-                            $teksKelas .= "- Kelas {$label}\n";
-                            $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
-                            $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
+                            $teksKelas .= "{$nomor}. *{$mk}\n";
+                            $teksKelas .= "        » `{$sks} SKS` - {$sksText}\n";
+                            $teksKelas .= "        » Kelas {$label}\n";
+                            $teksKelas .= "        » Kode: *{$kodeJadwal}*\n";
+                            $teksKelas .= "        » RPS: ```{$kodeRPS}```\n";
                             $teksKelas .= $this->formatSesiTeks($sesi);
                             $nomor++;
                         }
@@ -238,6 +241,7 @@ trait WithKelas
                 } else {
                     $mk = $item->kelas_rel->rps_rel->mk ?? 'Mata Kuliah';
                     $sks = $item->kelas_rel->rps_rel->mk->sks ?? 2;
+                    $sksText = $item->kelas_rel->rps_rel->mk->sks_text ?? 'Tatap Muka';
                     $kodeJadwal = $item->kode ?? 'MBG-121104-X-IDL';
                     $kodeRPS = $item->kode_rps;
                     $label = $item->label_extra;
@@ -245,10 +249,11 @@ trait WithKelas
                     $sesis = $item->sesis ?? collect();
 
                     foreach ($sesis as $sesi) {
-                        $teksKelas .= "{$nomor}. *{$mk}* - `{$sks} SKS`\n";
-                        $teksKelas .= "- Kelas {$label}\n";
-                        $teksKelas .= "- Kode: *{$kodeJadwal}*\n";
-                        $teksKelas .= "- RPS: ```{$kodeRPS}```\n";
+                        $teksKelas .= "{$nomor}. *{$mk}*\n";
+                        $teksKelas .= "        » `{$sks} SKS` - {$sksText}\n";
+                        $teksKelas .= "        » Kelas {$label}\n";
+                        $teksKelas .= "        » Kode: *{$kodeJadwal}*\n";
+                        $teksKelas .= "        » RPS: ```{$kodeRPS}```\n";
                         $teksKelas .= $this->formatSesiTeks($sesi);
                         $nomor++;
                     }
@@ -282,8 +287,8 @@ trait WithKelas
             $hariSesi = '-';
             $tanggalSesi = 'Waktu tidak diatur';
         }
-        $teksKelas = "- Sesi ke-{$pertemuan}: _{$hariSesi}, {$tanggalSesi}_\n";
-        $teksKelas .= "- ⏱️ {$sesi->jam_pelaksanaan}\n\n";
+        $teksKelas = "        » Sesi ke-{$pertemuan}: _{$hariSesi}, {$tanggalSesi}_\n";
+        $teksKelas .= "        » ⏱️ {$sesi->jam_pelaksanaan}\n\n";
 
         return $teksKelas;
     }

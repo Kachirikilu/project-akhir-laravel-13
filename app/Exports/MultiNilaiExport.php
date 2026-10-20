@@ -13,7 +13,10 @@ class MultiNilaiExport implements WithMultipleSheets
 
     public function __construct($jadwals)
     {
-        $this->jadwals = $jadwals;
+        // 🌟 Urutkan berdasarkan gabungan kode_wilayah dan label
+        $this->jadwals = collect($jadwals)->sortBy(function ($jadwal) {
+            return ($jadwal->kode_wilayah ?? '') . ($jadwal->label ?? '');
+        });
     }
 
     public function sheets(): array

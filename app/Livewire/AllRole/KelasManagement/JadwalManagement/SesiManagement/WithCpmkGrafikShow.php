@@ -66,7 +66,10 @@ trait WithCpmkGrafikShow
     {
         $kelas = Kelas::where('id', $kelasId)->firstOrFail();
 
-        $jadwals = $kelas->jadwals;
+        $jadwals = $kelas->jadwals->sortBy(function ($jadwal) {
+            return $jadwal->kode_wilayah.$jadwal->label;
+        });
+
         $jumlahJadwal = $jadwals->count();
 
         $fileResults = [];
@@ -365,4 +368,3 @@ trait WithCpmkGrafikShow
         return $pdf->output();
     }
 }
-   

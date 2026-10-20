@@ -135,12 +135,12 @@ trait WithRPS
                 $sksText = $rps->mk_rel->sks_text ?? 'Tatap Muka';
                 $kodeRps = $rps->kode ?? 'RPS-Code';
 
-                $teksRPS .= "  {$nomorGlobal}. *{$namaMK}*\n";
-                $teksRPS .= "     - `{$sks} SKS` - {$sksText}\n";
-                $teksRPS .= "     - Kode MK: ```{$kodeMK}```\n";
-                $teksRPS .= "     - Kode RPS: *{$kodeRps}*\n";
+                $teksRPS .= "{$nomorGlobal}. *{$namaMK}*\n";
+                $teksRPS .= "        » `{$sks} SKS` - {$sksText}\n";
+                $teksRPS .= "        » Kode MK: ```{$kodeMK}```\n";
+                $teksRPS .= "        » Kode RPS: *{$kodeRps}*\n";
                 if ($rps->is_draf == 1) {
-                    $teksRPS .= "     - Draf:   ```Belum Aktif```\n";
+                    $teksRPS .= "        » Draf:   ```Belum Aktif```\n";
                 }
                 $teksRPS .= "--------------------------------------------\n";
                 $nomorGlobal++;

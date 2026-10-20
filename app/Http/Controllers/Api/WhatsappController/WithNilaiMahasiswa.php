@@ -248,8 +248,8 @@ foreach ($groupedNilai as $periode => $listNilai) {
 
             // Tampilkan totalan IPS di bawah tiap akhir semester
             $teksNilai .= "🔸 *TOTAL SEMESTER INI:*\n";
-            $teksNilai .= "     » SKS Diambil: *{$totalSksIps} SKS*\n";
-            $teksNilai .= "     » *IPS: {$ipsFormat}* (Mutu: *{$ipsMutu}*)\n";
+            $teksNilai .= "        » SKS Diambil: *{$totalSksIps} SKS*\n";
+            $teksNilai .= "        » *IPS: {$ipsFormat}* (Mutu: *{$ipsMutu}*)\n";
             $teksNilai .= "--------------------------------------------\n\n";
         }
 
