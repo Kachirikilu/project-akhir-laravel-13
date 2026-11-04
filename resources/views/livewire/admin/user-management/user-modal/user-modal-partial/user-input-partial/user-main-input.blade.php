@@ -109,7 +109,7 @@
             ],
             'xValues' => [4, 3, 2, 1],
             'iconString' => 'shield-check',
-            'placeholder' => 'Defau: Admin Program Studi',
+            'placeholder' => 'Default: Admin Program Studi',
             'message' => $errors->first('tingkat'),
             'isReadonly' => $canAccess ? 0 : 1,
             'isRequired' => 0,
@@ -130,7 +130,7 @@
             ],
             'xValues' => [5, 4, 3, 2, 1],
             'iconString' => 'shield-check',
-            'placeholder' => 'Defau: Dosen Umum',
+            'placeholder' => 'Default: Dosen Umum',
             'message' => $errors->first('tingkat'),
             'isRequired' => 0,
         ])
