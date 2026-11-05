@@ -159,7 +159,7 @@ trait WithTimDosenSearchFilters
 
         $query = $this->timDosenQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchTimDosen($value)->limit(12)->get();
             // $results = $this->searchOutputTimDosen($query, $value, null, 12);
             $this->timDosenResults = $this->mapTimDosen($results);

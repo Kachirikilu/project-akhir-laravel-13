@@ -1,5 +1,5 @@
 <div>
-    <flux:modal name="prodi-modal" wire:model.live="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
+    <flux:modal name="prodi-modal" wire:model.live="showPrModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
         class="modal-flux md:w-3xl max-w-4xl !p-0 !bg-[var(--second-pop-up-color)] no-scrollbar">
 
         @include('livewire.global.modal-form.loading-animation', [

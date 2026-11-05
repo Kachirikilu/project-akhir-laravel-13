@@ -32,18 +32,21 @@
             if (typeof $store.cpmk !== 'undefined') {
                 $store.cpmk.update(this.subItems);
     
-                $store.cpmk.setCountSCPMK(this.totalSubCPMK);
+                {{-- $store.cpmk.setCountSCPMK(this.totalSubCPMK); --}}
                 $store.cpmk.total_bobot = this.grandTotalBobot;
             }
         },
-    
+
         get grandTotalBobot() {
-            return (this.subItems || []).reduce((total, item) => {
-                // Karena subItems[index] berisi { ref: [...], scpmk: [...] }
-                const subArray = item?.scpmk || [];
-                return total + subArray.reduce((subTotal, sub) => {
-                    return subTotal + (parseFloat(sub?.bobot) || 0);
-                }, 0);
+            if (!this.subItems || this.subItems.length === 0) return 0;
+
+            const allSubs = (this.subItems || []).flatMap(item => item?.scpmk || []);
+            const uniqueSubs = Array.from(
+                new Map(allSubs.map(sub => [sub.id || JSON.stringify(sub), sub])).values()
+            );
+
+            return uniqueSubs.reduce((total, sub) => {
+                return total + (parseFloat(sub?.bobot) || 0);
             }, 0);
         },
     
@@ -95,11 +98,11 @@
         },
     
     
-        get totalSubCPMK() {
+        {{-- get totalSubCPMK() {
             return (this.subItems || []).reduce((total, item) => {
                 return total + (item?.scpmk?.length || 0);
             }, 0);
-        },
+        }, --}}
     
         resetItems() {
             Flux.modal('reset-confirm-modal-{{ $idString }}').show();
@@ -173,7 +176,7 @@
             'pNilai1' => 'Bobot Kecil:',
             'pNilai2' => 'Bobot Sedang:',
             'pNilai3' => 'Bobot Besar:',
-            'pNilai4' => 'Bobot Sangat:',
+            'pNilai4' => 'Bobot Sangat Besar:',
         ])
 
     </div>

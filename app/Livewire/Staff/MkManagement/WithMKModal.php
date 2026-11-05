@@ -36,6 +36,16 @@ trait WithMKModal
         'bahan_kajian' => '',
     ];
 
+    public function updatedShowMKModal($value)
+    {
+        if (! $value) {
+            $this->isEditingMK = false;
+        }
+        if ($this->showEditMK) {
+            $this->resetInputMK();
+        }
+    }
+
     public function addMK($level)
     {
         if (! $this->AuthCheck('staff')) {
@@ -129,7 +139,8 @@ trait WithMKModal
 
             $this->mk_input = array_merge($this->mk_input, [
                 'is_wajib' => $mk->is_wajib,
-                'tipe_sks' => $mk->tipe_sks,
+                // 'tipe_sks' => $mk->tipe_sks,
+                'tipe_sks' => (int) $mk->tipe_sks ?? 1,
                 'sks_kuliah' => $mk->sks_kuliah,
                 'deskripsi' => $mk->deskripsi,
                 'bahan_kajian' => $mk->bahan_kajian,

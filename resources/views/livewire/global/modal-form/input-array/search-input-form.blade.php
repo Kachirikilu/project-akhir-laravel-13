@@ -11,12 +11,16 @@
             ? str_replace(['[', ']'], ['.', ''], $nameSearchString)
             : null;
 
-        // Menghasilkan key unik yang aman untuk DOM Livewire
-        // Sertakan selectIndex (jika ada) agar multiple inputs using same selectX tetap unik per-slot
         $uniqueKey = str_replace(
             ['[', ']', '.'],
             '-',
-            ($nameSearchEntangle ?? 'search-input') . '-' . ($typeXString ?? 'type') . '-' . ($selectX ?? '0') . '-' . ($selectIndex ?? ''),
+            ($nameSearchEntangle ?? 'search-input') .
+                '-' .
+                ($typeXString ?? 'type') .
+                '-' .
+                ($selectX ?? '0') .
+                '-' .
+                ($selectIndex ?? ''),
         );
     @endphp
 
@@ -24,10 +28,10 @@
         open: false,
     
         search: @if (!$isArrayInput && !empty($nameSearchString)) @entangle($nameSearchString).live 
-                @elseif($nameSearchEntangle) 
-                    @entangle($nameSearchEntangle).live 
-                @else 
-                    '' @endif,
+            @elseif($nameSearchEntangle) 
+                @entangle($nameSearchEntangle).live 
+            @else 
+                '' @endif,
     
         items: @if ($idEntangle) @entangle($idEntangle).live @else null @endif,
         itemsAll: @if ($itemAllEntangle) @entangle($itemAllEntangle).live @else null @endif,
@@ -45,27 +49,44 @@
             } else {
                 this.isParentReady = this.parentSelectedId != null && this.parentSelectedId !== '';
             }
+        },
+    
+        // Method untuk sinkronisasi nilai dari $store ke komponen lokal
+        loadFromStore() {
+            const storeData = $store.{{ $alpine ?? 'rps' }};
+            if (!storeData) return;
+    
+            // Ambil nilai awal dari store jika ada
+            const idVal = storeData['{{ $idString }}'];
+            const itemsAllVal = storeData['{{ $itemsAllString }}'];
+            const searchVal = storeData['{{ $modelString }}'] || storeData['{{ $nameSearchString }}'];
+    
+            if (idVal) {
+                this.items = idVal;
+            }
+            if (itemsAllVal) {
+                this.itemsAll = itemsAllVal;
+            }
+            if (searchVal) {
+                this.search = searchVal;
+            }
         }
-    }"
+    }" x-init="checkReady();
+    $watch('parentSelectedId', () => checkReady());
+    // Populasikan nilai awal dari $store saat pertama kali dimuat
+    loadFromStore();"
         x-effect="
-            const config = $store.{{ $alpine ?? 'config' }};
-            
-            if (config?.isEdit === 0) {
-                search = '';
-                items = null;
-                itemsAll = null;
-            } else {
-                let currentId = config?.['{{ $idString }}'];
-                if (currentId) {
-                    // Prefer per-index nameSearchString in the store when available
-                    search = config?.['{{ $nameSearchString ?? $modelString }}'];
-                    items = config?.['{{ $idString }}'];
-                    itemsAll = config?.['{{ $itemsAllString }}'];
-                }
-            };
-        "
-        x-init="checkReady();
-        $watch('parentSelectedId', () => checkReady());">
+        const config = $store.{{ $alpine ?? 'rps' }};
+        
+        // Hanya kosongkan jika isEdit benar-benar bernilai 0 eksplisit (bukan undefined/null saat initial render)
+        if (config && config.isEdit === 0) {
+            search = '';
+            items = null;
+            itemsAll = null;
+        } else if (config && config.isEdit === 1) {
+            loadFromStore();
+        }
+    ">
 
         @include('livewire.global.modal-form.partial.label')
         @include('livewire.global.modal-form.input-array.partial.input-search', [

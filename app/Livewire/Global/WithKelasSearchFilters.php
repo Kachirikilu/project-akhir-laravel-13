@@ -132,7 +132,7 @@ trait WithKelasSearchFilters
 
         $query = $this->kelasQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchKelas($value)->limit(12)->get();
             // $results = $this->searchOutputKelas($query, $value, null, 12);
             $this->kelasResults = $this->mapKelas($results);

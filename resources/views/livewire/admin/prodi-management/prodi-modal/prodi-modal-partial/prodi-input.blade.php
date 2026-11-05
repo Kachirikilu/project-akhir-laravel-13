@@ -1,9 +1,9 @@
 <div x-data="{ step: 1, isOpen: false }"
     x-effect="
-        if ($wire.showProdiModal && !isOpen) {
+        if ($wire.showPrModal && !isOpen) {
             step = 1
         }
-        isOpen = $wire.showProdiModal
+        isOpen = $wire.showPrModal
     ">
 
     {{-- 🔹 HEADER TAB CONTAINER --}}

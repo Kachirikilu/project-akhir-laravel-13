@@ -1,5 +1,4 @@
-<div
-    class="form-container">
+<div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
         Input Rencana Pembelajaran Semester</h4>
@@ -34,7 +33,13 @@
         'wireLoading' => 'fetchMK',
     ])
 
-<div class="relative">
+    {{-- <p x-text="$store.rps.mk_id"></p>
+    <p x-text="$store.rps.nama_mk_search"></p>
+    <p x-text="$store.rps.mk_items.kode"></p>
+    <p x-text="$store.rps.mk_items.slot1"></p>
+    <p x-text="$store.rps.mk_items.slot2"></p> --}}
+
+    <div class="relative">
         <div class="space-y-4">
 
 

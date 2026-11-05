@@ -12,6 +12,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         isEdit: 0,
+        // isEdit2: 0,
         showEdit: 0,
         isForceDelete: 0,
         colorIcon: "text-[var(--contrast-second-text)]",
@@ -22,6 +23,7 @@ document.addEventListener("alpine:init", () => {
 
         setEdit(val) {
             this.isEdit = val;
+            // this.isEdit2 = val;
             if (val == 1) {
                 this.showEdit = 1;
             }

@@ -23,7 +23,9 @@ trait WithProdiModal
 
     public $selected_id_dosen = [];
 
-    public $showProdiModal = false;
+    public $showPrModal = false;
+
+    public $showEditPr = false;
 
     public $isEditingPr = false;
 
@@ -41,17 +43,32 @@ trait WithProdiModal
     //     'nama_fk' => 'required|string|max:255|unique:fakultas,nama_fk',
     // ];
 
+    public function updatedShowPrModal($value)
+    {
+        if (! $value) {
+            $this->isEditingPr = false;
+        }
+        if ($this->showEditPr) {
+            $this->resetInputPr();
+        }
+    }
+
     public function addProdi($type)
     {
         if (! $this->AuthCheck()) {
             return;
         }
 
+        if ($this->showEditPr == true) {
+            $this->resetInputPr();
+        }
+        $this->showEditPr = false;
+        $this->isEditingPr = false;
+
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditingPr = false;
         $this->prodiType = $type;
-        $this->showProdiModal = true;
+        $this->showPrModal = true;
         if ($type === 'prodi') {
             if (Auth::user()->tingkat < 3) {
                 if (Auth::user()->tingkat == 2) {
@@ -81,6 +98,7 @@ trait WithProdiModal
         $this->selected_id_pr = $id;
         $this->prodiType = $type;
         $this->isEditingPr = true;
+        $this->showEditPr = true;
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -140,7 +158,7 @@ trait WithProdiModal
                 $this->fetchDosenArray($idx);
             }
 
-            $this->showProdiModal = true;
+            $this->showPrModal = true;
 
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
@@ -408,11 +426,11 @@ trait WithProdiModal
             });
 
             $this->toast(message: $message);
-            $this->resetInputProdi();
+            $this->resetInputPr();
 
             $this->dispatch('refresh-data-pr');
             $this->dispatch('refresh-stats-pr');
-            $this->showProdiModal = false;
+            $this->showPrModal = false;
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -420,7 +438,7 @@ trait WithProdiModal
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data-pr');
-            $this->showProdiModal = false;
+            $this->showPrModal = false;
         }
     }
 
@@ -490,10 +508,10 @@ trait WithProdiModal
             });
 
             $this->toast(message: $message, type: 'update');
-            $this->resetInputProdi();
+            $this->resetInputPr();
 
             $this->dispatch('refresh-data-pr');
-            $this->showProdiModal = false;
+            $this->showPrModal = false;
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -589,7 +607,7 @@ trait WithProdiModal
         ];
     }
 
-    private function resetInputProdi()
+    private function resetInputPr()
     {
         $fields = [
             'selected_id_pr',

@@ -201,7 +201,7 @@ trait WithSubCPMKSearchFilters
 
         $query = $this->scpmkQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchSCPMK($value)->limit(12)->get();
             // $results = $this->searchOutputSCPMK($query, $value, null, 12);
             $this->scpmkResults = $this->mapSCPMK($results);

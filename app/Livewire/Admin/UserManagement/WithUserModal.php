@@ -33,6 +33,8 @@ trait WithUserModal
 
     public $isEditingUser = false;
 
+    public $showEditUser = false;
+
     public $roleType;
 
     public $tingkatType;
@@ -99,14 +101,30 @@ trait WithUserModal
     //     $this->syncFlyoutPreStates();
     // }
 
+    public function updatedShowUserModal($value)
+    {
+        if (! $value) {
+            $this->isEditingUser = false;
+        }
+        if ($this->showEditUser) {
+            $this->resetInputUser();
+        }
+    }
+
     public function addUser($role)
     {
         if (! $this->AuthCheck()) {
             return;
         }
+
+        if ($this->showEditUser == true) {
+            $this->resetInputUser();
+        }
+        $this->showEditUser = false;
+        $this->isEditingUser = false;
+
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditingUser = false;
         $this->roleType = $role;
 
         if (Auth::user()->tingkat == 2) {
@@ -162,6 +180,7 @@ trait WithUserModal
         }
         $this->showUserExcelModal = false;
         $this->isEditingUser = true;
+        $this->showEditUser = true;
 
         try {
             $user = User::with(['admin', 'dosen', 'mahasiswa', 'admin.pr_rel', 'dosen.pr_rel', 'mahasiswa.pr_rel'])->findOrFail($id);

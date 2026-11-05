@@ -18,52 +18,97 @@
                 if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
                 if (!Array.isArray(this.subItems)) this.subItems = [];
         
-                this.$nextTick(() => {
-                    this.syncToRpsStore();
+                // 1. Amati transisi isEdit dengan membaca (newVal, oldVal)
+                this.$watch('$store.{{ $alpine ?? 'rps' }}.isEdit', (newVal, oldVal) => {
+                    console.log(`Transisi isEdit: ${oldVal} -> ${newVal}`);
+        
+                    // Kasus Khusus: Transisi dari Edit (1) ke Create (0)
+                    if (oldVal === 1 && newVal === 0) {
+                        // Kosongkan array lokal
+                        this.items = [];
+                        this.itemsAll = [];
+                        this.subItems = [];
+        
+                        // Bypass sync berat: Langsung set store ke 0 secara instan
+                        if (typeof $store.rps !== 'undefined') {
+                            $store.rps.update([]);
+                            $store.rps.setCountSCPMK(0);
+                            $store.rps.total_bobot = 0;
+                        }
+                        return; // Hentikan eksekusi, jangan panggil syncToRpsStore()
+                    }
+        
+                    // Transisi normal lainnya (misal: 0 ke 0 atau awal load)
+                    if (newVal === 0) {
+                        this.$nextTick(() => this.syncToRpsStore());
+                    }
                 });
         
-                this.$watch('subItems', (value) => {
-                    this.syncToRpsStore();
+                // 2. Watcher rutin (hanya jalan jika posisi stabil di isEdit === 0)
+                this.$watch('subItems', () => {
+                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
+                        this.syncToRpsStore();
+                    }
                 });
         
-                this.$watch('$store.rps.bobot_uts', () => this.syncToRpsStore());
-                this.$watch('$store.rps.bobot_uas', () => this.syncToRpsStore());
+                this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uts', () => {
+                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
+                        this.syncToRpsStore();
+                    }
+                });
+        
+                this.$watch('$store.{{ $alpine ?? 'rps' }}.bobot_uas', () => {
+                    if ($store.{{ $alpine ?? 'rps' }}.isEdit === 0) {
+                        this.syncToRpsStore();
+                    }
+                });
             },
         
             syncToRpsStore() {
-                if (typeof $store.rps !== 'undefined') {
-                    $store.rps.update(this.subItems || []);
-                    $store.rps.setCountSCPMK(this.totalSubCPMK);
-                    $store.rps.total_bobot = this.grandTotalBobot;
+                if (typeof $store.{{ $alpine ?? 'rps' }} !== 'undefined') {
+                    $store.{{ $alpine ?? 'rps' }}.update(this.subItems || []);
+                    $store.{{ $alpine ?? 'rps' }}.setCountSCPMK(this.totalSubCPMK);
+                    $store.{{ $alpine ?? 'rps' }}.total_bobot = this.grandTotalBobot;
                 }
             },
         
             get grandTotalBobot() {
-                let totalSubCPMK = (this.subItems || []).reduce((total, item) => {
-                    const subArray = item?.scpmk || [];
-                    return total + subArray.reduce((subTotal, sub) => {
-                        const p = parseInt(sub?.pertemuan);
-                        if (p === 8 || p === 16) return subTotal;
+                const activeSubItems = (this.subItems || []).filter((_, idx) => this.items[idx] !== undefined);
+                const allSubs = activeSubItems.flatMap(item => item?.scpmk || []);
         
-                        return subTotal + (parseFloat(sub?.bobot) || 0);
-                    }, 0);
+                const uniqueSubs = Array.from(
+                    new Map(allSubs.map((sub, i) => [sub.id ? `${sub.id}_${i}` : i, sub])).values()
+                );
+        
+                let totalSubCPMK = uniqueSubs.reduce((total, sub) => {
+                    const p = parseInt(sub?.pertemuan);
+                    if (p === 8 || p === 16) return total;
+                    return total + (parseFloat(sub?.bobot) || 0);
                 }, 0);
         
-                const customUts = parseFloat($store.rps.bobot_uts) || 0;
-                const customUas = parseFloat($store.rps.bobot_uas) || 0;
+                const customUts = parseFloat($store.{{ $alpine ?? 'rps' }}.bobot_uts) || 0;
+                const customUas = parseFloat($store.{{ $alpine ?? 'rps' }}.bobot_uas) || 0;
         
-                // 3. Jika kustom kosong, cari nilai default dari Sub-CPMK (pertemuan 8 & 16)
                 let defaultUts = 0;
                 let defaultUas = 0;
         
                 if (!customUts || !customUas) {
-                    (this.subItems || []).forEach(item => {
-                        (item?.scpmk || []).forEach(sub => {
-                            if (parseInt(sub.pertemuan) === 8) defaultUts += parseFloat(sub.bobot) || 0;
-                            if (parseInt(sub.pertemuan) === 16) defaultUas += parseFloat(sub.bobot) || 0;
-                        });
+                    uniqueSubs.forEach(sub => {
+                        const p = parseInt(sub?.pertemuan);
+                        if (p === 8) defaultUts += parseFloat(sub?.bobot) || 0;
+                        if (p === 16) defaultUas += parseFloat(sub?.bobot) || 0;
                     });
                 }
+        
+                {{-- console.log('Grand Total Bobot Calculation:', {
+                    arraySubCPMK: uniqueSubs,
+                    totalSubCPMK: totalSubCPMK,
+                    customUts: customUts,
+                    customUas: customUas,
+                    defaultUts: defaultUts,
+                    defaultUas: defaultUas,
+                    grandTotal: totalSubCPMK + (customUts || defaultUts) + (customUas || defaultUas)
+                }); --}}
         
                 return totalSubCPMK + (customUts || defaultUts) + (customUas || defaultUas);
             },
@@ -100,6 +145,7 @@
                 this.syncToRpsStore();
             },
         
+        
             move(index, direction) {
                 let to = index + direction;
                 if (to < 0 || to >= this.items.length) return;
@@ -117,11 +163,12 @@
         
         
             get totalSubCPMK() {
-                if (!this.subItems) return 0;
-                return this.subItems.reduce((total, item) => {
-                    let subArray = item.scpmk || [];
-                    return total + subArray.length;
-                }, 0);
+                if (!this.subItems || this.subItems.length === 0) return 0;
+                const allSubs = this.subItems.flatMap(item => item?.scpmk || []);
+                const uniqueSubs = Array.from(
+                    new Map(allSubs.map(sub => [sub.id || JSON.stringify(sub), sub])).values()
+                );
+                return uniqueSubs.length;
             },
         
             resetItems() {

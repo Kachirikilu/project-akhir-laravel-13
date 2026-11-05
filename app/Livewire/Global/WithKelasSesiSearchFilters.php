@@ -120,7 +120,7 @@ trait WithKelasSesiSearchFilters
 
         $query = $this->sesiQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchKelasSesi($value)->limit(12)->get();
             // $results = $this->searchOutputSesi($query, $value, null, 12);
             $this->sesiResults = $this->mapSesi($results);

@@ -48,6 +48,9 @@ trait WithRefModal
         //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
         //         (property_exists($this, 'showCPLModal') && $this->showCPLModal);
         // }
+        if ($this->showEditRef) {
+            $this->resetInputRef();
+        }
     }
 
     public function addRef()

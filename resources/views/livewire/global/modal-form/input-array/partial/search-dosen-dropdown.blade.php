@@ -25,8 +25,9 @@
                             );
                         }
                         "
-            :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500 active:bg-red-600' :
-                'bg-[var(--focus-color)] text-white'"
+            x-bind:class="(Array.isArray(items) ? items.includes({{ $x['id'] }}) : items == {{ $x['id'] }}) ?
+            'bg-green-500 hover:bg-red-500 active:bg-red-600' :
+            'bg-[var(--focus-color)]'"
             class="p-1.5 rounded-md transition-all group">
 
             @include('livewire.global.modal-form.partial.dropdown-select')

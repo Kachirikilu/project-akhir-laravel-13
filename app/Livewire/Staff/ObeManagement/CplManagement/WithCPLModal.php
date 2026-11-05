@@ -6,12 +6,12 @@ use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\RPS;
-use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithPagination;
 
@@ -55,6 +55,9 @@ trait WithCPLModal
         //         (property_exists($this, 'showCPMKModal') && $this->showCPMKModal) ||
         //         (property_exists($this, 'showRefModal') && $this->showRefModal);
         // }
+        if ($this->showEditCPL) {
+            $this->resetInputCPL();
+        }
     }
 
     public function addCPL($level)

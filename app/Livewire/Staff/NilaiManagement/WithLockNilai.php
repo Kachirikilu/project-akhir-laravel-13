@@ -28,6 +28,13 @@ trait WithLockNilai
         'bulan_genap' => '',
     ];
 
+    public function updatedShowLockNilaiModal($value)
+    {
+        if ($value === false) {
+            $this->resetInputLockNilai();
+        }
+    }
+
     public function editLockNilai()
     {
         if (! $this->AuthCheck('staff')) {
@@ -35,7 +42,7 @@ trait WithLockNilai
         }
 
         $this->showLockNilaiModal = true;
-        $this->resetInputNilai();
+        $this->resetInputLockNilai();
         $this->resetValidation();
 
         try {
@@ -146,7 +153,7 @@ trait WithLockNilai
             $this->toast(text: $text, type: 'update');
             $this->showLockNilaiModal = false;
 
-            $this->resetInputNilai();
+            $this->resetInputLockNilai();
             $this->dispatch('refresh-data-nilai');
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -177,7 +184,7 @@ private function validationMessagesLockNilai()
         ];
     }
 
-    public function resetInputNilai()
+    public function resetInputLockNilai()
     {
         $fields = [
             'nilai_input',

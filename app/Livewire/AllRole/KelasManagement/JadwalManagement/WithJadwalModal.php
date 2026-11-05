@@ -59,6 +59,16 @@ trait WithJadwalModal
         'kapasitas' => '',
     ];
 
+    public function updatedShowJadwalModal($value)
+    {
+        if (! $value) {
+            $this->isEditingJadwal = false;
+        }
+        if ($this->showEditJadwal) {
+            $this->resetInputJadwal();
+        }
+    }
+
     public function addJadwal()
     {
         if (! $this->AuthCheck('staff')) {

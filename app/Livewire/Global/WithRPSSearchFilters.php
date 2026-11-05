@@ -172,7 +172,7 @@ trait WithRPSSearchFilters
 
         $this->haveRPSParent($query);
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchRPS($value)->limit(12)->get();
             // $results = $this->searchOutputRPS($query, $value, null, 12);
             $this->rpsResults = $this->mapRPS($results);

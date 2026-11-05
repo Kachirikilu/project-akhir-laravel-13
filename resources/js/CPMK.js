@@ -36,6 +36,8 @@ document.addEventListener("alpine:init", () => {
         ref_scpmk: [],
 
         update(allSubItems) {
+            
+
             if (!allSubItems || allSubItems.length === 0) {
                 this.ref_scpmk = [];
                 return;

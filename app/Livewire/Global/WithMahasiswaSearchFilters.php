@@ -134,7 +134,7 @@ trait WithMahasiswaSearchFilters
 
     //     $query = $this->mahasiswaQuery();
 
-    //     if (trim(strlen($value)) > 0) {
+    //     if (is_string($value) && strlen(trim($value)) > 0) {
     //         $results = $query->searchMahasiswa($value)->limit(12)->get();
     //         $this->mahasiswaResults = $this->mapMahasiswa($results);
 

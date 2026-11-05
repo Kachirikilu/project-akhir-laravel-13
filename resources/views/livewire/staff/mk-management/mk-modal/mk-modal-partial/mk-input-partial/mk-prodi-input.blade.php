@@ -23,6 +23,7 @@
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchPr',
     ])
+
     {{-- <div x-data x-init="$watch('$store.mk.nama_mk', value => console.log('nama_mk: ', value))"></div>
 
     <div x-data x-init="$watch('$store.mk.pr_id', value => console.log('pr_id: ', value))"></div>

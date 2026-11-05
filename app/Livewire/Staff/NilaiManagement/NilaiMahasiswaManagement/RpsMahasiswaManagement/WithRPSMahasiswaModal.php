@@ -22,6 +22,13 @@ trait WithRPSMahasiswaModal
 
     public $selected_id_nilai;
 
+    public function updatedShowModalNilai($value)
+    {
+        if (!$value) {
+            $this->resetInputNilaiMahasiswa();
+        }
+    }
+
     public function editNilaiMahasiswa($id)
     {
         $this->resetInputNilaiMahasiswa();

@@ -8,11 +8,10 @@
     maxBobot: {{ $bobotMax }}
 }"
     x-effect="
-        {{-- Syarat: Count < 14 ATAU Count > 16 ATAU Bobot < MIN ATAU Bobot > MAX --}}
         const isInvalid = $store.rps.count_scpmk < 14 || $store.rps.count_scpmk > 16 || $store.rps.total_bobot < minBobot || $store.rps.total_bobot > maxBobot;
-        if(isInvalid) { 
+        {{-- if(isInvalid) { 
             $store.rps.is_draf = 1; 
-        }
+        } --}}
     ">
     {{-- 1. TEMPLATE KONDISI TERKUNCI (DRAF ONLY) --}}
     <template x-if="$store.rps.count_scpmk < 14 || $store.rps.count_scpmk > 16 || $store.rps.total_bobot < minBobot || $store.rps.total_bobot > maxBobot">

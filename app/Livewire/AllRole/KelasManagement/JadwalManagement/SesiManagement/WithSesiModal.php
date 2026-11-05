@@ -41,6 +41,16 @@ trait WithSesiModal
         'waktu_mandiri' => '',
     ];
 
+    public function updatedShowSesiModal($value)
+    {
+        if (! $value) {
+            $this->isEditingSesi = false;
+        }
+        if ($this->showEditSesi) {
+            $this->resetInputSesi();
+        }
+    }
+
     public function addSesi()
     {
         if (! $this->AuthCheck('staff')) {

@@ -108,7 +108,7 @@ trait WithNilaiSearchFilters
 
         $query = $this->nilaiQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchNilai($value)->limit(12)->get();
             // $results = $this->searchOutputNilai($query, $value, null, 12);
             $this->nilaiResults = $this->mapNilai($results);

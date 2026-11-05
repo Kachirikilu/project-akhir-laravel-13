@@ -44,6 +44,9 @@ trait WithRPSModal
         //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
         //         (property_exists($this, 'showRefModal') && $this->showRefModal);
         // }
+        if ($this->showEditRPS) {
+            $this->resetInputRPS();
+        }
     }
 
     public function addRPS($key = 'rps')

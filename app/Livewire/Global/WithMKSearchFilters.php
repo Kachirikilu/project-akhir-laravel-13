@@ -136,7 +136,7 @@ trait WithMKSearchFilters
 
         $this->haveMKParent($query);
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchMK($value)->limit(12)->get();
             // $results = $this->searchOutputMK($this->mkQuery(), $value, 12);
             $this->mkResults = $this->mapMK($results);

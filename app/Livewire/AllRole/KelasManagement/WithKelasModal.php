@@ -28,6 +28,17 @@ trait WithKelasModal
 
     // public $rps_id_2;
 
+
+    public function updatedShowKelasModal($value)
+    {
+        if (! $value) {
+            $this->isEditingKelas = false;
+        }
+        if ($this->showEditKelas) {
+            $this->resetInputKelas();
+        }
+    }
+
     public function addKelas()
     {
         if (! $this->AuthCheck('staff')) {

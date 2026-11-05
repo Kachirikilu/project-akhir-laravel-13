@@ -141,7 +141,7 @@ trait WithDepartemenSearchFilters
 
         $this->haveDpParent($query);
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchDepartemen($value)->limit(12)->get();
             // $results = $this->searchOutputPr($query, $value, 12);
 

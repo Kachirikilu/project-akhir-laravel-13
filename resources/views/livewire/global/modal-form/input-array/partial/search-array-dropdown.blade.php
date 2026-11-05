@@ -12,9 +12,8 @@
             $param6 = isset($typeX6String) ? "'" . addslashes($itemLabel6) . "'" : 'null';
             $paramLink = isset($typeLinkString) ? "'" . addslashes($itemLink) . "'" : 'null';
 
-            $selectPayload = isset($sendLabelAsValue) && $sendLabelAsValue 
-                ? "'" . addslashes($itemLabel) . "'" 
-                : $itemId;
+            $selectPayload =
+                isset($sendLabelAsValue) && $sendLabelAsValue ? "'" . addslashes($itemLabel) . "'" : $itemId;
         @endphp
 
         <button type="button"
@@ -38,17 +37,16 @@
                         {{ $paramLink }}
                     );
 
-                    @if(isset($selectX) && filled($selectX))
-                        @if(isset($key) && $key !== '')
+                    @if (isset($selectX) && filled($selectX)) @if (isset($key) && $key !== '')
                             $wire.call('{{ $selectX }}', {{ $selectPayload }}, '{{ addslashes($key) }}');
                         @else
-                            $wire.call('{{ $selectX }}', {{ $selectPayload }});
-                        @endif
+                            $wire.call('{{ $selectX }}', {{ $selectPayload }}); @endif
                     @endif
                 }
             "
-            :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500 active:bg-red-600' :
-                'bg-[var(--focus-color)] text-white'"
+            x-bind:class="(Array.isArray(items) ? items.includes({{ $x['id'] }}) : items == {{ $x['id'] }}) ?
+            'bg-green-500 hover:bg-red-500 active:bg-red-600' :
+            'bg-[var(--focus-color)]'"
             class="p-1.5 rounded-md transition-all group">
 
             @include('livewire.global.modal-form.partial.dropdown-select')

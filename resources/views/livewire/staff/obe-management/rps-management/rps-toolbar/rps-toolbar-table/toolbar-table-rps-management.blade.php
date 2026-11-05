@@ -94,31 +94,31 @@
                     {{-- Tombol Edit --}}
                     <flux:menu.item
                         @click="
-                        $store.rps?.reset();
-                        $store.rps?.setFlyout(false);
+                            $store.rps?.reset();
+                            $store.rps?.setFlyout(false);
 
-                        $store.rps?.setEdit(1);
+                            $store.rps?.setEdit(1);
 
-                        $store.rps?.setColor('text-green-700 dark:text-green-400');
+                            $store.rps?.setColor('text-green-700 dark:text-green-400');
 
-                        $store.rps?.setValueRPS(
-                            '{{ $data['digit_akademik'] ?? '' }}',
-                            '{{ $data['deskripsi_rps'] ?? '' }}',
-                            '{{ $data['mk_id'] ?? '' }}',
-                            '{{ $data['kode_mk'] ?? '' }}',
-                            '{{ $data['mk'] ?? '' }}',
-                            '{{ $data['akademik'] ?? '' }}',
-                            '{{ $data['is_draf'] ?? '' }}',
-                            '{{ $data['count_scpmk'] ?? '' }}',
-                            '{{ $data['bobot_uts'] ?? '' }}',
-                            '{{ $data['bobot_uas'] ?? '' }}',
-                            '{{ $data['total_bobot'] ?? '' }}',
-                            '{{ $data['kode_semester'] ?? '' }}'
-                        );
+                            $store.rps?.setValueRPS(
+                                '{{ $data['digit_akademik'] ?? '' }}',
+                                '{{ $data['deskripsi_rps'] ?? '' }}',
+                                '{{ $data['mk_id'] ?? '' }}',
+                                '{{ $data['kode_mk'] ?? '' }}',
+                                '{{ $data['mk'] ?? '' }}',
+                                '{{ $data['akademik'] ?? '' }}',
+                                '{{ $data['is_draf'] ?? '' }}',
+                                '{{ $data['count_scpmk'] ?? '' }}',
+                                '{{ $data['bobot_uts'] ?? '' }}',
+                                '{{ $data['bobot_uas'] ?? '' }}',
+                                '{{ $data['total_bobot'] ?? '' }}',
+                                '{{ $data['kode_semester'] ?? '' }}'
+                            );
 
-                        $flux.modal('rps-modal').show();
-                        $dispatch('open-edit-rps-modal', { id: {{ $data['id'] }} });
-                    "
+                            $flux.modal('rps-modal').show();
+                            $dispatch('open-edit-rps-modal', { id: {{ $data['id'] }} });
+                        "
                         class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                         <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 

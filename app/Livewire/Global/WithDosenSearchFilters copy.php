@@ -145,7 +145,7 @@ trait WithDosenSearchFilters
 
         $query = $this->dosenQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchDosen($value)->limit(12)->get();
             // $results = $this->searchOutputDosen($query, $value, 12);
             $this->dosenResults = $this->mapDosen($results);

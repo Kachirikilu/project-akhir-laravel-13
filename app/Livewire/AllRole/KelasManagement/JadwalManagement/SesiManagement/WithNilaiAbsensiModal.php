@@ -33,13 +33,18 @@ trait WithNilaiAbsensiModal
         'list_absensi_array' => [],
     ];
 
-    public $isEditingSesi = false;
+    public $showMahasiswaAbsen = false;
 
     public $showEditSesi = false;
 
-    public $showMahasiswaAbsen = false;
-
     public KelasJadwal $jadwal;
+
+    public function updatedShowSesiAbsen($value)
+    {
+        if (!$value) {
+            $this->resetInputAbsensi();
+        }
+    }
 
     public function absensiSesi($data)
     {
@@ -162,7 +167,7 @@ trait WithNilaiAbsensiModal
         $jadwal = KelasJadwal::with('kelas_rel', 'kelas_rel.rps_rel')->find($kj_id);
         $this->jadwal = $jadwal;
 
-        $this->resetInputAbsen();
+        $this->resetInputAbsensi();
         $this->resetValidation();
         $this->resetErrorBag();
 
@@ -491,7 +496,7 @@ trait WithNilaiAbsensiModal
 
             \DB::commit();
 
-            $this->resetInputAbsen();
+            $this->resetInputAbsensi();
             $this->dispatch('refresh-data-sesi');
             $this->showMahasiswaAbsen = false;
             $this->showEditSesi = false;
@@ -547,7 +552,7 @@ trait WithNilaiAbsensiModal
         return $count;
     }
 
-    private function resetInputAbsen()
+    private function resetInputAbsensi()
     {
         $fields = [
             'selected_id_sesi',

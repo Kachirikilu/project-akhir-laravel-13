@@ -69,6 +69,7 @@
                 'message' => $errors->first('tipe_sks'),
             ])
         </div>
+        {{-- @dump($mk_input['tipe_sks']) --}}
         <div class="col-span-4">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'mk',

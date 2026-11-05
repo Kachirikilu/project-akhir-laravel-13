@@ -49,6 +49,9 @@ trait WithCPMKModal
         //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
         //         (property_exists($this, 'showRefModal') && $this->showRefModal);
         // }
+        if ($this->showEditCPMK) {
+            $this->resetInputCPMK();
+        }
     }
 
     public function addCPMK($key = 'cpmk')

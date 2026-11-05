@@ -137,7 +137,7 @@ trait WithUserSearchFilters
 
         $query = $this->userQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchUser($value)->limit(12)->get();
             // $results = $this->searchOutputUser($query, $value, null, 12);
             $this->userResults = $this->mapUser($results);

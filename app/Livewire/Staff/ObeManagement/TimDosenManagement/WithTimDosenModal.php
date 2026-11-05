@@ -53,6 +53,9 @@ trait WithTimDosenModal
         //         (property_exists($this, 'showSCPMKModal') && $this->showSCPMKModal) ||
         //         (property_exists($this, 'showCPLModal') && $this->showCPLModal);
         // }
+        if ($this->showEditTimDosen) {
+            $this->resetInputTimDosen();
+        }
     }
 
     public function addTimDosen()
@@ -73,7 +76,7 @@ trait WithTimDosenModal
         } elseif (Auth::user()->tingkat == 3) {
             $this->dp_id = Auth::user()->dp_id;
             $this->prLevel = 2;
-        // } elseif (Auth::user()->tingkat == 4 || Auth::user()->tingkat == 5) {
+            // } elseif (Auth::user()->tingkat == 4 || Auth::user()->tingkat == 5) {
         } elseif (Auth::user()->tingkat == 4) {
             $this->pr_id = Auth::user()->pr_id;
         }
@@ -136,7 +139,6 @@ trait WithTimDosenModal
                     $this->pr_id = $tim_dosen->pr_id;
                     $this->fetchPr();
                 }
-
 
                 $dosens = $tim_dosen->dosens->sortBy('pivot.sort_order');
                 $this->dosen_id_array = $dosens->pluck('id')->toArray();

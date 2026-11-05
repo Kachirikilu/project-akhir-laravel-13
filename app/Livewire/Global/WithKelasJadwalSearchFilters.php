@@ -120,7 +120,7 @@ trait WithKelasJadwalSearchFilters
 
         $query = $this->jadwalQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchKelasJadwal($value)->limit(12)->get();
             // $results = $this->searchOutputJadwal($query, $value, null, 12);
             $this->jadwalResults = $this->mapJadwal($results);

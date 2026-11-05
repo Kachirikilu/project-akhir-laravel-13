@@ -106,7 +106,7 @@ trait WithFakultasSearchFilters
         $query = $this->fkQuery()
             ->select('fakultas.*');
 
-        if (trim(strlen($value)) > 0) {
+        if (is_string($value) && strlen(trim($value)) > 0) {
             $results = $query->searchFakultas($value)->limit(12)->get();
             // $results = $this->searchOutputPr($query, $value, 12);
 

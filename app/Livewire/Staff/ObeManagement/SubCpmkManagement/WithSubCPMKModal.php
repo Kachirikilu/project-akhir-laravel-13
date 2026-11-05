@@ -59,6 +59,9 @@ trait WithSubCPMKModal
         //         (property_exists($this, 'showCPLModal') && $this->showCPLModal) ||
         //         (property_exists($this, 'showRefModal') && $this->showRefModal);
         // }
+        if ($this->showEditSCPMK) {
+            $this->resetInputSCPMK();
+        }
     }
 
     public function addSCPMK($key = 'scpmk')

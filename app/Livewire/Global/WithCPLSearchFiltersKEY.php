@@ -205,7 +205,7 @@ trait WithCPLSearchFilters
 
     //     $query = $this->cplQuery();
 
-    //     if (trim(strlen($value)) > 0) {
+    //     if (is_string($value) && strlen(trim($value)) > 0) {
     //         $results = $query->searchCPL($value)->limit(12)->get();
     //         $this->cplResults[$key] = $this->mapCPL($results);
 

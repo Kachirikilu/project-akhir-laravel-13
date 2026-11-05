@@ -129,8 +129,8 @@ document.addEventListener("alpine:init", () => {
 
                 this.semester = "";
                 this.sks_kuliah = "";
-                this.tipe_sks = "";
-                this.is_wajib = "";
+                // this.tipe_sks = "";
+                // this.is_wajib = "";
 
                 this.pr_id = "";
                 this.nama_pr_search = "";
