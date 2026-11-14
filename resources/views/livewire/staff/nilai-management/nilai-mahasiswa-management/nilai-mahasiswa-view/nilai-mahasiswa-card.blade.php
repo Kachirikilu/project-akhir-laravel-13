@@ -18,7 +18,7 @@
                     'total_sks' => (int) ($p->total_sks ?? 0),
                     'nilai_semester' => $p->nilai_semester ?? '0.00',
                     'ip_semester' => $p->ip_semester ?? '0.00',
-                    'huruf_semester' => strtoupper($p->huruf_semester ?? ''),
+                    'huruf_semester' => strtoupper($p->huruf_semester ?? 'E'),
 
                     'search_combinations' => [
                         $ganjilGenap . ' ' . $akademik,
@@ -448,7 +448,7 @@
 
                                 @include(
                                     'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card.nilai-huruf',
-                                    ['value' => $p->huruf_semester]
+                                    ['value' => $p->huruf_semester ?? 'E']
                                 )
                             </div>
                         </div>

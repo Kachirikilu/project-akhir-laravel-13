@@ -172,9 +172,9 @@ trait WithMKModal
         if ($data['digit_mk'] < 10) {
             $data['digit_mk'] = str_pad($data['digit_mk'], 2, '0', STR_PAD_LEFT);
         }
-        $data['nama_mk'] = $this->normalizeNama($data['nama_mk'] ?? '');
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
-        $data['bahan_kajian'] = $this->normalizeText($data['bahan_kajian'] ?? '');
+        // $data['nama_mk'] = $this->normalizeNama($data['nama_mk'] ?? '');
+        // $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        // $data['bahan_kajian'] = $this->normalizeText($data['bahan_kajian'] ?? '');
 
         $level = $this->mkType ?? 1;
         $targetProdiIds = ($level === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);

@@ -73,16 +73,48 @@ trait HasAkreditas
     //     return $query;
     // }
 
+    // protected function addIndexOBE(
+    //     $query,
+    //     ?int $prId = null,
+    //     string $alias = 'index_cpl_pr',
+    //     string $pivot = 'rekap_cpl_prodi',
+    //     string $kolom = 'cpl_id',
+    //     string $table = 'cpls',
+    // ) {
+    //     $query->addSelect("$table.*");
+    //     $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+    //         $query->from($pivot)
+    //             ->whereColumn(
+    //                 "$pivot.$kolom",
+    //                 "$table.id"
+    //             );
+
+    //         if ($prId !== null) {
+    //             $query->where(
+    //                 "$pivot.pr_id",
+    //                 $prId
+    //             );
+    //         }
+    //         $query->selectRaw('ROUND((nilai / 100) * 4, 2)');
+
+    //         $query->limit(1);
+
+    //     }, $alias);
+
+    //     return $query;
+    // }
+
     protected function addIndexOBE(
         $query,
         ?int $prId = null,
-        string $alias = 'index_cpl_pr',
+        string $alias = 'huruf_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
     ) {
         $query->addSelect("$table.*");
         $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+
             $query->from($pivot)
                 ->whereColumn(
                     "$pivot.$kolom",
@@ -95,7 +127,31 @@ trait HasAkreditas
                     $prId
                 );
             }
-            $query->selectRaw('ROUND((nilai / 100) * 4, 2)');
+
+            $bindings = [
+                config('rps.min_a', 86),
+                config('rps.min_a_min', 80),
+                config('rps.min_b_plus', 75),
+                config('rps.min_b', 70),
+                config('rps.min_b_min', 65),
+                config('rps.min_c_plus', 60),
+                config('rps.min_c', 56),
+                config('rps.min_d', 40),
+            ];
+
+            $query->selectRaw("
+                CASE
+                    WHEN nilai >= ? THEN '4.00'
+                    WHEN nilai >= ? THEN '3.70'
+                    WHEN nilai >= ? THEN '3.30'
+                    WHEN nilai >= ? THEN '3.00'
+                    WHEN nilai >= ? THEN '2.70'
+                    WHEN nilai >= ? THEN '2.30'
+                    WHEN nilai >= ? THEN '2.00'
+                    WHEN nilai >= ? THEN '1.00'
+                    ELSE 'E'
+                END
+            ", $bindings);
 
             $query->limit(1);
 
@@ -103,6 +159,7 @@ trait HasAkreditas
 
         return $query;
     }
+
 
     protected function addAkreditasOBE(
         $query,

@@ -138,7 +138,7 @@ trait WithKelasModal
             $data['deskripsi'] = '';
         }
 
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        // $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         $prId = $data['pr_id'] ?? $this->pr_id ?? null;
 

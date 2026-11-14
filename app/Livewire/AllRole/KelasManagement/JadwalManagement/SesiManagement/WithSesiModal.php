@@ -215,13 +215,13 @@ trait WithSesiModal
                 $defaultValue = $scpmk ? ($scpmk->{$field} ?? null) : null;
             }
 
-            if (in_array($field, ['deskripsi', 'materi', 'metodologi', 'indikator', 'deskripsi_tugas'])) {
-                $defaultValue = $this->normalizeText($defaultValue);
-                if ($scpmk && ! empty($defaultValue)) {
-                    $scpmk->{$field} = $defaultValue;
-                }
-                $inputValue = $this->normalizeText($inputValue);
-            }
+            // if (in_array($field, ['deskripsi', 'materi', 'metodologi', 'indikator', 'deskripsi_tugas'])) {
+            //     $defaultValue = $this->normalizeText($defaultValue);
+            //     if ($scpmk && ! empty($defaultValue)) {
+            //         $scpmk->{$field} = $defaultValue;
+            //     }
+            //     $inputValue = $this->normalizeText($inputValue);
+            // }
 
             if (in_array($field, ['waktu_tugas', 'waktu_mandiri']) && ! is_null($defaultValue)) {
                 $defaultValue = (int) $defaultValue;

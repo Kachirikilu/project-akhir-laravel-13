@@ -178,8 +178,8 @@ trait WithRPSModal
         $mk = DB::table('mata_kuliahs')->where('id', $mkId)->first();
         $desMK = $mk?->deskripsi ?? '';
 
-        $desMK = $this->normalizeText($desMK);
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        // $desMK = $this->normalizeText($desMK);
+        // $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         if ($data['deskripsi'] == $desMK) {
             $data['deskripsi'] = '';

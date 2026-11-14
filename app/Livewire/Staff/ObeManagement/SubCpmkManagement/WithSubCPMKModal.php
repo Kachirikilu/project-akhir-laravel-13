@@ -168,11 +168,11 @@ trait WithSubCPMKModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
-        $data['materi'] = $this->normalizeText($data['materi'] ?? '');
-        $data['metodologi'] = $this->normalizeText($data['metodologi'] ?? '');
-        $data['indikator'] = $this->normalizeText($data['indikator'] ?? '');
-        $data['deskripsi_tugas'] = $this->normalizeText($data['deskripsi_tugas'] ?? '');
+        // $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        // $data['materi'] = $this->normalizeText($data['materi'] ?? '');
+        // $data['metodologi'] = $this->normalizeText($data['metodologi'] ?? '');
+        // $data['indikator'] = $this->normalizeText($data['indikator'] ?? '');
+        // $data['deskripsi_tugas'] = $this->normalizeText($data['deskripsi_tugas'] ?? '');
 
         $rules = [
             'kode_scpmk_1' => 'required|alpha|max:10',

@@ -842,7 +842,7 @@ trait LogicSearch
         // Jika ada teks tambahan (misal: "nilai A" atau "huruf B+"), bersihkan kata kunci pengganggu
         $cleanSearch = $search;
         $stopWords = [
-            'NILAI', 'HURUF', 'MUTU', 'GRADE', 'AKREDITASI', 'SEMESTER',
+            'NILAI', 'HURUF', 'HURUF', 'GRADE', 'AKREDITASI', 'SEMESTER',
             'INDEX', 'INDEKS', 'IP', 'IPK', 'IPS',
         ];
 

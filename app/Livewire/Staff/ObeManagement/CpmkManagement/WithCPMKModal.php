@@ -205,11 +205,11 @@ trait WithCPMKModal
             }
         }
 
-        if (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
-            $data['deskripsi'] = null;
-        } else {
-            $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
-        }
+        // if (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
+        //     $data['deskripsi'] = null;
+        // } else {
+        //     $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        // }
 
         $rules = [
             'kode_cpmk_1' => 'required|alpha|max:10',

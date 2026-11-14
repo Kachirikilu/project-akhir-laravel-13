@@ -23,15 +23,42 @@
                             'badge' => 'emerald',
                             'teks' => 'Sangat Memuaskan',
                         ],
-                        $nilaiKon >= config('rps.min_a_min', 80) => ['huruf' => 'A-', 'badge' => 'teal', 'teks' => 'Sangat Baik'],
-                        $nilaiKon >= config('rps.min_b_plus', 75) => ['huruf' => 'B+', 'badge' => 'cyan', 'teks' => 'Baik Sekali'],
+                        $nilaiKon >= config('rps.min_a_min', 80) => [
+                            'huruf' => 'A-',
+                            'badge' => 'teal',
+                            'teks' => 'Sangat Baik',
+                        ],
+                        $nilaiKon >= config('rps.min_b_plus', 75) => [
+                            'huruf' => 'B+',
+                            'badge' => 'cyan',
+                            'teks' => 'Baik Sekali',
+                        ],
                         $nilaiKon >= config('rps.min_b', 70) => ['huruf' => 'B', 'badge' => 'sky', 'teks' => 'Baik'],
-                        $nilaiKon >= config('rps.min_b_min', 65) => ['huruf' => 'B-', 'badge' => 'blue', 'teks' => 'Cukup Baik'],
-                        $nilaiKon >= config('rps.min_c_plus', 60) => ['huruf' => 'C+', 'badge' => 'amber', 'teks' => 'Cukup'],
-                        $nilaiKon >= config('rps.min_c', 56) => ['huruf' => 'C', 'badge' => 'yellow', 'teks' => 'Hampir Cukup'],
-                        $nilaiKon >= config('rps.min_d', 40) => ['huruf' => 'D', 'badge' => 'orange', 'teks' => 'Kurang'],
+                        $nilaiKon >= config('rps.min_b_min', 65) => [
+                            'huruf' => 'B-',
+                            'badge' => 'blue',
+                            'teks' => 'Cukup Baik',
+                        ],
+                        $nilaiKon >= config('rps.min_c_plus', 60) => [
+                            'huruf' => 'C+',
+                            'badge' => 'amber',
+                            'teks' => 'Cukup',
+                        ],
+                        $nilaiKon >= config('rps.min_c', 56) => [
+                            'huruf' => 'C',
+                            'badge' => 'yellow',
+                            'teks' => 'Hampir Cukup',
+                        ],
+                        $nilaiKon >= config('rps.min_d', 40) => [
+                            'huruf' => 'D',
+                            'badge' => 'orange',
+                            'teks' => 'Kurang',
+                        ],
                         default => ['huruf' => 'E', 'badge' => 'rose', 'teks' => 'Sangat KUrang'],
                     };
+                    $fmtKode = fn($v) => $v ? preg_replace('/([A-Za-z]+)(\d+)/', '$1-$2', $v) : '---';
+
+                    $kode_cpmk = $fmtKode($item['kode_cpmk'] ?? null);
                 @endphp
 
                 <div
@@ -39,7 +66,7 @@
 
                     <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700/60 pb-3">
                         <flux:badge icon="academic-cap" color="violet" size="md" class="font-bold">
-                            {{ $item['kode_cpmk'] ?? '---' }}
+                            {{ $kode_cpmk ?? '---' }}
                         </flux:badge>
 
                         <flux:badge color="{{ $predikat['badge'] }}" size="sm" variant="pill">
@@ -105,12 +132,13 @@
                             <span class="font-semibold text-zinc-800 dark:text-zinc-100 block mb-1">Evaluasi
                                 Capaian:</span>
                             Capaian nilai mahasiswa pada <strong
-                                class="text-indigo-600 dark:text-indigo-400">{{ $item['kode_cpmk'] ?? 'CPMK' }}</strong>
+                                class="text-indigo-600 dark:text-indigo-400">{{ $kode_cpmk ?? 'CPMK' }}</strong>
                             memperoleh nilai kontribusi sebesar <strong
                                 class="text-emerald-600 dark:text-emerald-400">{{ $item['nilai_kontribusi'] ?? 0 }}</strong>
                             dengan kualifikasi huruf <strong
                                 class="uppercase text-indigo-600 dark:text-indigo-400">{{ $predikat['huruf'] }}</strong>
-                            ({{ $predikat['teks'] }}).
+                            ({{ $predikat['teks'] }})
+                            .
                         </div>
                         @if (!empty($item['deskripsi']))
                             <div class="pt-2 border-t border-zinc-200/60 dark:border-zinc-800/80">
@@ -134,8 +162,11 @@
                             </span>
                             <div class="flex flex-wrap items-center gap-2">
                                 @foreach ($item['cpls'] as $cpl)
+                                    @php
+                                        $kode_cpl = $fmtKode($cpl['kode_cpl'] ?? ($cpl['kode'] ?? null));
+                                    @endphp
                                     <flux:badge icon="document-text" color="sky" size="sm">
-                                        {{ $cpl['kode_cpl'] ?? ($cpl['kode'] ?? 'CPL') }}
+                                        {{ $kode_cpl }}
                                     </flux:badge>
                                 @endforeach
                             </div>

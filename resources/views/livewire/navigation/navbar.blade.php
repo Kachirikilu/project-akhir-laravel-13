@@ -576,6 +576,7 @@
             @elseif($item['type'] === 'dropdown-nilai')
                 {{-- @php
                     $nimDummy = '03041282227065';
+                    $nimDummy2 = '03041282227063';
 
                     $rpsHistory = [
                         "{$nimDummy}-Ganjil-2022-2023" => [
@@ -647,7 +648,6 @@
                     $nilaiHistory = session('nilai.history', []);
                     $capaianHistory = session('rps_capaian_mahasiswa.history', []);
 
-                    // Kelompokkan RPS per Mahasiswa
                     $groupedRps = [];
                     foreach ($rpsHistory as $rps) {
                         $nim = $rps['nim'] ?? null;
@@ -655,6 +655,30 @@
                             $groupedRps[$nim][] = $rps;
                         }
                     }
+
+                    $semesterWeight = [
+                        'ganjil' => 1,
+                        'genap' => 2,
+                        'antara' => 3,
+                        'pendek' => 3,
+                    ];
+
+                    foreach ($groupedRps as &$items) {
+                        usort($items, function ($a, $b) use ($semesterWeight) {
+                            $tahunA = (int) substr((string) ($a['akademik'] ?? '0'), 0, 4);
+                            $tahunB = (int) substr((string) ($b['akademik'] ?? '0'), 0, 4);
+
+                            if ($tahunA !== $tahunB) {
+                                return $tahunB <=> $tahunA; // Tahun terbaru di atas
+                            }
+
+                            $semA = $semesterWeight[strtolower(trim((string) ($a['ganjil_genap'] ?? '')))] ?? 0;
+                            $semB = $semesterWeight[strtolower(trim((string) ($b['ganjil_genap'] ?? '')))] ?? 0;
+
+                            return $semB <=> $semA; // Genap (2) di atas Ganjil (1)
+                        });
+                    }
+                    unset($items);
 
                     $subMenus = [
                         [
@@ -693,7 +717,7 @@
                             'level' => 1,
                             'active' =>
                                 request()->routeIs('nilai-mahasiswa-management') && request()->route('nim') == $nim,
-                            'active-sub' => true, // Set true agar menu induk NIM ikut terbuka saat fake active berjalan
+                            'active-sub' => true,
                         ];
 
                         if (isset($groupedRps[$nim])) {
@@ -777,6 +801,31 @@
                             $groupedRps[$nim][] = $rps;
                         }
                     }
+
+                    // Urutkan tiap grup RPS per mahasiswa: Tahun Akademik terbaru di atas, lalu Genap -> Ganjil
+                    $semesterWeight = [
+                        'ganjil' => 1,
+                        'genap' => 2,
+                        'antara' => 3,
+                        'pendek' => 3,
+                    ];
+
+                    foreach ($groupedRps as &$items) {
+                        usort($items, function ($a, $b) use ($semesterWeight) {
+                            $tahunA = (int) substr((string) ($a['akademik'] ?? '0'), 0, 4);
+                            $tahunB = (int) substr((string) ($b['akademik'] ?? '0'), 0, 4);
+
+                            if ($tahunA !== $tahunB) {
+                                return $tahunB <=> $tahunA; // Tahun terbaru di atas
+                            }
+
+                            $semA = $semesterWeight[strtolower(trim((string) ($a['ganjil_genap'] ?? '')))] ?? 0;
+                            $semB = $semesterWeight[strtolower(trim((string) ($b['ganjil_genap'] ?? '')))] ?? 0;
+
+                            return $semB <=> $semA; // Genap (2) di atas Ganjil (1)
+                        });
+                    }
+                    unset($items);
 
                     $subMenus = [
                         [

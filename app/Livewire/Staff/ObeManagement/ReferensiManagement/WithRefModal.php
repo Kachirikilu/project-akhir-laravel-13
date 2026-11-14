@@ -163,9 +163,9 @@ trait WithRefModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $data['judul'] = $this->normalizeNama($data['judul']);
-        $data['penulis'] = $this->normalizeNama($data['penulis']);
-        $data['penerbit'] = $this->normalizeNama($data['penerbit']);
+        // $data['judul'] = $this->normalizeNama($data['judul']);
+        // $data['penulis'] = $this->normalizeNama($data['penulis']);
+        // $data['penerbit'] = $this->normalizeNama($data['penerbit']);
 
         $rules = [
             'kode_ref_1' => 'required|alpha|max:10',

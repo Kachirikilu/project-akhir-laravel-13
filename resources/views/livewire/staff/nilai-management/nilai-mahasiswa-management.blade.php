@@ -11,14 +11,14 @@
 
 
     {{-- @php
-                $periodes = collect([
+        $periodes = collect([
             [
                 'akademik' => '2022/2023',
                 'ganjil_genap' => 'Ganjil',
                 'total_mk' => 9,
                 'total_sks' => 19,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 1,
             ],
@@ -28,7 +28,7 @@
                 'total_mk' => 9,
                 'total_sks' => 19,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 2,
             ],
@@ -38,7 +38,7 @@
                 'total_mk' => 10,
                 'total_sks' => 20,
                 'nilai_semester' => '98.75',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '3.95',
                 'semester' => 3,
             ],
@@ -48,7 +48,7 @@
                 'total_mk' => 9,
                 'total_sks' => 18,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 4,
             ],
@@ -58,7 +58,7 @@
                 'total_mk' => 8,
                 'total_sks' => 19,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 5,
             ],
@@ -68,7 +68,7 @@
                 'total_mk' => 8,
                 'total_sks' => 19,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 6,
             ],
@@ -78,7 +78,7 @@
                 'total_mk' => 7,
                 'total_sks' => 16,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 7,
             ],
@@ -88,7 +88,7 @@
                 'total_mk' => 3,
                 'total_sks' => 14,
                 'nilai_semester' => '100.00',
-                'mutu_semester' => 'A',
+                'huruf_semester' => 'A',
                 'ip_semester' => '4.00',
                 'semester' => 8,
             ],
@@ -142,7 +142,10 @@
     @if ($this->switchTable == 'nilai')
         @include('livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-view.nilai-mahasiswa-card')
     @elseif ($this->switchTable == 'cpl')
-        @include('livewire.staff.obe-management.cpl-management.cpl-view.cpl-table', ['withCapaian' => 1, 'isNilaiMahasiswa' => 1])
+        @include('livewire.staff.obe-management.cpl-management.cpl-view.cpl-table', [
+            'withCapaian' => 1,
+            'isNilaiMahasiswa' => 1,
+        ])
     @endif
 
 </div>
