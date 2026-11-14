@@ -326,17 +326,17 @@ trait WithCPLSearchFilters
                     );
 
                     $matchNilaiAkhir = $this->matchNilaiAkhir(
-                        $cpl->rekap_cpl_pr ?? 0,
+                        $cpl->rekap_cpl_pr ?? $cpl->rekap_cpl_mhs ?? 0,
                         $searchLower
                     );
 
                     $matchNilaiIndex = $this->matchNilaiIndex(
-                        $cpl->index_cpl_pr ?? 0,
+                        $cpl->index_cpl_pr ?? $cpl->index_cpl_mhs ?? 0,
                         $searchLower
                     );
 
                     $matchNilaiHuruf = $this->matchNilaiHuruf(
-                        $cpl->huruf_cpl_pr ?? 'E',
+                        $cpl->huruf_cpl_pr ?? $cpl->huruf_cpl_mhs ?? 'E',
                         $searchLower
                     );
 
@@ -349,12 +349,12 @@ trait WithCPLSearchFilters
                         $searchLower
                     );
 
-                    $rps_pr = (int) ($cpl->count_rps_pr ?? 0);
+                    $rps_pr_mhs = (int) ($cpl->count_rps_pr ?? $cpl->count_rps_mhs ?? 0);
                     $matchRPSPr = $this->matchCount(
-                        $rps_pr,
+                        $rps_pr_mhs,
                         $searchLower, ['rps_pr', 'rps']
                     ) || $this->containsStrict(
-                        $rps_pr.'RPS',
+                        $rps_pr_mhs.'RPS',
                         $searchLower
                     );
 
