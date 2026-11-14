@@ -10,7 +10,7 @@
     </div>
 
     <livewire:staff.obe-management.rps-management.show-rps-management />
-    <livewire:staff.obe-management.cpl-management.list-rps-cpl-management />
+    <livewire:staff.obe-management.cpl-management.list-rps-cpl-management :withCapaian="1" />
     <livewire:admin.user-management.list-rps-user-management />
 
     @if (Auth::user()->tingkat < 5)

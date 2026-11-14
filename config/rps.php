@@ -97,4 +97,14 @@ return [
     
     'uts_fields' => explode(',', env('UTS_FIELDS', 'UTS,EVALUASI AWAL')),
     'uas_fields' => explode(',', env('UAS_FIELDS', 'UAS,EVALUASI AKHIR,LAPORAN AKHIR,HASIL PROYEK,HASIL PROJEK')),
+
+    'min_a' => env('MIN_A', 86),
+    'min_a_min' => env('MIN_A_MIN', 80),
+    'min_b_plus' => env('MIN_B_PLUS', 75),
+    'min_b' => env('MIN_B', 70),
+    'min_b_min' => env('MIN_B_MIN', 65),
+    'min_c_plus' => env('MIN_C_PLUS', 60),
+    'min_c' => env('MIN_C', 56),
+    'min_d' => env('MIN_D', 40),
+    'batas_kelulusan' => env('BATAS_KELULUSAN', 65),
 ];

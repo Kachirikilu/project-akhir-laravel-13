@@ -15,7 +15,7 @@
         'total_sks' => $user->mahasiswa->total_sks,
         'rekap_mhs' => $user->mahasiswa->rekap_mhs ?? '0.00',
         'ipk_mhs' => $user->mahasiswa->ipk_mhs ?? '0.00',
-        'mutu_mhs' => $user->mahasiswa->mutu_mhs ?? 'E',
+        'huruf_mhs' => $user->mahasiswa->huruf_mhs ?? 'E',
         'angkatan' => $user->mahasiswa->angkatan ?? 'YYYY',
         'isTrashed' => $user->trashed(),
     ]"

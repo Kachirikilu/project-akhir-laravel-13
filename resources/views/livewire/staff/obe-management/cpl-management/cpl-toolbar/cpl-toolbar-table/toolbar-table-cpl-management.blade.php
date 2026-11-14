@@ -20,7 +20,7 @@
 
 
     @if (!$data['isTrashed'])
-    <flux:menu.separator />
+        <flux:menu.separator />
 
         {{-- Tombol Detail --}}
         <flux:menu.item
@@ -37,12 +37,18 @@
                     $store.cpl?.setColor(colors[type] ?? 'text-sky-700 dark:text-sky-400');
                         $store.cpl?.setValueCPLRPS (
                             '{{ $data['kode'] ?? '' }}',
-                            '{{ $data['rekap_cpl_pr'] ?? 0 }}',
-                            '{{ $data['index_cpl_pr'] ?? 0 }}',
-                            '{{ $data['mutu_cpl_pr'] ?? 'E' }}',
+                            '{{ $data['rekap_cpl'] ?? 0 }}',
+                            '{{ $data['index_cpl'] ?? 0 }}',
+                            '{{ $data['huruf_cpl'] ?? 'E' }}',
                         );
                     $flux.modal('cpl-rps-modal').show();
-                    $dispatch('open-list-rps-cpl-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['tingkat_cpl'] }}, isRPS: 1 });
+                    $dispatch('open-list-rps-cpl-modal', {
+                        id: {{ (int) $data['id'] }},
+                        tingkatan: {{ (int) $data['tingkat_cpl'] }},
+                        isRPS: 1,
+                        idInduk: {{ (int) ($data['idInduk'] ?? 0) }},
+                        isNilaiMahasiswa: {{ !empty($data['isNilaiMahasiswa']) ? 'true' : 'false' }}
+                    });
                 "
             {{-- wire:click="editCPL({{ $id }}, {{ $tingkat_cpl }}, 1)" --}} color="emerald"
             class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 active:!bg-cyan-200 dark:active:!bg-cyan-900 transition-colors">
@@ -81,7 +87,13 @@
                     );
 
                     $flux.modal('cpl-modal').show();
-                    $dispatch('open-edit-cpl-modal', { id: {{ $data['id'] }}, tingkatan: {{ $data['tingkat_cpl'] }} });
+                    $dispatch('open-edit-cpl-modal', { 
+                        id: {{ (int) ($data['id'] ?? 0) }}, 
+                        tingkatan: {{ (int) ($data['tingkat_cpl'] ?? 1) }}, 
+                        isRPS: false, 
+                        idInduk: {{ (int) ($data['idInduk'] ?? 0) }},
+                        isNilaiMahasiswa: {{ !empty($data['isNilaiMahasiswa']) ? 'true' : 'false' }}
+                    });
                 "
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 active:!bg-yellow-200 dark:active:!bg-yellow-900 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -113,7 +125,7 @@
         @endif
     @else
         @if ($canAccess)
-    <flux:menu.separator />
+            <flux:menu.separator />
 
             {{-- Tombol Restore --}}
             <flux:menu.item wire:click="$dispatch('restore-cpl', { id: {{ $data['id'] }} })"

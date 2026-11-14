@@ -35,7 +35,7 @@
         <livewire:staff.obe-management.rps-management.delete-rps-management />
 
         <livewire:staff.obe-management.cpl-management.modal-cpl-management />
-        <livewire:staff.obe-management.cpl-management.list-rps-cpl-management />
+        <livewire:staff.obe-management.cpl-management.list-rps-cpl-management :withCapaian="1" />
         <livewire:staff.obe-management.cpl-management.delete-cpl-management />
 
         <livewire:staff.obe-management.cpmk-management.modal-cpmk-management />

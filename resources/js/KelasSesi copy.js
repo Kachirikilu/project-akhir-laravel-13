@@ -272,7 +272,7 @@ initData(items) {
         mhs_tidak_masuk: 0,
         mhs_nilai_akhir: 0,
         mhs_nilai_index: 0,
-        mhs_nilai_mutu: "E",
+        mhs_nilai_huruf: "E",
 
         w_pelaksaan: "",
         w_berakhir: "",
@@ -493,7 +493,7 @@ initData(items) {
 
             nilaiAkhir,
             nilaiIndex,
-            nilaiMutu,
+            nilaiHuruf,
         ) {
             this.nama = name;
             this.nim = nim;
@@ -508,7 +508,7 @@ initData(items) {
             this.mhs_tidak_masuk = tidakMasuk;
             this.mhs_nilai_akhir = nilaiAkhir;
             this.mhs_nilai_index = nilaiIndex;
-            this.mhs_nilai_mutu = nilaiMutu;
+            this.mhs_nilai_huruf = nilaiHuruf;
         },
 
         setDeleteJadwal(namaJadwal, kodeJadwalDelete, forceDelete) {
@@ -538,7 +538,7 @@ initData(items) {
                 this.mhs_tidak_masuk = 0;
                 this.mhs_nilai_akhir = 0;
                 this.mhs_nilai_index = 0;
-                this.mhs_nilai_mutu = "E";
+                this.mhs_nilai_huruf = "E";
 
                 this.sesi_id = "";
                 this.pertemuan_ke = "";

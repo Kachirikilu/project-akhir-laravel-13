@@ -573,7 +573,7 @@ class ObeManagement extends Component
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
                     break;
                 case 'cpl':
-                    $this->addCountRpsCpl($queryCPL, null, 'count_rps');
+                    $this->addCountRpsCpl($queryCPL, null, null, 'count_rps');
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'cpmk':

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 trait HasAkreditas
 {
-    protected function addRekapProdi(
+    protected function addRekapOBE(
         $query,
         ?int $prId = null,
         string $alias = 'rekap_cpl_pr',
@@ -29,7 +29,7 @@ trait HasAkreditas
         return $query;
     }
 
-    // protected function addIndexProdi(
+    // protected function addIndexOBE(
     //     $query,
     //     ?int $prId = null,
     //     string $alias = 'index_cpl_pr',
@@ -73,7 +73,7 @@ trait HasAkreditas
     //     return $query;
     // }
 
-    protected function addIndexProdi(
+    protected function addIndexOBE(
         $query,
         ?int $prId = null,
         string $alias = 'index_cpl_pr',
@@ -104,10 +104,10 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addAkreditasProdi(
+    protected function addAkreditasOBE(
         $query,
         ?int $prId = null,
-        string $alias = 'mutu_cpl_pr',
+        string $alias = 'huruf_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
@@ -207,9 +207,9 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addMutuMahasiswa(
+    protected function addHurufMahasiswa(
         $query,
-        string $alias = 'mutu_mahasiswa'
+        string $alias = 'huruf_mahasiswa'
     ) {
         $query->selectSub(function ($sub) {
 

@@ -120,21 +120,21 @@ class NilaiMahasiswa extends Model
     //     });
     // }
 
-    protected function nilaiMutu(): Attribute
+    protected function nilaiHuruf(): Attribute
     {
         return Attribute::get(function () {
 
             $nilai = $this->nilai;
 
             return match (true) {
-                $nilai >= 86 => 'A',
-                $nilai >= 80 => 'A-',
-                $nilai >= 75 => 'B+',
-                $nilai >= 70 => 'B',
-                $nilai >= 65 => 'B-',
-                $nilai >= 60 => 'C+',
-                $nilai >= 56 => 'C',
-                $nilai >= 40 => 'D',
+                $nilai >= config('rps.min_a', 86) => 'A',
+                $nilai >= config('rps.min_a_min', 80) => 'A-',
+                $nilai >= config('rps.min_b_plus', 75) => 'B+',
+                $nilai >= config('rps.min_b', 70) => 'B',
+                $nilai >= config('rps.min_b_min', 65) => 'B-',
+                $nilai >= config('rps.min_c_plus', 60) => 'C+',
+                $nilai >= config('rps.min_c', 56) => 'C',
+                $nilai >= config('rps.min_d', 40) => 'D',
                 default => 'E',
             };
         });
@@ -143,7 +143,7 @@ class NilaiMahasiswa extends Model
     protected function nilaiIndex(): Attribute
     {
         return Attribute::get(function () {
-            return match ($this->nilai_mutu) {
+            return match ($this->nilai_huruf) {
                 'A' => 4.00,
                 'A-' => 3.70,
                 'B+' => 3.30,

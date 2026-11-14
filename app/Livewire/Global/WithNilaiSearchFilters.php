@@ -284,8 +284,8 @@ trait WithNilaiSearchFilters
                     $searchLower
                 );
 
-                $matchNilaiMutu = $this->matchNilaiMutu(
-                    $n->mutu_semester ?? 'E',
+                $matchNilaiHuruf = $this->matchNilaiHuruf(
+                    $n->huruf_semester ?? 'E',
                     $searchLower
                 );
 
@@ -350,13 +350,13 @@ trait WithNilaiSearchFilters
 
                 switch ($mode) {
                     case 'nilai':
-                        return $matchNilaiAkhir || $matchNilaiMutu;
+                        return $matchNilaiAkhir || $matchNilaiHuruf;
                     case 'akademik':
                         return $matchAkademik;
                     case 'index':
                         return $matchNilaiIndex;
-                    case 'mutu':
-                        return $matchNilaiMutu;
+                    case 'huruf':
+                        return $matchNilaiHuruf;
                     case 'semester':
                         return $matchSemester || $matchSemesterJenis;
                     case 'sks':
@@ -366,7 +366,7 @@ trait WithNilaiSearchFilters
                 return
                     $matchNilaiAkhir
                     || $matchNilaiIndex
-                    || $matchNilaiMutu
+                    || $matchNilaiHuruf
                     || $matchSemester
                     || $matchSemesterJenis
                     || $matchSKS
@@ -378,7 +378,7 @@ trait WithNilaiSearchFilters
         // --- LOGIKA SORTIR DATA COLLECTION ---
         if ($sortField) {
             $sortValue = match ($sortField) {
-                'nilai_semester', 'ip_semester', 'nilai_index', 'mutu_semester' => fn ($n) => $n->nilai_semester,
+                'nilai_semester', 'ip_semester', 'nilai_index', 'huruf_semester' => fn ($n) => $n->nilai_semester,
                 'semester' => fn ($n) => $n->semester,
                 'sks' => fn ($n) => $n->total_sks,
                 'sks', 'total_sks' => fn ($n) => $n->total_sks,

@@ -149,6 +149,7 @@ trait WithOBEExcel
                 $this->addCountRpsCpl(
                     $queryOBE,
                     null,
+                    null,
                     'count_rps'
                 );
                 $this->buttonCPLFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);

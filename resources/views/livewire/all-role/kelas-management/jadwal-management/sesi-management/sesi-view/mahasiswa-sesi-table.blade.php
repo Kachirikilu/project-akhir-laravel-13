@@ -216,8 +216,8 @@
                             'isCenter' => 1,
                         ])
                         @include('livewire.global.table.head-table', [
-                            'sortFieldString' => 'mhs_nilai_mutu',
-                            'headString' => 'Mutu',
+                            'sortFieldString' => 'mhs_nilai_huruf',
+                            'headString' => 'Huruf',
                             'isCenter' => 1,
                             'isMain' => 1,
                         ])
@@ -363,8 +363,8 @@
                             @if ($isMahasiswa)
                                 <flux:dropdown>
                                     <button class="cursor-pointer">
-                                        @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                            'xValue' => $user->mhs_nilai_mutu ?? 'E',
+                                        @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                            'xValue' => $user->mhs_nilai_huruf ?? 'E',
                                         ])
                                     </button>
                                     @include(

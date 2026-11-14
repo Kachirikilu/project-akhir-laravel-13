@@ -14,7 +14,7 @@
             @if(request()->routeIs('nilai-capaian'))
                 <livewire:staff.nilai-management :switch-table="request()->route('switchTable')" />
             @elseif (request()->routeIs('nilai-mahasiswa-management'))
-                <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" />
+                <livewire:staff.nilai-management.nilai-mahasiswa-management :nim="request()->route('nim')" :switch-table="request()->route('switchTable')" />
             @elseif (request()->routeIs('rps-mahasiswa-management'))
                 <livewire:staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management :nim="request()->route('nim')" :ganjil_genap="request()->route('ganjil_genap')" :akademik="request()->route('akademik')" />
             @elseif (request()->routeIs('rps-capaian-mahasiswa-management'))
@@ -32,6 +32,13 @@
     @if(request()->routeIs('nilai-capaian') && Auth::user()->admin)
         <livewire:admin.user-management.modal-user-management />
         <livewire:admin.user-management.delete-user-management />
+        
+    @endif
+    @if (request()->routeIs('nilai-mahasiswa-management'))
+        <livewire:staff.obe-management.cpl-management.modal-cpl-management />
+        <livewire:staff.obe-management.cpl-management.list-rps-cpl-management :withCapaian="1" />
+        <livewire:staff.obe-management.cpl-management.delete-cpl-management />
+        <livewire:staff.obe-management.rps-management.show-rps-management />
     @endif
     @if (request()->routeIs('nilai-capaian') || request()->routeIs('rps-mahasiswa-management'))
         <livewire:admin.user-management.list-rps-user-management :noModalRPS="1" />

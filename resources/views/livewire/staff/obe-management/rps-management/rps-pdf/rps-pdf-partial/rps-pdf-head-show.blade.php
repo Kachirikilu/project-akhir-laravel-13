@@ -582,7 +582,7 @@
                 <div class="otoritas-flex">
                     <div class="otoritas-title font-bold text-center">
                         Wakil Dekan Bidang Akademik,<br>
-                        Kemahasiswaan dan Penjaminan Mutu
+                        Kemahasiswaan dan Penjaminan Huruf
                     </div>
 
                     <!-- Space untuk TTD -->

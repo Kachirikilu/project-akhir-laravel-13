@@ -46,6 +46,7 @@
                 'color' => 'yellow',
                 'icon' => 'academic-cap',
                 'autoSmall' => 'lg',
+                'countClick' => 4,
             ])
         </div>
 

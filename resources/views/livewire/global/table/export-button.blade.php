@@ -1,6 +1,7 @@
 @php
     $pointAutoSmall = $autoSmall ?? null;
     $manualSmall = $isSmall ?? false;
+    $countClick = max(1, (int) ($countClick ?? 2));
 
     // kapan teks muncul
     $autoSmallClass = match ($pointAutoSmall) {
@@ -70,52 +71,58 @@
     $full = $isFull ?? false;
     $text = $isTextMd ?? false;
     $noPb = $isNoPb ?? ($full ?? false);
+
+    // Label teks konfirmasi dinamis berdasarkan $countClick
+    $confirmLabel = match (true) {
+        $countClick === 2 => 'Double click...',
+        $countClick === 3 => 'Triple click...',
+        $countClick >= 4 => $countClick . 'x click...',
+        default => $name,
+    };
 @endphp
 
 <div class="flex justify-end md:order-2 {{ !($noPb ?? false) ? 'pb-3' : '' }}" x-data="{
-    confirmExport: false,
+    clicks: 0,
+    maxClicks: {{ $countClick }},
     timeout: null,
 
     handleClick() {
-        if (this.confirmExport) {
-            $wire.{{ $xClick ?? $xString }};
-            {{-- $wire.printPDFRPS(\$store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null) --}}
-            {{-- $wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null) --}}
+        this.clicks++;
 
-            this.confirmExport = false;
+        if (this.clicks >= this.maxClicks) {
+            $wire.{{ $xClick ?? $xString }};
+
+            this.clicks = 0;
             clearTimeout(this.timeout);
             return;
         }
 
-        this.confirmExport = true;
-
+        clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
-            this.confirmExport = false;
+            this.clicks = 0;
         }, 3000);
     }
 }">
-    <flux:button @click="handleClick" size="sm" title="Klik 2x untuk {{ $name }}"
-        {{-- :icon="$full ? $icon ?? 'printer' : null" --}}
+    <flux:button @click="handleClick" size="sm"
+        title="Klik {{ $countClick > 1 ? $countClick . 'x' : '' }} untuk {{ $name }}"
         class="cursor-pointer h-8
     {{ !$text ? '!text-xs' : '' }}
     {{ $full ? $colorClassFull : '' }}
     {{ $colorClass }} border transition-colors transition-all duration-200 ease-in-out {{ $valuePy ?? 'py-4.5' }} {{ $buttonWidthClass }}"
-        x-bind:class="confirmExport
-            ?
-            '{{ $colorClassActive }}' :
-            ''">
+        x-bind:class="clicks > 0 ? '{{ $colorClassActive }}' : ''">
         <div class="flex items-center">
-                @if ($isLoading ?? false)
-                    <flux:icon name="arrow-path" class="animate-spin h-3.5 w-3.5 text-current" />
-                @else
-                    <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}" class="h-3.5 w-3.5" />
-                @endif
-                
-                {{-- <flux:icon name="{{ $icon ?? 'printer' }}" @class(['h-3.5 w-3.5', 'mr-2' => !$manualSmall && !$pointAutoSmall]) /> --}}
+            @if ($isLoading ?? false)
+                <flux:icon name="arrow-path" class="animate-spin h-3.5 w-3.5 text-current" />
+            @else
+                <flux:icon name="{{ $icon ?? 'printer' }}" variant="{{ $full ? 'solid' : 'outline' }}"
+                    class="h-3.5 w-3.5" />
+            @endif
 
             <div class="relative inline-flex justify-center items-center">
                 @if (!$manualSmall)
-                    <span wire:loading.remove wire:target="{{ $wireLoading ?? $xString }}" class="ml-2 {{ $autoSmallClass }}">
+                    <span wire:loading.remove wire:target="{{ $wireLoading ?? $xString }}"
+                        class="ml-2 {{ $autoSmallClass }}"
+                        x-text="clicks > 0 ? '{{ $confirmLabel }}' : '{{ $name }}'">
                         {{ $name }}
                     </span>
                 @endif
@@ -127,7 +134,6 @@
                     class="absolute flex justify-center items-center pointer-events-none">
                     <flux:icon name="arrow-path" class="animate-spin h-3.5 w-3.5 text-current" />
                 </span>
-
             </div>
         </div>
     </flux:button>

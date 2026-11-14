@@ -500,7 +500,7 @@ trait WithTimDosenModal
             'kode_tim_dosen.required' => 'Kode Tim Dosen lengkap wajib terbentuk!',
             'kode_tim_dosen.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_tim_dosen.required' => 'Kode Tim Dosen wajib diisi!',
-            'kode_tim_dosen.alpha_num' => 'Kode Tim Dosen hanya boleh berisi mutu dan angka!',
+            'kode_tim_dosen.alpha_num' => 'Kode Tim Dosen hanya boleh berisi huruf dan angka!',
             'kode_tim_dosen.max' => 'Kode Tim Dosen maksimal 20 karakter!',
 
             'nama_tim.required' => 'Nama Tim Dosen wajib diisi!',

@@ -345,8 +345,8 @@ trait WithUserFilters
             'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
             'name', 'identity1', 'identity2', 'identity3', 'nik', 'kampus',
             'count_rps', 'total_sks',
-            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu',
-            'rekap_mhs', 'ipk_mhs', 'mutu_mhs',
+            'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf',
+            'rekap_mhs', 'ipk_mhs', 'huruf_mhs',
             'program_studi', 'status', 'angkatan', 'kode', 'pertemuan_ke',
             'nip', 'nitk', 'nidn', 'nidk', 'nim',
         ];
@@ -389,7 +389,7 @@ trait WithUserFilters
         if (
             $this->sortField === 'rekap_mhs' ||
             $this->sortField === 'ipk_mhs' ||
-            $this->sortField === 'mutu_mhs' ||
+            $this->sortField === 'huruf_mhs' ||
             $this->sortField === 'count_rps' ||
             $this->sortField === 'total_sks'
         ) {
@@ -402,7 +402,7 @@ trait WithUserFilters
                 );
 
             return match ($this->sortField) {
-                'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => $queryUser->orderBy(
+                'rekap_mhs', 'ipk_mhs', 'huruf_mhs' => $queryUser->orderBy(
                     'rnm.nilai',
                     $this->sortDirection
                 ),
@@ -421,9 +421,9 @@ trait WithUserFilters
         $aliasSort = match ($this->sortField) {
             'mhs_nilai_akhir',
             'mhs_nilai_index',
-            'mhs_nilai_mutu' => 'mhs_nilai_akhir',
+            'mhs_nilai_huruf' => 'mhs_nilai_akhir',
 
-            // 'rekap_mhs', 'ipk_mhs', 'mutu_mhs' => 'rekap_mhs',
+            // 'rekap_mhs', 'ipk_mhs', 'huruf_mhs' => 'rekap_mhs',
 
             'count_rps',
             'total_sks' => $this->sortField,
@@ -538,7 +538,7 @@ trait WithUserFilters
     //         'kampus' => 'COALESCE(admins.kode_wilayah, mahasiswas.kode_wilayah)',
     //         'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
     //         'angkatan' => 'mahasiswas.angkatan',
-    //         'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu' => 'mahasiswas.mhs_nilai_akhir',
+    //         'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => 'mahasiswas.mhs_nilai_akhir',
     //         'created_at' => 'users.created_at',
     //         'updated_at' => 'users.updated_at',
     //         default => 'users.id'

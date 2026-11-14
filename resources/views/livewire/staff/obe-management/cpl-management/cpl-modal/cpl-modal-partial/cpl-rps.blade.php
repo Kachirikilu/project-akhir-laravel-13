@@ -26,7 +26,7 @@
                         <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai
                             Akhir</span>
                         <span class="block text-xl font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">
-                            <span x-text="$store.cpl?.rekap_cpl_pr"></span>
+                            <span x-text="$store.cpl?.rekap_cpl"></span>
                         </span>
                     </div>
 
@@ -34,15 +34,15 @@
                         class="p-3 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 text-center">
                         <span class="block text-xs font-medium text-blue-700 dark:text-blue-400">Index (0-4)</span>
                         <span class="block text-xl font-bold text-blue-800 dark:text-blue-300 mt-0.5">
-                            <span x-text="$store.cpl?.index_cpl_pr"></span>
+                            <span x-text="$store.cpl?.index_cpl"></span>
                         </span>
                     </div>
 
                     <div
                         class="p-3 rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-center">
-                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Mutu</span>
+                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Huruf</span>
                         <span class="block text-xl font-bold text-amber-800 dark:text-amber-300 mt-0.5">
-                            <span x-text="$store.cpl?.mutu_cpl_pr"></span>
+                            <span x-text="$store.cpl?.huruf_cpl"></span>
                         </span>
                     </div>
 

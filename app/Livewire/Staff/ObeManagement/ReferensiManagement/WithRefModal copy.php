@@ -378,7 +378,7 @@ trait WithRefModal
             'kode_ref.required' => 'Kode Referensi lengkap wajib terbentuk!',
             'kode_ref.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_ref.required' => 'Kode Referensi wajib diisi!',
-            'kode_ref.alpha_num' => 'Kode Referensi hanya boleh berisi mutu dan angka!',
+            'kode_ref.alpha_num' => 'Kode Referensi hanya boleh berisi huruf dan angka!',
             'kode_ref.max' => 'Kode Referensi maksimal 20 karakter!',
 
             // Deskripsi & Status

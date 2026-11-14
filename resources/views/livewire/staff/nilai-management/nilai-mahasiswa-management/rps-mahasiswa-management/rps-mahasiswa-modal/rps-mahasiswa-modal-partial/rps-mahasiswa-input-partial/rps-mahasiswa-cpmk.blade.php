@@ -18,18 +18,18 @@
                     $nilaiKon = (float) ($item['nilai_kontribusi'] ?? 0);
 
                     $predikat = match (true) {
-                        $nilaiKon >= 86 => [
+                        $nilaiKon >= config('rps.min_a', 86) => [
                             'huruf' => 'A',
                             'badge' => 'emerald',
                             'teks' => 'Sangat Memuaskan',
                         ],
-                        $nilaiKon >= 80 => ['huruf' => 'A-', 'badge' => 'teal', 'teks' => 'Sangat Baik'],
-                        $nilaiKon >= 75 => ['huruf' => 'B+', 'badge' => 'cyan', 'teks' => 'Baik Sekali'],
-                        $nilaiKon >= 70 => ['huruf' => 'B', 'badge' => 'sky', 'teks' => 'Baik'],
-                        $nilaiKon >= 65 => ['huruf' => 'B-', 'badge' => 'blue', 'teks' => 'Cukup Baik'],
-                        $nilaiKon >= 60 => ['huruf' => 'C+', 'badge' => 'amber', 'teks' => 'Cukup'],
-                        $nilaiKon >= 56 => ['huruf' => 'C', 'badge' => 'yellow', 'teks' => 'Hampir Cukup'],
-                        $nilaiKon >= 40 => ['huruf' => 'D', 'badge' => 'orange', 'teks' => 'Kurang'],
+                        $nilaiKon >= config('rps.min_a_min', 80) => ['huruf' => 'A-', 'badge' => 'teal', 'teks' => 'Sangat Baik'],
+                        $nilaiKon >= config('rps.min_b_plus', 75) => ['huruf' => 'B+', 'badge' => 'cyan', 'teks' => 'Baik Sekali'],
+                        $nilaiKon >= config('rps.min_b', 70) => ['huruf' => 'B', 'badge' => 'sky', 'teks' => 'Baik'],
+                        $nilaiKon >= config('rps.min_b_min', 65) => ['huruf' => 'B-', 'badge' => 'blue', 'teks' => 'Cukup Baik'],
+                        $nilaiKon >= config('rps.min_c_plus', 60) => ['huruf' => 'C+', 'badge' => 'amber', 'teks' => 'Cukup'],
+                        $nilaiKon >= config('rps.min_c', 56) => ['huruf' => 'C', 'badge' => 'yellow', 'teks' => 'Hampir Cukup'],
+                        $nilaiKon >= config('rps.min_d', 40) => ['huruf' => 'D', 'badge' => 'orange', 'teks' => 'Kurang'],
                         default => ['huruf' => 'E', 'badge' => 'rose', 'teks' => 'Sangat KUrang'],
                     };
                 @endphp
@@ -108,7 +108,7 @@
                                 class="text-indigo-600 dark:text-indigo-400">{{ $item['kode_cpmk'] ?? 'CPMK' }}</strong>
                             memperoleh nilai kontribusi sebesar <strong
                                 class="text-emerald-600 dark:text-emerald-400">{{ $item['nilai_kontribusi'] ?? 0 }}</strong>
-                            dengan kualifikasi mutu <strong
+                            dengan kualifikasi huruf <strong
                                 class="uppercase text-indigo-600 dark:text-indigo-400">{{ $predikat['huruf'] }}</strong>
                             ({{ $predikat['teks'] }}).
                         </div>

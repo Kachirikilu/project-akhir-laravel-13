@@ -18,7 +18,7 @@
                         'noLabel' => 1,
                         'modelString' => 'kode_kelas_1',
                         'iconString' => 'document-text',
-                        'placeholder' => 'Masukkan mutu Kode Kelas...',
+                        'placeholder' => 'Masukkan huruf Kode Kelas...',
                         'isKode' => 4,
                         'isReadonly' => $isJadwal,
                         'isFocusSelect' => 1,

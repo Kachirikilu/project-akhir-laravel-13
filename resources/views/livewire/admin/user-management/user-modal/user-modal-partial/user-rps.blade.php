@@ -29,7 +29,7 @@
         </div>
 
 
-        {{-- @if ($roleType == 'mahasiswa') --}}
+        @if ($roleType == 'mahasiswa')
             <div class="flex flex-wrap items-center gap-2 lg:justify-end">
                 <span
                     class="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-100/60 dark:border-white/10 dark:bg-white/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.07em] text-zinc-600 dark:text-white/70">
@@ -37,7 +37,7 @@
                     Angkatan <span x-text="$store.user?.angkatan_mhs"></span>
                 </span>
             </div>
-        {{-- @endif --}}
+        @endif
 
     </div>
 
@@ -69,9 +69,9 @@
 
                     <div
                         class="p-3 rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/20 text-center">
-                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Mutu</span>
+                        <span class="block text-xs font-medium text-amber-700 dark:text-amber-400">Huruf</span>
                         <span class="block text-xl font-bold text-amber-800 dark:text-amber-300 mt-0.5">
-                            <span x-text="$store.user?.mutu_mhs"></span>
+                            <span x-text="$store.user?.huruf_mhs"></span>
                         </span>
                     </div>
 

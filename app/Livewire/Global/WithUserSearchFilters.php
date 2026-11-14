@@ -480,7 +480,7 @@ trait WithUserSearchFilters
 
                     $matchNilaiAkhirKelas = false;
                     $matchNilaiIndexKelas = false;
-                    $matchNilaiMutuKelas = false;
+                    $matchNilaiHurufKelas = false;
 
                     if ($idJadwal) {
 
@@ -541,8 +541,8 @@ trait WithUserSearchFilters
                             $searchLower
                         );
 
-                        $matchNilaiMutuKelas = $this->matchNilaiMutu(
-                            $user->mhs_nilai_mutu ?? 'E',
+                        $matchNilaiHurufKelas = $this->matchNilaiHuruf(
+                            $user->mhs_nilai_huruf ?? 'E',
                             $searchLower
                         );
                     }
@@ -551,7 +551,7 @@ trait WithUserSearchFilters
                     $matchSKS = false;
                     $matchNilaiAkhir = false;
                     $matchNilaiIndex = false;
-                    $matchNilaiMutu = false;
+                    $matchNilaiHuruf = false;
 
                     if ($withRPS) {
                         $rps = (int) ($user->count_rps ?? $user->mahasiswa->count_rps ?? 0);
@@ -598,8 +598,8 @@ trait WithUserSearchFilters
                             $searchLower
                         );
 
-                        $matchNilaiMutu = $this->matchNilaiMutu(
-                            $user->mahasiswa->mutu_mhs ?? 'E',
+                        $matchNilaiHuruf = $this->matchNilaiHuruf(
+                            $user->mahasiswa->huruf_mhs ?? 'E',
                             $searchLower
                         );
                     }
@@ -620,11 +620,11 @@ trait WithUserSearchFilters
                         case 'id':
                             return $matchID || $matchIDRole;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiMutu || $matchNilaiAkhirKelas || $matchNilaiMutuKelas;
+                            return $matchNilaiAkhir || $matchNilaiHuruf || $matchNilaiAkhirKelas || $matchNilaiHurufKelas;
                         case 'index':
                             return $matchNilaiIndex;
-                        case 'mutu':
-                            return $matchNilaiMutu;
+                        case 'huruf':
+                            return $matchNilaiHuruf;
                     }
 
                     return
@@ -661,11 +661,11 @@ trait WithUserSearchFilters
 
                         || $matchNilaiAkhirKelas
                         || $matchNilaiIndexKelas
-                        || $matchNilaiMutuKelas
+                        || $matchNilaiHurufKelas
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiMutu
+                        || $matchNilaiHuruf
 
                         || $matchRPS
                         || $matchSKS
@@ -705,7 +705,7 @@ trait WithUserSearchFilters
                 'mhs_izin' => fn ($user) => $user->mhs_izin ?? null,
                 'mhs_sakit' => fn ($user) => $user->mhs_sakit ?? null,
                 'mhs_tidak_masuk' => fn ($user) => $user->mhs_tidak_masuk ?? null,
-                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_mutu' => fn ($user) => $user->mhs_nilai_akhir ?? 0,
+                'mhs_nilai_akhir', 'mhs_nilai_index', 'mhs_nilai_huruf' => fn ($user) => $user->mhs_nilai_akhir ?? 0,
 
                 'count_rps' => fn ($user) => $user->count_rps ?? $user->mahasiswa->count_rps ?? null,
                 'total_sks' => fn ($user) => $user->total_sks ?? $user->mahasiswa->total_sks ?? null,

@@ -61,9 +61,9 @@ trait WithProdiExcel
         //     $this->addIndexDepartemenDp($queryPr, 'index_dp');
         //     $this->addAkreditasDepartemenDp($queryPr, 'akreditas_dp');
         // } else {
-            // $this->addRekapProdiPr($queryPr, 'rekap_pr');
-            // $this->addIndexProdiPr($queryPr, 'index_pr');
-            // $this->addAkreditasProdiPr($queryPr, 'akreditas_pr');
+            // $this->addRekapOBEPr($queryPr, 'rekap_pr');
+            // $this->addIndexOBEPr($queryPr, 'index_pr');
+            // $this->addAkreditasOBEPr($queryPr, 'akreditas_pr');
         if ($this->switchTable === '' || $this->switchTable === 'prodi') {
             $this->addMataKuliahProdiPr($queryPr, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
             $this->buttonStrataFilter($queryPr);

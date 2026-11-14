@@ -38,7 +38,7 @@
                                 'noLabel' => 1,
                                 'modelString' => 'kode_ref_1',
                                 'iconString' => 'book-open',
-                                'placeholder' => 'Masukkan mutu Kode Referensi...',
+                                'placeholder' => 'Masukkan huruf Kode Referensi...',
                                 'isKode' => 4,
                                 'isFocusSelect' => 1,
                             ])

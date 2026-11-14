@@ -8,7 +8,7 @@
 @php
     // // $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
     // $ipkSaya = 3.96 ?? 0;
-    // $mutuSaya = 'A+' ?? 'E';
+    // $hurufSaya = 'A+' ?? 'E';
 
     // $mkSaya = 61 ?? 0;
     // $mkSksSaya = 141;
@@ -24,7 +24,7 @@
 
     // $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
     $ipkSaya = Auth::user()->mahasiswa->ipk_mhs ?? 0;
-    $mutuSaya = Auth::user()->mahasiswa->mutu_mhs ?? 'E';
+    $hurufSaya = Auth::user()->mahasiswa->huruf_mhs ?? 'E';
 
     $mkSaya = Auth::user()->mahasiswa->nilai_mahasiswas->count() ?? 0;
     $mkSksSaya = Auth::user()->mahasiswa->nilai_mahasiswas
@@ -68,7 +68,7 @@
             'title' => 'IPK Saya',
             'subtitle' => "dari $sksSaya SKS",
             'value' => $ipkSaya,
-            'mainValue' => $mutuSaya,
+            'mainValue' => $hurufSaya,
             'largeMain' => 1,
             'max' => 4,
             'displayValue' => number_format($ipkSaya, 2) . ' / 4.00',

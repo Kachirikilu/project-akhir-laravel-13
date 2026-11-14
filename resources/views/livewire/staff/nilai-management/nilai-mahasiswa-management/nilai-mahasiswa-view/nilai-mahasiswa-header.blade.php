@@ -31,7 +31,7 @@
         $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
     }
 
-    $mutuMhs = match (true) {
+    $hurufMhs = match (true) {
         $calculatedIndex >= 3.75 => 'A',
         $calculatedIndex >= 3.5 => 'A-',
         $calculatedIndex >= 3.0 => 'B+',
@@ -44,7 +44,7 @@
 
     // --- 3. LOGIKA WARNA BERDASARKAN MUTU AKTIF ---
     $colorClass = 'text-zinc-500';
-    switch ($mutuMhs) {
+    switch ($hurufMhs) {
         case 'A':
             $colorClass = 'text-cyan-500 dark:text-cyan-400';
             break;
@@ -161,6 +161,7 @@
                         'xString' => 'rekapCapaian(' . (Auth::user()->pr_id ?? 'null') . ', 15)',
                         'color' => 'blue',
                         'icon' => 'academic-cap',
+                        'countClick' => 3,
                     ])
                 </div>
             @endif
@@ -196,12 +197,12 @@
         $ipLabel = $isIps ? 'IP Semester (IPS)' : 'IPK Akumulatif';
         $ipSub = $isIps ? 'Indeks Prestasi Semester Aktif' : 'Skala Penilaian Kurikulum OBE';
 
-        // Predikat Mutu — tidak ada rasio, tampilkan huruf di tengah
-        $mutuDisplay = $mutuMhs ?? 'E';
-        $mutuLabel = $isIps ? 'Mutu Semester' : 'Predikat Mutu';
-        $mutuSub = 'Bobot Standar Akademik';
+        // Predikat Huruf — tidak ada rasio, tampilkan huruf di tengah
+        $hurufDisplay = $hurufMhs ?? 'E';
+        $hurufLabel = $isIps ? 'Huruf Semester' : 'Predikat Huruf';
+        $hurufSub = 'Bobot Standar Akademik';
         // Warna accent predikat
-        $mutuAccent = match (strtoupper($mutuDisplay)) {
+        $hurufAccent = match (strtoupper($hurufDisplay)) {
             'A', 'A+' => '#10b981', // 4.0
             'A-', 'B+', 'B' => '#1d6fb8', // 3.0 - 3.7
             'B-', 'C+', 'C' => '#f59e0b', // 2.0 - 2.7
@@ -209,11 +210,11 @@
             default => '#991b1b', // E (Merah Gelap)
         };
 
-        $mutuSoftBg =
+        $hurufSoftBg =
             'rgba(' .
             implode(
                 ',',
-                match (strtoupper($mutuDisplay)) {
+                match (strtoupper($hurufDisplay)) {
                     'A', 'A+' => [16, 185, 129],
                     'A-', 'B+', 'B' => [29, 111, 184],
                     'B-', 'C+', 'C' => [245, 158, 11],
@@ -223,6 +224,7 @@
             ) .
             ',0.12)';
     @endphp
+    
 
     <div
         class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
@@ -274,16 +276,16 @@
         {{-- 4. PREDIKAT MUTU — tidak ada rasio, huruf di tengah --}}
         @include('livewire.global.statistik.donut-mini-stats', [
             'icon' => 'academic-cap',
-            'title' => $mutuLabel,
-            'sub' => $mutuSub,
+            'title' => $hurufLabel,
+            'sub' => $hurufSub,
             'value' => $ipValue,
             'max' => 4,
             'textPersentase' => '/ 4.00',
             'mainValue'   => number_format($calculatedIndex, 2),
-            'display' => $mutuDisplay,
-            'accent' => $mutuAccent,
-            'softBg' => $mutuSoftBg,
-            'textColor' => $mutuAccent,
+            'display' => $hurufDisplay,
+            'accent' => $hurufAccent,
+            'softBg' => $hurufSoftBg,
+            'textColor' => $hurufAccent,
             'size' => 64,
             'pctSize' => 'text-sm',
         ])

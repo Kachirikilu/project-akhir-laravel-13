@@ -809,14 +809,14 @@ trait LogicSearch
         return false;
     }
 
-    protected function matchNilaiMutu(
-        ?string $mutu,
+    protected function matchNilaiHuruf(
+        ?string $huruf,
         string $search
     ): bool {
-        $mutu = strtoupper(trim($mutu ?? ''));
+        $huruf = strtoupper(trim($huruf ?? ''));
         $search = strtoupper(trim($search));
 
-        if ($mutu === '') {
+        if ($huruf === '') {
             return false;
         }
 
@@ -827,19 +827,19 @@ trait LogicSearch
             return false;
         }
 
-        $targetMutu = $matches[1] ?? null;
+        $targetHuruf = $matches[1] ?? null;
 
-        // Jika nilai huruf yang dicari tidak sama dengan data mutu saat ini, langsung reject
-        if ($mutu !== $targetMutu) {
+        // Jika nilai huruf yang dicari tidak sama dengan data huruf saat ini, langsung reject
+        if ($huruf !== $targetHuruf) {
             return false;
         }
 
         // Jika user hanya mengetik hurufnya saja (misal: "A-", "B", "A"), langsung cocokkan
-        if ($search === $targetMutu) {
+        if ($search === $targetHuruf) {
             return true;
         }
 
-        // Jika ada teks tambahan (misal: "nilai A" atau "mutu B+"), bersihkan kata kunci pengganggu
+        // Jika ada teks tambahan (misal: "nilai A" atau "huruf B+"), bersihkan kata kunci pengganggu
         $cleanSearch = $search;
         $stopWords = [
             'NILAI', 'HURUF', 'MUTU', 'GRADE', 'AKREDITASI', 'SEMESTER',
@@ -852,7 +852,7 @@ trait LogicSearch
 
         $cleanSearch = trim($cleanSearch);
 
-        return $cleanSearch === $targetMutu;
+        return $cleanSearch === $targetHuruf;
     }
 
     protected function detectSearchMode(string $search): ?string
@@ -901,10 +901,10 @@ trait LogicSearch
         }
 
         if (
-            str_contains($search, 'mutu ')
+            str_contains($search, 'huruf ')
             || str_contains($search, 'grade ')
         ) {
-            return 'mutu';
+            return 'huruf';
         }
 
         if (

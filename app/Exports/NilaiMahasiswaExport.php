@@ -80,13 +80,13 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
         // Header Baris 1 - Kolom Tahun Akademik disisipkan setelah NIM
         $row1 = [
             'No MK', 'Mata Kuliah', 'Kode RPS', 'Nama Mahasiswa', 'NIM', 'Tahun Akademik',
-            'Penilaian Akhir', '', '', '', // SKS, Nilai, Index, Mutu
+            'Penilaian Akhir', '', '', '', // SKS, Nilai, Index, Huruf
         ];
 
         // Header Baris 2
         $row2 = [
             '', '', '', '', '', '',
-            'SKS', 'Nilai Akhir', 'Index', 'Mutu',
+            'SKS', 'Nilai Akhir', 'Index', 'Huruf',
         ];
 
         // Ekspansi horizontal untuk 16 Pertemuan
@@ -115,7 +115,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
             $row->sks ?? 0,
             $row->nilai ?? 0,
             $row->nilai_index ?? '0.00',
-            $row->nilai_mutu ?? 'E',
+            $row->nilai_huruf ?? 'E',
         ];
 
         $nilaiArray = $row->nilai_array ?? array_fill(0, 16, 0);
@@ -226,7 +226,7 @@ class NilaiMahasiswaExport extends DefaultValueBinder implements FromCollection,
         $sheet->setCellValue("H{$summaryRow}", round($rataNilaiAkhir, 2));
         $sheet->setCellValue("I{$summaryRow}", round($ipkAkhir, 2));
 
-        // Formula Predikat Mutu IPK otomatis di Excel tetap membaca kolom I
+        // Formula Predikat Huruf IPK otomatis di Excel tetap membaca kolom I
         $sheet->setCellValue("J{$summaryRow}", "=IF(I{$summaryRow}>=3.75,\"A\",IF(I{$summaryRow}>=3.5,\"A-\",IF(I{$summaryRow}>=3.0,\"B+\",IF(I{$summaryRow}>=2.75,\"B\",IF(I{$summaryRow}>=2.0,\"C\",\"D\")))))");
 
         // Style untuk Baris Summary

@@ -7,10 +7,11 @@
             'kode' => $c->kode,
             'tingkat_cpl' => $c->tingkat_cpl,
 
-        
-            'rekap_cpl_pr' => $c->rekap_cpl_pr ?? null,
-            'index_cpl_pr' => $c->index_cpl_pr ?? null,
-            'mutu_cpl_pr' => $c->mutu_cpl_pr ?? null,
+            'rekap_cpl' => $c->rekap_cpl_pr ?? $c->rekap_cpl_mhs ?? null,
+            'index_cpl' => $c->index_cpl_pr ?? $c->index_cpl_mhs ?? null,
+            'huruf_cpl' => $c->huruf_cpl_pr ?? $c->huruf_cpl_mhs ?? null,
+            'idInduk' => $pr_id_url ?? ($mahasiswa_id_url ?? null),
+            'isNilaiMahasiswa' => $c->isNilaiMahasiswa ?? null,
             'isTrashed' => $c->trashed(),
         ]"
             wire:key="toolbar-cpl-{{ $c->id }}-{{ $key }}" />
@@ -23,9 +24,11 @@
             'dp_id' => $c->prodis->first()?->dp_id,
             'fk_id' => $c->prodis->first()?->fk_id,
             'deskripsi' => $c->deskripsi,
-            'rekap_cpl_pr' => $c->rekap_cpl_pr ?? null,
-            'index_cpl_pr' => $c->index_cpl_pr ?? null,
-            'mutu_cpl_pr' => $c->mutu_cpl_pr ?? null,
+            'rekap_cpl' => $c->rekap_cpl_pr ?? $c->rekap_cpl_mhs ?? null,
+            'index_cpl' => $c->index_cpl_pr ?? $c->index_cpl_mhs ?? null,
+            'huruf_cpl' => $c->huruf_cpl_pr ?? $c->huruf_cpl_mhs ?? null,
+            'idInduk' => $pr_id_url ?? ($mahasiswa_id_url ?? null),
+            'isNilaiMahasiswa' => $c->isNilaiMahasiswa ?? null,
             'isTrashed' => $c->trashed(),
         ]"
             wire:key="toolbar-cpl-{{ $c->id }}-{{ $key }}" />

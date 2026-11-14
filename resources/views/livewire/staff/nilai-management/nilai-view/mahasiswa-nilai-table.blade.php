@@ -126,8 +126,8 @@
                 ])
 
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mutu_mhs',
-                    'headString' => 'Mutu',
+                    'sortFieldString' => 'huruf_mhs',
+                    'headString' => 'Huruf',
                     'isCenter' => 1,
                     'isMain' => 1,
                 ])
@@ -200,8 +200,8 @@
                 <td class="table-sub table-border-l whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer" wire:click="$dispatch('trigger-user-modal')">
-                            @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                'xValue' => $user->mahasiswa->mutu_mhs ?? 'E',
+                            @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                'xValue' => $user->mahasiswa->huruf_mhs ?? 'E',
                             ])
                         </button>
                         @include('livewire.staff.nilai-management.nilai-toolbar.nilai-toolbar-table', ['key' => 2])
@@ -230,7 +230,7 @@
 
                                 '{{ $user->mahasiswa->rekap_mhs ?? '0.00' }}',
                                 '{{ $user->mahasiswa->ipk_mhs ?? '0.00' }}',
-                                '{{ $user->mahasiswa->mutu_mhs ?? 'E' }}',
+                                '{{ $user->mahasiswa->huruf_mhs ?? 'E' }}',
 
                                 '{{ $user->mahasiswa->angkatan ?? 'YYYY' }}',
                                 {{-- '{{ $user->pr_id ?? '' }}', --}}

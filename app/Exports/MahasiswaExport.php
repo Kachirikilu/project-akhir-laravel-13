@@ -67,7 +67,7 @@ class MahasiswaExport extends DefaultValueBinder implements FromCollection, Shou
             [
                 '', '', '', '',
                 'NIP', 'NIK',
-                'Nilai', 'IPK', 'Mutu',
+                'Nilai', 'IPK', 'Huruf',
                 '', '',
                 'Kode RPS', 'SKS', 'Jumlah RPS',
             ],
@@ -98,7 +98,7 @@ class MahasiswaExport extends DefaultValueBinder implements FromCollection, Shou
 
             $m->rekap_mhs ?: '0',
             $m->ipk_mhs ?: '0',
-            $m->mutu_mhs ?? 'E',
+            $m->huruf_mhs ?? 'E',
 
             $u->status ?? '', // I
             $u->prodi ?? '', // J

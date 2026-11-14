@@ -25,27 +25,40 @@ class ListRpsCplManagement extends Component
 
     public $isReady;
 
+    public $withCapaian;
+
+    public function mount($withCapaian = 0)
+    {
+        $this->withCapaian = $withCapaian;
+    }
+
     #[On('refresh-data-rps-cpl-rps')]
     public function handleRefreshShowCPL()
     {
         $this->isReady = true;
         if ($this->selected_id_cpl) {
-            $this->editCPL($this->selected_id_cpl, $this->tingkatan, 1);
+            $this->editCPL($this->selected_id_cpl, $this->tingkatan, 1, $this->selected_id_induk_cpl, $this->isNilaiMahasiswa);
         }
     }
 
     #[On('open-list-rps-cpl-modal')]
-    public function handleShowCPL($id, $tingkatan = 1, $isRPS = false)
+    public function handleShowCPL($id, $tingkatan = 1, $isRPS = false, $idInduk = null, $isNilaiMahasiswa = false)
     {
         $this->isReady = true;
         $this->tingkatan = $tingkatan;
-        $this->editCPL($id, $tingkatan, $isRPS);
+        $this->selected_id_induk_cpl = $idInduk;
+        $this->isNilaiMahasiswa = $isNilaiMahasiswa;
+        $this->editCPL($id, $tingkatan, $isRPS, $idInduk, $isNilaiMahasiswa);
     }
 
     public function loadingRPSsList() {}
+    public function loadingOtherRPSsList() {}
 
     public function render()
     {
-        return view('livewire.staff.obe-management.cpl-management.cpl-modal.list-rps-cpl-management', ['cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.cpl-management.cpl-modal.list-rps-cpl-management', [
+            'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
+            'cpl_rps_other_modal_paginator' => $this->cpl_rps_other_modal_paginator
+        ]);
     }
 }

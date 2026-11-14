@@ -18,13 +18,30 @@
                     <div class="modal-flux-body">
                         @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-rps')
                         @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                            'headJudul' => $withCapaian ? 'RPS yang Terhubung dengan Capaian ' . ($isNilaiMahasiswa ? 'Mahasiswa' : 'Program Studi') : null,
                             'alpine' => 'cpl',
                             'rps_items_list' => $cpl_rps_items_list,
                             'rps_modal_paginator' => $cpl_rps_modal_paginator,
                             'nameXString' => 'CPL',
-                            'parent' => 'tim-dosen-rps',
+                            'parent' => 'cpl-rps',
                             'isFlyout' => false,
                         ])
+
+                        @if (!empty($cpl_rps_id_induk) && (Auth::user()->admnin && Auth::user()->dosen))
+                            @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                                'headJudul' => 'RPS Lainnya',
+                                'alpine' => 'cpl',
+                                'rps_items_list' => $cpl_rps_other_items_list,
+                                'rps_modal_paginator' => $cpl_rps_other_modal_paginator,
+                                'nameXString' => 'CPL',
+                                'parent' => 'cpl-rps-other',
+                                'isFlyout' => false,
+                                'typeXLoading' => 'loadingOtherRPSsList()',
+                            ])
+                        @endif
+
+                        {{-- public function loadingOtherRPSsList() {} --}}
+
                         @include('livewire.global.modal-form.footer.button-close')
                     </div>
                 @else

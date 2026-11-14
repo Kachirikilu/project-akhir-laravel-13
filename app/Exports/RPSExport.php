@@ -68,7 +68,7 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
                     'Referensi', '',
                 ], [
                     '', '', '', '',
-                    'Nilai', 'Index', 'Mutu',
+                    'Nilai', 'Index', 'Huruf',
                     'Kode MK', 'Deskripsi', 'SKS', 'Pembelajaran', 'Wajib/Pilih',
                     '', '', '',
                     'Kode CPL', 'Jumlah CPL',
@@ -150,7 +150,7 @@ class RPSExport extends DefaultValueBinder implements FromCollection, ShouldAuto
             array_splice($data, 4, 0, [
                 $r->rekap_rps_pr ?: '0',
                 $r->index_rps_pr ?: '0',
-                $r->mutu_rps_pr ?? 'E',
+                $r->huruf_rps_pr ?? 'E',
             ]);
         }
 

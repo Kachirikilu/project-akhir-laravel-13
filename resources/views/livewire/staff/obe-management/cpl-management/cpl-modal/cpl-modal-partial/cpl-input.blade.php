@@ -138,17 +138,30 @@
 
         </div>
         <div x-show="step === 2">
-            <template x-if="$store.cpl.isEdit" x-cloak>
+            @if ($isEditingCPL == true)
                 @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                    'headJudul' => $withCapaian ? 'RPS yang Terhubung dengan Capaian ' . ($isNilaiMahasiswa ? 'Mahasiswa' : 'Program Studi') : null,
                     'alpine' => 'cpl',
                     'rps_items_list' => $cpl_rps_items_list,
                     'rps_modal_paginator' => $cpl_rps_modal_paginator,
                     'nameXString' => 'CPL',
-                    'parent' => 'cpl',
-                    'isFlyout' => true,
+                    'parent' => 'cpl-rps',
+                    'isFlyout' => false,
                 ])
-            </template>
 
+                @if (!empty($cpl_rps_id_induk))
+                    @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                        'headJudul' => 'RPS Lainnya',
+                        'alpine' => 'cpl',
+                        'rps_items_list' => $cpl_rps_other_items_list,
+                        'rps_modal_paginator' => $cpl_rps_other_modal_paginator,
+                        'nameXString' => 'CPL',
+                        'parent' => 'cpl-rps-other',
+                        'isFlyout' => false,
+                        'typeXLoading' => 'loadingOtherRPSsList()',
+                    ])
+                @endif
+            @endif
         </div>
     </div>
 

@@ -142,38 +142,38 @@ trait WithNilaiMahasiswa
             }
         }
 
-        // Hitung skor IPK & tentukan Mutu IPK
+        // Hitung skor IPK & tentukan Huruf IPK
         $ipkSkor = $totalSksIpk > 0 ? $totalBobotIpk / $totalSksIpk : 0;
         $ipkFormat = number_format($ipkSkor, 2, '.', '');
 
-        // Logika konversi mutu IPK (Sesuaikan dengan standar kampusmu)
+        // Logika konversi huruf IPK (Sesuaikan dengan standar kampusmu)
         $ipkPredikat = 'E';
-        $ipkMutu = 'Sangat Kurang';
+        $ipkHuruf = 'Sangat Kurang';
 
         if ($ipkSkor >= 4.00) {
             $ipkPredikat = 'A';
-            $ipkMutu = 'Sangat Memuaskan';
+            $ipkHuruf = 'Sangat Memuaskan';
         } elseif ($ipkSkor >= 3.70) {
             $ipkPredikat = 'A-';
-            $ipkMutu = 'Sangat Memuaskan';
+            $ipkHuruf = 'Sangat Memuaskan';
         } elseif ($ipkSkor >= 3.30) {
             $ipkPredikat = 'B+';
-            $ipkMutu = 'Memuaskan';
+            $ipkHuruf = 'Memuaskan';
         } elseif ($ipkSkor >= 3.00) {
             $ipkPredikat = 'B';
-            $ipkMutu = 'Memuaskan';
+            $ipkHuruf = 'Memuaskan';
         } elseif ($ipkSkor >= 2.70) {
             $ipkPredikat = 'B-';
-            $ipkMutu = 'Memuaskan';
+            $ipkHuruf = 'Memuaskan';
         } elseif ($ipkSkor >= 2.30) {
             $ipkPredikat = 'C+';
-            $ipkMutu = 'Cukup';
+            $ipkHuruf = 'Cukup';
         } elseif ($ipkSkor >= 2.00) {
             $ipkPredikat = 'C';
-            $ipkMutu = 'Cukup';
+            $ipkHuruf = 'Cukup';
         } elseif ($ipkSkor >= 1.00) {
             $ipkPredikat = 'D';
-            $ipkMutu = 'Kurang';
+            $ipkHuruf = 'Kurang';
         }
 
         // --- 2. STRUKTUR HEAD (INFO MAHASISWA & IPK DI ATAS) ---
@@ -184,7 +184,7 @@ trait WithNilaiMahasiswa
             $head .= "🎓 Total SKS: *{$totalSksIpk} SKS*\n";
             $head .= "🏆 *IPK: {$ipkFormat}*\n";
             $head .= "🏅 Predikat: *{$ipkPredikat}*\n";
-            $head .= "⭐ _{$ipkMutu}_\n";
+            $head .= "⭐ _{$ipkHuruf}_\n";
         }
         $head .= '--------------------------------------------';
 
@@ -214,7 +214,7 @@ foreach ($groupedNilai as $periode => $listNilai) {
                 $skor = isset($nilaiMhs->nilai) ? number_format((float) $nilaiMhs->nilai, 2, '.', '') : '-';
                 $indexValue = isset($nilaiMhs->nilai_index) ? (float) $nilaiMhs->nilai_index : null;
                 $index = is_null($indexValue) ? '-' : number_format($indexValue, 2, '.', '');
-                $mutu = $nilaiMhs->nilai_mutu ?? '-';
+                $huruf = $nilaiMhs->nilai_huruf ?? '-';
 
                 if (! is_null($indexValue)) {
                     $totalSksIps += $sks;
@@ -226,7 +226,7 @@ foreach ($groupedNilai as $periode => $listNilai) {
                 $teksNilai .= "        » RPS: ```{$rps}```\n";
                 $teksNilai .= "        » Nilai: *{$skor}*\n";
                 $teksNilai .= "        » Index: *{$index}*\n";
-                $teksNilai .= "        » Mutu: *{$mutu}*\n";
+                $teksNilai .= "        » Huruf: *{$huruf}*\n";
                 $nomor++;
             }
 
@@ -234,22 +234,22 @@ foreach ($groupedNilai as $periode => $listNilai) {
             $ipsSkor = $totalSksIps > 0 ? $totalBobotIps / $totalSksIps : 0;
             $ipsFormat = number_format($ipsSkor, 2, '.', '');
 
-            // Logika konversi mutu IPS Semester
-            $ipsMutu = 'E';
+            // Logika konversi huruf IPS Semester
+            $ipsHuruf = 'E';
             if ($ipsSkor >= 3.51) {
-                $ipsMutu = 'A';
+                $ipsHuruf = 'A';
             } elseif ($ipsSkor >= 3.00) {
-                $ipsMutu = 'B';
+                $ipsHuruf = 'B';
             } elseif ($ipsSkor >= 2.50) {
-                $ipsMutu = 'C';
+                $ipsHuruf = 'C';
             } elseif ($ipsSkor >= 2.00) {
-                $ipsMutu = 'D';
+                $ipsHuruf = 'D';
             }
 
             // Tampilkan totalan IPS di bawah tiap akhir semester
             $teksNilai .= "🔸 *TOTAL SEMESTER INI:*\n";
             $teksNilai .= "        » SKS Diambil: *{$totalSksIps} SKS*\n";
-            $teksNilai .= "        » *IPS: {$ipsFormat}* (Mutu: *{$ipsMutu}*)\n";
+            $teksNilai .= "        » *IPS: {$ipsFormat}* (Huruf: *{$ipsHuruf}*)\n";
             $teksNilai .= "--------------------------------------------\n\n";
         }
 

@@ -146,9 +146,9 @@ trait WithRekapExcel
                 $queryOBE = $this->inputRPSSearch(null, null, 1);
                 $tag = 'Capaian RPS';
                 $TAG = 'CAPAIAN RENCANA PEMBELAJARAN SEMESTER';
-                $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                $this->addRekapOBE($queryOBE, $this->pr_id_url, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                $this->addIndexOBE($queryOBE, $this->pr_id_url, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                $this->addAkreditasOBE($queryOBE, $this->pr_id_url, 'huruf_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                 $this->buttonRPSFilter($queryOBE, $currentYear, $fiveYearsAgo->year, $prId);
                 break;
             case 'cpl':
@@ -159,23 +159,24 @@ trait WithRekapExcel
                 $this->addCountRpsCpl(
                     $queryOBE,
                     null,
+                    null,
                     'count_rps'
                 );
-                $this->addCountRpsCpl($queryOBE, $this->pr_id_url, 'count_rps_pr');
-                $this->addCountRpsCpl($queryOBE, null, 'count_rps');
+                $this->addCountRpsCpl($queryOBE, $this->pr_id_url, null, 'count_rps_pr');
+                $this->addCountRpsCpl($queryOBE, null, null, 'count_rps');
 
-                $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
-                $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
-                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                $this->addRekapOBE($queryOBE, $this->pr_id_url, 'rekap_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                $this->addIndexOBE($queryOBE, $this->pr_id_url, 'index_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                $this->addAkreditasOBE($queryOBE, $this->pr_id_url, 'huruf_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
                 $this->buttonCPLFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'cpmk':
                 $queryOBE = $this->inputCPMKSearch($prId);
                 $tag = 'Capaian CPMK';
                 $TAG = 'CAPAIAN PEMBELAJARAN MATA KULIAH';
-                $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
-                $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
-                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                $this->addRekapOBE($queryOBE, $this->pr_id_url, 'rekap_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                $this->addIndexOBE($queryOBE, $this->pr_id_url, 'index_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                $this->addAkreditasOBE($queryOBE, $this->pr_id_url, 'huruf_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
                 $this->buttonCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'sub-cpmk':
@@ -183,9 +184,9 @@ trait WithRekapExcel
                 $queryOBE = $this->inputSCPMKSearch($prId);
                 $tag = 'Capaian Sub-CPMK';
                 $TAG = 'SUB CAPAIAN PEMBELAJARAN MATA KULIAH';
-                $this->addRekapProdi($queryOBE, $this->pr_id_url, 'rekap_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
-                $this->addIndexProdi($queryOBE, $this->pr_id_url, 'index_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
-                $this->addAkreditasProdi($queryOBE, $this->pr_id_url, 'mutu_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                $this->addRekapOBE($queryOBE, $this->pr_id_url, 'rekap_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                $this->addIndexOBE($queryOBE, $this->pr_id_url, 'index_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                $this->addAkreditasOBE($queryOBE, $this->pr_id_url, 'huruf_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
                 $this->buttonSCPMKFilter($queryOBE, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                 break;
             case 'mahasiswa':

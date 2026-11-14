@@ -277,13 +277,12 @@ class MataKuliah extends Model
             // 1. Cari Nama & Kode Manual
             $q->where('mata_kuliahs.nama_mk', 'like', $searchTerm);
 
+            if (preg_match('/(?:s|sem|semester)\s*(\d+)/i', $search, $m)) {
+                $q->orWhere('mata_kuliahs.semester', $m[1]);
+            }
+
             if ($smart) {
                 $q->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
-            }
-            if ($smart) {
-                if (preg_match('/(?:s|sem|semester)\s*(\d+)/i', $search, $m)) {
-                    $q->orWhere('mata_kuliahs.semester', $m[1]);
-                }
 
                 $searchLower = strtolower($search);
 

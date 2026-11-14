@@ -3,8 +3,8 @@
 namespace App\Livewire\Staff\ObeManagement\CplManagement;
 
 use App\Models\Akademik\CPL;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 trait WithCPLFilters
 {
@@ -12,20 +12,32 @@ trait WithCPLFilters
 
     public $filterCPL = '';
 
-    public function inputCPLSearch($prId = null)
+    public function inputCPLSearch($prId = null, $mahasiswaId = null)
     {
         $queryCPL = CPL::query()->with([
-            'prodis', 'prodis.dp_rel', 'prodis.dp_rel.fk_rel',
-            'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
+            'prodis',
+            'prodis.dp_rel',
+            'prodis.dp_rel.fk_rel',
+            'cpmks.rps.mk_rel',
+            'cpmks.rps.mk_rel.prodis',
+            'cpmks.rps.mk_rel.prodis.dp_rel',
+            'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel',
+        ]);
 
         if ($this->switchTable === 'cpl' || $this->switchTable === 'capaian') {
-
             if (! empty($prId)) {
                 $queryCPL->where(function ($q) use ($prId) {
-                    // $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $prId)
                     $q->whereRelation('prodis', 'prodis.id', $prId);
                 });
+            } elseif (! empty($mahasiswaId)) {
+                $queryCPL->whereIn('cpls.id', function ($sub) use ($mahasiswaId) {
+                    $sub->select('cpl_id')
+                        ->from('rekap_cpl_mahasiswa')
+                        ->where('mahasiswa_id', $mahasiswaId)
+                        ->whereNull('deleted_at');
+                });
             }
+
             if (! empty($this->selectedPrId)) {
                 $queryCPL->where(function ($q) {
                     $q->whereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
@@ -57,7 +69,7 @@ trait WithCPLFilters
         return $queryCPL;
     }
 
-    protected function addCountRpsCpl($queryCPL, ?int $prId = null, string $alias = 'count_rps')
+    protected function addCountRpsCpl($queryCPL, ?int $prId = null, ?int $mhsId = null, string $alias = 'count_rps')
     {
         $queryCPL->addSelect('cpls.*');
 
@@ -137,9 +149,8 @@ trait WithCPLFilters
             'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
             'count_rps' => $queryCPL->orderBy('count_rps', $this->sortDirection),
             'count_rps_pr' => $queryCPL->orderBy('count_rps_pr', $this->sortDirection),
-            'rekap_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
-            'index_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
-            'mutu_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
+            'rekap_cpl_pr', 'index_cpl_pr', 'huruf_cpl_pr' => $queryCPL->orderBy('rekap_cpl_pr', $this->sortDirection),
+            'rekap_cpl_mhs', 'index_cpl_mhs', 'huruf_cpl_mhs' => $queryCPL->orderBy('rekap_cpl_mhs', $this->sortDirection),
             'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
 

@@ -506,7 +506,7 @@ trait WithCPMKModal
             'kode_cpmk.required' => 'Kode CPMK lengkap wajib terbentuk!',
             'kode_cpmk.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_cpmk.required' => 'Kode CPMK wajib diisi!',
-            'kode_cpmk.alpha_num' => 'Kode CPMK hanya boleh berisi mutu dan angka!',
+            'kode_cpmk.alpha_num' => 'Kode CPMK hanya boleh berisi huruf dan angka!',
             'kode_cpmk.max' => 'Kode CPMK maksimal 20 karakter!',
 
             // Deskripsi & Status

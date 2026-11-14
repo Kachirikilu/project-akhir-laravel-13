@@ -245,7 +245,7 @@ class SesiManagement extends Component
     private function syncSortField($table, $sortField)
     {
         if (Auth::user()->admin || Auth::user()->dosen) {
-            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_dispensasi', 7 => 'mhs_terlambat', 8 => 'mhs_izin', 9 => 'mhs_sakit', 10 => 'mhs_tidak_masuk', 11 => 'mhs_nilai_akhir', 12 => 'mhs_nilai_index', 13 => 'mhs_nilai_mutu', 14 => 'angkatan', 15 => 'status', 16 => 'program_studi'];
+            $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_poin_absensi', 5 => 'mhs_masuk', 6 => 'mhs_dispensasi', 7 => 'mhs_terlambat', 8 => 'mhs_izin', 9 => 'mhs_sakit', 10 => 'mhs_tidak_masuk', 11 => 'mhs_nilai_akhir', 12 => 'mhs_nilai_index', 13 => 'mhs_nilai_huruf', 14 => 'angkatan', 15 => 'status', 16 => 'program_studi'];
         } else {
             $mahasiswa = [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'angkatan', 5 => 'status', 6 => 'program_studi'];
         }
@@ -253,7 +253,7 @@ class SesiManagement extends Component
             'card' => [1 => 'pertemuan_ke', 2 => 'total_absensi', 3 => 'tanggal_pelaksanaan', 4 => 'metode', 5 => 'kode_scpmk', 6 => 'bobot'],
             'table' => [1 => 'id', 2 => 'metode', 3 => 'pertemuan_ke', 4 => 'hari_pelaksanaan', 5 => 'jam_pelaksanaan', 6 => 'total_absensi', 7 => 'tanggal_pelaksanaan', 8 => 'kode_scpmk', 9 => 'bobot', 10 => 'tugas', 11 => 'w_tugas', 12 => 'w_mandiri'],
             'mahasiswa' => $mahasiswa,
-            'cpmk' => [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_nilai_akhir', 5 => 'mhs_nilai_index', 6 => 'mhs_nilai_mutu', 7 => 'angkatan', 8 => 'status', 9 => 'program_studi'],
+            'cpmk' => [1 => 'mahasiswa_id', 2 => 'pertemuan_ke', 3 => 'name', 4 => 'mhs_nilai_akhir', 5 => 'mhs_nilai_index', 6 => 'mhs_nilai_huruf', 7 => 'angkatan', 8 => 'status', 9 => 'program_studi'],
         ];
         $aliases = [
             'id' => ['id', 'mahasiswa_id'],
@@ -435,7 +435,7 @@ class SesiManagement extends Component
             if ($this->switchTable == 'mahasiswa' || $this->switchTable == 'cpmk') {
                 $this->addMahasiswaNilaiAkhir($queryUser, $jadwalId, 'mhs_nilai_akhir');
                 $this->addMahasiswaNilaiIndex($queryUser, $jadwalId, 'mhs_nilai_index');
-                $this->addMahasiswaNilaiMutu($queryUser, $jadwalId, 'mhs_nilai_mutu');
+                $this->addMahasiswaNilaiHuruf($queryUser, $jadwalId, 'mhs_nilai_huruf');
             }
 
             /**

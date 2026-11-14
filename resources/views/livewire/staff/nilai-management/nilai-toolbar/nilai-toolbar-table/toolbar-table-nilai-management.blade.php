@@ -45,7 +45,7 @@
 
                     '{{ $data['rekap_mhs'] ?? '' }}',
                     '{{ $data['ipk_mhs'] ?? '' }}',
-                    '{{ $data['mutu_mhs'] ?? '' }}',
+                    '{{ $data['huruf_mhs'] ?? '' }}',
                     '{{ $data['angkatan'] ?? 'YYYY' }}',
                 );
                 $dispatch('open-list-rps-user-modal', { id: {{ $data['id'] }}, withRPS: 1, isRPS: 1 });

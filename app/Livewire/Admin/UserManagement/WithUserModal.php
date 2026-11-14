@@ -285,7 +285,7 @@ trait WithUserModal
     //         sks: $user->mahasiswa?->total_sks ?? 0,
     //         rekap: $user->mahasiswa?->rekap_mhs ?? 0.00,
     //         index: $user->mahasiswa?->index_mhs ?? 0.00,
-    //         mutu: $user->mahasiswa?->mutu_mhs ?? 'E',
+    //         huruf: $user->mahasiswa?->huruf_mhs ?? 'E',
     //         jk: $user->gender ?? '',
     //         agama: $user->agama ?? '',
     //         tmtLahir: $user->tmt_lahir ?? '',

@@ -17,6 +17,12 @@
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'metode',
                 ])
+                @if ($withCapaian)
+                    @include('livewire.global.table.head-sortir', [
+                        'sortFieldString' => 'index_scpmk_pr',
+                        'headString' => 'Index',
+                    ])
+                @endif
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'bobot',
                 ])
@@ -117,8 +123,8 @@
                         'isCenter' => 1,
                     ])
                     @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'mutu_scpmk_pr',
-                        'headString' => 'Mutu',
+                        'sortFieldString' => 'huruf_scpmk_pr',
+                        'headString' => 'Huruf',
                         'isCenter' => 1,
                         'isMain' => 1,
                     ])
@@ -189,9 +195,12 @@
                             </flux:badge>
                         </button>
 
-                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table', [
-                            'key' => 1,
-                        ])
+                        @include(
+                            'livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table',
+                            [
+                                'key' => 1,
+                            ]
+                        )
                     </flux:dropdown>
                 </td>
 
@@ -206,8 +215,8 @@
                     <td class="table-sub table-border-l whitespace-nowrap text-center">
                         <flux:dropdown>
                             <button class="cursor-pointer">
-                                @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                    'xValue' => $sc->mutu_scpmk_pr ?? 'E',
+                                @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                    'xValue' => $sc->huruf_scpmk_pr ?? 'E',
                                 ])
                             </button>
                             @include(
@@ -228,9 +237,12 @@
                             ])
                         </button>
 
-                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table', [
-                            'key' => 3,
-                        ])
+                        @include(
+                            'livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table',
+                            [
+                                'key' => 3,
+                            ]
+                        )
                     </flux:dropdown>
                 </td>
                 @if ($showMore)
@@ -255,9 +267,12 @@
                         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                             inset="top bottom">
                         </flux:button>
-                        @include('livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table', [
-                            'key' => 4,
-                        ])
+                        @include(
+                            'livewire.staff.obe-management.scpmk-management.scpmk-toolbar.scpmk-toolbar-table',
+                            [
+                                'key' => 4,
+                            ]
+                        )
                     </flux:dropdown>
                 </td>
 

@@ -164,8 +164,8 @@
                         'isCenter' => 1,
                     ])
                     @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'mutu_rps_pr',
-                        'headString' => 'Mutu',
+                        'sortFieldString' => 'huruf_rps_pr',
+                        'headString' => 'Huruf',
                         'isCenter' => 1,
                         'isMain' => 1,
                     ])
@@ -293,8 +293,8 @@
                     <td class="table-sub table-border-l whitespace-nowrap text-center">
                         <flux:dropdown>
                             <button class="cursor-pointer">
-                                @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                    'xValue' => $r->mutu_rps_pr ?? 'E',
+                                @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                    'xValue' => $r->huruf_rps_pr ?? 'E',
                                 ])
                             </button>
                             @include(

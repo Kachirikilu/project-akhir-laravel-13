@@ -47,108 +47,122 @@
     </div>
 
 
+    @php
+        $gradeLimits = [
+            'min_a' => (float) config('rps.min_a', 86),
+            'min_a_min' => (float) config('rps.min_a_min', 80),
+            'min_b_plus' => (float) config('rps.min_b_plus', 75),
+            'min_b' => (float) config('rps.min_b', 70),
+            'min_b_min' => (float) config('rps.min_b_min', 65),
+            'min_c_plus' => (float) config('rps.min_c_plus', 60),
+            'min_c' => (float) config('rps.min_c', 56),
+            'min_d' => (float) config('rps.min_d', 40),
+        ];
+    @endphp
+
     <div x-data="{
+        limits: @js($gradeLimits),
+    
         getIndex(n) {
-                if (n >= 86) return '4.00';
-                if (n >= 80) return '3.70';
-                if (n >= 75) return '3.30';
-                if (n >= 70) return '3.00';
-                if (n >= 65) return '2.70';
-                if (n >= 60) return '2.30';
-                if (n >= 56) return '2.00';
-                if (n >= 40) return '1.00';
-                return '0.00';
-            },
+            if (n >= this.limits.min_a) return '4.00';
+            if (n >= this.limits.min_a_min) return '3.70';
+            if (n >= this.limits.min_b_plus) return '3.30';
+            if (n >= this.limits.min_b) return '3.00';
+            if (n >= this.limits.min_b_min) return '2.70';
+            if (n >= this.limits.min_c_plus) return '2.30';
+            if (n >= this.limits.min_c) return '2.00';
+            if (n >= this.limits.min_d) return '1.00';
+            return '0.00';
+        },
     
-            getMutu(n) {
-                if (n >= 86) return 'A';
-                if (n >= 80) return 'A-';
-                if (n >= 75) return 'B+';
-                if (n >= 70) return 'B';
-                if (n >= 65) return 'B-';
-                if (n >= 60) return 'C+';
-                if (n >= 56) return 'C';
-                if (n >= 40) return 'D';
-                return 'E';
-            },
+        getHuruf(n) {
+            if (n >= this.limits.min_a) return 'A';
+            if (n >= this.limits.min_a_min) return 'A-';
+            if (n >= this.limits.min_b_plus) return 'B+';
+            if (n >= this.limits.min_b) return 'B';
+            if (n >= this.limits.min_b_min) return 'B-';
+            if (n >= this.limits.min_c_plus) return 'C+';
+            if (n >= this.limits.min_c) return 'C';
+            if (n >= this.limits.min_d) return 'D';
+            return 'E';
+        },
+        getStats() {
+            let rawAbsensi = $store.sesi?.list_absensi_array ?? [];
+            let dataAbsensi = Array.isArray(rawAbsensi) ? rawAbsensi : Object.values(rawAbsensi);
     
-            getStats() {
-                let rawAbsensi = $store.sesi?.list_absensi_array ?? [];
-                let dataAbsensi = Array.isArray(rawAbsensi) ? rawAbsensi : Object.values(rawAbsensi);
+            let totalNilaiAkhir = 0;
     
-                let totalNilaiAkhir = 0;
+            dataAbsensi.forEach(item => {
+                let n = parseFloat(item?.nilai);
     
-                dataAbsensi.forEach(item => {
-                    let n = parseFloat(item?.nilai);
+                let rawBobot = item?.bobot ?? item?.bobot_text ?? 0;
+                let b = parseFloat(String(rawBobot).replace('%', ''));
     
-                    let rawBobot = item?.bobot ?? item?.bobot_text ?? 0;
-                    let b = parseFloat(String(rawBobot).replace('%', ''));
+                if (!isNaN(n) && !isNaN(b)) {
+                    let bobotDesimal = b > 1 ? (b / 100) : b;
+                    totalNilaiAkhir += n * bobotDesimal;
+                }
+            });
     
-                    if (!isNaN(n) && !isNaN(b)) {
-                        let bobotDesimal = b > 1 ? (b / 100) : b;
-                        totalNilaiAkhir += n * bobotDesimal;
-                    }
-                });
+            const nilaiAkhir = isNaN(totalNilaiAkhir) ? 0 : totalNilaiAkhir;
     
-                const nilaiAkhir = isNaN(totalNilaiAkhir) ? 0 : totalNilaiAkhir;
+            // 2. Hitung Statistik Presensi
+            let hadir = 0;
+            let dispensasi = 0;
+            let terlambat = 0;
+            let izin = 0;
+            let sakit = 0;
+            let tidakMasuk = 0;
+            let poin = 0;
     
-                // 2. Hitung Statistik Presensi
-                let hadir = 0;
-                let dispensasi = 0;
-                let terlambat = 0;
-                let izin = 0;
-                let sakit = 0;
-                let tidakMasuk = 0;
-                let poin = 0;
+            dataAbsensi.forEach(item => {
+                const status = item?.status ?? '';
     
-                dataAbsensi.forEach(item => {
-                    const status = item?.status ?? '';
+                switch (status) {
+                    case 'Hadir':
+                        hadir++;
+                        poin += 2;
+                        break;
+                    case 'Dispensasi':
+                        dispensasi++;
+                        poin += 2;
+                        break;
+                    case 'Terlambat':
+                        terlambat++;
+                        poin += 1;
+                        break;
+                    case 'Izin':
+                        izin++;
+                        tidakMasuk++;
+                        poin += 1;
+                        break;
+                    case 'Sakit':
+                        sakit++;
+                        tidakMasuk++;
+                        poin += 1;
+                        break;
+                    default:
+                        tidakMasuk++;
+                        break;
+                }
+            });
     
-                    switch (status) {
-                        case 'Hadir':
-                            hadir++;
-                            poin += 2;
-                            break;
-                        case 'Dispensasi':
-                            dispensasi++;
-                            poin += 2;
-                            break;
-                        case 'Terlambat':
-                            terlambat++;
-                            poin += 1;
-                            break;
-                        case 'Izin':
-                            izin++;
-                            tidakMasuk++;
-                            poin += 1;
-                            break;
-                        case 'Sakit':
-                            sakit++;
-                            tidakMasuk++;
-                            poin += 1;
-                            break;
-                        default:
-                            tidakMasuk++;
-                            break;
-                    }
-                });
+            const maxPoin = dataAbsensi.length * 2;
     
-                const maxPoin = dataAbsensi.length * 2;
-    
-                return {
-                    masuk: (hadir + dispensasi + terlambat),
-                    hadir,
-                    dispensasi,
-                    terlambat,
-                    izin,
-                    sakit,
-                    tidakMasuk,
-                    poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : 0,
-                    nilai_akhir: nilaiAkhir.toFixed(2),
-                    nilai_index: this.getIndex(nilaiAkhir),
-                    nilai_mutu: this.getMutu(nilaiAkhir)
-                };
-            }
+            return {
+                masuk: (hadir + dispensasi + terlambat),
+                hadir,
+                dispensasi,
+                terlambat,
+                izin,
+                sakit,
+                tidakMasuk,
+                poinPersen: maxPoin ? Number(((poin / maxPoin) * 100).toFixed(2)) : 0,
+                nilai_akhir: nilaiAkhir.toFixed(2),
+                nilai_index: this.getIndex(nilaiAkhir),
+                nilai_huruf: this.getHuruf(nilaiAkhir)
+            };
+        }
     }"
         x-effect="
         // Memicu reaktivitas Alpine secara mendalam saat isi store berubah
@@ -238,7 +252,7 @@
                 </span>
             </div>
 
-            {{-- Section Nilai Akhir, Index, & Mutu --}}
+            {{-- Section Nilai Akhir, Index, & Huruf --}}
             <div
                 class="col-span-2 md:col-span-3 px-2.5 py-4 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/20 text-center">
                 <span class="block text-xs font-medium text-emerald-700 dark:text-emerald-400">Nilai Akhir</span>
@@ -261,11 +275,11 @@
 
             <div
                 class="sm:col-span-1 md:col-span-2 px-2.5 py-4 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
-                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Mutu</span>
+                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Huruf</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
                     <span wire:loading wire:target="editNilaiAbsensi"
-                        x-text="$store.sesi?.mhs_nilai_mutu ?? 'E'"></span>
-                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_mutu"></span>
+                        x-text="$store.sesi?.mhs_nilai_huruf ?? 'E'"></span>
+                    <span wire:loading.remove wire:target="editNilaiAbsensi" x-text="getStats().nilai_huruf"></span>
                 </span>
             </div>
         </div>

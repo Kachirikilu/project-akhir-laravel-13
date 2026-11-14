@@ -18,7 +18,7 @@
                     'total_sks' => (int) ($p->total_sks ?? 0),
                     'nilai_semester' => $p->nilai_semester ?? '0.00',
                     'ip_semester' => $p->ip_semester ?? '0.00',
-                    'mutu_semester' => strtoupper($p->mutu_semester ?? ''),
+                    'huruf_semester' => strtoupper($p->huruf_semester ?? ''),
 
                     'search_combinations' => [
                         $ganjilGenap . ' ' . $akademik,
@@ -110,7 +110,7 @@
                 const targetText = [
                         item.akademik,
                         item.ganjil_genap,
-                        item.mutu_semester,
+                        item.huruf_semester,
                         String(item.semester),
                         String(item.ip_semester),
                         String(item.nilai_semester),
@@ -340,7 +340,7 @@
 
                         <div class="flex-grow max-w-md">
                             @include('livewire.global.search-and-filters.main-search', [
-                                'placeholder' => 'Cari Semester, IP, Mutu, atau Tahun Akademik...',
+                                'placeholder' => 'Cari Semester, IP, Huruf, atau Tahun Akademik...',
                                 'alpine' => 'periode',
                                 'isLive' => 1,
                                 'isBorder' => 2,
@@ -447,8 +447,8 @@
                                 </div>
 
                                 @include(
-                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card.nilai-mutu',
-                                    ['value' => $p->mutu_semester]
+                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card.nilai-huruf',
+                                    ['value' => $p->huruf_semester]
                                 )
                             </div>
                         </div>

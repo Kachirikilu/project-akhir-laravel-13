@@ -18,7 +18,7 @@
                     'noLabel' => 1,
                     'modelString' => 'kode_scpmk_1',
                     'iconString' => 'academic-cap',
-                    'placeholder' => 'Masukkan mutu Kode Sub-CPMK...',
+                    'placeholder' => 'Masukkan huruf Kode Sub-CPMK...',
                     'isKode' => 4,
                     'isFocusSelect' => 1,
                 ])

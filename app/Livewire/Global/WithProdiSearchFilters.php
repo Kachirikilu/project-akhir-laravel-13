@@ -506,7 +506,7 @@ trait WithProdiSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiMutu = $this->matchNilaiMutu(
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
                         $pr->akreditas_pr ?? $pr->akreditas_dp ?? $pr->akreditas_fk ?? 'E',
                         $searchLower
                     );
@@ -635,7 +635,7 @@ trait WithProdiSearchFilters
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiMutu
+                        || $matchNilaiHuruf
 
                         || $matchMK
                         || $matchRPS

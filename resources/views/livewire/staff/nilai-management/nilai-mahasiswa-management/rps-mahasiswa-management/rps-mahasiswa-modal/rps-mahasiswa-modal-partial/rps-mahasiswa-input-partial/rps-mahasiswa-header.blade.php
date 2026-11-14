@@ -40,9 +40,23 @@
     </div>
 
 
+    @php
+        $gradeLimits = [
+            'min_a' => (float) config('rps.min_a', 86),
+            'min_a_min' => (float) config('rps.min_a_min', 80),
+            'min_b_plus' => (float) config('rps.min_b_plus', 75),
+            'min_b' => (float) config('rps.min_b', 70),
+            'min_b_min' => (float) config('rps.min_b_min', 65),
+            'min_c_plus' => (float) config('rps.min_c_plus', 60),
+            'min_c' => (float) config('rps.min_c', 56),
+            'min_d' => (float) config('rps.min_d', 40),
+        ];
+    @endphp
+
     <div x-data="{
+        limits: @js($gradeLimits),
         nilaiAkhir: 0,
-        nilaiMutu: 'E',
+        nilaiHuruf: 'E',
         nilaiIndex: '0.00',
     
         hitungRekap() {
@@ -68,20 +82,39 @@
             // 1. Set Nilai Akhir
             this.nilaiAkhir = parseFloat(totalNilaiAkhir.toFixed(2));
     
-            // 2. Evaluasi Huruf Mutu
+            // 2. Evaluasi Nilai Huruf & Index
             let na = this.nilaiAkhir;
-            if (na >= 86) this.nilaiMutu = 'A';
-            else if (na >= 80) this.nilaiMutu = 'A-';
-            else if (na >= 75) this.nilaiMutu = 'B+';
-            else if (na >= 70) this.nilaiMutu = 'B';
-            else if (na >= 65) this.nilaiMutu = 'B-';
-            else if (na >= 60) this.nilaiMutu = 'C+';
-            else if (na >= 56) this.nilaiMutu = 'C';
-            else if (na >= 40) this.nilaiMutu = 'D';
-            else this.nilaiMutu = 'E';
+            if (na >= this.limits.min_a) {
+                this.nilaiHuruf = 'A';
+                this.nilaiIndex = '4.00';
+            } else if (na >= this.limits.min_a_min) {
+                this.nilaiHuruf = 'A-';
+                this.nilaiIndex = '3.70';
+            } else if (na >= this.limits.min_b_plus) {
+                this.nilaiHuruf = 'B+';
+                this.nilaiIndex = '3.30';
+            } else if (na >= this.limits.min_b) {
+                this.nilaiHuruf = 'B';
+                this.nilaiIndex = '3.00';
+            } else if (na >= this.limits.min_b_min) {
+                this.nilaiHuruf = 'B-';
+                this.nilaiIndex = '2.70';
+            } else if (na >= this.limits.min_c_plus) {
+                this.nilaiHuruf = 'C+';
+                this.nilaiIndex = '2.30';
+            } else if (na >= this.limits.min_c) {
+                this.nilaiHuruf = 'C';
+                this.nilaiIndex = '2.00';
+            } else if (na >= this.limits.min_d) {
+                this.nilaiHuruf = 'D';
+                this.nilaiIndex = '1.00';
+            } else {
+                this.nilaiHuruf = 'E';
+                this.nilaiIndex = '0.00';
+            }
     
             // 3. Evaluasi Angka Index
-            switch (this.nilaiMutu) {
+            switch (this.nilaiHuruf) {
                 case 'A':
                     this.nilaiIndex = '4.00';
                     break;
@@ -110,8 +143,8 @@
                     this.nilaiIndex = '0.00';
             }
         }
-        }"
-            x-effect="
+    }"
+        x-effect="
         JSON.stringify($store.nilai?.list_nilai_array);
         JSON.stringify($store.sesi?.list_absensi_array);
         hitungRekap();
@@ -141,9 +174,9 @@
 
             <div
                 class="sm:col-span-1 md:col-span-2 px-2.5 py-4 rounded-lg border border-purple-200 dark:border-purple-900/60 bg-purple-50/50 dark:bg-purple-950/20 text-center">
-                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Mutu</span>
+                <span class="block text-xs font-medium text-purple-700 dark:text-purple-400">Huruf</span>
                 <span class="block text-lg font-bold text-purple-800 dark:text-purple-300 mt-0.5">
-                    <span x-text="nilaiMutu">E</span>
+                    <span x-text="nilaiHuruf">E</span>
                 </span>
             </div>
 

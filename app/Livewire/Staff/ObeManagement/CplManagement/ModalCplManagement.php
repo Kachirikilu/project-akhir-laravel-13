@@ -27,6 +27,14 @@ class ModalCplManagement extends Component
 
     public $isReady;
 
+    public $withCapaian;
+
+    public function mount($withCapaian = 0)
+    {
+        $this->withCapaian = $withCapaian;
+    }
+
+
     #[On('refresh-data-rps-cpl')]
     public function handleRefreshCPL()
     {
@@ -48,18 +56,32 @@ class ModalCplManagement extends Component
     }
 
     #[On('open-edit-cpl-modal')]
-    public function handleEditCPL($id, $tingkatan = 1, $isRPS = false, $parent = null)
+    public function handleEditCPL($id, $tingkatan = 1, $isRPS = false, $idInduk = null, $isNilaiMahasiswa = false, $parent = null)
     {
         $this->isReady = true;
         $this->parent = $parent;
         $this->tingkatan = $tingkatan;
-        $this->editCPL($id, $tingkatan, $isRPS);
+        $this->selected_id_induk_cpl = $idInduk;
+        $this->isNilaiMahasiswa = $isNilaiMahasiswa;
+
+        // dump([
+        //     'id' => $id,
+        //     'tingkatan' => $tingkatan,
+        //     'isRPS' => $isRPS,
+        //     'idInduk' => $idInduk,
+        //     'isNilaiMahasiswa' => $isNilaiMahasiswa
+        // ]);
+
+        $this->editCPL($id, $tingkatan, $isRPS, $idInduk, $isNilaiMahasiswa);
     }
 
     public function loadingRPSsList() {}
 
     public function render()
     {
-        return view('livewire.staff.obe-management.cpl-management.cpl-modal.modal-cpl-management', ['cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator]);
+        return view('livewire.staff.obe-management.cpl-management.cpl-modal.modal-cpl-management', [
+            'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
+            'cpl_rps_other_modal_paginator' => $this->cpl_rps_other_modal_paginator
+        ]);
     }
 }

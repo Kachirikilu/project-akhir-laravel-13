@@ -134,7 +134,7 @@ trait WithProdiFilters
     //     return $queryPr;
     // }
 
-    // protected function addRekapProdiPr(
+    // protected function addRekapOBEPr(
     //     $queryPr,
     //     string $alias = 'rekap_pr'
     // ) {
@@ -160,7 +160,7 @@ trait WithProdiFilters
     //     return $queryPr;
     // }
 
-    // protected function addIndexProdiPr(
+    // protected function addIndexOBEPr(
     //     $queryPr,
     //     string $alias = 'index_pr'
     // ) {
@@ -190,7 +190,7 @@ trait WithProdiFilters
     //     return $queryPr;
     // }
 
-    // protected function addAkreditasProdiPr(
+    // protected function addAkreditasOBEPr(
     //     $queryPr,
     //     string $alias = 'akreditas_pr'
     // ) {

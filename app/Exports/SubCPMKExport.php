@@ -65,7 +65,7 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
                     'Referensi', '',
                 ], [
                     '', '', '',
-                    'Nilai', 'Index', 'Mutu',
+                    'Nilai', 'Index', 'Huruf',
                     'Materi', 'Metodologi', 'Indikator', 'Metode',
                     'Bobot Sub-CPMK', 'Deskripsi Tugas', 'Waktu Tugas', 'Waktu Mandiri',
                     'Kode Referensi', 'Jumlah Referensi',
@@ -118,7 +118,7 @@ class SubCPMKExport extends DefaultValueBinder implements FromCollection, Should
             array_splice($data, 3, 0, [
                 $s->rekap_cpmk_pr ?: '0',
                 $s->index_cpmk_pr ?: '0',
-                $s->mutu_cpmk_pr ?? 'E',
+                $s->huruf_cpmk_pr ?? 'E',
             ]);
         }
 

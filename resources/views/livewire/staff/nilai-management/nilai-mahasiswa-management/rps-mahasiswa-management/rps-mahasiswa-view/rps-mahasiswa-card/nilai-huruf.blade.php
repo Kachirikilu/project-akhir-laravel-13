@@ -30,7 +30,7 @@
 <div
     class="py-3 flex flex-col items-center gap-0.5 rounded-[10px] border border-transparent bg-[var(--second-table-color)] px-2.5 py-2 text-center ring-2 shadow-lg transition-all {{ $glowClasses }}">
     <span class="text-[9px] font-bold uppercase tracking-[0.07em] text-[var(--contrast-third-text)]">
-        Mutu
+        Huruf
     </span>
     <span class="text-base font-bold leading-none text-[var(--contrast-main-text)]">
         {{ $value }}

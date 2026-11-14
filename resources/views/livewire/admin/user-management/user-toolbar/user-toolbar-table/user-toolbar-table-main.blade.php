@@ -36,7 +36,7 @@
 
                             '{{ $data['rekap_mhs'] ?? '' }}',
                             '{{ $data['ipk_mhs'] ?? '' }}',
-                            '{{ $data['mutu_mhs'] ?? '' }}',
+                            '{{ $data['huruf_mhs'] ?? '' }}',
                             '{{ $data['angkatan'] ?? 'YYYY' }}',
                         );
                         $flux.modal('user-modal').show();

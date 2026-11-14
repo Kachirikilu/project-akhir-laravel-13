@@ -486,7 +486,7 @@ trait WithSubCPMKModal
             'kode_scpmk.required' => 'Kode Sub-CPMK lengkap wajib terbentuk!',
             'kode_scpmk.alpha_num' => 'Gabungan kode harus alfanumerik!',
             'kode_scpmk.required' => 'Kode Sub-CPMK wajib diisi!',
-            'kode_scpmk.alpha_num' => 'Kode Sub-CPMK hanya boleh berisi mutu dan angka!',
+            'kode_scpmk.alpha_num' => 'Kode Sub-CPMK hanya boleh berisi huruf dan angka!',
             'kode_scpmk.max' => 'Kode Sub-CPMK maksimal 20 karakter!',
 
             // Deskripsi & Status

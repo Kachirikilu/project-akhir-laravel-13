@@ -50,7 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route::get('/download-nilai/{jadwal}', DownloadNilaiController::class)->name('download.nilai');
 
         Route::view('nilai-capaian/{switchTable?}', 'nilai-management')->name('nilai-capaian');
-        Route::view('nilai-capaian/nim/{nim}', 'nilai-management')->name('nilai-mahasiswa-management');
+        Route::view('nilai-capaian/nim/{nim}/{switchTable?}', 'nilai-management')->name('nilai-mahasiswa-management');
         Route::view('nilai-capaian/nim/{nim}/rps/{ganjil_genap}/{akademik}', 'nilai-management')->name('rps-mahasiswa-management');
         Route::view('nilai-capaian/rps/{kode_rps}', 'nilai-management')->name('rps-capaian-mahasiswa-management');
     });
@@ -60,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware(['is_mahasiswa'])->group(function () {
-        Route::view('nilai-mahasiswa', 'nilai-mahasiswa')->name('nilai-mahasiswa');
+        Route::view('nilai-mahasiswa/{switchTable?}', 'nilai-mahasiswa')->name('nilai-mahasiswa');
         Route::view('nilai-mahasiswa/rps/{ganjil_genap}/{akademik}', 'nilai-mahasiswa')->name('rps-mahasiswa');
     });
 

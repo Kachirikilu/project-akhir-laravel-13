@@ -67,21 +67,21 @@ trait WithNilaiFilters
 
                 // Konversi nilai angka ke bobot skala 4.00
                 $nilaiAngka = $item->nilai ?? 0;
-                if ($nilaiAngka >= 86) {
+                if ($nilaiAngka >= config('rps.min_a', 86)) {
                     $bobot = 4.00;
-                } elseif ($nilaiAngka >= 80) {
+                } elseif ($nilaiAngka >= config('rps.min_a_min', 80)) {
                     $bobot = 3.70;
-                } elseif ($nilaiAngka >= 75) {
+                } elseif ($nilaiAngka >= config('rps.min_b_plus', 75)) {
                     $bobot = 3.30;
-                } elseif ($nilaiAngka >= 70) {
+                } elseif ($nilaiAngka >= config('rps.min_b', 70)) {
                     $bobot = 3.00;
-                } elseif ($nilaiAngka >= 65) {
+                } elseif ($nilaiAngka >= config('rps.min_b_min', 65)) {
                     $bobot = 2.70;
-                } elseif ($nilaiAngka >= 60) {
+                } elseif ($nilaiAngka >= config('rps.min_c_plus', 60)) {
                     $bobot = 2.30;
-                } elseif ($nilaiAngka >= 56) {
+                } elseif ($nilaiAngka >= config('rps.min_c', 56)) {
                     $bobot = 2.00;
-                } elseif ($nilaiAngka >= 40) {
+                } elseif ($nilaiAngka >= config('rps.min_d', 40)) {
                     $bobot = 1.00;
                 } else {
                     $bobot = 0.00;

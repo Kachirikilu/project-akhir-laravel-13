@@ -204,7 +204,7 @@ class NilaiManagement extends Component
     {
         $columns = [
             'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'is_draf', 5 => 'revisi'],
-            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ipk_mhs', 7 => 'mutu_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status', 10 => 'kampus', 11 => 'program_studi'],
+            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ipk_mhs', 7 => 'huruf_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status', 10 => 'kampus', 11 => 'program_studi'],
         ];
 
         $aliases = [
@@ -360,9 +360,6 @@ class NilaiManagement extends Component
                     $stats = array_merge($stats, $this->getStatsRps($this->showDeleted));
                     break;
             }
-
-            // $n = \App\Models\Penilaian\NilaiMahasiswa::count();
-            // dump($n);
 
             return view('livewire.staff.nilai-management', array_merge($data, [
                 'stats' => $stats,

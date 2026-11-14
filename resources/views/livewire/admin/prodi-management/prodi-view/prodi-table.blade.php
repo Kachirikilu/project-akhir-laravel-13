@@ -354,7 +354,7 @@
                 <td class="table-sub table-border-x whitespace-nowrap text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @include('livewire.global.table.badge.nilai-mutu-badge', [
+                            @include('livewire.global.table.badge.nilai-huruf-badge', [
                                 'xValue' => $akreditas_x ?? 'E',
                             ])
                         </button>

@@ -60,6 +60,7 @@
 
     $bobotCpmkLegend = [];
     $rataKeberhasilanCpmk = [];
+    $batasKelulusan = config('rps.batas_kelulusan', 65);
 
     foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
         $bobotMentah = collect($pertemuans)->sum('bobot');
@@ -68,9 +69,15 @@
 
         $semuaNilaiCpmk = $seriesData[$kodeCpmk]['data'];
         $totalMahasiswa = count($semuaNilaiCpmk);
+
+        // Hitung jumlah mahasiswa yang nilainya >= 65 (gunakan > 65 jika harus murni di atas 65)
+        $jumlahBerhasil = count(array_filter($semuaNilaiCpmk, fn($nilai) => $nilai >= $batasKelulusan));
+
+        // Persentase mahasiswa yang berhasil
         $rataKeberhasilanCpmk[$kodeCpmk] =
-            $totalMahasiswa > 0 ? round(array_sum($semuaNilaiCpmk) / $totalMahasiswa, 1) : 0;
+            $totalMahasiswa > 0 ? round(($jumlahBerhasil / $totalMahasiswa) * 100, 1) : 0;
     }
+
 
     // foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
     //     $bobotMentah = collect($pertemuans)->sum('bobot');
@@ -117,6 +124,7 @@
     ];
     $totalMahasiswa = count($daftarNim);
     $calculatedWidth = max($totalMahasiswa * 160, 800);
+    $batasKelulusan = config('rps.batas_kelulusan', 65);
 @endphp
 
 <div
@@ -274,13 +282,13 @@
                     },
                     annotations: {
                         yaxis: [{
-                            y: 70,
+                            y: {{ $batasKelulusan }},
                             borderColor: '#ef4444',
                             strokeDashArray: 4,
                             label: {
                                 borderColor: '#ef4444',
                                 style: { color: '#fff', background: '#ef4444', fontSize: '9px', fontWeight: 700 },
-                                text: 'Batas Kelulusan (70%)'
+                                text: 'Batas Kelulusan ({{ $batasKelulusan }}%)'
                             }
                         }]
                     }

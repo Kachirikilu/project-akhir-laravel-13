@@ -893,55 +893,55 @@
             <tbody class="text-center">
                 <tr>
                     <td class="skala-td">A</td>
-                    <td class="skala-td">86-100</td>
+                    <td class="skala-td">{{ config('rps.min_a', 86) }}-100</td>
                     <td class="skala-td">4.00</td>
                     <td class="skala-td nowrap">Sangat Memuaskan</td>
                 </tr>
                 <tr>
                     <td class="skala-td">A-</td>
-                    <td class="skala-td">80-85</td>
+                    <td class="skala-td">{{ config('rps.min_a_min', 80) }}-{{ config('rps.min_a', 86) - 0.01 }}</td>
                     <td class="skala-td">3.70</td>
                     <td class="skala-td nowrap">Sangat Baik</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B+</td>
-                    <td class="skala-td">75-79</td>
+                    <td class="skala-td">{{ config('rps.min_b_plus', 75) }}-{{ config('rps.min_a_min', 80) - 0.01 }}</td>
                     <td class="skala-td">3.30</td>
                     <td class="skala-td nowrap">Baik Sekali</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B</td>
-                    <td class="skala-td">70-74</td>
+                    <td class="skala-td">{{ config('rps.min_b', 70) }}-{{ config('rps.min_b_plus', 75) - 0.01 }}</td>
                     <td class="skala-td">3.00</td>
                     <td class="skala-td">Baik</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">B-</td>
-                    <td class="skala-td">65-69</td>
+                    <td class="skala-td">{{ config('rps.min_b_min', 65) }}-{{ config('rps.min_b', 70) - 0.01 }}</td>
                     <td class="skala-td">2.70</td>
                     <td class="skala-td">Cukup Baik</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">C+</td>
-                    <td class="skala-td">60-64</td>
+                    <td class="skala-td">{{ config('rps.min_c_plus', 60) }}-{{ config('rps.min_b_min', 65) - 0.01 }}</td>
                     <td class="skala-td">2.30</td>
                     <td class="skala-td">Cukup</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">C</td>
-                    <td class="skala-td">56-59</td>
+                    <td class="skala-td">{{ config('rps.min_c', 56) }}-{{ config('rps.min_c_plus', 60) - 0.01 }}</td>
                     <td class="skala-td">2.00</td>
                     <td class="skala-td">Hampir Cukup</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">D</td>
-                    <td class="skala-td">40-55</td>
+                    <td class="skala-td">{{ config('rps.min_d', 40) }}-{{ config('rps.min_c', 56) - 0.01 }}</td>
                     <td class="skala-td">1.00</td>
                     <td class="skala-td">Kurang</td>
                 </tr>
                 <tr>
                     <td class="font-medium skala-td">E</td>
-                    <td class="skala-td">0-39</td>
+                    <td class="skala-td">0-{{ config('rps.min_d', 40) - 0.01 }}</td>
                     <td class="skala-td">0.00</td>
                     <td class="skala-td skala-td-nowrap">Sangat Kurang
                     </td>

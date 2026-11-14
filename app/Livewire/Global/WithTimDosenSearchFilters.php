@@ -540,11 +540,11 @@ trait WithTimDosenSearchFilters
                         case 'bobot':
                             return $matchBobot;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiMutu;
+                            return $matchNilaiAkhir || $matchNilaiHuruf;
                         case 'index':
                             return $matchNilaiIndex;
-                        case 'mutu':
-                            return $matchNilaiMutu;
+                        case 'huruf':
+                            return $matchNilaiHuruf;
                     }
 
                     return

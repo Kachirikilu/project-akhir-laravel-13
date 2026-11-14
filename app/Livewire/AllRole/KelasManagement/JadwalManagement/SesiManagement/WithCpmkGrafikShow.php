@@ -175,7 +175,7 @@ trait WithCpmkGrafikShow
 
         $this->addMahasiswaNilaiAkhir($queryUser, $jadwalRPSId, 'mhs_nilai_akhir');
         $this->addMahasiswaNilaiIndex($queryUser, $jadwalRPSId, 'mhs_nilai_index');
-        $this->addMahasiswaNilaiMutu($queryUser, $jadwalRPSId, 'mhs_nilai_mutu');
+        $this->addMahasiswaNilaiHuruf($queryUser, $jadwalRPSId, 'mhs_nilai_huruf');
 
         $sampleNilai = NilaiMahasiswa::where('rps_id', $rps->id)->first() ?? new NilaiMahasiswa(['rps_id' => $rps->id]);
         $mappingData = $sampleNilai->mapping_pertemuan ?? [];

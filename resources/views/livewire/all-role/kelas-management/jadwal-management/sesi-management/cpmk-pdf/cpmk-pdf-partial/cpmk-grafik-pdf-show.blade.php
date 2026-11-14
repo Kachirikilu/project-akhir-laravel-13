@@ -424,6 +424,7 @@
 
     $bobotCpmkLegend = [];
     $rataKeberhasilanCpmk = [];
+    $batasKelulusan = config('rps.batas_kelulusan', 65);
 
     foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
         $bobotMentah = collect($pertemuans)->sum('bobot');
@@ -432,8 +433,13 @@
 
         $semuaNilaiCpmk = $seriesData[$kodeCpmk]['data'];
         $totalMahasiswa = count($semuaNilaiCpmk);
+
+        // Hitung jumlah mahasiswa yang nilainya >= 65 (gunakan > 65 jika harus murni di atas 65)
+        $jumlahBerhasil = count(array_filter($semuaNilaiCpmk, fn($nilai) => $nilai >= $batasKelulusan));
+
+        // Persentase mahasiswa yang berhasil
         $rataKeberhasilanCpmk[$kodeCpmk] =
-            $totalMahasiswa > 0 ? round(array_sum($semuaNilaiCpmk) / $totalMahasiswa, 1) : 0;
+            $totalMahasiswa > 0 ? round(($jumlahBerhasil / $totalMahasiswa) * 100, 1) : 0;
     }
 
     // foreach ($groupsCpmk as $kodeCpmk => $pertemuans) {
@@ -481,6 +487,7 @@
     ];
     $totalMahasiswa = count($daftarNim);
     $calculatedWidth = max($totalMahasiswa * 160, 800);
+
 @endphp
 {{-- Logo + nama universitas, fixed di pojok kanan-bawah, terulang tiap halaman --}}
 <div class="fixed pdf-footer-fixed">
@@ -636,12 +643,13 @@
                                         @endfor
 
                                         {{-- Garis Batas Kelulusan 70% --}}
-                                        <div class="absolute z-50" style="left:0; width:100%; bottom: 70%;">
+                                        <div class="absolute z-50"
+                                            style="left:0; width:100%; bottom: {{ $batasKelulusan }}%;">
                                             <div class="chart-threshold-line" style="border-color: #ef4444;">
                                             </div>
                                             <span class="absolute font-bold rounded bg-white chart-threshold-label"
                                                 style="color: #ef4444; border: 1px solid #ef4444;">
-                                                Batas Kelulusan 70%
+                                                Batas Kelulusan {{ $batasKelulusan }}%
                                             </span>
                                         </div>
 

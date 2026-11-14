@@ -66,6 +66,7 @@
                     'color' => 'blue',
                     'icon' => 'academic-cap',
                     'isNoPb' => 1,
+                    'countClick' => 3,
                 ])
             </div>
             @if (Auth::user()->admin || Auth::user()->dosen->tingkat_user == 1)
@@ -80,6 +81,7 @@
                         'icon' => 'academic-cap',
                         'autoSmall' => 'md',
                         'isNoPb' => 1,
+                        'countClick' => 4,
                     ])
                 </div>
             @endif

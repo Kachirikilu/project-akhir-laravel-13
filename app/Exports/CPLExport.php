@@ -64,7 +64,7 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
                 ],
                 [
                     '', '', '',
-                    'Nilai', 'Index', 'Mutu',
+                    'Nilai', 'Index', 'Huruf',
                     'Kode RPS', 'Jumlah RPS', 'Kode PR', 'Jumlah Program Studi',
                 ],
             ];
@@ -107,7 +107,7 @@ class CPLExport extends DefaultValueBinder implements FromCollection, ShouldAuto
             array_splice($data, 3, 0, [
                 $c->rekap_cpl_pr ?: '0',
                 $c->index_cpl_pr ?: '0',
-                $c->mutu_cpl_pr ?? 'E',
+                $c->huruf_cpl_pr ?? 'E',
             ]);
         }
 

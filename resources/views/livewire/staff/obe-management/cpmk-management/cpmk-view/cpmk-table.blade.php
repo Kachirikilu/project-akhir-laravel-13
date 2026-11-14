@@ -22,6 +22,12 @@
                     'sortFieldString' => 'count_scpmk',
                     'headString' => 'Total Sub-CPMK',
                 ])
+                @if ($withCapaian)
+                    @include('livewire.global.table.head-sortir', [
+                        'sortFieldString' => 'index_cpmk_pr',
+                        'headString' => 'Index',
+                    ])
+                @endif
                 @include('livewire.global.table.head-sortir', [
                     'sortFieldString' => 'total_bobot',
                 ])
@@ -114,8 +120,8 @@
                         'isCenter' => 1,
                     ])
                     @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'mutu_cpmk_pr',
-                        'headString' => 'Mutu',
+                        'sortFieldString' => 'huruf_cpmk_pr',
+                        'headString' => 'Huruf',
                         'isCenter' => 1,
                         'isMain' => 1,
                     ])
@@ -155,9 +161,12 @@
                             <flux:badge icon="academic-cap" color="violet" size="sm">{{ $c->kode ?? '---' }}
                             </flux:badge>
                         </button>
-                        @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table', [
-                            'key' => 1,
-                        ])
+                        @include(
+                            'livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table',
+                            [
+                                'key' => 1,
+                            ]
+                        )
                     </flux:dropdown>
                 </td>
 
@@ -174,13 +183,16 @@
                     <td class="table-sub table-border-l whitespace-nowrap text-center">
                         <flux:dropdown>
                             <button class="cursor-pointer">
-                                @include('livewire.global.table.badge.nilai-mutu-badge', [
-                                    'xValue' => $c->mutu_cpmk_pr ?? 'E',
+                                @include('livewire.global.table.badge.nilai-huruf-badge', [
+                                    'xValue' => $c->huruf_cpmk_pr ?? 'E',
                                 ])
                             </button>
-                            @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table', [
-                                'key' => 2,
-                            ])
+                            @include(
+                                'livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table',
+                                [
+                                    'key' => 2,
+                                ]
+                            )
                         </flux:dropdown>
                     </td>
                 @endif
@@ -199,9 +211,12 @@
                         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                             inset="top bottom">
                         </flux:button>
-                        @include('livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table', [
-                            'key' => 3,
-                        ])
+                        @include(
+                            'livewire.staff.obe-management.cpmk-management.cpmk-toolbar.cpmk-toolbar-table',
+                            [
+                                'key' => 3,
+                            ]
+                        )
                     </flux:dropdown>
                 </td>
 
@@ -221,5 +236,5 @@
             </tr>
         @endforelse
 
-        </x-global.main-layout-table>
+    </x-global.main-layout-table>
 </div>

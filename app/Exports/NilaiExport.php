@@ -80,7 +80,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
         }
 
         // Menambahkan Nilai Akhir
-        $header1 = array_merge($header1, ['Nilai Angka', 'Nilai Index', 'Nilai Mutu']);
+        $header1 = array_merge($header1, ['Nilai Angka', 'Nilai Index', 'Nilai Huruf']);
         $header2 = array_merge($header2, ['', '', '']);
         $header3 = array_merge($header3, ['', '', '']);
 
@@ -137,9 +137,19 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
             $subCpmkEndColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk);
             $nilaiAngkaColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk + $totalGroups + 1);
 
+
+            $minA = config('rps.min_a', 86);
+            $minAmin = config('rps.min_a_min', 80);
+            $minBplus = config('rps.min_b_plus', 75);
+            $minB = config('rps.min_b', 70);
+            $minBmin = config('rps.min_b_min', 65);
+            $minCplus = config('rps.min_c_plus', 60);
+            $minC = config('rps.min_c', 56);
+            $minD = config('rps.min_d', 40);
+
             $row[] = "=SUMPRODUCT(G{$currentRow}:{$subCpmkEndColLetter}{$currentRow}, G3:{$subCpmkEndColLetter}3) / SUM(G3:{$subCpmkEndColLetter}3)";
-            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=86,4.00,IF({$nilaiAngkaColLetter}{$currentRow}>=80,3.70,IF({$nilaiAngkaColLetter}{$currentRow}>=75,3.30,IF({$nilaiAngkaColLetter}{$currentRow}>=70,3.00,IF({$nilaiAngkaColLetter}{$currentRow}>=65,2.70,IF({$nilaiAngkaColLetter}{$currentRow}>=60,2.30,IF({$nilaiAngkaColLetter}{$currentRow}>=56,2.00,IF({$nilaiAngkaColLetter}{$currentRow}>=40,1.00,0.00))))))))";
-            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=86,\"A\",IF({$nilaiAngkaColLetter}{$currentRow}>=80,\"A-\",IF({$nilaiAngkaColLetter}{$currentRow}>=75,\"B+\",IF({$nilaiAngkaColLetter}{$currentRow}>=70,\"B\",IF({$nilaiAngkaColLetter}{$currentRow}>=65,\"B-\",IF({$nilaiAngkaColLetter}{$currentRow}>=60,\"C+\",IF({$nilaiAngkaColLetter}{$currentRow}>=56,\"C\",IF({$nilaiAngkaColLetter}{$currentRow}>=40,\"D\",\"E\"))))))))";
+            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A,4.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A_MIN,3.70,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_PLUS,3.30,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B,3.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_MIN,2.70,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C_PLUS,2.30,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C,2.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_D,1.00,0.00))))))))";
+            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A,\"A\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A_MIN,\"A-\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_PLUS,\"B+\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B,\"B\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_MIN,\"B-\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C_PLUS,\"C+\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C,\"C\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_D,\"D\",\"E\"))))))))";
 
             $rows[] = $row;
         }

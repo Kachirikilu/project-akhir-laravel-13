@@ -1,14 +1,14 @@
 <div class="form-container">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-sm sm:text-md md:text-lg font-medium border-b pb-2 mb-6">
-        Rencana Pembelajaran Semester</h4>
+        {{ $headJudul ?? 'Rencana Pembelajaran Semester' }}</h4>
 
     <div class="relative">
 
         <div class="space-y-4">
 
             @include('livewire.global.modal-form.loading-animation', [
-                'wireLoading' => ($wireLoading ?? 'edit' . $nameXString) . ', loadingRPSsList',
+                'wireLoading' => ($wireLoading ?? 'edit' . $nameXString) . ', ' . ($typeXLoading ?? 'loadingRPSsList'),
             ])
 
             {{-- HEADER --}}
@@ -59,7 +59,7 @@
                         @foreach ($rps_items_list as $r)
                             <div wire:key="rps-row-{{ $r['id'] }}-{{ $nameXString }}" x-data="{ expanded: false }"
                                 wire:loading.class="opacity-50 pointer-events-none"
-                                wire:target="{{ $wireLoading ?? 'edit' . $nameXString }}, loadingRPSsList"
+                                wire:target="{{ $wireLoading ?? 'edit' . $nameXString }}, {{ $typeXLoading ?? 'loadingRPSsList' }}"
                                 class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:border-green-300 dark:hover:border-green-800 transition-all">
 
                                 {{-- HEADER ITEM (clickable) --}}
@@ -267,7 +267,7 @@
                                 {{-- <div
                                 wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}"> --}}
                                 {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSsList()',
+                                    'typeXLoading' => $typeXLoading ?? 'loadingRPSsList()',
                                     'isSmall' => 1,
                                     'maxButtons' => 8,
                                 ]) }}

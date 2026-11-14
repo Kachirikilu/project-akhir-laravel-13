@@ -279,9 +279,9 @@ class CapaianManagement extends Component
         }
 
         $aggQuery = Prodi::query()->where('prodis.id', $prodi->id);
-        // $this->addRekapProdiPr($aggQuery, 'rekap_pr');
-        // $this->addIndexProdiPr($aggQuery, 'index_pr');
-        // $this->addAkreditasProdiPr($aggQuery, 'akreditas_pr');
+        // $this->addRekapOBEPr($aggQuery, 'rekap_pr');
+        // $this->addIndexOBEPr($aggQuery, 'index_pr');
+        // $this->addAkreditasOBEPr($aggQuery, 'akreditas_pr');
         $this->addMataKuliahProdiPr($aggQuery, 'count_mk', 'count_rps', 'count_rps_aktif', 'count_rps_draf');
 
         $agg = $aggQuery->first();
@@ -423,18 +423,18 @@ class CapaianManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'mutu_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
-            'capaian' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'mutu_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps'],
-            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'mutu_cpmk_pr', 7 => 'count_cpl'],
-            'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'mutu_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator'],
-            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ipk_mhs', 7 => 'mutu_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status', 10 => 'kampus', 11 => 'program_studi'],
-            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'ipk_mhs', 7 => 'mutu_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'rekap_rps_pr', 5 => 'index_rps_pr', 6 => 'huruf_rps_pr', 7 => 'kode_mk', 8 => 'mk', 9 => 'semester', 10 => 'sks', 11 => 'sks_text', 12 => 'is_wajib', 13 => 'is_draf', 14 => 'revisi'],
+            'capaian' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpl_pr', 5 => 'index_cpl_pr', 5 => 'huruf_cpl_pr', 6 => 'count_rps_pr', 7 => 'count_rps'],
+            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_cpmk_pr', 5 => 'index_cpmk_pr', 6 => 'huruf_cpmk_pr', 7 => 'count_cpl'],
+            'sub-cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'rekap_scpmk_pr', 5 => 'index_scpmk_pr', 6 => 'huruf_scpmk_pr', 5 => 'metode', 6 => 'materi', 7 => 'metodologi', 8 => 'indikator'],
+            'mahasiswa' => [1 => 'kode', 2 => 'name', 3 => 'rekap_mhs', 4 => 'ipk_mhs', 7 => 'huruf_mhs', 6 => 'count_rps', 7 => 'total_sks', 8 => 'angkatan', 9 => 'status', 10 => 'kampus', 11 => 'program_studi'],
+            // 'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'kode', 4 => 'name', 5 => 'rekap_mhs', 6 => 'ipk_mhs', 7 => 'huruf_mhs', 8 => 'count_rps', 9 => 'total_sks', 10 => 'angkatan', 11 => 'status'],
         ];
 
         $aliases = [
             'rekap_rps_pr' => ['rekap_cpl_pr', 'rekap_cpmk_pr', 'rekap_scpmk_pr', 'rekap_mhs'],
             'index_rps_pr' => ['index_cpl_pr', 'index_cpmk_pr', 'index_scpmk_pr', 'ipk_mhs'],
-            'mutu_rps_pr' => ['mutu_cpl_pr', 'mutu_cpmk_pr', 'mutu_scpmk_pr', 'mutu_mhs'],
+            'huruf_rps_pr' => ['huruf_cpl_pr', 'huruf_cpmk_pr', 'huruf_scpmk_pr', 'huruf_mhs'],
 
             'kode' => ['kode', 'name'],
             'deskripsi' => ['deskripsi', 'mk'],
@@ -575,36 +575,36 @@ class CapaianManagement extends Component
 
             switch ($this->switchTable) {
                 case 'rps':
-                    $this->addRekapProdi($queryRPS, $prId, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                    $this->addIndexProdi($queryRPS, $prId, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
-                    $this->addAkreditasProdi($queryRPS, $prId, 'mutu_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                    $this->addRekapOBE($queryRPS, $prId, 'rekap_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                    $this->addIndexOBE($queryRPS, $prId, 'index_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
+                    $this->addAkreditasOBE($queryRPS, $prId, 'huruf_rps_pr', 'rekap_rps_prodi', 'rps_id', 'rps');
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year, $prId);
                     break;
                 case 'cpl':
-                    $this->addCountRpsCpl($queryCPL, $prId, 'count_rps_pr');
-                    $this->addCountRpsCpl($queryCPL, null, 'count_rps');
+                    $this->addCountRpsCpl($queryCPL, $prId, null, 'count_rps_pr');
+                    $this->addCountRpsCpl($queryCPL, null, null, 'count_rps');
 
-                    $this->addRekapProdi($queryCPL, $prId, 'rekap_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
-                    $this->addIndexProdi($queryCPL, $prId, 'index_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
-                    $this->addAkreditasProdi($queryCPL, $prId, 'mutu_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                    $this->addRekapOBE($queryCPL, $prId, 'rekap_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                    $this->addIndexOBE($queryCPL, $prId, 'index_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
+                    $this->addAkreditasOBE($queryCPL, $prId, 'huruf_cpl_pr', 'rekap_cpl_prodi', 'cpl_id', 'cpls');
                     $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'cpmk':
-                    $this->addRekapProdi($queryCPMK, $prId, 'rekap_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
-                    $this->addIndexProdi($queryCPMK, $prId, 'index_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
-                    $this->addAkreditasProdi($queryCPMK, $prId, 'mutu_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                    $this->addRekapOBE($queryCPMK, $prId, 'rekap_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                    $this->addIndexOBE($queryCPMK, $prId, 'index_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
+                    $this->addAkreditasOBE($queryCPMK, $prId, 'huruf_cpmk_pr', 'rekap_cpmk_prodi', 'cpmk_id', 'cpmks');
                     $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'sub-cpmk':
-                    $this->addRekapProdi($querySCPMK, $prId, 'rekap_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
-                    $this->addIndexProdi($querySCPMK, $prId, 'index_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
-                    $this->addAkreditasProdi($querySCPMK, $prId, 'mutu_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                    $this->addRekapOBE($querySCPMK, $prId, 'rekap_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                    $this->addIndexOBE($querySCPMK, $prId, 'index_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
+                    $this->addAkreditasOBE($querySCPMK, $prId, 'huruf_scpmk_pr', 'rekap_scpmk_prodi', 'scpmk_id', 'sub_cpmks');
                     $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
                     break;
                 case 'mahasiswa':
                     // $this->addRekapMahasiswa($queryUser, 'rekap_mhs');
                     // $this->addIndexMahasiswa($queryUser, 'ipk_mhs');
-                    // $this->addMutuMahasiswa($queryUser, 'mutu_mhs');
+                    // $this->addHurufMahasiswa($queryUser, 'huruf_mhs');
                     // $this->addCountRpsMahasiswa($queryUser, 'count_rps');
                     // $this->addTotalSksMahasiswa($queryUser, 'total_sks');
                     $this->addCountRpsMahasiswa($queryUser, 'count_rps');

@@ -335,8 +335,8 @@ trait WithCPLSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiMutu = $this->matchNilaiMutu(
-                        $cpl->mutu_cpl_pr ?? 'E',
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $cpl->huruf_cpl_pr ?? 'E',
                         $searchLower
                     );
 
@@ -376,11 +376,11 @@ trait WithCPLSearchFilters
                         case 'bobot':
                             return $matchBobot;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiMutu;
+                            return $matchNilaiAkhir || $matchNilaiHuruf;
                         case 'index':
                             return $matchNilaiIndex;
-                        case 'mutu':
-                            return $matchNilaiMutu;
+                        case 'huruf':
+                            return $matchNilaiHuruf;
                     }
 
                     return
@@ -390,7 +390,7 @@ trait WithCPLSearchFilters
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiMutu
+                        || $matchNilaiHuruf
 
                         || $matchRPS
                         || $matchRPSPr
@@ -406,9 +406,14 @@ trait WithCPLSearchFilters
 
                 'rekap_cpl_pr',
                 'index_cpl_pr',
-                'mutu_cpl_pr' => fn ($cpl) => (float) ($cpl->rekap_cpl_pr ?? 0),
+                'huruf_cpl_pr' => fn ($cpl) => (float) ($cpl->rekap_cpl_pr ?? 0),
+
+                'rekap_cpl_mhs',
+                'index_cpl_mhs',
+                'huruf_cpl_mhs' => fn ($cpl) => (float) ($cpl->rekap_cpl_mhs ?? 0),
 
                 'count_rps_pr' => fn ($cpl) => $cpl->count_rps_pr ?? 0,
+                'count_rps_mhs' => fn ($cpl) => $cpl->count_rps_mhs ?? 0,
                 'count_rps' => fn ($cpl) => $cpl->count_rps ?? 0,
 
                 'created_at' => fn ($cpl) => $cpl->created_at,

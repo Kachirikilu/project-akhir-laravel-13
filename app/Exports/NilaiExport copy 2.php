@@ -2,14 +2,12 @@
 
 namespace App\Exports;
 
-use App\Models\Akademik\SubCPMK;
-use App\Models\Kelas\KelasJadwal;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
 // 🌟 1. WAJIB IMPORT CONCERN WITHTITLE DI SINI:
-use Maatwebsite\Excel\Concerns\WithTitle; 
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -27,7 +25,7 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
 
     protected $sesis;
 
-    protected $sheetName; 
+    protected $sheetName;
 
     public function __construct($jadwal, $sheetName = null)
     {
@@ -56,18 +54,20 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
 
         $header1 = ['Kode RPS', 'Nama MK', 'Kode Kelas', 'NIM', 'Nama Mhs', 'Angkatan'];
         foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
-            $header1[] = 'CPMK ' . $kodeCpmk; // Di-merge nanti via Events
-            for ($i = 1; $i < count($sesiGroup); $i++) $header1[] = ''; 
+            $header1[] = 'CPMK '.$kodeCpmk; // Di-merge nanti via Events
+            for ($i = 1; $i < count($sesiGroup); $i++) {
+                $header1[] = '';
+            }
         }
-$header2 = ['', '', '', '', '', ''];
-foreach ($this->sesis as $sesi) {
-    $scpmk = $sesi->scpmk_atr;
-    $header2[] = ($scpmk->kode ?? $scpmk->kode_scpmk) . ' (P-'.$sesi->pertemuan_ke.')';
-}
-$header3 = ['', '', '', '', '', ''];
-foreach ($this->sesis as $sesi) {
-    $header3[] = $sesi->bobot_normalisasi / 100;
-}
+        $header2 = ['', '', '', '', '', ''];
+        foreach ($this->sesis as $sesi) {
+            $scpmk = $sesi->scpmk_atr;
+            $header2[] = ($scpmk->kode ?? $scpmk->kode_scpmk).' (P-'.$sesi->pertemuan_ke.')';
+        }
+        $header3 = ['', '', '', '', '', ''];
+        foreach ($this->sesis as $sesi) {
+            $header3[] = $sesi->bobot_normalisasi / 100;
+        }
 
         foreach ($this->sesis as $sesi) {
             $scpmk = $sesi->scpmk_atr;
@@ -80,7 +80,7 @@ foreach ($this->sesis as $sesi) {
 
         $header1[] = 'Nilai Angka';
         $header1[] = 'Nilai Index';
-        $header1[] = 'Nilai Mutu';
+        $header1[] = 'Nilai Huruf';
         $header2[] = '';
         $header2[] = '';
         $header2[] = '';
@@ -100,8 +100,8 @@ foreach ($this->sesis as $sesi) {
             ->with([
                 'nilai_mahasiswas' => function ($q) {
                     $q->where('kj_id', $this->jadwalId)
-                    ->where('ganjil_genap', $this->jadwal->ganjil_genap)
-                    ->where('akademik', $this->jadwal->akademik);
+                        ->where('ganjil_genap', $this->jadwal->ganjil_genap)
+                        ->where('akademik', $this->jadwal->akademik);
                 },
             ])
             ->distinct()
@@ -118,27 +118,26 @@ foreach ($this->sesis as $sesi) {
                 $nilai_mahasiswas?->nilai_array
                 ?? [];
 
-$row = [
-    $this->jadwal->kode_rps,
-    $this->jadwal->mk,
-    $this->jadwal->kode,
-    $mhs->nim,
-    $mhs->user?->name,
-    $mhs->user?->mahasiswa->angkatan,
-];
+            $row = [
+                $this->jadwal->kode_rps,
+                $this->jadwal->mk,
+                $this->jadwal->kode,
+                $mhs->nim,
+                $mhs->user?->name,
+                $mhs->user?->mahasiswa->angkatan,
+            ];
 
-foreach ($this->sesis as $index => $sesi) {
-    $row[] = $nilaiArray[$index] ?? '';
-}
+            foreach ($this->sesis as $index => $sesi) {
+                $row[] = $nilaiArray[$index] ?? '';
+            }
 
-$cpmkGroups = collect($this->sesis)->groupBy('kode_cpmk');
-$currentColIndex = 7 + count($this->sesis);
+            $cpmkGroups = collect($this->sesis)->groupBy('kode_cpmk');
+            $currentColIndex = 7 + count($this->sesis);
 
-foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
-    $row[] = "=SUMPRODUCT(RangeSesi_Grup, RangeBobot_Grup)";
-    $currentColIndex++;
-}
-
+            foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
+                $row[] = '=SUMPRODUCT(RangeSesi_Grup, RangeBobot_Grup)';
+                $currentColIndex++;
+            }
 
             $startSesiCol = Coordinate::stringFromColumnIndex(7);
             $endSesiCol = Coordinate::stringFromColumnIndex(6 + count($this->sesis));
@@ -149,7 +148,6 @@ foreach ($cpmkGroups as $kodeCpmk => $sesiGroup) {
             $row[] = "=IF({$nilaiAngkaCoordinate}>=86,\"A\",IF({$nilaiAngkaCoordinate}>=80,\"A-\",IF({$nilaiAngkaCoordinate}>=75,\"B+\",IF({$nilaiAngkaCoordinate}>=70,\"B\",IF({$nilaiAngkaCoordinate}>=65,\"B-\",IF({$nilaiAngkaCoordinate}>=60,\"C+\",IF({$nilaiAngkaCoordinate}>=56,\"C\",IF({$nilaiAngkaCoordinate}>=40,\"D\",\"E\"))))))))";
             $rows[] = $row;
         }
-
 
         return $rows;
     }

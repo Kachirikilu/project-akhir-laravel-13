@@ -6,13 +6,14 @@ use Illuminate\Support\Facades\DB;
 
 trait HasAkreditas
 {
-    protected function addRekapProdi(
+    protected function addRekapOBE(
         $query,
-        ?int $prId = null,
+        ?int $id = null,
         string $alias = 'rekap_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
+        string $idPivot = 'pr_id'
     ) {
         $query->addSelect("$table.*");
         $query->selectSub(
@@ -20,8 +21,8 @@ trait HasAkreditas
                 ->selectRaw('COALESCE(MAX(nilai), 0)')
                 ->whereColumn("$pivot.$kolom", "$table.id")
                 ->when(
-                    $prId !== null,
-                    fn ($q) => $q->where("$pivot.pr_id", $prId)
+                    $id !== null,
+                    fn ($q) => $q->where("$pivot.$idPivot", $id)
                 ),
             $alias
         );
@@ -29,26 +30,26 @@ trait HasAkreditas
         return $query;
     }
 
-    // protected function addIndexProdi(
+    // protected function addIndexOBE(
     //     $query,
-    //     ?int $prId = null,
+    //     ?int $id = null,
     //     string $alias = 'index_cpl_pr',
     //     string $pivot = 'rekap_cpl_prodi',
     //     string $kolom = 'cpl_id',
     //     string $table = 'cpls',
     // ) {
     //     $query->addSelect("$table.*");
-    //     $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+    //     $query->selectSub(function ($query) use ($id, $pivot, $kolom, $table) {
     //         $query->from($pivot)
     //             ->whereColumn(
     //                 "$pivot.$kolom",
     //                 "$table.id"
     //             );
 
-    //         if ($prId !== null) {
+    //         if ($id !== null) {
     //             $query->where(
     //                 "$pivot.pr_id",
-    //                 $prId
+    //                 $id
     //             );
     //         }
 
@@ -73,26 +74,27 @@ trait HasAkreditas
     //     return $query;
     // }
 
-    protected function addIndexProdi(
+    protected function addIndexOBE(
         $query,
-        ?int $prId = null,
+        ?int $id = null,
         string $alias = 'index_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
+        string $idPivot = 'pr_id'
     ) {
         $query->addSelect("$table.*");
-        $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+        $query->selectSub(function ($query) use ($id, $pivot, $kolom, $table, $idPivot) {
             $query->from($pivot)
                 ->whereColumn(
                     "$pivot.$kolom",
                     "$table.id"
                 );
 
-            if ($prId !== null) {
+            if ($id !== null) {
                 $query->where(
-                    "$pivot.pr_id",
-                    $prId
+                    "$pivot.$idPivot",
+                    $id
                 );
             }
             $query->selectRaw('ROUND((nilai / 100) * 4, 2)');
@@ -104,16 +106,27 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addAkreditasProdi(
+    protected function addAkreditasOBE(
         $query,
-        ?int $prId = null,
-        string $alias = 'mutu_cpl_pr',
+        ?int $id = null,
+        string $alias = 'huruf_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
         string $kolom = 'cpl_id',
         string $table = 'cpls',
+        string $idPivot = 'pr_id'
     ) {
         $query->addSelect("$table.*");
-        $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
+        $query->selectSub(function ($query) use ($id, $pivot, $kolom, $table, $idPivot) {
+            $bindings = [
+                (float) (config('rps.min_a') ?: 86),
+                (float) (config('rps.min_a_min') ?: 80),
+                (float) (config('rps.min_b_plus') ?: 75),
+                (float) (config('rps.min_b') ?: 70),
+                (float) (config('rps.min_b_min') ?: 65),
+                (float) (config('rps.min_c_plus') ?: 60),
+                (float) (config('rps.min_c') ?: 56),
+                (float) (config('rps.min_d') ?: 40),
+            ];
 
             $query->from($pivot)
                 ->whereColumn(
@@ -121,26 +134,26 @@ trait HasAkreditas
                     "$table.id"
                 );
 
-            if ($prId !== null) {
+            if ($id !== null) {
                 $query->where(
-                    "$pivot.pr_id",
-                    $prId
+                    "$pivot.$idPivot",
+                    $id
                 );
             }
 
             $query->selectRaw("
-            CASE
-                WHEN nilai >= 86 THEN 'A'
-                WHEN nilai >= 80 THEN 'A-'
-                WHEN nilai >= 75 THEN 'B+'
-                WHEN nilai >= 70 THEN 'B'
-                WHEN nilai >= 65 THEN 'B-'
-                WHEN nilai >= 60 THEN 'C+'
-                WHEN nilai >= 56 THEN 'C'
-                WHEN nilai >= 40 THEN 'D'
-                ELSE 'E'
-            END
-        ");
+                CASE
+                    WHEN nilai >= ? THEN 'A'
+                    WHEN nilai >= ? THEN 'A-'
+                    WHEN nilai >= ? THEN 'B+'
+                    WHEN nilai >= ? THEN 'B'
+                    WHEN nilai >= ? THEN 'B-'
+                    WHEN nilai >= ? THEN 'C+'
+                    WHEN nilai >= ? THEN 'C'
+                    WHEN nilai >= ? THEN 'D'
+                    ELSE 'E'
+                END
+            ", $bindings);
 
             $query->limit(1);
 
@@ -207,28 +220,38 @@ trait HasAkreditas
         return $query;
     }
 
-    protected function addMutuMahasiswa(
+    protected function addHurufMahasiswa(
         $query,
-        string $alias = 'mutu_mahasiswa'
+        string $alias = 'huruf_mahasiswa'
     ) {
         $query->selectSub(function ($sub) {
+            $bindings = [
+                config('rps.min_a', 86),
+                config('rps.min_a_min', 80),
+                config('rps.min_b_plus', 75),
+                config('rps.min_b', 70),
+                config('rps.min_b_min', 65),
+                config('rps.min_c_plus', 60),
+                config('rps.min_c', 56),
+                config('rps.min_d', 40),
+            ];
 
             $sub->from('nilai_mahasiswa')
                 ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                 ->whereColumn('mahasiswas.user_id', 'users.id')
                 ->selectRaw("
-                CASE
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 86 THEN 'A'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 80 THEN 'A-'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 75 THEN 'B+'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 70 THEN 'B'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 65 THEN 'B-'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 60 THEN 'C+'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 56 THEN 'C'
-                    WHEN AVG(nilai_mahasiswa.nilai) >= 40 THEN 'D'
-                    ELSE 'E'
-                END
-            ");
+                    CASE
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'A'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'A-'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'B+'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'B'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'B-'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'C+'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'C'
+                        WHEN AVG(nilai_mahasiswa.nilai) >= ? THEN 'D'
+                        ELSE 'E'
+                    END
+                ", $bindings);
         }, $alias);
 
         return $query;
@@ -297,48 +320,49 @@ trait HasAkreditas
         return $queryUser;
     }
 
- protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
-{
-    $queryUser->addSelect('users.*');
+    protected function addCountRpsDosen($queryUser, string $alias = 'count_rps')
+    {
+        $queryUser->addSelect('users.*');
 
-    $queryUser->selectSub(
-        DB::table('rps_pivot_tim_dosen')
-            ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
-            ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
-            ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
-            ->whereColumn('dosens.user_id', 'users.id')
-            ->selectRaw('COUNT(DISTINCT rps_pivot_tim_dosen.rps_id)'),
-        $alias
-    );
-
-    return $queryUser;
-}
-protected function addTotalSksDosen($queryUser, string $alias = 'total_sks')
-{
-    $queryUser->addSelect('users.*');
-
-    $queryUser->selectSub(
-        DB::table(function ($sub) {
-            $sub->from('rps_pivot_tim_dosen')
+        $queryUser->selectSub(
+            DB::table('rps_pivot_tim_dosen')
                 ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
                 ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
                 ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
-                ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
-                ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-                ->selectRaw('
+                ->whereColumn('dosens.user_id', 'users.id')
+                ->selectRaw('COUNT(DISTINCT rps_pivot_tim_dosen.rps_id)'),
+            $alias
+        );
+
+        return $queryUser;
+    }
+
+    protected function addTotalSksDosen($queryUser, string $alias = 'total_sks')
+    {
+        $queryUser->addSelect('users.*');
+
+        $queryUser->selectSub(
+            DB::table(function ($sub) {
+                $sub->from('rps_pivot_tim_dosen')
+                    ->join('tim_dosens', 'rps_pivot_tim_dosen.tim_dosen_id', '=', 'tim_dosens.id')
+                    ->join('tim_dosen_pivot_dosen', 'tim_dosens.id', '=', 'tim_dosen_pivot_dosen.tim_dosen_id')
+                    ->join('dosens', 'tim_dosen_pivot_dosen.dosen_id', '=', 'dosens.id')
+                    ->join('rps', 'rps_pivot_tim_dosen.rps_id', '=', 'rps.id')
+                    ->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                    ->selectRaw('
                     dosens.user_id,
                     rps_pivot_tim_dosen.rps_id,
                     MAX(mata_kuliahs.sks_kuliah) as sks
                 ')
-                ->groupBy('dosens.user_id', 'rps_pivot_tim_dosen.rps_id');
-        }, 'rps_unik')
-        ->whereColumn('rps_unik.user_id', 'users.id')
-        ->selectRaw('COALESCE(SUM(rps_unik.sks), 0)'),
-        $alias
-    );
+                    ->groupBy('dosens.user_id', 'rps_pivot_tim_dosen.rps_id');
+            }, 'rps_unik')
+                ->whereColumn('rps_unik.user_id', 'users.id')
+                ->selectRaw('COALESCE(SUM(rps_unik.sks), 0)'),
+            $alias
+        );
 
-    return $queryUser;
-}
+        return $queryUser;
+    }
 
     protected function addCountRpsTimDosen($queryTimDosen, string $alias = 'count_rps')
     {
@@ -353,6 +377,7 @@ protected function addTotalSksDosen($queryUser, string $alias = 'total_sks')
                 );
         }, $alias);
     }
+
     protected function addTotalSksTimDosen($queryTimDosen, string $alias = 'total_sks')
     {
         return $queryTimDosen->selectSub(function ($query) {

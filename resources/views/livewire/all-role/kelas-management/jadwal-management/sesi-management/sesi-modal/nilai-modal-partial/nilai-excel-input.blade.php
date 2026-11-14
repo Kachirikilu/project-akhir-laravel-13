@@ -127,7 +127,7 @@
 
                                     <th rowspan="3" class="{{ $headColumn }}">Nilai Angka</th>
                                     <th rowspan="3" class="{{ $headColumn }}">Nilai Index</th>
-                                    <th rowspan="3" class="{{ $headColumn }}">Nilai Mutu</th>
+                                    <th rowspan="3" class="{{ $headColumn }}">Nilai Huruf</th>
                                     <th rowspan="3" class="{{ $headColumn }}">Aksi</th>
                                 </tr>
 
@@ -188,9 +188,28 @@
                                     @php
                                         $i = $row['_index'] ?? 0;
                                     @endphp
+                                    @php
+                                        $gradeLimits = [
+                                            'min_a' => (float) config('rps.min_a', 86),
+                                            'min_a_min' => (float) config('rps.min_a_min', 80),
+                                            'min_b_plus' => (float) config('rps.min_b_plus', 75),
+                                            'min_b' => (float) config('rps.min_b', 70),
+                                            'min_b_min' => (float) config('rps.min_b_min', 65),
+                                            'min_c_plus' => (float) config('rps.min_c_plus', 60),
+                                            'min_c' => (float) config('rps.min_c', 56),
+                                            'min_d' => (float) config('rps.min_d', 40),
+                                        ];
+                                    @endphp
+
                                     <tr wire:key="nilai-row-{{ $i }}" x-data="{
                                         bobotList: {{ $arrBobotJson }},
-                                        nilaiInputs: {{ json_encode(collect($row['sub_cpmk'] ?? [])->map(fn($n) => $n['nilai'] ?? 0)->toArray()) }},
+                                        nilaiInputs: @js(
+                                            collect($row['sub_cpmk'] ?? [])
+                                                ->map(fn($n) => $n['nilai'] ?? 0)
+                                                ->values()
+                                                ->toArray(),
+                                        ),
+                                        limits: @js($gradeLimits),
                                     
                                         get nilaiAngka() {
                                             let total = 0;
@@ -203,27 +222,27 @@
                                     
                                         get nilaiIndex() {
                                             let na = this.nilaiAngka;
-                                            if (na >= 86) return 4.00;
-                                            if (na >= 80) return 3.70;
-                                            if (na >= 75) return 3.30;
-                                            if (na >= 70) return 3.00;
-                                            if (na >= 65) return 2.70;
-                                            if (na >= 60) return 2.30;
-                                            if (na >= 56) return 2.00;
-                                            if (na >= 40) return 1.00;
+                                            if (na >= this.limits.min_a) return 4.00;
+                                            if (na >= this.limits.min_a_min) return 3.70;
+                                            if (na >= this.limits.min_b_plus) return 3.30;
+                                            if (na >= this.limits.min_b) return 3.00;
+                                            if (na >= this.limits.min_b_min) return 2.70;
+                                            if (na >= this.limits.min_c_plus) return 2.30;
+                                            if (na >= this.limits.min_c) return 2.00;
+                                            if (na >= this.limits.min_d) return 1.00;
                                             return 0.0;
                                         },
                                     
-                                        get nilaiMutu() {
+                                        get nilaiHuruf() {
                                             let na = this.nilaiAngka;
-                                            if (na >= 86) return 'A';
-                                            if (na >= 80) return 'A-';
-                                            if (na >= 75) return 'B+';
-                                            if (na >= 70) return 'B';
-                                            if (na >= 65) return 'B-';
-                                            if (na >= 60) return 'C+';
-                                            if (na >= 56) return 'C';
-                                            if (na >= 40) return 'D';
+                                            if (na >= this.limits.min_a) return 'A';
+                                            if (na >= this.limits.min_a_min) return 'A-';
+                                            if (na >= this.limits.min_b_plus) return 'B+';
+                                            if (na >= this.limits.min_b) return 'B';
+                                            if (na >= this.limits.min_b_min) return 'B-';
+                                            if (na >= this.limits.min_c_plus) return 'C+';
+                                            if (na >= this.limits.min_c) return 'C';
+                                            if (na >= this.limits.min_d) return 'D';
                                             return 'E';
                                         }
                                     }">
@@ -271,51 +290,40 @@
                                         ])
 
 
-                                        @foreach ($row['sub_cpmk'] ?? [] as $nilai)
-                                            <td
-                                                class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-800 align-top">
-                                                <div class="flex flex-col h-full min-h-[34px]">
-                                                    <input type="number" step="0.01" min="0" max="100"
-                                                        wire:key="nilai-cell-{{ $i }}-{{ $loop->index }}"
-                                                        x-data="{ val: @js($this->parsedNilaiRows[$i]['sub_cpmk'][$loop->index]['nilai'] ?? 0) }" x-model="val"
-                                                        @input="
-                                                            let normalized = $store.sesi?.normalizeFloat($el.value);
-                                                            $el.value = normalized;
-                                                            val = normalized;
-                                                            $wire.set('parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai', normalized, false);
-                                                        "
-                                                        class="{{ isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : 'bg-white dark:bg-neutral-600' }} w-full h-full border-0 rounded-none px-3 py-2 text-xs text-center outline-none focus:bg-blue-50/30 focus:ring-1 focus:ring-blue-500">
+@foreach ($row['sub_cpmk'] ?? [] as $nilai)
+    <td class="text-xs sm:text-sm p-0 border border-gray-200 dark:border-neutral-800 align-top">
+        <div class="flex flex-col h-full min-h-[34px]">
+            <input type="number" step="0.01" min="0" max="100"
+                wire:key="nilai-cell-{{ $i }}-{{ $loop->index }}"
+                x-model="nilaiInputs[{{ $loop->index }}]"
+                @input="
+                    let normalized = $store.sesi?.normalizeFloat($el.value);
+                    $el.value = normalized;
+                    nilaiInputs[{{ $loop->index }}] = normalized;
+                    $wire.set('parsedNilaiRows.{{ $i }}.sub_cpmk.{{ $loop->index }}.nilai', normalized, false);
+                "
+                class="{{ isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']) ? 'bg-red-50 dark:bg-red-950/30 text-red-600' : 'bg-white dark:bg-neutral-600' }} w-full h-full border-0 rounded-none px-3 py-2 text-xs text-center outline-none focus:bg-blue-50/30 focus:ring-1 focus:ring-blue-500">
 
-                                                    @if (isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']))
-                                                        <p
-                                                            class="text-red-500 text-[10px] px-1 py-0.5 bg-red-50 dark:bg-red-950/30 border-t border-red-200 text-center">
-                                                            {{ $rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai'][0] }}
-                                                        </p>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        @endforeach
+            @if (isset($rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai']))
+                <p class="text-red-500 text-[10px] px-1 py-0.5 bg-red-50 dark:bg-red-950/30 border-t border-red-200 text-center">
+                    {{ $rowNilaiErrors[$i]['sub_cpmk.' . $loop->index . '.nilai'][0] }}
+                </p>
+            @endif
+        </div>
+    </td>
+@endforeach
 
 
                                         @include('livewire.global.modal-form.table.excel-input-form', [
-                                            // 'model' => $this->parsedNilaiRows[$i]['nilai_angka'] ?? '',
                                             'modelAlpine' => 'nilaiAngka',
-                                            // 'wireModel' => "parsedNilaiRows.$i.nilai_angka",
-                                            // 'message' => $rowNilaiErrors[$i]['nilai_angka'] ?? null,
                                             'isReadonly' => 1,
                                         ])
                                         @include('livewire.global.modal-form.table.excel-input-form', [
-                                            // 'model' => $this->parsedNilaiRows[$i]['nilai_index'] ?? '',
                                             'modelAlpine' => 'nilaiIndex.toFixed(2)',
-                                            // 'wireModel' => "parsedNilaiRows.$i.nilai_index",
-                                            // 'message' => $rowNilaiErrors[$i]['nilai_index'] ?? null,
                                             'isReadonly' => 1,
                                         ])
                                         @include('livewire.global.modal-form.table.excel-input-form', [
-                                            // 'model' => $this->parsedNilaiRows[$i]['nilai_mutu'] ?? '',
-                                            'modelAlpine' => 'nilaiMutu',
-                                            // 'wireModel' => "parsedNilaiRows.$i.nilai_mutu",
-                                            // 'message' => $rowNilaiErrors[$i]['nilai_mutu'] ?? null,
+                                            'modelAlpine' => 'nilaiHuruf',
                                             'isReadonly' => 1,
                                         ])
 

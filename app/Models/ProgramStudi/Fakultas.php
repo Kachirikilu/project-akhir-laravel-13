@@ -63,14 +63,14 @@ class Fakultas extends Model
             get: function () {
                 $nilai = $this->nilai_fk ?? 0;
                 $index = match (true) {
-                    $nilai >= 86 => 4.00,
-                    $nilai >= 80 => 3.70,
-                    $nilai >= 75 => 3.30,
-                    $nilai >= 70 => 3.00,
-                    $nilai >= 65 => 2.70,
-                    $nilai >= 60 => 2.30,
-                    $nilai >= 56 => 2.00,
-                    $nilai >= 40 => 1.00,
+                    $nilai >= config('rps.min_a', 86) => 4.00,
+                    $nilai >= config('rps.min_a_min', 80) => 3.70,
+                    $nilai >= config('rps.min_b_plus', 75) => 3.30,
+                    $nilai >= config('rps.min_b', 70) => 3.00,
+                    $nilai >= config('rps.min_b_min', 65) => 2.70,
+                    $nilai >= config('rps.min_c_plus', 60) => 2.30,
+                    $nilai >= config('rps.min_c', 56) => 2.00,
+                    $nilai >= config('rps.min_d', 40) => 1.00,
                     default => 0.00,
                 };
 
@@ -86,14 +86,14 @@ class Fakultas extends Model
                 $nilai = $this->nilai_fk ?? 0;
 
                 return match (true) {
-                    $nilai >= 86 => 'A',
-                    $nilai >= 80 => 'A-',
-                    $nilai >= 75 => 'B+',
-                    $nilai >= 70 => 'B',
-                    $nilai >= 65 => 'B-',
-                    $nilai >= 60 => 'C+',
-                    $nilai >= 56 => 'C',
-                    $nilai >= 40 => 'D',
+                    $nilai >= config('rps.min_a', 86) => 'A',
+                    $nilai >= config('rps.min_a_min', 80) => 'A-',
+                    $nilai >= config('rps.min_b_plus', 75) => 'B+',
+                    $nilai >= config('rps.min_b', 70) => 'B',
+                    $nilai >= config('rps.min_b_min', 65) => 'B-',
+                    $nilai >= config('rps.min_c_plus', 60) => 'C+',
+                    $nilai >= config('rps.min_c', 56) => 'C',
+                    $nilai >= config('rps.min_d', 40) => 'D',
                     default => 'E',
                 };
             }
@@ -264,15 +264,15 @@ class Fakultas extends Model
                         );
 
                         $mapIndex = [
-                            '4.00' => [86, 100],
-                            '3.70' => [80, 85.99],
-                            '3.30' => [75, 79.99],
-                            '3.00' => [70, 74.99],
-                            '2.70' => [65, 69.99],
-                            '2.30' => [60, 64.99],
-                            '2.00' => [56, 59.99],
-                            '1.00' => [40, 55.99],
-                            '0.00' => [0, 39.99],
+                            '4.00' => [config('rps.min_a', 86), 100],
+                            '3.70' => [config('rps.min_a_min', 80), config('rps.min_a', 86) - 0.01],
+                            '3.30' => [config('rps.min_b_plus', 75), config('rps.min_a_min', 80) - 0.01],
+                            '3.00' => [config('rps.min_b', 70), config('rps.min_b_plus', 75) - 0.01],
+                            '2.70' => [config('rps.min_b_min', 65), config('rps.min_b', 70) - 0.01],
+                            '2.30' => [config('rps.min_c_plus', 60), config('rps.min_b_min', 65) - 0.01],
+                            '2.00' => [config('rps.min_c', 56), config('rps.min_c_plus', 60) - 0.01],
+                            '1.00' => [config('rps.min_d', 40), config('rps.min_c', 56) - 0.01],
+                            '0.00' => [0, config('rps.min_d', 40) - 0.01],
                         ];
 
                         $key = number_format($value, 2, '.', '');

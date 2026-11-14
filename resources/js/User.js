@@ -55,7 +55,7 @@ document.addEventListener("alpine:init", () => {
 
         rekap_mhs: "",
         ipk_mhs: "",
-        mutu_mhs: "",
+        huruf_mhs: "",
 
         kode_wilayah: "",
 
@@ -73,7 +73,7 @@ document.addEventListener("alpine:init", () => {
 
         pr_id_show: "",
 
-        setValueUser(email, tingkat, label1, id1, rps, sks, rekap, index, mutu) {
+        setValueUser(email, tingkat, label1, id1, rps, sks, rekap, index, huruf) {
             this.email = email;
             this.tingkat = tingkat;
             this.label_id1 = label1;
@@ -83,7 +83,7 @@ document.addEventListener("alpine:init", () => {
             this.total_sks = sks;
             this.rekap_mhs = rekap;
             this.ipk_mhs = index;
-            this.mutu_mhs = mutu;
+            this.huruf_mhs = huruf;
         },
         getDataUser() {
             return {
@@ -94,7 +94,7 @@ document.addEventListener("alpine:init", () => {
                 // total_sks: this.total_sks,
                 // rekap_mhs: this.rekap_mhs,
                 // ipk_mhs: this.ipk_mhs,
-                // mutu_mhs: this.mutu_mhs,
+                // huruf_mhs: this.huruf_mhs,
             };
         },
 
@@ -121,7 +121,7 @@ document.addEventListener("alpine:init", () => {
             sks,
             rekap,
             index,
-            mutu,
+            huruf,
 
             jk,
             agama,
@@ -158,7 +158,7 @@ document.addEventListener("alpine:init", () => {
 
             this.rekap_mhs = rekap;
             this.ipk_mhs = index;
-            this.mutu_mhs = mutu;
+            this.huruf_mhs = huruf;
 
             this.jenis_kelamin = jk;
             this.agama = agama;
@@ -183,7 +183,7 @@ document.addEventListener("alpine:init", () => {
 
             rekap,
             index,
-            mutu,
+            huruf,
 
             angkatan,
         ) {
@@ -198,7 +198,7 @@ document.addEventListener("alpine:init", () => {
 
             this.rekap_mhs = rekap;
             this.ipk_mhs = index;
-            this.mutu_mhs = mutu;
+            this.huruf_mhs = huruf;
 
             this.angkatan_mhs = angkatan;
             // this.pr_id_show = prId;
@@ -215,7 +215,7 @@ document.addEventListener("alpine:init", () => {
 
         //     rekap,
         //     index,
-        //     mutu,
+        //     huruf,
         //     prId,
         // ) {
         //     this.name = name;
@@ -228,7 +228,7 @@ document.addEventListener("alpine:init", () => {
 
         //     this.rekap_mhs = rekap;
         //     this.ipk_mhs = index;
-        //     this.mutu_mhs = mutu;
+        //     this.huruf_mhs = huruf;
         //     this.pr_id_show = prId;
         // },
         setDeleteUser(email, role, forceDelete) {
@@ -278,7 +278,7 @@ document.addEventListener("alpine:init", () => {
 
                 this.rekap_mhs = "";
                 this.ipk_mhs = "";
-                this.mutu_mhs = "";
+                this.huruf_mhs = "";
                 this.pr_id_show = "";
 
                 this.jenis_kelamin = "";

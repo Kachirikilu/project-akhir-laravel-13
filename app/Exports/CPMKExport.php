@@ -65,7 +65,7 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
                     'Referensi', '',
                 ], [
                     '', '', '', '',
-                    'Nilai', 'Index', 'Mutu',
+                    'Nilai', 'Index', 'Huruf',
                     'Kode CPL', 'Jumlah CPL',
                     'Kode Sub-CPMK', 'Jumlah Pertemuan', 'Metode', 'Bobot Sub-CPMK',
                     'Kode Referensi', 'Jumlah Referensi',
@@ -123,7 +123,7 @@ class CPMKExport extends DefaultValueBinder implements FromCollection, ShouldAut
             array_splice($data, 4, 0, [
                 $c->rekap_cpmk_pr ?: '0',
                 $c->index_cpmk_pr ?: '0',
-                $c->mutu_cpmk_pr ?? 'E',
+                $c->huruf_cpmk_pr ?? 'E',
             ]);
         }
 

@@ -235,7 +235,7 @@ trait WithNilaiExcelImport
         return array_merge([
             'nilai_angka' => 0,
             'nilai_index' => 0,
-            'nilai_mutu'  => 'E',
+            'nilai_huruf'  => 'E',
             '_index'      => count($this->parsedNilaiRows),
         ], $parsed);
     }

@@ -25,11 +25,11 @@
 
                     'nilai' => strtolower($n->nilai ?? '-'),
                     'nilai_index' => strtolower($n->nilai_index ?? '-'),
-                    'nilai_mutu' => strtolower($n->nilai_mutu ?? ''),
+                    'nilai_huruf' => strtolower($n->nilai_huruf ?? ''),
 
                     'nilai_semester' => $n->nilai_semester ?? '0.00',
                     'ip_semester' => $n->ip_semester ?? '0.00',
-                    'mutu_semester' => strtoupper($n->mutu_semester ?? ''),
+                    'huruf_semester' => strtoupper($n->huruf_semester ?? ''),
                 ];
             })
             ->values()
@@ -114,7 +114,7 @@
                         item.nim,
                         item.nilai,
                         String(item.nilai_index),
-                        String(item.nilai_mutu),
+                        String(item.nilai_huruf),
                         item.akademik,
                         item.ganjil_genap,
                         String(item.semester),
@@ -174,7 +174,7 @@
                         field === 'sks' ||
                         field === 'nilai' ||
                         field === 'nilai_index' ||
-                        field === 'nilai_mutu'
+                        field === 'nilai_huruf'
                     ) {
                         const numA = parseNumber(a[field]);
                         const numB = parseNumber(b[field]);
@@ -347,7 +347,7 @@
 
                         <div class="flex-grow max-w-md">
                             @include('livewire.global.search-and-filters.main-search', [
-                                'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Mutu...',
+                                'placeholder' => 'Cari Mata Kuliah, Nilai, Index, atau Huruf...',
                                 'alpine' => 'periode',
                                 'isLive' => 1,
                                 'isBorder' => 2,
@@ -472,8 +472,8 @@
                                         class="text-base font-bold leading-none text-[var(--contrast-main-text)]">{{ number_format($n->nilai_index, 2) ?? '-' }}</span>
                                 </div>
                                 @include(
-                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card.nilai-mutu',
-                                    ['value' => $n->nilai_mutu]
+                                    'livewire.staff.nilai-management.nilai-mahasiswa-management.rps-mahasiswa-management.rps-mahasiswa-view.rps-mahasiswa-card.nilai-huruf',
+                                    ['value' => $n->nilai_huruf]
                                 )
                             </div>
                         </div>

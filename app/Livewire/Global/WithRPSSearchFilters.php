@@ -569,8 +569,8 @@ trait WithRPSSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiMutu = $this->matchNilaiMutu(
-                        $rps->mutu_rps_pr ?? 'E',
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $rps->huruf_rps_pr ?? 'E',
                         $searchLower
                     );
 
@@ -754,11 +754,11 @@ trait WithRPSSearchFilters
                         case 'status':
                             return $matchDraf;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiMutu;
+                            return $matchNilaiAkhir || $matchNilaiHuruf;
                         case 'index':
                             return $matchNilaiIndex;
-                        case 'mutu':
-                            return $matchNilaiMutu;
+                        case 'huruf':
+                            return $matchNilaiHuruf;
                     }
 
                     return
@@ -772,7 +772,7 @@ trait WithRPSSearchFilters
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiMutu
+                        || $matchNilaiHuruf
 
                         || $matchSemester
                         || $matchSemesterJenis
@@ -806,7 +806,7 @@ trait WithRPSSearchFilters
 
                 'rekap_rps_pr',
                 'index_rps_pr',
-                'mutu_rps_pr' => fn ($rps) => (float) ($rps->rekap_rps_pr ?? 0),
+                'huruf_rps_pr' => fn ($rps) => (float) ($rps->rekap_rps_pr ?? 0),
 
                 'count_cpmk' => fn ($rps) => (int) $rps->count_cpmk,
                 'count_scpmk' => fn ($rps) => (int) $rps->count_scpmk,

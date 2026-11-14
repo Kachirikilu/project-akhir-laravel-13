@@ -76,23 +76,34 @@ trait HasNilaiAbsensi
     {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal, $kolom) {
+                $bindings = [
+                    config('rps.min_a', 86),
+                    config('rps.min_a_min', 80),
+                    config('rps.min_b_plus', 75),
+                    config('rps.min_b', 70),
+                    config('rps.min_b_min', 65),
+                    config('rps.min_c_plus', 60),
+                    config('rps.min_c', 56),
+                    config('rps.min_d', 40),
+                ];
+
                 $query->from('nilai_mahasiswa')
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
                     ->where("nilai_mahasiswa.$kolom", $idJadwal)
                     ->selectRaw('
                         CASE
-                            WHEN nilai_mahasiswa.nilai >= 86 THEN 4.00
-                            WHEN nilai_mahasiswa.nilai >= 80 THEN 3.70
-                            WHEN nilai_mahasiswa.nilai >= 75 THEN 3.30
-                            WHEN nilai_mahasiswa.nilai >= 70 THEN 3.00
-                            WHEN nilai_mahasiswa.nilai >= 65 THEN 2.70
-                            WHEN nilai_mahasiswa.nilai >= 60 THEN 2.30
-                            WHEN nilai_mahasiswa.nilai >= 56 THEN 2.00
-                            WHEN nilai_mahasiswa.nilai >= 40 THEN 1.00
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 4.00
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 3.70
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 3.30
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 3.00
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 2.70
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 2.30
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 2.00
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 1.00
                             ELSE 0
                         END
-                    ')
+                    ', $bindings)
                     ->limit(1);
             },
         ]);
@@ -100,27 +111,38 @@ trait HasNilaiAbsensi
         return $queryUser;
     }
 
-    protected function addMahasiswaNilaiMutu($queryUser, int $idJadwal, string $alias = 'mhs_nilai_mutu', string $kolom = 'kj_id')
+    protected function addMahasiswaNilaiHuruf($queryUser, int $idJadwal, string $alias = 'mhs_nilai_huruf', string $kolom = 'kj_id')
     {
         $queryUser->addSelect([
             $alias => function ($query) use ($idJadwal, $kolom) {
+                $bindings = [
+                    config('rps.min_a', 86),
+                    config('rps.min_a_min', 80),
+                    config('rps.min_b_plus', 75),
+                    config('rps.min_b', 70),
+                    config('rps.min_b_min', 65),
+                    config('rps.min_c_plus', 60),
+                    config('rps.min_c', 56),
+                    config('rps.min_d', 40),
+                ];
+
                 $query->from('nilai_mahasiswa')
                     ->join('mahasiswas', 'nilai_mahasiswa.mahasiswa_id', '=', 'mahasiswas.id')
                     ->whereColumn('mahasiswas.user_id', 'users.id')
                     ->where("nilai_mahasiswa.$kolom", $idJadwal)
                     ->selectRaw("
                         CASE
-                            WHEN nilai_mahasiswa.nilai >= 86 THEN 'A'
-                            WHEN nilai_mahasiswa.nilai >= 80 THEN 'A-'
-                            WHEN nilai_mahasiswa.nilai >= 75 THEN 'B+'
-                            WHEN nilai_mahasiswa.nilai >= 70 THEN 'B'
-                            WHEN nilai_mahasiswa.nilai >= 65 THEN 'B-'
-                            WHEN nilai_mahasiswa.nilai >= 60 THEN 'C+'
-                            WHEN nilai_mahasiswa.nilai >= 56 THEN 'C'
-                            WHEN nilai_mahasiswa.nilai >= 40 THEN 'D'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'A'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'A-'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'B+'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'B'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'B-'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'C+'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'C'
+                            WHEN nilai_mahasiswa.nilai >= ? THEN 'D'
                             ELSE 'E'
                         END
-                    ")
+                    ", $bindings)
                     ->limit(1);
             },
         ]);

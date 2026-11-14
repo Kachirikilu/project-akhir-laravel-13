@@ -387,23 +387,23 @@ trait WithNilaiExcel
 
     private function deriveNilaiGrade(float $average): array
     {
-        if ($average >= 86) {
-            return ['nilai_index' => 4, 'nilai_mutu' => 'A'];
+        if ($average >= config('rps.min_a', 86)) {
+            return ['nilai_index' => 4, 'nilai_huruf' => 'A'];
         }
 
-        if ($average >= 71) {
-            return ['nilai_index' => 3, 'nilai_mutu' => 'B'];
+        if ($average >= config('rps.min_b', 70)) {
+            return ['nilai_index' => 3, 'nilai_huruf' => 'B'];
         }
 
-        if ($average >= 56) {
-            return ['nilai_index' => 2, 'nilai_mutu' => 'C'];
+        if ($average >= config('rps.min_c', 56)) {
+            return ['nilai_index' => 2, 'nilai_huruf' => 'C'];
         }
 
-        if ($average >= 41) {
-            return ['nilai_index' => 1, 'nilai_mutu' => 'D'];
+        if ($average >= config('rps.min_d', 40)) {
+            return ['nilai_index' => 1, 'nilai_huruf' => 'D'];
         }
 
-        return ['nilai_index' => 0, 'nilai_mutu' => 'E'];
+        return ['nilai_index' => 0, 'nilai_huruf' => 'E'];
     }
 
     private function normalizeParsedNilaiRows(): void
@@ -459,7 +459,7 @@ trait WithNilaiExcel
         $row['sub_cpmk'] = $normalizedSubCpmks;
         $row['nilai_angka'] = $average;
         $row['nilai_index'] = $gradeInfo['nilai_index'];
-        $row['nilai_mutu'] = $gradeInfo['nilai_mutu'];
+        $row['nilai_huruf'] = $gradeInfo['nilai_huruf'];
 
         return $row;
     }
@@ -881,7 +881,7 @@ trait WithNilaiExcel
             'nama' => 'required|string|max:255',
             'nilai_angka' => 'required|numeric|min:0|max:100',
             'nilai_index' => 'nullable|numeric',
-            'nilai_mutu' => 'nullable|string|max:2',
+            'nilai_huruf' => 'nullable|string|max:2',
 
             'sub_cpmk' => 'nullable|array',
             'sub_cpmk.*.kode_scpmk' => 'nullable|string',

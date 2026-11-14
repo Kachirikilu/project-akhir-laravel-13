@@ -119,7 +119,7 @@
     @include('livewire.global.statistik.donut-mini-stats', [
         'icon'      => 'academic-cap',
         'title'     => 'Akreditasi Program Studi',
-        'sub'       => 'Status Mutu Akademik',
+        'sub'       => 'Status Huruf Akademik',
         'value'     => $ikValue,
         'max'       => 4,
         'textPersentase' => '/ 4.00',

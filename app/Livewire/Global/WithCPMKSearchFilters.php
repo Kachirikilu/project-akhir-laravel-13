@@ -365,8 +365,8 @@ trait WithCPMKSearchFilters
                         $searchLower
                     );
 
-                    $matchNilaiMutu = $this->matchNilaiMutu(
-                        $cpmk->mutu_cpmk_pr ?? 'E',
+                    $matchNilaiHuruf = $this->matchNilaiHuruf(
+                        $cpmk->huruf_cpmk_pr ?? 'E',
                         $searchLower
                     );
                     /*
@@ -452,11 +452,11 @@ trait WithCPMKSearchFilters
                         case 'bobot':
                             return $matchBobot;
                         case 'nilai':
-                            return $matchNilaiAkhir || $matchNilaiMutu;
+                            return $matchNilaiAkhir || $matchNilaiHuruf;
                         case 'index':
                             return $matchNilaiIndex;
-                        case 'mutu':
-                            return $matchNilaiMutu;
+                        case 'huruf':
+                            return $matchNilaiHuruf;
                     }
 
                     return
@@ -467,7 +467,7 @@ trait WithCPMKSearchFilters
 
                         || $matchNilaiAkhir
                         || $matchNilaiIndex
-                        || $matchNilaiMutu
+                        || $matchNilaiHuruf
 
                         || $matchSCPMK
                         || $matchBobot
@@ -484,7 +484,7 @@ trait WithCPMKSearchFilters
 
                 'rekap_cpmk_pr',
                 'index_cpmk_pr',
-                'mutu_cpmk_pr' => fn ($cpmk) => (float) ($cpmk->rekap_cpmk_pr ?? 0),
+                'huruf_cpmk_pr' => fn ($cpmk) => (float) ($cpmk->rekap_cpmk_pr ?? 0),
 
                 'count_cpl' => fn ($cpmk) => (int) $cpmk->count_cpl,
                 'count_scpmk' => fn ($cpmk) => (int) $cpmk->count_scpmk,

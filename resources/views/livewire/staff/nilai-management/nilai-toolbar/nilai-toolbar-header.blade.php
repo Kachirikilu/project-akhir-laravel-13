@@ -41,8 +41,6 @@
 
                     <div></div>
 
-
-
                     @php
                         $runningAllKey = 'rekap_capaian_running_all';
                         $runningProdiKey = 'rekap_capaian_running_prodi_ids';
@@ -72,6 +70,7 @@
                                     'color' => 'blue',
                                     'icon' => 'academic-cap',
                                     'isNoPb' => 1,
+                                    'countClick' => 3,
                                 ])
                             </div>
                         @endif
@@ -88,6 +87,7 @@
                                     'icon' => 'academic-cap',
                                     'autoSmall' => 'sm',
                                     'isNoPb' => 1,
+                                    'countClick' => 4,
                                 ])
                             </div>
                         @endif

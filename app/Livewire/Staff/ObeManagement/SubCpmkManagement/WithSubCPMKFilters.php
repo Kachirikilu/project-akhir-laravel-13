@@ -107,9 +107,7 @@ trait WithSubCPMKFilters
             'tugas' => $querySCPMK->orderBy('waktu_tugas', $this->sortDirection),
             'mandiri' => $querySCPMK->orderBy('waktu_mandiri', $this->sortDirection),
 
-            'rekap_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
-            'index_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
-            'mutu_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
+            'rekap_scpmk_pr', 'index_scpmk_pr', 'huruf_scpmk_pr' => $querySCPMK->orderBy('rekap_scpmk_pr', $this->sortDirection),
 
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),

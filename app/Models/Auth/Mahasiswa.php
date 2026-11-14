@@ -149,9 +149,9 @@ class Mahasiswa extends Model
         return Attribute::get(fn () => number_format($this->rekap_nilai?->nilai_ipk ?? 0, 2, '.', ''));
     }
 
-    protected function mutuMhs(): Attribute
+    protected function hurufMhs(): Attribute
     {
-        return Attribute::get(fn () => $this->rekap_nilai?->nilai_mutu ?? 'E');
+        return Attribute::get(fn () => $this->rekap_nilai?->nilai_huruf ?? 'E');
     }
 
     protected function countRps(): Attribute
