@@ -645,7 +645,13 @@
                         'rps-capaian-mahasiswa-management',
                     );
 
-                    $nilaiHistory = session('nilai.history', []);
+                    $nilaiHistory = [
+                        $nimDummy => [
+                            'mahasiswa_id' => 4,
+                            'nim' => $nimDummy,
+                            'url' => url("/nilai-capaian/nim/{$nimDummy}"),
+                        ],
+                    ];
                     $capaianHistory = session('rps_capaian_mahasiswa.history', []);
 
                     $groupedRps = [];

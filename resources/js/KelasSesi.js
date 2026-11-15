@@ -364,7 +364,7 @@ document.addEventListener("alpine:init", () => {
                 this.sent = 1;
                 this.showEdit = 0;
 
-                this.list_absensi_array = [];
+                // this.list_absensi_array = [];
             }
             if (isAdd == 0) {
                 this.isEdit = 0;

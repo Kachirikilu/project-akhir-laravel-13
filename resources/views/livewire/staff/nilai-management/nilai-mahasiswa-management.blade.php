@@ -119,7 +119,7 @@
                     @include('livewire.global.search-and-filters.partial.tab-filter-2', [
                         'xString' => 'switchingTable',
                         'xFilter' => $switchTable,
-                        // 'tabFilter' => $stats['nilai-mahasiswa'] ?? null,
+                        'tabFilter' => $stats['periodes'] ?? null,
                         'tabString' => 'nilai',
                         'tabNameString' => 'Nilai Semester Mahasiswa',
                         'icon' => 'chart-pie',

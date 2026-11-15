@@ -115,22 +115,29 @@
                             'message' => $errors->first('deskripsi'),
                         ])
                         @if (Auth::user()->tingkat < 4)
-                            <template x-if="$store.cpl?.typeModal == 1" x-cloak>
-                                @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-prodi-input')
-                            </template>
+                            <div x-show="$store.cpl?.typeModal == 1">
+                                <div wire:key="input-cpl-1">
+                                    @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-prodi-input')
+                                </div>
+                            </div>
                         @endif
 
-                        <template x-if="$store.cpl?.typeModal == 2" x-cloak>
-                            @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-departemen-input')
-                        </template>
+                        <div x-show="$store.cpl?.typeModal == 2">
+                            <div wire:key="input-cpl-2">
+                                @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-departemen-input')
+                            </div>
+                        </div>
 
-                        <template x-if="$store.cpl?.typeModal == 3" x-cloak>
-                            @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-fakultas-input')
-                        </template>
+                        <div x-show="$store.cpl?.typeModal == 3">
+                            <div wire:key="input-cpl-3">
+                                @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-fakultas-input')
+                            </div>
+                        </div>
 
-                        <template x-if="$store.cpl?.typeModal == 4" x-cloak>
-                            @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-universitas-input')
-                        </template>
+                        <div x-show="$store.cpl?.typeModal == 4">
+                            <div wire:key="input-cpl-4">
+                                @include('livewire.staff.obe-management.cpl-management.cpl-modal.cpl-modal-partial.cpl-input-partial.cpl-universitas-input')
+                        </div>
                     </div>
                 </div>
 
@@ -140,7 +147,10 @@
         <div x-show="step === 2">
             @if ($isEditingCPL == true)
                 @include('livewire.staff.obe-management.obe-partial.rps-list', [
-                    'headJudul' => $withCapaian ? 'RPS yang Terhubung dengan Capaian ' . ($isNilaiMahasiswa ? 'Mahasiswa' : 'Program Studi') : null,
+                    'headJudul' => $withCapaian
+                        ? 'RPS yang Terhubung dengan Capaian ' .
+                            ($isNilaiMahasiswa ? 'Mahasiswa' : 'Program Studi')
+                        : null,
                     'alpine' => 'cpl',
                     'rps_items_list' => $cpl_rps_items_list,
                     'rps_modal_paginator' => $cpl_rps_modal_paginator,

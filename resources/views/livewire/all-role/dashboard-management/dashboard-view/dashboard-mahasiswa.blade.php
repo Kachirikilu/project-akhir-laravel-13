@@ -8,7 +8,7 @@
 @php
     // // $rekapSaya = Auth::user()->mahasiswa->rekap_mhs ?? 0;
     // $ipkSaya = 3.96 ?? 0;
-    // $hurufSaya = 'A+' ?? 'E';
+    // $hurufSaya = 'A' ?? 'E';
 
     // $mkSaya = 61 ?? 0;
     // $mkSksSaya = 141;

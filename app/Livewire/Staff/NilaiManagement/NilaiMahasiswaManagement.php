@@ -16,6 +16,8 @@ use App\Livewire\Staff\NilaiManagement\NilaiMahasiswaManagement\WithNilaiMahasis
 use App\Livewire\Staff\ObeManagement\CplManagement\WithCPLFilters;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
+use App\Models\Penilaian\RekapCPLMahasiswa;
+use App\Models\Akademik\CPL;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -246,7 +248,10 @@ class NilaiMahasiswaManagement extends Component
             }
 
             return view('livewire.staff.nilai-management.nilai-mahasiswa-management', array_merge($data, [
-                'stats' => $stats ?? null,
+                'stats' => [
+                    'periodes' => count($data['periodes'] ?? []),
+                    'cpl' => RekapCPLMahasiswa::where('mahasiswa_id', $this->mahasiswa_id_url)->count(),
+                ],
             ]));
 
         } catch (QueryException $e) {
@@ -255,16 +260,12 @@ class NilaiMahasiswaManagement extends Component
             if (method_exists($this, 'toast')) {
                 $this->toast(text: $message, variant: 'danger');
             }
-
-            return view('livewire.staff.nilai-management.nilai-mahasiswa-management', [], [
+            return view('livewire.staff.nilai-management.nilai-mahasiswa-management', [
                 'periodes' => new LengthAwarePaginator([], 0, $this->perPage ?? 8),
-            ]);
-
-            return view('livewire.staff.nilai-management', [
-                'periodes' => new LengthAwarePaginator([], 0, $this->perPage ?? 8),
-                'cpl' => CPL::whereRaw('1=0')->whereHas('mahasiswa')->paginate($this->perPage),
+                'cpl' => CPL::whereRaw('1=0')->paginate($this->perPage),
             ], [
                 'stats' => [
+                    'cpl' => '-',
                     // 'rps' => '-',
                     // 'rps-saya' => '-',
                     // 'rps-prodi' => '-',

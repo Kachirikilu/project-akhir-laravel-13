@@ -45,34 +45,32 @@
     </template>
 
     {{-- 🔒 Password Input --}}
-    <template x-if="$store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen'" x-cloak>
-        <template x-if="$store.user?.isEdit == 0" x-cloak>
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'user',
-                // 'isLivewire' => 1,
-                'modelString' => 'password',
-                'typeString' => 'password',
-                'showPassword' => 1,
-                'placeholder' => 'Default: NIP',
-                'message' => $errors->first('password'),
-                'isRequired' => 0,
-            ])
-        </template>
+    <template x-if="($store.user?.typeModal == 'admin' || $store.user?.typeModal == 'dosen') && $store.user?.isEdit == 0"
+        x-cloak>
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'modelString' => 'password',
+            'typeString' => 'password',
+            'showPassword' => 1,
+            'placeholder' => 'Default: NIP',
+            'message' => $errors->first('password'),
+            'isRequired' => 0,
+        ])
     </template>
-    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-        <template x-if="$store.user?.isEdit == 0" x-cloak>
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'user',
-                // 'isLivewire' => 1,
-                'modelString' => 'password',
-                'typeString' => 'password',
-                'showPassword' => 1,
-                'placeholder' => 'Default: NIM',
-                'message' => $errors->first('password'),
-                'isRequired' => 0,
-            ])
-        </template>
+    <template x-if="$store.user?.typeModal == 'mahasiswa' && $store.user?.isEdit == 0" x-cloak>
+        @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'user',
+            // 'isLivewire' => 1,
+            'modelString' => 'password',
+            'typeString' => 'password',
+            'showPassword' => 1,
+            'placeholder' => 'Default: NIM',
+            'message' => $errors->first('password'),
+            'isRequired' => 0,
+        ])
     </template>
+
 
     <template x-if="$store.user?.isEdit == 1" x-cloak>
         @include('livewire.global.modal-form.input-form', [
@@ -93,7 +91,7 @@
         $tingkatMe = (int) ($user->admin?->tingkat ?? ($user->dosen?->tingkat ?? 5));
         $isMe = (int) $selected_id_user === (int) $user->id;
 
-        $canAccess = !$isMe && ($tingkatMe <= ($tingkatType ?? 5));
+        $canAccess = !$isMe && $tingkatMe <= ($tingkatType ?? 5);
     @endphp
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
         @include('livewire.global.modal-form.select-form', [

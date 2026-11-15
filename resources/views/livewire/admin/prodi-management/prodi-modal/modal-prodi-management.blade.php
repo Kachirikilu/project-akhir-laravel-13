@@ -43,15 +43,21 @@
                         enctype="multipart/form-data" id="prodiForm">
 
                         <template x-if="$store.prodi?.typeModal == 'prodi'" x-cloak>
+                            <div wire:key="input-prodi">
                             @include('livewire.admin.prodi-management.prodi-modal.prodi-modal-partial.prodi-input')
+                            </div>
                         </template>
 
                         <template x-if="$store.prodi?.typeModal == 'departemen'" x-cloak>
+                            <div wire:key="input-departemen">
                             @include('livewire.admin.prodi-management.prodi-modal.prodi-modal-partial.departemen-input')
+                            </div>
                         </template>
 
                         <template x-if="$store.prodi?.typeModal == 'fakultas'" x-cloak>
+                            <div wire:key="input-fakultas">
                             @include('livewire.admin.prodi-management.prodi-modal.prodi-modal-partial.fakultas-input')
+                            </div>
                         </template>
 
                         <div class="form-message-container">

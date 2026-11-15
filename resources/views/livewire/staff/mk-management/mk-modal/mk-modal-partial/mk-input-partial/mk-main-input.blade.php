@@ -90,22 +90,22 @@
             </div>
 
             @if (Auth::user()->tingkat < 4)
-                <template x-if="$store.mk?.typeModal == 1" x-cloak>
+                <div x-show="$store.mk?.typeModal == 1">
                     @include('livewire.staff.mk-management.mk-modal.mk-modal-partial.mk-input-partial.mk-prodi-input')
-                </template>
+                </div>
             @endif
 
-            <template x-if="$store.mk?.typeModal == 2" x-cloak>
+            <div x-show="$store.mk?.typeModal == 2">
                 @include('livewire.staff.mk-management.mk-modal.mk-modal-partial.mk-input-partial.mk-departemen-input')
-            </template>
+            </div>
 
-            <template x-if="$store.mk?.typeModal == 3" x-cloak>
+            <div x-show="$store.mk?.typeModal == 3">
                 @include('livewire.staff.mk-management.mk-modal.mk-modal-partial.mk-input-partial.mk-fakultas-input')
-            </template>
+            </div>
 
-            <template x-if="$store.mk?.typeModal == 4" x-cloak>
+            <div x-show="$store.mk?.typeModal == 4">
                 @include('livewire.staff.mk-management.mk-modal.mk-modal-partial.mk-input-partial.mk-universitas-input')
-            </template>
+            </div>
         </div>
 
     </div>

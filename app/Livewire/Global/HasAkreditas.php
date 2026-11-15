@@ -74,64 +74,9 @@ trait HasAkreditas
     //     return $query;
     // }
 
-    protected function addIndexOBE(
+    protected function addKonversiNilaiOBE(
         $query,
-        ?int $prId = null,
-        string $alias = 'huruf_cpl_pr',
-        string $pivot = 'rekap_cpl_prodi',
-        string $kolom = 'cpl_id',
-        string $table = 'cpls',
-    ) {
-        $query->addSelect("$table.*");
-        $query->selectSub(function ($query) use ($prId, $pivot, $kolom, $table) {
-
-            $query->from($pivot)
-                ->whereColumn(
-                    "$pivot.$kolom",
-                    "$table.id"
-                );
-
-            if ($prId !== null) {
-                $query->where(
-                    "$pivot.pr_id",
-                    $prId
-                );
-            }
-
-            $bindings = [
-                config('rps.min_a', 86),
-                config('rps.min_a_min', 80),
-                config('rps.min_b_plus', 75),
-                config('rps.min_b', 70),
-                config('rps.min_b_min', 65),
-                config('rps.min_c_plus', 60),
-                config('rps.min_c', 56),
-                config('rps.min_d', 40),
-            ];
-
-            $query->selectRaw("
-                CASE
-                    WHEN nilai >= ? THEN '4.00'
-                    WHEN nilai >= ? THEN '3.70'
-                    WHEN nilai >= ? THEN '3.30'
-                    WHEN nilai >= ? THEN '3.00'
-                    WHEN nilai >= ? THEN '2.70'
-                    WHEN nilai >= ? THEN '2.30'
-                    WHEN nilai >= ? THEN '2.00'
-                    WHEN nilai >= ? THEN '1.00'
-                    ELSE 'E'
-                END
-            ", $bindings);
-
-            $query->limit(1);
-
-        }, $alias);
-
-        return $query;
-    }
-
-    protected function addAkreditasOBE(
-        $query,
+        array $labels,
         ?int $id = null,
         string $alias = 'huruf_cpl_pr',
         string $pivot = 'rekap_cpl_prodi',
@@ -140,7 +85,7 @@ trait HasAkreditas
         string $idPivot = 'pr_id'
     ) {
         $query->addSelect("$table.*");
-        $query->selectSub(function ($query) use ($id, $pivot, $kolom, $table, $idPivot) {
+        $query->selectSub(function ($query) use ($labels, $id, $pivot, $kolom, $table, $idPivot) {
             $bindings = [
                 (float) (config('rps.min_a') ?: 86),
                 (float) (config('rps.min_a_min') ?: 80),
@@ -153,37 +98,73 @@ trait HasAkreditas
             ];
 
             $query->from($pivot)
-                ->whereColumn(
-                    "$pivot.$kolom",
-                    "$table.id"
-                );
+                ->whereColumn("$pivot.$kolom", "$table.id");
 
             if ($id !== null) {
-                $query->where(
-                    "$pivot.$idPivot",
-                    $id
-                );
+                $query->where("$pivot.$idPivot", $id);
             }
+
+            // Susun SQL CASE WHEN secara dinamis sesuai array $labels
+            $cases = [];
+            for ($i = 0; $i < 8; $i++) {
+                $cases[] = "WHEN nilai >= ? THEN '{$labels[$i]}'";
+            }
+            $elseLabel = $labels[8] ?? 'E';
+            $caseSql = implode("\n                    ", $cases);
 
             $query->selectRaw("
                 CASE
-                    WHEN nilai >= ? THEN 'A'
-                    WHEN nilai >= ? THEN 'A-'
-                    WHEN nilai >= ? THEN 'B+'
-                    WHEN nilai >= ? THEN 'B'
-                    WHEN nilai >= ? THEN 'B-'
-                    WHEN nilai >= ? THEN 'C+'
-                    WHEN nilai >= ? THEN 'C'
-                    WHEN nilai >= ? THEN 'D'
-                    ELSE 'E'
+                    {$caseSql}
+                    ELSE '{$elseLabel}'
                 END
             ", $bindings);
 
             $query->limit(1);
-
         }, $alias);
 
         return $query;
+    }
+
+    protected function addIndexOBE(
+        $query,
+        ?int $id = null,
+        string $alias = 'index_cpl_pr',
+        string $pivot = 'rekap_cpl_prodi',
+        string $kolom = 'cpl_id',
+        string $table = 'cpls',
+        string $idPivot = 'pr_id'
+    ) {
+        return $this->addKonversiNilaiOBE(
+            $query,
+            ['4.00', '3.70', '3.30', '3.00', '2.70', '2.30', '2.00', '1.00', 'E'],
+            $id,
+            $alias,
+            $pivot,
+            $kolom,
+            $table,
+            $idPivot
+        );
+    }
+
+    protected function addAkreditasOBE(
+        $query,
+        ?int $id = null,
+        string $alias = 'huruf_cpl_pr',
+        string $pivot = 'rekap_cpl_prodi',
+        string $kolom = 'cpl_id',
+        string $table = 'cpls',
+        string $idPivot = 'pr_id'
+    ) {
+        return $this->addKonversiNilaiOBE(
+            $query,
+            ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'E'],
+            $id,
+            $alias,
+            $pivot,
+            $kolom,
+            $table,
+            $idPivot
+        );
     }
 
     protected function addRekapMahasiswa(

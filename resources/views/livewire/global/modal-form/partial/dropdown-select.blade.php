@@ -1,12 +1,12 @@
 <template x-if="Array.isArray(items) && items.includes({{ $x['id'] }})">
-    <div class="cursor-pointer relative flex items-center justify-center">
+    <div class="text-white cursor-pointer relative flex items-center justify-center">
         <flux:icon icon="check" variant="mini" class="group-hover:hidden group-active:hidden" />
         <flux:icon icon="trash" variant="mini" class="hidden group-hover:block group-active:block" />
     </div>
 </template>
 
 <template x-if="!Array.isArray(items) || !items.includes({{ $x['id'] }})">
-    <div class="cursor-pointer flex items-center justify-center">
+    <div class="text-white cursor-pointer flex items-center justify-center">
         <flux:icon icon="plus" variant="mini" />
     </div>
 </template>

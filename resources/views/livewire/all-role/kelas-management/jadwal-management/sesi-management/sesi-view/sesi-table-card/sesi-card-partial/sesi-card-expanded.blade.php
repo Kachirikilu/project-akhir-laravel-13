@@ -130,23 +130,26 @@
         @endphp
 
         @forelse($pengajar_collection as $dosen)
-            <div class="text-xs {{ $mainText }} flex items-center gap-2">
-                <div class="{{ $pengajar_collection->count() > 1 ? 'indent-[-15px] pl-[15px]' : '' }} mb-1">
+            <div class="text-xs {{ $mainText }} flex items-start gap-1.5 mb-1.5 last:mb-0">
+                @if ($pengajar_collection->count() > 1)
+                    <span class="shrink-0 font-medium">{{ $loop->iteration }}.</span>
+                @endif
 
-                    @if ($pengajar_collection->count() > 1)
-                        <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                    @endif
+                <div class="min-w-0 flex-1 leading-snug">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span>{{ $dosen->name }}</span>
 
-                    {{ $dosen->name }}
+                        @if ($dosen->is_ketua)
+                            <span
+                                class="inline-flex items-center rounded-md bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-blue-700 ring-1 ring-inset ring-blue-700/15 dark:bg-blue-500/15 dark:text-blue-400 dark:ring-blue-400/30 select-none">
+                                Ketua
+                            </span>
+                        @endif
+                    </div>
 
-                    @if ($dosen->is_ketua)
-                        <span
-                            class="mb-0.5 ml-1.5 inline-flex items-center px-1 py-0.5 text-[7px] font-bold leading-none bg-blue-100 text-blue-700 rounded-sm select-none align-middle">
-                            Ketua
-                        </span>
-                    @endif
-
-                    <br>NIP. {{ $dosen->nip }}
+                    <div class="text-zinc-500 dark:text-zinc-400">
+                        NIP. {{ $dosen->nip }}
+                    </div>
                 </div>
             </div>
         @empty
@@ -227,18 +230,16 @@
         @else
             @php
                 // Format string tanggal dengan aman
-                $tanggalStr = $s->tanggal instanceof \Carbon\Carbon 
-                    ? $s->tanggal->format('Y-m-d') 
-                    : \Carbon\Carbon::parse($s->tanggal)->format('Y-m-d');
+                $tanggalStr =
+                    $s->tanggal instanceof \Carbon\Carbon
+                        ? $s->tanggal->format('Y-m-d')
+                        : \Carbon\Carbon::parse($s->tanggal)->format('Y-m-d');
 
                 // Format jam mulai & berakhir
-                $jamMulaiStr = $s->jam_mulai instanceof \Carbon\Carbon 
-                    ? $s->jam_mulai->format('H:i:s') 
-                    : $s->jam_mulai;
+                $jamMulaiStr = $s->jam_mulai instanceof \Carbon\Carbon ? $s->jam_mulai->format('H:i:s') : $s->jam_mulai;
 
-                $jamBerakhirStr = $s->jam_berakhir instanceof \Carbon\Carbon 
-                    ? $s->jam_berakhir->format('H:i:s') 
-                    : $s->jam_berakhir;
+                $jamBerakhirStr =
+                    $s->jam_berakhir instanceof \Carbon\Carbon ? $s->jam_berakhir->format('H:i:s') : $s->jam_berakhir;
 
                 // Konversi ke Carbon DateTime
                 $waktuMulai = \Carbon\Carbon::parse($tanggalStr . ' ' . $jamMulaiStr);
