@@ -5,7 +5,7 @@
             <table class="w-full text-xs text-left border-collapse min-w-[800px]">
                 <thead>
                     <tr class="text-gray-400 uppercase tracking-tighter border-b table-border">
-                        <th class="pb-3 px-4 text-center">Kode</th>
+                        <th class="pb-3 px-4 text-center">ID</th>
                         <th class="pb-3 px-4 text-center font-bold min-w-16">Kode</th>
                         <th class="pb-3 px-4 min-w-32">Deskripsi</th>
                         <th class="pb-3 px-4 min-w-32">Materi</th>
