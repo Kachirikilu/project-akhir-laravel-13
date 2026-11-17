@@ -8,7 +8,6 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class MultiNilaiExport implements WithMultipleSheets
 {
     use Exportable;
-
     protected $jadwals;
 
     public function __construct($jadwals)
