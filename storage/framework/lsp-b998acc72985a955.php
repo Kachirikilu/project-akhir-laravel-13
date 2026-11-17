@@ -11,7 +11,6 @@ public static function relativePath($path)
 if (!str_contains($path, base_path())) {
 return (string) $path;
 }
-
 return ltrim(str_replace(base_path(), '', realpath($path) ?: $path), DIRECTORY_SEPARATOR);
 }
 
