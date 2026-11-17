@@ -19,7 +19,6 @@ class KelasSeeder extends Seeder
 
         $kelasPerMahasiswaMin = 6;
         $kelasPerMahasiswaMax = 10;
-
         $totalProcessed = 0;
 
         $this->command->info(
