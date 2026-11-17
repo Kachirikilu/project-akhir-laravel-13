@@ -2,7 +2,6 @@
 
 $min = env('RPS_BOBOT_MIN');
 $max = env('RPS_BOBOT_MAX');
-
 $min = is_numeric($min) ? (float) $min : null;
 $max = is_numeric($max) ? (float) $max : null;
 
