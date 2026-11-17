@@ -72,6 +72,13 @@
 
     $ganjil_genap = $ganjil_genap_url ?? null;
     $akademik = $akademik_fix_url ?? null;
+    $semester = null;
+
+    if ($ganjil_genap && $akademik) {
+        $firstNilai = collect($nilais)->first();
+        // $semester = is_array($firstNilai) ? $firstNilai['semester'] ?? null : $firstNilai?->semester ?? null;
+        $semester = 7;
+    }
 @endphp
 
 {{-- Header Section --}}
@@ -187,19 +194,19 @@
 
         // MK
         $mkValue = (int) ($totalMk ?? 0);
-        $mkSub = $isIps ? 'Registrasi KRS Semester ini' : 'Semua Mata Kuliah di Transkrip';
+        $mkSub = $isIps ? 'Registrasi KRS Semester ' . $semester : 'Semua Mata Kuliah di Transkrip';
 
         // IPK / IPS
         $ipValue = is_numeric($calculatedIndex) ? (float) $calculatedIndex : 0;
         $ipDisplay = is_numeric($calculatedIndex)
             ? number_format($calculatedIndex, 2) . ' / 4.00'
             : $calculatedIndex . ' / 4.00';
-        $ipLabel = $isIps ? 'IP Semester (IPS)' : 'IPK Akumulatif';
+        $ipLabel = $isIps ? "IP Semester ". $semester : 'IPK Akumulatif';
         $ipSub = $isIps ? 'Indeks Prestasi Semester Aktif' : 'Skala Penilaian Kurikulum OBE';
 
         // Predikat Huruf — tidak ada rasio, tampilkan huruf di tengah
         $hurufDisplay = $hurufMhs ?? 'E';
-        $hurufLabel = $isIps ? 'Huruf Semester' : 'Predikat Huruf';
+        $hurufLabel = $isIps ? 'Predikat Semester ' . $semester : 'Predikat Huruf';
         $hurufSub = 'Bobot Standar Akademik';
         // Warna accent predikat
         $hurufAccent = match (strtoupper($hurufDisplay)) {
@@ -224,40 +231,41 @@
             ) .
             ',0.12)';
     @endphp
-    
+
 
     <div
         class="md:px-6 lg:px-8 xl:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-9 bg-[var(--main-pop-up-color)]/90 p-6 rounded-xl border table-border shadow-sm">
 
         {{-- 1. SKS — ada rasio, donut penuh --}}
         @if ($isIps)
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'scale',
-            'title' => 'SKS Semester',
-            'sub' => $sksSub,
-            'mainValue' => $sksValue,
-            'display' => 'SKS',
-            'accent' => '#10b981',
-            'softBg' => 'rgba(16,185,129,0.12)',
-            'textColor' => '#10b981',
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            @include('livewire.global.statistik.donut-mini-stats', [
+                'icon' => 'scale',
+                'title' => 'SKS Semester ' . $semester ?? null,
+                'sub' => $sksSub,
+                'mainValue' => $sksValue,
+                'display' => 'SKS',
+                'accent' => '#10b981',
+                'softBg' => 'rgba(16,185,129,0.12)',
+                'textColor' => '#10b981',
+                'size' => 64,
+                'pctSize' => 'text-sm',
+            ])
         @else
-        @include('livewire.global.statistik.donut-mini-stats', [
-            'icon' => 'scale',
-            'title' => 'SKS Ditempuh',
-            'sub' => $sksSub,
-            'value' => $sksValue,
-            'max' => $targetSks,
-            'display' => $sksDisplay,
-            'accent' => '#10b981',
-            'softBg' => 'rgba(16,185,129,0.12)',
-            'textColor' => '#10b981',
-            'size' => 64,
-            'pctSize' => 'text-sm',
-        ])
+            @include('livewire.global.statistik.donut-mini-stats', [
+                'icon' => 'scale',
+                'title' => 'SKS Ditempuh',
+                'sub' => $sksSub,
+                'value' => $sksValue,
+                'max' => $targetSks,
+                'display' => $sksDisplay,
+                'accent' => '#10b981',
+                'softBg' => 'rgba(16,185,129,0.12)',
+                'textColor' => '#10b981',
+                'size' => 64,
+                'pctSize' => 'text-sm',
+            ])
         @endif
+
 
         {{-- 2. MATA KULIAH — tidak ada rasio, angka saja di tengah --}}
         @include('livewire.global.statistik.donut-mini-stats', [
@@ -296,7 +304,7 @@
             'value' => $ipValue,
             'max' => 4,
             'textPersentase' => '/ 4.00',
-            'mainValue'   => number_format($calculatedIndex, 2),
+            'mainValue' => number_format($calculatedIndex, 2),
             'display' => $hurufDisplay,
             'accent' => $hurufAccent,
             'softBg' => $hurufSoftBg,

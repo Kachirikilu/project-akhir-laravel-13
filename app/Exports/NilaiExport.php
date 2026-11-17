@@ -137,19 +137,20 @@ class NilaiExport implements FromArray, ShouldAutoSize, WithEvents, WithStyles, 
             $subCpmkEndColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk);
             $nilaiAngkaColLetter = Coordinate::stringFromColumnIndex(6 + $totalSubCpmk + $totalGroups + 1);
 
+            $minA = (float) config('rps.min_a', 86);
+            $minAmin = (float) config('rps.min_a_min', 80);
+            $minBplus = (float) config('rps.min_b_plus', 75);
+            $minB = (float) config('rps.min_b', 70);
+            $minBmin = (float) config('rps.min_b_min', 65);
+            $minCplus = (float) config('rps.min_c_plus', 60);
+            $minC = (float) config('rps.min_c', 56);
+            $minD = (float) config('rps.min_d', 40);
 
-            $minA = config('rps.min_a', 86);
-            $minAmin = config('rps.min_a_min', 80);
-            $minBplus = config('rps.min_b_plus', 75);
-            $minB = config('rps.min_b', 70);
-            $minBmin = config('rps.min_b_min', 65);
-            $minCplus = config('rps.min_c_plus', 60);
-            $minC = config('rps.min_c', 56);
-            $minD = config('rps.min_d', 40);
+            $cellNilai = "{$nilaiAngkaColLetter}{$currentRow}";
 
             $row[] = "=SUMPRODUCT(G{$currentRow}:{$subCpmkEndColLetter}{$currentRow}, G3:{$subCpmkEndColLetter}3) / SUM(G3:{$subCpmkEndColLetter}3)";
-            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A,4.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A_MIN,3.70,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_PLUS,3.30,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B,3.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_MIN,2.70,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C_PLUS,2.30,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C,2.00,IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_D,1.00,0.00))))))))";
-            $row[] = "=IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A,\"A\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_A_MIN,\"A-\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_PLUS,\"B+\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B,\"B\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_B_MIN,\"B-\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C_PLUS,\"C+\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_C,\"C\",IF({$nilaiAngkaColLetter}{$currentRow}>=\$MIN_D,\"D\",\"E\"))))))))";
+            $row[] = "=IF({$cellNilai}>={$minA},4.00,IF({$cellNilai}>={$minAmin},3.70,IF({$cellNilai}>={$minBplus},3.30,IF({$cellNilai}>={$minB},3.00,IF({$cellNilai}>={$minBmin},2.70,IF({$cellNilai}>={$minCplus},2.30,IF({$cellNilai}>={$minC},2.00,IF({$cellNilai}>={$minD},1.00,0.00))))))))";
+            $row[] = "=IF({$cellNilai}>={$minA},\"A\",IF({$cellNilai}>={$minAmin},\"A-\",IF({$cellNilai}>={$minBplus},\"B+\",IF({$cellNilai}>={$minB},\"B\",IF({$cellNilai}>={$minBmin},\"B-\",IF({$cellNilai}>={$minCplus},\"C+\",IF({$cellNilai}>={$minC},\"C\",IF({$cellNilai}>={$minD},\"D\",\"E\"))))))))";
 
             $rows[] = $row;
         }
