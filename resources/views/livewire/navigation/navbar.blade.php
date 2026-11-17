@@ -574,7 +574,7 @@
                     <x-livewire::navigation.partial.navbar-level-button :subMenus="$subMenus" :openMenuVar="$openMenuVar" />
                 </div>
             @elseif($item['type'] === 'dropdown-nilai')
-                {{-- @php
+                @php
                     $nimDummy = '03041282227065';
                     $nimDummy2 = '03041282227063';
 
@@ -785,8 +785,8 @@
 
                     $isSubMenu = ['mahasiswa', 'rps'];
                     $openMenuVar = 'openNilaiMenu';
-                @endphp --}}
-                @php
+                @endphp
+                {{-- @php
                     $currentTable = (string) request()->route('switchTable');
                     $isNilaiActive = request()->routeIs(
                         'nilai-capaian',
@@ -922,7 +922,7 @@
 
                     $isSubMenu = ['mahasiswa', 'rps'];
                     $openMenuVar = 'openNilaiMenu';
-                @endphp
+                @endphp --}}
 
                 <div class="relative mr-2">
                     <x-livewire::navigation.partial.dropdown-level-button :subMenus="$subMenus"

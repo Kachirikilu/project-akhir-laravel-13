@@ -36,7 +36,7 @@
                             'xFilter' => $switchTable,
                             'tabFilter' => $stats['jadwal'] ?? null,
                             'tabString' => 'table',
-                            'tabNameStrin g' => 'Tabel Jadwal',
+                            'tabNameString' => 'Tabel Jadwal',
                             'icon' => 'table-cells',
                         ])
                     </div>

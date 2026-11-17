@@ -17,7 +17,7 @@
         'isEdit' => 0,
     ]) --}}
 
-    {{-- @php
+    @php
         $semester7Mks = [
             ['id' => 501, 'kode' => 'TKE4101', 'nama' => 'METODE PENELITIAN DAN PENULISAN ILMIAH', 'sks' => 2],
             ['id' => 502, 'kode' => 'TKE4102', 'nama' => 'TRANSMISI DAYA ARUS BOLAK BALIK DAN GARDU INDUK', 'sks' => 3],
@@ -96,7 +96,7 @@
 
             return $nilaiMhs;
         });
-    @endphp --}}
+    @endphp
 
     @include(
         'livewire.staff.nilai-management.nilai-mahasiswa-management.nilai-mahasiswa-view.nilai-mahasiswa-header',
