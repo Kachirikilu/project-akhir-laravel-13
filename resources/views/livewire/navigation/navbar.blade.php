@@ -8,7 +8,6 @@
             <x-app-logo />
         </a>
     </div>
-
     {{-- <div x-show="$store.theme_manager.activeWallpaper !== null"
         class="absolute inset-0 z-0 bg-cover bg-center transition-all duration-300"
         :style="{
