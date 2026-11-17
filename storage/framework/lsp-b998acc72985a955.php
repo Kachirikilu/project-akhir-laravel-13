@@ -8,6 +8,7 @@ class LspHelper
 {
 public static function relativePath($path)
 {
+
 if (!str_contains($path, base_path())) {
 return (string) $path;
 }
