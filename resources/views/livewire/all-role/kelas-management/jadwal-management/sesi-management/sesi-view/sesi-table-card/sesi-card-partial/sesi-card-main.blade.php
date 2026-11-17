@@ -6,7 +6,7 @@
             class="flex flex-col items-center gap-0.5 rounded-[10px] border {{ $borderTable }} {{  $secondTable }} px-1.5 py-2 text-center">
             <span class="text-[9px] font-bold uppercase tracking-[0.07em] {{ $thirdText }}">Absensi</span>
             <span
-                class="text-base font-bold leading-none {{ $mainText }}">{{ $s->total_absensi ?? 0 }}</span>
+                class="text-base font-bold leading-none {{ $mainText }}">0</span>
             <span class="text-[9px] font-semibold text-[var(--contrast-second-text)]">/
                 {{ $s->count_mahasiswa }}</span>
         </div>

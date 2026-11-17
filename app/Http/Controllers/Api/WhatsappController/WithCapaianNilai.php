@@ -389,7 +389,7 @@ trait WithCapaianNilai
                 return response()->json([
                     'status' => true,
                     'head' => '*✅ File PDF Berhasil Dibuat!*',
-                    'message' => "Berhasil memproses semua jadwal dalam Kelas *{$this->kelas->kode_kelas}*: {$pesanFilter}",
+                    'message' => "Berhasil memproses semua jadwal dalam Kelas *{$this->kelas->kode}*: {$pesanFilter}",
                     'files' => $allData,
                     'file_type' => 'excel',
                 ]);

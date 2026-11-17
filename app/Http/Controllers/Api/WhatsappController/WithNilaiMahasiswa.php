@@ -222,7 +222,7 @@ foreach ($groupedNilai as $periode => $listNilai) {
                 }
 
                 $teksNilai .= "{$nomor}. *{$mkNama}*\n";
-                $teksNilai .= "        » `{$sks}` - {$sksText}\n";
+                $teksNilai .= "        » `{$sks} SKS` - {$sksText}\n";
                 $teksNilai .= "        » RPS: ```{$rps}```\n";
                 $teksNilai .= "        » Nilai: *{$skor}*\n";
                 $teksNilai .= "        » Index: *{$index}*\n";

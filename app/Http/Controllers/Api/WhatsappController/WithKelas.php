@@ -230,7 +230,7 @@ trait WithKelas
 
                             $teksKelas .= "{$nomor}. *{$mk}\n";
                             $teksKelas .= "        » `{$sks} SKS` - {$sksText}\n";
-                            $teksKelas .= "        » Kelas {$label}\n";
+                            $teksKelas .= "        » Kelas: {$label}\n";
                             $teksKelas .= "        » Kode: *{$kodeJadwal}*\n";
                             $teksKelas .= "        » RPS: ```{$kodeRPS}```\n";
                             $teksKelas .= $this->formatSesiTeks($sesi);
@@ -251,7 +251,7 @@ trait WithKelas
                     foreach ($sesis as $sesi) {
                         $teksKelas .= "{$nomor}. *{$mk}*\n";
                         $teksKelas .= "        » `{$sks} SKS` - {$sksText}\n";
-                        $teksKelas .= "        » Kelas {$label}\n";
+                        $teksKelas .= "        » Kelas: {$label}\n";
                         $teksKelas .= "        » Kode: *{$kodeJadwal}*\n";
                         $teksKelas .= "        » RPS: ```{$kodeRPS}```\n";
                         $teksKelas .= $this->formatSesiTeks($sesi);
