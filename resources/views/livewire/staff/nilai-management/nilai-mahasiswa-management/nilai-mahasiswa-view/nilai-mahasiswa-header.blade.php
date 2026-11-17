@@ -15,20 +15,20 @@
 
         $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
     } else {
-        $safePeriodes = collect($periodes ?? []);
-        $totalSks = 144;
-        $totalMk = 63;
-
-        $calculatedIndex = 3.99;
-
         // $safePeriodes = collect($periodes ?? []);
-        // $totalSks = $safePeriodes->sum('total_sks');
-        // $totalMk = $safePeriodes->sum('total_mk');
+        // $totalSks = 144;
+        // $totalMk = 63;
 
-        // $totalBobotSks = $safePeriodes->sum(function ($n) {
-        //     return ($n->total_sks ?? 0) * (float) ($n->ip_semester ?? 0);
-        // });
-        // $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
+        // $calculatedIndex = 3.99;
+
+        $safePeriodes = collect($periodes ?? []);
+        $totalSks = $safePeriodes->sum('total_sks');
+        $totalMk = $safePeriodes->sum('total_mk');
+
+        $totalBobotSks = $safePeriodes->sum(function ($n) {
+            return ($n->total_sks ?? 0) * (float) ($n->ip_semester ?? 0);
+        });
+        $calculatedIndex = $totalSks > 0 ? $totalBobotSks / $totalSks : 0;
     }
 
     $hurufMhs = match (true) {
